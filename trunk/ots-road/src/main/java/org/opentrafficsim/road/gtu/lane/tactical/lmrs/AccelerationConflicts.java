@@ -5,9 +5,9 @@ import java.util.SortedSet;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -44,7 +44,7 @@ public class AccelerationConflicts implements AccelerationIncentive
     @Override
     public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final BehavioralCharacteristics bc, final SpeedLimitInfo speedLimitInfo)
+            final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
         Acceleration acceleration = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
@@ -52,7 +52,7 @@ public class AccelerationConflicts implements AccelerationIncentive
         SortedSet<HeadwayConflict> conflicts =
                 perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
         SortedSet<HeadwayGTU> leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
-        simplePlan.minimizeAcceleration(ConflictUtil.approachConflicts(bc, conflicts, leaders, carFollowingModel, length, speed,
+        simplePlan.minimizeAcceleration(ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length, speed,
                 acceleration, speedLimitInfo, this.yieldPlans, gtu));
         if (this.yieldPlans.getIndicatorIntent().isLeft())
         {

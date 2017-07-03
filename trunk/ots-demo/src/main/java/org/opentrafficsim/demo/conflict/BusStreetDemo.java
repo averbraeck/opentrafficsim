@@ -26,6 +26,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -37,10 +40,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
@@ -561,14 +561,14 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final BehavioralCharacteristics getDefaultBehavioralCharacteristics()
+        public final Parameters getDefaultParameters()
         {
-            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-            behavioralCharacteristics.setDefaultParameters(ParameterTypes.class);
-            behavioralCharacteristics.setDefaultParameters(LmrsParameters.class);
-            behavioralCharacteristics.setDefaultParameters(ConflictUtil.class);
-            behavioralCharacteristics.setDefaultParameters(AbstractIDM.class);
-            return behavioralCharacteristics;
+            Parameters parameters = new Parameters();
+            parameters.setDefaultParameters(ParameterTypes.class);
+            parameters.setDefaultParameters(LmrsParameters.class);
+            parameters.setDefaultParameters(ConflictUtil.class);
+            parameters.setDefaultParameters(AbstractIDM.class);
+            return parameters;
         }
 
         /** {@inheritDoc} */
@@ -610,7 +610,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public void setValues(final BehavioralCharacteristics defaultCharacteristics, final GTUType gtuType)
+        public void setValues(final Parameters defaultCharacteristics, final GTUType gtuType)
                 throws ParameterException
         {
 

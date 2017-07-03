@@ -9,6 +9,11 @@ import java.util.Set;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
+import org.opentrafficsim.base.parameters.AbstractParameterType;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
+import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -32,13 +37,13 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
 
     /** {@inheritDoc} */
     @Override
-    public void setValues(final BehavioralCharacteristics defaultCharacteristics, final GTUType gtuType)
+    public void setValues(final Parameters parameters, final GTUType gtuType)
     {
         if (this.map.containsKey(gtuType))
         {
             for (ParameterEntry entry : this.map.get(gtuType))
             {
-                entry.setValue(defaultCharacteristics);
+                entry.setValue(parameters);
             }
         }
     }
@@ -131,9 +136,9 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
     {
         /**
          * Set value for parameter.
-         * @param behavioralCharacteristics the behavioral characteristics
+         * @param parameters
          */
-        void setValue(BehavioralCharacteristics behavioralCharacteristics);
+        void setValue(Parameters parameters);
     }
 
     /**
@@ -179,12 +184,12 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
 
         /** {@inheritDoc} */
         @Override
-        public void setValue(final BehavioralCharacteristics behavioralCharacteristics)
+        public void setValue(final Parameters parameters)
         {
             T val = this.mu.instantiateRel(this.dist.draw(), this.mu.getUnit().getStandardUnit());
             try
             {
-                behavioralCharacteristics.setParameter(this.parameterType, val);
+                parameters.setParameter(this.parameterType, val);
             }
             catch (ParameterException exception)
             {
@@ -240,12 +245,12 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
 
         /** {@inheritDoc} */
         @Override
-        public void setValue(final BehavioralCharacteristics behavioralCharacteristics)
+        public void setValue(final Parameters parameters)
         {
             double val = this.dist.draw();
             try
             {
-                behavioralCharacteristics.setParameter(this.parameterType, val);
+                parameters.setParameter(this.parameterType, val);
             }
             catch (ParameterException exception)
             {
@@ -299,11 +304,11 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
 
         /** {@inheritDoc} */
         @Override
-        public void setValue(final BehavioralCharacteristics behavioralCharacteristics)
+        public void setValue(final Parameters parameters)
         {
             try
             {
-                behavioralCharacteristics.setParameter(this.parameterType, this.value);
+                parameters.setParameter(this.parameterType, this.value);
             }
             catch (ParameterException exception)
             {
@@ -355,11 +360,11 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
 
         /** {@inheritDoc} */
         @Override
-        public void setValue(final BehavioralCharacteristics behavioralCharacteristics)
+        public void setValue(final Parameters parameters)
         {
             try
             {
-                behavioralCharacteristics.setParameter(this.parameterType, this.value);
+                parameters.setParameter(this.parameterType, this.value);
             }
             catch (ParameterException exception)
             {

@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 /**
  * <p>

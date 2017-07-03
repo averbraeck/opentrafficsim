@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 
@@ -24,24 +24,24 @@ public class ToledoFactory implements LaneBasedTacticalPlannerFactory<Toledo>
 
     /** {@inheritDoc} */
     @Override
-    public final BehavioralCharacteristics getDefaultBehavioralCharacteristics()
+    public final Parameters getDefaultParameters()
     {
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        Parameters parameters = new Parameters();
         try
         {
-            behavioralCharacteristics.setDefaultParameter(ParameterTypes.LOOKAHEAD);
-            behavioralCharacteristics.setDefaultParameter(ParameterTypes.LOOKBACK);
-            behavioralCharacteristics.setDefaultParameter(ParameterTypes.PERCEPTION);
+            parameters.setDefaultParameter(ParameterTypes.LOOKAHEAD);
+            parameters.setDefaultParameter(ParameterTypes.LOOKBACK);
+            parameters.setDefaultParameter(ParameterTypes.PERCEPTION);
         }
         catch (ParameterException exception)
         {
             // should not happen for these 2 parameters
             throw new RuntimeException(exception);
         }
-        behavioralCharacteristics.setDefaultParameters(ToledoLaneChangeParameters.class);
-        behavioralCharacteristics.setDefaultParameters(ToledoCarFollowing.class);
-        behavioralCharacteristics.setDefaultParameters(Toledo.class);
-        return behavioralCharacteristics;
+        parameters.setDefaultParameters(ToledoLaneChangeParameters.class);
+        parameters.setDefaultParameters(ToledoCarFollowing.class);
+        parameters.setDefaultParameters(Toledo.class);
+        return parameters;
     }
 
     /** {@inheritDoc} */

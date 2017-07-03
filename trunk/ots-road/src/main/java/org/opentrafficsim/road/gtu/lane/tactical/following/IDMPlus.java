@@ -6,9 +6,9 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 
 /**
  * Implementation of the IDM+. See Schakel, W.J., Knoop, V.L., and Van Arem, B. (2012),
@@ -45,12 +45,12 @@ public class IDMPlus extends AbstractIDM
     /** {@inheritDoc} */
     @Override
     protected final Acceleration combineInteractionTerm(final Acceleration aFree,
-            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final Speed desiredSpeed,
+            final Parameters parameters, final Speed speed, final Speed desiredSpeed,
             final Length desiredHeadway, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
-        Acceleration a = behavioralCharacteristics.getParameter(ParameterTypes.A);
+        Acceleration a = parameters.getParameter(ParameterTypes.A);
         double sRatio =
-                dynamicDesiredHeadway(behavioralCharacteristics, speed, desiredHeadway, leaders.get(leaders.firstKey())).si
+                dynamicDesiredHeadway(parameters, speed, desiredHeadway, leaders.get(leaders.firstKey())).si
                         / leaders.firstKey().si;
         double aInt = a.si * (1 - sRatio * sRatio);
         return new Acceleration(aInt < aFree.si ? aInt : aFree.si, AccelerationUnit.SI);

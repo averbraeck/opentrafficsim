@@ -7,9 +7,9 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -151,7 +151,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
                 .getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
-        BehavioralCharacteristics bc = getGtu().getBehavioralCharacteristics();
+        Parameters params = getGtu().getParameters();
 
         // LMRS
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
@@ -166,7 +166,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         {
             for (RelativeLane lane : lanes)
             {
-                incentive.accelerate(simplePlan, lane, getGtu(), getPerception(), getCarFollowingModel(), speed, bc, sli);
+                incentive.accelerate(simplePlan, lane, getGtu(), getPerception(), getCarFollowingModel(), speed, params, sli);
             }
         }
 
@@ -185,7 +185,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         simplePlan.setTurnIndicator(getGtu());
 
         // create plan
-        return buildPlanFromSimplePlan(getGtu(), startTime, bc, simplePlan, this.laneChange);
+        return buildPlanFromSimplePlan(getGtu(), startTime, params, simplePlan, this.laneChange);
 
     }
 

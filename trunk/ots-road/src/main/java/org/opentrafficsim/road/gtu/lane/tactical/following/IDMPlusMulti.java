@@ -6,8 +6,8 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 
 /**
  * <p>
@@ -38,10 +38,10 @@ public class IDMPlusMulti extends AbstractIDM
     /** {@inheritDoc} */
     @Override
     protected final Acceleration combineInteractionTerm(final Acceleration aFree,
-            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final Speed desiredSpeed,
+            final Parameters parameters, final Speed speed, final Speed desiredSpeed,
             final Length desiredHeadway, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
-        Acceleration a = behavioralCharacteristics.getParameter(A);
+        Acceleration a = parameters.getParameter(A);
         double aIntMulti = Double.POSITIVE_INFINITY;
         int i = 1;
         double cumulVehicleLengths = 0;
@@ -49,7 +49,7 @@ public class IDMPlusMulti extends AbstractIDM
         {
             // desired headway is scaled to the i'th leader
             // current headway is the sum of net headways (i.e. vehicle lengths of vehicles in between are subtracted)
-            double sRatio = dynamicDesiredHeadway(behavioralCharacteristics, speed, desiredHeadway.multiplyBy(i),
+            double sRatio = dynamicDesiredHeadway(parameters, speed, desiredHeadway.multiplyBy(i),
                     leaders.get(headway)).si / (headway.si - cumulVehicleLengths);
             double aIntSingle = a.si * (1 - sRatio * sRatio);
             aIntMulti = aIntMulti < aIntSingle ? aIntMulti : aIntSingle;

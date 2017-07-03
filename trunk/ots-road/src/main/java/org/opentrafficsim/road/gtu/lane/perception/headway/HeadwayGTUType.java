@@ -3,9 +3,9 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.perception.GTUTypeAssumptions;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -131,9 +131,9 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
 
     /** {@inheritDoc} */
     @Override
-    public final BehavioralCharacteristics getBehavioralCharacteristics()
+    public final Parameters getParameters()
     {
-        return this.gtuTypeAssumptions.getBehavioralCharacteristics(getGtuType());
+        return this.gtuTypeAssumptions.getParameters(getGtuType());
     }
 
     /** {@inheritDoc} */

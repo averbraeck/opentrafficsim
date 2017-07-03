@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -22,7 +23,6 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -104,13 +104,13 @@ public class SensorTest implements UNITS
         FixedAccelerationModel fas =
                 new FixedAccelerationModel(new Acceleration(0.5, METER_PER_SECOND_2), new Duration(100, SECOND));
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
-        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
+        Parameters parameters = DefaultTestParameters.create();
 
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(fas, null);
         LaneBasedIndividualGTU car =
                 new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed, simulator, (OTSNetwork) network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                 new LaneBasedGTUFollowingTacticalPlanner(fas, car), car);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
         simulator.runUpTo(new Time(1, TimeUnit.BASE_SECOND));

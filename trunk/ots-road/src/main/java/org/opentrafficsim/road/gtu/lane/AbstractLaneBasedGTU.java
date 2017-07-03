@@ -17,6 +17,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -25,8 +27,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -991,9 +991,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final BehavioralCharacteristics getBehavioralCharacteristics()
+    public final Parameters getParameters()
     {
-        return getStrategicalPlanner().getBehavioralCharacteristics();
+        return getStrategicalPlanner().getParameters();
     }
 
     /** {@inheritDoc} */

@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.strategical;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 import nl.tudelft.simulation.language.Throw;
@@ -26,33 +26,33 @@ public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedSt
     private final LaneBasedGTU gtu;
 
     /** The personal driving characteristics, which contain settings for the tactical planner. */
-    private BehavioralCharacteristics behavioralCharacteristics;
+    private Parameters parameters;
 
     /**
-     * @param behavioralCharacteristics the personal driving characteristics, which contain settings for the tactical planner
+     * @param parameters the personal driving characteristics, which contain settings for the tactical planner
      * @param gtu GTU
      */
-    public AbstractLaneBasedStrategicalPlanner(final BehavioralCharacteristics behavioralCharacteristics,
+    public AbstractLaneBasedStrategicalPlanner(final Parameters parameters,
             final LaneBasedGTU gtu)
     {
-        Throw.whenNull(behavioralCharacteristics, "Behavioral characteristics may not be null.");
+        Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(gtu, "GTU may not be null.");
-        this.behavioralCharacteristics = behavioralCharacteristics;
+        this.parameters = parameters;
         this.gtu = gtu;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final BehavioralCharacteristics getBehavioralCharacteristics()
+    public final Parameters getParameters()
     {
-        return this.behavioralCharacteristics;
+        return this.parameters;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setBehavioralCharacteristics(final BehavioralCharacteristics behavioralCharacteristics)
+    public final void setParameters(final Parameters parameters)
     {
-        this.behavioralCharacteristics = behavioralCharacteristics;
+        this.parameters = parameters;
     }
 
     /** {@inheritDoc} */

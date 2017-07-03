@@ -25,12 +25,12 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartPanel;
 import org.junit.Test;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
@@ -147,9 +147,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         GTUFollowingModelOld gtuFollowingModel =
                 new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(1000, SECOND));
         // Construct a car
-        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
+        Parameters parameters = DefaultTestParameters.create();
         LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("1", gtuType, length, width, maxSpeed, simulator, this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, speed);
         simulator.runUpTo(new Time(124, TimeUnit.BASE_SECOND));
@@ -235,10 +235,10 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         }
         // Check that harmonic mean speed is computed
         speed = new Speed(10, KM_PER_HOUR);
-        behavioralCharacteristics = DefaultTestParameters.create();
+        parameters = DefaultTestParameters.create();
         LaneBasedIndividualGTU gtuX =
                 new LaneBasedIndividualGTU("1234", gtuType, length, width, maxSpeed, simulator, this.network);
-        strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+        strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtuX), gtuX);
         gtuX.init(strategicalPlanner, initialLongitudinalPositions, speed);
         simulator.runUpTo(new Time(125, TimeUnit.BASE_SECOND));

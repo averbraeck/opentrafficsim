@@ -25,17 +25,17 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactoryByType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -149,16 +149,16 @@ public final class AHFEUtil
         CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory();
         PerceptionFactory delayedPerceptionFactory =
                 new DelayedPerceptionFactory(Anticipation.valueOf(anticipationStrategy.toUpperCase()));
-        BehavioralCharacteristics bc = new BehavioralCharacteristics();
-        bc.setDefaultParameter(AbstractIDM.DELTA);
-        bc.setParameter(ParameterTypes.TR, reactionTime);
-        bc.setParameter(DelayedNeighborsPerception.TA, anticipationTime);
-        bc.setDefaultParameter(DelayedNeighborsPerception.TAUE);
-        bc.setParameter(DelayedNeighborsPerception.SERROR, distanceError);
-        bc.setParameter(DelayedNeighborsPerception.VERROR, speedError);
-        bc.setParameter(DelayedNeighborsPerception.AERROR, accelerationError);
+        Parameters params = new Parameters();
+        params.setDefaultParameter(AbstractIDM.DELTA);
+        params.setParameter(ParameterTypes.TR, reactionTime);
+        params.setParameter(DelayedNeighborsPerception.TA, anticipationTime);
+        params.setDefaultParameter(DelayedNeighborsPerception.TAUE);
+        params.setParameter(DelayedNeighborsPerception.SERROR, distanceError);
+        params.setParameter(DelayedNeighborsPerception.VERROR, speedError);
+        params.setParameter(DelayedNeighborsPerception.AERROR, accelerationError);
         LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory =
-                new LMRSFactoryAHFE(idmPlusFactory, bc, delayedPerceptionFactory);
+                new LMRSFactoryAHFE(idmPlusFactory, params, delayedPerceptionFactory);
 
         BehavioralCharacteristicsFactoryByType bcFactory = new BehavioralCharacteristicsFactoryByType();
         // Length lookAhead = new Length(1000.0, LengthUnit.SI);
@@ -230,7 +230,8 @@ public final class AHFEUtil
                     new GTUType("truck", TRUCK), speedTruck, 1.0);
         }
 
-        TimeVector timeVector = new TimeVector(new double[] { 0, 360, 1560, 2160, 3960 }, TimeUnit.BASE_SECOND, StorageType.DENSE);
+        TimeVector timeVector =
+                new TimeVector(new double[] { 0, 360, 1560, 2160, 3960 }, TimeUnit.BASE_SECOND, StorageType.DENSE);
         double leftLeft = leftDemand.si * leftFraction;
         FrequencyVector leftLeftDemandPattern = new FrequencyVector(
                 new double[] { leftLeft * 0.5, leftLeft * 0.5, leftLeft, leftLeft, 0.0 }, FrequencyUnit.SI, StorageType.DENSE);
@@ -300,7 +301,7 @@ public final class AHFEUtil
      * @param headwayGenerator the headway generator for the GTU
      * @param gtuColorer the GTU colorer for animation
      * @param roomChecker the checker to see if there is room for the GTU
-     * @param bcFactory the factory to generate behavioral characteristics for the GTU
+     * @param bcFactory the factory to generate parameters for the GTU
      * @param tacticalFactory the generator for the tactical planner
      * @param simulationTime simulation time
      * @throws SimRuntimeException in case of scheduling problems
@@ -348,7 +349,7 @@ public final class AHFEUtil
         private final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory;
 
         /** Default set of parameters for the car-following model. */
-        private final BehavioralCharacteristics defaultCarFollowingBehavioralCharacteristics;
+        private final Parameters defaultCarFollowingParameters;
 
         /** Factory for perception. */
         private final PerceptionFactory perceptionFactory;
@@ -356,28 +357,27 @@ public final class AHFEUtil
         /**
          * Constructor with car-following model class. The class should have an accessible empty constructor.
          * @param carFollowingModelFactory factory of the car-following model
-         * @param defaultCarFollowingBehavioralCharacteristics default set of parameters for the car-following model
+         * @param defaultCarFollowingParameters default set of parameters for the car-following model
          * @param perceptionFactory perception factory
          * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
          */
         LMRSFactoryAHFE(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
-                final BehavioralCharacteristics defaultCarFollowingBehavioralCharacteristics,
-                final PerceptionFactory perceptionFactory) throws GTUException
+                final Parameters defaultCarFollowingParameters, final PerceptionFactory perceptionFactory) throws GTUException
         {
             this.carFollowingModelFactory = carFollowingModelFactory;
-            this.defaultCarFollowingBehavioralCharacteristics = defaultCarFollowingBehavioralCharacteristics;
+            this.defaultCarFollowingParameters = defaultCarFollowingParameters;
             this.perceptionFactory = perceptionFactory;
         }
 
         /** {@inheritDoc} */
         @Override
-        public final BehavioralCharacteristics getDefaultBehavioralCharacteristics()
+        public final Parameters getDefaultParameters()
         {
-            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-            behavioralCharacteristics.setDefaultParameters(ParameterTypes.class);
-            behavioralCharacteristics.setDefaultParameters(LmrsParameters.class);
-            behavioralCharacteristics.setAll(this.defaultCarFollowingBehavioralCharacteristics);
-            return behavioralCharacteristics;
+            Parameters parameters = new Parameters();
+            parameters.setDefaultParameters(ParameterTypes.class);
+            parameters.setDefaultParameters(LmrsParameters.class);
+            parameters.setAll(this.defaultCarFollowingParameters);
+            return parameters;
         }
 
         /** {@inheritDoc} */
@@ -473,14 +473,14 @@ public final class AHFEUtil
 
         /** {@inheritDoc} */
         @Override
-        public Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
-                final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
-                final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
+        public Desire determineDesire(final Parameters parameters, final LanePerception perception,
+                final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
+                throws ParameterException, OperationalPlanException
         {
             if (perception.getLaneStructure().getRootLSR().getRight() != null
                     && perception.getLaneStructure().getRootLSR().getRight().getRight() != null
                     && perception.getPerceptionCategory(EgoPerception.class).getSpeed()
-                            .gt(behavioralCharacteristics.getParameter(ParameterTypes.VCONG)))
+                            .gt(parameters.getParameter(ParameterTypes.VCONG)))
             {
                 // may not be on this lane
                 return new Desire(0, 1);

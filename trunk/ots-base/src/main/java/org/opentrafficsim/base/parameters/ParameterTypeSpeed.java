@@ -1,11 +1,11 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Speed;
 
 /**
- * Wrapper class for Time parameters.
+ * Wrapper class for Speed parameters.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -14,20 +14,20 @@ import org.djunits.value.vdouble.scalar.Duration;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implements Serializable
+public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements Serializable
 {
 
     /** */
-    private static final long serialVersionUID = 20150400L;
+    private static final long serialVersionUID = 20160400L;
 
     /**
      * Constructor without default value and check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeDuration(final String id, final String description)
+    public ParameterTypeSpeed(final String id, final String description)
     {
-        super(id, description, Duration.class);
+        super(id, description, Speed.class);
     }
 
     /**
@@ -36,9 +36,9 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeDuration(final String id, final String description, final Duration defaultValue)
+    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue)
     {
-        super(id, description, Duration.class, defaultValue);
+        super(id, description, Speed.class, defaultValue);
     }
 
     /**
@@ -47,9 +47,9 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDuration(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeSpeed(final String id, final String description, final NumericConstraint constraint)
     {
-        super(id, description, Duration.class, constraint);
+        super(id, description, Speed.class, constraint);
     }
 
     /**
@@ -59,17 +59,16 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDuration(final String id, final String description, final Duration defaultValue,
-            final NumericConstraint constraint)
+    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue, final NumericConstraint constraint)
     {
-        super(id, description, Duration.class, defaultValue, constraint);
+        super(id, description, Speed.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "ParameterTypeDuration [id=" + getId() + ", description=" + getDescription() + "]";
+        return "ParameterTypeSpeed [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

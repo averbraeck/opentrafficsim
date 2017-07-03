@@ -1,14 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.UNITINTERVAL;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVE;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.UNITINTERVAL;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeSpeed;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
+import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -32,11 +32,11 @@ public interface LmrsParameters
         /** */
         private static final long serialVersionUID = 20160413L;
 
-        public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
+        public void check(final double value, final Parameters params) throws ParameterException
         {
-            Throw.when(bc.contains(DSYNC) && value >= bc.getParameter(DSYNC), ParameterException.class,
+            Throw.when(params.contains(DSYNC) && value >= params.getParameter(DSYNC), ParameterException.class,
                     "Value of dFree is above or equal to dSync.");
-            Throw.when(bc.contains(DCOOP) && value >= bc.getParameter(DCOOP), ParameterException.class,
+            Throw.when(params.contains(DCOOP) && value >= params.getParameter(DCOOP), ParameterException.class,
                     "Value of dFree is above or equal to dCoop.");
         }
     };
@@ -48,11 +48,11 @@ public interface LmrsParameters
                 /** */
                 private static final long serialVersionUID = 20160413L;
 
-                public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
+                public void check(final double value, final Parameters params) throws ParameterException
                 {
-                    Throw.when(bc.contains(DFREE) && value <= bc.getParameter(DFREE), ParameterException.class,
+                    Throw.when(params.contains(DFREE) && value <= params.getParameter(DFREE), ParameterException.class,
                             "Value of dSync is below or equal to dFree.");
-                    Throw.when(bc.contains(DCOOP) && value >= bc.getParameter(DCOOP), ParameterException.class,
+                    Throw.when(params.contains(DCOOP) && value >= params.getParameter(DCOOP), ParameterException.class,
                             "Value of dSync is above or equal to dCoop.");
                 }
             };
@@ -64,11 +64,11 @@ public interface LmrsParameters
                 /** */
                 private static final long serialVersionUID = 20160413L;
 
-                public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
+                public void check(final double value, final Parameters params) throws ParameterException
                 {
-                    Throw.when(bc.contains(DFREE) && value <= bc.getParameter(DFREE), ParameterException.class,
+                    Throw.when(params.contains(DFREE) && value <= params.getParameter(DFREE), ParameterException.class,
                             "Value of dCoop is below or equal to dFree.");
-                    Throw.when(bc.contains(DSYNC) && value <= bc.getParameter(DSYNC), ParameterException.class,
+                    Throw.when(params.contains(DSYNC) && value <= params.getParameter(DSYNC), ParameterException.class,
                             "Value of dCoop is below or equal to dSync.");
                 }
             };

@@ -2,9 +2,9 @@ package org.opentrafficsim.road.gtu.animation;
 
 import java.awt.Color;
 
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 
 /**
@@ -28,13 +28,13 @@ public class TotalDesireColorer extends DesireColorer
     @Override
     public Color getColor(final GTU gtu)
     {
-        BehavioralCharacteristics bc = gtu.getBehavioralCharacteristics();
-        if (bc.contains(LmrsParameters.DLEFT) && bc.contains(LmrsParameters.DRIGHT))
+        Parameters params = gtu.getParameters();
+        if (params.contains(LmrsParameters.DLEFT) && params.contains(LmrsParameters.DRIGHT))
         {
             try
             {
-                double dLeft = bc.getParameter(LmrsParameters.DLEFT);
-                double dRight = bc.getParameter(LmrsParameters.DRIGHT);
+                double dLeft = params.getParameter(LmrsParameters.DLEFT);
+                double dRight = params.getParameter(LmrsParameters.DRIGHT);
                 return getColor(dLeft, dRight);
             }
             catch (ParameterException exception)

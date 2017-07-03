@@ -4,9 +4,9 @@ import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -32,7 +32,7 @@ public class IncentiveBusStop implements MandatoryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics, final LanePerception perception,
+    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
@@ -71,14 +71,14 @@ public class IncentiveBusStop implements MandatoryIncentive
         Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         if (firstStop.getRelativeLane().isCurrent())
         {
-            double d = -IncentiveRoute.getDesireToLeave(behavioralCharacteristics, firstStop.getDistance(), 1, speed);
+            double d = -IncentiveRoute.getDesireToLeave(parameters, firstStop.getDistance(), 1, speed);
             return new Desire(d, d);
         }
 
         int n = firstStop.getRelativeLane().getNumLanes();
 
-        double dNotGood = -IncentiveRoute.getDesireToLeave(behavioralCharacteristics, firstStop.getDistance(), n + 1, speed);
-        double dGood = IncentiveRoute.getDesireToLeave(behavioralCharacteristics, firstStop.getDistance(), n, speed);
+        double dNotGood = -IncentiveRoute.getDesireToLeave(parameters, firstStop.getDistance(), n + 1, speed);
+        double dGood = IncentiveRoute.getDesireToLeave(parameters, firstStop.getDistance(), n, speed);
         return firstStop.getRelativeLane().getLateralDirectionality().isRight() ? new Desire(dNotGood, dGood)
                 : new Desire(dGood, dNotGood);
 

@@ -28,6 +28,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -37,7 +38,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.demo.carFollowing.DefaultsFactory;
@@ -373,10 +373,10 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
             Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
             initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
             GTUType gtuType = CAR;
-            BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
+            Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", gtuType, new Length(1, LengthUnit.METER),
                     lane.getWidth(1), Speed.ZERO, theSimulator, (OTSNetwork) this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                     new LaneBasedGTUFollowingTacticalPlanner(carFollowingModelCars, block), block);
             block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class, gtuColorer);
             return lane;

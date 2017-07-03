@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
@@ -64,9 +64,9 @@ public class LaneBasedStrategicalRoutePlannerTest
         OTSLink link = new OTSLink(network, "link", fromNode, toNode, LinkType.ALL, designLine, simulator, directionalityMap);
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);
-        BehavioralCharacteristics bc = DefaultTestParameters.create();
+        Parameters params = DefaultTestParameters.create();
         // TODO Gtu cannot be null anymore...
-        // LaneBasedStrategicalRoutePlanner lbsrp = new LaneBasedStrategicalRoutePlanner(bc, tacticalPlanner, null);
+        // LaneBasedStrategicalRoutePlanner lbsrp = new LaneBasedStrategicalRoutePlanner(params, tacticalPlanner, null);
 
     }
 }

@@ -10,11 +10,11 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.TimeStampedObject;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDuration;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -109,9 +109,9 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
             try
             {
                 // TODO The reaction time may differ between observed objects and vary over time
-                BehavioralCharacteristics bc = getPerception().getGtu().getBehavioralCharacteristics();
-                this.reactionTime = bc.getParameter(TR);
-                this.plannerTimeStep = bc.getParameter(DT);
+                Parameters params = getPerception().getGtu().getParameters();
+                this.reactionTime = params.getParameter(TR);
+                this.plannerTimeStep = params.getParameter(DT);
                 double rem;
                 if (this.reactionTime.eq0())
                 {

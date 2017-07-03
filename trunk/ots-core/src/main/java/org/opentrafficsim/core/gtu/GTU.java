@@ -7,8 +7,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -92,8 +92,8 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     /** @return Length; the current odometer value. */
     Length getOdometer();
 
-    /** @return Behavioral characteristics. */
-    BehavioralCharacteristics getBehavioralCharacteristics();
+    /** @return Parameters. */
+    Parameters getParameters();
 
     /**
      * @return StrategicalPlanner; the planner responsible for the overall 'mission' of the GTU, usually indicating where it

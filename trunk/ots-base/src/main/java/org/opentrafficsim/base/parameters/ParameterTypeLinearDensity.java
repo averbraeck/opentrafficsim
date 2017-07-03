@@ -1,11 +1,11 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.LinearDensity;
 
 /**
- * Wrapper class for Acceleration parameters.
+ * Wrapper class for LinearDensity parameters.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -14,20 +14,20 @@ import org.djunits.value.vdouble.scalar.Acceleration;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration> implements Serializable
+public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensity> implements Serializable
 {
 
     /** */
-    private static final long serialVersionUID = 20160400L;
+    private static final long serialVersionUID = 20150000L;
 
     /**
      * Constructor without default value and check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeAcceleration(final String id, final String description)
+    public ParameterTypeLinearDensity(final String id, final String description)
     {
-        super(id, description, Acceleration.class);
+        super(id, description, LinearDensity.class);
     }
 
     /**
@@ -36,9 +36,9 @@ public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue)
+    public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue)
     {
-        super(id, description, Acceleration.class, defaultValue);
+        super(id, description, LinearDensity.class, defaultValue);
     }
 
     /**
@@ -47,9 +47,9 @@ public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeAcceleration(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeLinearDensity(final String id, final String description, final NumericConstraint constraint)
     {
-        super(id, description, Acceleration.class, constraint);
+        super(id, description, LinearDensity.class, constraint);
     }
 
     /**
@@ -59,17 +59,17 @@ public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue,
+    public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue,
             final NumericConstraint constraint)
     {
-        super(id, description, Acceleration.class, defaultValue, constraint);
+        super(id, description, LinearDensity.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "ParameterTypeAcceleration [id=" + getId() + ", description=" + getDescription() + "]";
+        return "ParameterTypeLinearDensity [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

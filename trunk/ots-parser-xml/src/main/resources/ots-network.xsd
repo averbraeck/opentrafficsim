@@ -86,7 +86,8 @@
                 <xsd:attribute name="MAXGTU" type="xsd:double" use="optional" />
                 <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional" />
                 <xsd:attribute name="ENDTIME" type="TIMETYPE" use="optional" />
-                <xsd:attribute name="ROUTE" type="xsd:string" use="required" />
+                <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
+                <xsd:attribute name="ROUTEMIX" type="xsd:string" use="optional" />
                 <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required" />
               </xsd:complexType>
             </xsd:element>

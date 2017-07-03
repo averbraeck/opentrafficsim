@@ -48,7 +48,7 @@
 
   <xsd:simpleType name="FRACTIONTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%"></xsd:pattern>
+      <xsd:pattern value="(0?\.\d*|1\.0*|1|0)|((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 

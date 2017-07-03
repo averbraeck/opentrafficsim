@@ -5,12 +5,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.animation.ColorInterpolator;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 
 /**
  * <p>
@@ -56,16 +56,16 @@ public class DesiredHeadwayColorer implements GTUColorer, Serializable
     @Override
     public Color getColor(final GTU gtu)
     {
-        BehavioralCharacteristics bc = gtu.getBehavioralCharacteristics();
-        if (!bc.contains(ParameterTypes.TMIN) || !bc.contains(ParameterTypes.TMAX) || !bc.contains(ParameterTypes.T))
+        Parameters params = gtu.getParameters();
+        if (!params.contains(ParameterTypes.TMIN) || !params.contains(ParameterTypes.TMAX) || !params.contains(ParameterTypes.T))
         {
             return UNKNOWN;
         }
         try
         {
-            double tMin = bc.getParameter(ParameterTypes.TMIN).si;
-            double tMax = bc.getParameter(ParameterTypes.TMAX).si;
-            double t = bc.getParameter(ParameterTypes.T).si;
+            double tMin = params.getParameter(ParameterTypes.TMIN).si;
+            double tMax = params.getParameter(ParameterTypes.TMAX).si;
+            double t = params.getParameter(ParameterTypes.T).si;
             if (t <= tMin)
             {
                 return LOW;

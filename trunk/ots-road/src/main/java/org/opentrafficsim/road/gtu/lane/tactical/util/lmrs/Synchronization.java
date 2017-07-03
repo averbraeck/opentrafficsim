@@ -8,10 +8,10 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -46,7 +46,7 @@ public enum Synchronization implements LmrsParameters
     {
 
         @Override
-        Acceleration synchronize(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+        Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
@@ -65,10 +65,10 @@ public enum Synchronization implements LmrsParameters
             if (remainingDist != null)
             {
                 Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-                Acceleration bCrit = bc.getParameter(ParameterTypes.BCRIT);
+                Acceleration bCrit = params.getParameter(ParameterTypes.BCRIT);
                 try
                 {
-                    remainingDist = remainingDist.minus(bc.getParameter(ParameterTypes.S0))
+                    remainingDist = remainingDist.minus(params.getParameter(ParameterTypes.S0))
                             .minus(perception.getGtu().getFront().getDx());
                 }
                 catch (GTUException exception)
@@ -102,7 +102,7 @@ public enum Synchronization implements LmrsParameters
         }
 
         @Override
-        Acceleration cooperate(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+        Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
@@ -116,16 +116,16 @@ public enum Synchronization implements LmrsParameters
     {
 
         @Override
-        Acceleration synchronize(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+        Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
             // stop for dead-end
-            return NONE.synchronize(perception, bc, sli, cfm, desire, lat, lmrsData);
+            return NONE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData);
         }
 
         @Override
-        Acceleration cooperate(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+        Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
@@ -134,22 +134,22 @@ public enum Synchronization implements LmrsParameters
             {
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
-            Acceleration b = bc.getParameter(ParameterTypes.B);
+            Acceleration b = params.getParameter(ParameterTypes.B);
             Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
-            double dCoop = bc.getParameter(DCOOP);
+            double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
             for (HeadwayGTU leader : removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
                     relativeLane), perception, RelativeLane.CURRENT))
             {
-                BehavioralCharacteristics bc2 = leader.getBehavioralCharacteristics();
-                double desire = lat.equals(LateralDirectionality.LEFT) && bc2.contains(DRIGHT) ? bc2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) && bc2.contains(DLEFT) ? bc2.getParameter(DLEFT) : 0;
+                Parameters params2 = leader.getParameters();
+                double desire = lat.equals(LateralDirectionality.LEFT) && params2.contains(DRIGHT) ? params2.getParameter(DRIGHT)
+                        : lat.equals(LateralDirectionality.RIGHT) && params2.contains(DLEFT) ? params2.getParameter(DLEFT) : 0;
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
                 {
                     Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
-                            desire, bc, sli, cfm);
+                            desire, params, sli, cfm);
                     a = Acceleration.min(a, aSingle);
                 }
             }
@@ -164,12 +164,12 @@ public enum Synchronization implements LmrsParameters
     {
 
         @Override
-        Acceleration synchronize(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+        Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POSITIVE_INFINITY;
-            double dCoop = bc.getParameter(DCOOP);
+            double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
             SortedSet<
                     HeadwayGTU> set =
@@ -200,24 +200,24 @@ public enum Synchronization implements LmrsParameters
             {
                 Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
                 Acceleration aSingle =
-                        LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, bc, sli, cfm);
+                        LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, params, sli, cfm);
                 a = Acceleration.min(a, aSingle);
             }
-            a = gentleUrgency(a, desire, bc);
+            a = gentleUrgency(a, desire, params);
 
             // dead end
-            a = Acceleration.min(a, NONE.synchronize(perception, bc, sli, cfm, desire, lat, lmrsData));
+            a = Acceleration.min(a, NONE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData));
 
             return a;
 
         }
 
         @Override
-        Acceleration cooperate(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+        Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
-            return COOPERATION.cooperate(perception, bc, sli, cfm, lat, ownDesire);
+            return COOPERATION.cooperate(perception, params, sli, cfm, lat, ownDesire);
         }
 
     },
@@ -227,20 +227,20 @@ public enum Synchronization implements LmrsParameters
     {
 
         @Override
-        Acceleration synchronize(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+        Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
 
-            Acceleration b = bc.getParameter(ParameterTypes.B);
-            Duration tMin = bc.getParameter(ParameterTypes.TMIN);
-            Duration tMax = bc.getParameter(ParameterTypes.TMAX);
-            Speed vCong = bc.getParameter(ParameterTypes.VCONG);
-            Length x0 = bc.getParameter(ParameterTypes.LOOKAHEAD);
-            Duration t0 = bc.getParameter(ParameterTypes.T0);
-            Duration lc = bc.getParameter(ParameterTypes.LCDUR);
+            Acceleration b = params.getParameter(ParameterTypes.B);
+            Duration tMin = params.getParameter(ParameterTypes.TMIN);
+            Duration tMax = params.getParameter(ParameterTypes.TMAX);
+            Speed vCong = params.getParameter(ParameterTypes.VCONG);
+            Length x0 = params.getParameter(ParameterTypes.LOOKAHEAD);
+            Duration t0 = params.getParameter(ParameterTypes.T0);
+            Duration lc = params.getParameter(ParameterTypes.LCDUR);
             Speed tagSpeed = x0.divideBy(t0);
-            double dCoop = bc.getParameter(DCOOP);
+            double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             Length ownLength = perception.getPerceptionCategory(EgoPerception.class).getLength();
             Length dx;
@@ -299,7 +299,7 @@ public enum Synchronization implements LmrsParameters
                     if (leader.getDistance().lt(maxDistance))
                     {
                         if ((leader.getDistance().gt(xMergeSync) || leader.getSpeed().gt(vCong))
-                                && tagAlongAcceleration(leader, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm)
+                                && tagAlongAcceleration(leader, ownSpeed, ownLength, tagSpeed, desire, params, sli, cfm)
                                         .gt(b.neg()))
                         {
                             syncVehicle = leader;
@@ -332,7 +332,7 @@ public enum Synchronization implements LmrsParameters
             {
                 up = getFollower(syncVehicle, leaders, follower, ownLength);
                 upOk = up == null ? false
-                        : tagAlongAcceleration(up, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm).gt(b.neg());
+                        : tagAlongAcceleration(up, ownSpeed, ownLength, tagSpeed, desire, params, sli, cfm).gt(b.neg());
             }
             while (syncVehicle != null
                     && up != null && (upOk || (!canBeAhead(up, xCur, nCur, ownSpeed, ownLength, tagSpeed, dCoop, b, tMin, tMax,
@@ -349,7 +349,7 @@ public enum Synchronization implements LmrsParameters
                 syncVehicle = up;
                 up = getFollower(syncVehicle, leaders, follower, ownLength);
                 upOk = up == null ? false
-                        : tagAlongAcceleration(up, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm).gt(b.neg());
+                        : tagAlongAcceleration(up, ownSpeed, ownLength, tagSpeed, desire, params, sli, cfm).gt(b.neg());
             }
             lmrsData.setSyncVehicle(syncVehicle);
 
@@ -357,8 +357,8 @@ public enum Synchronization implements LmrsParameters
             Acceleration a = Acceleration.POSITIVE_INFINITY;
             if (syncVehicle != null)
             {
-                a = gentleUrgency(tagAlongAcceleration(syncVehicle, ownSpeed, ownLength, tagSpeed, desire, bc, sli, cfm),
-                        desire, bc);
+                a = gentleUrgency(tagAlongAcceleration(syncVehicle, ownSpeed, ownLength, tagSpeed, desire, params, sli, cfm),
+                        desire, params);
             }
             else if (nCur > 0 && (follower != null || (leaders != null && !leaders.isEmpty())))
             {
@@ -375,16 +375,16 @@ public enum Synchronization implements LmrsParameters
                     {
                         // inappropriate to get behind
                         // note: if minimum lane change space is more than infrastructure, deceleration will simply be limited
-                        a = stopForEnd(xCur, xMerge, bc, ownSpeed, cfm, sli);
+                        a = stopForEnd(xCur, xMerge, params, ownSpeed, cfm, sli);
                     }
                     else
                     {
-                        a = gentleUrgency(acc, desire, bc);
+                        a = gentleUrgency(acc, desire, params);
                     }
                 }
-                else if (!LmrsUtil.acceptGapNeighbors(perception, bc, sli, cfm, desire, ownSpeed, lat))
+                else if (!LmrsUtil.acceptGapNeighbors(perception, params, sli, cfm, desire, ownSpeed, lat))
                 {
-                    a = stopForEnd(xCur, xMerge, bc, ownSpeed, cfm, sli);
+                    a = stopForEnd(xCur, xMerge, params, ownSpeed, cfm, sli);
                     // but no stronger than getting behind the leader
                     if (leaders != null && !leaders.isEmpty())
                     {
@@ -409,7 +409,7 @@ public enum Synchronization implements LmrsParameters
                     Speed vMerge = xCur.lt(xMerge) ? Speed.ZERO
                             : xCur.minus(xMerge).divideBy(t0.multiplyBy((1 - dCoop) * (nCur - 1)).plus(lc));
                     vMerge = Speed.max(vMerge, x0.divideBy(t0));
-                    a = Acceleration.min(a, CarFollowingUtil.approachTargetSpeed(cfm, bc, ownSpeed, sli, xMerge, vMerge));
+                    a = Acceleration.min(a, CarFollowingUtil.approachTargetSpeed(cfm, params, ownSpeed, sli, xMerge, vMerge));
                 }
                 else
                 {
@@ -426,7 +426,7 @@ public enum Synchronization implements LmrsParameters
         }
 
         @Override
-        Acceleration cooperate(final LanePerception perception, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+        Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
@@ -437,21 +437,21 @@ public enum Synchronization implements LmrsParameters
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
             Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
-            double dCoop = bc.getParameter(DCOOP);
+            double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
             for (HeadwayGTU leader : removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
                     relativeLane), perception, RelativeLane.CURRENT))
             {
-                BehavioralCharacteristics bc2 = leader.getBehavioralCharacteristics();
-                double desire = lat.equals(LateralDirectionality.LEFT) && bc2.contains(DRIGHT) ? bc2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) && bc2.contains(DLEFT) ? bc2.getParameter(DLEFT) : 0;
+                Parameters params2 = leader.getParameters();
+                double desire = lat.equals(LateralDirectionality.LEFT) && params2.contains(DRIGHT) ? params2.getParameter(DRIGHT)
+                        : lat.equals(LateralDirectionality.RIGHT) && params2.contains(DLEFT) ? params2.getParameter(DLEFT) : 0;
                 if (desire >= dCoop && leader.getDistance().gt0())
                 {
                     Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
-                            desire, bc, sli, cfm);
-                    a = Acceleration.min(a, gentleUrgency(aSingle, desire, bc));
+                            desire, params, sli, cfm);
+                    a = Acceleration.min(a, gentleUrgency(aSingle, desire, params));
                 }
             }
             return a;
@@ -462,7 +462,7 @@ public enum Synchronization implements LmrsParameters
     /**
      * Determine acceleration for synchronization.
      * @param perception perception
-     * @param bc behavioral characteristics
+     * @param params parameters
      * @param sli speed limit info
      * @param cfm car-following model
      * @param desire level of lane change desire
@@ -472,14 +472,14 @@ public enum Synchronization implements LmrsParameters
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    abstract Acceleration synchronize(LanePerception perception, BehavioralCharacteristics bc, SpeedLimitInfo sli,
+    abstract Acceleration synchronize(LanePerception perception, Parameters params, SpeedLimitInfo sli,
             CarFollowingModel cfm, double desire, LateralDirectionality lat, LmrsData lmrsData)
             throws ParameterException, OperationalPlanException;
 
     /**
      * Determine acceleration for cooperation.
      * @param perception perception
-     * @param bc behavioral characteristics
+     * @param params parameters
      * @param sli speed limit info
      * @param cfm car-following model
      * @param lat lateral direction for cooperation
@@ -488,7 +488,7 @@ public enum Synchronization implements LmrsParameters
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    abstract Acceleration cooperate(LanePerception perception, BehavioralCharacteristics bc, SpeedLimitInfo sli,
+    abstract Acceleration cooperate(LanePerception perception, Parameters params, SpeedLimitInfo sli,
             CarFollowingModel cfm, LateralDirectionality lat, Desire ownDesire)
             throws ParameterException, OperationalPlanException;
 
@@ -537,24 +537,24 @@ public enum Synchronization implements LmrsParameters
      * is a linear interpolation between {@code b} and {@code bCrit}.
      * @param a acceleration to limit
      * @param desire lane change desire
-     * @param bc behavioral characteristics
+     * @param params parameters
      * @return limited deceleration
      * @throws ParameterException when parameter is no available or value out of range
      */
-    static Acceleration gentleUrgency(final Acceleration a, final double desire, final BehavioralCharacteristics bc)
+    static Acceleration gentleUrgency(final Acceleration a, final double desire, final Parameters params)
             throws ParameterException
     {
-        Acceleration b = bc.getParameter(ParameterTypes.B);
+        Acceleration b = params.getParameter(ParameterTypes.B);
         if (a.si > -b.si)
         {
             return a;
         }
-        double dCoop = bc.getParameter(DCOOP);
+        double dCoop = params.getParameter(DCOOP);
         if (desire < dCoop)
         {
             return b.neg();
         }
-        Acceleration bCrit = bc.getParameter(ParameterTypes.BCRIT);
+        Acceleration bCrit = params.getParameter(ParameterTypes.BCRIT);
         double f = (desire - dCoop) / (1.0 - dCoop);
         Acceleration lim = Acceleration.interpolate(b.neg(), bCrit.neg(), f);
         return Acceleration.max(a, lim);
@@ -590,7 +590,7 @@ public enum Synchronization implements LmrsParameters
      * @param followerLength follower length
      * @param tagSpeed maximum tag along speed
      * @param desire lane change desire
-     * @param bc behavioral characteristics
+     * @param params parameters
      * @param sli speed limit info
      * @param cfm car-following model
      * @return acceleration by following an adjacent vehicle including tagging along
@@ -598,10 +598,10 @@ public enum Synchronization implements LmrsParameters
      */
     @SuppressWarnings("checkstyle:parameternumber")
     static Acceleration tagAlongAcceleration(final HeadwayGTU leader, final Speed followerSpeed, final Length followerLength,
-            final Speed tagSpeed, final double desire, final BehavioralCharacteristics bc, final SpeedLimitInfo sli,
+            final Speed tagSpeed, final double desire, final Parameters params, final SpeedLimitInfo sli,
             final CarFollowingModel cfm) throws ParameterException
     {
-        double dCoop = bc.getParameter(DCOOP);
+        double dCoop = params.getParameter(DCOOP);
         double tagV = followerSpeed.lt(tagSpeed) ? 1.0 - followerSpeed.si / tagSpeed.si : 0.0;
         double tagD = desire <= dCoop ? 1.0 : 1.0 - (desire - dCoop) / (1.0 - dCoop);
         double tagExtent = tagV < tagD ? tagV : tagD;
@@ -616,10 +616,10 @@ public enum Synchronization implements LmrsParameters
          * truck>car:      __   truck>truck:       ______ 
          *            ______                    ______
          */
-        Length headwayAdjustment = bc.getParameter(ParameterTypes.S0)
+        Length headwayAdjustment = params.getParameter(ParameterTypes.S0)
                 .plus(Length.min(followerLength, leader.getLength()).multiplyBy(0.5)).multiplyBy(tagExtent);
         Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance().plus(headwayAdjustment), followerSpeed,
-                leader.getSpeed(), desire, bc, sli, cfm);
+                leader.getSpeed(), desire, params, sli, cfm);
         return a;
     }
 
@@ -651,7 +651,7 @@ public enum Synchronization implements LmrsParameters
         // always true if adjacent vehicle is behind and i) both vehicles very slow, or ii) cooperation assumed and possible
         boolean tmp = LmrsUtil
                 .singleAcceleration(adjacentVehicle.getDistance().neg().minus(adjacentVehicle.getLength()).minus(ownLength),
-                        adjacentVehicle.getSpeed(), ownSpeed, desire, adjacentVehicle.getBehavioralCharacteristics(),
+                        adjacentVehicle.getSpeed(), ownSpeed, desire, adjacentVehicle.getParameters(),
                         adjacentVehicle.getSpeedLimitInfo(), adjacentVehicle.getCarFollowingModel())
                 .gt(b.neg());
         if (adjacentVehicle.getDistance().lt(ownLength.neg())
@@ -701,39 +701,39 @@ public enum Synchronization implements LmrsParameters
      * Calculates acceleration to stop for a split or dead-end, accounting for infrastructure.
      * @param xCur remaining distance to end
      * @param xMerge distance until merge point
-     * @param bc behavioral characteristics
+     * @param params parameters
      * @param ownSpeed own speed
      * @param cfm car-following model
      * @param sli speed limit info
      * @return acceleration to stop for a split or dead-end, accounting for infrastructure
      * @throws ParameterException if parameter is not defined
      */
-    static Acceleration stopForEnd(final Length xCur, final Length xMerge, final BehavioralCharacteristics bc,
+    static Acceleration stopForEnd(final Length xCur, final Length xMerge, final Parameters params,
             final Speed ownSpeed, final CarFollowingModel cfm, final SpeedLimitInfo sli) throws ParameterException
     {
         if (xCur.lt0())
         {
             // missed our final lane change spot, but space remains
-            return Acceleration.max(bc.getParameter(ParameterTypes.BCRIT).neg(),
-                    CarFollowingUtil.stop(cfm, bc, ownSpeed, sli, xMerge));
+            return Acceleration.max(params.getParameter(ParameterTypes.BCRIT).neg(),
+                    CarFollowingUtil.stop(cfm, params, ownSpeed, sli, xMerge));
         }
-        LmrsUtil.setDesiredHeadway(bc, 1.0);
-        Acceleration a = CarFollowingUtil.stop(cfm, bc, ownSpeed, sli, xCur);
+        LmrsUtil.setDesiredHeadway(params, 1.0);
+        Acceleration a = CarFollowingUtil.stop(cfm, params, ownSpeed, sli, xCur);
         if (a.lt0())
         {
             // decelerate even more if still comfortable, leaving space for acceleration later
-            a = Acceleration.min(a, bc.getParameter(ParameterTypes.B).neg());
+            a = Acceleration.min(a, params.getParameter(ParameterTypes.B).neg());
             // but never decelerate such that stand-still is reached within xMerge
             if (xMerge.gt0())
             {
-                a = Acceleration.max(a, CarFollowingUtil.stop(cfm, bc, ownSpeed, sli, xMerge));
+                a = Acceleration.max(a, CarFollowingUtil.stop(cfm, params, ownSpeed, sli, xMerge));
             }
         }
         else
         {
             a = Acceleration.POSITIVE_INFINITY;
         }
-        LmrsUtil.resetDesiredHeadway(bc);
+        LmrsUtil.resetDesiredHeadway(params);
         return a;
     }
 

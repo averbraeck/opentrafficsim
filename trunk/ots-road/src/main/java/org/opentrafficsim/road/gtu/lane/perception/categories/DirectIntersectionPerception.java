@@ -11,13 +11,13 @@ import java.util.TreeSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.TimeStampedObject;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -152,7 +152,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                 CrossSectionLink conflictingLink = otherConflict.getLane().getParentLink();
 
                 // TODO get from link combination (needs to be a map property on the links)
-                Length lookAhead = getGtu().getBehavioralCharacteristics().getParameter(LOOKAHEAD);
+                Length lookAhead = getGtu().getParameters().getParameter(LOOKAHEAD);
                 Length conflictingVisibility = lookAhead;
                 Speed conflictingSpeedLimit;
                 try

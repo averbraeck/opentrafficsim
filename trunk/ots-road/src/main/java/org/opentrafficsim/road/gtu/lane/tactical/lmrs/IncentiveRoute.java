@@ -2,11 +2,11 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDuration;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
@@ -41,17 +41,17 @@ public class IncentiveRoute implements MandatoryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
+    public final Desire determineDesire(final Parameters parameters,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
         // desire to leave current lane
-        double dCurr = getDesireToLeave(behavioralCharacteristics, perception, RelativeLane.CURRENT);
+        double dCurr = getDesireToLeave(parameters, perception, RelativeLane.CURRENT);
         double dLeft;
         if (perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
         {
             // desire to leave left lane
-            dLeft = getDesireToLeave(behavioralCharacteristics, perception, RelativeLane.LEFT);
+            dLeft = getDesireToLeave(parameters, perception, RelativeLane.LEFT);
             // desire to leave from current to left lane
             dLeft = dLeft < dCurr ? dCurr : dLeft > dCurr ? -dLeft : 0;
         }
@@ -63,7 +63,7 @@ public class IncentiveRoute implements MandatoryIncentive
         if (perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
         {
             // desire to leave right lane
-            dRigh = getDesireToLeave(behavioralCharacteristics, perception, RelativeLane.RIGHT);
+            dRigh = getDesireToLeave(parameters, perception, RelativeLane.RIGHT);
             // desire to leave from current to right lane
             dRigh = dRigh < dCurr ? dCurr : dRigh > dCurr ? -dRigh : 0;
         }
@@ -76,14 +76,14 @@ public class IncentiveRoute implements MandatoryIncentive
 
     /**
      * Calculates desire to leave a lane.
-     * @param bc behavioral characteristics
+     * @param params parameters
      * @param perception perception
      * @param lane relative lane to evaluate
      * @return desire to leave a lane
      * @throws ParameterException in case of a parameter exception
      * @throws OperationalPlanException in case of perception exceptions
      */
-    private static double getDesireToLeave(final BehavioralCharacteristics bc, final LanePerception perception,
+    private static double getDesireToLeave(final Parameters params, final LanePerception perception,
             final RelativeLane lane) throws ParameterException, OperationalPlanException
     {
         Speed v = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -93,7 +93,7 @@ public class IncentiveRoute implements MandatoryIncentive
             for (InfrastructureLaneChangeInfo info : perception.getPerceptionCategory(InfrastructurePerception.class)
                     .getInfrastructureLaneChangeInfo(lane))
             {
-                double d = getDesireToLeave(bc, info.getRemainingDistance(), info.getRequiredNumberOfLaneChanges(), v);
+                double d = getDesireToLeave(params, info.getRemainingDistance(), info.getRequiredNumberOfLaneChanges(), v);
                 dOut = d > dOut ? d : dOut;
             }
         }
@@ -102,18 +102,18 @@ public class IncentiveRoute implements MandatoryIncentive
 
     /**
      * Calculates desire to leave a lane for a single infrastructure info.
-     * @param bc behavioral characteristics
+     * @param params parameters
      * @param x remaining distance for lane changes
      * @param n number of required lane changes
      * @param v current speed
      * @return desire to leave a lane for a single infrastructure info
      * @throws ParameterException in case of a parameter exception
      */
-    public static double getDesireToLeave(final BehavioralCharacteristics bc, final Length x, final int n, final Speed v)
+    public static double getDesireToLeave(final Parameters params, final Length x, final int n, final Speed v)
             throws ParameterException
     {
-        double d1 = 1 - x.si / (n * bc.getParameter(LOOKAHEAD).si);
-        double d2 = 1 - (x.si / v.si) / (n * bc.getParameter(T0).si);
+        double d1 = 1 - x.si / (n * params.getParameter(LOOKAHEAD).si);
+        double d2 = 1 - (x.si / v.si) / (n * params.getParameter(T0).si);
         d1 = d2 > d1 ? d2 : d1;
         return d1 < 0 ? 0 : d1;
     }

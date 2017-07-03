@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -31,7 +32,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -258,11 +258,11 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 DirectedLanePosition gtuPosition = findLaneAndPosition(lanes, initialPosition);
                 initialLongitudinalPositions.add(new DirectedLanePosition(gtuPosition.getLane(), gtuPosition.getPosition(),
                         gtuPosition.getGtuDirection()));
-                BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
+                Parameters parameters = DefaultTestParameters.create();
                 LaneChangeModel laneChangeModel = new Egoistic();
                 GTUFollowingModelOld gtuFollowingModel = new FixedAccelerationModel(
                         new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2), new Duration(10, DurationUnit.SECOND));
-                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                         new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
                 Speed initialSpeed = new Speed(10, SpeedUnit.METER_PER_SECOND);
                 if (lanes.length == 6 && pos >= 103)

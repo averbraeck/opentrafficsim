@@ -8,8 +8,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -125,7 +125,7 @@ public final class AnticipationInfo implements Serializable
      * Returns info of the anticipation using free acceleration from car-following model.
      * @param distance distance to cover
      * @param initialSpeed initial speed
-     * @param behavioralCharacteristics behavioral characteristics of the anticipated GTU
+     * @param parameters parameters of the anticipated GTU
      * @param carFollowingModel car-following model of the anticipated GTU
      * @param speedLimitInfo speed limit info of the anticipated GTU
      * @param timeStep time step to use
@@ -133,7 +133,7 @@ public final class AnticipationInfo implements Serializable
      * @throws ParameterException if parameter is not defined
      */
     public static AnticipationInfo anticipateMovementFreeAcceleration(final Length distance, final Speed initialSpeed,
-            final BehavioralCharacteristics behavioralCharacteristics, final CarFollowingModel carFollowingModel,
+            final Parameters parameters, final CarFollowingModel carFollowingModel,
             final SpeedLimitInfo speedLimitInfo, final Duration timeStep) throws ParameterException
     {
         if (distance.lt0())
@@ -150,7 +150,7 @@ public final class AnticipationInfo implements Serializable
         while (xCumul.lt(distance))
         {
             Acceleration a =
-                    CarFollowingUtil.freeAcceleration(carFollowingModel, behavioralCharacteristics, speed, speedLimitInfo);
+                    CarFollowingUtil.freeAcceleration(carFollowingModel, parameters, speed, speedLimitInfo);
             Length add = new Length(speed.si * timeStep.si + .5 * a.si * timeStep.si * timeStep.si, LengthUnit.SI);
             Length remain = distance.minus(xCumul);
             if (add.lt(remain))

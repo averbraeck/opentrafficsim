@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.dsol;
+package org.opentrafficsim.base;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,7 +47,7 @@ public final class OTSClassUtil
     public static <T> Class<List<T>> getTypedClassList(final T object)
     {
         List<T> list = new ArrayList<>();
-        return (Class<List<T>>) (list).getClass();
+        return (Class<List<T>>) list.getClass();
     }
     
     /**

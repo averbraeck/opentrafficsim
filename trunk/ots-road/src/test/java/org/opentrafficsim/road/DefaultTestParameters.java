@@ -3,18 +3,18 @@ package org.opentrafficsim.road;
 import java.lang.reflect.Field;
 import java.util.Set;
 
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeBoolean;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeInteger;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeBoolean;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
+import org.opentrafficsim.base.parameters.ParameterTypeInteger;
+import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
- * Creator of set of behavioral characteristics with default values.
+ * Creator of set of parameters with default values.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -34,14 +34,14 @@ public final class DefaultTestParameters
     }
 
     /**
-     * Returns a default set of behavioral characteristics.
-     * @return Default set of behavioral characteristics.
+     * Returns a default set of parameters.
+     * @return Default set of parameters.
      */
     @SuppressWarnings("unchecked")
-    public static BehavioralCharacteristics create()
+    public static Parameters create()
     {
 
-        BehavioralCharacteristics bc = new BehavioralCharacteristics();
+        Parameters params = new Parameters();
 
         // set all default values using reflection
         Set<Field> fields = ClassUtil.getAllFields(ParameterTypes.class);
@@ -56,7 +56,7 @@ public final class DefaultTestParameters
                         field.setAccessible(true);
                         @SuppressWarnings("rawtypes")
                         ParameterTypeNumeric p = (ParameterTypeNumeric) field.get(ParameterTypes.class);
-                        bc.setParameter(p, p.getDefaultValue());
+                        params.setParameter(p, p.getDefaultValue());
                     }
                     catch (ParameterException pe)
                     {
@@ -69,7 +69,7 @@ public final class DefaultTestParameters
                     {
                         field.setAccessible(true);
                         ParameterTypeBoolean p = (ParameterTypeBoolean) field.get(ParameterTypes.class);
-                        bc.setParameter(p, p.getDefaultValue());
+                        params.setParameter(p, p.getDefaultValue());
                     }
                     catch (ParameterException pe)
                     {
@@ -82,7 +82,7 @@ public final class DefaultTestParameters
                     {
                         field.setAccessible(true);
                         ParameterTypeDouble p = (ParameterTypeDouble) field.get(ParameterTypes.class);
-                        bc.setParameter(p, p.getDefaultValue());
+                        params.setParameter(p, p.getDefaultValue());
                     }
                     catch (ParameterException pe)
                     {
@@ -95,7 +95,7 @@ public final class DefaultTestParameters
                     {
                         field.setAccessible(true);
                         ParameterTypeInteger p = (ParameterTypeInteger) field.get(ParameterTypes.class);
-                        bc.setParameter(p, p.getDefaultValue());
+                        params.setParameter(p, p.getDefaultValue());
                     }
                     catch (ParameterException pe)
                     {
@@ -113,7 +113,7 @@ public final class DefaultTestParameters
             iace.printStackTrace();
         }
 
-        return bc;
+        return params;
 
     }
 

@@ -1,11 +1,9 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.Frequency;
-
 /**
- * Wrapper class for Frequency parameters.
+ * Wrapper class for int parameters.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -14,9 +12,8 @@ import org.djunits.value.vdouble.scalar.Frequency;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> implements Serializable
+public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implements Serializable
 {
-
     /** */
     private static final long serialVersionUID = 20160400L;
 
@@ -25,20 +22,20 @@ public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> impl
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeFrequency(final String id, final String description)
+    public ParameterTypeInteger(final String id, final String description)
     {
-        super(id, description, Frequency.class);
+        super(id, description, Integer.class);
     }
 
     /**
      * Constructor with default value, without check.
      * @param id Short name of parameter.
-     * @param description Parameter description or full name.
+     * @param description Parameter description or full name..
      * @param defaultValue Default value.
      */
-    public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue)
+    public ParameterTypeInteger(final String id, final String description, final int defaultValue)
     {
-        super(id, description, Frequency.class, defaultValue);
+        super(id, description, Integer.class, defaultValue);
     }
 
     /**
@@ -47,9 +44,9 @@ public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> impl
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeFrequency(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeInteger(final String id, final String description, final NumericConstraint constraint)
     {
-        super(id, description, Frequency.class, constraint);
+        super(id, description, Integer.class, constraint);
     }
 
     /**
@@ -59,17 +56,35 @@ public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> impl
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue,
+    public ParameterTypeInteger(final String id, final String description, final int defaultValue,
             final NumericConstraint constraint)
     {
-        super(id, description, Frequency.class, defaultValue, constraint);
+        super(id, description, Integer.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
-    @Override
-    public final String toString()
+    public final String printValue(final Parameters parameters) throws ParameterException
     {
-        return "ParameterTypeFrequency [id=" + getId() + ", description=" + getDescription() + "]";
+        return Integer.toString(parameters.getParameter(this));
+    }
+
+    /**
+     * Method to overwrite for checks with constraints.
+     * @param value Value to check with constraints.
+     * @param params Set of parameters.
+     * @throws ParameterException If the value does not comply with constraints.
+     */
+    public void check(final int value, final Parameters params) throws ParameterException
+    {
+        //
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    @Override
+    public String toString()
+    {
+        return "ParameterTypeInteger [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

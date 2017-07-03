@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -13,7 +13,7 @@ import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
- * In this class a set of behavioral characteristics in the form of parameters can be stored for use in behavioral models.
+ * In this class a set of parameters can be stored.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -22,7 +22,7 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class BehavioralCharacteristics implements Serializable
+public class Parameters implements Serializable
 {
 
     /** */
@@ -45,7 +45,7 @@ public class BehavioralCharacteristics implements Serializable
     /**
      * Empty constructor.
      */
-    public BehavioralCharacteristics()
+    public Parameters()
     {
         this.parameters = new HashMap<>();
         this.previous = new HashMap<>();
@@ -53,14 +53,14 @@ public class BehavioralCharacteristics implements Serializable
 
     /**
      * Constructor which creates a copy of the input set.
-     * @param behavioralCharacteristics input set
+     * @param parameters input set
      */
-    public BehavioralCharacteristics(final BehavioralCharacteristics behavioralCharacteristics)
+    public Parameters(final Parameters parameters)
     {
-        this.parameters = behavioralCharacteristics.parameters;
-        this.previous = behavioralCharacteristics.previous;
+        this.parameters = parameters.parameters;
+        this.previous = parameters.previous;
         this.copyOnWrite = true;
-        behavioralCharacteristics.copyOnWrite = true;
+        parameters.copyOnWrite = true;
     }
 
     /**
@@ -190,10 +190,10 @@ public class BehavioralCharacteristics implements Serializable
      * Sets the default value of a parameter.
      * @param parameter parameter to set the default value of
      * @param <T> Class of the value.
-     * @return this set of behavioral characteristics (for method chaining)
+     * @return this set of parameters (for method chaining)
      * @throws ParameterException if the parameter type has no default value
      */
-    public final <T> BehavioralCharacteristics setDefaultParameter(
+    public final <T> Parameters setDefaultParameter(
             final AbstractParameterType<T> parameter) throws ParameterException
     {
         T defaultValue = parameter.getDefaultValue();
@@ -212,9 +212,9 @@ public class BehavioralCharacteristics implements Serializable
     /**
      * Sets the default values of all accessible parameters defined in the given class.
      * @param clazz class with parameters
-     * @return this set of behavioral characteristics (for method chaining)
+     * @return this set of parameters (for method chaining)
      */
-    public final BehavioralCharacteristics setDefaultParameters(final Class<?> clazz)
+    public final Parameters setDefaultParameters(final Class<?> clazz)
     {
         return setDefaultParametersLocal(clazz);
     }
@@ -223,10 +223,10 @@ public class BehavioralCharacteristics implements Serializable
      * Sets the default values of all accessible parameters defined in the given class.
      * @param clazz class with parameters
      * @param <T> Class of the value.
-     * @return this set of behavioral characteristics (for method chaining)
+     * @return this set of parameters (for method chaining)
      */
     @SuppressWarnings("unchecked")
-    private <T> BehavioralCharacteristics setDefaultParametersLocal(final Class<?> clazz)
+    private <T> Parameters setDefaultParametersLocal(final Class<?> clazz)
     {
         // set all default values using reflection
         Set<Field> fields = ClassUtil.getAllFields(clazz);
@@ -264,21 +264,21 @@ public class BehavioralCharacteristics implements Serializable
     }
 
     /**
-     * Sets all behavioral characteristics from the given set in this set.
-     * @param behavioralCharacteristics set of behavioral characteristics to include in this set
+     * Sets all parameters from the given set in this set.
+     * @param parameters set of parameters to include in this set
      */
-    public final void setAll(final BehavioralCharacteristics behavioralCharacteristics)
+    public final void setAll(final Parameters parameters)
     {
-        for (AbstractParameterType<?> key : behavioralCharacteristics.parameters.keySet())
+        for (AbstractParameterType<?> key : parameters.parameters.keySet())
         {
-            this.parameters.put(key, behavioralCharacteristics.parameters.get(key));
+            this.parameters.put(key, parameters.parameters.get(key));
         }
     }
 
     /** {@inheritDoc} */
     public final String toString()
     {
-        StringBuilder out = new StringBuilder("BehavioralCharacteristics [");
+        StringBuilder out = new StringBuilder("Parameters [");
         String sep = "";
         for (AbstractParameterType<?> apt : this.parameters.keySet())
         {

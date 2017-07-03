@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
@@ -21,10 +21,10 @@ public interface LaneBasedTacticalPlannerFactory<T extends LaneBasedTacticalPlan
 {
 
     /**
-     * Returns a new set of behavioral characteristics with default values for the next tactical planner that will be generated.
-     * @return set of behavioral characteristics with default values for the next tactical planner that will be generated
+     * Returns a new set of parameters with default values for the next tactical planner that will be generated.
+     * @return set of parameters with default values for the next tactical planner that will be generated
      */
-    BehavioralCharacteristics getDefaultBehavioralCharacteristics();
+    Parameters getDefaultParameters();
 
     /**
      * Creates a new tactical planner for the given GTU.

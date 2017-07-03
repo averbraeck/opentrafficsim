@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
@@ -40,7 +40,7 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     private final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory;
 
     /** Default set of parameters for the car-following model. */
-    private final BehavioralCharacteristics defaultCarFollowingBehavioralCharacteristics;
+    private final Parameters defaultCarFollowingParameters;
 
     /** Factory for perception. */
     private final PerceptionFactory perceptionFactory;
@@ -60,16 +60,16 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     /**
      * Constructor using default incentives and passive synchronization.
      * @param carFollowingModelFactory factory of the car-following model
-     * @param defaultCarFollowingBehavioralCharacteristics default set of parameters for the car-following model
+     * @param defaultCarFollowingParameters default set of parameters for the car-following model
      * @param perceptionFactory perception factory
      * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
      */
     public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
-            final BehavioralCharacteristics defaultCarFollowingBehavioralCharacteristics,
+            final Parameters defaultCarFollowingParameters,
             final PerceptionFactory perceptionFactory) throws GTUException
     {
         this.carFollowingModelFactory = carFollowingModelFactory;
-        this.defaultCarFollowingBehavioralCharacteristics = defaultCarFollowingBehavioralCharacteristics;
+        this.defaultCarFollowingParameters = defaultCarFollowingParameters;
         this.perceptionFactory = perceptionFactory;
         this.synchronization = Synchronization.PASSIVE;
     }
@@ -77,7 +77,7 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     /**
      * Constructor with full control over incentives and type of synchronization.
      * @param carFollowingModelFactory factory of the car-following model
-     * @param defaultCarFollowingBehavioralCharacteristics default set of parameters for the car-following model
+     * @param defaultCarFollowingParameters default set of parameters for the car-following model
      * @param perceptionFactory perception factory
      * @param synchronization type of synchronization
      * @param mandatoryIncentives mandatory incentives
@@ -86,13 +86,13 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
      * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
      */
     public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
-            final BehavioralCharacteristics defaultCarFollowingBehavioralCharacteristics,
+            final Parameters defaultCarFollowingParameters,
             final PerceptionFactory perceptionFactory, final Synchronization synchronization,
             final Set<MandatoryIncentive> mandatoryIncentives, final Set<VoluntaryIncentive> voluntaryIncentives,
             final Set<AccelerationIncentive> accelerationIncentives) throws GTUException
     {
         this.carFollowingModelFactory = carFollowingModelFactory;
-        this.defaultCarFollowingBehavioralCharacteristics = defaultCarFollowingBehavioralCharacteristics;
+        this.defaultCarFollowingParameters = defaultCarFollowingParameters;
         this.perceptionFactory = perceptionFactory;
         this.synchronization = synchronization;
         this.mandatoryIncentives.addAll(mandatoryIncentives);
@@ -102,14 +102,14 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
 
     /** {@inheritDoc} */
     @Override
-    public final BehavioralCharacteristics getDefaultBehavioralCharacteristics()
+    public final Parameters getDefaultParameters()
     {
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
-        behavioralCharacteristics.setDefaultParameters(ParameterTypes.class);
-        behavioralCharacteristics.setDefaultParameters(LmrsParameters.class);
-        behavioralCharacteristics.setDefaultParameters(ConflictUtil.class);
-        behavioralCharacteristics.setAll(this.defaultCarFollowingBehavioralCharacteristics);
-        return behavioralCharacteristics;
+        Parameters parameters = new Parameters();
+        parameters.setDefaultParameters(ParameterTypes.class);
+        parameters.setDefaultParameters(LmrsParameters.class);
+        parameters.setDefaultParameters(ConflictUtil.class);
+        parameters.setAll(this.defaultCarFollowingParameters);
+        return parameters;
     }
 
     /** {@inheritDoc} */

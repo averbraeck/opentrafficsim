@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -30,7 +30,7 @@ public class IncentiveKeep implements VoluntaryIncentive
 
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
+    public final Desire determineDesire(final Parameters parameters,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
             final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
     {
@@ -41,7 +41,7 @@ public class IncentiveKeep implements VoluntaryIncentive
             return new Desire(0, 0);
         }
         // keep right with dFree
-        return new Desire(0, behavioralCharacteristics.getParameter(DFREE));
+        return new Desire(0, parameters.getParameter(DFREE));
     }
 
     /** {@inheritDoc} */

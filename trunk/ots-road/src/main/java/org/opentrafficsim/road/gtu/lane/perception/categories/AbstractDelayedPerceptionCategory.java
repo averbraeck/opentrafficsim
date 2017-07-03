@@ -9,10 +9,10 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.Type;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -132,11 +132,11 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
                 delayedInfoType);
 
         // remove old data if required
-        BehavioralCharacteristics bc;
+        Parameters params;
         Time now;
         try
         {
-            bc = getPerception().getGtu().getBehavioralCharacteristics();
+            params = getPerception().getGtu().getParameters();
             now = getPerception().getGtu().getSimulator().getSimulatorTime().getTime();
         }
         catch (GTUException exception)
@@ -146,7 +146,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
         Time delayedTime;
         try
         {
-            delayedTime = now.minus(bc.getParameter(delayedInfoType.getDelayParameter())).plus(MARGIN);
+            delayedTime = now.minus(params.getParameter(delayedInfoType.getDelayParameter())).plus(MARGIN);
         }
         catch (ParameterException exception)
         {

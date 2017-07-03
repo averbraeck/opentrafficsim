@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu.perception;
 
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**

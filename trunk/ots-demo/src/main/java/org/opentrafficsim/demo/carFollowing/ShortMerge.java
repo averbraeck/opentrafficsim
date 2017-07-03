@@ -26,6 +26,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
@@ -37,11 +40,8 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactoryByType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -313,8 +313,8 @@ public class ShortMerge extends AbstractWrappableAnimation
             IdGenerator idGenerator = new IdGenerator("");
 
             CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory();
-            BehavioralCharacteristics bc = new BehavioralCharacteristics();
-            bc.setDefaultParameter(AbstractIDM.DELTA);
+            Parameters params = new Parameters();
+            params.setDefaultParameter(AbstractIDM.DELTA);
 
             Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
             Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
@@ -335,7 +335,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             accelerationIncentives.add(new AccelerationTrafficLights());
             accelerationIncentives.add(new AccelerationConflicts());
             LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory =
-                    new LMRSFactory(idmPlusFactory, bc, new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION,
+                    new LMRSFactory(idmPlusFactory, params, new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION,
                             mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
 
             GTUType car = new GTUType("car", CAR);
@@ -440,7 +440,7 @@ public class ShortMerge extends AbstractWrappableAnimation
          * @param headwayGenerator the headway generator for the GTU
          * @param gtuColorer the GTU colorer for animation
          * @param roomChecker the checker to see if there is room for the GTU
-         * @param bcFactory the factory to generate behavioral characteristics for the GTU
+         * @param bcFactory the factory to generate parameters for the GTU
          * @param tacticalFactory the generator for the tactical planner
          * @param simulationTime simulation time
          * @throws SimRuntimeException in case of scheduling problems

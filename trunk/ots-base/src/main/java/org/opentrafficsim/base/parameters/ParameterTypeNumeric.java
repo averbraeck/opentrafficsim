@@ -1,9 +1,9 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 import java.util.IllegalFormatException;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+//import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -22,8 +22,6 @@ public class ParameterTypeNumeric<T extends Number> extends AbstractParameterTyp
 
     /** */
     private static final long serialVersionUID = 20160400L;
-
-    
 
     /** List of default constraint for ParameterTypes. */
     public enum NumericConstraint implements Constraint<Number>
@@ -114,7 +112,7 @@ public class ParameterTypeNumeric<T extends Number> extends AbstractParameterTyp
          * @param failMessage Message for value failure, pointing to a parameter using '%s'.
          */
         @SuppressWarnings("redundantmodifier")
-        @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED")
+        //@SuppressFBWarnings("RV_RETURN_VALUE_IGNORED")
         NumericConstraint(final String failMessage)
         {
             Throw.whenNull(failMessage,
@@ -197,9 +195,9 @@ public class ParameterTypeNumeric<T extends Number> extends AbstractParameterTyp
     }
 
     /** {@inheritDoc} */
-    public String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
+    public String printValue(final Parameters parameters) throws ParameterException
     {
-        return behavioralCharacteristics.getParameter(this).toString();
+        return parameters.getParameter(this).toString();
     }
 
     /** {@inheritDoc} */

@@ -35,6 +35,7 @@ import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -48,7 +49,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -746,7 +746,7 @@ public class ModelControlDemo extends ModelStarter
                             else if ("LMRS".equals(tacticalPlannerName))
                             {
                                 // provide default parameters with the car-following model
-                                BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
+                                Parameters defaultBehavioralCFCharacteristics = new Parameters();
                                 defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
                                 this.strategicalPlannerGeneratorCars =
                                         new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),

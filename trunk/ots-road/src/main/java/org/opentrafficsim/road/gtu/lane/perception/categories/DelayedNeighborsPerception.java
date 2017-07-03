@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVEZERO;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVE;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVEZERO;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,11 +14,11 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.TimeStampedObject;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
+import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -138,15 +138,15 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             {
                 return;
             }
-            BehavioralCharacteristics bc = getPerception().getGtu().getBehavioralCharacteristics();
-            ta = bc.getParameter(TA);
-            taue = bc.getParameter(TAUE);
-            distanceError = bc.getParameter(SERROR);
-            speedError = bc.getParameter(VERROR);
-            accelerationError = bc.getParameter(AERROR);
+            Parameters params = getPerception().getGtu().getParameters();
+            ta = params.getParameter(TA);
+            taue = params.getParameter(TAUE);
+            distanceError = params.getParameter(SERROR);
+            speedError = params.getParameter(VERROR);
+            accelerationError = params.getParameter(AERROR);
             length = getPerception().getGtu().getLength();
             egoSpeed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-            dt = bc.getParameter(DT);
+            dt = params.getParameter(DT);
             try
             {
                 traveledDistance = getPerception().getGtu().getOdometer().minus(getInfo(ODOMETER).getObject());
@@ -287,6 +287,14 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
             }
 
+        }
+        catch (@SuppressWarnings("unused") PerceptionException exception)
+        {
+            // lane change performed, info on a lane not present
+        }
+
+        try
+        {
             // add empty sets on all lanes in the current cross section that are not considered yet
             for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
             {
@@ -314,11 +322,6 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                     }
                 }
             }
-
-        }
-        catch (@SuppressWarnings("unused") PerceptionException exception)
-        {
-            // lane change performed, info on a lane not present
         }
         catch (ParameterException pe)
         {

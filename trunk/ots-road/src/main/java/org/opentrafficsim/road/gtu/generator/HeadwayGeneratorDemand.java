@@ -9,10 +9,10 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 
 import nl.tudelft.simulation.language.Throw;

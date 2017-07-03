@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUType;
 
 /**
@@ -12,16 +14,15 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 public interface BehavioralCharacteristicsFactory
 {
 
     /**
-     * Creates a set of behavioral characteristics for the provided GTU type.
-     * @param defaultCharacteristics default behavioral characteristics
+     * Creates a set of parameters for the provided GTU type.
+     * @param defaultCharacteristics default parameters
      * @param gtuType GTU type
      * @throws ParameterException when illegal parameter value is set
      */
-    void setValues(BehavioralCharacteristics defaultCharacteristics, GTUType gtuType) throws ParameterException;
+    void setValues(Parameters defaultCharacteristics, GTUType gtuType) throws ParameterException;
 
 }

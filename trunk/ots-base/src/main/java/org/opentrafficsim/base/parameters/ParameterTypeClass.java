@@ -1,9 +1,8 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
-import java.util.List;
 import java.util.Set;
 
-import org.opentrafficsim.core.dsol.OTSClassUtil;
+import org.opentrafficsim.base.OTSClassUtil;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -18,11 +17,11 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> class, e.g. TacticalPlanner
  */
-public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<? extends T>>>
+public class ParameterTypeClass<T> extends AbstractParameterType<Class<? extends T>>
 {
 
     /** */
-    private static final long serialVersionUID = 20170702L;
+    private static final long serialVersionUID = 20170630L;
 
     /**
      * Constraint that checks whether the value is any of a given set.
@@ -37,7 +36,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <T> class
      */
-    public static class ClassListConstraint<T> implements Constraint<List<Class<? extends T>>>
+    public static class ClassConstraint<T> implements Constraint<Class<? extends T>>
     {
 
         /** Acceptable classes. */
@@ -46,7 +45,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
         /**
          * @param classes acceptable classes
          */
-        public ClassListConstraint(final Set<Class<? extends T>> classes)
+        public ClassConstraint(final Set<Class<? extends T>> classes)
         {
             Throw.whenNull(classes, "Set of classes may not be null.");
             this.classes = classes;
@@ -54,16 +53,9 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
 
         /** {@inheritDoc} */
         @Override
-        public boolean fails(final List<Class<? extends T>> value)
+        public boolean fails(final Class<? extends T> value)
         {
-            for (Class<? extends T> clazz : value)
-            {
-                if (!this.classes.contains(clazz))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return !this.classes.contains(value);
         }
 
         /** {@inheritDoc} */
@@ -81,10 +73,11 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
          * @return new instance with given set
          */
         @SafeVarargs
-        public static <T> ClassListConstraint<T> newInstance(final Class<T> type, final Class<? extends T>... objs)
+        public static <T> ClassConstraint<T> newInstance(final Class<T> type, final Class<? extends T>... objs)
         {
-            return new ClassListConstraint<>(OTSClassUtil.toTypedSet(type, objs));
+            return new ClassConstraint<>(OTSClassUtil.toTypedSet(type, objs));
         }
+
     }
 
     /**
@@ -93,7 +86,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
      */
-    public ParameterTypeClassList(final String id, final String description, final Class<List<Class<? extends T>>> valueClass)
+    public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass)
     {
         super(id, description, valueClass);
     }
@@ -105,8 +98,8 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
      * @param valueClass Class of the value.
      * @param defaultValue Default value.
      */
-    public ParameterTypeClassList(final String id, final String description, final Class<List<Class<? extends T>>> valueClass,
-            final List<Class<? extends T>> defaultValue)
+    public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
+            final Class<? extends T> defaultValue)
     {
         super(id, description, valueClass, defaultValue);
     }
@@ -118,8 +111,8 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
      * @param valueClass Class of the value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeClassList(final String id, final String description, final Class<List<Class<? extends T>>> valueClass,
-            final Constraint<? super List<Class<? extends T>>> constraint)
+    public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
+            final Constraint<Class<? extends T>> constraint)
     {
         super(id, description, valueClass, constraint);
     }
@@ -132,26 +125,17 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeClassList(final String id, final String description, final Class<List<Class<? extends T>>> valueClass,
-            final List<Class<? extends T>> defaultValue, final Constraint<? super List<Class<? extends T>>> constraint)
+    public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
+            final Class<? extends T> defaultValue, final Constraint<Class<? extends T>> constraint)
     {
         super(id, description, valueClass, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
+    public String printValue(final Parameters parameters) throws ParameterException
     {
-        String delimiter = "";
-        StringBuilder str = new StringBuilder("[");
-        for (Class<? extends T> clazz : behavioralCharacteristics.getParameter(this))
-        {
-            str.append(clazz.getSimpleName());
-            str.append(delimiter);
-            delimiter = ", ";
-        }
-        str.append("]");
-        return str.toString();
+        return parameters.getParameter(this).getSimpleName();
     }
 
     /** {@inheritDoc} */

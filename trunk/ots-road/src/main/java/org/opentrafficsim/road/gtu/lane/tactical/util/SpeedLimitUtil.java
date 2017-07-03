@@ -4,9 +4,9 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -94,14 +94,14 @@ public final class SpeedLimitUtil
      * Acceleration for speed limit transitions. This implementation decelerates before curves and speed bumps. For this it uses
      * {@code approachTargetSpeed()} of the abstract car-following model implementation. All remaining transitions happen in the
      * default manner, i.e. deceleration and acceleration after the speed limit change and governed by the car-following model.
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param speed current speed
      * @param speedLimitProspect speed limit prospect
      * @param carFollowingModel car following model
      * @return acceleration for speed limit transitions
      * @throws ParameterException if a required parameter is not found
      */
-    public static Acceleration considerSpeedLimitTransitions(final BehavioralCharacteristics behavioralCharacteristics,
+    public static Acceleration considerSpeedLimitTransitions(final Parameters parameters,
             final Speed speed, final SpeedLimitProspect speedLimitProspect, final CarFollowingModel carFollowingModel)
             throws ParameterException
     {
@@ -114,8 +114,8 @@ public final class SpeedLimitUtil
             for (Length distance : speedLimitProspect.getDownstreamDistances(speedLimitType))
             {
                 SpeedLimitInfo speedLimitInfo = speedLimitProspect.buildSpeedLimitInfo(distance, speedLimitType);
-                Speed targetSpeed = carFollowingModel.desiredSpeed(behavioralCharacteristics, speedLimitInfo);
-                Acceleration a = CarFollowingUtil.approachTargetSpeed(carFollowingModel, behavioralCharacteristics, speed,
+                Speed targetSpeed = carFollowingModel.desiredSpeed(parameters, speedLimitInfo);
+                Acceleration a = CarFollowingUtil.approachTargetSpeed(carFollowingModel, parameters, speed,
                         currentSpeedLimitInfo, distance, targetSpeed);
                 if (a.lt(out))
                 {

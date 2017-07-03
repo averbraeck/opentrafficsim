@@ -30,11 +30,11 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -423,7 +423,7 @@ public class ContourPlotTest implements UNITS
 
         LaneBasedIndividualGTU car = CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator,
                 gtuFollowingModel, laneChangeModel, network);
-        car.getStrategicalPlanner().getBehavioralCharacteristics().setParameter(ParameterTypes.LOOKAHEAD,
+        car.getStrategicalPlanner().getParameters().setParameter(ParameterTypes.LOOKAHEAD,
                 new Length(10, LengthUnit.KILOMETER));
 
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "

@@ -21,7 +21,7 @@ public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategic
 {
 
     /**
-     * Creates a new strategical planner for the given GTU. The default behavioral characteristics should be used.
+     * Creates a new strategical planner for the given GTU. The default parameters should be used.
      * @param gtu GTU
      * @param route route
      * @return strategical planner for the given GTU

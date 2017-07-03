@@ -9,13 +9,13 @@ import javax.vecmath.Point3d;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -173,7 +173,7 @@ public class SubjectiveCar extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
-    public final BehavioralCharacteristics getBehavioralCharacteristics()
+    public final Parameters getParameters()
     {
         return null;
     }

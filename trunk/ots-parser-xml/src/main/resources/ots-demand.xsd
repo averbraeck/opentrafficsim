@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
+
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
+
+  <xsd:include schemaLocation="http://www.opentrafficsim.org/docs/current/ots-definitions.xsd" />
+  <xsd:include schemaLocation="http://www.opentrafficsim.org/docs/current/ots-types.xsd" />
+
+  <xsd:element name="DEMAND">
+    <xsd:complexType>
+      <xsd:sequence>
+
+        <xsd:element ref="LEVEL" />
+
+        <xsd:element name="GLOBALTIME" minOccurs="0" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="TIME" type="TIMETYPE" minOccurs="2" maxOccurs="unbounded" />
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+
+        <!-- TODO EITHER GTU or GTUGROUP should be present... -->
+        <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
+        <xsd:element name="FILL" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="LANE" type="xsd:string" use="required" />
+            <xsd:attribute name="GTU" type="xsd:string" use="optional" />
+            <xsd:attribute name="GTUMIX" type="xsd:string" use="optional" />
+            <xsd:attribute name="DISTANCE" type="LENGTHDISTTYPE" use="required" />
+            <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required" />
+            <xsd:attribute name="MAXGTU" type="xsd:double" use="optional" />
+            <xsd:attribute name="ROUTE" type="xsd:string" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element ref="ROUTE" minOccurs="0" maxOccurs="unbounded" />
+
+        <xsd:element ref="ROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
+
+        <xsd:element ref="SHORTESTROUTE" minOccurs="0" maxOccurs="unbounded" />
+
+        <xsd:element ref="SHORTESTROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
+
+        <!-- TODO EITHER GTU or GTUMIX should be present... -->
+        <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
+        <xsd:element name="GENERATOR" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="LEVEL" type="LEVELTYPE">
+
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="LANE" type="xsd:string" use="required" />
+            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional" />
+            <xsd:attribute name="GTU" type="xsd:string" use="optional" />
+            <xsd:attribute name="GTUMIX" type="xsd:string" use="optional" />
+            <xsd:attribute name="TACTICALPLANNER" type="TACTICALPLANNERTYPE" use="optional" />
+            <xsd:attribute name="IAT" type="TIMEDISTTYPE" use="required" />
+            <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required" />
+            <xsd:attribute name="MAXGTU" type="xsd:double" use="optional" />
+            <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional" />
+            <xsd:attribute name="ENDTIME" type="TIMETYPE" use="optional" />
+            <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
+            <xsd:attribute name="ROUTEMIX" type="xsd:string" use="optional" />
+            <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+
+        <!-- TODO EITHER GTU or GTUMIX should be present... -->
+        <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
+        <xsd:element name="LISTGENERATOR" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="URI" type="xsd:anyURI" use="required" />
+            <xsd:attribute name="LANE" type="xsd:string" use="required" />
+            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional" />
+            <xsd:attribute name="GTU" type="xsd:string" use="optional" />
+            <xsd:attribute name="GTUMIX" type="xsd:string" use="optional" />
+            <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required" />
+            <xsd:attribute name="ROUTE" type="xsd:string" use="required" />
+            <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element name="SINK" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="LANE" type="xsd:string" use="required" />
+            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element name="SPLITFRACTION" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="FRACTION">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="LINKFRACTION">
+                      <xsd:complexType>
+                        <xsd:attribute name="LINK" type="xsd:string" />
+                        <xsd:attribute name="GTU" type="xsd:string" />
+                        <xsd:attribute name="VALUE" type="FRACTIONTYPE" />
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                  <xsd:attribute name="TIME" type="TIMETYPE" />
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="NODE" type="xsd:IDREF" />
+            <xsd:attribute name="INTERPOLATION" type="INTERPOLATIONTYPE" />
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element name="ODMATRIX" minOccurs="0" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="OD">
+                <xsd:complexType>
+                  <xsd:sequence>
+
+                    <xsd:element ref="LEVEL" />
+
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="ORIGIN" type="xsd:IDREF" use="required" />
+            <xsd:attribute name="DESTINATION" type="xsd:IDREF" use="optional" />
+            <xsd:attribute name="LANE" type="xsd:string" use="optional" />
+            <xsd:attribute name="GTU" type="xsd:string" use="optional" />
+            <xsd:attribute name="GTUMIX" type="xsd:string" use="optional" />
+            <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
+            <xsd:attribute name="ROUTEMIX" type="xsd:string" use="optional" />
+            <xsd:attribute name="INTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
+          </xsd:complexType>
+        </xsd:element>
+
+      </xsd:sequence>
+      <xsd:attribute name="GLOBALINTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
+      <xsd:attribute name="START" type="xsd:dateTime" use="optional" />
+      <xsd:attribute name="GLOBALFACTOR" type="POSITIVEDECIMAL" use="optional" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="ROUTE">
+    <xsd:complexType>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="NODELIST" type="xsd:IDREFS" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="SHORTESTROUTE">
+    <xsd:complexType>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="FROM" type="xsd:IDREF" use="required" />
+      <xsd:attribute name="TO" type="xsd:IDREF" use="required" />
+      <xsd:attribute name="VIA" type="xsd:IDREFS" use="optional" />
+      <xsd:attribute name="DISTANCECOST" type="DISTANCECOSTTYPE" use="required" />
+      <xsd:attribute name="TIMECOST" type="TIMECOSTTYPE" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="ROUTEMIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="ROUTE" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="SHORTESTROUTEMIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="SHORTESTROUTE" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <!-- ================================================================================================== -->
+  <!-- ================================================= TYPES ========================================== -->
+  <!-- ================================================================================================== -->
+
+  <xsd:simpleType name="POSITIVEDECIMAL">
+    <xsd:restriction base="xsd:decimal">
+      <xsd:minExclusive value="0" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <!-- Either a fraction, or a veh value optional per time unit. -->
+  <xsd:element name="LEVEL">
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="LEVELTYPE">
+          <xsd:attribute name="TIME" type="TIMETYPE" use="optional" />
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="LEVELTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(0?\.\d*|1\.0*|1|0)|((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.\0*)?))\s*\%|(\ 
+){0}\d+\.?\d*\s*veh(\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week))?" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="GLOBALTIME">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="TIME" minOccurs="2" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="VALUE" type="TIMETYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="CATEGORY">
+    <xsd:complexType>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="GTUTYPE" type="xsd:string" use="optional" />
+      <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
+      <xsd:attribute name="LANE" type="xsd:string" use="optional" />
+      <xsd:attribute name="FRACTION" type="FRACTIONTYPE" use="optional" />
+    </xsd:complexType>
+  </xsd:element>
+
+<!--   <xsd:element name="DEMAND"> -->
+<!--     <xsd:complexType> -->
+<!--       <xsd:sequence> -->
+<!--         <xsd:element name="LEVEL" minOccurs="0" maxOccurs="unbounded"> -->
+<!--           <xsd:complexType> -->
+<!--             <xsd:attribute name="TIME" type="TIMETYPE" use="optional" /> -->
+<!--             <xsd:attribute name="VALUE" type="LEVELTYPE" use="required" /> -->
+<!--           </xsd:complexType> -->
+<!--         </xsd:element> -->
+<!--       </xsd:sequence> -->
+<!--       <xsd:attribute name="ORIGIN" type="xsd:IDREF" use="required" /> -->
+<!--       <xsd:attribute name="DESTINATION" type="xsd:IDREF" use="optional" /> -->
+<!--       <xsd:attribute name="CATEGORY" type="xsd:string" use="optional" /> -->
+<!--       <xsd:attribute name="INTERPOLATION" type="INTERPOLATIONTYPE" use="optional" /> -->
+<!--       <xsd:attribute name="FRACTION" type="FRACTIONTYPE" use="optional" /> -->
+<!--     </xsd:complexType> -->
+<!--   </xsd:element> -->
+
+  <xsd:element name="ODMATRIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice minOccurs="1" maxOccurs="unbounded">
+          <xsd:element ref="GLOBALTIME" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="CATEGORY" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="DEMAND" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute name="START" type="xsd:dateTime" use="optional" />
+      <xsd:attribute name="GLOBALINTERPOLATION" type="INTERPOLATIONTYPE" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

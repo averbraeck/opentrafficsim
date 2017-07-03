@@ -3,8 +3,8 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -81,15 +81,14 @@ public interface HeadwayGTU extends Headway
 
     /**
      * Many models that observe a GTU need to predict the imminent behavior of that GTU. Having an estimate of the behavioral
-     * characteristics of the observed GTU can help with that. The behavioral characteristics that are returned can be on a
-     * continuum between the actual behavioral characteristics of the observed GTU and the own behavioral characteristics of the
-     * observing GTU, not making any assumptions about the observed GTU. When successive observations of the GTU take place,
-     * parameters about its behavior can be estimated more accurately. Another interesting easy-to-implement solution is to
-     * return a set of behavioral characteristics per GTU type, where the behavioral characteristics of a truck can differ from
-     * that of a car.
-     * @return the behavioral characteristics that represent the expected behavior of the observed GTU
+     * characteristics of the observed GTU can help with that. The parameters that are returned can be on a continuum between
+     * the actual parameters of the observed GTU and the own parameters of the observing GTU, not making any assumptions about
+     * the observed GTU. When successive observations of the GTU take place, parameters about its behavior can be estimated more
+     * accurately. Another interesting easy-to-implement solution is to return a set of parameters per GTU type, where the
+     * parameters of a truck can differ from that of a car.
+     * @return the parameters that represent the expected behavior of the observed GTU
      */
-    BehavioralCharacteristics getBehavioralCharacteristics();
+    Parameters getParameters();
 
     /**
      * Many models that observe a GTU need to predict the imminent behavior of that GTU. Having a model of the speed info

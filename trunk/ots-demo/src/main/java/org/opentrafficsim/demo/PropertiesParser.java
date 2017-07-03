@@ -9,8 +9,8 @@ import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
@@ -182,7 +182,7 @@ public final class PropertiesParser
                     else if ("LMRS".equals(tacticalPlannerName))
                     {
                         // provide default parameters with the car-following model
-                        BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
+                        Parameters defaultBehavioralCFCharacteristics = new Parameters();
                         defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
                         defaultBehavioralCFCharacteristics.setDefaultParameters(TrafficLightUtil.class);
                         return new LaneBasedStrategicalRoutePlannerFactory(

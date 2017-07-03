@@ -5,10 +5,10 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -46,7 +46,7 @@ public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
     
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
+    public final Desire determineDesire(final Parameters parameters,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
             final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
     {
@@ -55,8 +55,8 @@ public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
         double dRightYes = 0;
         double dLeftNo = 0;
         double dRightNo = 0;
-        double courtesy = behavioralCharacteristics.getParameter(COURTESY);
-        Acceleration b = behavioralCharacteristics.getParameter(B);
+        double courtesy = parameters.getParameter(COURTESY);
+        Acceleration b = parameters.getParameter(B);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
@@ -71,12 +71,12 @@ public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
             {
                 for (HeadwayGTU leader : leaders)
                 {
-                    BehavioralCharacteristics bc = leader.getBehavioralCharacteristics();
-                    double desire = dir.isLeft() ? bc.getParameter(DRIGHT) : bc.getParameter(DLEFT);
+                    Parameters params = leader.getParameters();
+                    double desire = dir.isLeft() ? params.getParameter(DRIGHT) : params.getParameter(DLEFT);
                     if (desire > 0)
                     {
                         Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,
-                                bc, sli, carFollowingModel);
+                                params, sli, carFollowingModel);
                         if (a.lt0())
                         {
                             double d = desire * Math.min(-a.si / b.si, 1.0);
@@ -100,10 +100,10 @@ public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
             {
                 for (HeadwayGTU follower : followers)
                 {
-                    BehavioralCharacteristics bc = follower.getBehavioralCharacteristics();
-                    double desire = dir.isLeft() ? bc.getParameter(DRIGHT) : bc.getParameter(DLEFT);
+                    Parameters params = follower.getParameters();
+                    double desire = dir.isLeft() ? params.getParameter(DRIGHT) : params.getParameter(DLEFT);
                     Acceleration a = follower.getDistance().lt0() ? b.neg()
-                            : LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire, bc,
+                            : LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire, params,
                                     follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
                     if (a.lt0())
                     {
@@ -134,12 +134,12 @@ public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
             {
                 for (HeadwayGTU leader : leaders)
                 {
-                    BehavioralCharacteristics bc = leader.getBehavioralCharacteristics();
-                    double desire = dir.isLeft() ? bc.getParameter(DRIGHT) : bc.getParameter(DLEFT);
+                    Parameters params = leader.getParameters();
+                    double desire = dir.isLeft() ? params.getParameter(DRIGHT) : params.getParameter(DLEFT);
                     if (desire > 0)
                     {
                         Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,
-                                bc, sli, carFollowingModel);
+                                params, sli, carFollowingModel);
                         if (a.lt0())
                         {
                             double d = desire * Math.min(-a.si / b.si, 1.0); // (1 - leader.getDistance().si / x0.si) * desire;

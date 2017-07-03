@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.gtu.plan.tactical;
 
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 
 /**
  * A factory class is used to generate tactical planners as the tactical planner is state-full.
@@ -21,10 +21,10 @@ public interface TacticalPlannerFactory<T extends TacticalPlanner>
 {
 
     /**
-     * Returns a set of behavioral characteristics with default values for the next tactical planner that will be generated.
-     * @return set of behavioral characteristics with default values for the next tactical planner that will be generated
+     * Returns a set of parameters with default values for the next tactical planner that will be generated.
+     * @return set of parameters with default values for the next tactical planner that will be generated
      */
-    BehavioralCharacteristics getDefaultBehavioralCharacteristics();
+    Parameters getDefaultParameters();
 
     /**
      * Creates a new tactical planner for the given GTU.

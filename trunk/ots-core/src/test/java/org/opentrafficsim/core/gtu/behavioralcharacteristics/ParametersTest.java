@@ -21,7 +21,22 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint;
+import org.opentrafficsim.base.parameters.AbstractParameterType;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ConstraintInterface;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
+import org.opentrafficsim.base.parameters.ParameterTypeBoolean;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
+import org.opentrafficsim.base.parameters.ParameterTypeDuration;
+import org.opentrafficsim.base.parameters.ParameterTypeFrequency;
+import org.opentrafficsim.base.parameters.ParameterTypeInteger;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypeLinearDensity;
+import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
+import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
+import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -37,7 +52,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class BehavioralCharacteristicsTest implements ConstraintInterface
+public class ParametersTest implements ConstraintInterface
 {
 
     /**
@@ -46,11 +61,11 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
     @Test
     public final void defaultsTest()
     {
-        BehavioralCharacteristics bc = new BehavioralCharacteristics().setDefaultParameters(ParameterTypes.class);
+        Parameters params = new Parameters().setDefaultParameters(ParameterTypes.class);
         try
         {
             assertTrue("Default value is not correctly set.",
-                    bc.getParameter(ParameterTypes.A).equals(ParameterTypes.A.getDefaultValue()));
+                    params.getParameter(ParameterTypes.A).equals(ParameterTypes.A.getDefaultValue()));
         }
         catch (ParameterException exception)
         {
@@ -65,9 +80,9 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
     public final void constructorTest()
     {
         // Check BehavioralCharacteristics construction
-        BehavioralCharacteristics bc = new BehavioralCharacteristics();
-        assertNotNull("Default constructor should not return null.", bc);
-        if (!bc.getParameters().isEmpty())
+        Parameters params = new Parameters();
+        assertNotNull("Default constructor should not return null.", params);
+        if (!params.getParameters().isEmpty())
         {
             fail("Constructed BehavioralCharacteristics has a non-empty parameter map.");
         }
@@ -196,9 +211,9 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
     {
         try
         {
-            BehavioralCharacteristics bc = new BehavioralCharacteristics();
+            Parameters params = new Parameters();
             ParameterTypeAcceleration a = new ParameterTypeAcceleration("a", "along", constraint);
-            bc.setParameter(a, new Acceleration(value, AccelerationUnit.SI));
+            params.setParameter(a, new Acceleration(value, AccelerationUnit.SI));
             if (shouldFail)
             {
                 fail("Set value " + value + " fails default " + constraint + " constraint.");
@@ -221,14 +236,14 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
     {
 
         // Check values that should work
-        BehavioralCharacteristics bc = new BehavioralCharacteristics();
+        Parameters params = new Parameters();
         try
         {
             // requirement: v1 < v2
-            bc.setParameter(v1, new Speed(3.0, SpeedUnit.KM_PER_HOUR));
-            bc.setParameter(v2, new Speed(4.0, SpeedUnit.KM_PER_HOUR));
-            bc.setParameter(v1, new Speed(2.0, SpeedUnit.KM_PER_HOUR));
-            bc.setParameter(v2, new Speed(5.0, SpeedUnit.KM_PER_HOUR));
+            params.setParameter(v1, new Speed(3.0, SpeedUnit.KM_PER_HOUR));
+            params.setParameter(v2, new Speed(4.0, SpeedUnit.KM_PER_HOUR));
+            params.setParameter(v1, new Speed(2.0, SpeedUnit.KM_PER_HOUR));
+            params.setParameter(v2, new Speed(5.0, SpeedUnit.KM_PER_HOUR));
         }
         catch (ParameterException pe)
         {
@@ -236,12 +251,12 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
         }
 
         // Check values that should not work, set v1 first
-        bc = new BehavioralCharacteristics();
+        params = new Parameters();
         try
         {
             // requirement: v1 < v2
-            bc.setParameter(v1, new Speed(3.0, SpeedUnit.KM_PER_HOUR));
-            bc.setParameter(v2, new Speed(2.0, SpeedUnit.KM_PER_HOUR));
+            params.setParameter(v1, new Speed(3.0, SpeedUnit.KM_PER_HOUR));
+            params.setParameter(v2, new Speed(2.0, SpeedUnit.KM_PER_HOUR));
             fail("Custom check of set parameter value with value of other parameter does not fail for wrong values.");
         }
         catch (ParameterException pe)
@@ -250,12 +265,12 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
         }
 
         // Check values that should not work, set v2 first
-        bc = new BehavioralCharacteristics();
+        params = new Parameters();
         try
         {
             // requirement: v1 < v2
-            bc.setParameter(v2, new Speed(2.0, SpeedUnit.KM_PER_HOUR));
-            bc.setParameter(v1, new Speed(3.0, SpeedUnit.KM_PER_HOUR));
+            params.setParameter(v2, new Speed(2.0, SpeedUnit.KM_PER_HOUR));
+            params.setParameter(v1, new Speed(3.0, SpeedUnit.KM_PER_HOUR));
             fail("Custom check of set parameter value with value of other parameter does not fail for wrong values.");
         }
         catch (ParameterException pe)
@@ -273,9 +288,9 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public void check(final Speed v, final BehavioralCharacteristics bca) throws ParameterException
+        public void check(final Speed v, final Parameters paramsa) throws ParameterException
         {
-            Throw.when(bca.contains(v2) && v.si > bca.getParameter(v2).si, ParameterException.class,
+            Throw.when(paramsa.contains(v2) && v.si > paramsa.getParameter(v2).si, ParameterException.class,
                     "Value of v1 is larger than value of v2.");
         }
     };
@@ -288,9 +303,9 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public void check(final Speed v, final BehavioralCharacteristics bca) throws ParameterException
+        public void check(final Speed v, final Parameters paramsa) throws ParameterException
         {
-            Throw.when(bca.contains(v1) && v.si < bca.getParameter(v1).si, ParameterException.class,
+            Throw.when(paramsa.contains(v1) && v.si < paramsa.getParameter(v1).si, ParameterException.class,
                     "Value of v2 is smaller than value of v1.");
         }
     };
@@ -305,10 +320,10 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
         ParameterTypeInteger a = new ParameterTypeInteger("a", "along", 0);
 
         // exception reset without set: no value -> reset
-        BehavioralCharacteristics bc = new BehavioralCharacteristics();
+        Parameters params = new Parameters();
         try
         {
-            bc.resetParameter(a);
+            params.resetParameter(a);
             fail("Reset of parameter that was never set does not fail.");
         }
         catch (ParameterException pe)
@@ -317,12 +332,12 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
         }
 
         // exception for get after reset to no value: no value -> set -> reset -> get
-        bc = new BehavioralCharacteristics();
-        bc.setParameter(a, 1);
-        bc.resetParameter(a);
+        params = new Parameters();
+        params.setParameter(a, 1);
+        params.resetParameter(a);
         try
         {
-            bc.getParameter(a);
+            params.getParameter(a);
             fail("Get of parameter that was not given before set and reset, does not fail.");
         }
         catch (ParameterException pe)
@@ -331,12 +346,12 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
         }
 
         // exception for multiple resets: no value -> set -> reset -> reset
-        bc = new BehavioralCharacteristics();
-        bc.setParameter(a, 1);
-        bc.resetParameter(a);
+        params = new Parameters();
+        params.setParameter(a, 1);
+        params.resetParameter(a);
         try
         {
-            bc.resetParameter(a);
+            params.resetParameter(a);
             fail("Second reset without intermediate set does not fail when first reset was to no value.");
         }
         catch (ParameterException pe)
@@ -345,13 +360,13 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
         }
 
         // exception for multiple resets: set -> set -> reset -> reset
-        bc = new BehavioralCharacteristics();
-        bc.setParameter(a, 1);
-        bc.setParameter(a, 2);
-        bc.resetParameter(a);
+        params = new Parameters();
+        params.setParameter(a, 1);
+        params.setParameter(a, 2);
+        params.resetParameter(a);
         try
         {
-            bc.resetParameter(a);
+            params.resetParameter(a);
             fail("Second reset without intermediate set does not fail when first reset was to a value.");
         }
         catch (ParameterException pe)
@@ -360,13 +375,13 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
         }
 
         // no exception: set -> reset -> set -> reset
-        bc = new BehavioralCharacteristics();
-        bc.setParameter(a, 1);
-        bc.resetParameter(a);
-        bc.setParameter(a, 2);
+        params = new Parameters();
+        params.setParameter(a, 1);
+        params.resetParameter(a);
+        params.setParameter(a, 2);
         try
         {
-            bc.resetParameter(a);
+            params.resetParameter(a);
         }
         catch (ParameterException pe)
         {
@@ -375,23 +390,23 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
         }
 
         // same value: set(1) -> set(2) -> reset -> get(1?)
-        bc = new BehavioralCharacteristics();
-        bc.setParameter(a, 1);
-        bc.setParameter(a, 2);
-        bc.resetParameter(a);
-        assertEquals("Value after reset should be the same as before last set.", 1.0, bc.getParameter(a), 0.0);
+        params = new Parameters();
+        params.setParameter(a, 1);
+        params.setParameter(a, 2);
+        params.resetParameter(a);
+        assertEquals("Value after reset should be the same as before last set.", 1.0, params.getParameter(a), 0.0);
 
         // If null value is ever going to be allowed, use these tests to check proper set/reset.
         // // check null is not the same as 'no value': no value -> set(null) -> reset -> get
         // // (null setting does not work on primitive data types, parameter type 'a' cannot be used)
         // ParameterTypeFrequency b = new ParameterTypeFrequency("b", "blong");
         // bc = new BehavioralCharacteristics();
-        // bc.setParameter(b, null);
+        // params.setParameter(b, null);
         // bc.resetParameter(b);
         // try
         // {
         // // as there was no value before the null set, this should fail
-        // bc.getParameter(b);
+        // params.getParameter(b);
         // fail("Reset after setting of null is not properly handled.");
         // }
         // catch (ParameterException pe)
@@ -400,11 +415,11 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
         // }
         //
         // // check null is not the same as no value: no value -> set(null) -> set(value) -> reset -> get(null?)
-        // bc.setParameter(b, null);
-        // bc.setParameter(b, new Frequency(12, FrequencyUnit.SI));
+        // params.setParameter(b, null);
+        // params.setParameter(b, new Frequency(12, FrequencyUnit.SI));
         // bc.resetParameter(b);
         // // assertEquals() with null cannot be used (defaults into deprecated array method)
-        // if (bc.getParameter(b) != null)
+        // if (params.getParameter(b) != null)
         // {
         // fail("Value after reset is not equal to null, which it was before the last set.");
         // }
@@ -421,33 +436,33 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
         // equal double values from different parameters should be equal
         ParameterTypeDouble a1 = new ParameterTypeDouble("a", "along", 0.0);
         ParameterTypeDouble a2 = new ParameterTypeDouble("a", "along", 0.0);
-        BehavioralCharacteristics bc1 = new BehavioralCharacteristics();
-        BehavioralCharacteristics bc2 = new BehavioralCharacteristics();
-        bc1.setParameter(a1, 4.0);
-        bc2.setParameter(a2, 4.0);
-        assertEquals("Equal double values from different parameter types should be equal.", bc1.getParameter(a1),
-                bc2.getParameter(a2), 0.0);
+        Parameters params1 = new Parameters();
+        Parameters params2 = new Parameters();
+        params1.setParameter(a1, 4.0);
+        params2.setParameter(a2, 4.0);
+        assertEquals("Equal double values from different parameter types should be equal.", params1.getParameter(a1),
+                params2.getParameter(a2), 0.0);
 
         // equal DoubleScalar.Rel values should be equal from different characteristic sets
         ParameterTypeLinearDensity b1 = new ParameterTypeLinearDensity("b", "blong");
         ParameterTypeLinearDensity b2 = new ParameterTypeLinearDensity("b", "blong");
-        bc1.setParameter(b1, new LinearDensity(4.0, LinearDensityUnit.SI));
-        bc2.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
+        params1.setParameter(b1, new LinearDensity(4.0, LinearDensityUnit.SI));
+        params2.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
         assertEquals(
                 "Equal DoubleScalar.Rel values from different parameter types and different characteristics should be equal.",
-                bc1.getParameter(b1), bc2.getParameter(b2));
+                params1.getParameter(b1), params2.getParameter(b2));
 
         // equal DoubleScalar.Rel values should be equal from the same characteristic set
-        bc1.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
+        params1.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
         assertEquals(
                 "Equal DoubleScalar.Rel values from different parameter types and the same characteristics should be equal.",
-                bc1.getParameter(b1), bc1.getParameter(b2));
+                params1.getParameter(b1), params1.getParameter(b2));
 
         // values of parameter types with different value classes are not equal
-        bc1.setParameter(a1, 4.0);
-        bc1.setParameter(b1, new LinearDensity(4.0, LinearDensityUnit.SI));
-        assertNotEquals("Values of different parameter type value classes should not be equal.", bc1.getParameter(a1),
-                bc1.getParameter(b1));
+        params1.setParameter(a1, 4.0);
+        params1.setParameter(b1, new LinearDensity(4.0, LinearDensityUnit.SI));
+        assertNotEquals("Values of different parameter type value classes should not be equal.", params1.getParameter(a1),
+                params1.getParameter(b1));
 
     }
 
@@ -479,10 +494,10 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
 
         // set null value
         ParameterTypeNumeric<Speed> v = new ParameterTypeNumeric<>("v", "vlong", Speed.class);
-        BehavioralCharacteristics bc = new BehavioralCharacteristics();
+        Parameters params = new Parameters();
         try
         {
-            bc.setParameter(v, null);
+            params.setParameter(v, null);
             fail("Setting a value of 'null' did not fail.");
         }
         catch (ParameterException pe)
@@ -650,17 +665,17 @@ public class BehavioralCharacteristicsTest implements ConstraintInterface
     @Test
     public final void mergeTest() throws ParameterException
     {
-        BehavioralCharacteristics bcA = new BehavioralCharacteristics();
-        bcA.setDefaultParameter(ParameterTypes.A);
-        BehavioralCharacteristics bcB = new BehavioralCharacteristics();
-        bcB.setDefaultParameter(ParameterTypes.B);
-        bcA.setAll(bcB);
+        Parameters paramsA = new Parameters();
+        paramsA.setDefaultParameter(ParameterTypes.A);
+        Parameters paramsB = new Parameters();
+        paramsB.setDefaultParameter(ParameterTypes.B);
+        paramsA.setAll(paramsB);
         assertTrue("When merging set B with set A, set A should contain the parameters of set B.",
-                bcA.contains(ParameterTypes.B));
+                paramsA.contains(ParameterTypes.B));
         assertTrue("When merging set B with set A, parameter values should be equal.",
-                bcA.getParameter(ParameterTypes.B).eq(bcB.getParameter(ParameterTypes.B)));
+                paramsA.getParameter(ParameterTypes.B).eq(paramsB.getParameter(ParameterTypes.B)));
         assertFalse("When merging set B with set A, set B should not contain the parameters of set A.",
-                bcB.contains(ParameterTypes.A));
+                paramsB.contains(ParameterTypes.A));
     }
 
 }

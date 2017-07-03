@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -30,10 +30,10 @@ public class AccelerationTrafficLights implements AccelerationIncentive
     @Override
     public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final BehavioralCharacteristics bc, final SpeedLimitInfo speedLimitInfo)
+            final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws ParameterException, OperationalPlanException
     {
-        simplePlan.minimizeAcceleration(TrafficLightUtil.respondToTrafficLights(bc,
+        simplePlan.minimizeAcceleration(TrafficLightUtil.respondToTrafficLights(params,
                 perception.getPerceptionCategory(IntersectionPerception.class).getTrafficLights(lane), carFollowingModel, speed,
                 speedLimitInfo));
     }

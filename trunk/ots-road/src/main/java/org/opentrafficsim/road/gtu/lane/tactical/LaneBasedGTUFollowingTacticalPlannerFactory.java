@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 
@@ -43,18 +43,18 @@ public class LaneBasedGTUFollowingTacticalPlannerFactory
 
     /** {@inheritDoc} */
     @Override
-    public final BehavioralCharacteristics getDefaultBehavioralCharacteristics()
+    public final Parameters getDefaultParameters()
     {
-        BehavioralCharacteristics bc = new BehavioralCharacteristics().setDefaultParameters(ParameterTypes.class);
+        Parameters params = new Parameters().setDefaultParameters(ParameterTypes.class);
         try
         {
-            bc.setParameter(ParameterTypes.LOOKAHEAD, new Length(250, LengthUnit.SI));
+            params.setParameter(ParameterTypes.LOOKAHEAD, new Length(250, LengthUnit.SI));
         }
         catch (ParameterException pe)
         {
             throw new RuntimeException("Parameter type 'LOOKAHEAD' could not be set.", pe);
         }
-        return bc;
+        return params;
     }
 
     /** {@inheritDoc} */
