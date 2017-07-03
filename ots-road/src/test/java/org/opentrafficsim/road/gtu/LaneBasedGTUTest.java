@@ -21,14 +21,14 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -130,11 +130,11 @@ public class LaneBasedGTUTest implements UNITS
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         Speed maximumSpeed = new Speed(120, KM_PER_HOUR);
         GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
-        BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
+        Parameters parameters = DefaultTestParameters.create();
 
         LaneBasedIndividualGTU truck =
                 new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed, simulator, this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
         truck.init(strategicalPlanner, truckPositions, truckSpeed);
         // Verify that the truck is registered on the correct Lanes
@@ -172,7 +172,7 @@ public class LaneBasedGTUTest implements UNITS
         assertEquals("lanesChecked should equals the number of Links times the number of lanes on each Link",
                 laneCount * links.size(), lanesChecked);
         assertEquals("Truck should be registered in " + truckPositions.size() + " lanes", truckPositions.size(), found);
-        Length forwardMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+        Length forwardMaxDistance = truck.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getTacticalPlanner().getPerception().perceive();
         Headway leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
@@ -182,7 +182,7 @@ public class LaneBasedGTUTest implements UNITS
                 forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0);
         assertEquals("With one vehicle in the network forward headwayGTU should return null", null, leader.getId());
         // TODO see how we can ask the vehicle to look this far behind
-        Length reverseMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
+        Length reverseMaxDistance = truck.getParameters().getParameter(ParameterTypes.LOOKBACKOLD);
         Headway follower = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                 .getBackwardHeadway();
         assertTrue(
@@ -206,11 +206,11 @@ public class LaneBasedGTUTest implements UNITS
                 Length carPosition = new Length(step, METER);
                 Set<DirectedLanePosition> carPositions =
                         buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
-                behavioralCharacteristics = DefaultTestParameters.create();
+                parameters = DefaultTestParameters.create();
 
                 LaneBasedIndividualGTU car =
                         new LaneBasedIndividualGTU("Car", carType, carLength, carWidth, maximumSpeed, simulator, this.network);
-                strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                         new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
                 car.init(strategicalPlanner, carPositions, carSpeed);
                 // leader = truck.headway(forwardMaxDistance);
@@ -398,11 +398,11 @@ public class LaneBasedGTUTest implements UNITS
             FixedAccelerationModel fam = new FixedAccelerationModel(acceleration, new Duration(10, SECOND));
             LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
             Speed maximumSpeed = new Speed(200, KM_PER_HOUR);
-            BehavioralCharacteristics behavioralCharacteristics = DefaultTestParameters.create();
+            Parameters parameters = DefaultTestParameters.create();
 
             LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType,
                     new Length(4, METER), new Length(1.8, METER), maximumSpeed, simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                     new LaneBasedCFLCTacticalPlanner(fam, laneChangeModel, car), car);
             car.init(strategicalPlanner, carPositions, carSpeed);
             // Let the simulator execute the move method of the car

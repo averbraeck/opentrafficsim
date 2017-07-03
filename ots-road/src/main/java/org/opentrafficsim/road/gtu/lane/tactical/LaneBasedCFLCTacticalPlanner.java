@@ -17,13 +17,13 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.AccelerationVector;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -127,8 +127,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // NOTE: delete this if perception takes place independent of the tactical planning (different frequency)
             perception.perceive();
 
-            Length maximumForwardHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(LOOKAHEAD);
-            Length maximumReverseHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(LOOKBACKOLD);
+            Length maximumForwardHeadway = laneBasedGTU.getParameters().getParameter(LOOKAHEAD);
+            Length maximumReverseHeadway = laneBasedGTU.getParameters().getParameter(LOOKBACKOLD);
             Time now = getGtu().getSimulator().getSimulatorTime().getTime();
             Speed speedLimit = perception.getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit();
 

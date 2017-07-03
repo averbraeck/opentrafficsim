@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
@@ -39,9 +39,9 @@ public class ParameterTypeBoolean extends AbstractParameterType<Boolean> impleme
     }
 
     /** {@inheritDoc} */
-    public final String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
+    public final String printValue(final Parameters parameters) throws ParameterException
     {
-        return Boolean.toString(behavioralCharacteristics.getParameter(this));
+        return Boolean.toString(parameters.getParameter(this));
     }
 
     /** {@inheritDoc} */

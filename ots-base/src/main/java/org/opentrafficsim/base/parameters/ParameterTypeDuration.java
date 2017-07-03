@@ -1,11 +1,11 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
-import org.djunits.value.formatter.EngineeringFormatter;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
- * Wrapper class for double parameters.
+ * Wrapper class for Time parameters.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -14,31 +14,31 @@ import org.djunits.value.formatter.EngineeringFormatter;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements Serializable
+public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implements Serializable
 {
 
     /** */
-    private static final long serialVersionUID = 120160400;
+    private static final long serialVersionUID = 20150400L;
 
     /**
      * Constructor without default value and check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeDouble(final String id, final String description)
+    public ParameterTypeDuration(final String id, final String description)
     {
-        super(id, description, Double.class);
+        super(id, description, Duration.class);
     }
 
     /**
      * Constructor with default value, without check.
      * @param id Short name of parameter.
-     * @param description Parameter description or full name..
+     * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeDouble(final String id, final String description, final double defaultValue)
+    public ParameterTypeDuration(final String id, final String description, final Duration defaultValue)
     {
-        super(id, description, Double.class, defaultValue);
+        super(id, description, Duration.class, defaultValue);
     }
 
     /**
@@ -47,9 +47,9 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDouble(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeDuration(final String id, final String description, final NumericConstraint constraint)
     {
-        super(id, description, Double.class, constraint);
+        super(id, description, Duration.class, constraint);
     }
 
     /**
@@ -59,24 +59,17 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDouble(final String id, final String description, final double defaultValue,
+    public ParameterTypeDuration(final String id, final String description, final Duration defaultValue,
             final NumericConstraint constraint)
     {
-        super(id, description, Double.class, defaultValue, constraint);
+        super(id, description, Duration.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
-    public final String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
-    {
-        return EngineeringFormatter.format(behavioralCharacteristics.getParameter(this));
-    }
-
-    /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public String toString()
+    public final String toString()
     {
-        return "ParameterTypeDouble [id=" + getId() + ", description=" + getDescription() + "]";
+        return "ParameterTypeDuration [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

@@ -7,9 +7,9 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -45,7 +45,7 @@ public class AccelerationBusStop implements AccelerationIncentive
     @SuppressWarnings("checkstyle:parameternumber")
     public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final BehavioralCharacteristics bc, final SpeedLimitInfo speedLimitInfo)
+            final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
         SortedSet<HeadwayBusStop> stops = perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
@@ -91,7 +91,7 @@ public class AccelerationBusStop implements AccelerationIncentive
                     {
                         // decelerate to initiate stop
                         simplePlan.minimizeAcceleration(
-                                CarFollowingUtil.stop(carFollowingModel, bc, speed, speedLimitInfo, stop.getDistance()));
+                                CarFollowingUtil.stop(carFollowingModel, params, speed, speedLimitInfo, stop.getDistance()));
                     }
                 }
             }

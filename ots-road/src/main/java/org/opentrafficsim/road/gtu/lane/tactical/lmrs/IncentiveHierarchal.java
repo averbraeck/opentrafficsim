@@ -4,9 +4,9 @@ import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -41,15 +41,15 @@ public class IncentiveHierarchal implements VoluntaryIncentive
     
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
+    public final Desire determineDesire(final Parameters parameters,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
             final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
     {
         double dLeft = 0;
         double dRight = 0;
-        double hierarchy = behavioralCharacteristics.getParameter(HIERARCHY);
+        double hierarchy = parameters.getParameter(HIERARCHY);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-        Speed vDes = carFollowingModel.desiredSpeed(behavioralCharacteristics,
+        Speed vDes = carFollowingModel.desiredSpeed(parameters,
                 perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT)
                         .getSpeedLimitInfo(Length.ZERO));
         Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -63,11 +63,11 @@ public class IncentiveHierarchal implements VoluntaryIncentive
             if (!followers.isEmpty())
             {
                 HeadwayGTU follower = followers.first();
-                Speed vDesFollower = follower.getCarFollowingModel().desiredSpeed(follower.getBehavioralCharacteristics(),
+                Speed vDesFollower = follower.getCarFollowingModel().desiredSpeed(follower.getParameters(),
                         follower.getSpeedLimitInfo());
                 if (vDes.lt(vDesFollower)
                         && CarFollowingUtil
-                                .followSingleLeader(follower.getCarFollowingModel(), follower.getBehavioralCharacteristics(),
+                                .followSingleLeader(follower.getCarFollowingModel(), follower.getParameters(),
                                         follower.getSpeed(), follower.getSpeedLimitInfo(), follower.getDistance(), ownSpeed)
                                 .le0())
                 {
@@ -82,11 +82,11 @@ public class IncentiveHierarchal implements VoluntaryIncentive
             if (followers != null && !followers.isEmpty())
             {
                 HeadwayGTU follower = followers.first();
-                Speed vDesFollower = follower.getCarFollowingModel().desiredSpeed(follower.getBehavioralCharacteristics(),
+                Speed vDesFollower = follower.getCarFollowingModel().desiredSpeed(follower.getParameters(),
                         follower.getSpeedLimitInfo());
                 if (vDes.lt(vDesFollower)
                         && CarFollowingUtil
-                                .followSingleLeader(follower.getCarFollowingModel(), follower.getBehavioralCharacteristics(),
+                                .followSingleLeader(follower.getCarFollowingModel(), follower.getParameters(),
                                         follower.getSpeed(), follower.getSpeedLimitInfo(), follower.getDistance(), ownSpeed)
                                 .le0())
                 {

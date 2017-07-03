@@ -1,17 +1,17 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.NEGATIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.UNITINTERVAL;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.NEGATIVE;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVE;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.UNITINTERVAL;
 
 import java.lang.reflect.Field;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
+import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 
 /**
  * List of parameters for the model of Toledo (2003).<br>
@@ -237,10 +237,10 @@ public final class ToledoLaneChangeParameters
     }
 
     /**
-     * Fills behavioral characteristics with default values for all Toledo parameters.
-     * @param behavioralCharacteristics behavioral characteristics to fill
+     * Fills parameters with default values for all Toledo parameters.
+     * @param parameters parameters to fill
      */
-    public static void setDefaultParameters(final BehavioralCharacteristics behavioralCharacteristics)
+    public static void setDefaultParameters(final Parameters parameters)
     {
         for (Field field : ToledoLaneChangeParameters.class.getDeclaredFields())
         {
@@ -248,7 +248,7 @@ public final class ToledoLaneChangeParameters
             try
             {
                 p = (ParameterTypeDouble) field.get(null);
-                behavioralCharacteristics.setParameter(p, p.getDefaultValue());
+                parameters.setParameter(p, p.getDefaultValue());
             }
             catch (IllegalArgumentException | IllegalAccessException | ClassCastException exception)
             {

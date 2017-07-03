@@ -7,13 +7,13 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeSpeed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -65,15 +65,15 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
 
     /** Acceleration parameter type. */
     protected static final ParameterTypeAcceleration A = ParameterTypes.A;
-    
+
     /** Anticipation speed difference parameter type. */
     protected static final ParameterTypeSpeed VGAIN = LmrsParameters.VGAIN;
-    
+
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
-            final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
+    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
+            throws ParameterException, OperationalPlanException
     {
 
         // zero if no lane change is possible
@@ -83,8 +83,8 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
                 .getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si;
 
         // gather some info
-        Speed vCur = anticipationSpeed(RelativeLane.CURRENT, behavioralCharacteristics, perception, carFollowingModel);
-        Speed vGain = behavioralCharacteristics.getParameter(VGAIN);
+        Speed vCur = anticipationSpeed(RelativeLane.CURRENT, parameters, perception, carFollowingModel);
+        Speed vGain = parameters.getParameter(VGAIN);
 
         // calculate aGain (default 1; lower as acceleration is higher than 0)
         Dimensionless aGain;
@@ -96,7 +96,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         Acceleration aCur = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
         if (aCur.si > 0)
         {
-            Acceleration a = behavioralCharacteristics.getParameter(A);
+            Acceleration a = parameters.getParameter(A);
             aGain = a.minus(aCur).divideBy(a);
         }
         else
@@ -109,7 +109,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         if (leftDist > 0.0 && perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection()
                 .contains(RelativeLane.LEFT))
         {
-            Speed vLeft = anticipationSpeed(RelativeLane.LEFT, behavioralCharacteristics, perception, carFollowingModel);
+            Speed vLeft = anticipationSpeed(RelativeLane.LEFT, parameters, perception, carFollowingModel);
             dLeft = aGain.multiplyBy(vLeft.minus(vCur)).divideBy(vGain);
         }
         else
@@ -122,7 +122,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         if (rightDist > 0.0 && perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection()
                 .contains(RelativeLane.RIGHT))
         {
-            Speed vRight = anticipationSpeed(RelativeLane.RIGHT, behavioralCharacteristics, perception, carFollowingModel);
+            Speed vRight = anticipationSpeed(RelativeLane.RIGHT, parameters, perception, carFollowingModel);
             dRight = aGain.multiplyBy(vRight.minus(vCur)).divideBy(vGain);
         }
         else
@@ -138,22 +138,22 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
      * Determine the anticipation speed on the given lane. This depends on leading vehicles, leading vehicles in adjacent lanes
      * with their indicator to this lane, and conflicts.
      * @param lane lane to anticipate the speed on
-     * @param bc behavioral characteristics
+     * @param params parameters
      * @param perception perception
      * @param cfm car-following model, used for the desired speed
      * @return anticipation speed on lane
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    private Speed anticipationSpeed(final RelativeLane lane, final BehavioralCharacteristics bc,
-            final LanePerception perception, final CarFollowingModel cfm) throws ParameterException, OperationalPlanException
+    private Speed anticipationSpeed(final RelativeLane lane, final Parameters params, final LanePerception perception,
+            final CarFollowingModel cfm) throws ParameterException, OperationalPlanException
     {
 
         SpeedLimitInfo sli = perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(lane)
                 .getSpeedLimitInfo(Length.ZERO);
-        Speed anticipationSpeed = cfm.desiredSpeed(bc, sli);
+        Speed anticipationSpeed = cfm.desiredSpeed(params, sli);
         Speed desiredSpeed = new Speed(anticipationSpeed);
-        Length x0 = bc.getParameter(LOOKAHEAD);
+        Length x0 = params.getParameter(LOOKAHEAD);
 
         // leaders with right indicators on left lane of considered lane
         if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane.getLeft()))
@@ -229,7 +229,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
                     }
                     case PRIORITY:
                     {
-                        if (ConflictUtil.stopForPriorityConflict(headwayConflict, leaders, speed, vehicleLength, bc,
+                        if (ConflictUtil.stopForPriorityConflict(headwayConflict, leaders, speed, vehicleLength, params,
                                 new ConflictPlans()))
                         {
                             anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayConflict);
@@ -240,7 +240,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
                     {
                         Acceleration acceleration = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
                         if (ConflictUtil.stopForGiveWayConflict(headwayConflict, leaders, speed, acceleration, vehicleLength,
-                                bc, sli, cfm))
+                                params, sli, cfm))
                         {
                             anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayConflict);
                         }
@@ -249,8 +249,8 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
                     case STOP:
                     {
                         Acceleration acceleration = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
-                        if (ConflictUtil.stopForStopConflict(headwayConflict, leaders, speed, acceleration, vehicleLength, bc,
-                                sli, cfm))
+                        if (ConflictUtil.stopForStopConflict(headwayConflict, leaders, speed, acceleration, vehicleLength,
+                                params, sli, cfm))
                         {
                             anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayConflict);
                         }

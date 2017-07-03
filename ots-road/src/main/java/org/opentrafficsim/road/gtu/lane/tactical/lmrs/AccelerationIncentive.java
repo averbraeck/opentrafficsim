@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -33,14 +33,14 @@ public interface AccelerationIncentive
      * @param perception perception
      * @param carFollowingModel car-following model
      * @param speed current speed
-     * @param bc behavioral characteristics
+     * @param params parameters
      * @param speedLimitInfo speed limit info
      * @throws OperationalPlanException in case of an error
      * @throws ParameterException on missing parameter
      * @throws GTUException when there is a problem with the state of the GTU when planning a path
      */
     void accelerate(SimpleOperationalPlan simplePlan, RelativeLane lane, LaneBasedGTU gtu, LanePerception perception,
-            CarFollowingModel carFollowingModel, Speed speed, BehavioralCharacteristics bc, SpeedLimitInfo speedLimitInfo)
+            CarFollowingModel carFollowingModel, Speed speed, Parameters params, SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException;
 
 }

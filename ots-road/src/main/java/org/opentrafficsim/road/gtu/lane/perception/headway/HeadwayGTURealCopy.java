@@ -3,9 +3,9 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -47,8 +47,8 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     /** stored car following model of the observed GTU. */
     private final CarFollowingModel carFollowingModel;
 
-    /** stored behavioral characteristics of the observed GTU. */
-    private final BehavioralCharacteristics behavioralCharacteristics;
+    /** stored parameters of the observed GTU. */
+    private final Parameters parameters;
 
     /** stored speed limit info of the observed GTU. */
     private final SpeedLimitInfo speedLimitInfo;
@@ -65,7 +65,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
      * @param speed speed
      * @param acceleration acceleration
      * @param carFollowingModel car-following model
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param speedLimitInfo speed limit info
      * @param route route
      * @param gtuStatus gtu status
@@ -74,12 +74,12 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     @SuppressWarnings("checkstyle:parameternumber")
     HeadwayGTURealCopy(final String id, final GTUType gtuType, final Length distance, final Length length, final Speed speed,
             final Acceleration acceleration, final CarFollowingModel carFollowingModel,
-            final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedLimitInfo, final Route route,
+            final Parameters parameters, final SpeedLimitInfo speedLimitInfo, final Route route,
             final GTUStatus... gtuStatus) throws GTUException
     {
         super(id, gtuType, distance, true, length, speed, acceleration, gtuStatus);
         this.carFollowingModel = carFollowingModel;
-        this.behavioralCharacteristics = behavioralCharacteristics;
+        this.parameters = parameters;
         this.speedLimitInfo = speedLimitInfo;
         this.route = route;
     }
@@ -95,7 +95,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     {
         super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getSpeed(), gtu.getAcceleration(), gtuStatus);
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
-        this.behavioralCharacteristics = new BehavioralCharacteristics(gtu.getBehavioralCharacteristics());
+        this.parameters = new Parameters(gtu.getParameters());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
         this.route = gtu.getStrategicalPlanner().getRoute();
     }
@@ -114,7 +114,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
         super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getSpeed(),
                 gtu.getAcceleration());
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
-        this.behavioralCharacteristics = new BehavioralCharacteristics(gtu.getBehavioralCharacteristics());
+        this.parameters = new Parameters(gtu.getParameters());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
         this.route = gtu.getStrategicalPlanner().getRoute();
     }
@@ -149,9 +149,9 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
 
     /** {@inheritDoc} */
     @Override
-    public final BehavioralCharacteristics getBehavioralCharacteristics()
+    public final Parameters getParameters()
     {
-        return this.behavioralCharacteristics;
+        return this.parameters;
     }
 
     /** {@inheritDoc} */
@@ -175,7 +175,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
         try
         {
             return new HeadwayGTURealCopy(getId(), getGtuType(), headway, getLength(), speed, acceleration,
-                    getCarFollowingModel(), getBehavioralCharacteristics(), getSpeedLimitInfo(), getRoute(), getGtuStatus());
+                    getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getGtuStatus());
         }
         catch (GTUException exception)
         {

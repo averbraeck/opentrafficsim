@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.NEGATIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVE;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.NEGATIVE;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVE;
 
 import java.util.SortedMap;
 
@@ -13,11 +13,11 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeSpeed;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
+import org.opentrafficsim.base.parameters.ParameterTypeDuration;
+import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractCarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -105,62 +105,62 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
+    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo)
             throws ParameterException
     {
-        return behavioralCharacteristics.getParameter(CDS).plus(behavioralCharacteristics.getParameter(BETADS))
-                .plus(behavioralCharacteristics.getParameter(ALPHADS)
-                        .multiplyBy(behavioralCharacteristics.getParameter(ToledoLaneChangeParameters.ERROR_TERM)));
+        return parameters.getParameter(CDS).plus(parameters.getParameter(BETADS))
+                .plus(parameters.getParameter(ALPHADS)
+                        .multiplyBy(parameters.getParameter(ToledoLaneChangeParameters.ERROR_TERM)));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+    public final Length desiredHeadway(final Parameters parameters, final Speed speed)
             throws ParameterException
     {
-        return behavioralCharacteristics.getParameter(HSTAR).multiplyBy(speed);
+        return parameters.getParameter(HSTAR).multiplyBy(speed);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+    protected final Acceleration followingAcceleration(final Parameters parameters,
             final Speed speed, final Speed desiredSpeed, final Length desiredHeadway, final SortedMap<Length, Speed> leaders)
             throws ParameterException
     {
         if (leaders.isEmpty() || leaders.firstKey().gt(desiredHeadway))
         {
             // free
-            double eff = Toledo.RANDOM.nextGaussian() * behavioralCharacteristics.getParameter(SIGMAFF)
-                    * behavioralCharacteristics.getParameter(SIGMAFF);
-            return new Acceleration(behavioralCharacteristics.getParameter(LAMBDAFF) * (desiredSpeed.si - speed.si) + eff,
+            double eff = Toledo.RANDOM.nextGaussian() * parameters.getParameter(SIGMAFF)
+                    * parameters.getParameter(SIGMAFF);
+            return new Acceleration(parameters.getParameter(LAMBDAFF) * (desiredSpeed.si - speed.si) + eff,
                     AccelerationUnit.SI);
         }
         // TODO speed difference with reaction time
         if (leaders.get(leaders.firstKey()).ge(speed))
         {
             // accelerate
-            double eCfAcc = Toledo.RANDOM.nextGaussian() * behavioralCharacteristics.getParameter(SIGMAACC)
-                    * behavioralCharacteristics.getParameter(SIGMAACC);
+            double eCfAcc = Toledo.RANDOM.nextGaussian() * parameters.getParameter(SIGMAACC)
+                    * parameters.getParameter(SIGMAACC);
             // {@formatter:off}
             return new Acceleration(
-                behavioralCharacteristics.getParameter(CCFACC) 
-                    * Math.pow(speed.si, behavioralCharacteristics.getParameter(BETAACC))
-                    * Math.pow(leaders.firstKey().si, behavioralCharacteristics.getParameter(GAMMAACC))
-                    * Math.pow(getDensity(leaders), behavioralCharacteristics.getParameter(RHOACC))
-                    * Math.pow(leaders.get(leaders.firstKey()).si - speed.si, behavioralCharacteristics.getParameter(LAMBDAACC))
+                parameters.getParameter(CCFACC) 
+                    * Math.pow(speed.si, parameters.getParameter(BETAACC))
+                    * Math.pow(leaders.firstKey().si, parameters.getParameter(GAMMAACC))
+                    * Math.pow(getDensity(leaders), parameters.getParameter(RHOACC))
+                    * Math.pow(leaders.get(leaders.firstKey()).si - speed.si, parameters.getParameter(LAMBDAACC))
                     + eCfAcc,
                 AccelerationUnit.SI);
             // {@formatter:on}
         }
         // decelerate
-        double eCfDec = Toledo.RANDOM.nextGaussian() * behavioralCharacteristics.getParameter(SIGMADEC)
-                * behavioralCharacteristics.getParameter(SIGMADEC);
+        double eCfDec = Toledo.RANDOM.nextGaussian() * parameters.getParameter(SIGMADEC)
+                * parameters.getParameter(SIGMADEC);
         // {@formatter:off}
         return new Acceleration(
-            behavioralCharacteristics.getParameter(CCFDEC) 
-                * Math.pow(leaders.firstKey().si, behavioralCharacteristics.getParameter(GAMMADEC))
-                * Math.pow(getDensity(leaders), behavioralCharacteristics.getParameter(RHODEC))
-                * Math.pow(speed.si - leaders.get(leaders.firstKey()).si, behavioralCharacteristics.getParameter(LAMBDADEC))
+            parameters.getParameter(CCFDEC) 
+                * Math.pow(leaders.firstKey().si, parameters.getParameter(GAMMADEC))
+                * Math.pow(getDensity(leaders), parameters.getParameter(RHODEC))
+                * Math.pow(speed.si - leaders.get(leaders.firstKey()).si, parameters.getParameter(LAMBDADEC))
                 + eCfDec,
             AccelerationUnit.SI);
         // {@formatter:on}

@@ -1,8 +1,8 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.NEGATIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVE;
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVEZERO;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.NEGATIVE;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVE;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVEZERO;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
@@ -109,11 +109,11 @@ public class ParameterTypes
             /** */
             private static final long serialVersionUID = 20170203L;
 
-            public void check(final Acceleration value, final BehavioralCharacteristics bc) throws ParameterException
+            public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
-                Throw.when(bc.contains(B0) && value.si <= bc.getParameter(B0).si, ParameterException.class,
+                Throw.when(params.contains(B0) && value.si <= params.getParameter(B0).si, ParameterException.class,
                         "Value of b is below or equal to b0.");
-                Throw.when(bc.contains(BCRIT) && value.si >= bc.getParameter(BCRIT).si, ParameterException.class,
+                Throw.when(params.contains(BCRIT) && value.si >= params.getParameter(BCRIT).si, ParameterException.class,
                         "Value of b is above or equal to bCrit.");
             }
         };
@@ -124,11 +124,11 @@ public class ParameterTypes
             /** */
             private static final long serialVersionUID = 20170203L;
 
-            public void check(final Acceleration value, final BehavioralCharacteristics bc) throws ParameterException
+            public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
-                Throw.when(bc.contains(B0) && value.si <= bc.getParameter(B0).si, ParameterException.class,
+                Throw.when(params.contains(B0) && value.si <= params.getParameter(B0).si, ParameterException.class,
                         "Value of bCrit is below or equal to b0.");
-                Throw.when(bc.contains(B) && value.si <= bc.getParameter(B).si, ParameterException.class,
+                Throw.when(params.contains(B) && value.si <= params.getParameter(B).si, ParameterException.class,
                         "Value of bCrit is below or equal to b.");
             }
         };
@@ -139,11 +139,11 @@ public class ParameterTypes
                 /** */
                 private static final long serialVersionUID = 20170203L;
     
-                public void check(final Acceleration value, final BehavioralCharacteristics bc) throws ParameterException
+                public void check(final Acceleration value, final Parameters params) throws ParameterException
                 {
-                    Throw.when(bc.contains(B) && value.si >= bc.getParameter(B).si, ParameterException.class,
+                    Throw.when(params.contains(B) && value.si >= params.getParameter(B).si, ParameterException.class,
                             "Value of b0 is above or equal to b.");
-                    Throw.when(bc.contains(BCRIT) && value.si >= bc.getParameter(BCRIT).si, ParameterException.class,
+                    Throw.when(params.contains(BCRIT) && value.si >= params.getParameter(BCRIT).si, ParameterException.class,
                             "Value of b0 is above or equal to bCrit.");
                 }
             };
@@ -156,9 +156,9 @@ public class ParameterTypes
                 private static final long serialVersionUID = 20160400L;
 
                 @Override
-                public void check(final Duration value, final BehavioralCharacteristics bc) throws ParameterException
+                public void check(final Duration value, final Parameters params) throws ParameterException
                 {
-                    Throw.when(bc.contains(ParameterTypes.TMAX) && value.si >= bc.getParameter(ParameterTypes.TMAX).si,
+                    Throw.when(params.contains(ParameterTypes.TMAX) && value.si >= params.getParameter(ParameterTypes.TMAX).si,
                         ParameterException.class, "Value of Tmin is above or equal to Tmax.");
                 }
             };
@@ -169,9 +169,9 @@ public class ParameterTypes
             private static final long serialVersionUID = 20160400L;
 
             @Override
-            public void check(final Duration value, final BehavioralCharacteristics bc) throws ParameterException
+            public void check(final Duration value, final Parameters params) throws ParameterException
             {
-                Throw.when(bc.contains(ParameterTypes.TMIN) && value.si <= bc.getParameter(ParameterTypes.TMIN).si,
+                Throw.when(params.contains(ParameterTypes.TMIN) && value.si <= params.getParameter(ParameterTypes.TMIN).si,
                     ParameterException.class, "Value of Tmax is below or equal to Tmin.");
             }
         };

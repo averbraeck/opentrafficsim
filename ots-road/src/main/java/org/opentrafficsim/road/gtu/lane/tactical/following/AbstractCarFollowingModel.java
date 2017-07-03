@@ -6,8 +6,8 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 import nl.tudelft.simulation.language.Throw;
@@ -30,7 +30,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      * 'inappropriate' acceleration, since car-following models are then undefined. This may for example occur when checking a
      * gap in an adjacent lane for lane changing. It is then up to the client to decide what to do. E.g. limit deceleration to
      * an extent depending on the circumstances, or divert from a certain behavior.
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param speed current speed
      * @param speedLimitInfo info regarding the desired speed for car-following
      * @param leaders set of leader headways and speeds, ordered by headway (closest first)
@@ -39,11 +39,11 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      * @throws NullPointerException if any input is null
      */
     @Override
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+    public final Acceleration followingAcceleration(final Parameters parameters,
             final Speed speed, final SpeedLimitInfo speedLimitInfo, final SortedMap<Length, Speed> leaders)
             throws ParameterException
     {
-        Throw.whenNull(behavioralCharacteristics, "Behavioral characteristics may not be null.");
+        Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
         Throw.whenNull(leaders, "Leaders may not be null.");
@@ -53,13 +53,13 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
             return new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
         }
         // Forward to method with desired speed and headway predetermined by this car-following model.
-        return followingAcceleration(behavioralCharacteristics, speed, desiredSpeed(behavioralCharacteristics, speedLimitInfo),
-                desiredHeadway(behavioralCharacteristics, speed), leaders);
+        return followingAcceleration(parameters, speed, desiredSpeed(parameters, speedLimitInfo),
+                desiredHeadway(parameters, speed), leaders);
     }
 
     /**
      * Determination of car-following acceleration, possibly based on multiple leaders.
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param speed current speed
      * @param desiredSpeed desired speed
      * @param desiredHeadway desired headway
@@ -67,7 +67,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      * @return car-following acceleration
      * @throws ParameterException if parameter exception occurs
      */
-    protected abstract Acceleration followingAcceleration(BehavioralCharacteristics behavioralCharacteristics, Speed speed,
+    protected abstract Acceleration followingAcceleration(Parameters parameters, Speed speed,
             Speed desiredSpeed, Length desiredHeadway, SortedMap<Length, Speed> leaders) throws ParameterException;
 
     /** {@inheritDoc} */

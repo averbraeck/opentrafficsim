@@ -11,8 +11,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 
 /**
  * <p>
@@ -35,8 +35,8 @@ public class ToledoCFTester
     public static void main(String[] args) throws ParameterException
     {
 
-        BehavioralCharacteristics bc = new BehavioralCharacteristics();
-        bc.setDefaultParameters(ToledoCarFollowing.class);
+        Parameters params = new Parameters();
+        params.setDefaultParameters(ToledoCarFollowing.class);
         ToledoCarFollowing cf = new ToledoCarFollowing();
 
         Speed desiredSpeed = new Speed(120, SpeedUnit.KM_PER_HOUR);
@@ -53,8 +53,8 @@ public class ToledoCFTester
             Length s = leader.minus(x);
             leaders.clear();
             leaders.put(s, Speed.ZERO);
-            Length desiredHeadway = cf.desiredHeadway(bc, speed);
-            Acceleration a = cf.followingAcceleration(bc, speed, desiredSpeed, desiredHeadway, leaders);
+            Length desiredHeadway = cf.desiredHeadway(params, speed);
+            Acceleration a = cf.followingAcceleration(params, speed, desiredSpeed, desiredHeadway, leaders);
             System.out.println("t=" + t + ", v=" + speed + ", s=" + s + ", a=" + a);
 
             a = Acceleration.max(a, speed.divideBy(dt).neg());

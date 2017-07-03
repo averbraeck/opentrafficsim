@@ -5,9 +5,9 @@ import java.util.EnumSet;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -119,9 +119,9 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
 
     /** {@inheritDoc} */
     @Override
-    public final BehavioralCharacteristics getBehavioralCharacteristics()
+    public final Parameters getParameters()
     {
-        return this.gtu.getBehavioralCharacteristics();
+        return this.gtu.getParameters();
     }
 
     /** {@inheritDoc} */
@@ -150,7 +150,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
         try
         {
             return new HeadwayGTURealCopy(getId(), getGtuType(), headway, getLength(), speed, acceleration,
-                    getCarFollowingModel(), getBehavioralCharacteristics(), getSpeedLimitInfo(), getRoute(), getGtuStatus());
+                    getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getGtuStatus());
         }
         catch (GTUException exception)
         {

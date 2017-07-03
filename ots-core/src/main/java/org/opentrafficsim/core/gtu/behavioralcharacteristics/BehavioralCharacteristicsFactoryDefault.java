@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUType;
 
 /**
@@ -18,7 +19,7 @@ public class BehavioralCharacteristicsFactoryDefault implements BehavioralCharac
 
     /** {@inheritDoc} */
     @Override
-    public void setValues(final BehavioralCharacteristics defaultCharacteristics, final GTUType gtuType)
+    public void setValues(final Parameters defaultCharacteristics, final GTUType gtuType)
     {
         //
     }

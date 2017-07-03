@@ -1,11 +1,11 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djunits.value.vdouble.scalar.Length;
 
 /**
- * Wrapper class for LinearDensity parameters.
+ * Wrapper class for Length parameters.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -14,20 +14,20 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensity> implements Serializable
+public class ParameterTypeLength extends ParameterTypeNumeric<Length> implements Serializable
 {
 
     /** */
-    private static final long serialVersionUID = 20150000L;
+    private static final long serialVersionUID = 20160400L;
 
     /**
      * Constructor without default value and check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeLinearDensity(final String id, final String description)
+    public ParameterTypeLength(final String id, final String description)
     {
-        super(id, description, LinearDensity.class);
+        super(id, description, Length.class);
     }
 
     /**
@@ -36,9 +36,9 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue)
+    public ParameterTypeLength(final String id, final String description, final Length defaultValue)
     {
-        super(id, description, LinearDensity.class, defaultValue);
+        super(id, description, Length.class, defaultValue);
     }
 
     /**
@@ -47,9 +47,9 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLinearDensity(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeLength(final String id, final String description, final NumericConstraint constraint)
     {
-        super(id, description, LinearDensity.class, constraint);
+        super(id, description, Length.class, constraint);
     }
 
     /**
@@ -59,17 +59,17 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue,
+    public ParameterTypeLength(final String id, final String description, final Length defaultValue,
             final NumericConstraint constraint)
     {
-        super(id, description, LinearDensity.class, defaultValue, constraint);
+        super(id, description, Length.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "ParameterTypeLinearDensity [id=" + getId() + ", description=" + getDescription() + "]";
+        return "ParameterTypeLength [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

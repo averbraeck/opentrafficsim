@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
@@ -50,28 +50,28 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     private final TacticalPlanner fixedTacticalPlanner;
 
     /**
-     * @param behavioralCharacteristics the personal driving characteristics, which contain settings for the tactical planner
+     * @param parameters the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      * @param gtu GTU
      * @throws GTUException if fixed tactical planner == null
      */
-    public LaneBasedStrategicalRoutePlanner(final BehavioralCharacteristics behavioralCharacteristics,
+    public LaneBasedStrategicalRoutePlanner(final Parameters parameters,
             final TacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu) throws GTUException
     {
-        this(behavioralCharacteristics, fixedTacticalPlanner, null, gtu);
+        this(parameters, fixedTacticalPlanner, null, gtu);
     }
 
     /**
-     * @param behavioralCharacteristics the personal driving characteristics, which contain settings for the tactical planner
+     * @param parameters the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      * @param route the route to drive
      * @param gtu GTU
      * @throws GTUException if fixed tactical planner == null
      */
-    public LaneBasedStrategicalRoutePlanner(final BehavioralCharacteristics behavioralCharacteristics,
+    public LaneBasedStrategicalRoutePlanner(final Parameters parameters,
             final TacticalPlanner fixedTacticalPlanner, final Route route, final LaneBasedGTU gtu) throws GTUException
     {
-        super(behavioralCharacteristics, gtu);
+        super(parameters, gtu);
         this.route = route;
         this.fixedTacticalPlanner = fixedTacticalPlanner;
         Throw.when(fixedTacticalPlanner == null, GTUException.class,

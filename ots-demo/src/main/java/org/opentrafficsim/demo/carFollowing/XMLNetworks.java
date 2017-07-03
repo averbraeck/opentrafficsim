@@ -31,6 +31,8 @@ import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
@@ -46,8 +48,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -523,7 +523,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         else if ("LMRS".equals(tacticalPlannerName))
                         {
                             // provide default parameters with the car-following model
-                            BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
+                            Parameters defaultBehavioralCFCharacteristics = new Parameters();
                             defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
                             this.strategicalPlannerGeneratorCars =
                                     new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
@@ -823,11 +823,11 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 {
                     public LaneBasedStrategicalPlanner draw() throws ProbabilityException, ParameterException
                     {
-                        BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
-                        behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(450.0, LengthUnit.METER));
+                        BehavioralCharacteristics parameters = DefaultsFactory.getDefaultBehavioralCharacteristics();
+                        parameters.setParameter(ParameterTypes.LOOKAHEAD, new Length(450.0, LengthUnit.METER));
                         try
                         {
-                            return new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, tacticalPlanner,
+                            return new LaneBasedStrategicalRoutePlanner(parameters, tacticalPlanner,
                                 XMLNetworkModel.this.routeGenerator.draw());
                         }
                         catch (GTUException exception)
@@ -897,10 +897,10 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         // new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(java.lang.Double.MAX_VALUE,
         // TimeUnit.SI));
         // LaneChangeModel lcm = new FixedLaneChangeModel(null);
-        BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
+        Parameters parameters = DefaultsFactory.getDefaultParameters();
         LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(1, METER),
                 lane.getWidth(1), Speed.ZERO, this.simulator, (OTSNetwork) this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                 new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
         block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class, this.gtuColorer);
         return lane;

@@ -2,9 +2,9 @@ package org.opentrafficsim.demo.carFollowing;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 
 /**
  * Factory for defaults in demos.
@@ -30,25 +30,25 @@ public final class DefaultsFactory
     }
 
     /**
-     * Returns a default set of behavioral characteristics.
-     * @return Default set of behavioral characteristics.
+     * Returns a default set of parameters.
+     * @return Default set of parameters.
      */
-    public static BehavioralCharacteristics getDefaultBehavioralCharacteristics()
+    public static Parameters getDefaultParameters()
     {
 
-        BehavioralCharacteristics bc = new BehavioralCharacteristics().setDefaultParameters(ParameterTypes.class);
+        Parameters params = new Parameters().setDefaultParameters(ParameterTypes.class);
 
         // demos use different value from default LMRS value
         try
         {
-            bc.setParameter(ParameterTypes.LOOKAHEAD, new Length(250, LengthUnit.SI));
+            params.setParameter(ParameterTypes.LOOKAHEAD, new Length(250, LengthUnit.SI));
         }
         catch (ParameterException pe)
         {
             throw new RuntimeException("Parameter type 'LOOKAHEAD' could not be set.", pe);
         }
 
-        return bc;
+        return params;
 
     }
 

@@ -3,11 +3,11 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDouble;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeSpeed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
+import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -43,13 +43,13 @@ public class IncentiveGetInLane implements MandatoryIncentive
     
     /** {@inheritDoc} */
     @Override
-    public Desire determineDesire(final BehavioralCharacteristics behavioralCharacteristics, final LanePerception perception,
+    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
 
-        Speed vCong = behavioralCharacteristics.getParameter(VCONG);
-        double hierarchy = behavioralCharacteristics.getParameter(HIERARCHY);
+        Speed vCong = parameters.getParameter(VCONG);
+        double hierarchy = parameters.getParameter(HIERARCHY);
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         SortedSet<InfrastructureLaneChangeInfo> info = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);

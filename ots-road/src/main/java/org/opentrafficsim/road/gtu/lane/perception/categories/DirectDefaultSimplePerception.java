@@ -15,12 +15,12 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.TimeStampedObject;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -111,7 +111,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     {
         Time timestamp = getTimestamp();
         this.lanePathInfo = new TimeStampedObject<>(AbstractLaneBasedTacticalPlanner.buildLanePathInfo(getGtu(),
-                getGtu().getBehavioralCharacteristics().getParameter(LOOKAHEAD)), timestamp);
+                getGtu().getParameters().getParameter(LOOKAHEAD)), timestamp);
     }
 
     /** {@inheritDoc} */
@@ -123,7 +123,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         {
             updateLanePathInfo();
         }
-        Length maximumForwardHeadway = getGtu().getBehavioralCharacteristics().getParameter(LOOKAHEAD);
+        Length maximumForwardHeadway = getGtu().getParameters().getParameter(LOOKAHEAD);
         this.forwardHeadwayGTU = new TimeStampedObject<>(forwardHeadway(maximumForwardHeadway, true), timestamp);
     }
 
@@ -136,7 +136,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         {
             updateLanePathInfo();
         }
-        Length maximumForwardHeadway = getGtu().getBehavioralCharacteristics().getParameter(LOOKAHEAD);
+        Length maximumForwardHeadway = getGtu().getParameters().getParameter(LOOKAHEAD);
         this.forwardHeadwayObject = new TimeStampedObject<>(forwardHeadway(maximumForwardHeadway, false), timestamp);
     }
 
@@ -145,7 +145,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     public final void updateBackwardHeadway() throws GTUException, ParameterException, NetworkException
     {
         Time timestamp = getTimestamp();
-        Length maximumReverseHeadway = getGtu().getBehavioralCharacteristics().getParameter(LOOKBACKOLD);
+        Length maximumReverseHeadway = getGtu().getParameters().getParameter(LOOKBACKOLD);
         this.backwardHeadway = new TimeStampedObject<>(backwardHeadway(maximumReverseHeadway), timestamp);
     }
 
@@ -195,8 +195,8 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         }
 
         // for the accessible lanes, see who is ahead of us and in front of us
-        Length maximumForwardHeadway = getGtu().getBehavioralCharacteristics().getParameter(LOOKAHEAD);
-        Length maximumReverseHeadway = getGtu().getBehavioralCharacteristics().getParameter(LOOKBACKOLD);
+        Length maximumForwardHeadway = getGtu().getParameters().getParameter(LOOKAHEAD);
+        Length maximumReverseHeadway = getGtu().getParameters().getParameter(LOOKBACKOLD);
         this.neighboringHeadwaysLeft = new TimeStampedObject<>(
                 collectNeighborLaneTraffic(LateralDirectionality.LEFT, timestamp, maximumForwardHeadway, maximumReverseHeadway),
                 timestamp);
@@ -218,8 +218,8 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         }
 
         // for the accessible lanes, see who is ahead of us and in front of us
-        Length maximumForwardHeadway = getGtu().getBehavioralCharacteristics().getParameter(LOOKAHEAD);
-        Length maximumReverseHeadway = getGtu().getBehavioralCharacteristics().getParameter(LOOKBACKOLD);
+        Length maximumForwardHeadway = getGtu().getParameters().getParameter(LOOKAHEAD);
+        Length maximumReverseHeadway = getGtu().getParameters().getParameter(LOOKBACKOLD);
         this.neighboringHeadwaysRight = new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.RIGHT,
                 timestamp, maximumForwardHeadway, maximumReverseHeadway), timestamp);
     }

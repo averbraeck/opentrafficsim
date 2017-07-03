@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.lane.LaneType;
 
@@ -31,8 +31,8 @@ public class GTUTypeAssumptions implements Serializable
     /** stored car following model of the observed GTU. */
     private final Map<GTUType, CarFollowingModel> carFollowingModelMap = new HashMap<>();
 
-    /** stored behavioral characteristics of the observed GTU. */
-    private final Map<GTUType, BehavioralCharacteristics> behavioralCharacteristicsMap = new HashMap<>();
+    /** stored parameters of the observed GTU. */
+    private final Map<GTUType, Parameters> parametersMap = new HashMap<>();
 
     /** stored speed limit info of the observed GTU. */
     private final Map<GTUType, Map<LaneType, Speed>> laneTypeSpeedMap = new HashMap<>();
@@ -50,16 +50,16 @@ public class GTUTypeAssumptions implements Serializable
     }
 
     /**
-     * Set the behavioral characteristics for a certain GTUType as an assumption for that GTUType.
+     * Set the parameters for a certain GTUType as an assumption for that GTUType.
      * @param gtuType the GTUType to set the model for
-     * @param behavioralCharacteristics the model to set for the GTUType
+     * @param parameters the model to set for the GTUType
      */
-    public final void setBehavioralCharacteristics(final GTUType gtuType,
-            final BehavioralCharacteristics behavioralCharacteristics)
+    public final void setParameters(final GTUType gtuType,
+            final Parameters parameters)
     {
         Throw.whenNull(gtuType, "gtuType cannot be null");
-        Throw.whenNull(behavioralCharacteristics, "behavioralCharacteristics cannot be null");
-        this.behavioralCharacteristicsMap.put(gtuType, behavioralCharacteristics);
+        Throw.whenNull(parameters, "parameters cannot be null");
+        this.parametersMap.put(gtuType, parameters);
     }
 
     /**
@@ -93,13 +93,13 @@ public class GTUTypeAssumptions implements Serializable
     }
 
     /**
-     * Return the behavioral characteristics model for a certain GTUType as an assumption for that GTUType.
+     * Return the parameters model for a certain GTUType as an assumption for that GTUType.
      * @param gtuType the GTUType to get the model for
-     * @return the behavioral characteristics for the GTUType, or <b>null</b> when there is no information for the gtuType
+     * @return the parameters for the GTUType, or <b>null</b> when there is no information for the gtuType
      */
-    public final BehavioralCharacteristics getBehavioralCharacteristics(final GTUType gtuType)
+    public final Parameters getParameters(final GTUType gtuType)
     {
-        return this.behavioralCharacteristicsMap.get(gtuType);
+        return this.parametersMap.get(gtuType);
     }
 
     /**
@@ -142,7 +142,7 @@ public class GTUTypeAssumptions implements Serializable
         final int prime = 31;
         int result = 1;
         result = prime * result
-                + ((this.behavioralCharacteristicsMap == null) ? 0 : this.behavioralCharacteristicsMap.hashCode());
+                + ((this.parametersMap == null) ? 0 : this.parametersMap.hashCode());
         result = prime * result + ((this.carFollowingModelMap == null) ? 0 : this.carFollowingModelMap.hashCode());
         result = prime * result + ((this.laneTypeSpeedMap == null) ? 0 : this.laneTypeSpeedMap.hashCode());
         return result;
@@ -160,12 +160,12 @@ public class GTUTypeAssumptions implements Serializable
         if (getClass() != obj.getClass())
             return false;
         GTUTypeAssumptions other = (GTUTypeAssumptions) obj;
-        if (this.behavioralCharacteristicsMap == null)
+        if (this.parametersMap == null)
         {
-            if (other.behavioralCharacteristicsMap != null)
+            if (other.parametersMap != null)
                 return false;
         }
-        else if (!this.behavioralCharacteristicsMap.equals(other.behavioralCharacteristicsMap))
+        else if (!this.parametersMap.equals(other.parametersMap))
             return false;
         if (this.carFollowingModelMap == null)
         {
@@ -188,8 +188,8 @@ public class GTUTypeAssumptions implements Serializable
     @Override
     public final String toString()
     {
-        return "GTUTypeAssumptions [carFollowingModelMap=" + this.carFollowingModelMap + ", behavioralCharacteristicsMap="
-                + this.behavioralCharacteristicsMap + ", laneTypeSpeedMap=" + this.laneTypeSpeedMap + "]";
+        return "GTUTypeAssumptions [carFollowingModelMap=" + this.carFollowingModelMap + ", parametersMap="
+                + this.parametersMap + ", laneTypeSpeedMap=" + this.laneTypeSpeedMap + "]";
     }
 
 }

@@ -1,6 +1,6 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint;
+import org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint;
 
 /**
  * In order to define default constraints within a Parameter Type, an <tt>enum</tt> is available. This interface supplies easy
@@ -29,29 +29,27 @@ import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeri
  * In order to implement <i>custom</i> checks, any Parameter Type must extend the <tt>check</tt> method of its super. An example
  * is given below. The method should throw a <tt>ParameterException</tt> whenever a constraint is not met. The static
  * <tt>throwIf</tt> method is used to do this. The first check is a simple check on the SI value being above 2. The second check
- * compares the value with the value of another parameter in the <tt>BehavioralCharacteristics</tt>. These checks can only be
- * performed if the other parameter is present in the <tt>BehavioralCharacteristics</tt>. <b>Checks with other parameter type
- * values should always check whether <tt>BehavioralCharacteristics</tt> contains the other parameter type</b>. i.e.
- * <tt>bc.contains()</tt>.<br>
+ * compares the value with the value of another parameter in the <tt>Parameters</tt>. These checks can only be performed if the
+ * other parameter is present in the <tt>Parameters</tt>. <b>Checks with other parameter type values should always check whether
+ * <tt>Parameters</tt> contains the other parameter type</b>. i.e. <tt>params.contains()</tt>.<br>
  * 
  * <pre>
  * public static final ParameterTypeLength X = new ParameterTypeLength(&quot;x&quot;, &quot;My x parameter.&quot;)
  * {
- *     public void check(Length value, BehavioralCharacteristics bc) throws ParameterException
+ *     public void check(Length value, Parameters params) throws ParameterException
  *     {
  *         Throw.when(value.si &lt;= 2, ParameterException.class, &quot;Value of X is not above 2.&quot;);
- *         Throw.when(bc.contains(Y) &amp;&amp; value.si &gt; bc.getParameter(Y).si, ParameterException.class,
+ *         Throw.when(params.contains(Y) &amp;&amp; value.si &gt; params.getParameter(Y).si, ParameterException.class,
  *                 &quot;Value of X is larger than value of Y.&quot;);
  *     }
  * };
  * </pre>
  * 
- * Checks are invoked on default values (if given), in which case an empty <tt>BehavioralCharacteristics</tt> is forwarded. At
- * construction of a Parameter Type, no <tt>BehavioralCharacteristics</tt> is available. Checks are also invoked when value are
- * set into <tt>BehavioralCharacteristics</tt>, in which case that <tt>BehavioralCharacteristics</tt> forwards itself. Even
- * still, if in the above case X is set before Y, the check is never performed. Therefore, Y should also compare itself to X.
- * <b>Two parameters that are checked with each other, should both implement a check which is consistent with and mirrored to
- * the the others' check.</b> <br>
+ * Checks are invoked on default values (if given), in which case an empty <tt>Parameters</tt> is forwarded. At construction of
+ * a Parameter Type, no <tt>Parameters</tt> is available. Checks are also invoked when value are set into <tt>Parameters</tt>,
+ * in which case that <tt>Parameters</tt> forwards itself. Even still, if in the above case X is set before Y, the check is
+ * never performed. Therefore, Y should also compare itself to X. <b>Two parameters that are checked with each other, should
+ * both implement a check which is consistent with and mirrored to the the others' check.</b> <br>
  * <br>
  * The type of the first argument in the <tt>check()</tt> method depends on the super Parameter Type. For example:<br>
  * <ul>

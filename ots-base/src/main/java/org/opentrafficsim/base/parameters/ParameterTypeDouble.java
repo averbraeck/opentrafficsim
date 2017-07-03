@@ -1,9 +1,11 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
+import org.djunits.value.formatter.EngineeringFormatter;
+
 /**
- * Wrapper class for int parameters.
+ * Wrapper class for double parameters.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -12,19 +14,20 @@ import java.io.Serializable;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implements Serializable
+public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements Serializable
 {
+
     /** */
-    private static final long serialVersionUID = 20160400L;
+    private static final long serialVersionUID = 120160400;
 
     /**
      * Constructor without default value and check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeInteger(final String id, final String description)
+    public ParameterTypeDouble(final String id, final String description)
     {
-        super(id, description, Integer.class);
+        super(id, description, Double.class);
     }
 
     /**
@@ -33,9 +36,9 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
      * @param description Parameter description or full name..
      * @param defaultValue Default value.
      */
-    public ParameterTypeInteger(final String id, final String description, final int defaultValue)
+    public ParameterTypeDouble(final String id, final String description, final double defaultValue)
     {
-        super(id, description, Integer.class, defaultValue);
+        super(id, description, Double.class, defaultValue);
     }
 
     /**
@@ -44,9 +47,9 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeInteger(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeDouble(final String id, final String description, final NumericConstraint constraint)
     {
-        super(id, description, Integer.class, constraint);
+        super(id, description, Double.class, constraint);
     }
 
     /**
@@ -56,27 +59,16 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeInteger(final String id, final String description, final int defaultValue,
+    public ParameterTypeDouble(final String id, final String description, final double defaultValue,
             final NumericConstraint constraint)
     {
-        super(id, description, Integer.class, defaultValue, constraint);
+        super(id, description, Double.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
-    public final String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
+    public final String printValue(final Parameters parameters) throws ParameterException
     {
-        return Integer.toString(behavioralCharacteristics.getParameter(this));
-    }
-
-    /**
-     * Method to overwrite for checks with constraints.
-     * @param value Value to check with constraints.
-     * @param bc Set of behavioral characteristics.
-     * @throws ParameterException If the value does not comply with constraints.
-     */
-    public void check(final int value, final BehavioralCharacteristics bc) throws ParameterException
-    {
-        //
+        return EngineeringFormatter.format(parameters.getParameter(this));
     }
 
     /** {@inheritDoc} */
@@ -84,7 +76,7 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
     @Override
     public String toString()
     {
-        return "ParameterTypeInteger [id=" + getId() + ", description=" + getDescription() + "]";
+        return "ParameterTypeDouble [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

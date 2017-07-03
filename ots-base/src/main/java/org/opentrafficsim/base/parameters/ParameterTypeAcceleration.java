@@ -1,11 +1,11 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Acceleration;
 
 /**
- * Wrapper class for Length parameters.
+ * Wrapper class for Acceleration parameters.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeLength extends ParameterTypeNumeric<Length> implements Serializable
+public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration> implements Serializable
 {
 
     /** */
@@ -25,9 +25,9 @@ public class ParameterTypeLength extends ParameterTypeNumeric<Length> implements
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeLength(final String id, final String description)
+    public ParameterTypeAcceleration(final String id, final String description)
     {
-        super(id, description, Length.class);
+        super(id, description, Acceleration.class);
     }
 
     /**
@@ -36,9 +36,9 @@ public class ParameterTypeLength extends ParameterTypeNumeric<Length> implements
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeLength(final String id, final String description, final Length defaultValue)
+    public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue)
     {
-        super(id, description, Length.class, defaultValue);
+        super(id, description, Acceleration.class, defaultValue);
     }
 
     /**
@@ -47,9 +47,9 @@ public class ParameterTypeLength extends ParameterTypeNumeric<Length> implements
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLength(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeAcceleration(final String id, final String description, final NumericConstraint constraint)
     {
-        super(id, description, Length.class, constraint);
+        super(id, description, Acceleration.class, constraint);
     }
 
     /**
@@ -59,17 +59,17 @@ public class ParameterTypeLength extends ParameterTypeNumeric<Length> implements
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLength(final String id, final String description, final Length defaultValue,
+    public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue,
             final NumericConstraint constraint)
     {
-        super(id, description, Length.class, defaultValue, constraint);
+        super(id, description, Acceleration.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "ParameterTypeLength [id=" + getId() + ", description=" + getDescription() + "]";
+        return "ParameterTypeAcceleration [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

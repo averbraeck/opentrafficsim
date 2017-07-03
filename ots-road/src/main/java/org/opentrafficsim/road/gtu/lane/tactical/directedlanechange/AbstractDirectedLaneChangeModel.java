@@ -8,11 +8,11 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -81,7 +81,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
         DualAccelerationStep otherLaneAccelerationSteps = null == otherLane ? null
                 : gtuFollowingModel.computeDualAccelerationStep(gtu, otherLaneGTUs, maxDistance, speedLimit, laneChangeTime);
         if (null != otherLaneAccelerationSteps && otherLaneAccelerationSteps.getFollowerAcceleration()
-                .getSI() < -gtu.getBehavioralCharacteristics().getParameter(B).getSI())
+                .getSI() < -gtu.getParameters().getParameter(B).getSI())
         {
             otherLane = null; // do not change to the other lane
         }

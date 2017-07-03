@@ -11,8 +11,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -191,7 +191,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
 
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
+    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo)
             throws ParameterException
     {
         throw new UnsupportedOperationException("Old car-following model does not support desired speed.");
@@ -199,7 +199,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
 
     /** {@inheritDoc} */
     @Override
-    public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+    public final Length desiredHeadway(final Parameters parameters, final Speed speed)
             throws ParameterException
     {
         throw new UnsupportedOperationException("Old car-following model does not support desired headway.");
@@ -207,7 +207,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+    public final Acceleration followingAcceleration(final Parameters parameters,
             final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         Length headway;

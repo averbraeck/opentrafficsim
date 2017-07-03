@@ -12,9 +12,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -209,7 +209,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
 
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final SpeedLimitInfo speedInfo)
+    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo)
             throws ParameterException
     {
         return null;
@@ -217,7 +217,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
 
     /** {@inheritDoc} */
     @Override
-    public final Length desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed)
+    public final Length desiredHeadway(final Parameters parameters, final Speed speed)
             throws ParameterException
     {
         return null;
@@ -225,7 +225,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics,
+    public final Acceleration followingAcceleration(final Parameters parameters,
             final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         return null;

@@ -12,12 +12,12 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.TimeStampedObject;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -335,7 +335,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         Set<LaneStructureRecord> nextSet = new HashSet<>();
         LaneStructureRecord initRecord = getPerception().getLaneStructure().getLaneLSR(lane);
         currentSet.add(initRecord);
-        Length lookahead = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+        Length lookahead = getGtu().getParameters().getParameter(ParameterTypes.LOOKAHEAD);
         Length ds = getGtu().getFront().getDx().minus(getGtu().getReference().getDx());
         // move downstream over branches
         while (!currentSet.isEmpty())
@@ -406,7 +406,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         Set<LaneStructureRecord> prevSet = new HashSet<>();
         LaneStructureRecord initRecord = getPerception().getLaneStructure().getLaneLSR(lane);
         currentSet.add(initRecord);
-        Length lookback = getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
+        Length lookback = getGtu().getParameters().getParameter(ParameterTypes.LOOKBACK);
         Length dsFront = getGtu().getFront().getDx().minus(getGtu().getReference().getDx());
         Length dsRear = getGtu().getRear().getDx().minus(getGtu().getReference().getDx());
         // move upstream over branches
@@ -638,7 +638,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     {
         Time timestamp = getTimestamp();
         this.lanePathInfo = new TimeStampedObject<>(AbstractLaneBasedTacticalPlanner.buildLanePathInfo(getGtu(),
-                getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD)), timestamp);
+                getGtu().getParameters().getParameter(ParameterTypes.LOOKAHEAD)), timestamp);
     }
 
     /**

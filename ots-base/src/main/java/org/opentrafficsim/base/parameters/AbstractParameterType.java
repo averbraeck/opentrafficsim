@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
@@ -16,7 +16,7 @@ import nl.tudelft.simulation.language.Throw;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <T> Class of the value.
+ * @param <T> Type of the value.
  */
 public abstract class AbstractParameterType<T> extends Type<AbstractParameterType<T>> implements Serializable, Identifiable
 {
@@ -130,7 +130,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
             {
                 // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
                 // other parameter types.
-                check(defaultValue, new BehavioralCharacteristics());
+                check(defaultValue, new Parameters());
             }
             catch (ParameterException pe)
             {
@@ -204,21 +204,21 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     /**
      * Method to overwrite for checks with constraints.
      * @param value Value to check with constraints.
-     * @param bc Set of behavioral characteristics.
+     * @param params Set of parameters.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    public void check(final T value, final BehavioralCharacteristics bc) throws ParameterException
+    public void check(final T value, final Parameters params) throws ParameterException
     {
         //
     }
 
     /**
-     * Print the given value from the map in BehavioralCharachteristics in a presentable format.
-     * @param behavioralCharacteristics Behavioral characteristics to get the value from.
+     * Print the given value from the map in Parameters in a presentable format.
+     * @param parameters Parameters to get the value from.
      * @return Printable string of value.
      * @throws ParameterException If the parameter is not present.
      */
-    public abstract String printValue(BehavioralCharacteristics behavioralCharacteristics) throws ParameterException;
+    public abstract String printValue(Parameters parameters) throws ParameterException;
 
     /** {@inheritDoc} */
     @Override

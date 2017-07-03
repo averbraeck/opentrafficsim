@@ -9,12 +9,12 @@ import java.util.TreeMap;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.perception.AbstractPerception;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -93,11 +93,11 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         if (this.laneStructure == null || this.updateTime.lt(getGtu().getSimulator().getSimulatorTime().getTime()))
         {
             // downstream structure length
-            Length down = getGtu().getBehavioralCharacteristics().getParameter(PERCEPTION);
+            Length down = getGtu().getParameters().getParameter(PERCEPTION);
             // upstream structure length
-            Length up = getGtu().getBehavioralCharacteristics().getParameter(LOOKBACK);
+            Length up = getGtu().getParameters().getParameter(LOOKBACK);
             // structure length downstream of split on link not on route
-            Length downSplit = getGtu().getBehavioralCharacteristics().getParameter(LOOKAHEAD);
+            Length downSplit = getGtu().getParameters().getParameter(LOOKAHEAD);
             // structure length upstream of merge on link not on route
             Length upMerge = Length.max(up, downSplit);
             // negative values for upstream

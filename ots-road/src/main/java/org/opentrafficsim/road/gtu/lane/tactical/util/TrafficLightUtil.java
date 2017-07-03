@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
-import static org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeNumeric.NumericConstraint.POSITIVE;
+import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVE;
 
 import java.util.Set;
 import java.util.SortedMap;
@@ -10,10 +10,10 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeAcceleration;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -52,7 +52,7 @@ public final class TrafficLightUtil
      * model and the constant deceleration, it is ensured that comfortable deceleration is applied if approaching a red traffic
      * light from far away, while strong deceleration is only applied if required and appropriately represents stopping for
      * yellow.
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param headwayTrafficLights set of headway traffic lights
      * @param carFollowingModel car following model
      * @param speed speed
@@ -62,7 +62,7 @@ public final class TrafficLightUtil
      * @throws NullPointerException if any input is null
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
-    public static Acceleration respondToTrafficLights(final BehavioralCharacteristics behavioralCharacteristics,
+    public static Acceleration respondToTrafficLights(final Parameters parameters,
             final Set<HeadwayTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel, final Speed speed,
             final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
@@ -70,7 +70,7 @@ public final class TrafficLightUtil
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         for (HeadwayTrafficLight headwayTrafficLight : headwayTrafficLights)
         {
-            Acceleration aLight = respondToTrafficLight(behavioralCharacteristics, headwayTrafficLight, carFollowingModel,
+            Acceleration aLight = respondToTrafficLight(parameters, headwayTrafficLight, carFollowingModel,
                     speed, speedLimitInfo);
             a = Acceleration.min(a, aLight);
         }
@@ -84,7 +84,7 @@ public final class TrafficLightUtil
      * which usually occurs only during the yellow phase. By using the highest acceleration of the car-following model and the
      * constant deceleration, it is ensured that comfortable deceleration is applied if approaching a red traffic light from far
      * away, while strong deceleration is only applied if required and appropriately represents stopping for yellow.
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param headwayTrafficLight headway traffic light
      * @param carFollowingModel car following model
      * @param speed speed
@@ -94,11 +94,11 @@ public final class TrafficLightUtil
      * @throws NullPointerException if any input is null
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
-    public static Acceleration respondToTrafficLight(final BehavioralCharacteristics behavioralCharacteristics,
+    public static Acceleration respondToTrafficLight(final Parameters parameters,
             final HeadwayTrafficLight headwayTrafficLight, final CarFollowingModel carFollowingModel, final Speed speed,
             final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
-        Throw.whenNull(behavioralCharacteristics, "Behavioral characteristics may not be null.");
+        Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(headwayTrafficLight, "Traffic light may not be null.");
         Throw.whenNull(carFollowingModel, "Car-following model may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
@@ -109,18 +109,18 @@ public final class TrafficLightUtil
             // deceleration from car-following model
             SortedMap<Length, Speed> leaders = new TreeMap<>();
             leaders.put(headwayTrafficLight.getDistance(), Speed.ZERO);
-            Acceleration a = carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaders);
+            Acceleration a = carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
             // compare to constant deceleration
-            Length s0 = behavioralCharacteristics.getParameter(ParameterTypes.S0);
+            Length s0 = parameters.getParameter(ParameterTypes.S0);
             if (headwayTrafficLight.getDistance().gt(s0)) // constant acceleration not applicable if within s0
             {
                 // constant acceleration is -.5*v^2/s, where s = distance-s0 > 0
-                Acceleration aConstant = CarFollowingUtil.constantAccelerationStop(carFollowingModel, behavioralCharacteristics,
+                Acceleration aConstant = CarFollowingUtil.constantAccelerationStop(carFollowingModel, parameters,
                         speed, headwayTrafficLight.getDistance());
                 a = Acceleration.max(a, aConstant);
             }
             // return a if a > -b
-            if (a.gt(behavioralCharacteristics.getParameter(B_YELLOW).neg()))
+            if (a.gt(parameters.getParameter(B_YELLOW).neg()))
             {
                 return a;
             }

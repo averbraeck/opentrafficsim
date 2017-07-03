@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.strategical;
 
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
@@ -17,17 +17,17 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 public interface LaneBasedStrategicalPlanner extends StrategicalPlanner
 {
     /**
-     * get the personal behavioral characteristics of the driver of a GTU.
-     * @return the personal behavioral characteristics of the driver of a GTU.
+     * get the personal parameters of the driver of a GTU.
+     * @return the personal parameters of the driver of a GTU.
      */
-    BehavioralCharacteristics getBehavioralCharacteristics();
+    Parameters getParameters();
 
     /**
-     * set the personal behavioral characteristics of the driver of a GTU.
-     * @param behavioralCharacteristics set behavioral characteristics, if the driver of the GTU changes, or the driver is using
+     * set the personal parameters of the driver of a GTU.
+     * @param parameters set parameters, if the driver of the GTU changes, or the driver is using
      *            different characteristics
      */
-    void setBehavioralCharacteristics(final BehavioralCharacteristics behavioralCharacteristics);
+    void setParameters(Parameters parameters);
 
     /** {@inheritDoc} */
     LaneBasedGTU getGtu();

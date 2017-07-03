@@ -3,8 +3,8 @@ package ahfe;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
@@ -592,8 +592,8 @@ public class AHFESimulation extends AbstractWrappableSimulation
             AHFESimulation.this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
-                InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
-                //URL stream = URLResource.getResource("./Network.xml");
+                //InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml"); // Running from eclipse
+                URL stream = URLResource.getResource("./Network.xml"); // Running Jar
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 this.network = new OTSNetwork("AHFE");
                 nlp.build(stream, this.network);

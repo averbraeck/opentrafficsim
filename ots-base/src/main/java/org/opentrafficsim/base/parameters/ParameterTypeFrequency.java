@@ -1,11 +1,11 @@
-package org.opentrafficsim.core.gtu.behavioralcharacteristics;
+package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Frequency;
 
 /**
- * Wrapper class for Speed parameters.
+ * Wrapper class for Frequency parameters.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements Serializable
+public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> implements Serializable
 {
 
     /** */
@@ -25,9 +25,9 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeSpeed(final String id, final String description)
+    public ParameterTypeFrequency(final String id, final String description)
     {
-        super(id, description, Speed.class);
+        super(id, description, Frequency.class);
     }
 
     /**
@@ -36,9 +36,9 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue)
+    public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue)
     {
-        super(id, description, Speed.class, defaultValue);
+        super(id, description, Frequency.class, defaultValue);
     }
 
     /**
@@ -47,9 +47,9 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeFrequency(final String id, final String description, final NumericConstraint constraint)
     {
-        super(id, description, Speed.class, constraint);
+        super(id, description, Frequency.class, constraint);
     }
 
     /**
@@ -59,16 +59,17 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue, final NumericConstraint constraint)
+    public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue,
+            final NumericConstraint constraint)
     {
-        super(id, description, Speed.class, defaultValue, constraint);
+        super(id, description, Frequency.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "ParameterTypeSpeed [id=" + getId() + ", description=" + getDescription() + "]";
+        return "ParameterTypeFrequency [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

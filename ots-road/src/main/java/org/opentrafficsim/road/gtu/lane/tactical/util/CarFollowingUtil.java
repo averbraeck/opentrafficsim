@@ -9,8 +9,8 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -41,7 +41,7 @@ public final class CarFollowingUtil
     /**
      * Follow a set of headway GTUs.
      * @param carFollowingModel car-following model
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param speed current speed
      * @param speedLimitInfo speed limit info
      * @param leaders leaders
@@ -49,7 +49,7 @@ public final class CarFollowingUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration followLeaders(final CarFollowingModel carFollowingModel,
-            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
+            final Parameters parameters, final Speed speed, final SpeedLimitInfo speedLimitInfo,
             final SortedSet<HeadwayGTU> leaders) throws ParameterException
     {
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
@@ -57,13 +57,13 @@ public final class CarFollowingUtil
         {
             leaderMap.put(headwayGTU.getDistance(), headwayGTU.getSpeed());
         }
-        return carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaderMap);
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaderMap);
     }
 
     /**
      * Follow a set of headway GTUs.
      * @param carFollowingModel car-following model
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param speed current speed
      * @param speedLimitInfo speed limit info
      * @param distance distance
@@ -72,18 +72,18 @@ public final class CarFollowingUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel,
-            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
+            final Parameters parameters, final Speed speed, final SpeedLimitInfo speedLimitInfo,
             final Length distance, final Speed leaderSpeed) throws ParameterException
     {
         SortedMap<Length, Speed> leaders = new TreeMap<>();
         leaders.put(distance, leaderSpeed);
-        return carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaders);
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
     }
 
     /**
      * Stop within given distance.
      * @param carFollowingModel car-following model
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param speed current speed
      * @param speedLimitInfo speed limit info
      * @param distance distance to stop over
@@ -91,47 +91,47 @@ public final class CarFollowingUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration stop(final CarFollowingModel carFollowingModel,
-            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
+            final Parameters parameters, final Speed speed, final SpeedLimitInfo speedLimitInfo,
             final Length distance) throws ParameterException
     {
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
         leaderMap.put(distance, Speed.ZERO);
-        return carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaderMap);
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaderMap);
     }
 
     /**
      * Return constant acceleration in order to stop in specified distance. The car-following model is used to determine the
      * stopping distance (i.e. distance remaining at stand still, e.g. 1-3m).
      * @param carFollowingModel car-following model
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param speed current speed
      * @param distance distance to stop over
      * @return constant acceleration in order to stop in specified distance
      * @throws ParameterException on missing parameter
      */
     public static Acceleration constantAccelerationStop(final CarFollowingModel carFollowingModel,
-            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final Length distance)
+            final Parameters parameters, final Speed speed, final Length distance)
             throws ParameterException
     {
-        Length s0 = carFollowingModel.desiredHeadway(behavioralCharacteristics, Speed.ZERO);
+        Length s0 = carFollowingModel.desiredHeadway(parameters, Speed.ZERO);
         return new Acceleration(-0.5 * speed.si * speed.si / (distance.si - s0.si), AccelerationUnit.SI);
     }
 
     /**
      * Calculate free acceleration.
      * @param carFollowingModel car-following model
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param speed current speed
      * @param speedLimitInfo speed limit info
      * @return acceleration free acceleration
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration freeAcceleration(final CarFollowingModel carFollowingModel,
-            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo)
+            final Parameters parameters, final Speed speed, final SpeedLimitInfo speedLimitInfo)
             throws ParameterException
     {
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
-        return carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaderMap);
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaderMap);
     }
 
     /**
@@ -179,7 +179,7 @@ public final class CarFollowingUtil
      * low, and the target speed is so high, that such levels of deceleration are never required.<br>
      * <br>
      * @param carFollowingModel car-following model to use
-     * @param behavioralCharacteristics behavioral characteristics
+     * @param parameters parameters
      * @param speed current speed
      * @param speedLimitInfo info regarding the desired speed for car-following
      * @param distance distance to the location of the target speed
@@ -190,10 +190,10 @@ public final class CarFollowingUtil
      * @throws IllegalArgumentException if the distance or target speed is not at least 0
      */
     public static Acceleration approachTargetSpeed(final CarFollowingModel carFollowingModel,
-            final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, final SpeedLimitInfo speedLimitInfo,
+            final Parameters parameters, final Speed speed, final SpeedLimitInfo speedLimitInfo,
             final Length distance, final Speed targetSpeed) throws ParameterException
     {
-        Throw.whenNull(behavioralCharacteristics, "Behavioral characteristics may not be null.");
+        Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
         Throw.whenNull(distance, "Distance may not be null");
@@ -211,11 +211,11 @@ public final class CarFollowingUtil
             virtualSpeed = new Speed(Double.MAX_VALUE, SpeedUnit.SI);
         }
         // set distance in line with equilibrium headway at virtual speed
-        Length virtualDistance = distance.plus(carFollowingModel.desiredHeadway(behavioralCharacteristics, virtualSpeed));
+        Length virtualDistance = distance.plus(carFollowingModel.desiredHeadway(parameters, virtualSpeed));
         // calculate acceleration towards virtual vehicle with car-following model
         SortedMap<Length, Speed> leaders = new TreeMap<>();
         leaders.put(virtualDistance, virtualSpeed);
-        return carFollowingModel.followingAcceleration(behavioralCharacteristics, speed, speedLimitInfo, leaders);
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
     }
 
 }

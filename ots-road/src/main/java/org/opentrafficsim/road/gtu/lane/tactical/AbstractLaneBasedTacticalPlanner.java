@@ -10,20 +10,20 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSClassUtil;
+import org.opentrafficsim.base.OTSClassUtil;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeClass;
+import org.opentrafficsim.base.parameters.ParameterTypeClassList;
+import org.opentrafficsim.base.parameters.ParameterTypeDuration;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.ParameterTypeClass.ClassConstraint;
+import org.opentrafficsim.base.parameters.ParameterTypeClassList.ClassListConstraint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClass;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClass.ClassConstraint;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClassList;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeClassList.ClassListConstraint;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeDuration;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypeLength;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -671,7 +671,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * Build an operational plan based on a simple operational plan and status info.
      * @param gtu gtu
      * @param startTime start time for plan
-     * @param bc behavioral characteristics
+     * @param params parameters
      * @param simplePlan simple operational plan
      * @param laneChange lane change status
      * @return operational plan
@@ -681,10 +681,10 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @throws OperationalPlanException operational plan exeption
      */
     public static LaneBasedOperationalPlan buildPlanFromSimplePlan(final LaneBasedGTU gtu, final Time startTime,
-            final BehavioralCharacteristics bc, final SimpleOperationalPlan simplePlan, final LaneChange laneChange)
+            final Parameters params, final SimpleOperationalPlan simplePlan, final LaneChange laneChange)
             throws ParameterException, GTUException, NetworkException, OperationalPlanException
     {
-        Length forwardHeadway = bc.getParameter(LOOKAHEAD);
+        Length forwardHeadway = params.getParameter(LOOKAHEAD);
         List<Lane> lanes = null;
         // START TEMP INSTANT CHANGE
         if (simplePlan.isLaneChange())
@@ -699,7 +699,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             try
             {
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, startPosition, startTime, gtu.getSpeed(),
-                        simplePlan.getAcceleration(), bc.getParameter(DT));
+                        simplePlan.getAcceleration(), params.getParameter(DT));
             }
             catch (OTSGeometryException exception)
             {
@@ -751,7 +751,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             try
             {
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, firstLanePosition, startTime,
-                        gtu.getSpeed(), simplePlan.getAcceleration(), bc.getParameter(DT));
+                        gtu.getSpeed(), simplePlan.getAcceleration(), params.getParameter(DT));
             }
             catch (OTSGeometryException exception)
             {
@@ -762,7 +762,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         try
         {
             return LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtu, lanes, simplePlan.getLaneChangeDirection(),
-                    gtu.getLocation(), startTime, gtu.getSpeed(), simplePlan.getAcceleration(), bc.getParameter(DT),
+                    gtu.getLocation(), startTime, gtu.getSpeed(), simplePlan.getAcceleration(), params.getParameter(DT),
                     laneChange);
         }
         catch (OTSGeometryException exception)

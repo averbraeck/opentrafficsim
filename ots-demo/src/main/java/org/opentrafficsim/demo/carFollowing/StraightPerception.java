@@ -36,6 +36,9 @@ import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -45,9 +48,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -586,11 +586,11 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         try
         {
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
+            Parameters parameters = DefaultsFactory.getDefaultParameters();
 
             this.block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
                     new Speed(0.0, KM_PER_HOUR), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                     new GTUFollowingTacticalPlannerNoPerceive(this.carFollowingModelCars, this.block), this.block);
             this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
                     this.gtuColorer);
@@ -641,16 +641,16 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 Duration tSafe = new Duration(1.0, DurationUnit.SECOND); // time headway
                 gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
             }
-            BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
+            Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedPerceivingCar car = new LaneBasedPerceivingCar("" + (++this.carsCreated), this.gtuType, vehicleLength,
                     new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                     new GTUFollowingTacticalPlannerNoPerceive(gtuFollowingModel, car), car);
             car.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             car.setPerceptionInterval(new Duration(this.perceptionIntervalDist.draw(), DurationUnit.SECOND));
-            car.getStrategicalPlanner().getBehavioralCharacteristics().setParameter(ParameterTypes.LOOKAHEAD,
+            car.getStrategicalPlanner().getParameters().setParameter(ParameterTypes.LOOKAHEAD,
                     new Length(this.forwardHeadwayDist.draw(), LengthUnit.METER));
             // .setForwardHeadwayDistance(new Length(this.forwardHeadwayDist.draw(), LengthUnit.METER));
         }
@@ -802,7 +802,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
 
             // get the lane plan
             LanePathInfo lanePathInfo =
-                    buildLanePathInfo(getGtu(), getGtu().getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD));
+                    buildLanePathInfo(getGtu(), getGtu().getParameters().getParameter(ParameterTypes.LOOKAHEAD));
             Length maxDistance = lanePathInfo.getPath().getLength();
 
             // look at the conditions for headway

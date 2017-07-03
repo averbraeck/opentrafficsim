@@ -11,11 +11,11 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
@@ -402,7 +402,7 @@ class GeneratorTag implements Serializable
         if (generatorTag.tacticalPlannerName.equals("LMRS"))
         {
             // provide default parameters with the car-following model
-            BehavioralCharacteristics defaultBehavioralCFCharacteristics = new BehavioralCharacteristics();
+            Parameters defaultBehavioralCFCharacteristics = new Parameters();
             defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
             defaultBehavioralCFCharacteristics.setDefaultParameters(TrafficLightUtil.class);
             try
