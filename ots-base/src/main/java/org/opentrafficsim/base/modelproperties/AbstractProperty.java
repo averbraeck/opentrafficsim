@@ -55,9 +55,9 @@ public abstract class AbstractProperty<T> implements Property<T>, Serializable
 
     /**
      * Finalize the readOnly flag.
-     * @param readOnlyValue the readonly property value to set
+     * @param readOnlyValue boolean; the new value for the readonly flag
      */
-    // XXX Made this method public to allow changes in e.g., tests
+    // XXX Made this method public to allow changes in e.g., tests; it should really be private
     public final void setReadOnly(final boolean readOnlyValue)
     {
         this.readOnly = readOnlyValue;
@@ -171,7 +171,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Serializable
         /** Next in line in the main CompoundProperty. */
         private int currentIndex;
 
-        /** Full list of AbstractProperties. */
+        /** Full list of Properties. */
         private final ArrayList<Property<?>> list;
 
         /**
@@ -187,7 +187,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Serializable
 
         /**
          * Recursively add all properties to the list. <br>
-         * Compound properties are included <b>before</b> their contents.
+         * Compound properties are included <b>right before</b> their contents.
          * @param cp AbstractProperty&lt;T&gt;; the property to add (if compound it and all it's children are added)
          */
         private void addToList(final Property<?> cp)
