@@ -1,24 +1,23 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
-import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVE;
-
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import nl.tudelft.simulation.language.Throw;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Static methods regarding traffic lights for composition in tactical planners.
@@ -34,7 +33,7 @@ public final class TrafficLightUtil
     /** Maximum deceleration for stopping for yellow traffic light. */
     public static final ParameterTypeAcceleration B_YELLOW =
             new ParameterTypeAcceleration("bYellow", "Maximum deceleration for stopping for yellow traffic light.",
-                    new Acceleration(3.5, AccelerationUnit.SI), POSITIVE);
+                    new Acceleration(3.5, AccelerationUnit.SI), ConstraintInterface.POSITIVE);
 
     /**
      * Do not instantiate.

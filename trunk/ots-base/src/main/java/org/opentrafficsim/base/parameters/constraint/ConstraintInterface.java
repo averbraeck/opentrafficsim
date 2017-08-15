@@ -1,6 +1,6 @@
-package org.opentrafficsim.base.parameters;
+package org.opentrafficsim.base.parameters.constraint;
 
-import org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint;
+import org.opentrafficsim.base.parameters.constraint.SingleBound.NumericConstraint;
 
 /**
  * In order to define default constraints within a Parameter Type, an <tt>enum</tt> is available. This interface supplies easy
@@ -74,12 +74,12 @@ public interface ConstraintInterface
 {
     // @formatter:off
     
-    NumericConstraint POSITIVE     = NumericConstraint.POSITIVE;
-    NumericConstraint NEGATIVE     = NumericConstraint.NEGATIVE;
-    NumericConstraint POSITIVEZERO = NumericConstraint.POSITIVEZERO;
-    NumericConstraint NEGATIVEZERO = NumericConstraint.NEGATIVEZERO;
-    NumericConstraint NONZERO      = NumericConstraint.NONZERO;
-    NumericConstraint UNITINTERVAL = NumericConstraint.UNITINTERVAL;
-    NumericConstraint ATLEASTONE   = NumericConstraint.ATLEASTONE;
+    Constraint<Number> POSITIVE     = NumericConstraint.POSITIVE;
+    Constraint<Number> NEGATIVE     = NumericConstraint.NEGATIVE;
+    Constraint<Number> POSITIVEZERO = NumericConstraint.POSITIVEZERO;
+    Constraint<Number> NEGATIVEZERO = NumericConstraint.NEGATIVEZERO;
+    Constraint<Number> NONZERO      = NumericConstraint.NONZERO;
+    Constraint<Number> UNITINTERVAL = DoubleBound.UNITINTERVAL;
+    Constraint<Number> ATLEASTONE   = NumericConstraint.ATLEASTONE;
     
 }

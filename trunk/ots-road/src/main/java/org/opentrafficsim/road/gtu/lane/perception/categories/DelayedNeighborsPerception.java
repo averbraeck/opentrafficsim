@@ -1,12 +1,12 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVE;
-import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVEZERO;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import nl.tudelft.simulation.jstats.distributions.DistNormal;
+import nl.tudelft.simulation.language.Throw;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -14,10 +14,11 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.TimeStampedObject;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
@@ -26,9 +27,6 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
-
-import nl.tudelft.simulation.jstats.distributions.DistNormal;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Implementation of delayed neighbors perception which anticipates using constant speed.
@@ -46,23 +44,23 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** Parameter for anticipating beyond current time. */
     public static final ParameterTypeDuration TA =
-            new ParameterTypeDuration("ta", "anticipation time in future", Duration.ZERO, POSITIVEZERO);
+            new ParameterTypeDuration("ta", "anticipation time in future", Duration.ZERO, ConstraintInterface.POSITIVEZERO);
 
     /** Parameter for correlation in errors. */
     public static final ParameterTypeDuration TAUE =
-            new ParameterTypeDuration("tau_e", "error correlation time", Duration.createSI(20), POSITIVE);
+            new ParameterTypeDuration("tau_e", "error correlation time", Duration.createSI(20), ConstraintInterface.POSITIVE);
 
     /** Parameter for distance error factor. */
     public static final ParameterTypeDouble SERROR =
-            new ParameterTypeDouble("s_error", "distance error factor", 0.1, POSITIVEZERO);
+            new ParameterTypeDouble("s_error", "distance error factor", 0.1, ConstraintInterface.POSITIVEZERO);
 
     /** Parameter for speed error factor. */
     public static final ParameterTypeDouble VERROR =
-            new ParameterTypeDouble("v_error", "speed error factor", 0.1, POSITIVEZERO);
+            new ParameterTypeDouble("v_error", "speed error factor", 0.1, ConstraintInterface.POSITIVEZERO);
 
     /** Parameter for acceleration error factor. */
     public static final ParameterTypeDouble AERROR =
-            new ParameterTypeDouble("a_error", "acceleration error factor", 0.2, POSITIVEZERO);
+            new ParameterTypeDouble("a_error", "acceleration error factor", 0.2, ConstraintInterface.POSITIVEZERO);
 
     /** Margin to check time step in Wiener process. */
     private static final double MARGIN = 1e-6;

@@ -2,10 +2,11 @@ package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
+import nl.tudelft.simulation.language.Throw;
+
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.Type;
-
-import nl.tudelft.simulation.language.Throw;
+import org.opentrafficsim.base.parameters.constraint.Constraint;
 
 /**
  * Defines meta-information of a parameter, defining the parameter uniquely.
@@ -53,7 +54,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Constructor without default value and constraint.
+     * Constructor without default value and with constraint.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
@@ -144,6 +145,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
      * Returns the parameter id.
      * @return id Parameter id.
      */
+    @Override
     public final String getId()
     {
         return this.id;
@@ -198,6 +200,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
         {
             return;
         }
+        this.constraint.fails(value);
         Throw.when(this.constraint.fails(value), ParameterException.class, this.constraint.failMessage(), this.getId());
     }
 
@@ -283,6 +286,15 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     {
         return "AbstractParameterType [id=" + this.id + ", description=" + this.description + ", valueClass=" + this.valueClass
                 + "]";
+    }
+
+    /**
+     * Retrieve the constraint.
+     * @return Constraint; the constraint of this AbstractParameterType
+     */
+    public final Constraint<? super T> getConstraint()
+    {
+        return this.constraint;
     }
 
 }

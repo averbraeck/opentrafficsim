@@ -3,9 +3,10 @@ package org.opentrafficsim.base.parameters;
 import java.util.List;
 import java.util.Set;
 
-import org.opentrafficsim.base.OTSClassUtil;
-
 import nl.tudelft.simulation.language.Throw;
+
+import org.opentrafficsim.base.OTSClassUtil;
+import org.opentrafficsim.base.parameters.constraint.Constraint;
 
 /**
  * <p>
@@ -54,6 +55,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
 
         /** {@inheritDoc} */
         @Override
+        @SuppressWarnings("checkstyle:designforextension")
         public boolean fails(final List<Class<? extends T>> value)
         {
             for (Class<? extends T> clazz : value)
@@ -68,6 +70,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
 
         /** {@inheritDoc} */
         @Override
+        @SuppressWarnings("checkstyle:designforextension")
         public String failMessage()
         {
             return "Value of parameter '%s' is not in the set of acceptable values.";
@@ -84,6 +87,13 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
         public static <T> ClassListConstraint<T> newInstance(final Class<T> type, final Class<? extends T>... objs)
         {
             return new ClassListConstraint<>(OTSClassUtil.toTypedSet(type, objs));
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "ClassListConstraint [classes=" + this.classes + "]";
         }
     }
 
@@ -140,6 +150,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public String printValue(final Parameters parameters) throws ParameterException
     {
         String delimiter = "";
@@ -156,6 +167,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "ParameterTypeClass []";

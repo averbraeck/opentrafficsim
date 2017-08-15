@@ -2,6 +2,8 @@ package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
+import org.opentrafficsim.base.parameters.constraint.Constraint;
+
 /**
  * Wrapper class for int parameters.
  * <p>
@@ -39,12 +41,23 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
     }
 
     /**
+     * Constructor with default value, without check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name..
+     * @param defaultValue Default value.
+     */
+    public ParameterTypeInteger(final String id, final String description, final Integer defaultValue)
+    {
+        super(id, description, Integer.class, defaultValue);
+    }
+
+    /**
      * Constructor without default value, with check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeInteger(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeInteger(final String id, final String description, final Constraint<Number> constraint)
     {
         super(id, description, Integer.class, constraint);
     }
@@ -57,12 +70,26 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeInteger(final String id, final String description, final int defaultValue,
-            final NumericConstraint constraint)
+            final Constraint<Number> constraint)
+    {
+        super(id, description, Integer.class, defaultValue, constraint);
+    }
+
+    /**
+     * Constructor with default value and check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param defaultValue Default value.
+     * @param constraint Constraint for parameter values.
+     */
+    public ParameterTypeInteger(final String id, final String description, final Integer defaultValue,
+            final Constraint<Number> constraint)
     {
         super(id, description, Integer.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String printValue(final Parameters parameters) throws ParameterException
     {
         return Integer.toString(parameters.getParameter(this));

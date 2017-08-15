@@ -2,7 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.base.HierarchalType;
+import org.opentrafficsim.base.HierarchicalType;
 
 /**
  * A GTU type identifies the type of a GTU. <br>
@@ -17,7 +17,7 @@ import org.opentrafficsim.base.HierarchalType;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class GTUType extends HierarchalType<GTUType> implements Serializable
+public final class GTUType extends HierarchicalType<GTUType> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141231L;

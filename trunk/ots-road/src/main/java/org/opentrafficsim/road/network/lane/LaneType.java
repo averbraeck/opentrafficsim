@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentrafficsim.base.HierarchalType;
+import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
@@ -27,7 +27,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class LaneType extends HierarchalType<LaneType> implements Serializable
+public class LaneType extends HierarchicalType<LaneType> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20140821L;

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVE;
-
 import java.util.SortedMap;
 
 import org.djunits.unit.AccelerationUnit;
@@ -9,13 +7,14 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -51,29 +50,25 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 
     /** Speed limit adherence factor parameter type. */
     protected static final ParameterTypeDouble FSPEED = ParameterTypes.FSPEED;
-    
+
     /** Acceleration flattening. */
-    public static final ParameterTypeDouble DELTA =
-            new ParameterTypeDouble("delta", "Acceleration flattening exponent towards desired speed.", 4.0, POSITIVE);
+    public static final ParameterTypeDouble DELTA = new ParameterTypeDouble("delta",
+            "Acceleration flattening exponent towards desired speed.", 4.0, ConstraintInterface.POSITIVE);
 
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo)
-            throws ParameterException
+    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
     {
-        Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo)
-                .multiplyBy(parameters.getParameter(FSPEED));
+        Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo).multiplyBy(parameters.getParameter(FSPEED));
         Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
         return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length desiredHeadway(final Parameters parameters, final Speed speed)
-            throws ParameterException
+    public final Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
     {
-        return parameters.getParameter(S0)
-                .plus(speed.multiplyBy(parameters.getParameter(T)));
+        return parameters.getParameter(S0).plus(speed.multiplyBy(parameters.getParameter(T)));
     }
 
     /**
@@ -92,9 +87,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    protected Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final Speed desiredSpeed, final Length desiredHeadway, final SortedMap<Length, Speed> leaders)
-            throws ParameterException
+    protected Acceleration followingAcceleration(final Parameters parameters, final Speed speed, final Speed desiredSpeed,
+            final Length desiredHeadway, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         Acceleration a = parameters.getParameter(A);
         Acceleration b0 = parameters.getParameter(B0);
@@ -108,8 +102,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
             return new Acceleration(aFree, AccelerationUnit.SI);
         }
         // return combined acceleration
-        return combineInteractionTerm(new Acceleration(aFree, AccelerationUnit.SI), parameters, speed,
-                desiredSpeed, desiredHeadway, leaders);
+        return combineInteractionTerm(new Acceleration(aFree, AccelerationUnit.SI), parameters, speed, desiredSpeed,
+                desiredHeadway, leaders);
     }
 
     /**
@@ -123,9 +117,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * @return Combination of terms into a single acceleration.
      * @throws ParameterException In case of parameter exception.
      */
-    protected abstract Acceleration combineInteractionTerm(Acceleration aFree,
-            Parameters parameters, Speed speed, Speed desiredSpeed, Length desiredHeadway,
-            SortedMap<Length, Speed> leaders) throws ParameterException;
+    protected abstract Acceleration combineInteractionTerm(Acceleration aFree, Parameters parameters, Speed speed,
+            Speed desiredSpeed, Length desiredHeadway, SortedMap<Length, Speed> leaders) throws ParameterException;
 
     /**
      * Determines the dynamic desired headway, which is non-negative.
@@ -136,8 +129,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * @return Dynamic desired headway.
      * @throws ParameterException In case of parameter exception.
      */
-    protected final Length dynamicDesiredHeadway(final Parameters parameters, final Speed speed,
-            final Length desiredHeadway, final Speed leaderSpeed) throws ParameterException
+    protected final Length dynamicDesiredHeadway(final Parameters parameters, final Speed speed, final Length desiredHeadway,
+            final Speed leaderSpeed) throws ParameterException
     {
         double sStar = desiredHeadway.si + dynamicHeadwayTerm(parameters, speed, leaderSpeed).si;
         /*
@@ -163,8 +156,8 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * @return Dynamic headway term.
      * @throws ParameterException In case of parameter exception.
      */
-    protected final Length dynamicHeadwayTerm(final Parameters parameters, final Speed speed,
-            final Speed leaderSpeed) throws ParameterException
+    protected final Length dynamicHeadwayTerm(final Parameters parameters, final Speed speed, final Speed leaderSpeed)
+            throws ParameterException
     {
         Acceleration a = parameters.getParameter(A);
         Acceleration b = parameters.getParameter(B);
