@@ -7,14 +7,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import nl.tudelft.simulation.language.Throw;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
@@ -22,8 +24,6 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.AbstractParameterType;
-import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.base.parameters.ConstraintInterface;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeBoolean;
@@ -36,9 +36,10 @@ import org.opentrafficsim.base.parameters.ParameterTypeLinearDensity;
 import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint;
-
-import nl.tudelft.simulation.language.Throw;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.constraint.Constraint;
+import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
+import org.opentrafficsim.base.parameters.constraint.SingleBound.NumericConstraint;
 
 /**
  * <p>
@@ -182,7 +183,7 @@ public class ParametersTest implements ConstraintInterface
      * @param constraint Constraint to perform.
      * @param shouldFail Whether the check should fail.
      */
-    private void checkDefaultValue(final double value, final NumericConstraint constraint, final boolean shouldFail)
+    private void checkDefaultValue(final double value, final Constraint<Number> constraint, final boolean shouldFail)
     {
         try
         {
@@ -196,6 +197,7 @@ public class ParametersTest implements ConstraintInterface
         {
             if (!shouldFail)
             {
+                re.printStackTrace();
                 fail("Default value " + value + " does not fail default " + constraint + " constraint.");
             }
         }
@@ -207,7 +209,7 @@ public class ParametersTest implements ConstraintInterface
      * @param constraint Constraint to perform.
      * @param shouldFail Whether the check should fail.
      */
-    private void checkSetValue(final double value, final NumericConstraint constraint, final boolean shouldFail)
+    private void checkSetValue(final double value, final Constraint<Number> constraint, final boolean shouldFail)
     {
         try
         {
@@ -394,7 +396,7 @@ public class ParametersTest implements ConstraintInterface
         params.setParameter(a, 1);
         params.setParameter(a, 2);
         params.resetParameter(a);
-        assertEquals("Value after reset should be the same as before last set.", 1.0, params.getParameter(a), 0.0);
+        assertEquals("Value after reset should be the same as before last set.", 1.0, (double) params.getParameter(a), 0.0);
 
         // If null value is ever going to be allowed, use these tests to check proper set/reset.
         // // check null is not the same as 'no value': no value -> set(null) -> reset -> get
@@ -545,16 +547,17 @@ public class ParametersTest implements ConstraintInterface
      * @throws IllegalAccessException Reflection.
      * @throws InstantiationException Reflection.
      */
-    private <R extends AbstractParameterType<?>> void checkDefaultValuesPerClass(final Class<R> clazz,
-            final Object defaultValue) throws InstantiationException, IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, NoSuchMethodException, SecurityException
+    private <R extends AbstractParameterType<?>> void checkDefaultValuesPerClass(final Class<R> clazz, final Object defaultValue)
+            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+            NoSuchMethodException, SecurityException
     {
         // none set
         AbstractParameterType<?> ld;
         if (clazz.equals(ParameterTypeNumeric.class))
         {
-            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
-                    getClass(defaultValue));
+            ld =
+                    clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
+                            getClass(defaultValue));
         }
         else
         {
@@ -574,13 +577,15 @@ public class ParametersTest implements ConstraintInterface
         {
             if (clazz.equals(ParameterTypeNumeric.class))
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, NumericConstraint.class).newInstance("v",
-                        "vcong", getClass(defaultValue), POSITIVE);
+                ld =
+                        clazz.getDeclaredConstructor(String.class, String.class, Class.class, Constraint.class).newInstance(
+                                "v", "vcong", getClass(defaultValue), POSITIVE);
             }
             else
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, NumericConstraint.class).newInstance("v", "vcong",
-                        POSITIVE);
+                ld =
+                        clazz.getDeclaredConstructor(String.class, String.class, Constraint.class).newInstance("v", "vcong",
+                                POSITIVE);
             }
             try
             {
@@ -596,13 +601,15 @@ public class ParametersTest implements ConstraintInterface
         // value set
         if (clazz.equals(ParameterTypeNumeric.class))
         {
-            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Number.class)
-                    .newInstance("v", "vcong", getClass(defaultValue), defaultValue);
+            ld =
+                    clazz.getDeclaredConstructor(String.class, String.class, Class.class, Number.class).newInstance("v",
+                            "vcong", getClass(defaultValue), defaultValue);
         }
         else
         {
-            ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
-                    defaultValue);
+            ld =
+                    clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
+                            defaultValue);
         }
         try
         {
@@ -617,13 +624,15 @@ public class ParametersTest implements ConstraintInterface
         {
             if (clazz.equals(ParameterTypeNumeric.class))
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Number.class,
-                        NumericConstraint.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
+                ld =
+                        clazz.getDeclaredConstructor(String.class, String.class, Class.class, Number.class, Constraint.class)
+                                .newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
             }
             else
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue), NumericConstraint.class)
-                        .newInstance("v", "vcong", defaultValue, POSITIVE);
+                ld =
+                        clazz.getDeclaredConstructor(String.class, String.class, defaultValue.getClass(),
+                                Constraint.class).newInstance("v", "vcong", defaultValue, POSITIVE);
             }
             try
             {
@@ -672,8 +681,8 @@ public class ParametersTest implements ConstraintInterface
         paramsA.setAll(paramsB);
         assertTrue("When merging set B with set A, set A should contain the parameters of set B.",
                 paramsA.contains(ParameterTypes.B));
-        assertTrue("When merging set B with set A, parameter values should be equal.",
-                paramsA.getParameter(ParameterTypes.B).eq(paramsB.getParameter(ParameterTypes.B)));
+        assertTrue("When merging set B with set A, parameter values should be equal.", paramsA.getParameter(ParameterTypes.B)
+                .eq(paramsB.getParameter(ParameterTypes.B)));
         assertFalse("When merging set B with set A, set B should not contain the parameters of set A.",
                 paramsB.contains(ParameterTypes.A));
     }

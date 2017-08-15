@@ -1,8 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
-import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.ATLEASTONE;
-import static org.opentrafficsim.base.parameters.ParameterTypeNumeric.NumericConstraint.POSITIVE;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +9,8 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import nl.tudelft.simulation.language.Throw;
+
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -20,12 +19,13 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
@@ -44,8 +44,6 @@ import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * This class implements default behavior for intersection conflicts for use in tactical planners.
@@ -69,24 +67,24 @@ public final class ConflictUtil
 
     /** Minimum time gap between events. */
     public static final ParameterTypeDuration MIN_GAP = new ParameterTypeDuration("minGap", "Minimum gap for conflicts.",
-            new Duration(0.000001, DurationUnit.SECOND), POSITIVE);
+            new Duration(0.000001, DurationUnit.SECOND), ConstraintInterface.POSITIVE);
 
     /** Stopping distance at conflicts. */
-    public static final ParameterTypeLength S0_CONF =
-            new ParameterTypeLength("s0 conf", "Stopping distance at conflicts.", new Length(1.5, LengthUnit.METER), POSITIVE);
+    public static final ParameterTypeLength S0_CONF = new ParameterTypeLength("s0 conf", "Stopping distance at conflicts.",
+            new Length(1.5, LengthUnit.METER), ConstraintInterface.POSITIVE);
 
     /** Multiplication factor on time for conservative assessment. */
-    public static final ParameterTypeDouble TIME_FACTOR =
-            new ParameterTypeDouble("timeFactor", "Safety factor on estimated time.", 1.25, ATLEASTONE);
+    public static final ParameterTypeDouble TIME_FACTOR = new ParameterTypeDouble("timeFactor",
+            "Safety factor on estimated time.", 1.25, ConstraintInterface.ATLEASTONE);
 
     /** Area before stop line where one is considered arrived at the intersection. */
-    public static final ParameterTypeLength STOP_AREA =
-            new ParameterTypeLength("stopArea", "Area before stop line where one is considered arrived at the intersection.",
-                    new Length(4, LengthUnit.METER), POSITIVE);
+    public static final ParameterTypeLength STOP_AREA = new ParameterTypeLength("stopArea",
+            "Area before stop line where one is considered arrived at the intersection.", new Length(4, LengthUnit.METER),
+            ConstraintInterface.POSITIVE);
 
     /** Parameter of how much time before departure a bus indicates its departure to get priority. */
-    public static final ParameterTypeDuration TI =
-            new ParameterTypeDuration("ti", "Indicator time before departure.", Duration.createSI(3.0), POSITIVE);
+    public static final ParameterTypeDuration TI = new ParameterTypeDuration("ti", "Indicator time before departure.",
+            Duration.createSI(3.0), ConstraintInterface.POSITIVE);
 
     /** Time step for free acceleration anticipation. */
     private static final Duration TIME_STEP = new Duration(0.5, DurationUnit.SI);
@@ -119,11 +117,10 @@ public final class ConflictUtil
      * @throws ParameterException if a parameter is not defined or out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static Acceleration approachConflicts(final Parameters parameters,
-            final SortedSet<HeadwayConflict> conflicts, final SortedSet<HeadwayGTU> leaders,
-            final CarFollowingModel carFollowingModel, final Length vehicleLength, final Speed speed,
-            final Acceleration acceleration, final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans,
-            final LaneBasedGTU gtu) throws GTUException, ParameterException
+    public static Acceleration approachConflicts(final Parameters parameters, final SortedSet<HeadwayConflict> conflicts,
+            final SortedSet<HeadwayGTU> leaders, final CarFollowingModel carFollowingModel, final Length vehicleLength,
+            final Speed speed, final Acceleration acceleration, final SpeedLimitInfo speedLimitInfo,
+            final ConflictPlans conflictPlans, final LaneBasedGTU gtu) throws GTUException, ParameterException
     {
 
         conflictPlans.cleanPlans();
@@ -145,14 +142,16 @@ public final class ConflictUtil
             if (conflict.isCrossing())
             {
                 // avoid collision if crossing is occupied
-                a = Acceleration.min(a,
-                        avoidCrossingCollision(parameters, conflict, carFollowingModel, speed, speedLimitInfo));
+                a = Acceleration.min(a, avoidCrossingCollision(parameters, conflict, carFollowingModel, speed, speedLimitInfo));
             }
             else
             {
                 // follow leading GTUs on merge or split
-                a = Acceleration.min(a, followConflictingLeaderOnMergeOrSplit(conflict, parameters,
-                        carFollowingModel, speed, speedLimitInfo));
+                a =
+                        Acceleration.min(
+                                a,
+                                followConflictingLeaderOnMergeOrSplit(conflict, parameters, carFollowingModel, speed,
+                                        speedLimitInfo));
             }
             if (conflict.getDistance().lt0())
             {
@@ -166,8 +165,9 @@ public final class ConflictUtil
             {
                 BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
                 Time actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());
-                if (actualDeparture != null && actualDeparture.si < gtu.getSimulator().getSimulatorTime().getTime().si
-                        + parameters.getParameter(TI).si)
+                if (actualDeparture != null
+                        && actualDeparture.si < gtu.getSimulator().getSimulatorTime().getTime().si
+                                + parameters.getParameter(TI).si)
                 {
                     // TODO depending on left/right-hand traffic
                     conflictPlans.setIndicatorIntent(TurnIndicatorIntent.LEFT, conflict.getDistance());
@@ -180,20 +180,21 @@ public final class ConflictUtil
             {
                 case PRIORITY:
                 {
-                    stop = stopForPriorityConflict(conflict, leaders, speed, vehicleLength, parameters,
-                            conflictPlans);
+                    stop = stopForPriorityConflict(conflict, leaders, speed, vehicleLength, parameters, conflictPlans);
                     break;
                 }
                 case GIVE_WAY:
                 {
-                    stop = stopForGiveWayConflict(conflict, leaders, speed, acceleration, vehicleLength,
-                            parameters, speedLimitInfo, carFollowingModel);
+                    stop =
+                            stopForGiveWayConflict(conflict, leaders, speed, acceleration, vehicleLength, parameters,
+                                    speedLimitInfo, carFollowingModel);
                     break;
                 }
                 case STOP:
                 {
-                    stop = stopForStopConflict(conflict, leaders, speed, acceleration, vehicleLength, parameters,
-                            speedLimitInfo, carFollowingModel);
+                    stop =
+                            stopForStopConflict(conflict, leaders, speed, acceleration, vehicleLength, parameters,
+                                    speedLimitInfo, carFollowingModel);
                     break;
                 }
                 case ALL_STOP:
@@ -225,8 +226,7 @@ public final class ConflictUtil
                     for (int i = prevEnds.size() - 1; i >= 0; i--) // downstream to upstream
                     {
                         // note, at this point prevStarts contains one more conflict than prevEnds
-                        if (prevStarts.get(i + 1).minus(prevEnds.get(i))
-                                .gt(passableDistance(vehicleLength, parameters)))
+                        if (prevStarts.get(i + 1).minus(prevEnds.get(i)).gt(passableDistance(vehicleLength, parameters)))
                         {
                             j = i + 1;
                             break;
@@ -249,8 +249,9 @@ public final class ConflictUtil
                         }
                         else
                         {
-                            Acceleration aStop = CarFollowingUtil.stop(carFollowingModel, parameters, speed,
-                                    speedLimitInfo, prevStarts.get(j));
+                            Acceleration aStop =
+                                    CarFollowingUtil.stop(carFollowingModel, parameters, speed, speedLimitInfo,
+                                            prevStarts.get(j));
                             if (conflictRuleTypes.get(j).equals(BusStopConflictRule.class)
                                     && aStop.lt(parameters.getParameter(ParameterTypes.BCRIT).neg()))
                             {
@@ -295,8 +296,8 @@ public final class ConflictUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     private static Acceleration followConflictingLeaderOnMergeOrSplit(final HeadwayConflict conflict,
-            final Parameters parameters, final CarFollowingModel carFollowingModel,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo) throws ParameterException
+            final Parameters parameters, final CarFollowingModel carFollowingModel, final Speed speed,
+            final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
         // ignore if no conflicting GTU's
         if (conflict.getDownstreamConflictingGTUs().isEmpty())
@@ -345,8 +346,8 @@ public final class ConflictUtil
              */
             // {@formatter:on}
             parameters.setParameter(ParameterTypes.S0, parameters.getParameter(S0_CONF));
-            Acceleration aStop = CarFollowingUtil.stop(carFollowingModel, parameters, speed, speedLimitInfo,
-                    conflict.getDistance());
+            Acceleration aStop =
+                    CarFollowingUtil.stop(carFollowingModel, parameters, speed, speedLimitInfo, conflict.getDistance());
             parameters.resetParameter(ParameterTypes.S0);
             a = Acceleration.max(a, aStop); // max, which ever allows the largest acceleration
         }
@@ -363,9 +364,9 @@ public final class ConflictUtil
      * @return acceleration required to avoid a collision
      * @throws ParameterException if parameter is not defined
      */
-    private static Acceleration avoidCrossingCollision(final Parameters parameters,
-            final HeadwayConflict conflict, final CarFollowingModel carFollowingModel, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo) throws ParameterException
+    private static Acceleration avoidCrossingCollision(final Parameters parameters, final HeadwayConflict conflict,
+            final CarFollowingModel carFollowingModel, final Speed speed, final SpeedLimitInfo speedLimitInfo)
+            throws ParameterException
     {
 
         // TODO only within visibility
@@ -405,18 +406,21 @@ public final class ConflictUtil
             if (conflictingGTU.isParallel())
             {
                 tteC = new AnticipationInfo(Duration.ZERO, conflictingGTU.getSpeed());
-                distance = conflictingGTU.getOverlapRear().abs().plus(conflictingGTU.getOverlap())
-                        .plus(conflictingGTU.getOverlapFront().abs());
+                distance =
+                        conflictingGTU.getOverlapRear().abs().plus(conflictingGTU.getOverlap())
+                                .plus(conflictingGTU.getOverlapFront().abs());
             }
             else
             {
-                tteC = AnticipationInfo.anticipateMovement(conflictingGTU.getDistance(), conflictingGTU.getSpeed(),
-                        Acceleration.ZERO);
+                tteC =
+                        AnticipationInfo.anticipateMovement(conflictingGTU.getDistance(), conflictingGTU.getSpeed(),
+                                Acceleration.ZERO);
                 distance = conflictingGTU.getDistance().plus(conflict.getLength()).plus(conflictingGTU.getLength());
             }
             AnticipationInfo ttcC = AnticipationInfo.anticipateMovement(distance, conflictingGTU.getSpeed(), Acceleration.ZERO);
-            AnticipationInfo tteO = AnticipationInfo.anticipateMovementFreeAcceleration(conflict.getDistance(), speed,
-                    parameters, carFollowingModel, speedLimitInfo, TIME_STEP);
+            AnticipationInfo tteO =
+                    AnticipationInfo.anticipateMovementFreeAcceleration(conflict.getDistance(), speed, parameters,
+                            carFollowingModel, speedLimitInfo, TIME_STEP);
             // enter before cleared
             // TODO safety factor?
             if (tteC.getDuration().lt(tteO.getDuration()) && tteO.getDuration().lt(ttcC.getDuration()))
@@ -424,8 +428,9 @@ public final class ConflictUtil
                 if (!conflictingGTU.getSpeed().eq0())
                 {
                     // solve parabolic speed profile s = v*t + .5*a*t*t, a =
-                    double acc = 2 * (conflict.getDistance().si - speed.si * ttcC.getDuration().si)
-                            / (ttcC.getDuration().si * ttcC.getDuration().si);
+                    double acc =
+                            2 * (conflict.getDistance().si - speed.si * ttcC.getDuration().si)
+                                    / (ttcC.getDuration().si * ttcC.getDuration().si);
                     // time till zero speed > time to avoid conflict?
                     if (speed.si / -acc > ttcC.getDuration().si)
                     {
@@ -434,8 +439,11 @@ public final class ConflictUtil
                     else
                     {
                         // will reach zero speed ourselves
-                        a = Acceleration.min(a, CarFollowingUtil.stop(carFollowingModel, parameters, speed,
-                                speedLimitInfo, conflict.getDistance()));
+                        a =
+                                Acceleration.min(
+                                        a,
+                                        CarFollowingUtil.stop(carFollowingModel, parameters, speed, speedLimitInfo,
+                                                conflict.getDistance()));
                     }
                 }
                 // conflicting vehicle stand-still, ignore even at conflict
@@ -457,8 +465,8 @@ public final class ConflictUtil
      * @throws ParameterException if parameter B is not defined
      */
     public static boolean stopForPriorityConflict(final HeadwayConflict conflict, final SortedSet<HeadwayGTU> leaders,
-            final Speed speed, final Length vehicleLength, final Parameters parameters,
-            final ConflictPlans yieldPlans) throws ParameterException
+            final Speed speed, final Length vehicleLength, final Parameters parameters, final ConflictPlans yieldPlans)
+            throws ParameterException
     {
 
         if (leaders.isEmpty() || conflict.getUpstreamConflictingGTUs().isEmpty())
@@ -471,12 +479,13 @@ public final class ConflictUtil
         // use start of conflict on merge, end of conflict on crossing
         Length typeCorrection = conflict.isCrossing() ? conflict.getLength() : Length.ZERO;
         // distance leader has to cover before we can pass the conflict
-        Length distance = conflict.getDistance().minus(leaders.first().getDistance())
-                .plus(passableDistance(vehicleLength, parameters)).plus(typeCorrection);
+        Length distance =
+                conflict.getDistance().minus(leaders.first().getDistance()).plus(passableDistance(vehicleLength, parameters))
+                        .plus(typeCorrection);
         if (distance.gt0())
         {
-            Length required = conflict.getDistance().plus(typeCorrection)
-                    .plus(passableDistance(vehicleLength, parameters)); // for ourselves
+            Length required = conflict.getDistance().plus(typeCorrection).plus(passableDistance(vehicleLength, parameters)); // for
+                                                                                                                             // ourselves
             for (HeadwayGTU leader : leaders)
             {
                 if (leader.getSpeed().eq0())
@@ -508,9 +517,8 @@ public final class ConflictUtil
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static boolean stopForGiveWayConflict(final HeadwayConflict conflict, final SortedSet<HeadwayGTU> leaders,
-            final Speed speed, final Acceleration acceleration, final Length vehicleLength,
-            final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
-            final CarFollowingModel carFollowingModel) throws ParameterException
+            final Speed speed, final Acceleration acceleration, final Length vehicleLength, final Parameters parameters,
+            final SpeedLimitInfo speedLimitInfo, final CarFollowingModel carFollowingModel) throws ParameterException
     {
 
         // TODO conflicting vehicle on crossing conflict, but will leave sooner then we enter, so no problem?
@@ -535,8 +543,9 @@ public final class ConflictUtil
             distance = distance.plus(conflict.getLength());
         }
         // based on acceleration, limited by free acceleration
-        AnticipationInfo ttcOa = AnticipationInfo.anticipateMovementFreeAcceleration(distance, speed, parameters,
-                carFollowingModel, speedLimitInfo, TIME_STEP);
+        AnticipationInfo ttcOa =
+                AnticipationInfo.anticipateMovementFreeAcceleration(distance, speed, parameters, carFollowingModel,
+                        speedLimitInfo, TIME_STEP);
         // time till downstream vehicle will make the conflict passible, under constant speed or safe deceleration
         AnticipationInfo ttpDz = null;
         AnticipationInfo ttpDs = null;
@@ -544,8 +553,9 @@ public final class ConflictUtil
         {
             if (!leaders.isEmpty())
             {
-                distance = conflict.getDistance().minus(leaders.first().getDistance()).plus(conflict.getLength())
-                        .plus(passableDistance(vehicleLength, parameters));
+                distance =
+                        conflict.getDistance().minus(leaders.first().getDistance()).plus(conflict.getLength())
+                                .plus(passableDistance(vehicleLength, parameters));
                 ttpDz = AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), Acceleration.ZERO);
                 ttpDs = AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), b);
             }
@@ -578,9 +588,10 @@ public final class ConflictUtil
             // none within visibility, assume a conflicting vehicle just outside of visibility driving at speed limit
             try
             {
-                HeadwayGTUSimple conflictGtu = new HeadwayGTUSimple("virtual " + UUID.randomUUID().toString(), GTUType.CAR,
-                        conflict.getConflictingVisibility(), new Length(4.0, LengthUnit.SI),
-                        conflict.getConflictingSpeedLimit(), Acceleration.ZERO);
+                HeadwayGTUSimple conflictGtu =
+                        new HeadwayGTUSimple("virtual " + UUID.randomUUID().toString(), GTUType.CAR,
+                                conflict.getConflictingVisibility(), new Length(4.0, LengthUnit.SI),
+                                conflict.getConflictingSpeedLimit(), Acceleration.ZERO);
                 conflictingVehicles.add(conflictGtu);
             }
             catch (GTUException exception)
@@ -603,8 +614,9 @@ public final class ConflictUtil
             AnticipationInfo tteCa;
             if (conflictingVehicle instanceof HeadwayGTUSimple)
             {
-                tteCa = AnticipationInfo.anticipateMovement(conflictingVehicle.getDistance(), conflictingVehicle.getSpeed(),
-                        conflictingVehicle.getAcceleration());
+                tteCa =
+                        AnticipationInfo.anticipateMovement(conflictingVehicle.getDistance(), conflictingVehicle.getSpeed(),
+                                conflictingVehicle.getAcceleration());
             }
             else
             {
@@ -612,8 +624,9 @@ public final class ConflictUtil
                 SpeedLimitInfo sli = conflictingVehicle.getSpeedLimitInfo();
                 CarFollowingModel cfm = conflictingVehicle.getCarFollowingModel();
                 // Constant acceleration creates inf at stand still, triggering passing trough a congested stream
-                tteCa = AnticipationInfo.anticipateMovementFreeAcceleration(conflictingVehicle.getDistance(),
-                        conflictingVehicle.getSpeed(), params, cfm, sli, TIME_STEP);
+                tteCa =
+                        AnticipationInfo.anticipateMovementFreeAcceleration(conflictingVehicle.getDistance(),
+                                conflictingVehicle.getSpeed(), params, cfm, sli, TIME_STEP);
             }
             AnticipationInfo tteCs =
                     AnticipationInfo.anticipateMovement(conflictingVehicle.getDistance(), conflictingVehicle.getSpeed(), b);
@@ -628,9 +641,12 @@ public final class ConflictUtil
                 speedDiff = speedDiff > 0 ? speedDiff : 0;
                 Duration additionalTime = new Duration(speedDiff / -b.si, DurationUnit.SI);
                 // check if conflict vehicle will be upstream after that time, position beyond conflict after additional time
-                double followerFront = conflictingVehicle.getSpeed().si * ttcOa.getDuration().si
-                        - conflictingVehicle.getDistance().si + (conflictingVehicle.getSpeed().si * additionalTime.si
-                                + 0.5 * b.si * additionalTime.si * additionalTime.si);
+                double followerFront =
+                        conflictingVehicle.getSpeed().si
+                                * ttcOa.getDuration().si
+                                - conflictingVehicle.getDistance().si
+                                + (conflictingVehicle.getSpeed().si * additionalTime.si + 0.5 * b.si * additionalTime.si
+                                        * additionalTime.si);
                 double ownRear = vSelf * additionalTime.si; // constant speed after clearing
                 Duration tMax = parameters.getParameter(ParameterTypes.TMAX);
                 Length s0 = parameters.getParameter(ParameterTypes.S0);
@@ -663,8 +679,8 @@ public final class ConflictUtil
             }
             else
             {
-                throw new RuntimeException(
-                        "Conflict is of unknown type " + conflict.getConflictType() + ", which is not merge nor a crossing.");
+                throw new RuntimeException("Conflict is of unknown type " + conflict.getConflictType()
+                        + ", which is not merge nor a crossing.");
             }
         }
 
@@ -688,12 +704,11 @@ public final class ConflictUtil
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static boolean stopForStopConflict(final HeadwayConflict conflict, final SortedSet<HeadwayGTU> leaders,
-            final Speed speed, final Acceleration acceleration, final Length vehicleLength,
-            final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
-            final CarFollowingModel carFollowingModel) throws ParameterException
+            final Speed speed, final Acceleration acceleration, final Length vehicleLength, final Parameters parameters,
+            final SpeedLimitInfo speedLimitInfo, final CarFollowingModel carFollowingModel) throws ParameterException
     {
-        return stopForGiveWayConflict(conflict, leaders, speed, acceleration, vehicleLength, parameters,
-                speedLimitInfo, carFollowingModel);
+        return stopForGiveWayConflict(conflict, leaders, speed, acceleration, vehicleLength, parameters, speedLimitInfo,
+                carFollowingModel);
     }
 
     /**
@@ -749,8 +764,7 @@ public final class ConflictUtil
      * @return speed dependent distance needed behind the leader to completely pass the conflict
      * @throws ParameterException if parameter is not available
      */
-    private static Length passableDistance(final Length vehicleLength,
-            final Parameters parameters) throws ParameterException
+    private static Length passableDistance(final Length vehicleLength, final Parameters parameters) throws ParameterException
     {
         return parameters.getParameter(ParameterTypes.S0).plus(vehicleLength);
     }
@@ -762,8 +776,7 @@ public final class ConflictUtil
      * abandoned. Decelerations above what is considered safe deceleration may result due to numerical overshoot or other factor
      * coming into play in car-following models. Many other examples exist where a driver sticks to a certain plan.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jun 7, 2016 <br>
@@ -836,8 +849,8 @@ public final class ConflictUtil
         {
             Throw.when(
                     !this.stopPhases.containsKey(stopLine.getId())
-                            || !this.stopPhases.get(stopLine.getId()).equals(StopPhase.APPROACH),
-                    RuntimeException.class, "Yield stop phase is set for stop line that was not approached.");
+                            || !this.stopPhases.get(stopLine.getId()).equals(StopPhase.APPROACH), RuntimeException.class,
+                    "Yield stop phase is set for stop line that was not approached.");
             this.stopPhases.put(stopLine.getId(), StopPhase.YIELD);
         }
 
@@ -923,8 +936,7 @@ public final class ConflictUtil
     /**
      * Phases of navigating an all-stop intersection.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jun 30, 2016 <br>

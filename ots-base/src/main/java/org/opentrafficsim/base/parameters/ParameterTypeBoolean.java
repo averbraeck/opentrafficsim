@@ -39,6 +39,7 @@ public class ParameterTypeBoolean extends AbstractParameterType<Boolean> impleme
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String printValue(final Parameters parameters) throws ParameterException
     {
         return Boolean.toString(parameters.getParameter(this));

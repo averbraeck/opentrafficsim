@@ -3,6 +3,7 @@ package org.opentrafficsim.base.parameters;
 import java.io.Serializable;
 
 import org.djunits.value.formatter.EngineeringFormatter;
+import org.opentrafficsim.base.parameters.constraint.Constraint;
 
 /**
  * Wrapper class for double parameters.
@@ -47,7 +48,7 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeDouble(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeDouble(final String id, final String description, final Constraint<Number> constraint)
     {
         super(id, description, Double.class, constraint);
     }
@@ -60,12 +61,26 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeDouble(final String id, final String description, final double defaultValue,
-            final NumericConstraint constraint)
+            final Constraint<Number> constraint)
+    {
+        super(id, description, Double.class, defaultValue, constraint);
+    }
+
+    /**
+     * Constructor with default value and check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param defaultValue Default value.
+     * @param constraint Constraint for parameter values.
+     */
+    public ParameterTypeDouble(final String id, final String description, final Double defaultValue,
+            final Constraint<Number> constraint)
     {
         super(id, description, Double.class, defaultValue, constraint);
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String printValue(final Parameters parameters) throws ParameterException
     {
         return EngineeringFormatter.format(parameters.getParameter(this));

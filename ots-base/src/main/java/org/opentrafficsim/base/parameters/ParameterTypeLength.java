@@ -3,6 +3,7 @@ package org.opentrafficsim.base.parameters;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.parameters.constraint.Constraint;
 
 /**
  * Wrapper class for Length parameters.
@@ -47,7 +48,7 @@ public class ParameterTypeLength extends ParameterTypeNumeric<Length> implements
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLength(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeLength(final String id, final String description, final Constraint<Number> constraint)
     {
         super(id, description, Length.class, constraint);
     }
@@ -60,7 +61,7 @@ public class ParameterTypeLength extends ParameterTypeNumeric<Length> implements
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeLength(final String id, final String description, final Length defaultValue,
-            final NumericConstraint constraint)
+            final Constraint<Number> constraint)
     {
         super(id, description, Length.class, defaultValue, constraint);
     }

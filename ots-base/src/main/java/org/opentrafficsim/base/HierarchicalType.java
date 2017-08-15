@@ -15,7 +15,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> Self-reference to type.
  */
-public abstract class HierarchalType<T extends HierarchalType<T>> implements Identifiable
+public abstract class HierarchicalType<T extends HierarchicalType<T>> implements Identifiable
 {
 
     /** The id of the type to make it identifiable. */
@@ -29,7 +29,7 @@ public abstract class HierarchalType<T extends HierarchalType<T>> implements Ide
      * @param id The id of the type to make it identifiable.
      * @throws NullPointerException if the id is null
      */
-    protected HierarchalType(final String id) throws NullPointerException
+    protected HierarchicalType(final String id) throws NullPointerException
     {
         Throw.whenNull(id, "id cannot be null for hierarchal types");
         this.id = id;
@@ -42,7 +42,7 @@ public abstract class HierarchalType<T extends HierarchalType<T>> implements Ide
      * @param parent T; parent type
      * @throws NullPointerException if the id is null
      */
-    public HierarchalType(final String id, final T parent) throws NullPointerException
+    public HierarchicalType(final String id, final T parent) throws NullPointerException
     {
         Throw.whenNull(id, "id cannot be null for hierarchal types");
         Throw.whenNull(parent, "parent cannot be null for hierarchal types");
@@ -53,7 +53,8 @@ public abstract class HierarchalType<T extends HierarchalType<T>> implements Ide
     /**
      * @return id.
      */
-    public String getId()
+    @Override
+    public final String getId()
     {
         return this.id;
     }
@@ -61,7 +62,7 @@ public abstract class HierarchalType<T extends HierarchalType<T>> implements Ide
     /**
      * @return parent or {@code null} if this is a top level type.
      */
-    public T getParent()
+    public final T getParent()
     {
         return this.parent;
     }
@@ -71,7 +72,7 @@ public abstract class HierarchalType<T extends HierarchalType<T>> implements Ide
      * @param type T; type
      * @return whether this, or any of the parent types, equals the given type
      */
-    public boolean isOfType(final T type)
+    public final boolean isOfType(final T type)
     {
         if (this.equals(type))
         {
@@ -86,6 +87,7 @@ public abstract class HierarchalType<T extends HierarchalType<T>> implements Ide
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
         final int prime = 31;
@@ -97,6 +99,7 @@ public abstract class HierarchalType<T extends HierarchalType<T>> implements Ide
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -111,7 +114,7 @@ public abstract class HierarchalType<T extends HierarchalType<T>> implements Ide
         {
             return false;
         }
-        HierarchalType<?> other = (HierarchalType<?>) obj;
+        HierarchicalType<?> other = (HierarchicalType<?>) obj;
         if (this.id == null)
         {
             if (other.id != null)

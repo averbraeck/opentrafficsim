@@ -3,6 +3,8 @@ package org.opentrafficsim.base.parameters;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.opentrafficsim.base.parameters.constraint.Constraint;
+import org.opentrafficsim.base.parameters.constraint.SingleBound.NumericConstraint;
 
 /**
  * Wrapper class for LinearDensity parameters.
@@ -47,7 +49,7 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeLinearDensity(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeLinearDensity(final String id, final String description, final Constraint<Number> constraint)
     {
         super(id, description, LinearDensity.class, constraint);
     }
@@ -60,7 +62,7 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue,
-            final NumericConstraint constraint)
+            final Constraint<Number> constraint)
     {
         super(id, description, LinearDensity.class, defaultValue, constraint);
     }

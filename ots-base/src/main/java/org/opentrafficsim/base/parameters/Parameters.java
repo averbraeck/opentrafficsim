@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.djunits.unit.DimensionlessUnit;
-import org.djunits.value.vdouble.scalar.Dimensionless;
-
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
+
+import org.djunits.unit.DimensionlessUnit;
+import org.djunits.value.vdouble.scalar.Dimensionless;
 
 /**
  * In this class a set of parameters can be stored.
@@ -265,17 +265,18 @@ public class Parameters implements Serializable
 
     /**
      * Sets all parameters from the given set in this set.
-     * @param parameters set of parameters to include in this set
+     * @param newParameterSet set of parameters to include in this set
      */
-    public final void setAll(final Parameters parameters)
+    public final void setAll(final Parameters newParameterSet)
     {
-        for (AbstractParameterType<?> key : parameters.parameters.keySet())
+        for (AbstractParameterType<?> key : newParameterSet.parameters.keySet())
         {
-            this.parameters.put(key, parameters.parameters.get(key));
+            this.parameters.put(key, newParameterSet.parameters.get(key));
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         StringBuilder out = new StringBuilder("Parameters [");

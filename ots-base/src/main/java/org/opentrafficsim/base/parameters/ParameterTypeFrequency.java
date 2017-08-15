@@ -3,6 +3,7 @@ package org.opentrafficsim.base.parameters;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.opentrafficsim.base.parameters.constraint.Constraint;
 
 /**
  * Wrapper class for Frequency parameters.
@@ -47,7 +48,7 @@ public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> impl
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeFrequency(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeFrequency(final String id, final String description, final Constraint<Number> constraint)
     {
         super(id, description, Frequency.class, constraint);
     }
@@ -60,7 +61,7 @@ public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> impl
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue,
-            final NumericConstraint constraint)
+            final Constraint<Number> constraint)
     {
         super(id, description, Frequency.class, defaultValue, constraint);
     }

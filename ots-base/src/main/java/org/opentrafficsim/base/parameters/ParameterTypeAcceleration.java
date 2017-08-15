@@ -3,6 +3,8 @@ package org.opentrafficsim.base.parameters;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.opentrafficsim.base.parameters.constraint.Constraint;
+import org.opentrafficsim.base.parameters.constraint.SingleBound.NumericConstraint;
 
 /**
  * Wrapper class for Acceleration parameters.
@@ -47,7 +49,7 @@ public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeAcceleration(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeAcceleration(final String id, final String description, final Constraint<Number> constraint)
     {
         super(id, description, Acceleration.class, constraint);
     }
@@ -60,7 +62,7 @@ public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration
      * @param constraint Constraint for parameter values.
      */
     public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue,
-            final NumericConstraint constraint)
+            final Constraint<Number> constraint)
     {
         super(id, description, Acceleration.class, defaultValue, constraint);
     }

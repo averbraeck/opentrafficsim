@@ -3,6 +3,7 @@ package org.opentrafficsim.base.parameters;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.constraint.Constraint;
 
 /**
  * Wrapper class for Speed parameters.
@@ -47,7 +48,7 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
      * @param description Parameter description or full name.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final NumericConstraint constraint)
+    public ParameterTypeSpeed(final String id, final String description, final Constraint<Number> constraint)
     {
         super(id, description, Speed.class, constraint);
     }
@@ -59,7 +60,8 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue, final NumericConstraint constraint)
+    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue,
+            final Constraint<Number> constraint)
     {
         super(id, description, Speed.class, defaultValue, constraint);
     }
