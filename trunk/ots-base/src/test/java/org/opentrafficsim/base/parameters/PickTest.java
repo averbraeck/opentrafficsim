@@ -64,6 +64,11 @@ public class PickTest
         assertNotNull("fail message may not be null", failMessage);
         assertTrue("fail message contains id1", failMessage.indexOf("id1") >= 0);
         assertTrue("fail message contains id2", failMessage.indexOf("id2") >= 0);
+        String constraintDescription = pl.getConstraint().toString();
+        assertNotNull("constraint toString may not be null", constraintDescription);
+        assertTrue("constraint toString contains id1", constraintDescription.indexOf("id1") >= 0);
+        assertTrue("constraint toString contains id2", constraintDescription.indexOf("id2") >= 0);
+        
         pl = new PickList<String>("id", "description", item1, item2);
         assertFalse("does contain an item with id2", pl.fails("id2"));
         assertFalse("does contain an item with id1", pl.fails("id1"));
