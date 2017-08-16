@@ -109,4 +109,12 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
         return result.toString();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return "PickList [ids=" + this.ids + ", items=" + this.items + "]";
+    }
+
 }
