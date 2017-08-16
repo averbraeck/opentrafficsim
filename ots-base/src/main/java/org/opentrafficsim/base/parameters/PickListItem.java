@@ -1,7 +1,7 @@
 package org.opentrafficsim.base.parameters;
 
 /**
- * Value that can be used in a StringParameterSelector.
+ * Value that can be used in a PickList.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -11,11 +11,12 @@ package org.opentrafficsim.base.parameters;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <T> type of the pick ids (usually String or Integer)
  */
-public class StringPickListItem
+public class PickListItem<T>
 {
     /** Id of this pick list item. */
-    private final String id;
+    private final T id;
 
     /** Display text of this pick list item. */
     private final String displayText;
@@ -25,11 +26,11 @@ public class StringPickListItem
 
     /**
      * Construct a new PickListItem.
-     * @param id String; the id of the new PickListItem
+     * @param id T; the id of the new PickListItem
      * @param displayText String; the text to show to the user in the pick list
      * @param description String; the description of this pick list item (may use HTML formatting) 
      */
-    public StringPickListItem(final String id, final String displayText, final String description)
+    public PickListItem(final T id, final String displayText, final String description)
     {
         this.id = id;
         this.displayText = displayText;
@@ -38,26 +39,26 @@ public class StringPickListItem
 
     /**
      * Construct a new PickListItem.
-     * @param id String; the id of the new PickListItem
+     * @param id T; the id of the new PickListItem
      * @param displayText String; the text to show to the user in the pick list
      */
-    public StringPickListItem(final String id, final String displayText)
+    public PickListItem(final T id, final String displayText)
     {
         this(id, displayText, displayText);
     }
 
     /**
-     * Retrieve the id of this StringPickListItem.
-     * @return String; the id of this StringPickListItem
+     * Retrieve the id of this PickListItem.
+     * @return T; the id of this PickListItem
      */
-    public final String getId()
+    public final T getId()
     {
         return this.id;
     }
 
     /**
-     * Retrieve the display text of this StringPickListItem.
-     * @return String; the display text of this StringPickListItem
+     * Retrieve the display text of this PickListItem.
+     * @return String; the display text of this PickListItem
      */
     public final String getDisplayText()
     {
@@ -65,8 +66,8 @@ public class StringPickListItem
     }
 
     /**
-     * Retrieve the description of this StringPickListItem.
-     * @return String; the description of this StringPickListItem
+     * Retrieve the description of this PickListItem.
+     * @return String; the description of this PickListItem
      */
     public final String getDescription()
     {
@@ -78,7 +79,7 @@ public class StringPickListItem
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "StringPickListItem [id=" + this.id + ", displayText=" + this.displayText + ", description=" + this.description
+        return "PickListItem [id=" + this.id + ", displayText=" + this.displayText + ", description=" + this.description
                 + "]";
     }
    
