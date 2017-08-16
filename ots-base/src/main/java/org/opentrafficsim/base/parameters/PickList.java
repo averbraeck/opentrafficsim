@@ -37,14 +37,20 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
      * Construct a new PickList and fill it with the provided items.
      * @param id String; id of the new PickList
      * @param description String; description of the new PickList
-     * @param items PickList&lt;T&gt;...; the items to add to the new PickList
+     * @param firstItem PickList&lt;T&gt; the first item to add to the new PickList
+     * @param additionalItems PickList&lt;T&gt;...; any additional items to add to the new PickList; the reason for putting the
+     *            first item in a separate argument is to ensure that this constructor cannot construct a PickList with zero
+     *            items
      * @throws ParameterException when the ids of the items are not all distinct
      */
+    @SafeVarargs
     @SuppressWarnings("unchecked")
-    public PickList(final String id, final String description, final PickListItem<T>... items) throws ParameterException
+    public PickList(final String id, final String description, final PickListItem<T> firstItem,
+            final PickListItem<T>... additionalItems) throws ParameterException
     {
-        super(id, description, (Class<T>) items[0].getClass());
-        for (PickListItem<T> item : items)
+        super(id, description, (Class<T>) firstItem.getClass());
+        addItem(firstItem);
+        for (PickListItem<T> item : additionalItems)
         {
             addItem(item);
         }
@@ -60,12 +66,25 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
     @SuppressWarnings("unchecked")
     public PickList(final String id, final String description, final List<PickListItem<T>> items) throws ParameterException
     {
-        super(id, description, (Class<T>) items.get(0).getClass(), null, new PickListConstraint<T>());
+        super(id, description, (Class<T>) getItemZero(items), new PickListConstraint<T>());
         ((PickListConstraint<T>) getConstraint()).setIds(this.ids);
         for (PickListItem<T> item : items)
         {
             addItem(item);
         }
+    }
+    
+    /**
+     * 
+     * @param items2 List&lt;PickListItem&lt;?&gt;&gt;; a non-empty list of pick list items.
+     * @return Object; item 0 in the list
+     * @throws ParameterException when list is null, or empty
+     */
+    private static Object getItemZero(final List<?> items2) throws ParameterException
+    {
+        Throw.whenNull(items2, "items may not be null");
+        Throw.when(items2.isEmpty(), ParameterException.class, "items may not be empty");
+        return items2.get(0).getClass();
     }
 
     /**
