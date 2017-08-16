@@ -32,7 +32,7 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
 
     /** The items for each id. */
     private Map<T, PickListItem<T>> items = new HashMap<>();
-
+    
     /**
      * Construct a new PickList and fill it with the provided items.
      * @param id String; id of the new PickList
@@ -48,7 +48,7 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
     public PickList(final String id, final String description, final PickListItem<T> firstItem,
             final PickListItem<T>... additionalItems) throws ParameterException
     {
-        super(id, description, (Class<T>) firstItem.getClass());
+        super(id, description, (Class<T>) firstItem.getClass(), new PickListConstraint<T>());
         addItem(firstItem);
         for (PickListItem<T> item : additionalItems)
         {
@@ -67,7 +67,6 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
     public PickList(final String id, final String description, final List<PickListItem<T>> items) throws ParameterException
     {
         super(id, description, (Class<T>) getItemZero(items), new PickListConstraint<T>());
-        ((PickListConstraint<T>) getConstraint()).setIds(this.ids);
         for (PickListItem<T> item : items)
         {
             addItem(item);
@@ -92,12 +91,14 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
      * @param item PickListItem&lt;T&gt;; the item to add
      * @throws ParameterException when the id of the provided item matches an existing item
      */
+    @SuppressWarnings("unchecked")
     public final void addItem(final PickListItem<T> item) throws ParameterException
     {
         Throw.when(this.ids.contains(item.getId()), ParameterException.class,
                 "PickList already contains an item matching id \"%s\"", item.getId());
         this.ids.add(item.getId());
         this.items.put(item.getId(), item);
+        ((PickListConstraint<T>) getConstraint()).setIds(this.ids);
     }
 
     /** {@inheritDoc} */
@@ -112,20 +113,14 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
     @Override
     public final boolean fails(final T value)
     {
-        return !this.ids.contains(value);
+        return getConstraint().fails(value);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String failMessage()
     {
-        StringBuilder result = new StringBuilder();
-        result.append("provided id is not one of");
-        for (T id : this.ids)
-        {
-            result.append(" " + id);
-        }
-        return result.toString();
+        return getConstraint().failMessage();
     }
 
     /** {@inheritDoc} */
