@@ -64,12 +64,12 @@ public class ParametersTest implements ConstraintInterface
     @Test
     public final void constructorTest()
     {
-        // Check BehavioralCharacteristics construction
+        // Check Parameters constructor
         Parameters params = new Parameters();
         assertNotNull("Default constructor should not return null.", params);
         if (!params.getParameters().isEmpty())
         {
-            fail("Constructed BehavioralCharacteristics has a non-empty parameter map.");
+            fail("Constructed Parameters has a non-empty parameter map.");
         }
 
         // Check ParameterType construction (id, description, class, defaultValue)

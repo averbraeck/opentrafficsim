@@ -106,7 +106,7 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
     @SuppressWarnings("checkstyle:designforextension")
     public String printValue(final Parameters parameters) throws ParameterException
     {
-        return getId();
+        return parameters.getParameter(this).toString();
     }
 
     /** {@inheritDoc} */
