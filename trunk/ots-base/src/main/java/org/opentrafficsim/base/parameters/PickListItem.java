@@ -40,7 +40,7 @@ public class PickListItem<T>
     /**
      * Construct a new PickListItem.
      * @param id T; the id of the new PickListItem
-     * @param displayText String; the text to show to the user in the pick list
+     * @param displayText String; the text to show to the user in the pick list; also used for the description
      */
     public PickListItem(final T id, final String displayText)
     {
