@@ -141,14 +141,14 @@ public class ShortMerge extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    public String shortName()
+    public final String shortName()
     {
         return "ShortMerge";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String description()
+    public final String description()
     {
         return "Short merge to test lane change models.";
     }
@@ -180,7 +180,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     /**
      * @return simulator.
      */
-    public OTSDEVSSimulatorInterface getSimulator()
+    public final OTSDEVSSimulatorInterface getSimulator()
     {
         return this.sim;
     }
@@ -188,7 +188,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     /**
      * @param simulator set simulator.
      */
-    public void setSimulator(final OTSDEVSSimulatorInterface simulator)
+    public final void setSimulator(final OTSDEVSSimulatorInterface simulator)
     {
         this.sim = simulator;
     }

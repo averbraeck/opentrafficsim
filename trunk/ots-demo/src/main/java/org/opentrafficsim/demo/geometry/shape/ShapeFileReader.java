@@ -11,9 +11,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.UNITS;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
