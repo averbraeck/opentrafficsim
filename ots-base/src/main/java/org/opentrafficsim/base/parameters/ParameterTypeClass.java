@@ -27,8 +27,7 @@ public class ParameterTypeClass<T> extends AbstractParameterType<Class<? extends
     /**
      * Constraint that checks whether the value is any of a given set.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 30 jun. 2017 <br>
@@ -154,7 +153,7 @@ public class ParameterTypeClass<T> extends AbstractParameterType<Class<? extends
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "ParameterTypeClass []";
+        return "ParameterTypeClass [" + getConstraint().toString() + "]";
     }
 
 }
