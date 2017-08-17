@@ -822,7 +822,7 @@ public class OTSControlPanel extends JPanel
             double bestError = Double.MAX_VALUE;
             for (int step = this.slider.getMinimum(); step < this.slider.getMaximum(); step++)
             {
-                double ratio = getTickValues().get(step);// stepToFactor(step);
+                double ratio = getTickValues().get(step); // stepToFactor(step);
                 double logError = Math.abs(Math.log(factor / ratio));
                 if (logError < bestError)
                 {
