@@ -79,7 +79,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Constructor with default value, without constraint.
+     * Constructor with default value and constraint.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
