@@ -23,6 +23,7 @@ public interface TrafficController extends EventProducerInterface, EventListener
      * Retrieve the Id of the traffic light controller.
      * @return String; the id of the traffic light controller
      */
+    @Override
     public String getId();
 
     /**

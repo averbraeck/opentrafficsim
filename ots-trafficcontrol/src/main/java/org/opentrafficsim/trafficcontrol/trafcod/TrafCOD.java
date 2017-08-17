@@ -2750,6 +2750,7 @@ class CausePrinter
         this.cause = cause;
     }
 
+    @Override
     public String toString()
     {
         if (this.cause instanceof String)
