@@ -300,6 +300,7 @@ public class ParametersTest implements ConstraintInterface
      * Tests the set/reset mechanism.
      * @throws ParameterException Should not be thrown, is for untested methods (in this test) that throw the exception.
      */
+    @SuppressWarnings("cast")
     @Test
     public final void setResetTest() throws ParameterException
     {
