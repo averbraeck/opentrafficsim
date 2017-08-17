@@ -106,6 +106,7 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString()
     {
         return "GTUType: " + this.getId();
