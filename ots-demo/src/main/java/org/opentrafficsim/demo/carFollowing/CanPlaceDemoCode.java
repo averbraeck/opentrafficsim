@@ -30,8 +30,8 @@ public class CanPlaceDemoCode implements LaneBasedGTUGenerator.RoomChecker
 
     /** {@inheritDoc} */
     @Override
-    public Speed canPlace(Speed leaderSpeed, org.djunits.value.vdouble.scalar.Length headway,
-            LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException
+    public final Speed canPlace(final Speed leaderSpeed, final org.djunits.value.vdouble.scalar.Length headway,
+            final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException
     {
         // This simple minded implementation returns null if the headway is less than the headway wanted for driving at
         // the current speed of the leader

@@ -362,7 +362,7 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
          * @throws GTUException when construction of the GTU (the block is a GTU) fails
          * @throws OTSGeometryException when the initial path is wrong
          */
-        private Lane setupBlock(final Lane lane, OTSDEVSSimulatorInterface theSimulator, GTUColorer gtuColorer)
+        private Lane setupBlock(final Lane lane, final OTSDEVSSimulatorInterface theSimulator, final GTUColorer gtuColorer)
                 throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
         {
             Length initialPosition = lane.getLength();
@@ -375,7 +375,7 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
             GTUType gtuType = CAR;
             Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", gtuType, new Length(1, LengthUnit.METER),
-                    lane.getWidth(1), Speed.ZERO, theSimulator, (OTSNetwork) this.network);
+                    lane.getWidth(1), Speed.ZERO, theSimulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                     new LaneBasedGTUFollowingTacticalPlanner(carFollowingModelCars, block), block);
             block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class, gtuColorer);

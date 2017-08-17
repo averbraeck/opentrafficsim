@@ -97,6 +97,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
     {
         SwingUtilities.invokeLater(new Runnable()
         {
+            @Override
             public void run()
             {
                 try
