@@ -86,18 +86,21 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         LaneBasedTemplateGTUType passengerCar =
                 new LaneBasedTemplateGTUType(pcType, new IdGenerator("Passenger car "), new Generator<Length>()
                 {
+                    @Override
                     public Length draw()
                     {
                         return pcLength.draw();
                     }
                 }, new Generator<Length>()
                 {
+                    @Override
                     public Length draw()
                     {
                         return pcWidth.draw();
                     }
                 }, new Generator<Speed>()
                 {
+                    @Override
                     public Speed draw()
                     {
                         return pcMaximumSpeed.draw();
@@ -113,6 +116,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                         */
                         initialLongitudinalPositions, new Generator<Speed>()
                         {
+                            @Override
                             public Speed draw()
                             {
                                 return pcInitialSpeed.draw();
@@ -132,18 +136,21 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         LaneBasedTemplateGTUType truck =
                 new LaneBasedTemplateGTUType(truckType, new IdGenerator("Truck "), new Generator<Length>()
                 {
+                    @Override
                     public Length draw()
                     {
                         return truckLength.draw();
                     }
                 }, new Generator<Length>()
                 {
+                    @Override
                     public Length draw()
                     {
                         return truckWidth.draw();
                     }
                 }, new Generator<Speed>()
                 {
+                    @Override
                     public Speed draw()
                     {
                         return truckMaximumSpeed.draw();
@@ -159,6 +166,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                         */
                         initialLongitudinalPositions, new Generator<Speed>()
                         {
+                            @Override
                             public Speed draw()
                             {
                                 return truckInitialSpeed.draw();
@@ -218,18 +226,21 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         TemplateGTUType passengerCar = new TemplateGTUType(pc, new IdGenerator("Passenger car "), new Generator<Length>()
         {
+            @Override
             public Length draw()
             {
                 return pcLength.draw();
             }
         }, new Generator<Length>()
         {
+            @Override
             public Length draw()
             {
                 return pcWidth.draw();
             }
         }, new Generator<Speed>()
         {
+            @Override
             public Speed draw()
             {
                 return pcMaximumSpeed.draw();
@@ -245,18 +256,21 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         SimpleSimulator truckSimulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         TemplateGTUType truck = new TemplateGTUType(truckType, new IdGenerator("Truck "), new Generator<Length>()
         {
+            @Override
             public Length draw()
             {
                 return truckLength.draw();
             }
         }, new Generator<Length>()
         {
+            @Override
             public Length draw()
             {
                 return truckWidth.draw();
             }
         }, new Generator<Speed>()
         {
+            @Override
             public Speed draw()
             {
                 return truckMaximumSpeed.draw();
@@ -345,14 +359,14 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
      * Register the simulator.
      * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
      */
-    public void setSimulator(SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
+    public void setSimulator(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
     {
         this.simulator = simulator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
     {
         // Nothing happens here
     }
