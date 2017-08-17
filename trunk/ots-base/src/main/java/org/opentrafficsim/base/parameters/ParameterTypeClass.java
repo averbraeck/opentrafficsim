@@ -82,6 +82,7 @@ public class ParameterTypeClass<T> extends AbstractParameterType<Class<? extends
 
         /** {@inheritDoc} */
         @Override
+        @SuppressWarnings("checkstyle:designforextension")
         public String toString()
         {
             return "ClassConstraint [classes=" + this.classes + "]";

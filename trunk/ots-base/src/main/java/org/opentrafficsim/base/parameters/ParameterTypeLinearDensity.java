@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
-import org.opentrafficsim.base.parameters.constraint.SingleBound.NumericConstraint;
 
 /**
  * Wrapper class for LinearDensity parameters.

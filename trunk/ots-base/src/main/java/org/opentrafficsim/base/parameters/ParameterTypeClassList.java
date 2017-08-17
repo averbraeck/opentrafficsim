@@ -91,6 +91,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
 
         /** {@inheritDoc} */
         @Override
+        @SuppressWarnings("checkstyle:designforextension")
         public String toString()
         {
             return "ClassListConstraint [classes=" + this.classes + "]";

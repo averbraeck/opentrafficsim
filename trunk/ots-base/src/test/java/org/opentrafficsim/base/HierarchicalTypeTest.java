@@ -47,7 +47,6 @@ public class HierarchicalTypeTest
         st3 = new SubType("id2");
         assertFalse("other subtype with same name but no parent is not equal", st2.equals(st3));
         assertFalse("other subtype with same name but no parent is not equal", st3.equals(st2));
-        SubType otherParent = new SubType("st4");
     }
     
     

@@ -106,6 +106,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Serializable
      * Retrieve the key of this AbstractProperty.
      * @return String; the key of this AbstractProperty
      */
+    @Override
     public final String getKey()
     {
         return this.key;
