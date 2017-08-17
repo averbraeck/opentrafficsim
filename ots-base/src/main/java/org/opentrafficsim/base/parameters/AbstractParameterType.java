@@ -135,8 +135,8 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
             }
             catch (ParameterException pe)
             {
-                throw new RuntimeException("Default value of parameter '" + getId() + "' does not comply with custom constraints.",
-                        pe);
+                throw new RuntimeException("Default value of parameter '" + getId() 
+                        + "' does not comply with custom constraints.", pe);
             }
         }
     }
