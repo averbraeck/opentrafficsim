@@ -32,7 +32,7 @@ public class ToledoCFTester
      * @param args arguments for the run (should be empty at the moment)
      * @throws ParameterException when Toledo parameters cannot be found
      */
-    public static void main(String[] args) throws ParameterException
+    public static void main(final String[] args) throws ParameterException
     {
 
         Parameters params = new Parameters();

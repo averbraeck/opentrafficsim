@@ -62,4 +62,11 @@ public class TTCRoomChecker implements RoomChecker
         return null;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TTCRoomChecker [ttc=" + this.ttc + "]";
+    }
+
 }

@@ -276,7 +276,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
      * Returns the conflict rule type.
      * @return conflict rule type
      */
-    public Class<? extends ConflictRule> getConflictRuleType()
+    public final Class<? extends ConflictRule> getConflictRuleType()
     {
         return this.conflictRuleType;
     }
@@ -285,7 +285,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
      * Returns the distance of a traffic light upstream on the conflicting lane.
      * @return distance of a traffic light upstream on the conflicting lane.
      */
-    public Length getConflictingTrafficLightDistance()
+    public final Length getConflictingTrafficLightDistance()
     {
         return this.conflictingTrafficLightDistance;
     }
@@ -294,7 +294,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
      * Whether the conflict is permitted by the traffic light.
      * @return whether the conflict is permitted by the traffic light
      */
-    public boolean isPermitted()
+    public final boolean isPermitted()
     {
         return this.permitted;
     }
@@ -304,13 +304,14 @@ public class HeadwayConflict extends AbstractHeadwayCopy
      * @param trafficLightDistance distance of a traffic light upstream on the conflicting lane.
      * @param permittedConflict whether the conflict is permitted by the traffic light
      */
-    public void setConflictingTrafficLight(final Length trafficLightDistance, final boolean permittedConflict)
+    public final void setConflictingTrafficLight(final Length trafficLightDistance, final boolean permittedConflict)
     {
         this.conflictingTrafficLightDistance = trafficLightDistance;
         this.permitted = permittedConflict;
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return String.format("Headway %s to object %s of type %s", getDistance(), getId(), getObjectType());

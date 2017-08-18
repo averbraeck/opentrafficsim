@@ -42,6 +42,7 @@ public interface NonDirectionalOccupancySensor extends Serializable, Identifiabl
     Length getLanePositionB();
 
     /** @return The id of the sensor. */
+    @Override
     String getId();
 
     /** @return The simulator. */

@@ -59,8 +59,8 @@ public class GTUTypeGenerator
         Throw.whenNull(simulator, "Simulator may not be null.");
         try
         {
-            Throw.whenNull(simulator.getReplication().getStream(GTU_CLASS_STREAM),
-                    "Could not obtain random stream '" + GTU_CLASS_STREAM + "'.");
+            Throw.whenNull(simulator.getReplication().getStream(GTU_CLASS_STREAM), "Could not obtain random stream '"
+                    + GTU_CLASS_STREAM + "'.");
         }
         catch (RemoteException exception)
         {
@@ -76,8 +76,8 @@ public class GTUTypeGenerator
      * @param maximumSpeed maximum speed of the GTU
      * @param probability the probability to generate with these characteristics
      */
-    public void addType(final Length length, final Length width, final GTUType gtuType, final Generator<Speed> maximumSpeed,
-            final double probability)
+    public final void addType(final Length length, final Length width, final GTUType gtuType,
+            final Generator<Speed> maximumSpeed, final double probability)
     {
         this.lengths.add(length);
         this.widths.add(width);
@@ -90,7 +90,7 @@ public class GTUTypeGenerator
     /**
      * @return random GTU type info
      */
-    public GTUTypeInfo draw()
+    public final GTUTypeInfo draw()
     {
         double r;
         try
@@ -110,8 +110,8 @@ public class GTUTypeGenerator
         }
         try
         {
-            return new GTUTypeInfo(this.lengths.get(i), this.widths.get(i), this.gtuTypes.get(i),
-                    this.maximumSpeeds.get(i).draw());
+            return new GTUTypeInfo(this.lengths.get(i), this.widths.get(i), this.gtuTypes.get(i), this.maximumSpeeds.get(i)
+                    .draw());
         }
         catch (ProbabilityException | ParameterException exception)
         {
@@ -121,8 +121,7 @@ public class GTUTypeGenerator
 
     /**
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 19 nov. 2016 <br>
@@ -162,7 +161,7 @@ public class GTUTypeGenerator
         /**
          * @return length.
          */
-        public Length getLength()
+        public final Length getLength()
         {
             return this.length;
         }
@@ -170,7 +169,7 @@ public class GTUTypeGenerator
         /**
          * @return width.
          */
-        public Length getWidth()
+        public final Length getWidth()
         {
             return this.width;
         }
@@ -178,7 +177,7 @@ public class GTUTypeGenerator
         /**
          * @return gtuType.
          */
-        public GTUType getGtuType()
+        public final GTUType getGtuType()
         {
             return this.gtuType;
         }
@@ -186,11 +185,28 @@ public class GTUTypeGenerator
         /**
          * @return maximumSpeed.
          */
-        public Speed getMaximumSpeed()
+        public final Speed getMaximumSpeed()
         {
             return this.maximumSpeed;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "GTUTypeInfo [length=" + this.length + ", width=" + this.width + ", gtuType=" + this.gtuType
+                    + ", maximumSpeed=" + this.maximumSpeed + "]";
+        }
+
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "GTUTypeGenerator [lengths=" + this.lengths + ", widths=" + this.widths + ", gtuTypes=" + this.gtuTypes
+                + ", maximumSpeeds=" + this.maximumSpeeds + ", probabilities=" + this.probabilities + ", probabilitySum="
+                + this.probabilitySum + ", simulator=" + this.simulator + "]";
     }
 
 }

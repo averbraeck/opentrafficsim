@@ -171,7 +171,7 @@ public class BusSchedule extends Route
     /**
      * @return line.
      */
-    public String getLine()
+    public final String getLine()
     {
         return this.line;
     }
@@ -241,6 +241,14 @@ public class BusSchedule extends Route
         public final boolean isForceSchedule()
         {
             return this.forceSchedule;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "BusStopInfo [departureTime=" + this.departureTime + ", dwellTime=" + this.dwellTime + ", forceSchedule="
+                    + this.forceSchedule + "]";
         }
 
     }

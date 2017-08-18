@@ -275,6 +275,13 @@ public class DefaultCarAnimation extends Renderable2D implements ClonableRendera
             return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "Text [isTextDestroyed=" + this.isTextDestroyed + "]";
+        }
+
     }
 
 }

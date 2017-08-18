@@ -56,7 +56,7 @@ public class SplitColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(final GTU gtu)
+    public final Color getColor(final GTU gtu)
     {
         if (!(gtu instanceof LaneBasedGTU))
         {
@@ -173,21 +173,21 @@ public class SplitColorer implements GTUColorer
      * @param to to point
      * @return angle between two points
      */
-    private final double getAngle(final OTSPoint3D from, final OTSPoint3D to)
+    private double getAngle(final OTSPoint3D from, final OTSPoint3D to)
     {
         return Math.atan2(to.x - from.x, to.y - from.y);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<LegendEntry> getLegend()
+    public final List<LegendEntry> getLegend()
     {
         return LEGEND;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "Split";
     }

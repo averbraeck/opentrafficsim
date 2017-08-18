@@ -37,7 +37,7 @@ public class RouteData implements RouteDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public String getId()
+    public final String getId()
     {
         return this.route.getId();
     }

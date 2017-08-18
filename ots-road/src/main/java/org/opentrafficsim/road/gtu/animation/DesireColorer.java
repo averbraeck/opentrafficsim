@@ -59,7 +59,7 @@ public abstract class DesireColorer implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public List<LegendEntry> getLegend()
+    public final List<LegendEntry> getLegend()
     {
         return LEGEND;
     }

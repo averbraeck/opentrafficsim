@@ -321,6 +321,13 @@ public final class Conflict extends AbstractLaneBasedObject
             return null;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "ConflictEnd [conflict=" + this.conflict + "]";
+        }
+
     }
 
 }

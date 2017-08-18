@@ -112,14 +112,14 @@ public class BusStopConflictRule implements ConflictRule
 
     /** {@inheritDoc} */
     @Override
-    public ConflictRule clone(final OTSSimulatorInterface newSimulator)
+    public final ConflictRule clone(final OTSSimulatorInterface newSimulator)
     {
         return new BusStopConflictRule(newSimulator);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "BusStopConflictRule";
     }

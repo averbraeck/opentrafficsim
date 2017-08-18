@@ -550,6 +550,16 @@ public class TrafficLightSensor extends EventProducer
         return this.currentGTUs.size() > 0;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "TrafficLightSensor [id=" + this.id + ", entryA=" + this.entryA + ", exitA=" + this.exitA + ", entryB="
+                + this.entryB + ", exitB=" + this.exitB + ", currentGTUs=" + this.currentGTUs + ", lanes=" + this.lanes
+                + ", directionalityA=" + this.directionalityA + ", directionalityB=" + this.directionalityB + ", path="
+                + this.path + "]";
+    }
+
 }
 
 /**
@@ -607,6 +617,13 @@ class FlankSensor extends AbstractSensor
         // sensors?
         return new FlankSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
                 (OTSDEVSSimulatorInterface) newSimulator, this.parent);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "FlankSensor [parent=" + this.parent.getId() + "]";
     }
 
 }

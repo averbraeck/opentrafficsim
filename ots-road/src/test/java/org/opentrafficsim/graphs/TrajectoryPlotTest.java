@@ -1,14 +1,11 @@
 package org.opentrafficsim.graphs;
 
 import static org.junit.Assert.assertEquals;
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -23,7 +20,6 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;

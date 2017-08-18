@@ -102,14 +102,14 @@ public class Category implements Serializable
     /**
      * @return fraction.
      */
-    public double getFraction()
+    public final double getFraction()
     {
         return this.fraction;
     }
 
     /** {@inheritDoc} */
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -123,7 +123,7 @@ public class Category implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(final Object obj)
+    public final boolean equals(final Object obj)
     {
         if (this == obj)
         {

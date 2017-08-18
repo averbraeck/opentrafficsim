@@ -54,7 +54,7 @@ public class DesiredHeadwayColorer implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(final GTU gtu)
+    public final Color getColor(final GTU gtu)
     {
         Parameters params = gtu.getParameters();
         if (!params.contains(ParameterTypes.TMIN) || !params.contains(ParameterTypes.TMAX) || !params.contains(ParameterTypes.T))
@@ -90,14 +90,14 @@ public class DesiredHeadwayColorer implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public List<LegendEntry> getLegend()
+    public final List<LegendEntry> getLegend()
     {
         return LEGEND;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "Desired headway";
     }

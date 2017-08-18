@@ -151,6 +151,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
     /**
      * @return gtuType
      */
+    @Override
     public final GTUType getGtuType()
     {
         return this.gtuType;
@@ -159,36 +160,42 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
     /**
      * @return facingSameDirection
      */
+    @Override
     public final boolean isFacingSameDirection()
     {
         return this.facingSameDirection;
     }
 
     /** @return were the braking lights on? */
+    @Override
     public final boolean isBrakingLightsOn()
     {
         return this.gtuStatus.contains(GTUStatus.BRAKING_LIGHTS);
     }
 
     /** @return was the left turn indicator on? */
+    @Override
     public final boolean isLeftTurnIndicatorOn()
     {
         return this.gtuStatus.contains(GTUStatus.LEFT_TURNINDICATOR);
     }
 
     /** @return was the right turn indicator on? */
+    @Override
     public final boolean isRightTurnIndicatorOn()
     {
         return this.gtuStatus.contains(GTUStatus.RIGHT_TURNINDICATOR);
     }
 
     /** @return were the emergency lights on? */
+    @Override
     public final boolean isEmergencyLightsOn()
     {
         return this.gtuStatus.contains(GTUStatus.EMERGENCY_LIGHTS);
     }
 
     /** @return was the vehicle honking or ringing its bell when being observed for the headway? */
+    @Override
     public final boolean isHonking()
     {
         return this.gtuStatus.contains(GTUStatus.HONK);

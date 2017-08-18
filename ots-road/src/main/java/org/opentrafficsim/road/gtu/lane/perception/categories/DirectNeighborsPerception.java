@@ -616,6 +616,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "DirectNeighborsPerception";

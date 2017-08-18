@@ -11,12 +11,13 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -50,9 +51,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 /**
  * Test the non-GUI part of the ContourPlot class.
  * <p>
@@ -77,12 +75,14 @@ public class ContourPlotTest implements UNITS
     {
         OTSNode b = new OTSNode(network, "B", new OTSPoint3D(12345, 0, 0));
         ArrayList<Lane> result = new ArrayList<Lane>();
-        Lane[] lanes = LaneFactory.makeMultiLane(network, "AtoB", new OTSNode(network, "A", new OTSPoint3D(1234, 0, 0)), b,
-                null, 1, laneType, new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
+        Lane[] lanes =
+                LaneFactory.makeMultiLane(network, "AtoB", new OTSNode(network, "A", new OTSPoint3D(1234, 0, 0)), b, null, 1,
+                        laneType, new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
         result.add(lanes[0]);
         // Make a continuation lane to prevent errors when the operational plan exceeds the available remaining length
-        lanes = LaneFactory.makeMultiLane(network, "BtoC", b, new OTSNode(network, "C", new OTSPoint3D(99999, 0, 0)), null, 1,
-                laneType, new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
+        lanes =
+                LaneFactory.makeMultiLane(network, "BtoC", b, new OTSNode(network, "C", new OTSPoint3D(99999, 0, 0)), null, 1,
+                        laneType, new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
         // System.out.println("continuation lane is " + lanes[0] + " length is " + lanes[0].getLength());
         // System.out.println("next lanes is " + result.get(0).nextLanes(gtuType));
         return result;
@@ -132,7 +132,7 @@ public class ContourPlotTest implements UNITS
      * @param fromY fromY
      * @param toY toY
      */
-    static void printMatrix(ContourPlot cp, int fromX, int toX, int fromY, int toY)
+    static void printMatrix(final ContourPlot cp, final int fromX, final int toX, final int fromY, final int toY)
     {
         System.out.println("Contour plot data:");
         int maxItem = cp.getItemCount(0);
@@ -211,8 +211,8 @@ public class ContourPlotTest implements UNITS
      *            expected when no car has passed
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static void standardContourTests(final ContourPlot cp, Lane lane, GTUType gtuType, final double expectedZValue,
-            final double expectedZValueWithTraffic) throws Exception
+    public static void standardContourTests(final ContourPlot cp, final Lane lane, final GTUType gtuType,
+            final double expectedZValue, final double expectedZValueWithTraffic) throws Exception
     {
         assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
         assertEquals("domainOrder should be ASCENDING", DomainOrder.ASCENDING, cp.getDomainOrder());
@@ -221,12 +221,13 @@ public class ContourPlotTest implements UNITS
         assertEquals("getGroup always returns null", null, cp.getGroup());
         int xBins = cp.xAxisBins();
         int yBins = cp.yAxisBins();
-        int expectedXBins = (int) Math
-                .ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND).getSI())
-                        / ContourPlot.STANDARDTIMEGRANULARITIES[ContourPlot.STANDARDINITIALTIMEGRANULARITYINDEX]);
+        int expectedXBins =
+                (int) Math.ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND)
+                        .getSI()) / ContourPlot.STANDARDTIMEGRANULARITIES[ContourPlot.STANDARDINITIALTIMEGRANULARITYINDEX]);
         assertEquals("Initial xBins should be " + expectedXBins, expectedXBins, xBins);
-        int expectedYBins = (int) Math.ceil(lane.getLength().getSI()
-                / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
+        int expectedYBins =
+                (int) Math.ceil(lane.getLength().getSI()
+                        / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
         assertEquals("yBins should be " + expectedYBins, expectedYBins, yBins);
         int bins = cp.getItemCount(0);
         assertEquals("Total bin count is product of xBins * yBins", xBins * yBins, bins);
@@ -242,9 +243,9 @@ public class ContourPlotTest implements UNITS
             {
                 cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + distanceGranularity));
                 cp.reGraph();
-                expectedXBins = (int) Math
-                        .ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND).getSI())
-                                / timeGranularity);
+                expectedXBins =
+                        (int) Math.ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND,
+                                ContourPlot.INITIALLOWERTIMEBOUND).getSI()) / timeGranularity);
                 xBins = cp.xAxisBins();
                 assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
                 expectedYBins = (int) Math.ceil(lane.getLength().getSI() / distanceGranularity);
@@ -421,10 +422,11 @@ public class ContourPlotTest implements UNITS
             }
         }
 
-        LaneBasedIndividualGTU car = CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator,
-                gtuFollowingModel, laneChangeModel, network);
-        car.getStrategicalPlanner().getParameters().setParameter(ParameterTypes.LOOKAHEAD,
-                new Length(10, LengthUnit.KILOMETER));
+        LaneBasedIndividualGTU car =
+                CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
+                        laneChangeModel, network);
+        car.getStrategicalPlanner().getParameters()
+                .setParameter(ParameterTypes.LOOKAHEAD, new Length(10, LengthUnit.KILOMETER));
 
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(0));
@@ -470,8 +472,9 @@ public class ContourPlotTest implements UNITS
                 // the car MAY have contributed to this cell
                 Time cellStartTime =
                         new Time(Math.max(car.getOperationalPlan().getStartTime().getSI(), x), TimeUnit.BASE_SECOND);
-                Time cellEndTime = new Time(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity),
-                        TimeUnit.BASE_SECOND);
+                Time cellEndTime =
+                        new Time(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity),
+                                TimeUnit.BASE_SECOND);
                 // System.out.println("cellStartTime=" + cellStartTime + ", cellEndTime=" + cellEndTime);
                 // The next if statement is the problem
                 // if (cellStartTime.lt(cellEndTime)
@@ -695,7 +698,7 @@ class ContourPlotModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator) throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator) throws SimRuntimeException
     {
         // NOT USED
     }

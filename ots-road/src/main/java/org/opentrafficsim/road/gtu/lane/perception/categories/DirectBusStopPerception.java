@@ -85,7 +85,7 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "DirectBusStopPerception";
     }

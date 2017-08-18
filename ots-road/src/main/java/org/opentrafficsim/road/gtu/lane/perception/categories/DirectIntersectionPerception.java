@@ -561,6 +561,14 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
             return true;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "LaneInfo [lane=" + this.lane + ", direction=" + this.direction + ", distance=" + this.distance
+                    + ", position=" + this.position + ", gtuType=" + this.gtuType + "]";
+        }
+
     }
 
     /** {@inheritDoc} */
@@ -630,6 +638,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "DirectIntersectionPerception";

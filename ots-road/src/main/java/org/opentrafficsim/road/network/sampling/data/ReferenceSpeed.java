@@ -58,7 +58,7 @@ public class ReferenceSpeed extends ExtendedDataTypeSpeed
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "Reference Speed";
     }

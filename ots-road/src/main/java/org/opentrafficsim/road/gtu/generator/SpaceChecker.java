@@ -21,6 +21,6 @@ public interface SpaceChecker
      * Checks whether a GTU will have enough space to be generated.
      * @return Whether a GTU will have enough space to be generated.
      */
-    public boolean checkEnoughSpace();
+    boolean checkEnoughSpace();
 
 }

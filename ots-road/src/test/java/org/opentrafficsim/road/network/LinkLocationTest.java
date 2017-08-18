@@ -39,7 +39,7 @@ public class LinkLocationTest implements UNITS
      * @throws NetworkException if that happens this test has failed
      */
     @Test
-    public void linkLocationTest() throws OTSGeometryException, NetworkException
+    public final void linkLocationTest() throws OTSGeometryException, NetworkException
     {
         // Preparations
         Network network = new OTSNetwork("link location test network");

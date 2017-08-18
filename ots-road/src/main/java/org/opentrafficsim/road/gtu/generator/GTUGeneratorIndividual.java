@@ -102,6 +102,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
     /**
      * @return lengthDist.
      */
+    @Override
     public final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> getLengthDist()
     {
         return this.lengthDist;
@@ -110,6 +111,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
     /**
      * @return widthDist.
      */
+    @Override
     public final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> getWidthDist()
     {
         return this.widthDist;
@@ -118,6 +120,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
     /**
      * @return maximumSpeedDist.
      */
+    @Override
     public final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> getMaximumSpeedDist()
     {
         return this.maximumSpeedDist;

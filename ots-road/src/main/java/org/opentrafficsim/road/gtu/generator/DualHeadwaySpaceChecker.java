@@ -17,7 +17,7 @@ public class DualHeadwaySpaceChecker implements SpaceChecker
 
     /** {@inheritDoc} */
     @Override
-    public boolean checkEnoughSpace()
+    public final boolean checkEnoughSpace()
     {
         return false;
     }

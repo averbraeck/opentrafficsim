@@ -170,7 +170,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
 
     /** {@inheritDoc} */
     @Override
-    public AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
+    public final AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
     {
         try
         {
@@ -182,6 +182,14 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
             // input should be consistent
             throw new RuntimeException("Exception while copying Headway GTU.", exception);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeadwayGTURealCopy [carFollowingModel=" + this.carFollowingModel + ", parameters=" + this.parameters
+                + ", speedLimitInfo=" + this.speedLimitInfo + ", route=" + this.route + "]";
     }
 
 }

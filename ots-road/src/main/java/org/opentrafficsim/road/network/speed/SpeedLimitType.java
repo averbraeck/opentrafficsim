@@ -48,6 +48,7 @@ public class SpeedLimitType<T> extends Type<SpeedLimitType<T>> implements Serial
      * Returns the id.
      * @return the id
      */
+    @Override
     public final String getId()
     {
         return this.id;

@@ -53,7 +53,7 @@ public class LaneData implements LaneDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public String getId()
+    public final String getId()
     {
         return this.lane.getId();
     }

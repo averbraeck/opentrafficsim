@@ -3,13 +3,13 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.ParameterTypeLength;
-import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
@@ -23,8 +23,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimpl
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Lane-based tactical planner that implements car following behavior. This tactical planner retrieves the car following model

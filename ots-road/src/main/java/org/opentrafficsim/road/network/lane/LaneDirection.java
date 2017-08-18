@@ -54,7 +54,7 @@ public class LaneDirection implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "[" + this.lane + (this.direction.isPlus() ? " +]" : " -]");
     }

@@ -55,7 +55,7 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
 
     /** {@inheritDoc} */
     @Override
-    public void paint(final Graphics2D arg0, final ImageObserver arg1) throws RemoteException
+    public final void paint(final Graphics2D arg0, final ImageObserver arg1) throws RemoteException
     {
         SpeedSign sign = getSource();
         double r = RADIUS;
@@ -78,7 +78,7 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "SpeedSignAnimation";
     }

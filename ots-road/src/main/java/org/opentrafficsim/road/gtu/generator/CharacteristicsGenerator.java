@@ -81,7 +81,7 @@ public class CharacteristicsGenerator implements LaneBasedGTUCharacteristicsGene
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException
+    public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException
     {
         GTUTypeInfo info = this.gtuTypeGenerator.draw();
         GTUCharacteristics gtuCharacteristics = new GTUCharacteristics(info.getGtuType(), this.idGenerator, info.getLength(),
@@ -92,9 +92,19 @@ public class CharacteristicsGenerator implements LaneBasedGTUCharacteristicsGene
 
     /** {@inheritDoc} */
     @Override
-    public OTSDEVSSimulatorInterface getSimulator() throws ProbabilityException
+    public final OTSDEVSSimulatorInterface getSimulator() throws ProbabilityException
     {
         return this.simulator;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "CharacteristicsGenerator [strategicalFactory=" + this.strategicalFactory + ", routeGenerator="
+                + this.routeGenerator + ", idGenerator=" + this.idGenerator + ", simulator=" + this.simulator + ", network="
+                + this.network + ", gtuTypeGenerator=" + this.gtuTypeGenerator + ", generationSpeed=" + this.generationSpeed
+                + ", positions=" + this.positions + "]";
     }
 
 }

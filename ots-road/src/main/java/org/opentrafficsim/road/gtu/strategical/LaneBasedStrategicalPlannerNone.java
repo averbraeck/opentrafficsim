@@ -40,42 +40,45 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
 
     /** {@inheritDoc} */
     @Override
-    public TacticalPlanner generateTacticalPlanner()
+    public final TacticalPlanner generateTacticalPlanner()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Node nextNode(Link link, GTUDirectionality direction, GTUType gtuType) throws NetworkException
+    public final Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+            throws NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public LinkDirection nextLinkDirection(Link link, GTUDirectionality direction, GTUType gtuType) throws NetworkException
+    public final LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType) 
+            throws NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Node nextNode(Node node, Link previousLink, GTUType gtuType) throws NetworkException
+    public final Node nextNode(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public LinkDirection nextLinkDirection(Node node, Link previousLink, GTUType gtuType) throws NetworkException
+    public final LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType) 
+            throws NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Route getRoute()
+    public final Route getRoute()
     {
         return null;
     }

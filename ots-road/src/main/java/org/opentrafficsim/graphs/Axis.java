@@ -72,7 +72,7 @@ public class Axis implements Serializable
      * @param value DoubleScalar; the value
      * @return double; the bin that belongs to the value
      */
-    public double getRelativeBin(final DoubleScalarInterface value)
+    public final double getRelativeBin(final DoubleScalarInterface value)
     {
         return (value.getSI() - this.getMinimumValue().getSI()) / this.getGranularities()[0];
     }
@@ -81,7 +81,7 @@ public class Axis implements Serializable
      * Adjust (increase) the range of this AxisDefinition.
      * @param newMaximum DoubleScalar; the new maximum value of the axis
      */
-    public void adjustMaximumValue(final DoubleScalarInterface newMaximum)
+    public final void adjustMaximumValue(final DoubleScalarInterface newMaximum)
     {
         // System.out.println("extending axis " + this.name + " from " + this.maximumValue + " to " + newMaximum);
         this.setMaximumValue(newMaximum);
@@ -92,7 +92,7 @@ public class Axis implements Serializable
      * @param aggregatedBin Integer; the number of a bin
      * @return Double; the value corresponding to the center of aggregateBin
      */
-    public double getValue(final int aggregatedBin)
+    public final double getValue(final int aggregatedBin)
     {
         return this.getMinimumValue().getSI() + 1.0 * aggregatedBin * this.getCurrentGranularity();
     }
@@ -100,7 +100,7 @@ public class Axis implements Serializable
     /**
      * @return Integer; the number of bins along this axis
      */
-    public int getAggregatedBinCount()
+    public final int getAggregatedBinCount()
     {
         return (int) Math
                 .ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI()) / this.getCurrentGranularity());
@@ -109,7 +109,7 @@ public class Axis implements Serializable
     /**
      * @return Integer; the number of aggregated bins along this axis
      */
-    public int getBinCount()
+    public final int getBinCount()
     {
         return (int) Math.ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI()) / this.getGranularities()[0]);
     }
@@ -118,7 +118,7 @@ public class Axis implements Serializable
      * Get the granularity of this axis.
      * @return double; the granularity of this axis
      */
-    public double getCurrentGranularity()
+    public final double getCurrentGranularity()
     {
         return this.currentGranularity;
     }
@@ -128,7 +128,7 @@ public class Axis implements Serializable
      * The new value must be present in the granularities.
      * @param newGranularity double; the new value for the granularity of this axis
      */
-    public void setCurrentGranularity(final double newGranularity)
+    public final void setCurrentGranularity(final double newGranularity)
     {
         for (double g : this.getGranularities())
         {
@@ -145,7 +145,7 @@ public class Axis implements Serializable
      * Get the maximum value of this axis.
      * @return DoubleScalar; the current maximum value of this axis
      */
-    public DoubleScalarInterface getMaximumValue()
+    public final DoubleScalarInterface getMaximumValue()
     {
         return this.maximumValue;
     }
@@ -155,7 +155,7 @@ public class Axis implements Serializable
      * The maximum value can only be increased.
      * @param newMaximumValue DoubleScalar; the new maximum value of this axis
      */
-    public void setMaximumValue(final DoubleScalarInterface newMaximumValue)
+    public final void setMaximumValue(final DoubleScalarInterface newMaximumValue)
     {
         if (null != this.maximumValue && newMaximumValue.getSI() < this.maximumValue.getSI())
         {
@@ -168,7 +168,7 @@ public class Axis implements Serializable
      * Get the minimum value of this axis.
      * @return DoubleScalar; the minimum value of this axis
      */
-    public DoubleScalarInterface getMinimumValue()
+    public final DoubleScalarInterface getMinimumValue()
     {
         return this.minimumValue;
     }
@@ -186,7 +186,7 @@ public class Axis implements Serializable
      * Retrieve the format for displaying values along this Axis.
      * @return format
      */
-    public String getFormat()
+    public final String getFormat()
     {
         return this.format;
     }
@@ -195,7 +195,7 @@ public class Axis implements Serializable
      * Retrieve the short name for this Axis.
      * @return String; the short name for this Axis
      */
-    public String getShortName()
+    public final String getShortName()
     {
         return this.shortName;
     }
@@ -204,7 +204,7 @@ public class Axis implements Serializable
      * Retrieve the name of this Axis.
      * @return String; the name of this Axis
      */
-    public String getName()
+    public final String getName()
     {
         return this.name;
     }

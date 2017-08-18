@@ -62,6 +62,7 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends R
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         graphics.fill(this.rectangle);

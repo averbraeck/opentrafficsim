@@ -52,6 +52,7 @@ public class SpeedLimit extends ExtendedDataTypeSpeed
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "SpeedLimit";

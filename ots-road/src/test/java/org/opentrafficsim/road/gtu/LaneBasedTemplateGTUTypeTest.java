@@ -68,7 +68,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void constructorTest() throws Exception
+    public final void constructorTest() throws Exception
     {
         OTSNetwork network = new OTSNetwork("network");
         GTUType pcType = CAR;
@@ -193,13 +193,13 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         /**
          * 
          */
-        public DummyStrategicalPlannerFactory()
+        DummyStrategicalPlannerFactory()
         {
         }
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedStrategicalPlanner create(LaneBasedGTU gtu, Route route) throws GTUException
+        public LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route) throws GTUException
         {
             return null;
         }
@@ -211,7 +211,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void compatibleLaneTypeTest() throws Exception
+    public final void compatibleLaneTypeTest() throws Exception
     {
         // Create some TemplateGTUTypes
         OTSNetwork network = new OTSNetwork("network");

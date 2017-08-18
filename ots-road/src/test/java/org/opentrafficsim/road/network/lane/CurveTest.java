@@ -2,10 +2,10 @@ package org.opentrafficsim.road.network.lane;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.naming.NamingException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
@@ -35,9 +35,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationMode
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-
 /**
  * Verify that GTUs register and unregister at the correct times and locations when following a curve.
  * <p>
@@ -61,7 +58,7 @@ public class CurveTest
      * @throws GTUException on error
      */
     @Test
-    public void curveTest() throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GTUException
+    public final void curveTest() throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GTUException
     {
         final int laneCount = 1;
         GTUType gtuType = CAR;
@@ -113,7 +110,7 @@ public class CurveTest
      * Print all scheduled events of an OTSDEVSSimulatorInterface.
      * @param simulator OTSDEVSSimulatorInterface; the OTSDEVSSimulatorInterface
      */
-    public void printEventList(final OTSDEVSSimulatorInterface simulator)
+    public final void printEventList(final OTSDEVSSimulatorInterface simulator)
     {
         for (SimEventInterface<OTSSimTimeDouble> se : simulator.getEventList())
         {

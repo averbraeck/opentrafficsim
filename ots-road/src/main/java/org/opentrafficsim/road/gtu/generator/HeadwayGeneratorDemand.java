@@ -104,7 +104,7 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    public Duration draw() throws ProbabilityException, ParameterException
+    public final Duration draw() throws ProbabilityException, ParameterException
     {
         Time time = this.simulator.getSimulatorTime().getTime();
         try
@@ -187,6 +187,14 @@ public class HeadwayGeneratorDemand implements Generator<Duration>
 
         return arrival;
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeadwayGeneratorDemand [interpolation=" + this.interpolation + ", timeVector=" + this.timeVector
+                + ", demandVector=" + this.demandVector + ", simulator=" + this.simulator + "]";
     }
 
 }

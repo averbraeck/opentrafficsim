@@ -265,7 +265,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
 
     /** {@inheritDoc} */
     @Override
-    protected JFreeChart createChart(final JFrame container)
+    protected final JFreeChart createChart(final JFrame container)
     {
         final JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
         container.add(statusLabel, BorderLayout.SOUTH);
@@ -403,6 +403,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
     /**
      * Redraw this ContourGraph (after the underlying data, or a granularity setting has been changed).
      */
+    @Override
     public final void reGraph()
     {
         for (DatasetChangeListener dcl : getListenerList().getListeners(DatasetChangeListener.class))

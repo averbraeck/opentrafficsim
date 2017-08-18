@@ -24,6 +24,9 @@ import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 // TODO same class name as in core, w\o additional functionality, while the core one is used in AbstractWrappableAnimation
 public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+    
     /** The initial set of GTU colorers in the default list. */
     private static final GTUColorer[] COLORERS;
 

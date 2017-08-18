@@ -63,7 +63,7 @@ public interface OvertakingConditions
      * initial version Sep 13, 2015
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      */
-    public static class LeftOnly implements OvertakingConditions
+    static class LeftOnly implements OvertakingConditions
     {
 
         /** {@inheritDoc} */

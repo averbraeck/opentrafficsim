@@ -203,6 +203,13 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
             }
             return IDGTUColorer.LEGEND.get(colorIndex).getColor();
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "MyRenderer []";
+        }
     }
 
     /** {@inheritDoc} */
@@ -491,6 +498,13 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
         public double getLengthOffset()
         {
             return this.lengthOffset;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "TrajectoryAndLengthOffset [trajectory=" + this.trajectory + ", lengthOffset=" + this.lengthOffset + "]";
         }
 
     }

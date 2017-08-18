@@ -75,7 +75,7 @@ public class DataSampler implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "DataSampler [lanes=" + this.lanes + ", network=" + this.network + ", #gtus=" + this.gtus.size() + "]";
     }

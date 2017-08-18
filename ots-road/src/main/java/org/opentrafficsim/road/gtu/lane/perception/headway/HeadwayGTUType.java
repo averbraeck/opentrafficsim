@@ -152,7 +152,7 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
 
     /** {@inheritDoc} */
     @Override
-    public AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
+    public final AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
     {
         try
         {
@@ -164,6 +164,13 @@ public class HeadwayGTUType extends AbstractHeadwayGTU
             // input should be consistent
             throw new RuntimeException("Exception while copying Headway GTU.", exception);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeadwayGTUType [gtuTypeAssumptions=" + this.gtuTypeAssumptions + "]";
     }
 
 }

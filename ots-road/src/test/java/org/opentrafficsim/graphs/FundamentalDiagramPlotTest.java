@@ -10,11 +10,13 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.swing.JLabel;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -47,9 +49,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -128,10 +127,10 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
 
         // add a sink 100 meter before the end of the lane.
-        new SinkSensor(lane, new Length(lane.getLength().getSI() - 100, METER), simulator);
+        new SinkSensor(lane, new Length(lane.getLength().getSI() - 100, METER), this.simulator);
 
-        simulator.runUpTo(time);
-        while (simulator.isRunning())
+        this.simulator.runUpTo(time);
+        while (this.simulator.isRunning())
         {
             try
             {
@@ -148,12 +147,13 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
                 new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(1000, SECOND));
         // Construct a car
         Parameters parameters = DefaultTestParameters.create();
-        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("1", gtuType, length, width, maxSpeed, simulator, this.network);
+        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("1", gtuType, length, width, maxSpeed, this.simulator, 
+                this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, speed);
-        simulator.runUpTo(new Time(124, TimeUnit.BASE_SECOND));
-        while (simulator.isRunning())
+        this.simulator.runUpTo(new Time(124, TimeUnit.BASE_SECOND));
+        while (this.simulator.isRunning())
         {
             try
             {
@@ -237,12 +237,12 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         speed = new Speed(10, KM_PER_HOUR);
         parameters = DefaultTestParameters.create();
         LaneBasedIndividualGTU gtuX =
-                new LaneBasedIndividualGTU("1234", gtuType, length, width, maxSpeed, simulator, this.network);
+                new LaneBasedIndividualGTU("1234", gtuType, length, width, maxSpeed, this.simulator, this.network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtuX), gtuX);
         gtuX.init(strategicalPlanner, initialLongitudinalPositions, speed);
-        simulator.runUpTo(new Time(125, TimeUnit.BASE_SECOND));
-        while (simulator.isRunning())
+        this.simulator.runUpTo(new Time(125, TimeUnit.BASE_SECOND));
+        while (this.simulator.isRunning())
         {
             try
             {
@@ -422,14 +422,14 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
     {
         // Do nothing
     }
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
     {
         return this.simulator;
@@ -437,7 +437,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public final OTSNetwork getNetwork()
     {
         return this.network;
     }

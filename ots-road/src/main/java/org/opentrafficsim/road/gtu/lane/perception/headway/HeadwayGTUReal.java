@@ -145,7 +145,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
      * and anticipated. Other information is taken from the actual GTU at the time {@code moved()} is called.</b>
      */
     @Override
-    public HeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
+    public final HeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
     {
         try
         {
@@ -191,56 +191,56 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
 
     /** {@inheritDoc} */
     @Override
-    public String getId()
+    public final String getId()
     {
         return this.gtu.getId();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Length getLength()
+    public final Length getLength()
     {
         return this.gtu.getLength();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Speed getSpeed()
+    public final Speed getSpeed()
     {
         return this.gtu.getSpeed();
     }
 
     /** {@inheritDoc} */
     @Override
-    public ObjectType getObjectType()
+    public final ObjectType getObjectType()
     {
         return ObjectType.GTU;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Acceleration getAcceleration()
+    public final Acceleration getAcceleration()
     {
         return this.gtu.getAcceleration();
     }
 
     /** {@inheritDoc} */
     @Override
-    public GTUType getGtuType()
+    public final GTUType getGtuType()
     {
         return this.gtu.getGTUType();
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isFacingSameDirection()
+    public final boolean isFacingSameDirection()
     {
         return this.facingSameDirection;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isBrakingLightsOn()
+    public final boolean isBrakingLightsOn()
     {
         // TODO
         return false;
@@ -248,31 +248,39 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
 
     /** {@inheritDoc} */
     @Override
-    public boolean isLeftTurnIndicatorOn()
+    public final boolean isLeftTurnIndicatorOn()
     {
         return this.gtu.getTurnIndicatorStatus().isLeft();
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isRightTurnIndicatorOn()
+    public final boolean isRightTurnIndicatorOn()
     {
         return this.gtu.getTurnIndicatorStatus().isRight();
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isEmergencyLightsOn()
+    public final boolean isEmergencyLightsOn()
     {
         return this.gtu.getTurnIndicatorStatus().isHazard();
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isHonking()
+    public final boolean isHonking()
     {
         // TODO
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeadwayGTUReal [speedLimitInfo=" + this.speedLimitInfo + ", gtu=" + this.gtu + ", facingSameDirection="
+                + this.facingSameDirection + "]";
     }
 
 }

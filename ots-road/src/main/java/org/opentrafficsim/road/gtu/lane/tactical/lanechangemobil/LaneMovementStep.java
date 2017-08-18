@@ -99,6 +99,7 @@ public class LaneMovementStep implements Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return this.gfmr.toString() + ", " + (null == this.laneChange ? "no lane change" : this.laneChange.toString());

@@ -42,18 +42,18 @@ public class AccelerationConflicts implements AccelerationIncentive
 
     /** {@inheritDoc} */
     @Override
-    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
+    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws OperationalPlanException, ParameterException, GTUException
+            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException,
+            GTUException
     {
         Acceleration acceleration = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
         Length length = perception.getPerceptionCategory(EgoPerception.class).getLength();
         SortedSet<HeadwayConflict> conflicts =
                 perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
         SortedSet<HeadwayGTU> leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
-        simplePlan.minimizeAcceleration(ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length, speed,
-                acceleration, speedLimitInfo, this.yieldPlans, gtu));
+        simplePlan.minimizeAcceleration(ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length,
+                speed, acceleration, speedLimitInfo, this.yieldPlans, gtu));
         if (this.yieldPlans.getIndicatorIntent().isLeft())
         {
             simplePlan.setIndicatorIntentLeft(this.yieldPlans.getIndicatorObjectDistance());
@@ -66,7 +66,7 @@ public class AccelerationConflicts implements AccelerationIncentive
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "AccelerationConflicts";
     }

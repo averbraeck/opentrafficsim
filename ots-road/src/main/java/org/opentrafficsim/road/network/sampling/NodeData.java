@@ -37,7 +37,7 @@ public class NodeData implements NodeDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public String getId()
+    public final String getId()
     {
         return this.node.getId();
     }

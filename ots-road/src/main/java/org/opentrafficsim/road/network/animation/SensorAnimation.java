@@ -125,13 +125,13 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source the object for which the text is displayed
-         * @param text the text to display
-         * @param dx the horizontal movement of the text, in meters
-         * @param dy the vertical movement of the text, in meters
-         * @param textPlacement where to place the text
-         * @param color the color of the text
-         * @param simulator the simulator
+         * @param source Locatable; the object for which the text is displayed
+         * @param text String; the text to display
+         * @param dx float; the horizontal movement of the text, in meters
+         * @param dy float; the vertical movement of the text, in meters
+         * @param textPlacement TextAlignment; where to place the text
+         * @param color Color; the color of the text
+         * @param simulator OTSSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
@@ -149,6 +149,13 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
                 throws RemoteException, NamingException
         {
             return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "Text []";
         }
     }
 

@@ -129,7 +129,16 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
      */
     public final boolean isCompatible(final GTUType gtuType)
     {
-        return this.compatibilitySet.contains(gtuType) || this.compatibilitySet.contains(GTUType.ALL);
+        // OTS-338
+        //return this.compatibilitySet.contains(gtuType) || this.compatibilitySet.contains(GTUType.ALL);
+        for (GTUType type = gtuType; null != type; type = type.getParent())
+        {
+            if (this.compatibilitySet.contains(type))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

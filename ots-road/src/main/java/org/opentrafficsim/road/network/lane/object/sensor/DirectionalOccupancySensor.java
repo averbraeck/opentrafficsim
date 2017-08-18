@@ -42,6 +42,7 @@ public interface DirectionalOccupancySensor extends Serializable, Identifiable
     LaneBasedObject getLanePositionExit();
 
     /** @return The id of the sensor. */
+    @Override
     String getId();
 
     /** @return The simulator. */

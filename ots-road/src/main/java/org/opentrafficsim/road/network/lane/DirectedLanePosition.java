@@ -87,7 +87,7 @@ public class DirectedLanePosition implements Serializable
      * Retrieve the location and direction of the GTU on the lane.
      * @return DirectedPoint; the location and direction of the GTU on the lane
      */
-    public DirectedPoint getLocation()
+    public final DirectedPoint getLocation()
     {
         // double fraction = this.position.si / this.lane.getParentLink().getLength().si;
         OTSLine3D centerLine = this.lane.getCenterLine();
@@ -145,7 +145,7 @@ public class DirectedLanePosition implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "DirectedLanePosition [lane=" + this.lane + ", position=" + this.position + ", gtuDirection=" + this.gtuDirection
                 + "]";
