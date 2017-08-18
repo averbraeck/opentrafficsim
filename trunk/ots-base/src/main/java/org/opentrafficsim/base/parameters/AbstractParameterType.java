@@ -43,10 +43,10 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     protected final T defaultValue;
 
     /**
-     * Constructor without default value and constraint.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
+     * Construct a new AbstractParameterType without default value and constraint.
+     * @param id String; short name of the new AbstractParameterType
+     * @param description String; description or full name of the new AbstractParameterType
+     * @param valueClass Class&lt;T&gt;; class of the value of the new AbstractParameterType
      */
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass)
     {
@@ -54,11 +54,11 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Constructor without default value and with constraint.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param constraint Constraint to check the value.
+     * Construct a new AbstractParameterType without default value and with constraint.
+     * @param id String; short name of the new AbstractParameterType
+     * @param description String; description or full name of the new AbstractParameterType
+     * @param valueClass Class&lt;T&gt;; class of the value of the new AbstractParameterType
+     * @param constraint Constraint&lt;? super T&gt;; constraint that applies to the value of the new AbstractParameterType
      */
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass,
             final Constraint<? super T> constraint)
@@ -67,11 +67,11 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Constructor with default value, without constraint.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param defaultValue Default value.
+     * Construct a new AbstractParameterType with default value, without constraint.
+     * @param id String; short name of the new AbstractParameterType
+     * @param description String; description or full name of the new AbstractParameterType
+     * @param valueClass Class&lt;T&gt;; class of the value of the new AbstractParameterType
+     * @param defaultValue T; default value of the new AbstractParameterType
      */
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue)
     {
@@ -79,12 +79,12 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Constructor with default value and constraint.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param defaultValue Default value.
-     * @param constraint Constraint to check the value.
+     * Construct a new AbstractParameterType with default value and constraint.
+     * @param id String; short name of the new AbstractParameterType
+     * @param description String; description or full name of the new AbstractParameterType
+     * @param valueClass Class&lt;T&gt;; class of the value of the new AbstractParameterType
+     * @param defaultValue T; default value of the new AbstractParameterType
+     * @param constraint Constraint&lt;? super T&gt;; constraint that applies to the value of the new AbstractParameterType
      */
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
             final Constraint<? super T> constraint)
@@ -94,12 +94,13 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
 
     /**
      * Protected constructor with default value and constraint, which may check the default value.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param defaultValue Default value.
-     * @param constraint Constraint to check the value.
-     * @param hasDefaultValue Whether to check the default value for null.
+     * @param id String; short name of the new AbstractParameterType
+     * @param description String; description or full name of the new AbstractParameterType
+     * @param valueClass Class&lt;T&gt;; class of the value of the new AbstractParameterType
+     * @param defaultValue T; default value of the new AbstractParameterType
+     * @param constraint Constraint&lt;? super T&gt;; constraint that applies to the value of the new AbstractParameterType
+     * @param hasDefaultValue boolean; if true a check is performed to ensure that the default value is not null and does not
+     *            violate the constraint
      */
     private AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
             final Constraint<? super T> constraint, final boolean hasDefaultValue)
@@ -124,8 +125,8 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
             }
             catch (ParameterException pe)
             {
-                throw new RuntimeException(
-                        "Default value of parameter '" + this.id + "' does not comply with default constraints.", pe);
+                throw new RuntimeException("Default value of parameter '" + this.id
+                        + "' does not comply with default constraints.", pe);
             }
             try
             {
@@ -135,15 +136,15 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
             }
             catch (ParameterException pe)
             {
-                throw new RuntimeException("Default value of parameter '" + getId() 
+                throw new RuntimeException("Default value of parameter '" + getId()
                         + "' does not comply with custom constraints.", pe);
             }
         }
     }
 
     /**
-     * Returns the parameter id.
-     * @return id Parameter id.
+     * Retrieve the id of this AbstractParameterType.
+     * @return String; the id of this AbstractParameterType
      */
     @Override
     public final String getId()
@@ -152,8 +153,8 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Returns the parameter description.
-     * @return description
+     * Retrieve the description of this AbstractParameterType.
+     * @return String; the description of this AbstractParameterType
      */
     public final String getDescription()
     {
@@ -161,17 +162,17 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Returns the class of the value.
-     * @return valueClass Class of the value.
+     * Retrieve the class of the value of this AbstractParameterType.
+     * @return valueClass Class&lt;T&gt;; the class of the value of this AbstractParameterType
      */
     public final Class<T> getValueClass()
     {
         return this.valueClass;
     }
-    
+
     /**
      * Returns whether this parameter type has a default value.
-     * @return Whether this parameter type has a default value.
+     * @return boolean; true if this AbstractParameterType type has a default value; false if it does not have a default value
      */
     public final boolean hasDefaultValue()
     {
@@ -179,9 +180,9 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Returns the default value.
-     * @return defaultValue Default value.
-     * @throws ParameterException If no default value was set.
+     * Retrieve the the default value of this AbstractParameterType.
+     * @return T; the default value of this AbstractParameterType
+     * @throws ParameterException if this AbstractParameterType does not have a default value
      */
     public final T getDefaultValue() throws ParameterException
     {
@@ -190,9 +191,9 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Checks the default constraints given with the parameter type.
-     * @param value The value to check.
-     * @throws ParameterException If the value does not comply with constraints.
+     * Check that a value complies with the constraint of this AbstractParameterType.
+     * @param value T; the value to check
+     * @throws ParameterException if the value does not comply with constraints
      */
     public final void checkConstraint(final T value) throws ParameterException
     {
@@ -205,9 +206,9 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Method to overwrite for checks with constraints.
-     * @param value Value to check with constraints.
-     * @param params Set of parameters.
+     * Default implementation of check method. This default implementation will never throw any Exception.
+     * @param value T; the value to check
+     * @param params Parameters; Set of parameters
      * @throws ParameterException If the value does not comply with constraints.
      */
     public void check(final T value, final Parameters params) throws ParameterException
@@ -217,9 +218,9 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
 
     /**
      * Print the given value from the map in Parameters in a presentable format.
-     * @param parameters Parameters to get the value from.
-     * @return Printable string of value.
-     * @throws ParameterException If the parameter is not present.
+     * @param parameters Parameters to get the value from
+     * @return String; readable representation of the value
+     * @throws ParameterException If the parameter is not present
      */
     public abstract String printValue(Parameters parameters) throws ParameterException;
 
@@ -279,15 +280,6 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
         return true;
     }
 
-    /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
-    @Override
-    public String toString()
-    {
-        return "AbstractParameterType [id=" + this.id + ", description=" + this.description + ", valueClass=" + this.valueClass
-                + "]";
-    }
-
     /**
      * Retrieve the constraint.
      * @return Constraint; the constraint of this AbstractParameterType
@@ -295,6 +287,15 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     public final Constraint<? super T> getConstraint()
     {
         return this.constraint;
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    @Override
+    public String toString()
+    {
+        return "AbstractParameterType [id=" + this.id + ", description=" + this.description + ", valueClass=" + this.valueClass
+                + "]";
     }
 
 }
