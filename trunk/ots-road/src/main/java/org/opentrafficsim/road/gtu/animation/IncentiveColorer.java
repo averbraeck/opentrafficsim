@@ -37,7 +37,7 @@ public class IncentiveColorer extends DesireColorer
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(final GTU gtu)
+    public final Color getColor(final GTU gtu)
     {
         if (!(gtu.getTacticalPlanner() instanceof LMRS))
         {

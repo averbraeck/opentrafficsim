@@ -34,16 +34,16 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayedPerceptionCategory
-        implements NeighborsPerception
+public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayedPerceptionCategory implements
+        NeighborsPerception
 {
 
     /** */
     private static final long serialVersionUID = 20170217L;
-    
+
     /** Reaction time parameter type. */
     protected static final ParameterTypeDuration TR = ParameterTypes.TR;
-    
+
     /** Time step parameter type. */
     protected static final ParameterTypeDuration DT = ParameterTypes.DT;
 
@@ -101,7 +101,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /** {@inheritDoc} */
     @Override
-    public void updateAll() throws GTUException, NetworkException, ParameterException
+    public final void updateAll() throws GTUException, NetworkException, ParameterException
     {
 
         if (this.remainder == null)
@@ -176,22 +176,24 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
             this.direct.updateFirstFollowers(LateralDirectionality.LEFT);
             this.direct.updateFirstLeaders(LateralDirectionality.LEFT);
             this.direct.updateGtuAlongside(LateralDirectionality.LEFT);
-            this.gtuAlongsideLeftOverride = newFirstLeaderOrFollower(getFollowers(RelativeLane.LEFT),
-                    this.direct.getFirstFollowers(LateralDirectionality.LEFT))
-                    || newFirstLeaderOrFollower(getLeaders(RelativeLane.LEFT),
-                            this.direct.getFirstLeaders(LateralDirectionality.LEFT))
-                    || this.direct.isGtuAlongside(LateralDirectionality.LEFT);
+            this.gtuAlongsideLeftOverride =
+                    newFirstLeaderOrFollower(getFollowers(RelativeLane.LEFT),
+                            this.direct.getFirstFollowers(LateralDirectionality.LEFT))
+                            || newFirstLeaderOrFollower(getLeaders(RelativeLane.LEFT),
+                                    this.direct.getFirstLeaders(LateralDirectionality.LEFT))
+                            || this.direct.isGtuAlongside(LateralDirectionality.LEFT);
         }
         if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
         {
             this.direct.updateFirstFollowers(LateralDirectionality.RIGHT);
             this.direct.updateFirstLeaders(LateralDirectionality.RIGHT);
             this.direct.updateGtuAlongside(LateralDirectionality.RIGHT);
-            this.gtuAlongsideRightOverride = newFirstLeaderOrFollower(getFollowers(RelativeLane.RIGHT),
-                    this.direct.getFirstFollowers(LateralDirectionality.RIGHT))
-                    || newFirstLeaderOrFollower(getLeaders(RelativeLane.RIGHT),
-                            this.direct.getFirstLeaders(LateralDirectionality.RIGHT))
-                    || this.direct.isGtuAlongside(LateralDirectionality.RIGHT);
+            this.gtuAlongsideRightOverride =
+                    newFirstLeaderOrFollower(getFollowers(RelativeLane.RIGHT),
+                            this.direct.getFirstFollowers(LateralDirectionality.RIGHT))
+                            || newFirstLeaderOrFollower(getLeaders(RelativeLane.RIGHT),
+                                    this.direct.getFirstLeaders(LateralDirectionality.RIGHT))
+                            || this.direct.isGtuAlongside(LateralDirectionality.RIGHT);
         }
 
     }
@@ -224,7 +226,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
      * @param lat lateral direction
      * @return whether to override the gtu alongside boolean as true
      */
-    public boolean isGtuAlongsideOverride(final LateralDirectionality lat)
+    public final boolean isGtuAlongsideOverride(final LateralDirectionality lat)
     {
         return lat.isLeft() ? this.gtuAlongsideLeftOverride : this.gtuAlongsideRightOverride;
     }
@@ -274,7 +276,8 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstLeaders(final LateralDirectionality lat) throws ParameterException, GTUException, NetworkException
+    public final void updateFirstLeaders(final LateralDirectionality lat) throws ParameterException, GTUException,
+            NetworkException
     {
         setInfo(NeighborsInfoType.getSortedSetType(FIRSTLEADERS), new RelativeLane(lat, 1),
                 this.direct.getTimeStampedFirstLeaders(lat));
@@ -282,7 +285,8 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstFollowers(final LateralDirectionality lat) throws GTUException, ParameterException, NetworkException
+    public final void updateFirstFollowers(final LateralDirectionality lat) throws GTUException, ParameterException,
+            NetworkException
     {
         setInfo(NeighborsInfoType.getSortedSetType(FIRSTFOLLOWERS), new RelativeLane(lat, 1),
                 this.direct.getTimeStampedFirstFollowers(lat));
@@ -290,7 +294,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /** {@inheritDoc} */
     @Override
-    public void updateGtuAlongside(final LateralDirectionality lat) throws GTUException, ParameterException
+    public final void updateGtuAlongside(final LateralDirectionality lat) throws GTUException, ParameterException
     {
         setInfo(NeighborsInfoType.getBooleanType(GTUALONGSIDE), new RelativeLane(lat, 1),
                 this.direct.isGtuAlongsideTimeStamped(lat));
@@ -298,14 +302,14 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /** {@inheritDoc} */
     @Override
-    public void updateLeaders(final RelativeLane lane) throws ParameterException, GTUException, NetworkException
+    public final void updateLeaders(final RelativeLane lane) throws ParameterException, GTUException, NetworkException
     {
         setInfo(NeighborsInfoType.getSortedSetType(LEADERS), lane, this.direct.getTimeStampedLeaders(lane));
     }
 
     /** {@inheritDoc} */
     @Override
-    public void updateFollowers(final RelativeLane lane) throws GTUException, NetworkException, ParameterException
+    public final void updateFollowers(final RelativeLane lane) throws GTUException, NetworkException, ParameterException
     {
         setInfo(NeighborsInfoType.getSortedSetType(FOLLOWERS), lane, this.direct.getTimeStampedFollowers(lane));
     }
@@ -314,7 +318,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
      * Returns the cross-section on which the most recent observed neighbors were determined.
      * @return cross-section on which the most recent observed neighbors were determined
      */
-    public SortedSet<RelativeLane> getDelayedCrossSection()
+    public final SortedSet<RelativeLane> getDelayedCrossSection()
     {
         try
         {
@@ -327,15 +331,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
     }
 
     /**
-     * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 17 feb. 2017 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * Delayed information about the type of the neighbors. <br>
      * @param <T> data type of info
      */
     public static final class NeighborsInfoType<T> extends DelayedInfoType<T>
@@ -381,6 +377,13 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
                 LANEINFOTYPES.put(id, new NeighborsInfoType<SortedSet<HeadwayGTU>>(id));
             }
             return (NeighborsInfoType<Boolean>) LANEINFOTYPES.get(id);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "NeighborsInfoType []";
         }
 
     }

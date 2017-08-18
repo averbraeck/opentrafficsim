@@ -44,9 +44,17 @@ public class SpeedGenerator implements Generator<Speed>
 
     /** {@inheritDoc} */
     @Override
-    public Speed draw() throws ProbabilityException, ParameterException
+    public final Speed draw() throws ProbabilityException, ParameterException
     {
         return this.minSpeed.plus(this.deltaSpeed.multiplyBy(this.stream.nextDouble()));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SpeedGenerator [minSpeed=" + this.minSpeed + ", deltaSpeed=" + this.deltaSpeed + ", stream=" + this.stream
+                + "]";
     }
 
 }

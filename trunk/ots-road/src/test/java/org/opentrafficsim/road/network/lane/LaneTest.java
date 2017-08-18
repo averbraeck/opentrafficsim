@@ -8,14 +8,15 @@ import static org.opentrafficsim.core.gtu.GTUType.CAR;
 import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
 import java.awt.geom.Point2D;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
+
+import mockit.MockUp;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Length;
@@ -38,9 +39,6 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-
-import mockit.MockUp;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the Lane class.
@@ -173,7 +171,7 @@ public class LaneTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void contourTest() throws Exception
+    public final void contourTest() throws Exception
     {
         final int[] startPositions = { 0, 1, -1, 20, -20 };
         final double[] angles = { 0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI,
@@ -351,7 +349,7 @@ public class LaneTest implements UNITS
      * @return boolean; true if the point is inside the polygon; false if it is outside the polygon; if the point lies <b>on</b>
      *         an vertex or edge of the polygon the result is (of course) undefined
      */
-    private boolean pointInsidePolygon(Coordinate point, Coordinate[] polygon)
+    private boolean pointInsidePolygon(final Coordinate point, final Coordinate[] polygon)
     {
         boolean result = false;
         for (int i = 0, j = polygon.length - 1; i < polygon.length; j = i++)

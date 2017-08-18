@@ -407,7 +407,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public SortedSet<HeadwayGTU> getFirstLeaders(final LateralDirectionality lat)
+    public final SortedSet<HeadwayGTU> getFirstLeaders(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         rearrangeNeighbors();
@@ -416,7 +416,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public SortedSet<HeadwayGTU> getFirstFollowers(final LateralDirectionality lat)
+    public final SortedSet<HeadwayGTU> getFirstFollowers(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         rearrangeNeighbors();
@@ -425,7 +425,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public boolean isGtuAlongside(final LateralDirectionality lat)
+    public final boolean isGtuAlongside(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         if (isGtuAlongsideOverride(lat))
@@ -444,7 +444,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public SortedSet<HeadwayGTU> getLeaders(final RelativeLane lane)
+    public final SortedSet<HeadwayGTU> getLeaders(final RelativeLane lane)
     {
         rearrangeNeighbors();
         return this.leaders.get(lane);
@@ -452,7 +452,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public SortedSet<HeadwayGTU> getFollowers(final RelativeLane lane)
+    public final SortedSet<HeadwayGTU> getFollowers(final RelativeLane lane)
     {
         rearrangeNeighbors();
         return this.followers.get(lane);
@@ -509,6 +509,13 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
         {
             this.time = t;
             this.error = err;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "ErrorValue [time=" + this.time + ", error=" + this.error + "]";
         }
 
     }
@@ -672,5 +679,23 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             return this.acceleration;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "NeighborTriplet [headway=" + this.headway + ", speed=" + this.speed + ", acceleration=" + this.acceleration
+                    + "]";
+        }
+
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "DelayedNeighborsPerception [anticipation=" + this.anticipation + ", rearrangeTime=" + this.rearrangeTime
+                + ", followers=" + this.followers + ", leaders=" + this.leaders + ", firstFollowers=" + this.firstFollowers
+                + ", firstLeaders=" + this.firstLeaders + ", gtuAlongside=" + this.gtuAlongside + ", errors=" + this.errors
+                + ", norm=" + this.norm + "]";
     }
 }

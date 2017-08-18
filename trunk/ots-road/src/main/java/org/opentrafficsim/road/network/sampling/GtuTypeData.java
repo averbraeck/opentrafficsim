@@ -31,6 +31,7 @@ public class GtuTypeData implements GtuTypeDataInterface
     /**
      * @return gtuType.
      */
+    @Override
     public final String getId()
     {
         return this.gtuType.getId();

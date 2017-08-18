@@ -79,4 +79,11 @@ public class SimpleReportingSensor extends AbstractSensor
         // the sensor creates its own animation (for now)
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "SimpleReportingSensor []";
+    }
+
 }

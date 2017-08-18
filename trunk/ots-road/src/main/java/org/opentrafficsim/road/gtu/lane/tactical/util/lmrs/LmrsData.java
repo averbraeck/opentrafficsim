@@ -110,4 +110,12 @@ public final class LmrsData
         return this.synchronization;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "LmrsData [synchronization=" + this.synchronization + ", leaders=" + this.leaders + ", tempLeaders="
+                + this.tempLeaders + ", syncVehicle=" + this.syncVehicle + "]";
+    }
+
 }

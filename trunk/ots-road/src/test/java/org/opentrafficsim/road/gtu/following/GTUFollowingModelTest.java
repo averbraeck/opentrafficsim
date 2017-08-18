@@ -9,10 +9,12 @@ import static org.opentrafficsim.core.gtu.GTUType.CAR;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -23,8 +25,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -49,9 +51,6 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test the methods that the classes that implement GTUFollowingModel have in common.
@@ -79,7 +78,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
      * @param gtuFollowingModel GTUFollowingModel
      * @throws Exception when something goes wrong (should not happen)
      */
-    private void gtuFollowingModelTests(GTUFollowingModelOld gtuFollowingModel) throws Exception
+    private void gtuFollowingModelTests(final GTUFollowingModelOld gtuFollowingModel) throws Exception
     {
         Acceleration maxSafeDeceleration = gtuFollowingModel.getMaximumSafeDeceleration();
         assertNotNull("maximumSafeDeceleration must return non-null value", maxSafeDeceleration);
@@ -317,35 +316,35 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
     }
 
     /**
-     * Test IDM
+     * Test IDM.
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void testIDM() throws Exception
+    public final void testIDM() throws Exception
     {
         gtuFollowingModelTests(new IDMOld());
     }
 
     /**
-     * Test IDMPlus
+     * Test IDMPlus.
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void testIDMPlus() throws Exception
+    public final void testIDMPlus() throws Exception
     {
         gtuFollowingModelTests(new IDMPlusOld());
     }
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator) throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator) throws SimRuntimeException
     {
         // Do nothing.
     }
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
 
     {
         return null;
@@ -353,7 +352,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public final OTSNetwork getNetwork()
     {
         return this.network;
     }

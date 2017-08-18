@@ -40,7 +40,7 @@ public class HeadwayGTUTest
      * @throws GTUException when something fails; if uncaught; this test has failed
      */
     @Test
-    public void constructorTest() throws GTUException
+    public final void constructorTest() throws GTUException
     {
         // Make two headway GTUs with different values to prove that HeadwayGTUs do not share static fields.
         String id1 = "id1";

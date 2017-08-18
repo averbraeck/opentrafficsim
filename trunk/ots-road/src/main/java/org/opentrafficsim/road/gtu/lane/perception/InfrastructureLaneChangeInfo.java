@@ -71,7 +71,7 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
     /**
      * @return whether this reason to change lane is due to a dead-end.
      */
-    public boolean isDeadEnd()
+    public final boolean isDeadEnd()
     {
         return this.deadEnd;
     }

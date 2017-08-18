@@ -131,7 +131,8 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed) throws NetworkException
+            final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed)
+            throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.ALL, Duration.ZERO, ENDOFDAY);
     }
@@ -142,7 +143,7 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param time current time-of-day
      * @return whether this speed limit is currently active
      */
-    public boolean isActive(final GTUType gtuTypeIn, final Duration time)
+    public final boolean isActive(final GTUType gtuTypeIn, final Duration time)
     {
         return gtuTypeIn.isOfType(this.gtuType) && time.ge(this.startTimeOfDay) && time.le(this.endTimeOfDay);
     }
@@ -151,14 +152,14 @@ public class SpeedSign extends AbstractLaneBasedObject
      * Returns the speed.
      * @return the speed
      */
-    public Speed getSpeed()
+    public final Speed getSpeed()
     {
         return this.speed;
     }
 
     /** {@inheritDoc} */
     @Override
-    public AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
             final boolean animation) throws NetworkException
     {
         return new SpeedSign(getId(), (Lane) newCSE, getDirection(), getLongitudinalPosition(), newSimulator, this.speed,
@@ -244,10 +245,10 @@ public class SpeedSign extends AbstractLaneBasedObject
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
-        return "SpeedSign [speed=" + this.speed + ", gtuType=" + this.gtuType + ", startTime=" + this.startTimeOfDay + ", endTime="
-                + this.endTimeOfDay + "]";
+        return "SpeedSign [speed=" + this.speed + ", gtuType=" + this.gtuType + ", startTime=" + this.startTimeOfDay
+                + ", endTime=" + this.endTimeOfDay + "]";
     }
 
 }

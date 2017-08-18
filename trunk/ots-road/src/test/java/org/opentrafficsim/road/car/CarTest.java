@@ -3,11 +3,18 @@ package org.opentrafficsim.road.car;
 import static org.junit.Assert.assertEquals;
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.naming.NamingException;
+
+import mockit.MockUp;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.Experiment;
+import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.experiment.Treatment;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -49,14 +56,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-
-import mockit.MockUp;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Experiment;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.experiment.Treatment;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -215,7 +214,7 @@ public class CarTest implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public OTSNetwork getNetwork()
+        public final OTSNetwork getNetwork()
         {
             return null;
         }

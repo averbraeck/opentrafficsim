@@ -621,6 +621,14 @@ public final class LmrsUtil implements LmrsParameters
             return this.carFollowingModel.getLongName();
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "CarFollowingModelWrapper [carFollowingModel=" + this.carFollowingModel.getName() + ", desiredSpeed="
+                    + this.desiredSpeed + "]";
+        }
+
     }
 
 }

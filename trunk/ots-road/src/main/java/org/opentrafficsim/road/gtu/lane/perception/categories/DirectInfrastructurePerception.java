@@ -504,6 +504,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "DirectInfrastructurePerception";

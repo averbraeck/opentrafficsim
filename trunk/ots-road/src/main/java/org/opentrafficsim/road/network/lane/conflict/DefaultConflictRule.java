@@ -173,14 +173,14 @@ public class DefaultConflictRule implements ConflictRule
 
     /** {@inheritDoc} */
     @Override
-    public ConflictRule clone(final OTSSimulatorInterface newSimulator)
+    public final ConflictRule clone(final OTSSimulatorInterface newSimulator)
     {
         return new DefaultConflictRule();
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "DefaultConflictRule";
     }

@@ -6,11 +6,13 @@ import static org.junit.Assert.fail;
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -50,9 +52,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 /**
  * Test the various methods of an AbstractLaneBasedGTU.<br>
  * As abstract classes cannot be directly
@@ -75,7 +74,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void abstractLaneBasedGTUTest() throws Exception
+    public final void abstractLaneBasedGTUTest() throws Exception
     {
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes

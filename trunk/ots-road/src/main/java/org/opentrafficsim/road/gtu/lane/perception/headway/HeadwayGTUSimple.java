@@ -24,8 +24,8 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * sharp bends. Therefore, algorithms implementing headway should only project the <i>reference point</i> of the reference GTU
  * on the center line of the adjacent lane, and then calculate the forward position and backward position on the adjacent lane
  * based on the reference point. Still, our human perception of what is parallel and what not, is not reflected by fractional
- * positions. See examples in
- * <a href= "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
+ * positions. See examples in <a href=
+ * "http://simulation.tudelft.nl:8085/browse/OTS-113">http://simulation.tudelft.nl:8085/browse/OTS-113</a>.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -141,7 +141,7 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
 
     /** {@inheritDoc} */
     @Override
-    public AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
+    public final AbstractHeadwayGTU moved(final Length headway, final Speed speed, final Acceleration acceleration)
     {
         try
         {
@@ -152,6 +152,13 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
             // input should be consistent
             throw new RuntimeException("Exception while copying Headway GTU.", exception);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeadwayGTUSimple [length=" + super.getLength() + "]";
     }
 
 }

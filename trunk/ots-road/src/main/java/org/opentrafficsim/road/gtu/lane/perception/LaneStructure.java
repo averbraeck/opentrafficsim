@@ -173,9 +173,11 @@ public class LaneStructure implements Serializable
             this.relativeLaneMap.put(relativeLane, new HashSet<>());
         }
         this.relativeLaneMap.get(relativeLane).add(lsr);
-        if (lsr.getStartDistance().le0() && lsr.getStartDistance().plus(lsr.getLane().getLength()).gt0()
-                && (!this.crossSectionRecords.containsKey(relativeLane)
-                        || this.crossSectionRecords.get(relativeLane).getStartDistance().gt0() && lsr.getStartDistance().le0()))
+        if (lsr.getStartDistance().le0()
+                && lsr.getStartDistance().plus(lsr.getLane().getLength()).gt0()
+                && (!this.crossSectionRecords.containsKey(relativeLane) || this.crossSectionRecords.get(relativeLane)
+                        .getStartDistance().gt0()
+                        && lsr.getStartDistance().le0()))
         {
             this.crossSectionRecords.put(relativeLane, lsr);
         }
@@ -235,9 +237,10 @@ public class LaneStructure implements Serializable
         for (LaneBasedObject object : record.getLane().getLaneBasedObjects(minimumPosition, maximumPosition))
         {
             distance = record.getDistanceToPosition(object.getLongitudinalPosition()).minus(ds);
-            if (clazz.isAssignableFrom(object.getClass()) && distance.le(this.lookAhead)
-                    && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
-                            || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
+            if (clazz.isAssignableFrom(object.getClass())
+                    && distance.le(this.lookAhead)
+                    && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth()) || (record.getDirection()
+                            .isMinus() && object.getDirection().isBackwardOrBoth())))
             {
                 // unchecked, but the above isAssignableFrom assures correctness
                 set.add(new Entry<>(distance, (T) object));
@@ -302,9 +305,10 @@ public class LaneStructure implements Serializable
             for (LaneBasedObject object : next.getLane().getLaneBasedObjects())
             {
                 distance = next.getDistanceToPosition(object.getLongitudinalPosition()).minus(ds);
-                if (clazz.isAssignableFrom(object.getClass()) && distance.le(this.lookAhead)
-                        && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
-                                || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
+                if (clazz.isAssignableFrom(object.getClass())
+                        && distance.le(this.lookAhead)
+                        && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth()) || (record
+                                .getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
                 {
                     // unchecked, but the above isAssignableFrom assures correctness
                     set.add(new Entry<>(distance, (T) object));
@@ -325,8 +329,8 @@ public class LaneStructure implements Serializable
      * @return Sorted set of objects of requested type
      * @throws GTUException if lane is not in current set
      */
-    public <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(final Class<T> clazz,
-            final GTU gtu, final RelativePosition.TYPE pos, final Route route) throws GTUException
+    public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(
+            final Class<T> clazz, final GTU gtu, final RelativePosition.TYPE pos, final Route route) throws GTUException
     {
         Map<RelativeLane, SortedSet<Entry<T>>> out = new HashMap<>();
         for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
@@ -371,8 +375,8 @@ public class LaneStructure implements Serializable
         for (LaneBasedObject object : record.getLane().getLaneBasedObjects(minimumPosition, maximumPosition))
         {
             if (clazz.isAssignableFrom(object.getClass())
-                    && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
-                            || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
+                    && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth()) || (record.getDirection()
+                            .isMinus() && object.getDirection().isBackwardOrBoth())))
             {
                 distance = record.getDistanceToPosition(object.getLongitudinalPosition()).neg().minus(ds);
                 // unchecked, but the above isAssignableFrom assures correctness
@@ -401,8 +405,8 @@ public class LaneStructure implements Serializable
             for (LaneBasedObject object : prev.getLane().getLaneBasedObjects())
             {
                 if (clazz.isAssignableFrom(object.getClass())
-                        && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
-                                || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
+                        && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth()) || (record
+                                .getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
                 {
                     distance = prev.getDistanceToPosition(object.getLongitudinalPosition()).neg().minus(ds);
                     // unchecked, but the above isAssignableFrom assures correctness
@@ -422,8 +426,7 @@ public class LaneStructure implements Serializable
 
     /**
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 15, 2016 <br>

@@ -37,8 +37,8 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner
-        implements LaneBasedStrategicalPlanner, Serializable
+public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner implements
+        LaneBasedStrategicalPlanner, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150724L;
@@ -55,8 +55,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param gtu GTU
      * @throws GTUException if fixed tactical planner == null
      */
-    public LaneBasedStrategicalRoutePlanner(final Parameters parameters,
-            final TacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu) throws GTUException
+    public LaneBasedStrategicalRoutePlanner(final Parameters parameters, final TacticalPlanner fixedTacticalPlanner,
+            final LaneBasedGTU gtu) throws GTUException
     {
         this(parameters, fixedTacticalPlanner, null, gtu);
     }
@@ -68,26 +68,26 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param gtu GTU
      * @throws GTUException if fixed tactical planner == null
      */
-    public LaneBasedStrategicalRoutePlanner(final Parameters parameters,
-            final TacticalPlanner fixedTacticalPlanner, final Route route, final LaneBasedGTU gtu) throws GTUException
+    public LaneBasedStrategicalRoutePlanner(final Parameters parameters, final TacticalPlanner fixedTacticalPlanner,
+            final Route route, final LaneBasedGTU gtu) throws GTUException
     {
         super(parameters, gtu);
         this.route = route;
         this.fixedTacticalPlanner = fixedTacticalPlanner;
-        Throw.when(fixedTacticalPlanner == null, GTUException.class,
-                "Fixed Tactical Planner for a Strategical planner is null");
+        Throw.when(fixedTacticalPlanner == null, GTUException.class, "Fixed Tactical Planner for a Strategical planner is null");
     }
 
     /** {@inheritDoc} */
     @Override
-    public TacticalPlanner generateTacticalPlanner()
+    public final TacticalPlanner generateTacticalPlanner()
     {
         return this.fixedTacticalPlanner;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType) throws NetworkException
+    public final Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+            throws NetworkException
     {
         LinkDirection linkDirection = nextLinkDirection(link, direction, gtuType);
         return linkDirection.getNodeTo();
@@ -95,7 +95,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+    public final LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
             throws NetworkException
     {
         Node nextNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
@@ -104,7 +104,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public Node nextNode(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException
+    public final Node nextNode(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException
     {
         LinkDirection linkDirection = nextLinkDirection(node, previousLink, gtuType);
         return linkDirection.getNodeTo();
@@ -112,7 +112,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType)
+    public final LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType)
             throws NetworkException
     {
 
@@ -120,15 +120,15 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         if (node.getLinks().size() == 1 && previousLink != null)
         {
             // end node
-            throw new NetworkException(
-                    "LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node + " has no successors");
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node
+                    + " has no successors");
         }
         if (node.getLinks().size() == 1 && previousLink == null)
         {
             // start node
             Link link = node.getLinks().iterator().next();
-            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
-                    : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS) : new LinkDirection(
+                    link, GTUDirectionality.DIR_MINUS);
         }
         if (node.getLinks().size() == 2)
         {
@@ -192,8 +192,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         if (links.size() == 1)
         {
             Link link = links.iterator().next();
-            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
-                    : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS) : new LinkDirection(
+                    link, GTUDirectionality.DIR_MINUS);
         }
 
         // more than 2 links... We have to check the route!

@@ -62,7 +62,7 @@ public class LinkData implements LinkDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public String getId()
+    public final String getId()
     {
         return this.link.getId();
     }

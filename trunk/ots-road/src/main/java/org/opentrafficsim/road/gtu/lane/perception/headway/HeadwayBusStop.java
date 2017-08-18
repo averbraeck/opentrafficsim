@@ -53,7 +53,7 @@ public class HeadwayBusStop extends AbstractHeadwayCopy
     /**
      * @return relativeLane.
      */
-    public RelativeLane getRelativeLane()
+    public final RelativeLane getRelativeLane()
     {
         return this.relativeLane;
     }
@@ -61,7 +61,7 @@ public class HeadwayBusStop extends AbstractHeadwayCopy
     /**
      * @return lines.
      */
-    public ImmutableSet<String> getLines()
+    public final ImmutableSet<String> getLines()
     {
         return this.lines;
     }
@@ -69,9 +69,17 @@ public class HeadwayBusStop extends AbstractHeadwayCopy
     /**
      * @return conflictIds.
      */
-    public Set<String> getConflictIds()
+    public final Set<String> getConflictIds()
     {
         return this.conflictIds;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "HeadwayBusStop [relativeLane=" + this.relativeLane + ", lines=" + this.lines + ", conflictIds="
+                + this.conflictIds + "]";
     }
 
 }

@@ -38,6 +38,7 @@ public class PerceivedObjectType<T> implements Serializable, Identifiable
     /**
      * @return the id of the perceivable object type.
      */
+    @Override
     public final String getId()
     {
         return this.id;

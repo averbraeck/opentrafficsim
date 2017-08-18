@@ -19,6 +19,7 @@ import org.opentrafficsim.base.Identifiable;
 public interface TrafficLightController extends Identifiable
 {
     /** @return the controller id. */
+    @Override
     String getId();
 
     /** @return the number of phases. */

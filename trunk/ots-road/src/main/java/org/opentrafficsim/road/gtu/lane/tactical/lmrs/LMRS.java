@@ -194,7 +194,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
      * @param incentiveClass class of incentive
      * @return desire of the given incentive
      */
-    public Desire getLatestDesire(final Class<? extends Incentive> incentiveClass)
+    public final Desire getLatestDesire(final Class<? extends Incentive> incentiveClass)
     {
         return this.desireMap.get(incentiveClass);
     }

@@ -237,7 +237,7 @@ public class SimpleOperationalPlan implements Serializable
      * @param gtu GTU to set the indicator on
      * @throws GTUException if GTU does not support the indicator
      */
-    public void setTurnIndicator(final GTU gtu) throws GTUException
+    public final void setTurnIndicator(final GTU gtu) throws GTUException
     {
         if (this.indicatorIntent.isLeft())
         {

@@ -34,6 +34,9 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 public class ToledoPerception extends AbstractPerceptionCategory implements PerceptionCategory
 {
 
+    /** */
+    private static final long serialVersionUID = 20160000L;
+
     /** Infrastructure lane change info per relative lane. */
     private Map<RelativeLane, TimeStampedObject<SortedSet<InfrastructureLaneChangeInfoToledo>>> infrastructureLaneChangeInfo;
 

@@ -108,11 +108,11 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
      * @throws ProbabilityException pe
      * @throws ParameterException if drawing from the interarrival generator fails
      */
-    public LaneBasedGTUGenerator(String id, final Generator<Duration> interarrivelTimeGenerator, final long maxGTUs,
+    public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator, final long maxGTUs,
             final Time startTime, final Time endTime, final GTUColorer gtuColorer,
             final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
-            final Set<DirectedLanePosition> initialLongitudinalPositions, final OTSNetwork network, RoomChecker roomChecker)
-            throws SimRuntimeException, ProbabilityException, ParameterException
+            final Set<DirectedLanePosition> initialLongitudinalPositions, final OTSNetwork network, 
+            final RoomChecker roomChecker) throws SimRuntimeException, ProbabilityException, ParameterException
     {
         this.id = id;
         this.interarrivelTimeGenerator = interarrivelTimeGenerator;
@@ -284,7 +284,8 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
     }
 
     /** {@inheritDoc} */
-    public String toString()
+    @Override
+    public final String toString()
     {
         return "LaneBasedGTUGenerator " + this.id + " on " + this.initialLongitudinalPositions;
     }
@@ -292,7 +293,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
     /**
      * @return generatedGTUs.
      */
-    public long getGeneratedGTUs()
+    public final long getGeneratedGTUs()
     {
         return this.generatedGTUs;
     }
@@ -300,7 +301,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
     /**
      * @param generatedGTUs set generatedGTUs.
      */
-    public void setGeneratedGTUs(long generatedGTUs)
+    public final void setGeneratedGTUs(final long generatedGTUs)
     {
         this.generatedGTUs = generatedGTUs;
     }
@@ -309,7 +310,8 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
      * Retrieve the id of this LaneBasedGTUGenerator.
      * @return String; the id of this LaneBasedGTUGenerator
      */
-    public String getId()
+    @Override
+    public final String getId()
     {
         return this.id;
     }
@@ -318,7 +320,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
      * Retrieve the end time of this LaneBasedGTUGenerator.
      * @return Time; the time after which this LaneBasedGTUGenerator will not generate any more GTUs
      */
-    public Time getEndTime()
+    public final Time getEndTime()
     {
         return this.endTime;
     }
@@ -327,7 +329,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
      * Retrieve the maximum number of GTUs to generate.
      * @return long; once this number of GTUS is generated, this LaneBasedGTUGenerator will stop generating any more GTUs
      */
-    public long getMaxGTUs()
+    public final long getMaxGTUs()
     {
         return this.maxGTUs;
     }
@@ -336,7 +338,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
      * Retrieve the GTUColorer that this LaneBasedGTUGenerator assigns to all generated GTUs.
      * @return GtuColorer; the GTUColorer that this LaneBasedGTUGenerator assigns to all generated GTUs
      */
-    public GTUColorer getGtuColorer()
+    public final GTUColorer getGtuColorer()
     {
         return this.gtuColorer;
     }
@@ -358,7 +360,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
          *         current time
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
          */
-        public Speed canPlace(final Speed leaderSpeed, final Length headway,
+        Speed canPlace(final Speed leaderSpeed, final Length headway,
                 final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException;
     }
 

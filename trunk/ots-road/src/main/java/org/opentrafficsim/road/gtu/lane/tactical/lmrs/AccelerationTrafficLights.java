@@ -28,7 +28,7 @@ public class AccelerationTrafficLights implements AccelerationIncentive
 
     /** {@inheritDoc} */
     @Override
-    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
+    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
             final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws ParameterException, OperationalPlanException
@@ -40,7 +40,7 @@ public class AccelerationTrafficLights implements AccelerationIncentive
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "AccelerationTrafficLights";
     }

@@ -9,9 +9,11 @@ import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -21,8 +23,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -53,9 +55,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 /**
  * Test the LaneBasedGTU class.
  * <p>
@@ -84,7 +83,8 @@ public class LaneBasedGTUTest implements UNITS
      * @param carLanesCovered int; number of lanes that the car covers
      * @throws Exception when something goes wrong (should not happen)
      */
-    private void leaderFollowerParallel(int truckFromLane, int truckUpToLane, int carLanesCovered) throws Exception
+    private void leaderFollowerParallel(final int truckFromLane, final int truckUpToLane, final int carLanesCovered) 
+            throws Exception
     {
         // Perform a few sanity checks
         if (carLanesCovered < 1)
@@ -362,7 +362,7 @@ public class LaneBasedGTUTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void timeAtDistanceTest() throws Exception
+    public final void timeAtDistanceTest() throws Exception
     {
         for (int a = 1; a >= -1; a--)
         {
@@ -455,8 +455,8 @@ public class LaneBasedGTUTest implements UNITS
      * @param uptoLaneRank int; highest rank of lanes that the GTU must be registered on (0-based)
      * @return the Set of the LanePositions that the GTU is registered on
      */
-    private Set<DirectedLanePosition> buildPositionsSet(Length totalLongitudinalPosition, Length gtuLength,
-            ArrayList<CrossSectionLink> links, int fromLaneRank, int uptoLaneRank)
+    private Set<DirectedLanePosition> buildPositionsSet(final Length totalLongitudinalPosition, final Length gtuLength,
+            final ArrayList<CrossSectionLink> links, final int fromLaneRank, final int uptoLaneRank)
     {
         Set<DirectedLanePosition> result = new LinkedHashSet<>(1);
         double cumulativeLength = 0;
@@ -525,7 +525,7 @@ class Model implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator) throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator) throws SimRuntimeException
     {
         // Dummy
     }

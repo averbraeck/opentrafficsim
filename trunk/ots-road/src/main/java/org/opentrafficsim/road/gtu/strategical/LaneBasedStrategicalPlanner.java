@@ -30,6 +30,7 @@ public interface LaneBasedStrategicalPlanner extends StrategicalPlanner
     void setParameters(Parameters parameters);
 
     /** {@inheritDoc} */
+    @Override
     LaneBasedGTU getGtu();
 
 }

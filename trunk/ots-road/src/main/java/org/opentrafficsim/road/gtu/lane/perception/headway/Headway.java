@@ -102,6 +102,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
     /**
      * @return String; the id of the other object for comparison purposes, cannot be null.
      */
+    @Override
     String getId();
 
     /**

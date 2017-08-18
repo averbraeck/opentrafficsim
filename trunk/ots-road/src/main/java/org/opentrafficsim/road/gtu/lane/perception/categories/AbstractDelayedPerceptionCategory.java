@@ -32,8 +32,8 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstractPerceptionCategory
-        implements PerceptionCategory
+public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstractPerceptionCategory implements
+        PerceptionCategory
 {
 
     /** Margin of 1 millisecond. */
@@ -59,7 +59,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
      * @param info info
      * @param <T> data type of delayed info
      */
-    public <T> void setInfo(final DelayedInfoType<T> delayedInfoType, final TimeStampedObject<T> info)
+    public final <T> void setInfo(final DelayedInfoType<T> delayedInfoType, final TimeStampedObject<T> info)
     {
         setInfo(delayedInfoType, null, info);
     }
@@ -71,7 +71,8 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
      * @param info info
      * @param <T> data type of delayed info
      */
-    public <T> void setInfo(final DelayedInfoType<T> delayedInfoType, final RelativeLane lane, final TimeStampedObject<T> info)
+    public final <T> void setInfo(final DelayedInfoType<T> delayedInfoType, final RelativeLane lane,
+            final TimeStampedObject<T> info)
     {
         Throw.whenNull(delayedInfoType, "Delayed info type may not be null.");
         Throw.whenNull(info, "Info may not be null.");
@@ -104,7 +105,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
      * @return info of the given type
      * @throws PerceptionException if info was not perceived
      */
-    public <T> TimeStampedObject<T> getInfo(final DelayedInfoType<T> delayedInfoType) throws PerceptionException
+    public final <T> TimeStampedObject<T> getInfo(final DelayedInfoType<T> delayedInfoType) throws PerceptionException
     {
         return getInfo(delayedInfoType, null);
     }
@@ -119,7 +120,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
      * @throws PerceptionException if info was not perceived
      */
     @SuppressWarnings("unchecked")
-    public <T> TimeStampedObject<T> getInfo(final DelayedInfoType<T> delayedInfoType, final RelativeLane lane)
+    public final <T> TimeStampedObject<T> getInfo(final DelayedInfoType<T> delayedInfoType, final RelativeLane lane)
             throws PerceptionException
     {
         Throw.whenNull(delayedInfoType, "Delayed info type may not be null.");
@@ -165,7 +166,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
      * when it flips logic concerning the origin and target lane.
      * @param dir direction of lane change
      */
-    public void changeLane(final LateralDirectionality dir)
+    public final void changeLane(final LateralDirectionality dir)
     {
         for (DelayedInfoType<?> delayedInfoType : this.map.keySet())
         {
@@ -188,8 +189,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
     /**
      * Superclass for delayed info.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 feb. 2017 <br>
@@ -222,6 +222,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
          * Returns the id.
          * @return id
          */
+        @Override
         public final String getId()
         {
             return this.getId();
@@ -231,7 +232,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
          * Returns the delay parameter type.
          * @return delayParameter
          */
-        public ParameterTypeDuration getDelayParameter()
+        public final ParameterTypeDuration getDelayParameter()
         {
             return this.delayParameter;
         }
@@ -275,13 +276,6 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
                 return false;
             }
             return true;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
-        {
-            return "DelayedInfoType [id=" + this.id + ", delayParameter=" + this.delayParameter + "]";
         }
 
     }

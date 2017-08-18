@@ -136,7 +136,6 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     private final OTSDEVSSimulatorInterface simulator;
 
     /** Flow counter. */
-
     int flow = 0;
 
     /**
@@ -188,8 +187,6 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
         final ChartPanel cp = new ChartPanel(this.chartPanel);
         PointerHandler ph = new PointerHandler()
         {
-            /** */
-            private static final long serialVersionUID = 120140000;
 
             /** {@inheritDoc} */
             @Override
@@ -529,7 +526,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
          * @param density density [veh/m]
          * @param flow [veh/s]
          */
-        public Sample(final double meanSpeed, final double density, final double flow)
+        Sample(final double meanSpeed, final double density, final double flow)
         {
             super();
             this.meanSpeed = meanSpeed;
@@ -580,7 +577,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
          * @param lane the lane for which to build the flowSensor
          * @throws NetworkException when the position on the lane is out of bounds
          */
-        public FlowSensor(final Lane lane) throws NetworkException
+        FlowSensor(final Lane lane) throws NetworkException
         {
             super("FLOW", lane, lane.getLength().divideBy(2.0), RelativePosition.FRONT, null);
         }

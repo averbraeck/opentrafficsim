@@ -97,6 +97,7 @@ public abstract class AbstractOTSPlot extends JFrame
     /**
      * Force redrawing of the graph.
      */
+    @Override
     public abstract void reGraph();
 
     /** {@inheritDoc} */
@@ -158,6 +159,7 @@ public abstract class AbstractOTSPlot extends JFrame
      * Provide a unique ID for this graph. In this case based on a generated UUID.
      * @return String; a unique ID.
      */
+    @Override
     public final String getId()
     {
         return this.uniqueId.toString();

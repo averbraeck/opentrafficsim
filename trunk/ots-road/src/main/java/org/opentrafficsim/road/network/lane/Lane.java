@@ -1573,7 +1573,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @throws NetworkException when the lane directionality for the given GTUType is inconsistent with the Link directionality
      *             to which the lane belongs.
      */
-    public void addDirectionality(final GTUType gtuType, final LongitudinalDirectionality directionality)
+    public final void addDirectionality(final GTUType gtuType, final LongitudinalDirectionality directionality)
             throws NetworkException
     {
         this.directionalityMap.put(gtuType, directionality);
@@ -1586,7 +1586,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * present). Thereby removing a directionality is different from setting the directionality to NONE.
      * @param gtuType the GTU type to remove the directionality for on this lane.
      */
-    public void removeDirectionality(final GTUType gtuType)
+    public final void removeDirectionality(final GTUType gtuType)
     {
         this.directionalityMap.remove(gtuType);
     }

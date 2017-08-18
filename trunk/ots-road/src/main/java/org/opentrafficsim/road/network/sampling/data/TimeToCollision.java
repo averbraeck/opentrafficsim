@@ -106,7 +106,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "TTC";
     }

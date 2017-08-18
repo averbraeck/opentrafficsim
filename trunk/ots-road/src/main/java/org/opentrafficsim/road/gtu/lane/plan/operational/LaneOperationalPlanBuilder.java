@@ -610,6 +610,7 @@ public final class LaneOperationalPlanBuilder
         }
 
         /** {@inheritDoc} */
+        @Override
         public final String toString()
         {
             return "LaneChange [" + this.laneChangeProgress + " of " + this.laneChangeDuration + " to "

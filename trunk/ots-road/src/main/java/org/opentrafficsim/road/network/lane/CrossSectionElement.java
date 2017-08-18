@@ -359,6 +359,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * Retrieve the id of this CrossSectionElement.
      * @return String; the id of this CrossSectionElement
      */
+    @Override
     public final String getId()
     {
         return this.id;

@@ -872,6 +872,13 @@ public final class ConflictBuilder
             return this.width;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "FixedWidthGenerator [width=" + this.width + "]";
+        }
+
     }
 
     /**
@@ -906,6 +913,13 @@ public final class ConflictBuilder
         public final double getWidth(final Lane lane, final double fraction)
         {
             return lane.getWidth(fraction).si * this.factor;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "RelativeWidthGenerator [factor=" + this.factor + "]";
         }
 
     }

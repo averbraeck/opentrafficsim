@@ -26,7 +26,7 @@ public class TotalDesireColorer extends DesireColorer
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(final GTU gtu)
+    public final Color getColor(final GTU gtu)
     {
         Parameters params = gtu.getParameters();
         if (params.contains(LmrsParameters.DLEFT) && params.contains(LmrsParameters.DRIGHT))

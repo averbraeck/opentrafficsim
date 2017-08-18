@@ -200,8 +200,6 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         final ChartPanel cp = new ChartPanel(this.chartPanel);
         PointerHandler ph = new PointerHandler()
         {
-            /** */
-            private static final long serialVersionUID = 20140000L;
 
             /** {@inheritDoc} */
             @Override
@@ -624,6 +622,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         }
 
         /** {@inheritDoc} */
+        @Override
         public final String toString()
         {
             return "FundamentalDiagramSensor at " + getLongitudinalPosition();
