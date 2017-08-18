@@ -206,7 +206,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        GTUType unrelatedGTUType = new GTUType("junk", null);
+        GTUType unrelatedGTUType = new GTUType("junk", GTUType.NONE); // Creatively abusing the NONE GTUType...
         Set<Link> nextLinks = node.nextLinks(unrelatedGTUType, network.getLink("link from neighbor node 1"));
         assertEquals("There should be no nextLinks for an unrelated GTU type", 0, nextLinks.size());
         // Check to be sure there is no typo or other stupid error
@@ -370,7 +370,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        GTUType unrelatedGTUType = new GTUType("junk", null);
+        GTUType unrelatedGTUType = new GTUType("junk", GTUType.NONE); // Creatively abusing the NONE GTUType
         Set<Link> nextLinks = node.nextLinks(unrelatedGTUType, network.getLink("link from neighbor node 1"));
         assertEquals("There should be no nextLinks for an unrelated GTU type", 0, nextLinks.size());
         // Check to be sure there is no typo or other stupid error
