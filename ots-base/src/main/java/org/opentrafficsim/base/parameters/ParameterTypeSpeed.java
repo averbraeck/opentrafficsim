@@ -22,9 +22,9 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
     private static final long serialVersionUID = 20160400L;
 
     /**
-     * Constructor without default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
+     * Construct a new ParameterTypeSpeed without default value and check.
+     * @param id String; short name of the new ParameterTypeSpeed
+     * @param description String; parameter description or full name of the new ParameterTypeSpeed
      */
     public ParameterTypeSpeed(final String id, final String description)
     {
@@ -32,10 +32,10 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
     }
 
     /**
-     * Constructor with default value, without check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param defaultValue Default value.
+     * Construct a new ParameterTypeSpeed with default value, without check.
+     * @param id String; short name of the new ParameterTypeSpeed
+     * @param description String; parameter description or full name of the new ParameterTypeSpeed
+     * @param defaultValue Speed; default value of the new ParameterTypeSpeed
      */
     public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue)
     {
@@ -43,10 +43,10 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
     }
 
     /**
-     * Constructor without default value, with check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param constraint Constraint for parameter values.
+     * Constructor a new ParameterTypeSpeed without default value, with check.
+     * @param id String; short name of the new ParameterTypeSpeed
+     * @param description String; parameter description or full name of the new ParameterTypeSpeed
+     * @param constraint Constraint&lt;Number&gt;; constraint for parameter values
      */
     public ParameterTypeSpeed(final String id, final String description, final Constraint<Number> constraint)
     {
@@ -54,11 +54,11 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
     }
 
     /**
-     * Constructor with default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param defaultValue Default value.
-     * @param constraint Constraint for parameter values.
+     * Constructor a new ParameterTypeSpeed with default value and check.
+     * @param id String; short name of the new ParameterTypeSpeed
+     * @param description String; parameter description or full name of the new ParameterTypeSpeed
+     * @param defaultValue Speed; default value of the new ParameterTypeSpeed
+     * @param constraint Constraint&lt;Number&gt;; constraint for parameter values
      */
     public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue,
             final Constraint<Number> constraint)

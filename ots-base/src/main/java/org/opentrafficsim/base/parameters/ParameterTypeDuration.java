@@ -22,9 +22,9 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
     private static final long serialVersionUID = 20150400L;
 
     /**
-     * Constructor without default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
+     * Construct a new ParameterTypeDuration without default value and check.
+     * @param id String; short name of the new ParameterTypeDuration
+     * @param description String; parameter description or full name of the new ParameterTypeDuration
      */
     public ParameterTypeDuration(final String id, final String description)
     {
@@ -32,10 +32,10 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
     }
 
     /**
-     * Constructor with default value, without check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param defaultValue Default value.
+     * Construct a new ParameterTypeDuration with default value, without check.
+     * @param id String; short name of the new ParameterTypeDuration
+     * @param description String; parameter description or full name of the new ParameterTypeDuration
+     * @param defaultValue Duration; the default value for the new ParameterTypeDuration
      */
     public ParameterTypeDuration(final String id, final String description, final Duration defaultValue)
     {
@@ -43,10 +43,10 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
     }
 
     /**
-     * Constructor without default value, with check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param constraint Constraint for parameter values.
+     * Construct a new ParameterTypeDuration without default value, with check.
+     * @param id String; short name of the new ParameterTypeDuration
+     * @param description String; parameter description or full name of the new ParameterTypeDuration
+     * @param constraint Constraint for parameter values
      */
     public ParameterTypeDuration(final String id, final String description, final Constraint<Number> constraint)
     {
@@ -54,11 +54,11 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
     }
 
     /**
-     * Constructor with default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param defaultValue Default value.
-     * @param constraint Constraint for parameter values.
+     * Construct a new ParameterTypeDuration with default value and check.
+     * @param id String; short name of the new ParameterTypeDuration
+     * @param description String; parameter description or full name of the new ParameterTypeDuration
+     * @param defaultValue Default value of the new ParameterTypeDuration
+     * @param constraint Constraint for parameter values
      */
     public ParameterTypeDuration(final String id, final String description, final Duration defaultValue,
             final Constraint<Number> constraint)
