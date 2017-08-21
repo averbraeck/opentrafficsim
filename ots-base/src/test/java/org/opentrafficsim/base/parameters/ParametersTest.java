@@ -557,6 +557,11 @@ public class ParametersTest implements ConstraintInterface
         {
             // should fail
         }
+        String toStringResult = ld.toString();
+        // System.out.println("tostring yields \"" + toStringResult + "\"");
+        // System.out.println("clazz is " + clazz.getSimpleName());
+        assertTrue("toString returns something with the class name in it ", toStringResult.contains(clazz.getSimpleName()));
+
         // none set, including default check
         if (!clazz.equals(ParameterTypeBoolean.class)) // boolean has no checks
         {
