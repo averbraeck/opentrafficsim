@@ -32,8 +32,8 @@ public class ParameterTypes
     }
 
     /** Fixed model time step. */
-    public static final ParameterTypeDuration DT = new ParameterTypeDuration("dt", "Fixed model time step.", new Duration(0.5,
-            DurationUnit.SI), ConstraintInterface.POSITIVE);
+    public static final ParameterTypeDuration DT = new ParameterTypeDuration("dt", "Fixed model time step", 
+            new Duration(0.5, DurationUnit.SI), ConstraintInterface.POSITIVE);
 
     /** Car-following stopping distance. */
     public static final ParameterTypeLength S0;
@@ -95,13 +95,14 @@ public class ParameterTypes
 
         /** {@formatter:off} */
 
-        S0 = new ParameterTypeLength("s0", "Car-following stopping distance.", new Length(3.0, LengthUnit.SI), ConstraintInterface.POSITIVE);
+        S0 = new ParameterTypeLength("s0", "Car-following stopping distance", new Length(3.0, LengthUnit.SI), 
+                ConstraintInterface.POSITIVE);
 
-        A = new ParameterTypeAcceleration("a", "Maximum (desired) car-following acceleration.", 
-            new Acceleration(1.25, AccelerationUnit.SI), ConstraintInterface.POSITIVE);
+        A = new ParameterTypeAcceleration("a", "Maximum (desired) car-following acceleration", 
+                new Acceleration(1.25, AccelerationUnit.SI), ConstraintInterface.POSITIVE);
 
-        B = new ParameterTypeAcceleration("b", "Maximum comfortable car-following deceleration.", 
-            new Acceleration(2.09, AccelerationUnit.SI), ConstraintInterface.POSITIVE)
+        B = new ParameterTypeAcceleration("b", "Maximum comfortable car-following deceleration", 
+                new Acceleration(2.09, AccelerationUnit.SI), ConstraintInterface.POSITIVE)
         {
             /** */
             private static final long serialVersionUID = 20170203L;
@@ -110,13 +111,13 @@ public class ParameterTypes
             public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
                 Throw.when(params.contains(B0) && value.si <= params.getParameter(B0).si, ParameterException.class,
-                        "Value of b is below or equal to b0.");
+                        "Value of b is below or equal to b0");
                 Throw.when(params.contains(BCRIT) && value.si >= params.getParameter(BCRIT).si, ParameterException.class,
-                        "Value of b is above or equal to bCrit.");
+                        "Value of b is above or equal to bCrit");
             }
         };
 
-        BCRIT = new ParameterTypeAcceleration("bCrit", "Maximum critical deceleration, e.g. stop/go at traffic light.",
+        BCRIT = new ParameterTypeAcceleration("bCrit", "Maximum critical deceleration, e.g. stop/go at traffic light",
             new Acceleration(3.5, AccelerationUnit.SI), ConstraintInterface.POSITIVE)
         {
             /** */
@@ -126,44 +127,47 @@ public class ParameterTypes
             public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
                 Throw.when(params.contains(B0) && value.si <= params.getParameter(B0).si, ParameterException.class,
-                        "Value of bCrit is below or equal to b0.");
+                        "Value of bCrit is below or equal to b0");
                 Throw.when(params.contains(B) && value.si <= params.getParameter(B).si, ParameterException.class,
-                        "Value of bCrit is below or equal to b.");
+                        "Value of bCrit is below or equal to b");
             }
         };
 
-        B0 = new ParameterTypeAcceleration("b0", "Maximum adjustment deceleration, e.g. when speed limit drops.",
-            new Acceleration(0.5, AccelerationUnit.SI), ConstraintInterface.POSITIVE)
-            {
-                /** */
-                private static final long serialVersionUID = 20170203L;
+        B0 = new ParameterTypeAcceleration("b0", "Maximum adjustment deceleration, e.g. when speed limit drops",
+                new Acceleration(0.5, AccelerationUnit.SI), ConstraintInterface.POSITIVE)
+        {
+            /** */
+            private static final long serialVersionUID = 20170203L;
     
-                @Override
-                public void check(final Acceleration value, final Parameters params) throws ParameterException
-                {
-                    Throw.when(params.contains(B) && value.si >= params.getParameter(B).si, ParameterException.class,
-                            "Value of b0 is above or equal to b.");
-                    Throw.when(params.contains(BCRIT) && value.si >= params.getParameter(BCRIT).si, ParameterException.class,
-                            "Value of b0 is above or equal to bCrit.");
-                }
-            };
-
-        T = new ParameterTypeDuration("T", "Current car-following headway.", new Duration(1.2, DurationUnit.SI), ConstraintInterface.POSITIVE);
-
-        TMIN = new ParameterTypeDuration("Tmin", "Minimum car-following headway.", new Duration(0.56, DurationUnit.SI), ConstraintInterface.POSITIVE)
+            @Override
+            public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
-                /** */
-                private static final long serialVersionUID = 20160400L;
+                Throw.when(params.contains(B) && value.si >= params.getParameter(B).si, ParameterException.class,
+                        "Value of b0 is above or equal to b");
+                Throw.when(params.contains(BCRIT) && value.si >= params.getParameter(BCRIT).si, ParameterException.class,
+                        "Value of b0 is above or equal to bCrit");
+            }
+        };
 
-                @Override
-                public void check(final Duration value, final Parameters params) throws ParameterException
-                {
-                    Throw.when(params.contains(ParameterTypes.TMAX) && value.si >= params.getParameter(ParameterTypes.TMAX).si,
-                        ParameterException.class, "Value of Tmin is above or equal to Tmax.");
-                }
-            };
+        T = new ParameterTypeDuration("T", "Current car-following headway", new Duration(1.2, DurationUnit.SI), 
+                ConstraintInterface.POSITIVE);
 
-        TMAX = new ParameterTypeDuration("Tmax", "Maximum car-following headway.", new Duration(1.2, DurationUnit.SI), ConstraintInterface.POSITIVE)
+        TMIN = new ParameterTypeDuration("Tmin", "Minimum car-following headway", new Duration(0.56, DurationUnit.SI), 
+                ConstraintInterface.POSITIVE)
+        {
+            /** */
+            private static final long serialVersionUID = 20160400L;
+
+            @Override
+            public void check(final Duration value, final Parameters params) throws ParameterException
+            {
+                Throw.when(params.contains(ParameterTypes.TMAX) && value.si >= params.getParameter(ParameterTypes.TMAX).si,
+                        ParameterException.class, "Value of Tmin is above or equal to Tmax");
+            }
+        };
+
+        TMAX = new ParameterTypeDuration("Tmax", "Maximum car-following headway", new Duration(1.2, DurationUnit.SI), 
+                ConstraintInterface.POSITIVE)
         {
             /** */
             private static final long serialVersionUID = 20160400L;
@@ -172,32 +176,37 @@ public class ParameterTypes
             public void check(final Duration value, final Parameters params) throws ParameterException
             {
                 Throw.when(params.contains(ParameterTypes.TMIN) && value.si <= params.getParameter(ParameterTypes.TMIN).si,
-                    ParameterException.class, "Value of Tmax is below or equal to Tmin.");
+                    ParameterException.class, "Value of Tmax is below or equal to Tmin");
             }
         };
 
-        TAU = new ParameterTypeDuration("tau", "Headway relaxation time.", new Duration(25.0, DurationUnit.SI), ConstraintInterface.POSITIVE);
-
-        T0 = new ParameterTypeDuration("t0", "Look-ahead time for mandatory lane changes.", new Duration(43.0, DurationUnit.SI),
+        TAU = new ParameterTypeDuration("tau", "Headway relaxation time", new Duration(25.0, DurationUnit.SI), 
                 ConstraintInterface.POSITIVE);
 
-        LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance.", new Length(295.0, LengthUnit.SI), ConstraintInterface.POSITIVE);
+        T0 = new ParameterTypeDuration("t0", "Look-ahead time for mandatory lane changes", 
+                new Duration(43.0, DurationUnit.SI), ConstraintInterface.POSITIVE);
 
-        LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance.", new Length(200, LengthUnit.SI), ConstraintInterface.POSITIVE);
+        LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance", new Length(295.0, LengthUnit.SI), 
+                ConstraintInterface.POSITIVE);
 
-        LOOKBACKOLD = new ParameterTypeLength("Look-back old", "Look-back distance (old version for MOBIL code).", 
-            new Length(-200, LengthUnit.SI), ConstraintInterface.NEGATIVE);
+        LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance", new Length(200, LengthUnit.SI), 
+                ConstraintInterface.POSITIVE);
+
+        LOOKBACKOLD = new ParameterTypeLength("Look-back old", "Look-back distance (old version for MOBIL code)", 
+                new Length(-200, LengthUnit.SI), ConstraintInterface.NEGATIVE);
         
-        FSPEED = new ParameterTypeDouble("fSpeed", "Speed limit adherence factor.", 1.0, ConstraintInterface.POSITIVE);
+        FSPEED = new ParameterTypeDouble("fSpeed", "Speed limit adherence factor", 1.0, ConstraintInterface.POSITIVE);
 
-        VCONG = new ParameterTypeSpeed("vCong", "Speed threshold below which traffic is considered congested.", 
-            new Speed(60, SpeedUnit.KM_PER_HOUR), ConstraintInterface.POSITIVE);
+        VCONG = new ParameterTypeSpeed("vCong", "Speed threshold below which traffic is considered congested", 
+                new Speed(60, SpeedUnit.KM_PER_HOUR), ConstraintInterface.POSITIVE);
 
-        LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration.", new Duration(3, DurationUnit.SI), ConstraintInterface.POSITIVE);
+        LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration", new Duration(3, DurationUnit.SI), 
+                ConstraintInterface.POSITIVE);
         
-        PERCEPTION = new ParameterTypeLength("mapLength", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), ConstraintInterface.POSITIVE);
+        PERCEPTION = new ParameterTypeLength("mapLength", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), 
+                ConstraintInterface.POSITIVE);
         
-        TR = new ParameterTypeDuration("Tr", "Reaction time.", Duration.createSI(0.5), ConstraintInterface.POSITIVEZERO);
+        TR = new ParameterTypeDuration("Tr", "Reaction time", Duration.createSI(0.5), ConstraintInterface.POSITIVEZERO);
         
     }
 

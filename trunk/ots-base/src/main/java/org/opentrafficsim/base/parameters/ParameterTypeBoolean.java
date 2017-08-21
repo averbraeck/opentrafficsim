@@ -18,9 +18,9 @@ public class ParameterTypeBoolean extends AbstractParameterType<Boolean> impleme
     private static final long serialVersionUID = 20160400L;
 
     /**
-     * Constructor without default value.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
+     * Construct a new ParameterTypeBoolean without default value.
+     * @param id String; short name of the new ParameterTypeBoolean
+     * @param description String; parameter description or full name of the new ParameterTypeBoolean
      */
     public ParameterTypeBoolean(final String id, final String description)
     {
@@ -28,10 +28,10 @@ public class ParameterTypeBoolean extends AbstractParameterType<Boolean> impleme
     }
 
     /**
-     * Constructor with default value.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param defaultValue Default value.
+     * Construct a new ParameterTypeBoolean with default value.
+     * @param id String; short name of the new ParameterTypeBoolean
+     * @param description String; parameter description or full name of the new ParameterTypeBoolean
+     * @param defaultValue boolean; the default value of the new ParameterTypeBoolean
      */
     public ParameterTypeBoolean(final String id, final String description, final boolean defaultValue)
     {

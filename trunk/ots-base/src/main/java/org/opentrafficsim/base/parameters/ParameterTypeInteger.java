@@ -20,9 +20,9 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
     private static final long serialVersionUID = 20160400L;
 
     /**
-     * Constructor without default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
+     * Construct a new ParameterTypeInteger without default value and check.
+     * @param id String; short name of the new ParameterTypeInteger
+     * @param description String; parameter description or full name of the new ParameterTypeInteger
      */
     public ParameterTypeInteger(final String id, final String description)
     {
@@ -30,10 +30,10 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
     }
 
     /**
-     * Constructor with default value, without check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name..
-     * @param defaultValue Default value.
+     * Construct a new ParameterTypeInteger with default value, without check.
+     * @param id String; short name of the new ParameterTypeInteger
+     * @param description String; parameter description or full name of the new ParameterTypeInteger
+     * @param defaultValue int; the default value of the new ParameterTypeInteger
      */
     public ParameterTypeInteger(final String id, final String description, final int defaultValue)
     {
@@ -41,10 +41,10 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
     }
 
     /**
-     * Constructor with default value, without check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name..
-     * @param defaultValue Default value.
+     * Construct a new ParameterTypeInteger with default value, without check.
+     * @param id String; short name of the new ParameterTypeInteger
+     * @param description String; parameter description or full name of the new ParameterTypeInteger
+     * @param defaultValue Integer; the default value of the new ParameterTypeInteger
      */
     public ParameterTypeInteger(final String id, final String description, final Integer defaultValue)
     {
@@ -52,10 +52,10 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
     }
 
     /**
-     * Constructor without default value, with check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param constraint Constraint for parameter values.
+     * Construct a new ParameterTypeInteger without default value, with check.
+     * @param id String; short name of the new ParameterTypeInteger
+     * @param description String; parameter description or full name of the new ParameterTypeInteger
+     * @param constraint Constraint&lt;Number&gt;; constraint for parameter values
      */
     public ParameterTypeInteger(final String id, final String description, final Constraint<Number> constraint)
     {
@@ -63,11 +63,11 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
     }
 
     /**
-     * Constructor with default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param defaultValue Default value.
-     * @param constraint Constraint for parameter values.
+     * Construct a new ParameterTypeInteger with default value and check.
+     * @param id String; short name of the new ParameterTypeInteger
+     * @param description String; parameter description or full name of the new ParameterTypeInteger
+     * @param defaultValue int; the default value of the new ParameterTypeInteger
+     * @param constraint Constraint&lt;Number&gt;; constraint for parameter values
      */
     public ParameterTypeInteger(final String id, final String description, final int defaultValue,
             final Constraint<Number> constraint)
@@ -76,11 +76,11 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
     }
 
     /**
-     * Constructor with default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param defaultValue Default value.
-     * @param constraint Constraint for parameter values.
+     * Construct a new ParameterTypeInteger with default value and check.
+     * @param id String; short name of the new ParameterTypeInteger
+     * @param description String; parameter description or full name of the new ParameterTypeInteger
+     * @param defaultValue Integer; the default value of the new ParameterTypeInteger
+     * @param constraint Constraint&lt;Number&gt;; constraint for parameter values
      */
     public ParameterTypeInteger(final String id, final String description, final Integer defaultValue,
             final Constraint<Number> constraint)
