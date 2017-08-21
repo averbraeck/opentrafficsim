@@ -13,7 +13,7 @@ import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 
 /**
- * In this class a set of parameters can be stored.
+ * Storage for a set of parameters with one level undo (set/reset).
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -28,9 +28,7 @@ public class Parameters implements Serializable
     /** */
     private static final long serialVersionUID = 20160400L;
 
-    /**
-     * Object to recognize that no value was set previously.
-     */
+    /** Object to recognize that no value was set previously. */
     private static final Empty EMPTY = new Empty();
 
     /** Whether to copy internal data on write. */
@@ -43,7 +41,7 @@ public class Parameters implements Serializable
     private Map<AbstractParameterType<?>, Object> previous;
 
     /**
-     * Empty constructor.
+     * Construct a new, empty Parameters set.
      */
     public Parameters()
     {
@@ -53,7 +51,7 @@ public class Parameters implements Serializable
 
     /**
      * Constructor which creates a copy of the input set.
-     * @param parameters input set
+     * @param parameters Parameters; input set to copy into the new Parameters object
      */
     public Parameters(final Parameters parameters)
     {
@@ -65,13 +63,12 @@ public class Parameters implements Serializable
 
     /**
      * Set parameter value of given parameter type.
-     * @param parameterType Parameter type.
-     * @param value Value.
+     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
+     * @param value T; new value for the parameter of type <code>parameterType</code>.
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
-    public final <T> void setParameter(final AbstractParameterType<T> parameterType, final T value)
-            throws ParameterException
+    public final <T> void setParameter(final AbstractParameterType<T> parameterType, final T value) throws ParameterException
     {
         Throw.when(value == null, ParameterException.class,
                 "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
@@ -80,14 +77,13 @@ public class Parameters implements Serializable
     }
 
     /**
-     * Remembers the current value, or if it is not given, for possible reset.
-     * @param parameterType Parameter type.
-     * @param value Value.
-     * @param <T> Class of the value.
+     * Remember the current value for recovery on reset.
+     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type
+     * @param value T; new value for the parameter
+     * @param <T> Class of the value
      * @throws ParameterException If the value does not comply with constraints.
      */
-    private <T> void saveSetParameter(final AbstractParameterType<T> parameterType, final T value)
-            throws ParameterException
+    private <T> void saveSetParameter(final AbstractParameterType<T> parameterType, final T value) throws ParameterException
     {
         parameterType.checkConstraint(value);
         checkCopyOnWrite();
@@ -105,7 +101,7 @@ public class Parameters implements Serializable
 
     /**
      * Resets the parameter value to the value from before the last set. This goes only a single value back.
-     * @param parameterType Parameter type.
+     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
      * @throws ParameterException If the parameter was never set.
      */
     public final void resetParameter(final AbstractParameterType<?> parameterType) throws ParameterException
@@ -126,7 +122,7 @@ public class Parameters implements Serializable
     }
 
     /**
-     * Check if internal data needs to be copied.
+     * Copy the internal data if needed.
      */
     private void checkCopyOnWrite()
     {
@@ -140,10 +136,10 @@ public class Parameters implements Serializable
 
     /**
      * Get parameter of given type.
-     * @param parameterType Parameter type.
+     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
      * @param <T> Class of value.
-     * @return Parameter of given type.
-     * @throws ParameterException If parameter was never set.
+     * @return T; parameter of the requested type if it exists
+     * @throws ParameterException If the parameter was never set.
      */
     @SuppressWarnings("checkstyle:designforextension")
     public <T> T getParameter(final AbstractParameterType<T> parameterType) throws ParameterException
@@ -154,7 +150,6 @@ public class Parameters implements Serializable
         T result = (T) this.parameters.get(parameterType);
         return result;
     }
-
 
     /**
      * Check whether parameter has been set.
@@ -168,9 +163,9 @@ public class Parameters implements Serializable
     }
 
     /**
-     * Whether the given parameter type has been set.
-     * @param parameterType Parameter type.
-     * @return Whether the given parameter type has been set.
+     * Indicate whether the given parameter type has been set.
+     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type to check
+     * @return boolean; true if <code>parameterType</code> has been set; false if <code>parameterType</code> has not been set
      */
     public final boolean contains(final AbstractParameterType<?> parameterType)
     {
@@ -179,7 +174,7 @@ public class Parameters implements Serializable
 
     /**
      * Returns a safe copy of the parameters.
-     * @return Safe copy of the parameters, e.g., for printing.
+     * @return Map&lt;AbstractParameterType&lt;?&gt;&gt;; a safe copy of the parameters, e.g., for printing
      */
     public final Map<AbstractParameterType<?>, Object> getParameters()
     {
@@ -188,13 +183,12 @@ public class Parameters implements Serializable
 
     /**
      * Sets the default value of a parameter.
-     * @param parameter parameter to set the default value of
-     * @param <T> Class of the value.
-     * @return this set of parameters (for method chaining)
+     * @param parameter AbstractParameterType&lt;T&gt;; the parameter to set the default value of
+     * @param <T> Class of the value
+     * @return Parameters; this set of parameters (for method chaining)
      * @throws ParameterException if the parameter type has no default value
      */
-    public final <T> Parameters setDefaultParameter(
-            final AbstractParameterType<T> parameter) throws ParameterException
+    public final <T> Parameters setDefaultParameter(final AbstractParameterType<T> parameter) throws ParameterException
     {
         T defaultValue = parameter.getDefaultValue();
         try
@@ -210,9 +204,10 @@ public class Parameters implements Serializable
     }
 
     /**
-     * Sets the default values of all accessible parameters defined in the given class.
-     * @param clazz class with parameters
-     * @return this set of parameters (for method chaining)
+     * Sets the default values of all accessible parameters defined in the given class.<br>
+     * TODO Determin if this method should call checkCopyOnWrite and/or backup the current values in this.previous
+     * @param clazz Class&lt;?&gt;; class with parameters
+     * @return Parameters; this set of parameters (for method chaining)
      */
     public final Parameters setDefaultParameters(final Class<?> clazz)
     {
@@ -221,8 +216,8 @@ public class Parameters implements Serializable
 
     /**
      * Sets the default values of all accessible parameters defined in the given class.
-     * @param clazz class with parameters
-     * @param <T> Class of the value.
+     * @param clazz Class&lt;?&gt;; class with parameters
+     * @param <T> Class of the value
      * @return this set of parameters (for method chaining)
      */
     @SuppressWarnings("unchecked")
@@ -259,19 +254,19 @@ public class Parameters implements Serializable
                 }
             }
         }
-
         return this;
     }
 
     /**
-     * Sets all parameters from the given set in this set.
-     * @param newParameterSet set of parameters to include in this set
+     * Sets all parameters from the given set in this set. <br>
+     * TODO Determine whether this method should call checkCopyOnWrite and/or make backups in this.previous
+     * @param referenceSet Parameters; set of parameters to set in this set
      */
-    public final void setAll(final Parameters newParameterSet)
+    public final void setAll(final Parameters referenceSet)
     {
-        for (AbstractParameterType<?> key : newParameterSet.parameters.keySet())
+        for (AbstractParameterType<?> key : referenceSet.parameters.keySet())
         {
-            this.parameters.put(key, newParameterSet.parameters.get(key));
+            this.parameters.put(key, referenceSet.parameters.get(key));
         }
     }
 
@@ -299,15 +294,7 @@ public class Parameters implements Serializable
     }
 
     /**
-     * Class to put in a HashMap to recognize that no value was set at some point.
-     * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 14, 2016 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * Class of object to put in the internal Map of Parameters to indicate that no value was set.
      */
     private static class Empty extends Dimensionless
     {
@@ -315,7 +302,7 @@ public class Parameters implements Serializable
         private static final long serialVersionUID = 20160414L;
 
         /**
-         * Empty constructor.
+         * Constructor for Empty.
          */
         Empty()
         {

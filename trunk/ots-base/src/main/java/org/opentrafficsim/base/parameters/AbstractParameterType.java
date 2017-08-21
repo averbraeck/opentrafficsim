@@ -207,12 +207,12 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     /**
      * Default implementation of check method. This default implementation will never throw any Exception.
      * @param value T; the value to check
-     * @param params Parameters; Set of parameters
+     * @param params Parameters; Set of parameters to check
      * @throws ParameterException If the value does not comply with constraints.
      */
     public void check(final T value, final Parameters params) throws ParameterException
     {
-        //
+        // Default implementation does nothing
     }
 
     /**
