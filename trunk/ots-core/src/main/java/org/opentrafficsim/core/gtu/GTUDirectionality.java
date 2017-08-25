@@ -1,7 +1,8 @@
 package org.opentrafficsim.core.gtu;
 
 /**
- * Longitudinal driving directions for a GTU. The driving directions can be used on a link or a lane.
+ * Longitudinal driving directions for a GTU. The driving directions can be used on a link or a lane. The two possible values
+ * are <code>DIR_PLUS</code> and <code>DIR_MINUS</code>.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

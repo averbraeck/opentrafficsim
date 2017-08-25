@@ -120,8 +120,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     {
         Throw.when(id == null, GTUException.class, "id is null");
         Throw.when(gtuType == null, GTUException.class, "gtuType is null");
-        Throw.when(gtuType.equals(GTUType.NONE), GTUException.class, "gtuType of an actual GTU cannot be GTUType.NONE");
-        Throw.when(gtuType.equals(GTUType.ALL), GTUException.class, "gtuType of an actual GTU cannot be GTUType.ALL");
         Throw.when(perceivableContext == null, GTUException.class, "perceivableContext is null for GTU with id %s", id);
         Throw.when(perceivableContext.containsGtuId(id), GTUException.class,
                 "GTU with id %s already registered in perceivableContext %s", id, perceivableContext.getId());

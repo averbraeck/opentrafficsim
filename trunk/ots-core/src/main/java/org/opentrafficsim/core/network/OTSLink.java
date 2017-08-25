@@ -1,23 +1,21 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.media.j3d.Bounds;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
-
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * A standard implementation of a link between two OTSNodes.
@@ -60,22 +58,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     private final Set<GTU> gtus = new HashSet<>();
 
     /**
-     * The direction in which vehicles can drive, i.e., in direction of geometry, reverse, or both. It might be that the link is
-     * FORWARD (from start node to end node) for the GTU type CAR, but BOTH for the GTU type BICYCLE (i.e., bicycles can also go
-     * from end node to start node). If the directionality for a GTUType is set to NONE, this means that the given GTUTYpe
-     * cannot use the Link. If a Directionality is set for GTUType.ALL, the getDirectionality will default to these settings
-     * when there is no specific entry for a given directionality. This means that the settings can be used additive, or
-     * restrictive. <br>
-     * In <b>additive use</b>, set the directionality for GTUType.ALL to NONE, or do not set the directionality for GTUType.ALL.
-     * Now, one by one, the allowed directionalities can be added. An example is a highway, which we only open for CAR, TRUCK
-     * and BUS. <br>
-     * In <b>restrictive use</b>, set the directionality for GTUType.ALL to BOTH, FORWARD, or BACKWARD. Override the
-     * directionality for certain GTUTypes to a more restrictive access, e.g. to NONE. An example is a road that is open for all
-     * road users, except PEDESTRIAN.
-     */
-    private final Map<GTUType, LongitudinalDirectionality> directionalityMap;
-
-    /**
      * Construct a new link.
      * @param id the link id
      * @param network the network to which the link belongs
@@ -84,14 +66,12 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
      * @param simulator the simulator on which events can be scheduled
-     * @param directionalityMap the directions (FORWARD, BACKWARD, BOTH, NONE) that GTUtypes can traverse this link
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OTSLine3D designLine, final OTSSimulatorInterface simulator,
-            final Map<GTUType, LongitudinalDirectionality> directionalityMap) throws NetworkException
+            final OTSLine3D designLine, final OTSSimulatorInterface simulator) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -100,7 +80,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         Throw.whenNull(linkType, "linkType cannot be null");
         Throw.whenNull(designLine, "designLine cannot be null");
         Throw.whenNull(simulator, "simulator cannot be null");
-        Throw.whenNull(directionalityMap, "directionalityMap cannot be null");
 
         this.network = network;
         this.id = id;
@@ -111,32 +90,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         this.endNode.addLink(this);
         this.designLine = designLine;
         this.simulator = simulator;
-        this.directionalityMap = directionalityMap;
 
         this.network.addLink(this);
-    }
-
-    /**
-     * Construct a new link, with a directionality for all GTUs as provided.
-     * @param id the link id
-     * @param network the network to which the link belongs
-     * @param startNode start node (directional)
-     * @param endNode end node (directional)
-     * @param linkType Link type to indicate compatibility with GTU types
-     * @param designLine the OTSLine3D design line of the Link
-     * @param simulator the simulator on which events can be scheduled
-     * @param directionality the directionality for all GTUs
-     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
-     *             or the end node of the link are not registered in the network.
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OTSLine3D designLine, final OTSSimulatorInterface simulator, final LongitudinalDirectionality directionality)
-            throws NetworkException
-    {
-        this(network, id, startNode, endNode, linkType, designLine, simulator,
-                new HashMap<GTUType, LongitudinalDirectionality>());
-        addDirectionality(GTUType.ALL, directionality);
     }
 
     /**
@@ -152,36 +107,14 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
             final OTSLink link) throws NetworkException
     {
         this(newNetwork, link.id, newNetwork.getNode(link.startNode.getId()), newNetwork.getNode(link.endNode.getId()),
-                link.linkType, link.designLine, newSimulator, new HashMap<>(link.directionalityMap));
+                link.linkType, link.designLine, newSimulator);
     }
 
     /** {@inheritDoc} */
     @Override
     public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
     {
-        if (this.directionalityMap.containsKey(gtuType))
-        {
-            return this.directionalityMap.get(gtuType);
-        }
-        if (this.directionalityMap.containsKey(GTUType.ALL))
-        {
-            return this.directionalityMap.get(GTUType.ALL);
-        }
-        return LongitudinalDirectionality.DIR_NONE;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void addDirectionality(final GTUType gtuType, final LongitudinalDirectionality directionality)
-    {
-        this.directionalityMap.put(gtuType, directionality);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void removeDirectionality(final GTUType gtuType)
-    {
-        this.directionalityMap.remove(gtuType);
+        return this.getLinkType().getDirectionality(gtuType);
     }
 
     /** {@inheritDoc} */
@@ -191,8 +124,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         if (!this.gtus.contains(gtu))
         {
             this.gtus.add(gtu);
-            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
-                    gtu.getSimulator().getSimulatorTime());
+            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() }, gtu.getSimulator()
+                    .getSimulatorTime());
         }
     }
 
@@ -203,8 +136,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         if (this.gtus.contains(gtu))
         {
             this.gtus.remove(gtu);
-            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
-                    gtu.getSimulator().getSimulatorTime());
+            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() }, gtu.getSimulator()
+                    .getSimulatorTime());
         }
     }
 
@@ -269,14 +202,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     public final OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
-    }
-
-    /**
-     * @return directionalityMap the directionality map. Only for internal use in (sub)classes.
-     */
-    protected final Map<GTUType, LongitudinalDirectionality> getDirectionalityMap()
-    {
-        return this.directionalityMap;
     }
 
     /** {@inheritDoc} */

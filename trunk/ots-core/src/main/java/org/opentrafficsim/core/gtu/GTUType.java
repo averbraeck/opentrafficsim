@@ -22,12 +22,15 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     /** */
     private static final long serialVersionUID = 20141231L;
 
-    /** ALL GTUType to be used only for permeability and accessibility. */
-    public static final GTUType ALL;
-
-    /** NONE GTUType to be used only for permeability and accessibility. */
-    public static final GTUType NONE;
-
+    /** Super type for all road users. */
+    public static final GTUType ROAD_USER;
+    
+    /** Super type for all water way users. */
+    public static final GTUType WATER_WAY_USER;
+    
+    /** Super type for all rail users. */
+    public static final GTUType RAIL_WAY_USER;
+    
     /** Super type for pedestrians. */
     public static final GTUType PEDESTRIAN;
 
@@ -67,17 +70,18 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     /* static block to guarantee that ALL is always on the first place, and NONE on the second, for code reproducibility. */
     static
     {
-        ALL = new GTUType("ALL");
-        NONE = new GTUType("NONE");
+        ROAD_USER = new GTUType("ROAD_USER", null);
+        WATER_WAY_USER = new GTUType("WATER_WAY_USER", null);
+        RAIL_WAY_USER = new GTUType("RAIL_WAY_USER", null);
+
+        SHIP = new GTUType("SHIP", WATER_WAY_USER);
+        TRAIN = new GTUType("TRAIN", RAIL_WAY_USER);
+        PEDESTRIAN = new GTUType("PEDESTRIAN", ROAD_USER);
+        BICYCLE = new GTUType("BICYCLE", ROAD_USER);
         
-        PEDESTRIAN = new GTUType("PEDESTRIAN", ALL);
-        BICYCLE = new GTUType("BICYCLE", ALL);
-        SHIP = new GTUType("SHIP", ALL);
-        TRAIN = new GTUType("TRAIN", ALL);
+        MOPED = new GTUType("MOPED", BICYCLE);
         
-        MOPED = new GTUType("MOPED", ALL);
-        
-        VEHICLE = new GTUType("VEHICLE", ALL);
+        VEHICLE = new GTUType("VEHICLE", ROAD_USER);
         EMERGENCY_VEHICLE = new GTUType("EMERGENCY_VEHICLE", VEHICLE);
         CAR = new GTUType("CAR", VEHICLE);
         VAN = new GTUType("VAN", VEHICLE);
