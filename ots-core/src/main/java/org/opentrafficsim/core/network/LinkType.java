@@ -1,17 +1,15 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
+import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.base.Type;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 
-import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
-import nl.tudelft.simulation.language.Throw;
+import compatibility.Compatibility;
+import compatibility.Compatible;
+import compatibility.GTUCompatibility;
 
 /**
  * Link type to indicate compatibility with GTU types. The id of a LinkType should be unique within a simulation. This is,
@@ -26,61 +24,66 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LinkType extends Type<LinkType> implements Serializable, Identifiable
+public class LinkType extends HierarchicalType<LinkType> implements Serializable, Identifiable, Compatible
 {
     /** */
     private static final long serialVersionUID = 20140821L;
 
-    /** The id of the link type to make it identifiable. Should be unique in the simulation. */
-    private final String id;
-
     /** The compatibility of GTU types with this link type. */
-    private final ImmutableSet<GTUType> compatibilitySet;
+    private final Compatibility<GTUType, LinkType> compatibility;
 
-    /** The link type that does not allow any vehicles. */
+    /** The link type that does not allow any vehicles, or pedestrians. */
     public static final LinkType NONE;
 
-    /** The link type that allows all vehicles. */
-    public static final LinkType ALL;
+    /** Two-directional road, accessible to all GTU types (including PEDESTRIAN). */
+    public static final LinkType ROAD;
+
+    /** Two-directional water way. */
+    public static final LinkType WATER_WAY;
+
+    /** Two-directional rail link. */
+    public static final LinkType RAIL_WAY;
 
     static
     {
-        NONE = new LinkType("NONE", new HashSet<GTUType>());
-        Set<GTUType> allSet = new HashSet<>();
-        allSet.add(GTUType.ALL);
-        ALL = new LinkType("ALL", allSet);
+        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<LinkType>();
+        NONE = new LinkType("NONE", null, compatibility);
+        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
+        ROAD = new LinkType("ROAD", null, compatibility);
+        compatibility = new GTUCompatibility<>();
+        compatibility.addAllowedGTUType(GTUType.WATER_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
+        WATER_WAY = new LinkType("WATER_WAY", null, compatibility);
+        compatibility = new GTUCompatibility<>();
+        compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
+        RAIL_WAY = new LinkType("WATER_WAY", null, compatibility);
     }
 
     /**
-     * Create a new Link type with an immutable compatibility set.
-     * @param id the id of the lane type.
-     * @param compatibility the collection of compatible GTUTypes for this LinkType
-     * @throws NullPointerException if either the id is null, or the compatibilitySet is null
+     * Create a new Link type with compatibility set.
+     * @param id String; the id of the lane type (may not be null)
+     * @param parent LinkType; the parent type (may be null)
+     * @param compatibility the collection of compatible GTUTypes for this LinkType; can be null (resulting in a LinkType that
+     *            is inaccessible to all GTU types). This constructor makes a deep copy of the <code>compatibility</code>.
      */
-    public LinkType(final String id, final Collection<GTUType> compatibility) throws NullPointerException
+    public LinkType(final String id, final LinkType parent, final GTUCompatibility<LinkType> compatibility)
     {
-        Throw.whenNull(id, "id cannot be null for LinkType");
-        Throw.whenNull(compatibility, "compatibilitySet cannot be null for LinkType with id = %s", id);
-
-        this.id = id;
-        this.compatibilitySet = new ImmutableHashSet<>(compatibility);
+        super(id, parent);
+        this.compatibility = new GTUCompatibility<LinkType>(compatibility);
     }
 
-    /**
-     * @param gtuType GTU type to look for compatibility.
-     * @return whether the LaneType is compatible with the GTU type, or compatible with all GTU types.
-     */
-    public final boolean isCompatible(final GTUType gtuType)
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
     {
-        return this.compatibilitySet.contains(gtuType) || this.compatibilitySet.contains(GTUType.ALL);
-    }
-
-    /**
-     * @return id.
-     */
-    public final String getId()
-    {
-        return this.id;
+        for (LinkType linkType = this; null != linkType; linkType = linkType.getParent())
+        {
+            Boolean c = this.compatibility.isCompatible(gtuType, directionality);
+            if (null != c)
+            {
+                return c;
+            }
+        }
+        return false;
     }
 
     /** {@inheritDoc} */
@@ -88,35 +91,18 @@ public class LinkType extends Type<LinkType> implements Serializable, Identifiab
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "LinkType [id=" + this.id + ", compatibilitySet=" + this.compatibilitySet + "]";
+        return "LinkType [id=" + getId() + ", compatibilitySet=" + this.compatibility + "]";
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public int hashCode()
+    /**
+     * Get the LongitudinalDirectionality for a GTUType. Will recursively check parent type of GTUType if needed.
+     * @param gtuType GTUType; the type of the GTU to retrieve LongitudinalDirectinality for
+     * @return LongitudinalityDirectionality for the GTUType, or DIR_NONE if none of the parent types of the GTUType has a
+     *         specified LongitudinalDirectionality
+     */
+    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + this.id.hashCode();
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
-    public boolean equals(final Object obj)
-    {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        LinkType other = (LinkType) obj;
-        if (!this.id.equals(other.id))
-            return false;
-        return true;
+        return this.compatibility.getDirectionality(gtuType);
     }
 
 }
