@@ -831,6 +831,13 @@ public final class Trajectory
             return new Boundaries(newFrom, newFFrom, newTo, newFTo);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "Boundaries [from=" + this.from + ", fFrom=" + this.fFrom + ", to=" + this.to + ", fTo=" + this.fTo + "]";
+        }
+
     }
 
 }
