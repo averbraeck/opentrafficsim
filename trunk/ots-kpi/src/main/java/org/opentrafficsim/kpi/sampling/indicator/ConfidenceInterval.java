@@ -49,4 +49,11 @@ public class ConfidenceInterval<T extends AbstractDoubleScalarRel<?, T>>
         return this.upperValue;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ConfidenceInterval [lowerValue=" + this.lowerValue + ", upperValue=" + this.upperValue + "]";
+    }
+
 }

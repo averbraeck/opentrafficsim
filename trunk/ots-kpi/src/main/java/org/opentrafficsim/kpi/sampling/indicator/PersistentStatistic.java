@@ -118,4 +118,11 @@ public class PersistentStatistic<T extends AbstractDoubleScalarRel<?, T>> implem
         return this.persistent.getMean().si;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "PersistentStatistic [persistent=" + this.persistent + "]";
+    }
+
 }
