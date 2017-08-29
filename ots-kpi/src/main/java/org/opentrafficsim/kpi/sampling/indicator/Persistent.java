@@ -491,4 +491,13 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
             0.9999999999982816, 0.9999999999982816, 0.9999999999982816, 0.9999999999982816, 0.9999999999982816,
             0.9999999999982816, 0.9999999999982816, 0.9999999999982816, 0.9999999999982816, 1.0000000000000000 };
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "Persistent [unit=" + this.unit + ", sum=" + this.sum + ", min=" + this.min + ", max=" + this.max + ", mean="
+                + this.mean + ", varianceSum=" + this.varianceSum + ", weightSum=" + this.weightSum + ", n=" + this.n
+                + ", semaphore=" + this.semaphore + "]";
+    }
+
 }

@@ -47,4 +47,11 @@ public class MeanDensity extends AbstractIndicator<LinearDensity>
         return new LinearDensity(ttt / area, LinearDensityUnit.SI);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "MeanDensity [travelTime=" + this.travelTime + "]";
+    }
+
 }

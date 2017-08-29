@@ -46,4 +46,11 @@ public class MeanIntensity extends AbstractIndicator<Frequency>
         return new Frequency(ttd / area, FrequencyUnit.SI);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "MeanIntensity [travelDistance=" + this.travelDistance + "]";
+    }
+
 }
