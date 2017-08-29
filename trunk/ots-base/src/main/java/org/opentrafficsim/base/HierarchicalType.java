@@ -3,8 +3,8 @@ package org.opentrafficsim.base;
 import nl.tudelft.simulation.language.Throw;
 
 /**
- * Super class for types with hierarchal structure. Upper level types without parent can be created in sub classes using a 
- * protected constructor without parent. 
+ * Super class for types with hierarchical structure. Upper level types without parent can be created in sub classes using a
+ * protected constructor without parent.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -15,15 +15,15 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> Self-reference to type.
  */
-public abstract class HierarchicalType<T extends HierarchicalType<T>> implements Identifiable
+public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Type<T> implements Identifiable
 {
 
     /** The id of the type to make it identifiable. */
     private final String id;
-    
+
     /** Parent type. */
     private final T parent;
-    
+
     /**
      * Constructor for creating the top level types in subclasses.
      * @param id The id of the type to make it identifiable.
@@ -35,7 +35,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> implements
         this.id = id;
         this.parent = null;
     }
-    
+
     /**
      * Constructor.
      * @param id The id of the type to make it identifiable.
@@ -49,7 +49,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> implements
         this.id = id;
         this.parent = parent;
     }
-    
+
     /**
      * @return id.
      */
@@ -66,7 +66,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> implements
     {
         return this.parent;
     }
-    
+
     /**
      * Whether this, or any of the parent types, equals the given type.
      * @param type T; type
@@ -139,5 +139,5 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> implements
         }
         return true;
     }
-    
+
 }
