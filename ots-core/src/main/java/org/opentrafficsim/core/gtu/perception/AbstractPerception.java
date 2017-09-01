@@ -42,6 +42,7 @@ public abstract class AbstractPerception implements Perception
     }
 
     /** {@inheritDoc} */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public GTU getGtu()
     {
@@ -105,6 +106,7 @@ public abstract class AbstractPerception implements Perception
     }
 
     /** {@inheritDoc} */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public void perceive() throws GTUException, NetworkException, ParameterException
     {
@@ -115,6 +117,7 @@ public abstract class AbstractPerception implements Perception
     }
 
     /** {@inheritDoc} */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {

@@ -48,6 +48,7 @@ public class FixedRouteGenerator implements RouteGenerator, Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         StringBuilder result = new StringBuilder();

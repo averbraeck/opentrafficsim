@@ -270,6 +270,7 @@ public class Distribution<O> implements Generator<O>, Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         StringBuilder result = new StringBuilder();

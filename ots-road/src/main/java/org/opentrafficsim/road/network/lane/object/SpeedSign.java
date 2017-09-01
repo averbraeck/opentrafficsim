@@ -49,14 +49,14 @@ public class SpeedSign extends AbstractLaneBasedObject
     private final Duration endTimeOfDay;
 
     /**
-     * Speed sign.
-     * @param id id
-     * @param lane lane
-     * @param direction direction
-     * @param longitudinalPosition longitudinal position
-     * @param simulator simulator
-     * @param speed speed
-     * @param gtuType GTU type
+     * Construct a new SpeedSign.
+     * @param id String; the id of the new SpeedSign
+     * @param lane Lane on/over which the SpeedSign is positioned
+     * @param direction LongitudinalDirectionality; driving direction for which the new SpeedSign applies
+     * @param longitudinalPosition Length; the longitudinal position along the lane of the new SpeedSign
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param speed Speed; the speed limit shown by the new SpeedSign
+     * @param gtuType GTU type that should obey the speed sign
      * @param startTimeOfDay start time-of-day
      * @param endTimeOfDay end time-of-day
      * @throws NetworkException when the position on the lane is out of bounds
@@ -117,7 +117,7 @@ public class SpeedSign extends AbstractLaneBasedObject
             final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed,
             final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
-        this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.ALL, startTimeOfDay, endTimeOfDay);
+        this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.VEHICLE, startTimeOfDay, endTimeOfDay);
     }
 
     /**
@@ -134,7 +134,7 @@ public class SpeedSign extends AbstractLaneBasedObject
             final Length longitudinalPosition, final OTSSimulatorInterface simulator, final Speed speed)
             throws NetworkException
     {
-        this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.ALL, Duration.ZERO, ENDOFDAY);
+        this(id, lane, direction, longitudinalPosition, simulator, speed, GTUType.VEHICLE, Duration.ZERO, ENDOFDAY);
     }
 
     /**

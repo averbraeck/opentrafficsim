@@ -85,7 +85,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
             final Map<GTUType, LongitudinalDirectionality> directionalityMap, final LaneKeepingPolicy laneKeepingPolicy)
             throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, simulator, directionalityMap);
+        super(network, id, startNode, endNode, linkType, designLine, simulator);
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 
@@ -109,7 +109,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
             final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
             final LongitudinalDirectionality directionality, final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType, designLine, simulator, directionality);
+        super(network, id, startNode, endNode, linkType, designLine, simulator);
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 

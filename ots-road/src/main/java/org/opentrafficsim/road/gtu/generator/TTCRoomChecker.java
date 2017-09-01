@@ -49,7 +49,7 @@ public class TTCRoomChecker implements RoomChecker
         Speed speed = Speed.min(leaderSpeed, laneBasedGTUCharacteristics.getMaximumSpeed());
         for (DirectedLanePosition dlp : laneBasedGTUCharacteristics.getInitialLongitudinalPositions())
         {
-            if (dlp.getLane().getLaneType().isCompatible(laneBasedGTUCharacteristics.getGTUType()))
+            if (dlp.getLane().getLaneType().isCompatible(laneBasedGTUCharacteristics.getGTUType(), dlp.getGtuDirection()))
             {
                 speed = Speed.min(speed, dlp.getLane().getSpeedLimit(laneBasedGTUCharacteristics.getGTUType()));
             }

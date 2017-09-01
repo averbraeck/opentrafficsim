@@ -21,6 +21,7 @@ public interface RouteGenerator extends Generator<Route>
      * @return Route; the next Route
      * @throws ProbabilityException when the an error was detected in the probabilities of the routes to choose from
      */
+    @Override
     Route draw() throws ProbabilityException;
 
 }

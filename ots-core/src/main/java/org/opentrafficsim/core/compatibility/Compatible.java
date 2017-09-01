@@ -1,4 +1,4 @@
-package compatibility;
+package org.opentrafficsim.core.compatibility;
 
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -17,11 +17,13 @@ import org.opentrafficsim.core.gtu.GTUType;
 public interface Compatible
 {
     /**
-     * Test if a GTUType can travel over the infrastructure.
+     * Test if a GTUType is handled by the infrastructure in the given direction. For Lane and Link, <cite>handled</cite> means
+     * that GTUs of this type can travel over this infrastructure in the direction. For Sensors it means that the sensor will
+     * detect GTUs that travel over it in the given direction.
      * @param gtuType GTUType; the type of the GTU
      * @param directionality GTUDirectionality; the direction of the GTU with respect to the design direction of the
      *            infrastructure
-     * @return boolean; true if the GTU can travel over the infrastructure in the given direction
+     * @return boolean; true if the GTU is handled by the infrastructure in the given direction
      */
     boolean isCompatible(GTUType gtuType, GTUDirectionality directionality);
 

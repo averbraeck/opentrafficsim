@@ -33,6 +33,7 @@ public interface Node extends Locatable, Serializable, Identifiable
     Network getNetwork();
 
     /** @return node id. */
+    @Override
     String getId();
 
     /** @return point. */

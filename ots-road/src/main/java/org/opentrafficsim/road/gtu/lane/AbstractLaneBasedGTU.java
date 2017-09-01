@@ -297,7 +297,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         for (Lane lane : lanesCopy.keySet())
         {
-            Set<Lane> laneSet = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType());
+            Set<Lane> laneSet = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType(), getDirection(lane));
             if (laneSet.size() > 0)
             {
                 Lane adjacentLane = laneSet.iterator().next();
@@ -346,7 +346,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         int numRegistered = 0;
         for (Lane lane : lanesCopy.keySet())
         {
-            Set<Lane> laneSet = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType());
+            Set<Lane> laneSet = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType(), getDirection(lane));
             if (laneSet.size() > 0)
             {
                 numRegistered++;
@@ -398,7 +398,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
             for (Lane lane : lanesCopy.keySet())
             {
-                Iterator<Lane> iterator = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType()).iterator();
+                Iterator<Lane> iterator =
+                        lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType(), getDirection(lane)).iterator();
                 if (iterator.hasNext() && lanesCopy.keySet().contains(iterator.next()))
                 {
                     lanesToBeRemoved.add(lane);

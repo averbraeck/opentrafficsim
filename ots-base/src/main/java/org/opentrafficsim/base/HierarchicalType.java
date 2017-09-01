@@ -84,7 +84,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Ty
         }
         return false;
     }
-
+    
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")

@@ -28,6 +28,7 @@ import nl.tudelft.simulation.immutablecollections.ImmutableMap;
 public interface Network extends Identifiable
 {
     /** @return String; the id */
+    @Override
     String getId();
 
     /***************************************************************************************/

@@ -85,9 +85,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         Length position = new Length(123, METER);
         Length carPosition = new Length(122.5, METER);
         GTUType gtuType = CAR;
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         Lane lane = CarTest.makeLane(this.network, laneType);
-        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position, this.simulator);
+        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position, detectedGTUTypes, this.simulator);
         assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
         assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(), 0.0001);
         try
@@ -337,9 +337,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 
         Duration aggregationTime = new Duration(30, SECOND);
         Length position = new Length(123, METER);
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime,
-                CarTest.makeLane(this.network, laneType), position, this.simulator);
+                CarTest.makeLane(this.network, laneType), position, detectedGTUTypes, this.simulator);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;

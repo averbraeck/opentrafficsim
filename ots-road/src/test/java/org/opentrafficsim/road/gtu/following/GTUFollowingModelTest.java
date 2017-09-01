@@ -111,7 +111,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         SimpleSimulator simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
                 new Duration(1800, SECOND), this);
         GTUType carType = CAR;
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         Lane lane = CarTest.makeLane(this.network, laneType);
         Length initialPosition = new Length(1234.567, METER);
         Length length = new Length(5.0, METER);

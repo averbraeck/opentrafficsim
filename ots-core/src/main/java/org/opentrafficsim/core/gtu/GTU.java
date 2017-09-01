@@ -42,6 +42,7 @@ import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 public interface GTU extends Locatable, Serializable, EventProducerInterface, Identifiable
 {
     /** @return the id of the GTU */
+    @Override
     String getId();
 
     /** @return the maximum length of the GTU (parallel with driving direction). */

@@ -82,7 +82,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         OTSNode nodeAFrom = new OTSNode(this.network, "AFrom", new OTSPoint3D(0, 0, 0));
         OTSNode nodeATo = new OTSNode(this.network, "ATo", new OTSPoint3D(1000, 0, 0));
         GTUType gtuType = CAR;
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModel();
         final SimpleSimulatorInterface simulator =

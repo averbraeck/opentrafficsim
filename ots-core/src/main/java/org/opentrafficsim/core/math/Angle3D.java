@@ -120,6 +120,7 @@ public class Angle3D implements Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return String.format(Locale.US, "Angle3D.Rel roll %s, pitch %s, yaw %s", getRoll(), getPitch(), getYaw());

@@ -79,7 +79,7 @@ public class LaneTest implements UNITS
         Length endWidth = new Length(4, METER);
         GTUType gtuTypeCar = CAR;
         GTUType gtuTypeTruck = TRUCK;
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
@@ -176,7 +176,7 @@ public class LaneTest implements UNITS
         final int[] startPositions = { 0, 1, -1, 20, -20 };
         final double[] angles = { 0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI,
                 Math.PI * 1.01, Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2) };
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();

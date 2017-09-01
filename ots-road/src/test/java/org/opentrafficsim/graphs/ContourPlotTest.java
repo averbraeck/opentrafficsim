@@ -98,7 +98,7 @@ public class ContourPlotTest implements UNITS
     {
         Network network = new OTSNetwork("contour test network");
         GTUType gtuType = CAR;
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         List<Lane> path = dummyPath(network, laneType, gtuType);
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", path);
         assertTrue("newly created AccelerationContourPlot should not be null", null != acp);
@@ -116,7 +116,7 @@ public class ContourPlotTest implements UNITS
     {
         Network network = new OTSNetwork("contour test network");
         GTUType gtuType = CAR;
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         List<Lane> path = dummyPath(network, laneType, gtuType);
         DensityContourPlot dcp = new DensityContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
@@ -174,7 +174,7 @@ public class ContourPlotTest implements UNITS
     {
         Network network = new OTSNetwork("contour test network");
         GTUType gtuType = CAR;
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         List<Lane> path = dummyPath(network, laneType, gtuType);
         FlowContourPlot fcp = new FlowContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
@@ -192,7 +192,7 @@ public class ContourPlotTest implements UNITS
     {
         Network network = new OTSNetwork("contour test network");
         GTUType gtuType = CAR;
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         List<Lane> path = dummyPath(network, laneType, gtuType);
         SpeedContourPlot scp = new SpeedContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);

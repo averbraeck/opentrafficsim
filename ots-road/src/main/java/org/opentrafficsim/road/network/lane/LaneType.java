@@ -1,17 +1,15 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+
+import nl.tudelft.simulation.language.Throw;
 
 import org.opentrafficsim.base.HierarchicalType;
+import org.opentrafficsim.core.compatibility.Compatibility;
+import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
-
-import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
-import nl.tudelft.simulation.language.Throw;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 
 /**
  * Lane type to indicate compatibility with GTU types. The id of a LaneType should be unique. This is, however, not checked or
@@ -27,25 +25,22 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class LaneType extends HierarchicalType<LaneType> implements Serializable
+public class LaneType extends HierarchicalType<LaneType> implements Serializable, Compatibility<GTUType, LaneType>
 {
     /** */
     private static final long serialVersionUID = 20140821L;
 
-    /**
-     * The compatibility of GTUs with this lane type. Compatibility is solely determined by a specific lane type, and
-     * independent of compatibility in super or sub types.
-     */
-    private final Set<GTUType> compatibilitySet;
+    /** The compatibility of GTUs with this lane type. */
+    private final GTUCompatibility<LaneType> compatibility;
 
-    /** Lane type that does not allow any vehicles. */
+    /** The lane type used for lanes that are forbidden to all GTU types. */
     public static final LaneType NONE;
+    
+    /** Vehicular roads (Dutch: weg); allows all road vehicles and pedestrians. */
+    public static final LaneType TWO_WAY_LANE;
 
-    /** Lane type that allows all vehicles. */
-    public static final LaneType ALL;
-
-    /** Vehicular roads (Dutch: weg). */
-    public static final LaneType ROAD;
+    /** Vehicular lane that is two-way for PEDESTRIANS but only permitted in design direction for all other road users. */
+    public static final LaneType ONE_WAY_LANE;
 
     /** Controlled access roads (Dutch: snelweg). */
     public static final LaneType FREEWAY;
@@ -53,44 +48,61 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     /** High speed vehicular roads (Dutch: autoweg). */
     public static final LaneType HIGHWAY;
 
-    /** Rural vehicular roads (Dutch: weg buiten bebouwde kom). */
-    public static final LaneType RURAL_ROAD;
+    /** Lane on rural vehicular roads (Dutch: weg buiten bebouwde kom). */
+    public static final LaneType RURAL_ROAD_LANE;
 
-    /** Urban vehicular roads (Dutch: weg binnen bebouwde kom). */
-    public static final LaneType URBAN_ROAD;
+    /** Lane on urban vehicular roads (Dutch: weg binnen bebouwde kom). */
+    public static final LaneType URBAN_ROAD_LANE;
 
     /** Residential vehicular roads (Dutch: woonerf). */
-    public static final LaneType RESIDENTIAL_ROAD;
+    public static final LaneType RESIDENTIAL_ROAD_LANE;
 
-    /** Bus lane (Dutch: busstrook). */
+    /** Bidirectional bus lane (Dutch: busstrook). */
     public static final LaneType BUS_LANE;
 
-    /** Bicycle path (Dutch: (brom)fietspad). */
+    /** Bidirectional bicycle lane (Dutch: (brom)fietspad). */
     public static final LaneType MOPED_PATH;
 
     /** Bicycle path (Dutch: fietspad). */
     public static final LaneType BICYCLE_PATH;
 
-    /** Footpath (Dutch: voetpad). */
+    /** Bidirectional footpath (Dutch: voetpad). */
     public static final LaneType FOOTPATH;
 
     static
     {
-        NONE = new LaneType("NONE", new HashSet<GTUType>());
-        ALL = new LaneType("ALL", Arrays.asList(new GTUType[] { GTUType.ALL }));
-        ROAD = new LaneType("ROAD", ALL, Arrays.asList(new GTUType[] { GTUType.VEHICLE }));
-        FREEWAY = new LaneType("FREEWAY", ROAD, Arrays.asList(new GTUType[] { GTUType.VEHICLE }));
-        HIGHWAY = new LaneType("HIGHWAY", ROAD, Arrays.asList(new GTUType[] { GTUType.VEHICLE }));
-        RURAL_ROAD = new LaneType("RURAL_ROAD", ROAD,
-                Arrays.asList(new GTUType[] { GTUType.VEHICLE, GTUType.BICYCLE, GTUType.MOPED, GTUType.PEDESTRIAN }));
-        URBAN_ROAD = new LaneType("URBAN_ROAD", ROAD,
-                Arrays.asList(new GTUType[] { GTUType.VEHICLE, GTUType.BICYCLE, GTUType.MOPED, GTUType.PEDESTRIAN }));
-        RESIDENTIAL_ROAD = new LaneType("RESIDENTIAL_ROAD", ROAD,
-                Arrays.asList(new GTUType[] { GTUType.VEHICLE, GTUType.BICYCLE, GTUType.MOPED, GTUType.PEDESTRIAN }));
-        BUS_LANE = new LaneType("BUS_LANE", ALL, Arrays.asList(new GTUType[] { GTUType.BUS }));
-        MOPED_PATH = new LaneType("MOPED_PATH", ALL, Arrays.asList(new GTUType[] { GTUType.BICYCLE, GTUType.MOPED }));
-        BICYCLE_PATH = new LaneType("BICYCLE_PATH", ALL, Arrays.asList(new GTUType[] { GTUType.BICYCLE }));
-        FOOTPATH = new LaneType("FOOTPATH", ALL, Arrays.asList(new GTUType[] { GTUType.PEDESTRIAN }));
+        GTUCompatibility<LaneType> noTrafficCompatibility = new GTUCompatibility<LaneType>((LaneType) null);
+        NONE = new LaneType("NONE", null, noTrafficCompatibility);
+        GTUCompatibility<LaneType> roadCompatibility = new GTUCompatibility<LaneType>((LaneType) null);
+        roadCompatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
+        TWO_WAY_LANE = new LaneType("TWO_WAY_LANE", null, roadCompatibility);
+        RURAL_ROAD_LANE = new LaneType("RURAL_ROAD", TWO_WAY_LANE, new GTUCompatibility<LaneType>(roadCompatibility));
+        URBAN_ROAD_LANE = new LaneType("URBAN_ROAD", TWO_WAY_LANE, new GTUCompatibility<LaneType>(roadCompatibility));
+        RESIDENTIAL_ROAD_LANE =
+                new LaneType("RESIDENTIAL_ROAD", TWO_WAY_LANE, new GTUCompatibility<LaneType>(roadCompatibility));
+        GTUCompatibility<LaneType> oneWayLaneCompatibility = new GTUCompatibility<LaneType>(roadCompatibility);
+        oneWayLaneCompatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
+        oneWayLaneCompatibility.addAllowedGTUType(GTUType.PEDESTRIAN, LongitudinalDirectionality.DIR_BOTH);
+        ONE_WAY_LANE = new LaneType("ONE_WAY_LANE", oneWayLaneCompatibility);
+        GTUCompatibility<LaneType> highwayLaneCompatibility =
+                new GTUCompatibility<LaneType>(oneWayLaneCompatibility).addAllowedGTUType(GTUType.PEDESTRIAN,
+                        LongitudinalDirectionality.DIR_NONE);
+        FREEWAY = new LaneType("FREEWAY", highwayLaneCompatibility);
+        HIGHWAY = new LaneType("FREEWAY", highwayLaneCompatibility);
+        GTUCompatibility<LaneType> busLaneCompatibility = new GTUCompatibility<LaneType>(roadCompatibility);
+        busLaneCompatibility.addAllowedGTUType(GTUType.BUS, LongitudinalDirectionality.DIR_BOTH);
+        busLaneCompatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_NONE);
+        BUS_LANE = new LaneType("BUS_LANE", busLaneCompatibility);
+        GTUCompatibility<LaneType> mopedAndBicycleLaneCompatibility = new GTUCompatibility<LaneType>(roadCompatibility);
+        mopedAndBicycleLaneCompatibility.addAllowedGTUType(GTUType.BICYCLE, LongitudinalDirectionality.DIR_BOTH);
+        mopedAndBicycleLaneCompatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_NONE);
+        MOPED_PATH = new LaneType("MOPED_PATH", mopedAndBicycleLaneCompatibility);
+        GTUCompatibility<LaneType> bicycleOnlyCompatibility = new GTUCompatibility<LaneType>(mopedAndBicycleLaneCompatibility);
+        bicycleOnlyCompatibility.addAllowedGTUType(GTUType.MOPED, LongitudinalDirectionality.DIR_NONE);
+        BICYCLE_PATH = new LaneType("BICYCLE_PATH", bicycleOnlyCompatibility);
+        GTUCompatibility<LaneType> pedestriansOnly = new GTUCompatibility<LaneType>(roadCompatibility);
+        pedestriansOnly.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_NONE);
+        FOOTPATH = new LaneType("FOOTPATH", pedestriansOnly);
     }
 
     /**
@@ -100,11 +112,31 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
      *            specific lane type, and independent of compatibility in super or sub types.
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    private LaneType(final String id, final Collection<GTUType> compatibility) throws NullPointerException
+    private LaneType(final String id, final GTUCompatibility<LaneType> compatibility) throws NullPointerException
     {
         super(id);
         Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
-        this.compatibilitySet = new HashSet<>(compatibility);
+        this.compatibility = new GTUCompatibility<LaneType>(compatibility);
+    }
+    
+    /**
+     * Private constructor 
+     * @param id
+     * @param inverted
+     */
+    private LaneType(final String id, final boolean inverted)
+    {
+        super(id);
+        this.compatibility = null;
+    }
+    
+    /**
+     * Construct a new Lane type based on another Lane type with inverted compatibility.
+     * @return LaneType; the new lane type
+     */
+    public LaneType inv()
+    {
+        return new LaneType(getId(), true);
     }
 
     /**
@@ -115,57 +147,59 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
      *            specific lane type, and independent of compatibility in super or sub types.
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
-    public LaneType(final String id, final LaneType parent, final Collection<GTUType> compatibility) throws NullPointerException
+    public LaneType(final String id, final LaneType parent, final GTUCompatibility<LaneType> compatibility)
+            throws NullPointerException
     {
         super(id, parent);
         Throw.whenNull(compatibility, "compatibility collection cannot be null for LaneType with id = %s", id);
-        this.compatibilitySet = new HashSet<>(compatibility);
+        this.compatibility = new GTUCompatibility<LaneType>(compatibility);
     }
 
     /**
      * Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub types.
      * @param gtuType GTU type to look for compatibility.
-     * @return whether the LaneType is compatible with the GTU type, or compatible with all GTU types.
+     * @param direction GTUDirectionality; the direction that the GTU is moving (with respect to the direction of the design
+     *            line of the Link)
+     * @return boolean; true if this LaneType permits GTU type in the given direction
      */
-    public final boolean isCompatible(final GTUType gtuType)
+    @Override
+    public final Boolean isCompatible(final GTUType gtuType, final GTUDirectionality direction)
     {
         // OTS-338
-        //return this.compatibilitySet.contains(gtuType) || this.compatibilitySet.contains(GTUType.ALL);
-        for (GTUType type = gtuType; null != type; type = type.getParent())
+        // return this.compatibilitySet.contains(gtuType) || this.compatibilitySet.contains(GTUType.ALL);
+        return getDirectionality(gtuType).permits(direction);
+    }
+
+    /**
+     * Get the permitted driving directions for a given GTU type on this Lane.
+     * @param gtuType GTUType; the GTU type
+     * @return LongitudinalDirectionality; the permitted directions of the GTU type on this Lane
+     */
+    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
+    {
+        LongitudinalDirectionality result = this.compatibility.getDirectionality(gtuType, true);
+        if (null == this.compatibility)
         {
-            if (this.compatibilitySet.contains(type))
-            {
-                return true;
-            }
+            return result.invert();
         }
-        return false;
-    }
-
-    /**
-     * Get the set of compatible GTU types.
-     * @return set of compatible GTU types
-     */
-    public final ImmutableSet<GTUType> getCompatbilitySet()
-    {
-        return new ImmutableHashSet<>(this.compatibilitySet);
-    }
-
-    /**
-     * Remove GTU type from compatibility.
-     * @param gtuType GTU type to remove
-     */
-    public final void removeGtuCompatibility(final GTUType gtuType)
-    {
-        this.compatibilitySet.remove(gtuType);
+        return result;
     }
 
     /**
      * Add GTU type to compatibility.
-     * @param gtuType GTU type to add
+     * @param gtuType GTUType; the GTU type to add
+     * @param direction LongitudinalDirectionality; permitted direction of movement
      */
-    public final void addGtuCompatability(final GTUType gtuType)
+    public final void addGtuCompatability(final GTUType gtuType, final LongitudinalDirectionality direction)
     {
-        this.compatibilitySet.add(gtuType);
+        if (null == this.compatibility)
+        {
+            getParent().addGtuCompatability(gtuType, direction.invert());
+        }
+        else
+        {
+            this.compatibility.addAllowedGTUType(gtuType, direction);
+        }
     }
 
     /** {@inheritDoc} */
@@ -173,21 +207,23 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "LaneType [id=" + this.getId() + ", compatibilitySet=" + this.compatibilitySet + "]";
+        return "LaneType [id=" + this.getId() + ", compatibilitySet=" + this.compatibility + "]";
     }
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((this.compatibilitySet == null) ? 0 : this.compatibilitySet.hashCode());
+        result = prime * result + ((this.compatibility == null) ? 0 : this.compatibility.hashCode());
         return result;
     }
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -203,18 +239,30 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
             return false;
         }
         LaneType other = (LaneType) obj;
-        if (this.compatibilitySet == null)
+        if (this.compatibility == null)
         {
-            if (other.compatibilitySet != null)
+            if (other.compatibility != null)
             {
                 return false;
             }
         }
-        else if (!this.compatibilitySet.equals(other.compatibilitySet))
+        else if (!this.compatibility.equals(other.compatibility))
         {
             return false;
         }
         return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType, final boolean tryParentsOfGTUType)
+    {
+        LongitudinalDirectionality result = this.compatibility.getDirectionality(gtuType, tryParentsOfGTUType);
+        if (null == this.compatibility)
+        {
+            return result.invert();
+        }
+        return result;
     }
 
 }

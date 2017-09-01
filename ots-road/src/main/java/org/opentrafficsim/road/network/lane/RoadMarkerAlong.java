@@ -158,15 +158,15 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      */
     public final boolean isPermeable(final GTUType gtuType, final LateralDirectionality lateralDirection)
     {
-        if (this.permeabilityMap.containsKey(GTUType.ALL))
+        for (GTUType testGTUType = gtuType; null != testGTUType; testGTUType = testGTUType.getParent())
         {
-            return this.permeabilityMap.get(GTUType.ALL).contains(lateralDirection);
+            Set<LateralDirectionality> directions = this.permeabilityMap.get(testGTUType);
+            if (null != directions)
+            {
+                return directions.contains(lateralDirection);
+            }
         }
-        if (!this.permeabilityMap.containsKey(gtuType))
-        {
-            return false;
-        }
-        return this.permeabilityMap.get(gtuType).contains(lateralDirection);
+        return true;
     }
 
     /**
