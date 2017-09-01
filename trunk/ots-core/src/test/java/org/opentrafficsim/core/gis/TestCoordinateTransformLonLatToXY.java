@@ -18,7 +18,7 @@ public class TestCoordinateTransformLonLatToXY
     /**
      * @param args args
      */
-    public static void main(String[] args)
+    public static void main(final String[] args)
     {
         // double latCenter = 37.419933552777, lonCenter = -122.05752616111;
         double latCenter = 37.40897623275873, lonCenter = -122.0246091728831;

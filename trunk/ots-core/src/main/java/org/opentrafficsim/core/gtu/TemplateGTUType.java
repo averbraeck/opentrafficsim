@@ -90,6 +90,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
      * @throws ProbabilityException in case of probability exception
      * @throws ParameterException in case of parameter exception
      */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public GTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
@@ -124,6 +125,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     }
 
     /** {@inheritDoc} */
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {

@@ -111,7 +111,7 @@ public final class LaneFactory
          */
 
         OTSLine3D designLine = new OTSLine3D(pointList);
-        CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ALL, designLine, simulator, direction,
+        CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ROAD, designLine, simulator, direction,
                 LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }
@@ -128,7 +128,6 @@ public final class LaneFactory
      * @param width Length; the width of the new Lane
      * @param speedLimit Speed; the speed limit on the new Lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
-     * @param direction the direction of the underlying link, DIR_PLUS or DIR_MINUS (or DIR_BOTH)
      * @return Lane
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on network inconsistency
@@ -137,14 +136,12 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
             final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
-            final OTSDEVSSimulatorInterface simulator, final LongitudinalDirectionality direction)
+            final OTSDEVSSimulatorInterface simulator)
             throws NamingException, NetworkException, OTSGeometryException
     {
-        Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        directionalityMap.put(GTUType.ALL, direction);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(GTUType.ALL, speedLimit);
-        Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, directionalityMap, speedMap,
+        speedMap.put(GTUType.VEHICLE, speedLimit);
+        Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, speedMap,
                 new OvertakingConditions.LeftAndRight());
         if (simulator instanceof OTSAnimatorInterface)
         {
@@ -185,7 +182,7 @@ public final class LaneFactory
         Length width = new Length(4.0, LengthUnit.METER);
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, direction, simulator);
         Length latPos = new Length(0.0, LengthUnit.METER);
-        return makeLane(link, "lane", laneType, latPos, latPos, width, speedLimit, simulator, direction);
+        return makeLane(link, "lane", laneType, latPos, latPos, width, speedLimit, simulator);
     }
 
     /**
@@ -225,7 +222,7 @@ public final class LaneFactory
             Length latPosAtStart = new Length((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
             Length latPosAtEnd = new Length((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
             result[laneIndex] = makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit,
-                    simulator, direction);
+                    simulator);
         }
         return result;
     }
@@ -298,7 +295,7 @@ public final class LaneFactory
             Length latPosAtStart = new Length((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
             Length latPosAtEnd = new Length((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
             result[laneIndex] = makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit,
-                    simulator, direction);
+                    simulator);
         }
         return result;
     }

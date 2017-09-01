@@ -33,6 +33,7 @@ public interface Link extends Locatable, Serializable, Identifiable
     Network getNetwork();
 
     /** @return id. */
+    @Override
     String getId();
 
     /** @return start node. */

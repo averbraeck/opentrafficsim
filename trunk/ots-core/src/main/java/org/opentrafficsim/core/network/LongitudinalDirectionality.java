@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.network;
 
+import org.opentrafficsim.core.gtu.GTUDirectionality;
+
 /**
  * Permitted longitudinal driving directions.
  * <p>
@@ -114,4 +116,84 @@ public enum LongitudinalDirectionality
     {
         return this.equals(DIR_BOTH);
     }
+    
+    /**
+     * Compute the intersection of this LongitudinalDirectionality with another LongitudinalDirectionality.
+     * @param other LongitudinalDirectionality; the other LongitudinalDirectionality
+     * @return LongitudinalDirectionality; the intersection of <code>this</code> and <code>other</code>
+     */
+    public final LongitudinalDirectionality intersect(final LongitudinalDirectionality other)
+    {
+        switch (other)
+        {
+            case DIR_BOTH:
+                return this;
+            case DIR_MINUS:
+                if (this.equals(other))
+                {
+                    return this;
+                }
+                if (this.equals(DIR_BOTH))
+                {
+                    return other;
+                }
+                return DIR_NONE;
+            case DIR_NONE:
+                return other;
+            case DIR_PLUS:
+                if (this.equals(other))
+                {
+                    return this;
+                }
+                if (this.equals(DIR_BOTH))
+                {
+                    return other;
+                }
+                return DIR_NONE;
+            default:
+                System.err.println("intersect with null (returns DIR_NONE)");
+                return DIR_NONE;
+        }
+    }
+
+    /**
+     * Check if a direction is permitted by this LongitudinalDirectionality.
+     * @param direction GTUDirectionality; the direction of motion in which a GTU moves, or wants to move
+     * @return boolean; true if the direction is permitted by this LongitudinalDirectionality; false if it is not permitted
+     */
+    public final boolean permits(final GTUDirectionality direction)
+    {
+        switch (direction)
+        {
+            case DIR_MINUS:
+                return isBackwardOrBoth();
+            case DIR_PLUS:
+                return isForwardOrBoth();
+            default:
+                System.out.println("Bad direction: " + direction);
+                return false;
+        }
+    }
+
+    /**
+     * Return the inverse if this LongitudinalDirectionality.
+     * @return LongitudinalDirectionality; the directional inverse of this LongitudinalDirectionality
+     */
+    public LongitudinalDirectionality invert()
+    {
+        switch(this)
+        {
+            case DIR_BOTH:
+                return this;
+            case DIR_MINUS:
+                return DIR_PLUS;
+            case DIR_NONE:
+                return this;
+            case DIR_PLUS:
+                return DIR_MINUS;
+            default:
+                return this; // cannot happen
+        }
+    }
+    
 }

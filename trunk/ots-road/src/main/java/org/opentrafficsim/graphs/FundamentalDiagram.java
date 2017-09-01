@@ -15,6 +15,8 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
+import nl.tudelft.simulation.language.Throw;
+
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
@@ -39,6 +41,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -50,7 +53,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow"> Wikipedia:
@@ -95,9 +97,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private ArrayList<Sample> samples = new ArrayList<Sample>();
 
     /** Definition of the density axis. */
-    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER),
-            new LinearDensity(200, LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density",
-            "density %.1f veh/km");
+    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER), new LinearDensity(200,
+            LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -128,8 +129,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     }
 
     /** Definition of the flow axis. */
-    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR), new Frequency(3000d, FrequencyUnit.HERTZ), null,
-            0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
+    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR), new Frequency(3000d, FrequencyUnit.HERTZ),
+            null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
     private Axis xAxis;
@@ -168,11 +169,12 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      *            Fundamental diagram
      * @param lane Lane; the Lane on which the traffic will be sampled
      * @param position DoubleScalarRel&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
+     * @param detectedGTUTypes Compatible; the types of GTU that will be used to compose this fundamental diagram
      * @param simulator the simulator
      * @throws NetworkException on network inconsistency
      */
     public FundamentalDiagram(final String caption, final Duration aggregationTime, final Lane lane, final Length position,
-            final OTSDEVSSimulatorInterface simulator) throws NetworkException
+            final Compatible detectedGTUTypes, final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
         if (aggregationTime.getSI() <= 0)
         {
@@ -230,7 +232,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.add(cp, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
-        new FundamentalDiagramSensor(lane, position, simulator);
+        new FundamentalDiagramSensor(lane, position, detectedGTUTypes, simulator);
     }
 
     /**
@@ -452,8 +454,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     @Override
     public final String toString()
     {
-        return "FundamentalDiagram [caption=" + this.caption + ", aggregationTime=" + this.aggregationTime + ", samples.size="
-                + this.samples.size() + "]";
+        return "FundamentalDiagram [caption=" + this.caption + ", aggregationTime=" + this.aggregationTime
+                + ", samples.size=" + this.samples.size() + "]";
     }
 
     /**
@@ -580,8 +582,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Internal Sensor class.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
@@ -597,14 +598,15 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * Construct a FundamentalDiagramSensor.
          * @param lane Lane; the Lane on which the new FundamentalDiagramSensor is to be added
          * @param longitudinalPosition Length; longitudinal position on the Lane of the new FundamentalDiagramSensor
+         * @param detectedGTUTypes Compatible; the GTU types that the new FundamentalDiagramSensor will register
          * @param simulator simulator to allow animation
          * @throws NetworkException on network inconsistency
          */
-        FundamentalDiagramSensor(final Lane lane, final Length longitudinalPosition, final OTSDEVSSimulatorInterface simulator)
-                throws NetworkException
+        FundamentalDiagramSensor(final Lane lane, final Length longitudinalPosition, final Compatible detectedGTUTypes,
+                final OTSDEVSSimulatorInterface simulator) throws NetworkException
         {
             super("FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(), lane, longitudinalPosition, RelativePosition.REFERENCE,
-                    simulator);
+                    simulator, detectedGTUTypes);
         }
 
         /** {@inheritDoc} */
@@ -636,7 +638,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
             Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
                     "simulator should be a DEVSSimulator");
-            return new FundamentalDiagramSensor((Lane) newCSE, getLongitudinalPosition(),
+            return new FundamentalDiagramSensor((Lane) newCSE, getLongitudinalPosition(), getDetectedGTUTypes(),
                     (OTSDEVSSimulatorInterface) newSimulator);
         }
 

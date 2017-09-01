@@ -1,15 +1,16 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.immutablecollections.ImmutableSet;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 
 /**
  * A sensor is a lane-based object that can be triggered by a relative position of the GTU (e.g., front, back) when that
@@ -23,7 +24,7 @@ import nl.tudelft.simulation.immutablecollections.ImmutableSet;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface SingleSensor extends Sensor, Comparable<SingleSensor>, LaneBasedObject
+public interface SingleSensor extends Sensor, Comparable<SingleSensor>, LaneBasedObject, Compatible
 {
     /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the sensor. */
     RelativePosition.TYPE getPositionType();
@@ -31,18 +32,12 @@ public interface SingleSensor extends Sensor, Comparable<SingleSensor>, LaneBase
     /**
      * Trigger an action on the GTU. Normally this is the GTU that triggered the sensor. The typical call therefore is
      * <code>sensor.trigger(this);</code>.
-     * @param gtu the GTU for which to carry out the trigger action.
+     * @param gtu LaneBasedGTU; the GTU for which to carry out the trigger action.
      */
     void trigger(LaneBasedGTU gtu);
 
     /** @return The simulator. */
     OTSDEVSSimulatorInterface getSimulator();
-
-    /**
-     * Return which GTU types will trigger this particular sensor.
-     * @return Set&lt;GTUType&gt; the GTU types will trigger this particular sensor.
-     */
-    ImmutableSet<GTUType> getTriggeringGTUTypes();
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of a Sensor on a lane. <br>

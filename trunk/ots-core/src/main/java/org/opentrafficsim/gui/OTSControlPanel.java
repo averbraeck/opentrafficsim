@@ -747,6 +747,7 @@ public class OTSControlPanel extends JPanel
             // adjust the simulation speed
             this.slider.addChangeListener(new ChangeListener()
             {
+                @Override
                 public void stateChanged(final ChangeEvent ce)
                 {
                     JSlider source = (JSlider) ce.getSource();

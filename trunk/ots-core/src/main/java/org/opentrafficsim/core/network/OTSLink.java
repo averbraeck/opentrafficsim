@@ -114,7 +114,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     @Override
     public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
     {
-        return this.getLinkType().getDirectionality(gtuType);
+        return this.getLinkType().getDirectionality(gtuType, true);
     }
 
     /** {@inheritDoc} */

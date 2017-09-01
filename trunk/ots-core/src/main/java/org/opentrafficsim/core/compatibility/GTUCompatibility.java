@@ -1,4 +1,4 @@
-package compatibility;
+package org.opentrafficsim.core.compatibility;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +7,7 @@ import nl.tudelft.simulation.language.Throw;
 
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 
@@ -22,17 +23,22 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <I> infrastructure type, e.g. LinkType or LaneType, or water way type
  */
-public class GTUCompatibility<I extends HierarchicalType<I>> implements Compatibility<GTUType, I>
+public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUType, I>> implements
+        Compatibility<GTUType, I>
 {
     /** The map of GTUTypes to permitted directions of movement. */
     private final Map<GTUType, LongitudinalDirectionality> allowanceMap = new HashMap<>();
 
+    /** Infrastructure type, e.g. LinkType, LaneType, SensorType. */
+    private final I infrastructure;
+
     /**
      * Construct a new Compatibility object with empty allowed and forbidden sets for both directions.
+     * @param infrastructure I; the infrastructure type, e.g. LinkType, LaneType, SensorType.
      */
-    public GTUCompatibility()
+    public GTUCompatibility(final I infrastructure)
     {
-        // Nothing to do here
+        this.infrastructure = infrastructure;
     }
 
     /**
@@ -43,6 +49,7 @@ public class GTUCompatibility<I extends HierarchicalType<I>> implements Compatib
      */
     public GTUCompatibility(final GTUCompatibility<I> original)
     {
+        this.infrastructure = original.infrastructure;
         this.allowanceMap.putAll(original.allowanceMap);
     }
 
@@ -108,21 +115,6 @@ public class GTUCompatibility<I extends HierarchicalType<I>> implements Compatib
 
     /** {@inheritDoc} */
     @Override
-    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
-    {
-        for (GTUType testGTUType = gtuType; null != testGTUType; testGTUType = testGTUType.getParent())
-        {
-            LongitudinalDirectionality result = this.allowanceMap.get(gtuType);
-            if (null != result)
-            {
-                return result;
-            }
-        }
-        return LongitudinalDirectionality.DIR_NONE;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String toString()
     {
         return "GTUCompatibility [allowanceMap=" + this.allowanceMap + "]";
@@ -169,4 +161,50 @@ public class GTUCompatibility<I extends HierarchicalType<I>> implements Compatib
         return true;
     }
 
+    /**
+     * Check if a GTUCompatibility does not allow things that the GTUCompatibility of a parent object disallows, e.g. a
+     * permitted driving direction on a Lane should not be forbidden on the Link that the Lane is part of.
+     * @param parentCompatibility GTUCompatibility&lt;?&gt;; the GTUCompatibility of the parent object
+     * @param tryParentsOfGTUType 
+     * @throws GTUException if a conflict is found
+     */
+    public final void isCompatibleWith(final Compatibility<GTUType, ?> parentCompatibility, final boolean tryParentsOfGTUType)
+            throws GTUException
+    {
+        for (GTUType gtuType : this.allowanceMap.keySet())
+        {
+            LongitudinalDirectionality ourLD = this.allowanceMap.get(gtuType);
+            LongitudinalDirectionality parentLD = parentCompatibility.getDirectionality(gtuType, true);
+            if (!parentLD.contains(ourLD))
+            {
+                throw new GTUException(String.format(
+                        "GTUType %s has LongitudinalDirectionality %s on child, but %s on parent", ourLD, parentLD));
+            }
+        }
+        // TODO cleverly check only those in the parent(s) that do not conflict with ours.
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType, final boolean tryParentsOfGTUType)
+    {
+        for (GTUType testGTUType = gtuType; null != testGTUType; testGTUType = testGTUType.getParent())
+        {
+            LongitudinalDirectionality result = this.allowanceMap.get(testGTUType);
+            if (null != result)
+            {
+                return result;
+            }
+            result = this.infrastructure.getParent().getDirectionality(testGTUType, false);
+            if (null != result)
+            {
+                return result;
+            }
+            if (!tryParentsOfGTUType)
+            {
+                break;
+            }
+        }
+        return tryParentsOfGTUType ? LongitudinalDirectionality.DIR_NONE : null;
+    }
 }

@@ -83,7 +83,7 @@ public class CarTest implements UNITS
     {
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         GTUType gtuType = CAR;
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         OTSNetwork network = new OTSNetwork("network");
         Lane lane = makeLane(network, laneType);
         Length initialPosition = new Length(12, METER);

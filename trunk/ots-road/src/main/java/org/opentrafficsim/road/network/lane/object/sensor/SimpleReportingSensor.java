@@ -5,7 +5,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.language.Throw;
+
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -14,8 +17,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.animation.SensorAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Sensor that prints which GTU triggers it.
@@ -35,18 +36,22 @@ public class SimpleReportingSensor extends AbstractSensor
     private static final long serialVersionUID = 20150130L;
 
     /**
-     * @param lane the lane that triggers the deletion of the GTU.
-     * @param position the position of the sensor
+     * Construct a new SimpleReportingSensor.
+     * @param lane Lane; the lane on which the new SimpleReportingSensor will be located
+     * @param position Length; the position of the sensor along the lane
      * @param triggerPosition RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
-     *            the sensor.
-     * @param id the id of the sensor.
-     * @param simulator the simulator to enable animation.
+     *            the sensor
+     * @param id String; the id of the new SimpleReportingSensor
+     * @param simulator OTSDEVSSimulatorInterface; the simulator to enable animation
+     * @param compatible Compatible; object that can decide if a particular GTU type in a particular driving direction will
+     *            trigger the new SimpleReportingSensor
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public SimpleReportingSensor(final String id, final Lane lane, final Length position,
-            final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator) throws NetworkException
+            final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator,
+            final Compatible compatible) throws NetworkException
     {
-        super(id, lane, position, triggerPosition, simulator);
+        super(id, lane, position, triggerPosition, simulator, compatible);
         try
         {
             new SensorAnimation(this, position, simulator, Color.YELLOW);
@@ -74,7 +79,7 @@ public class SimpleReportingSensor extends AbstractSensor
         Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         return new SimpleReportingSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
-                (OTSDEVSSimulatorInterface) newSimulator);
+                (OTSDEVSSimulatorInterface) newSimulator, getDetectedGTUTypes());
 
         // the sensor creates its own animation (for now)
     }

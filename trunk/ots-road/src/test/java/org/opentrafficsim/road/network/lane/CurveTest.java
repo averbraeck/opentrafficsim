@@ -62,7 +62,7 @@ public class CurveTest
     {
         final int laneCount = 1;
         GTUType gtuType = CAR;
-        LaneType laneType = LaneType.ROAD;
+        LaneType laneType = LaneType.TWO_WAY_LANE;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulatorInterface simulator = CarTest.makeSimulator();
         Network network = new OTSNetwork("curve test network");

@@ -36,6 +36,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -81,9 +82,8 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     private ArrayList<Sample> samples = new ArrayList<Sample>();
 
     /** Definition of the density axis. */
-    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER),
-            new LinearDensity(200, LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density",
-            "density %.1f veh/km");
+    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER), new LinearDensity(200,
+            LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -114,8 +114,8 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     }
 
     /** Definition of the flow axis. */
-    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR), new Frequency(3000d, FrequencyUnit.HERTZ), null,
-            0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
+    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR), new Frequency(3000d, FrequencyUnit.HERTZ),
+            null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
     private Axis xAxis;
@@ -162,12 +162,14 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
      * @param aggregationTime DoubleScalarRel&lt;TimeUnit&gt;; the aggregation of the detector that generates the data for this
      *            Fundamental diagram
      * @param lane Lane; the Lane on which the traffic will be sampled
+     * @param detectedGTUTypes Compatible; specifies the GTU types that will be used to compose this fundamental diagram
      * @param simulator the simulator to schedule the sampling on
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException in case scheduling of the sampler fails
      */
     public FundamentalDiagramLane(final String caption, final Duration aggregationTime, final Lane lane,
-            final OTSDEVSSimulatorInterface simulator) throws NetworkException, SimRuntimeException
+            final Compatible detectedGTUTypes, final OTSDEVSSimulatorInterface simulator) throws NetworkException,
+            SimRuntimeException
     {
         if (aggregationTime.getSI() <= 0)
         {
@@ -218,7 +220,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
         simulator.scheduleEventRel(this.aggregationTime, this, this, "addData", null);
-        new FlowSensor(lane);
+        new FlowSensor(lane, detectedGTUTypes);
     }
 
     /**
@@ -574,12 +576,14 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
         private static final long serialVersionUID = 1L;
 
         /**
-         * @param lane the lane for which to build the flowSensor
+         * Construct a new FlowSensor.
+         * @param lane the lane for which to build the FlowSensor
+         * @param detectedGTUTypes Compatible; specifies the GTU types that will be counted by this FlowSensor
          * @throws NetworkException when the position on the lane is out of bounds
          */
-        FlowSensor(final Lane lane) throws NetworkException
+        FlowSensor(final Lane lane, final Compatible detectedGTUTypes) throws NetworkException
         {
-            super("FLOW", lane, lane.getLength().divideBy(2.0), RelativePosition.FRONT, null);
+            super("FLOW", lane, lane.getLength().divideBy(2.0), RelativePosition.FRONT, null, detectedGTUTypes);
         }
 
         /** {@inheritDoc} */
@@ -602,7 +606,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
                 final boolean animation) throws NetworkException
         {
             Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-            return new FlowSensor((Lane) newCSE);
+            return new FlowSensor((Lane) newCSE, getDetectedGTUTypes());
         }
 
     }

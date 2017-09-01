@@ -38,8 +38,8 @@ public class NoTrafficLane extends Lane
 
     static
     {
-        DIRECTIONALITY_NONE.put(GTUType.ALL, LongitudinalDirectionality.DIR_NONE);
-        SPEED_NULL.put(GTUType.ALL, Speed.ZERO);
+        DIRECTIONALITY_NONE.put(GTUType.VEHICLE, LongitudinalDirectionality.DIR_NONE);
+        SPEED_NULL.put(GTUType.VEHICLE, Speed.ZERO);
     }
 
     /**
@@ -60,7 +60,7 @@ public class NoTrafficLane extends Lane
             throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE,
-                DIRECTIONALITY_NONE, SPEED_NULL, NO_OVERTAKING);
+                SPEED_NULL, NO_OVERTAKING);
     }
 
     /**
@@ -76,7 +76,7 @@ public class NoTrafficLane extends Lane
     public NoTrafficLane(final CrossSectionLink parentLink, final String id, final Length lateralOffset, final Length width)
             throws OTSGeometryException, NetworkException
     {
-        super(parentLink, id, lateralOffset, width, LaneType.NONE, DIRECTIONALITY_NONE, SPEED_NULL, NO_OVERTAKING);
+        super(parentLink, id, lateralOffset, width, LaneType.NONE, SPEED_NULL, NO_OVERTAKING);
     }
 
     /**
@@ -93,7 +93,7 @@ public class NoTrafficLane extends Lane
     public NoTrafficLane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices)
             throws OTSGeometryException, NetworkException
     {
-        super(parentLink, id, crossSectionSlices, LaneType.NONE, DIRECTIONALITY_NONE, SPEED_NULL, NO_OVERTAKING);
+        super(parentLink, id, crossSectionSlices, LaneType.NONE, SPEED_NULL, NO_OVERTAKING);
     }
 
     /** {@inheritDoc} */

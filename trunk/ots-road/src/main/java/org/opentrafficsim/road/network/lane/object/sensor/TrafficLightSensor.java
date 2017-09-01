@@ -11,23 +11,6 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
-import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.animation.SensorAnimation;
-import org.opentrafficsim.road.network.animation.TrafficLightSensorAnimation;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
-import org.opentrafficsim.road.network.lane.Lane;
-
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -35,6 +18,24 @@ import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
+
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.animation.SensorAnimation;
+import org.opentrafficsim.road.network.animation.TrafficLightSensorAnimation;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * This traffic light sensor reports whether it whether any GTUs are within its area. The area is a sub-section of a Lane. This
@@ -48,8 +49,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightSensor extends EventProducer
-        implements EventListenerInterface, NonDirectionalOccupancySensor, EventProducerInterface, Locatable, Sensor
+public class TrafficLightSensor extends EventProducer implements EventListenerInterface, NonDirectionalOccupancySensor,
+        EventProducerInterface, Locatable, Sensor
 {
     /** */
     private static final long serialVersionUID = 20161103L;
@@ -96,19 +97,20 @@ public class TrafficLightSensor extends EventProducer
      * @param entryPosition RelativePosition; the position on the GTUs that trigger the entry events
      * @param exitPosition RelativePosition; the position on the GTUs that trigger the exit events
      * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @param compatible Compatible; object that checks that the detector detects a GTU.
      * @throws NetworkException when the network is inconsistent.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TrafficLightSensor(final String id, final Lane laneA, final Length positionA, final Lane laneB,
             final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
-            final OTSDEVSSimulatorInterface simulator) throws NetworkException
+            final OTSDEVSSimulatorInterface simulator, final Compatible compatible) throws NetworkException
     {
         Throw.whenNull(id, "id may not be null");
         this.id = id;
-        this.entryA = new FlankSensor(id + ".entryA", laneA, positionA, entryPosition, simulator, this);
-        this.exitA = new FlankSensor(id + ".exitA", laneA, positionA, exitPosition, simulator, this);
-        this.entryB = new FlankSensor(id + ".entryB", laneB, positionB, entryPosition, simulator, this);
-        this.exitB = new FlankSensor(id + ".exitB", laneB, positionB, exitPosition, simulator, this);
+        this.entryA = new FlankSensor(id + ".entryA", laneA, positionA, entryPosition, simulator, this, compatible);
+        this.exitA = new FlankSensor(id + ".exitA", laneA, positionA, exitPosition, simulator, this, compatible);
+        this.entryB = new FlankSensor(id + ".entryB", laneB, positionB, entryPosition, simulator, this, compatible);
+        this.exitB = new FlankSensor(id + ".exitB", laneB, positionB, exitPosition, simulator, this, compatible);
         // Set up detection of GTUs that enter or leave the sensor laterally or appear due to a generator or disappear due to a
         // sink
         this.lanes.add(laneA);
@@ -129,9 +131,10 @@ public class TrafficLightSensor extends EventProducer
         }
         else
         {
-            this.directionalityA = findDirectionality(laneA);
-            this.directionalityB = GTUDirectionality.DIR_PLUS == findDirectionality(laneB) ? GTUDirectionality.DIR_MINUS
-                    : GTUDirectionality.DIR_PLUS;
+            this.directionalityA = findDirectionality(laneA, intermediateLanes);
+            this.directionalityB =
+                    GTUDirectionality.DIR_PLUS == findDirectionality(laneB, intermediateLanes) ? GTUDirectionality.DIR_MINUS
+                            : GTUDirectionality.DIR_PLUS;
             // System.out.println("Directionality on B is " + this.directionalityB);
         }
         List<OTSPoint3D> outLine = new ArrayList<>();
@@ -145,18 +148,19 @@ public class TrafficLightSensor extends EventProducer
             while (remainingLanes.size() > 0)
             {
                 Lane continuingLane = null;
+                Node node = prevLane.getParentLink().getEndNode();
                 for (Lane nextLane : intermediateLanes)
                 {
-                    if (prevLane.nextLanes(GTUType.ALL).containsKey(nextLane))
+                    if (nextLane.getParentLink().getStartNode().equals(node))
                     {
                         continuingLane = nextLane;
-                        outLine.add(fixElevation(prevLane.getCenterLine().getLast()));
+                        outLine.add(fixElevation(nextLane.getCenterLine().getFirst()));
                         break;
                     }
-                    else if (prevLane.prevLanes(GTUType.ALL).containsKey(nextLane))
+                    else if (nextLane.getParentLink().getEndNode().equals(node))
                     {
                         continuingLane = nextLane;
-                        outLine.add(fixElevation(prevLane.getCenterLine().getFirst()));
+                        outLine.add(fixElevation(nextLane.getCenterLine().getLast()));
                         break;
                     }
                 }
@@ -200,24 +204,38 @@ public class TrafficLightSensor extends EventProducer
     /**
      * Figure out which part of a lane is covered by the TrafficLightSensor.
      * @param lane Lane; the lane
+     * @param intermediateLanes TODO
      * @return GTUDirectionality; DIR_PLUS if the detector covers the section with higher longitudinal position; DIR_MINUS if
      *         the detector covers the section with lower longitudinal position
      * @throws NetworkException if the lane is not connected to any of the lanes in this.lanes
      */
-    private GTUDirectionality findDirectionality(final Lane lane) throws NetworkException
+    private GTUDirectionality findDirectionality(final Lane lane, final List<Lane> intermediateLanes) throws NetworkException
     {
-        for (Lane nextLane : lane.nextLanes(GTUType.ALL).keySet())
+        Node startNode = lane.getParentLink().getStartNode();
+        Node endNode = lane.getParentLink().getEndNode();
+        for (Lane otherLane : intermediateLanes)
         {
-            if (this.lanes.contains(nextLane))
+            if (lane.equals(otherLane))
+            {
+                continue;
+            }
+            Node intermediateNode = otherLane.getParentLink().getStartNode();
+            if (intermediateNode == startNode)
+            {
+                return GTUDirectionality.DIR_MINUS;
+            }
+            if (intermediateNode == endNode)
             {
                 return GTUDirectionality.DIR_PLUS;
             }
-        }
-        for (Lane prevLane : lane.prevLanes(GTUType.ALL).keySet())
-        {
-            if (this.lanes.contains(prevLane))
+            intermediateNode = otherLane.getParentLink().getEndNode();
+            if (intermediateNode == startNode)
             {
                 return GTUDirectionality.DIR_MINUS;
+            }
+            if (intermediateNode == endNode)
+            {
+                return GTUDirectionality.DIR_PLUS;
             }
         }
         throw new NetworkException("lane " + lane + " is not connected to any intermediate lane or the other lane");
@@ -263,7 +281,8 @@ public class TrafficLightSensor extends EventProducer
             }
             try
             {
-                Map<Lane, Length> frontPositions = gtu.positions(gtu.getRelativePositions().get(this.entryA.getPositionType()));
+                Map<Lane, Length> frontPositions =
+                        gtu.positions(gtu.getRelativePositions().get(this.entryA.getPositionType()));
                 Set<Lane> remainingLanes = new HashSet<>(frontPositions.keySet());
                 remainingLanes.retainAll(this.lanes);
                 if (remainingLanes.size() == 0)
@@ -289,14 +308,16 @@ public class TrafficLightSensor extends EventProducer
             // Determine whether the GTU is in our range
             try
             {
-                Map<Lane, Length> frontPositions = gtu.positions(gtu.getRelativePositions().get(this.entryA.getPositionType()));
+                Map<Lane, Length> frontPositions =
+                        gtu.positions(gtu.getRelativePositions().get(this.entryA.getPositionType()));
                 Set<Lane> remainingLanes = new HashSet<>(frontPositions.keySet());
                 remainingLanes.retainAll(this.lanes);
                 if (remainingLanes.size() == 0)
                 {
                     System.err.println("GTU is not in any or our lanes - CANNOT HAPPEN");
                 }
-                Map<Lane, Length> rearPositions = gtu.positions(gtu.getRelativePositions().get(this.exitA.getPositionType()));
+                Map<Lane, Length> rearPositions =
+                        gtu.positions(gtu.getRelativePositions().get(this.exitA.getPositionType()));
                 for (Lane remainingLane : remainingLanes)
                 {
                     Length frontPosition = frontPositions.get(remainingLane);
@@ -305,8 +326,8 @@ public class TrafficLightSensor extends EventProducer
                     // System.out.println("frontPosition " + frontPosition + ", rearPosition " + rearPosition + ", laneLength "
                     // + laneLength + ", directionalityB " + this.directionalityB);
 
-                    if (frontPosition.lt0() && rearPosition.lt0()
-                            || frontPosition.gt(laneLength) && rearPosition.gt(laneLength))
+                    if (frontPosition.lt0() && rearPosition.lt0() || frontPosition.gt(laneLength)
+                            && rearPosition.gt(laneLength))
                     {
                         continue; // Not detected on this lane
                     }
@@ -487,13 +508,13 @@ public class TrafficLightSensor extends EventProducer
         // : this.exitB == sensor ? "exitB" : "???";
         // System.out.println("Time " + sensor.getSimulator().getSimulatorTime().get() + ": " + this.id + " " + source
         // + " triggered on " + gtu + " driving direction is " + gtuDirection);
-        if (this.entryA == sensor && gtuDirection == this.directionalityA
-                || this.entryB == sensor && gtuDirection != this.directionalityB)
+        if (this.entryA == sensor && gtuDirection == this.directionalityA || this.entryB == sensor
+                && gtuDirection != this.directionalityB)
         {
             addGTU(gtu);
         }
-        else if (this.exitA == sensor && gtuDirection != this.directionalityA
-                || this.exitB == sensor && gtuDirection == this.directionalityB)
+        else if (this.exitA == sensor && gtuDirection != this.directionalityA || this.exitB == sensor
+                && gtuDirection == this.directionalityB)
         // Some exit sensor has triggered
         {
             removeGTU(gtu);
@@ -581,12 +602,14 @@ class FlankSensor extends AbstractSensor
      * @param positionType TYPE; the position on the GTUs that triggers the new FlankSensor
      * @param simulator OTSDEVSSimulatorInterface; the simulator engine
      * @param parent TrafficLightSensor; the traffic light sensor that deploys this FlankSensor
+     * @param compatible Compatible; object that determines if a GTU is detectable by the new FlankSensor
      * @throws NetworkException when the network is inconsistent
      */
     FlankSensor(final String id, final Lane lane, final Length longitudinalPosition, final TYPE positionType,
-            final OTSDEVSSimulatorInterface simulator, final TrafficLightSensor parent) throws NetworkException
+            final OTSDEVSSimulatorInterface simulator, final TrafficLightSensor parent, final Compatible compatible)
+            throws NetworkException
     {
-        super(id, lane, longitudinalPosition, positionType, simulator);
+        super(id, lane, longitudinalPosition, positionType, simulator, compatible);
         this.parent = parent;
         try
         {
@@ -616,7 +639,7 @@ class FlankSensor extends AbstractSensor
         // XXX should the parent of the clone be our parent??? And should the (cloned) parent not construct its own flank
         // sensors?
         return new FlankSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
-                (OTSDEVSSimulatorInterface) newSimulator, this.parent);
+                (OTSDEVSSimulatorInterface) newSimulator, this.parent, super.getDetectedGTUTypes());
     }
 
     /** {@inheritDoc} */

@@ -4,12 +4,10 @@ import java.io.Serializable;
 
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.compatibility.Compatibility;
+import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
-
-import compatibility.Compatibility;
-import compatibility.Compatible;
-import compatibility.GTUCompatibility;
 
 /**
  * Link type to indicate compatibility with GTU types. The id of a LinkType should be unique within a simulation. This is,
@@ -24,13 +22,13 @@ import compatibility.GTUCompatibility;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LinkType extends HierarchicalType<LinkType> implements Serializable, Identifiable, Compatible
+public class LinkType extends HierarchicalType<LinkType> implements Serializable, Identifiable, Compatibility<GTUType, LinkType>
 {
     /** */
     private static final long serialVersionUID = 20140821L;
 
     /** The compatibility of GTU types with this link type. */
-    private final Compatibility<GTUType, LinkType> compatibility;
+    private final GTUCompatibility<LinkType> compatibility;
 
     /** The link type that does not allow any vehicles, or pedestrians. */
     public static final LinkType NONE;
@@ -46,14 +44,14 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
     static
     {
-        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<LinkType>();
+        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<LinkType>((LinkType) null);
         NONE = new LinkType("NONE", null, compatibility);
         compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
         ROAD = new LinkType("ROAD", null, compatibility);
-        compatibility = new GTUCompatibility<>();
+        compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.WATER_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
         WATER_WAY = new LinkType("WATER_WAY", null, compatibility);
-        compatibility = new GTUCompatibility<>();
+        compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
         RAIL_WAY = new LinkType("WATER_WAY", null, compatibility);
     }
@@ -73,17 +71,9 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+    public final Boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
     {
-        for (LinkType linkType = this; null != linkType; linkType = linkType.getParent())
-        {
-            Boolean c = this.compatibility.isCompatible(gtuType, directionality);
-            if (null != c)
-            {
-                return c;
-            }
-        }
-        return false;
+        return this.compatibility.isCompatible(gtuType, directionality);
     }
 
     /** {@inheritDoc} */
@@ -94,15 +84,11 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
         return "LinkType [id=" + getId() + ", compatibilitySet=" + this.compatibility + "]";
     }
 
-    /**
-     * Get the LongitudinalDirectionality for a GTUType. Will recursively check parent type of GTUType if needed.
-     * @param gtuType GTUType; the type of the GTU to retrieve LongitudinalDirectinality for
-     * @return LongitudinalityDirectionality for the GTUType, or DIR_NONE if none of the parent types of the GTUType has a
-     *         specified LongitudinalDirectionality
-     */
-    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
+    /** {@inheritDoc} */
+    @Override
+    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType, final boolean tryParentsOfGTUType)
     {
-        return this.compatibility.getDirectionality(gtuType);
+        return this.compatibility.getDirectionality(gtuType, tryParentsOfGTUType);
     }
 
 }

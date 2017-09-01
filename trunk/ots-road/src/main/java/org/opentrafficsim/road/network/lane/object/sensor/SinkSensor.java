@@ -5,8 +5,11 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -17,7 +20,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import nl.tudelft.simulation.language.Throw;
 
 /**
- * sensor that deletes the GTU.
+ * A SinkSensor is a sensor that deletes every GTU that hits it.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
@@ -33,15 +36,26 @@ public class SinkSensor extends AbstractSensor
     /** */
     private static final long serialVersionUID = 20150130L;
 
+    /** A compatibility checker that will accept every GTU regardless of type and direction of motion. */
+    private static final Compatible EVERYTHING = new Compatible()
+    {
+        @Override
+        public boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+        {
+            return true;
+        }
+    };
+
     /**
      * @param lane the lane that triggers the deletion of the GTU.
      * @param position the position of the sensor
      * @param simulator the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkSensor(final Lane lane, final Length position, final OTSDEVSSimulatorInterface simulator) throws NetworkException
+    public SinkSensor(final Lane lane, final Length position, final OTSDEVSSimulatorInterface simulator)
+            throws NetworkException
     {
-        super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator);
+        super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator, EVERYTHING);
         try
         {
             new SinkAnimation(this, simulator);
@@ -63,7 +77,7 @@ public class SinkSensor extends AbstractSensor
     public SinkSensor(final String dummy1, final Lane lane, final Length position, final RelativePosition.TYPE dummy2,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException
     {
-        super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator);
+        super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator, EVERYTHING);
         try
         {
             new SinkAnimation(this, simulator);
@@ -91,8 +105,8 @@ public class SinkSensor extends AbstractSensor
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public SinkSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator, final boolean animation)
-            throws NetworkException
+    public SinkSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+            final boolean animation) throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
