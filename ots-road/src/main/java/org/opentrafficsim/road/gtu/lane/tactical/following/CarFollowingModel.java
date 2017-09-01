@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -29,6 +30,10 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  */
 public interface CarFollowingModel
 {
+
+    /** Parameter type for car-following model. */
+    ParameterTypeClass<CarFollowingModel> CAR_FOLLOWING_MODEL = new ParameterTypeClass<>("cf.model", "car-following model",
+            ParameterTypeClass.getValueClass(CarFollowingModel.class));
 
     /**
      * Determines the desired speed.
