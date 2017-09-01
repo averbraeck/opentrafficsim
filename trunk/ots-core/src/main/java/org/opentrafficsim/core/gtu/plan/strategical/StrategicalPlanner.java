@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu.plan.strategical;
 
+import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -25,6 +26,10 @@ import org.opentrafficsim.core.network.route.Route;
  */
 public interface StrategicalPlanner
 {
+
+    /** Parameter type for strategical planner. */
+    ParameterTypeClass<StrategicalPlanner> STRATEGICAL_PLANNER = new ParameterTypeClass<>("strat.plan.", "Strategcial planner",
+            ParameterTypeClass.getValueClass(StrategicalPlanner.class));
 
     /**
      * Returns the GTU.

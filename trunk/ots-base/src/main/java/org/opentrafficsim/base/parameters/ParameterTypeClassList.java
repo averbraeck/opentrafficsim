@@ -1,5 +1,6 @@
 package org.opentrafficsim.base.parameters;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import org.opentrafficsim.base.OTSClassUtil;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 
 /**
+ * Parameter type for a list of classes, each of which may need to be present in a constraint set.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -26,7 +28,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
     private static final long serialVersionUID = 20170702L;
 
     /**
-     * Constraint that checks whether the value is any of a given set.
+     * Constraint that checks whether each object in the value list, is any of a given set.
      * <p>
      * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -73,7 +75,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
         @SuppressWarnings("checkstyle:designforextension")
         public String failMessage()
         {
-            return "Value of parameter '%s' is not in the set of acceptable values.";
+            return "Value of parameter '%s' contains value(s) not in the set of acceptable values.";
         }
 
         /**
@@ -149,6 +151,20 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
         super(id, description, valueClass, defaultValue, constraint);
     }
 
+    /**
+     * Returns a typed class, where the type is {@code List<Class<? extends T>>}, such that {@code ParameterTypeClass} instances
+     * can easily be created.
+     * @param clazz class instance
+     * @param <T> constraining class in parameter type, e.g. TacticalPlanner
+     * @return typed class
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<List<Class<? extends T>>> getValueClass(final Class<T> clazz)
+    {
+        List<Class<? extends T>> list = new ArrayList<>();
+        return (Class<List<Class<? extends T>>>) list.getClass();
+    }
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -171,7 +187,7 @@ public class ParameterTypeClassList<T> extends AbstractParameterType<List<Class<
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "ParameterTypeClass []";
+        return "ParameterTypeClassList []";
     }
 
 }

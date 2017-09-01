@@ -8,6 +8,7 @@ import org.opentrafficsim.base.OTSClassUtil;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 
 /**
+ * Parameter type for classes, of which the value may need to be present in a constraint set.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -139,6 +140,19 @@ public class ParameterTypeClass<T> extends AbstractParameterType<Class<? extends
             final Class<? extends T> defaultValue, final Constraint<Class<? extends T>> constraint)
     {
         super(id, description, valueClass, defaultValue, constraint);
+    }
+    
+    /**
+     * Returns a typed class, where the type is {@code Class<? extends T>}, such that {@code ParameterTypeClass} instances can
+     * easily be created.
+     * @param clazz class instance
+     * @param <T> constraining class in parameter type, e.g. TacticalPlanner
+     * @return typed class
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<Class<? extends T>> getValueClass(final Class<T> clazz)
+    {
+        return (Class<Class<? extends T>>) clazz.getClass();
     }
 
     /** {@inheritDoc} */

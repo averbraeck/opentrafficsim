@@ -7,8 +7,9 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeClassList;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -51,6 +52,18 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public class LMRS extends AbstractLaneBasedTacticalPlanner
 {
+
+    /** Parameter type for mandatory lane change incentives. */
+    public static final ParameterTypeClassList<MandatoryIncentive> MANDATORY = new ParameterTypeClassList<>("man.incent.",
+            "Mandatory lane-change incentives.", ParameterTypeClassList.getValueClass(MandatoryIncentive.class));
+    
+    /** Parameter type for voluntary lane change incentives. */
+    public static final ParameterTypeClassList<VoluntaryIncentive> VOLUNTARY = new ParameterTypeClassList<>("vol.incent.",
+            "Voluntary lane-change incentives.", ParameterTypeClassList.getValueClass(VoluntaryIncentive.class));
+    
+    /** Parameter type for acceleration incentives. */
+    public static final ParameterTypeClassList<AccelerationIncentive> ACCELERATION = new ParameterTypeClassList<>("acc.incent.",
+            "Acceleration incentives.", ParameterTypeClassList.getValueClass(AccelerationIncentive.class));
 
     /** Serialization id. */
     private static final long serialVersionUID = 20160300L;
