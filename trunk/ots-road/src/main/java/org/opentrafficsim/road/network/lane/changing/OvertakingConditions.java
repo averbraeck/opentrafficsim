@@ -363,10 +363,10 @@ public interface OvertakingConditions
         private static final long serialVersionUID = 20150913L;
 
         /** A collection of GTUs that can overtake another collection of GTUs. */
-        private final Collection<GTUType> overtakingGTUs;
+        private final Collection<GTUType> overtakingGTUTypes;
 
         /** A collection of GTUs that can be overtaken by another collection of GTUs. */
-        private final Collection<GTUType> overtakenGTUs;
+        private final Collection<GTUType> overtakenGTUTypes;
 
         /**
          * Provide a collection of GTUs that can overtake another collection of GTUs on the left, but not vice versa. Example:
@@ -379,8 +379,8 @@ public interface OvertakingConditions
          */
         public LeftSet(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs)
         {
-            this.overtakingGTUs = overtakingGTUs;
-            this.overtakenGTUs = overtakenGTUs;
+            this.overtakingGTUTypes = overtakingGTUs;
+            this.overtakenGTUTypes = overtakenGTUs;
         }
 
         /** {@inheritDoc} */
@@ -388,8 +388,9 @@ public interface OvertakingConditions
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
                 final LaneBasedGTU predecessorGTU)
         {
-            if ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
-                    && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU.getGTUType()))))
+            if ((this.overtakingGTUTypes.contains(GTUType.ALL) || this.overtakingGTUTypes.contains(gtu.getGTUType())
+                    && (this.overtakenGTUTypes.contains(GTUType.ALL) || this.overtakenGTUTypes.contains(predecessorGTU
+                            .getGTUType()))))
             {
                 return OvertakingDirection.LEFT;
             }
@@ -400,7 +401,8 @@ public interface OvertakingConditions
         @Override
         public final String toString()
         {
-            return "LeftSet [overtakingGTUs=" + this.overtakingGTUs + ", overtakenGTUs=" + this.overtakenGTUs + "]";
+            return "LeftSet [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
+                    + this.overtakenGTUTypes + "]";
         }
     }
 
@@ -425,10 +427,10 @@ public interface OvertakingConditions
         private static final long serialVersionUID = 20150913L;
 
         /** A collection of GTUs that can overtake another collection of GTUs. */
-        private final Collection<GTUType> overtakingGTUs;
+        private final Collection<GTUType> overtakingGTUTypes;
 
         /** A collection of GTUs that can be overtaken by another collection of GTUs. */
-        private final Collection<GTUType> overtakenGTUs;
+        private final Collection<GTUType> overtakenGTUTypes;
 
         /**
          * Provide a collection of GTUs that can overtake another collection of GTUs on the right, but not vice versa. Example:
@@ -441,8 +443,8 @@ public interface OvertakingConditions
          */
         public RightSet(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs)
         {
-            this.overtakingGTUs = overtakingGTUs;
-            this.overtakenGTUs = overtakenGTUs;
+            this.overtakingGTUTypes = overtakingGTUs;
+            this.overtakenGTUTypes = overtakenGTUs;
         }
 
         /** {@inheritDoc} */
@@ -450,8 +452,9 @@ public interface OvertakingConditions
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
                 final LaneBasedGTU predecessorGTU)
         {
-            if ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
-                    && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU.getGTUType()))))
+            if ((this.overtakingGTUTypes.contains(GTUType.ALL) || this.overtakingGTUTypes.contains(gtu.getGTUType())
+                    && (this.overtakenGTUTypes.contains(GTUType.ALL) || this.overtakenGTUTypes.contains(predecessorGTU
+                            .getGTUType()))))
             {
                 return OvertakingDirection.RIGHT;
             }
@@ -462,7 +465,8 @@ public interface OvertakingConditions
         @Override
         public final String toString()
         {
-            return "RightSet [overtakingGTUs=" + this.overtakingGTUs + ", overtakenGTUs=" + this.overtakenGTUs + "]";
+            return "RightSet [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
+                    + this.overtakenGTUTypes + "]";
         }
     }
 
@@ -487,10 +491,10 @@ public interface OvertakingConditions
         private static final long serialVersionUID = 20150913L;
 
         /** A collection of GTUs that can overtake another collection of GTUs. */
-        private final Collection<GTUType> overtakingGTUs;
+        private final Collection<GTUType> overtakingGTUTypes;
 
         /** A collection of GTUs that can be overtaken by another collection of GTUs. */
-        private final Collection<GTUType> overtakenGTUs;
+        private final Collection<GTUType> overtakenGTUTypes;
 
         /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed rightOvertakingSpeedMax;
@@ -509,8 +513,8 @@ public interface OvertakingConditions
         public LeftSetRightSpeed(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs,
                 final Speed rightOvertakingSpeedMax)
         {
-            this.overtakingGTUs = overtakingGTUs;
-            this.overtakenGTUs = overtakenGTUs;
+            this.overtakingGTUTypes = overtakingGTUs;
+            this.overtakenGTUTypes = overtakenGTUs;
             this.rightOvertakingSpeedMax = rightOvertakingSpeedMax;
         }
 
@@ -519,8 +523,10 @@ public interface OvertakingConditions
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
                 final LaneBasedGTU predecessorGTU)
         {
-            boolean left = ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
-                    && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU.getGTUType()))));
+            boolean left =
+                    ((this.overtakingGTUTypes.contains(GTUType.ALL) || this.overtakingGTUTypes.contains(gtu.getGTUType())
+                            && (this.overtakenGTUTypes.contains(GTUType.ALL) || this.overtakenGTUTypes
+                                    .contains(predecessorGTU.getGTUType()))));
             boolean right = gtu.getSpeed().lt(this.rightOvertakingSpeedMax);
             if (left)
             {
@@ -533,8 +539,8 @@ public interface OvertakingConditions
         @Override
         public final String toString()
         {
-            return "LeftSetRightSpeed [overtakingGTUs=" + this.overtakingGTUs + ", overtakenGTUs=" + this.overtakenGTUs
-                    + ", rightOvertakingSpeedMax=" + this.rightOvertakingSpeedMax + "]";
+            return "LeftSetRightSpeed [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
+                    + this.overtakenGTUTypes + ", rightOvertakingSpeedMax=" + this.rightOvertakingSpeedMax + "]";
         }
     }
 
@@ -559,10 +565,10 @@ public interface OvertakingConditions
         private static final long serialVersionUID = 20150913L;
 
         /** A collection of GTUs that can overtake another collection of GTUs. */
-        private final Collection<GTUType> overtakingGTUs;
+        private final Collection<GTUType> overtakingGTUTypes;
 
         /** A collection of GTUs that can be overtaken by another collection of GTUs. */
-        private final Collection<GTUType> overtakenGTUs;
+        private final Collection<GTUType> overtakenGTUTypes;
 
         /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed leftOvertakingSpeedMax;
@@ -581,8 +587,8 @@ public interface OvertakingConditions
         public RightSetLeftSpeed(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs,
                 final Speed leftOvertakingSpeedMax)
         {
-            this.overtakingGTUs = overtakingGTUs;
-            this.overtakenGTUs = overtakenGTUs;
+            this.overtakingGTUTypes = overtakingGTUs;
+            this.overtakenGTUTypes = overtakenGTUs;
             this.leftOvertakingSpeedMax = leftOvertakingSpeedMax;
         }
 
@@ -591,8 +597,10 @@ public interface OvertakingConditions
         public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
                 final LaneBasedGTU predecessorGTU)
         {
-            boolean right = ((this.overtakingGTUs.contains(GTUType.ALL) || this.overtakingGTUs.contains(gtu.getGTUType())
-                    && (this.overtakenGTUs.contains(GTUType.ALL) || this.overtakenGTUs.contains(predecessorGTU.getGTUType()))));
+            boolean right =
+                    ((this.overtakingGTUTypes.contains(GTUType.ALL) || this.overtakingGTUTypes.contains(gtu.getGTUType())
+                            && (this.overtakenGTUTypes.contains(GTUType.ALL) || this.overtakenGTUTypes
+                                    .contains(predecessorGTU.getGTUType()))));
             boolean left = gtu.getSpeed().lt(this.leftOvertakingSpeedMax);
             if (right)
             {
@@ -605,8 +613,8 @@ public interface OvertakingConditions
         @Override
         public final String toString()
         {
-            return "RightSetLeftSpeed [overtakingGTUs=" + this.overtakingGTUs + ", overtakenGTUs=" + this.overtakenGTUs
-                    + ", leftOvertakingSpeedMax=" + this.leftOvertakingSpeedMax + "]";
+            return "RightSetLeftSpeed [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
+                    + this.overtakenGTUTypes + ", leftOvertakingSpeedMax=" + this.leftOvertakingSpeedMax + "]";
         }
     }
 
