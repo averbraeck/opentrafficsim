@@ -6,17 +6,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import nl.tudelft.simulation.language.Throw;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * A LaneStructureRecord contains information about the lanes that can be accessed from this lane by a GTUType. It tells whether
@@ -87,8 +86,8 @@ public class LaneStructureRecord implements Serializable
      */
     public final Node getFromNode()
     {
-        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getStartNode()
-                : this.lane.getParentLink().getEndNode();
+        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getStartNode() : this.lane.getParentLink()
+                .getEndNode();
     }
 
     /**
@@ -96,8 +95,8 @@ public class LaneStructureRecord implements Serializable
      */
     public final Node getToNode()
     {
-        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode()
-                : this.lane.getParentLink().getStartNode();
+        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode() : this.lane.getParentLink()
+                .getStartNode();
     }
 
     /**
@@ -107,8 +106,8 @@ public class LaneStructureRecord implements Serializable
      */
     public final Length getDistanceToPosition(final Length longitudinalPosition)
     {
-        return this.startDistance.plus(
-                this.gtuDirectionality.isPlus() ? longitudinalPosition : this.lane.getLength().minus(longitudinalPosition));
+        return this.startDistance.plus(this.gtuDirectionality.isPlus() ? longitudinalPosition : this.lane.getLength().minus(
+                longitudinalPosition));
     }
 
     /**
@@ -288,12 +287,16 @@ public class LaneStructureRecord implements Serializable
             LaneStructureRecord nextRecord = nextSet.iterator().next();
             for (Lane l : nextRecord.getLane().getParentLink().getLanes())
             {
-                if (l.getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
-                        || ((l.getDirectionality(gtuType).isForward() && nextRecord.getDirection().isPlus())
-                                || (l.getDirectionality(gtuType).isBackward() && nextRecord.getDirection().isMinus())))
+                if (l.getLaneType().getDirectionality(gtuType).getDirectionalities().contains(nextRecord.getDirection()))
                 {
                     nLanesOnNextLink++;
                 }
+                // if (l.getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
+                // || ((l.getDirectionality(gtuType).isForward() && nextRecord.getDirection().isPlus()) || (l
+                // .getDirectionality(gtuType).isBackward() && nextRecord.getDirection().isMinus())))
+                // {
+                // nLanesOnNextLink++;
+                // }
             }
             if (nextSet.size() == nLanesOnNextLink)
             {
