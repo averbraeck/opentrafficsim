@@ -1,7 +1,5 @@
 package org.opentrafficsim.base.parameters.constraint;
 
-import org.opentrafficsim.base.parameters.constraint.SingleBound.NumericConstraint;
-
 /**
  * In order to define default constraints within a Parameter Type, an <tt>enum</tt> is available. This interface supplies easy
  * access to the values of this <tt>enum</tt>. To use this interface, simply implement it as below. The value <tt>POSITIVE</tt>
@@ -72,14 +70,14 @@ import org.opentrafficsim.base.parameters.constraint.SingleBound.NumericConstrai
 @SuppressWarnings({ "checkstyle:interfaceistype", "checkstyle:javadoctype", "checkstyle:javadocvariable", "javadoc" })
 public interface ConstraintInterface
 {
-    // @formatter:off
     
+    // @formatter:off
     Constraint<Number> POSITIVE     = NumericConstraint.POSITIVE;
     Constraint<Number> NEGATIVE     = NumericConstraint.NEGATIVE;
     Constraint<Number> POSITIVEZERO = NumericConstraint.POSITIVEZERO;
     Constraint<Number> NEGATIVEZERO = NumericConstraint.NEGATIVEZERO;
     Constraint<Number> NONZERO      = NumericConstraint.NONZERO;
-    Constraint<Number> UNITINTERVAL = DoubleBound.UNITINTERVAL;
     Constraint<Number> ATLEASTONE   = NumericConstraint.ATLEASTONE;
+    Constraint<Number> UNITINTERVAL = DualBound.UNITINTERVAL;
     
 }

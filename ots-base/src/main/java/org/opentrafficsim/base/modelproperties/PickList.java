@@ -1,14 +1,15 @@
-package org.opentrafficsim.base.parameters;
+package org.opentrafficsim.base.modelproperties;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import nl.tudelft.simulation.language.Throw;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterType;
+import org.opentrafficsim.base.parameters.Parameters;
 
-import org.opentrafficsim.base.parameters.constraint.Constraint;
-import org.opentrafficsim.base.parameters.constraint.PickListConstraint;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Pick list with PickListItems.
@@ -22,17 +23,17 @@ import org.opentrafficsim.base.parameters.constraint.PickListConstraint;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> type of the ids of the pick items
  */
-public class PickList<T> extends AbstractParameterType<T> implements Constraint<T>
+public class PickList<T> extends ParameterType<T>
 {
     /** */
     private static final long serialVersionUID = 20170814L;
 
-    /** The list of ids. */
-    private List<T> ids = new ArrayList<>();
+    /** The list of item ids. */
+    private List<T> itemIds = new ArrayList<>();
 
     /** The items for each id. */
     private Map<T, PickListItem<T>> items = new HashMap<>();
-    
+
     /**
      * Construct a new PickList and fill it with the provided items.
      * @param id String; id of the new PickList
@@ -48,7 +49,7 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
     public PickList(final String id, final String description, final PickListItem<T> firstItem,
             final PickListItem<T>... additionalItems) throws ParameterException
     {
-        super(id, description, (Class<T>) firstItem.getClass(), new PickListConstraint<T>());
+        super(id, description, (Class<T>) firstItem.getClass());
         addItem(firstItem);
         for (PickListItem<T> item : additionalItems)
         {
@@ -66,7 +67,7 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
     @SuppressWarnings("unchecked")
     public PickList(final String id, final String description, final List<PickListItem<T>> items) throws ParameterException
     {
-        super(id, description, (Class<T>) getItemZero(items), new PickListConstraint<T>());
+        super(id, description, (Class<T>) getItemZero(items));
         for (PickListItem<T> item : items)
         {
             addItem(item);
@@ -74,7 +75,6 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
     }
     
     /**
-     * 
      * @param items2 List&lt;PickListItem&lt;?&gt;&gt;; a non-empty list of pick list items.
      * @return Object; item 0 in the list
      * @throws ParameterException when list is null, or empty
@@ -91,14 +91,12 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
      * @param item PickListItem&lt;T&gt;; the item to add
      * @throws ParameterException when the id of the provided item matches an existing item
      */
-    @SuppressWarnings("unchecked")
     public final void addItem(final PickListItem<T> item) throws ParameterException
     {
-        Throw.when(this.ids.contains(item.getId()), ParameterException.class,
+        Throw.when(this.itemIds.contains(item.getId()), ParameterException.class,
                 "PickList already contains an item matching id \"%s\"", item.getId());
-        this.ids.add(item.getId());
+        this.itemIds.add(item.getId());
         this.items.put(item.getId(), item);
-        ((PickListConstraint<T>) getConstraint()).setIds(this.ids);
     }
 
     /** {@inheritDoc} */
@@ -111,24 +109,10 @@ public class PickList<T> extends AbstractParameterType<T> implements Constraint<
 
     /** {@inheritDoc} */
     @Override
-    public final boolean fails(final T value)
-    {
-        return getConstraint().fails(value);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String failMessage()
-    {
-        return getConstraint().failMessage();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "PickList [ids=" + this.ids + ", items=" + this.items + "]";
+        return "PickList [ids=" + this.itemIds + ", items=" + this.items + "]";
     }
 
 }

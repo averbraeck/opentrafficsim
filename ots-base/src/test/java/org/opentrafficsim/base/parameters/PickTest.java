@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.opentrafficsim.base.modelproperties.PickList;
+import org.opentrafficsim.base.modelproperties.PickListItem;
 
 /**
  * Test the PickList class and closely related classes.
@@ -32,19 +34,16 @@ public class PickTest
     @Test
     public final void testPickList() throws ParameterException
     {
-        PickListItem<String> item1 = new PickListItem<String>("id1", "description1", "long description 1");
+        PickListItem<String> item1 = new PickListItem<>("id1", "description1", "long description 1");
         assertEquals("can retrieve id", "id1", item1.getId());
         assertEquals("can retrieve display text", "description1", item1.getDisplayText());
         assertEquals("can retrieve description", "long description 1", item1.getDescription());
         assertTrue("toString returns something with PickListItem in it", item1.toString().indexOf("PickListItem") >= 0);
-        PickList<String> pl = new PickList<String>("id", "description", item1);
+        PickList<String> pl = new PickList<>("id", "description", item1);
         assertEquals("can retrieve id", "id", pl.getId());
         assertEquals("can retrieve description", "description", pl.getDescription());
-        assertTrue("does not contain an item with junkId", pl.fails("junkId"));
-        assertFalse("does contain an item with id1", pl.fails("id1"));
-        assertTrue("does not contain an item with null id", pl.fails(null));
         assertTrue("toString returns something with PickList in it", pl.toString().indexOf("PickList") >= 0);
-        PickListItem<String> item2 = new PickListItem<String>("id1", "description2"); // Same id!
+        PickListItem<String> item2 = new PickListItem<>("id1", "description2"); // Same id!
         assertEquals("using 2 arg constructor sets description to display text", "description2", item2.getDisplayText());
         assertEquals("using 2 arg constructor sets description to display text", "description2", item2.getDescription());
         try
@@ -55,39 +54,27 @@ public class PickTest
         {
             // Ignore expected exception
         }
-        item2 = new PickListItem<String>("id2", "description2", "long description 2");
-        assertTrue("does not (yet) contain an item with id2", pl.fails("id2"));
+        item2 = new PickListItem<>("id2", "description2", "long description 2");
         pl.addItem(item2); // should not throw an exception
-        assertFalse("does contain an item with id2", pl.fails("id2"));
-        assertFalse("does contain an item with id1", pl.fails("id1"));
-        String failMessage = pl.failMessage();
-        assertNotNull("fail message may not be null", failMessage);
-        assertTrue("fail message contains id1", failMessage.indexOf("id1") >= 0);
-        assertTrue("fail message contains id2", failMessage.indexOf("id2") >= 0);
         String constraintDescription = pl.getConstraint().toString();
         assertNotNull("constraint toString may not be null", constraintDescription);
         assertTrue("constraint toString contains id1", constraintDescription.indexOf("id1") >= 0);
         assertTrue("constraint toString contains id2", constraintDescription.indexOf("id2") >= 0);
         
-        pl = new PickList<String>("id", "description", item1, item2);
-        assertFalse("does contain an item with id2", pl.fails("id2"));
-        assertFalse("does contain an item with id1", pl.fails("id1"));
+        pl = new PickList<>("id", "description", item1, item2);
         List<PickListItem<String>> list = new ArrayList<>();
         try
         {
-            new PickList<String>("idXX", "descriptionXX", list);
+            new PickList<>("idXX", "descriptionXX", list);
         }
         catch (ParameterException pe)
         {
             // Ignore expected exception
         }
         list.add(item1);
-        pl = new PickList<String>("idXX", "descriptionXX", list);
+        pl = new PickList<>("idXX", "descriptionXX", list);
         assertEquals("can retrieve id", "idXX", pl.getId());
         assertEquals("can retrieve description", "descriptionXX", pl.getDescription());
-        assertTrue("does not contain an item with junkId", pl.fails("junkId"));
-        assertFalse("does contain an item with id1", pl.fails("id1"));
-        assertTrue("does not contain an item with null id", pl.fails(null));
         assertTrue("toString returns something with PickList in it", pl.toString().indexOf("PickList") >= 0);
     }
 }

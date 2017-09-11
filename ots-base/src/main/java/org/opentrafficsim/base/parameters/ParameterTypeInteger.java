@@ -55,9 +55,9 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
      * Construct a new ParameterTypeInteger without default value, with check.
      * @param id String; short name of the new ParameterTypeInteger
      * @param description String; parameter description or full name of the new ParameterTypeInteger
-     * @param constraint Constraint&lt;Number&gt;; constraint for parameter values
+     * @param constraint Constraint&lt;? super Integer&gt;; constraint for parameter values
      */
-    public ParameterTypeInteger(final String id, final String description, final Constraint<Number> constraint)
+    public ParameterTypeInteger(final String id, final String description, final Constraint<? super Integer> constraint)
     {
         super(id, description, Integer.class, constraint);
     }
@@ -67,10 +67,10 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
      * @param id String; short name of the new ParameterTypeInteger
      * @param description String; parameter description or full name of the new ParameterTypeInteger
      * @param defaultValue int; the default value of the new ParameterTypeInteger
-     * @param constraint Constraint&lt;Number&gt;; constraint for parameter values
+     * @param constraint Constraint&lt;? super Integer&gt;; constraint for parameter values
      */
     public ParameterTypeInteger(final String id, final String description, final int defaultValue,
-            final Constraint<Number> constraint)
+            final Constraint<? super Integer> constraint)
     {
         super(id, description, Integer.class, defaultValue, constraint);
     }

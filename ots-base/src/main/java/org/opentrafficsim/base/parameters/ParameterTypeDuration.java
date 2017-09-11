@@ -48,7 +48,7 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
      * @param description String; parameter description or full name of the new ParameterTypeDuration
      * @param constraint Constraint for parameter values
      */
-    public ParameterTypeDuration(final String id, final String description, final Constraint<Number> constraint)
+    public ParameterTypeDuration(final String id, final String description, final Constraint<? super Duration> constraint)
     {
         super(id, description, Duration.class, constraint);
     }
@@ -61,7 +61,7 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
      * @param constraint Constraint for parameter values
      */
     public ParameterTypeDuration(final String id, final String description, final Duration defaultValue,
-            final Constraint<Number> constraint)
+            final Constraint<? super Duration> constraint)
     {
         super(id, description, Duration.class, defaultValue, constraint);
     }

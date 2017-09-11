@@ -532,12 +532,12 @@ public class ParametersTest implements ConstraintInterface
      * @throws IllegalAccessException Reflection.
      * @throws InstantiationException Reflection.
      */
-    private <R extends AbstractParameterType<?>> void checkDefaultValuesPerClass(final Class<R> clazz, final Object defaultValue)
+    private <R extends ParameterType<?>> void checkDefaultValuesPerClass(final Class<R> clazz, final Object defaultValue)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             NoSuchMethodException, SecurityException
     {
         // none set
-        AbstractParameterType<?> ld;
+        ParameterType<?> ld;
         if (clazz.equals(ParameterTypeNumeric.class))
         {
             ld =
