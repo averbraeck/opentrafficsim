@@ -46,9 +46,9 @@ public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> impl
      * Construct a new ParameterTypeFrequency without default value, with check.
      * @param id String; short name of the new ParameterTypeFrequency
      * @param description String; parameter description or full name of the new ParameterTypeFrequency
-     * @param constraint Constraint&lt;Number&gt;; constraint for parameter values
+     * @param constraint Constraint&lt;? super Frequency&gt;; constraint for parameter values
      */
-    public ParameterTypeFrequency(final String id, final String description, final Constraint<Number> constraint)
+    public ParameterTypeFrequency(final String id, final String description, final Constraint<? super Frequency> constraint)
     {
         super(id, description, Frequency.class, constraint);
     }
@@ -58,10 +58,10 @@ public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> impl
      * @param id String; short name of the new ParameterTypeFrequency
      * @param description String; parameter description or full name of the new ParameterTypeFrequency
      * @param defaultValue Frequency; the default value of the new ParameterTypeFrequency
-     * @param constraint Constraint&lt;Number&gt;; constraint for parameter values
+     * @param constraint Constraint&lt;? super Frequency&gt;; constraint for parameter values
      */
     public ParameterTypeFrequency(final String id, final String description, final Frequency defaultValue,
-            final Constraint<Number> constraint)
+            final Constraint<? super Frequency> constraint)
     {
         super(id, description, Frequency.class, defaultValue, constraint);
     }

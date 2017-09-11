@@ -1,4 +1,4 @@
-package org.opentrafficsim.base.parameters;
+package org.opentrafficsim.base.modelproperties;
 
 /**
  * Value that can be used in a PickList.

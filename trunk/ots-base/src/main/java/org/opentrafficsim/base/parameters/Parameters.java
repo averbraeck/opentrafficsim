@@ -35,10 +35,10 @@ public class Parameters implements Serializable
     private boolean copyOnWrite = false;
 
     /** List of parameters. */
-    private Map<AbstractParameterType<?>, Object> parameters;
+    private Map<ParameterType<?>, Object> parameters;
 
     /** List of parameters with values before last set. */
-    private Map<AbstractParameterType<?>, Object> previous;
+    private Map<ParameterType<?>, Object> previous;
 
     /**
      * Construct a new, empty Parameters set.
@@ -68,7 +68,7 @@ public class Parameters implements Serializable
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
-    public final <T> void setParameter(final AbstractParameterType<T> parameterType, final T value) throws ParameterException
+    public final <T> void setParameter(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
         Throw.when(value == null, ParameterException.class,
                 "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
@@ -83,7 +83,7 @@ public class Parameters implements Serializable
      * @param <T> Class of the value
      * @throws ParameterException If the value does not comply with constraints.
      */
-    private <T> void saveSetParameter(final AbstractParameterType<T> parameterType, final T value) throws ParameterException
+    private <T> void saveSetParameter(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
         parameterType.checkConstraint(value);
         checkCopyOnWrite();
@@ -104,7 +104,7 @@ public class Parameters implements Serializable
      * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
      * @throws ParameterException If the parameter was never set.
      */
-    public final void resetParameter(final AbstractParameterType<?> parameterType) throws ParameterException
+    public final void resetParameter(final ParameterType<?> parameterType) throws ParameterException
     {
         Throw.when(!this.previous.containsKey(parameterType), ParameterException.class,
                 "Reset on parameter of type '%s' could not be performed, it was not set.", parameterType.getId());
@@ -142,7 +142,7 @@ public class Parameters implements Serializable
      * @throws ParameterException If the parameter was never set.
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public <T> T getParameter(final AbstractParameterType<T> parameterType) throws ParameterException
+    public <T> T getParameter(final ParameterType<T> parameterType) throws ParameterException
     {
         checkContains(parameterType);
         @SuppressWarnings("unchecked")
@@ -156,7 +156,7 @@ public class Parameters implements Serializable
      * @param parameterType Parameter type.
      * @throws ParameterException If parameter is not present.
      */
-    private void checkContains(final AbstractParameterType<?> parameterType) throws ParameterException
+    private void checkContains(final ParameterType<?> parameterType) throws ParameterException
     {
         Throw.when(!contains(parameterType), ParameterException.class,
                 "Could not get parameter of type '%s' as it was not set.", parameterType.getId());
@@ -167,7 +167,7 @@ public class Parameters implements Serializable
      * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type to check
      * @return boolean; true if <code>parameterType</code> has been set; false if <code>parameterType</code> has not been set
      */
-    public final boolean contains(final AbstractParameterType<?> parameterType)
+    public final boolean contains(final ParameterType<?> parameterType)
     {
         return this.parameters.containsKey(parameterType);
     }
@@ -176,7 +176,7 @@ public class Parameters implements Serializable
      * Returns a safe copy of the parameters.
      * @return Map&lt;AbstractParameterType&lt;?&gt;&gt;; a safe copy of the parameters, e.g., for printing
      */
-    public final Map<AbstractParameterType<?>, Object> getParameters()
+    public final Map<ParameterType<?>, Object> getParameters()
     {
         return new HashMap<>(this.parameters);
     }
@@ -188,7 +188,7 @@ public class Parameters implements Serializable
      * @return Parameters; this set of parameters (for method chaining)
      * @throws ParameterException if the parameter type has no default value
      */
-    public final <T> Parameters setDefaultParameter(final AbstractParameterType<T> parameter) throws ParameterException
+    public final <T> Parameters setDefaultParameter(final ParameterType<T> parameter) throws ParameterException
     {
         T defaultValue = parameter.getDefaultValue();
         try
@@ -228,12 +228,12 @@ public class Parameters implements Serializable
 
         for (Field field : fields)
         {
-            if (AbstractParameterType.class.isAssignableFrom(field.getType()))
+            if (ParameterType.class.isAssignableFrom(field.getType()))
             {
                 try
                 {
                     field.setAccessible(true);
-                    AbstractParameterType<T> p = (AbstractParameterType<T>) field.get(clazz);
+                    ParameterType<T> p = (ParameterType<T>) field.get(clazz);
                     T defaultValue = p.getDefaultValue();
                     saveSetParameter(p, defaultValue);
                 }
@@ -264,7 +264,7 @@ public class Parameters implements Serializable
      */
     public final void setAll(final Parameters referenceSet)
     {
-        for (AbstractParameterType<?> key : referenceSet.parameters.keySet())
+        for (ParameterType<?> key : referenceSet.parameters.keySet())
         {
             this.parameters.put(key, referenceSet.parameters.get(key));
         }
@@ -276,7 +276,7 @@ public class Parameters implements Serializable
     {
         StringBuilder out = new StringBuilder("Parameters [");
         String sep = "";
-        for (AbstractParameterType<?> apt : this.parameters.keySet())
+        for (ParameterType<?> apt : this.parameters.keySet())
         {
             try
             {

@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ParameterTypeBoolean extends AbstractParameterType<Boolean> implements Serializable
+public class ParameterTypeBoolean extends ParameterType<Boolean> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;

@@ -9,7 +9,7 @@ import java.util.Set;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
-import org.opentrafficsim.base.parameters.AbstractParameterType;
+import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -55,7 +55,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
      * @param <T> type
      */
     public <T extends DoubleScalarInterface> void addParameter(final GTUType gtuType,
-            final AbstractParameterType<T> parameterType, final T value)
+            final ParameterType<T> parameterType, final T value)
     {
         assureTypeInMap(gtuType);
         this.map.get(gtuType).add(new FixedEntry<>(parameterType, value));
@@ -287,7 +287,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
         private static final long serialVersionUID = 20170400L;
 
         /** Parameter type. */
-        private final AbstractParameterType<T> parameterType;
+        private final ParameterType<T> parameterType;
 
         /** Value. */
         private final T value;
@@ -296,7 +296,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
          * @param parameterType the parameter type
          * @param value the fixed value
          */
-        FixedEntry(final AbstractParameterType<T> parameterType, final T value)
+        FixedEntry(final ParameterType<T> parameterType, final T value)
         {
             this.parameterType = parameterType;
             this.value = value;

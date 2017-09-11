@@ -19,7 +19,7 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> Type of the value.
  */
-public abstract class AbstractParameterType<T> extends Type<AbstractParameterType<T>> implements Serializable, Identifiable
+public class ParameterType<T> extends Type<ParameterType<T>> implements Serializable, Identifiable
 {
 
     /** */
@@ -48,7 +48,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
      * @param description String; description or full name of the new AbstractParameterType
      * @param valueClass Class&lt;T&gt;; class of the value of the new AbstractParameterType
      */
-    public AbstractParameterType(final String id, final String description, final Class<T> valueClass)
+    public ParameterType(final String id, final String description, final Class<T> valueClass)
     {
         this(id, description, valueClass, null, null, false);
     }
@@ -60,7 +60,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
      * @param valueClass Class&lt;T&gt;; class of the value of the new AbstractParameterType
      * @param constraint Constraint&lt;? super T&gt;; constraint that applies to the value of the new AbstractParameterType
      */
-    public AbstractParameterType(final String id, final String description, final Class<T> valueClass,
+    public ParameterType(final String id, final String description, final Class<T> valueClass,
             final Constraint<? super T> constraint)
     {
         this(id, description, valueClass, null, constraint, false);
@@ -73,7 +73,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
      * @param valueClass Class&lt;T&gt;; class of the value of the new AbstractParameterType
      * @param defaultValue T; default value of the new AbstractParameterType
      */
-    public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue)
+    public ParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue)
     {
         this(id, description, valueClass, defaultValue, null, true);
     }
@@ -86,7 +86,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
      * @param defaultValue T; default value of the new AbstractParameterType
      * @param constraint Constraint&lt;? super T&gt;; constraint that applies to the value of the new AbstractParameterType
      */
-    public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
+    public ParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
             final Constraint<? super T> constraint)
     {
         this(id, description, valueClass, defaultValue, constraint, true);
@@ -102,7 +102,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
      * @param hasDefaultValue boolean; if true a check is performed to ensure that the default value is not null and does not
      *            violate the constraint
      */
-    private AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
+    private ParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue,
             final Constraint<? super T> constraint, final boolean hasDefaultValue)
     {
         Throw.whenNull(id, "Id may not be null.");
@@ -125,8 +125,8 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
             }
             catch (ParameterException pe)
             {
-                throw new RuntimeException("Default value of parameter '" + this.id
-                        + "' does not comply with default constraints.", pe);
+                throw new RuntimeException(
+                        "Default value of parameter '" + this.id + "' does not comply with default constraints.", pe);
             }
             try
             {
@@ -136,8 +136,8 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
             }
             catch (ParameterException pe)
             {
-                throw new RuntimeException("Default value of parameter '" + getId()
-                        + "' does not comply with custom constraints.", pe);
+                throw new RuntimeException(
+                        "Default value of parameter '" + getId() + "' does not comply with custom constraints.", pe);
             }
         }
     }
@@ -201,7 +201,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
         {
             return;
         }
-        Throw.when(this.constraint.fails(value), ParameterException.class, this.constraint.failMessage(), this.getId());
+        Throw.when(!this.constraint.accept(value), ParameterException.class, this.constraint.failMessage(), this.getId());
     }
 
     /**
@@ -216,12 +216,16 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     }
 
     /**
-     * Print the given value from the map in Parameters in a presentable format.
+     * Print the given value from the map in Parameters in a presentable format. The default implementation simply returns the
+     * output of toString().
      * @param parameters Parameters to get the value from
      * @return String; readable representation of the value
      * @throws ParameterException If the parameter is not present
      */
-    public abstract String printValue(Parameters parameters) throws ParameterException;
+    public String printValue(final Parameters parameters) throws ParameterException
+    {
+        return parameters.getParameter(this).toString();
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -252,7 +256,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
         {
             return false;
         }
-        AbstractParameterType<?> other = (AbstractParameterType<?>) obj;
+        ParameterType<?> other = (ParameterType<?>) obj;
         if (!this.id.equals(other.id))
         {
             return false;
@@ -293,7 +297,7 @@ public abstract class AbstractParameterType<T> extends Type<AbstractParameterTyp
     @Override
     public String toString()
     {
-        return "AbstractParameterType [id=" + this.id + ", description=" + this.description + ", valueClass=" + this.valueClass
+        return "ParameterType [id=" + this.id + ", description=" + this.description + ", valueClass=" + this.valueClass
                 + "]";
     }
 

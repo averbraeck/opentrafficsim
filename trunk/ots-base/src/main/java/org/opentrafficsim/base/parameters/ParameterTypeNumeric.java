@@ -17,42 +17,11 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> Class of the value.
  */
-public class ParameterTypeNumeric<T extends Number> extends AbstractParameterType<T> implements Serializable
+public class ParameterTypeNumeric<T extends Number> extends ParameterType<T> implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160400L;
-
-    /**
-     * Continuous constraint with upper and lower bound.
-     */
-    public interface NumericRangeConstraint extends Constraint<Number>
-    {
-        /**
-         * Does this NumericRangeConstraint include the lower bound value?
-         * @return boolean; true if this NumericRangeConstraint includes the lower bound value; false if it does not
-         */
-        boolean includesLowerBound();
-        
-        /**
-         * Does this NumericRangeConstraint include the upper bound value?
-         * @return boolean; true if this NumericRangeConstraint includes the upper bound value; false if it does not
-         */
-        boolean includesUpperBound();
-        
-        /**
-         * Retrieve the lower bound of the range of this NumericRangeConstraint.
-         * @return Number; the lower bound of the range of this NumericRangeConstraint
-         */
-        Number getLowerBound();
-        
-        /**
-         * Retrieve the upper bound of the range of this NumericRangeConstraint.
-         * @return Number; the upper bound of the range of this NumericRangeConstraint
-         */
-        Number getUpperBound();
-        
-    }
 
     /**
      * Constructor without default value and check.
