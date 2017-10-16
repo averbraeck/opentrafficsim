@@ -165,7 +165,7 @@ public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
      * Check if a GTUCompatibility does not allow things that the GTUCompatibility of a parent object disallows, e.g. a
      * permitted driving direction on a Lane should not be forbidden on the Link that the Lane is part of.
      * @param parentCompatibility GTUCompatibility&lt;?&gt;; the GTUCompatibility of the parent object
-     * @param tryParentsOfGTUType 
+     * @param tryParentsOfGTUType
      * @throws GTUException if a conflict is found
      */
     public final void isCompatibleWith(final Compatibility<GTUType, ?> parentCompatibility, final boolean tryParentsOfGTUType)
@@ -195,10 +195,13 @@ public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
             {
                 return result;
             }
-            result = this.infrastructure.getParent().getDirectionality(testGTUType, false);
-            if (null != result)
+            if (null != this.infrastructure && null != this.infrastructure.getParent())
             {
-                return result;
+                result = this.infrastructure.getParent().getDirectionality(testGTUType, false);
+                if (null != result)
+                {
+                    return result;
+                }
             }
             if (!tryParentsOfGTUType)
             {

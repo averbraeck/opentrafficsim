@@ -336,7 +336,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
             nodes[3][2] = new OTSNode(this.network, "ew3", new OTSPoint3D(-20, 10));
             nodes[3][3] = new OTSNode(this.network, "ew4", new OTSPoint3D(-5000, 10));
 
-            LaneType laneType = LaneType.ROAD;
+            LaneType laneType = LaneType.TWO_WAY_LANE;
 
             Map<Lane, SimpleTrafficLight> trafficLights = new HashMap<>();
 

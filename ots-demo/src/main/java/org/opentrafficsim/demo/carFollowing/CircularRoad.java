@@ -608,7 +608,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                 }
             }
             GTUType gtuType = CAR;
-            LaneType laneType = LaneType.ROAD;
+            LaneType laneType = LaneType.TWO_WAY_LANE;
             OTSNode start = new OTSNode(this.network, "Start", new OTSPoint3D(radius, 0, 0));
             OTSNode halfway = new OTSNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0));
 

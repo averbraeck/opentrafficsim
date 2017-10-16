@@ -167,7 +167,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 int xs = (int) lane.getParentLink().getStartNode().getPoint().x;
                 int xe = (int) lane.getParentLink().getEndNode().getPoint().x;
                 fd = new FundamentalDiagramLane("Fundamental Diagram for [" + xs + ", " + xe + "] m", new Duration(1.0, SECOND),
-                        lane, (OTSDEVSSimulatorInterface) this.model.getSimulator());
+                        lane, detectedGTUTypes, (OTSDEVSSimulatorInterface) this.model.getSimulator());
                 fd.setTitle("Fundamental Diagram Graph");
                 fd.setExtendedState(Frame.MAXIMIZED_BOTH);
                 this.model.getFundamentalDiagrams().add(fd);
@@ -289,7 +289,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
             this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
             try
             {
-                LaneType laneType = LaneType.ROAD;
+                LaneType laneType = LaneType.TWO_WAY_LANE;
                 OTSNode node = new OTSNode(this.network, "Node 0", new OTSPoint3D(this.startX.getSI(), 0, 0));
                 for (int laneNr = 0; laneNr < 10; laneNr++)
                 {

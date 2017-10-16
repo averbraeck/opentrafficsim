@@ -1,5 +1,12 @@
 package org.opentrafficsim.core.network;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
+import nl.tudelft.simulation.immutablecollections.ImmutableSet;
+
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 
 /**
@@ -17,13 +24,34 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 public enum LongitudinalDirectionality
 {
     /** Direction the same as the direction of the graph, increasing fractional position when driving in this direction. */
-    DIR_PLUS,
+    DIR_PLUS(new GTUDirectionality[] { GTUDirectionality.DIR_PLUS }),
     /** Direction opposite to the direction of the graph, decreasing fractional position when driving in this direction. */
-    DIR_MINUS,
+    DIR_MINUS(new GTUDirectionality[] { GTUDirectionality.DIR_MINUS }),
     /** Bidirectional. */
-    DIR_BOTH,
+    DIR_BOTH(new GTUDirectionality[] { GTUDirectionality.DIR_PLUS, GTUDirectionality.DIR_MINUS }),
     /** No traffic possible. */
-    DIR_NONE;
+    DIR_NONE(new GTUDirectionality[] {});
+
+    /** Array of permitted driving directions. */
+    private final ImmutableSet<GTUDirectionality> directions;
+
+    /**
+     * Construct a new LongitudinalDirectionality.
+     * @param directions GTUDirectionality[]; array containing the permitted driving directions
+     */
+    LongitudinalDirectionality(final GTUDirectionality[] directions)
+    {
+        this.directions = new ImmutableHashSet<>(new HashSet<GTUDirectionality>(Arrays.asList(directions)), Immutable.WRAP);
+    }
+
+    /**
+     * Retrieve the permitted driving directions.
+     * @return ImmutableSet&lt;GTUDirectionality&gt;; immutable set containing the permitted driving directions
+     */
+    public final ImmutableSet<GTUDirectionality> getDirectionalities()
+    {
+        return this.directions;
+    }
 
     /**
      * This method looks if this directionality "contains" the provided other directionality. The logic table looks as follows:
@@ -116,7 +144,7 @@ public enum LongitudinalDirectionality
     {
         return this.equals(DIR_BOTH);
     }
-    
+
     /**
      * Compute the intersection of this LongitudinalDirectionality with another LongitudinalDirectionality.
      * @param other LongitudinalDirectionality; the other LongitudinalDirectionality
@@ -181,7 +209,7 @@ public enum LongitudinalDirectionality
      */
     public LongitudinalDirectionality invert()
     {
-        switch(this)
+        switch (this)
         {
             case DIR_BOTH:
                 return this;
@@ -195,5 +223,5 @@ public enum LongitudinalDirectionality
                 return this; // cannot happen
         }
     }
-    
+
 }

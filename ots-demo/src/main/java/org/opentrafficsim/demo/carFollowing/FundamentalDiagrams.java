@@ -165,7 +165,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
             try
             {
                 fd = new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m", new Duration(1, MINUTE),
-                        this.model.getLane(), detectorLocation, simulator);
+                        this.model.getLane(), detectorLocation, detectedGTUTypes, simulator);
                 fd.setTitle("Density Contour Graph");
                 fd.setExtendedState(Frame.MAXIMIZED_BOTH);
                 this.model.getFundamentalDiagrams().add(fd);
@@ -290,7 +290,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
                 OTSNode to = new OTSNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
                 OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
-                LaneType laneType = LaneType.ROAD;
+                LaneType laneType = LaneType.TWO_WAY_LANE;
                 this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit,
                         this.simulator, LongitudinalDirectionality.DIR_PLUS);
                 CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null,

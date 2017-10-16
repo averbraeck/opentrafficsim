@@ -432,7 +432,7 @@ class SequentialModel implements OTSModelInterface, UNITS
             OTSNode n5 = new OTSNode(this.network, "Node(2200,200)", new OTSPoint3D(2200, 200));
             this.nodes.addAll(Arrays.asList(new OTSNode[] { n0, n1, n2, n3, n4, n5 }));
 
-            LaneType laneType = LaneType.ROAD;
+            LaneType laneType = LaneType.TWO_WAY_LANE;
 
             // Now we can build a series of Links with one Lane on them
             ArrayList<CrossSectionLink> links = new ArrayList<>();

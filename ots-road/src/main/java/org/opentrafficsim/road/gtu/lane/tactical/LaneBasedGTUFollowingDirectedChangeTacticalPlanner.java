@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -15,13 +19,12 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
-import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
@@ -47,10 +50,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Lane-based tactical planner that implements car following behavior and rule-based lane change. This tactical planner
@@ -96,9 +95,6 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     
     /** Speed limit adherance factor parameter type. */
     protected static final ParameterTypeDouble FSPEED = ParameterTypes.FSPEED;
-    
-    /** Look ahead parameter type. */
-    protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
     
     /** Comfortable deceleration parameter type. */
     protected static final ParameterTypeAcceleration B = ParameterTypes.B;
@@ -525,7 +521,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         {
             Length pos = positions.get(lane);
             if (pos.si > 0.0 && pos.si < lane.getLength().si
-                    && lane.accessibleAdjacentLanes(direction, getGtu().getGTUType()).isEmpty())
+                    && lane.accessibleAdjacentLanes(direction, getGtu().getGTUType(), getGtu().getDirection(lane)).isEmpty())
             {
                 return false;
             }
