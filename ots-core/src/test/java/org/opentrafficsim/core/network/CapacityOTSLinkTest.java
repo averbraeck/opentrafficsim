@@ -44,7 +44,7 @@ public class CapacityOTSLinkTest
         Network network = new OTSNetwork("testNetworkForCapacityOTSLink");
         Node fromNode = new OTSNode(network, "startNode", fromPoint);
         Node toNode = new OTSNode(network, "endNode", toPoint);
-        LinkType linkType = LinkType.ALL;
+        LinkType linkType = LinkType.ROAD;
         OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
         OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
         {
@@ -53,19 +53,9 @@ public class CapacityOTSLinkTest
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
-        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
+        directionalityMap.put(GTUType.VEHICLE, LongitudinalDirectionality.DIR_PLUS);
         CapacityOTSLink link = new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator,
-                initialCapacity, directionalityMap);
-        assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
-        assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
-        assertTrue("from node matches", fromNode.equals(link.getStartNode()));
-        assertTrue("to node matches", toNode.equals(link.getEndNode()));
-        assertTrue("capacity mathes", initialCapacity.equals(link.getCapacity()));
-        link.setCapacity(finalCapacity);
-        assertTrue("capacity mathes", finalCapacity.equals(link.getCapacity()));
-
-        link = new CapacityOTSLink(network, "link2", fromNode, toNode, linkType, designLine, simulator, initialCapacity,
-                LongitudinalDirectionality.DIR_PLUS);
+                initialCapacity);
         assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
         assertTrue("from node matches", fromNode.equals(link.getStartNode()));

@@ -40,20 +40,19 @@ public class LinkLocationTest
         Network network = new OTSNetwork("testNetworkForCapacityOTSLink");
         Node fromNode = new OTSNode(network, "startNode", fromPoint);
         Node toNode = new OTSNode(network, "endNode", toPoint);
-        LinkType linkType = LinkType.ALL;
+        LinkType linkType = LinkType.ROAD;
         OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
         OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
         {
             // no implementation needed.
         }.getMockInstance();
-        LongitudinalDirectionality directionality = LongitudinalDirectionality.DIR_PLUS;
-        Link link = new OTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator, directionality);
+        Link link = new OTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator);
         Length linkLength = link.getLength();
         // Create an unrelated link
         OTSPoint3D a = new OTSPoint3D(1, 2, 3);
         OTSPoint3D b = new OTSPoint3D(11, 12, 13);
         Link otherLink = new OTSLink(network, "otherLink", new OTSNode(network, "a", a), new OTSNode(network, "b", b), linkType,
-                new OTSLine3D(a, b), simulator, LongitudinalDirectionality.DIR_PLUS);
+                new OTSLine3D(a, b), simulator);
         for (int percentage = 0; percentage <= 100; percentage += 10)
         {
             double fraction = percentage / 100.0;
