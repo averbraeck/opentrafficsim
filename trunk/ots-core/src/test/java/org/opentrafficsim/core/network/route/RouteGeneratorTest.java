@@ -151,6 +151,6 @@ public class RouteGeneratorTest
         nodes.add(new OTSNode(network, "n2", new OTSPoint3D(1000, 0, 0)));
         nodes.add(new OTSNode(network, "n3", new OTSPoint3D(1000, 1000, 0)));
         nodes.add(new OTSNode(network, endNodeName, new OTSPoint3D(2000, 1000, 0)));
-        return new FixedRouteGenerator(new CompleteRoute("fixed route", GTUType.ALL, nodes));
+        return new FixedRouteGenerator(new CompleteRoute("fixed route", GTUType.VEHICLE, nodes));
     }
 }
