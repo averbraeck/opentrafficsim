@@ -45,7 +45,6 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Ty
     public HierarchicalType(final String id, final T parent) throws NullPointerException
     {
         Throw.whenNull(id, "id cannot be null for hierarchal types");
-        Throw.whenNull(parent, "parent cannot be null for hierarchal types");
         this.id = id;
         this.parent = parent;
     }

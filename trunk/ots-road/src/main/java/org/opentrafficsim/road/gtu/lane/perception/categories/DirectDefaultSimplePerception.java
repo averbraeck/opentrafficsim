@@ -1095,10 +1095,9 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         for (int i = 1; i < lpi.getLaneDirectionList().size(); i++)
         {
             LaneDirection ld = lpi.getLaneDirectionList().get(i);
-            // TODO will getDirection work on adjacentLane????
             Set<Lane> accessibleLanes =
                     ld.getLane().accessibleAdjacentLanes(direction, getGtu().getGTUType(),
-                            getGtu().getDirection(adjacentLane));
+                            lpi.getReferenceLaneDirection().getDirection());
             Lane adjLane = null;
             for (Lane lane : accessibleLanes)
             {

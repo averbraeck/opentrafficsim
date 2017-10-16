@@ -430,7 +430,7 @@ class StraightModel implements OTSModelInterface, UNITS
             OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
             OTSNode to = new OTSNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
             OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
-            LaneType laneType = LaneType.ROAD;
+            LaneType laneType = LaneType.TWO_WAY_LANE;
             this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
                     LongitudinalDirectionality.DIR_PLUS);
             this.path.add(this.lane);

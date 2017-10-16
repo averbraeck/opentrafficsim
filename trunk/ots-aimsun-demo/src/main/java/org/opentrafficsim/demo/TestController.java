@@ -10,9 +10,9 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
-
 import nl.tudelft.simulation.language.io.URLResource;
+
+import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
 
 /**
  * Test client for AimsunController.
@@ -101,7 +101,8 @@ public final class TestController
         // String network = URLResource.getResource("/aimsun/singleRoad.xml").toString(); // wrong; fix later
         String network = null; // IOUtils.toString(URLResource.getResource("/aimsun/singleRoad.xml"));
         URLConnection conn = URLResource.getResource("/aimsun/singleRoad.xml").openConnection();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)))
+        try (BufferedReader reader =
+                new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)))
         {
             network = reader.lines().collect(Collectors.joining("\n"));
         }

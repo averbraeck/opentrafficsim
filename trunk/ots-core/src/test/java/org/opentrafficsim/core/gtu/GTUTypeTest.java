@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
@@ -17,17 +18,6 @@ import org.junit.Test;
  */
 public class GTUTypeTest
 {
-    /**
-     * Test the static fields of the GTUType class.
-     */
-    @Test
-    public final void staticsTest()
-    {
-        GTUType t = GTUType.ALL;
-        assertTrue("Id of ALL is \"ALL\"", "ALL".equals(t.getId()));
-        t = GTUType.NONE;
-        assertTrue("Id of NONE is \"NONE\"", "NONE".equals(t.getId()));
-    }
 
     /**
      * Run the constructor and verify that all fields get correctly initialized.
@@ -41,5 +31,6 @@ public class GTUTypeTest
         assertTrue("Id is stored in the newly created GTUType", "pqr".equals(t2.getId()));
         // prove that the two are really distinct (do not use the same storage for the type string
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));
+        assertEquals("parent can be retrieved", VEHICLE, t.getParent());
     }
 }
