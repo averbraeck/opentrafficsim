@@ -4,10 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.junit.Test;
+import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.gtu.GTUType;
 
 /**
@@ -30,9 +28,12 @@ public class LinkTypeTest
     @Test
     public final void testLinkType()
     {
+        GTUCompatibility<LinkType> roadCompatibility =
+                new GTUCompatibility<>((LinkType) null).addAllowedGTUType(GTUType.VEHICLE,
+                        LongitudinalDirectionality.DIR_BOTH);
         try
         {
-            new LinkType("name", null);
+            new LinkType("name", null, null);
         }
         catch (NullPointerException npe)
         {
@@ -40,50 +41,39 @@ public class LinkTypeTest
         }
         try
         {
-            new LinkType(null, new ArrayList<GTUType>());
+            new LinkType(null, null, roadCompatibility);
         }
         catch (NullPointerException npe)
         {
             // Ignore expected exception
         }
-        GTUType car = new GTUType("Car", GTUType.VEHICLE);
-        GTUType truck = new GTUType("Truck", GTUType.VEHICLE);
+        GTUType carType = new GTUType("Car", GTUType.VEHICLE);
+        GTUType truckType = new GTUType("Truck", GTUType.VEHICLE);
         GTUType catamaran = new GTUType("Catamaran", GTUType.SHIP);
-        Collection<GTUType> carGroup = new ArrayList<>();
-        carGroup.add(car);
-        carGroup.add(truck);
-        LinkType roadLinkType = new LinkType("Vehicles", carGroup);
-        Collection<GTUType> boatGroup = new ArrayList<>();
-        boatGroup.add(catamaran);
-        LinkType waterwayType = new LinkType("Waterway", boatGroup);
+        LinkType roadLinkType = new LinkType("Vehicles", null, roadCompatibility);
+        GTUCompatibility<LinkType> waterCompatibility =
+                new GTUCompatibility<>((LinkType) null).addAllowedGTUType(GTUType.SHIP, LongitudinalDirectionality.DIR_BOTH);
+        LinkType waterwayType = new LinkType("Waterway", null, waterCompatibility);
         assertTrue("equals to itself", roadLinkType.equals(roadLinkType));
         assertFalse("not equal to the other", roadLinkType.equals(waterwayType));
-        assertTrue("Car is compatible with roadLinkType", roadLinkType.isCompatible(car));
-        assertTrue("Truck is compatible with roadLinkType", roadLinkType.isCompatible(truck));
-        assertFalse("Catamaran is not compatible with roadLinkType", roadLinkType.isCompatible(catamaran));
-        assertFalse("Truck is not compatible with waterwayLinkType", waterwayType.isCompatible(truck));
-        assertTrue("Catamaran is not compatible with waterwayLinkType", waterwayType.isCompatible(catamaran));
-        Collection<GTUType> allGTUTypeGroup = new ArrayList<>();
-        allGTUTypeGroup.add(GTUType.ALL);
-        LinkType allLinkType = new LinkType("all", allGTUTypeGroup);
-        assertTrue("Car is compatible with allLinkType", allLinkType.isCompatible(car));
-        assertTrue("Truck is compatible with allLinkType", allLinkType.isCompatible(truck));
-        assertTrue("Catamaran is compatible with allLinkType", allLinkType.isCompatible(catamaran));
-        allLinkType = LinkType.ALL;
-        assertTrue("Car is compatible with pre-defined ALL LinkType", allLinkType.isCompatible(car));
-        assertTrue("Truck is compatible with pre-defined ALL LinkType", allLinkType.isCompatible(truck));
-        assertTrue("Catamaran is compatible with pre-defined ALL LinkType", allLinkType.isCompatible(catamaran));
+        assertEquals("Car is compatible with roadLinkType", LongitudinalDirectionality.DIR_BOTH,
+                roadLinkType.getDirectionality(carType, true));
+        assertEquals("Truck is compatible with roadLinkType",  LongitudinalDirectionality.DIR_BOTH,
+                roadLinkType.getDirectionality(truckType, true));
+        assertEquals("Catamaran is not compatible with roadLinkType", LongitudinalDirectionality.DIR_NONE,
+                roadLinkType.getDirectionality(catamaran, true));
+        assertEquals("Truck is not compatible with waterwayLinkType", LongitudinalDirectionality.DIR_NONE,
+                waterwayType.getDirectionality(truckType, true));
+        assertEquals("Catamaran is compatible with waterwayLinkType", LongitudinalDirectionality.DIR_BOTH,
+                waterwayType.getDirectionality(catamaran, true));
         LinkType lava = LinkType.NONE;
-        assertFalse("Car is not compatible with lava", lava.isCompatible(car));
-        assertFalse("Truck is not compatible with lava", lava.isCompatible(truck));
-        assertFalse("Catamaran is not compatible with lava", lava.isCompatible(catamaran));
         assertEquals("name must match", "Waterway", waterwayType.getId());
         assertTrue("toString returns something with the name in it", waterwayType.toString().contains("Waterway"));
         assertFalse("waterwayType is not equal to null", waterwayType.equals(null));
         assertFalse("waterwayType is not equal to some String", waterwayType.equals("Hello world!"));
         assertFalse("waterwayType is not equal to lava", waterwayType.equals(lava));
         // Try to create another waterwayType
-        LinkType waterwayType2 = new LinkType("Waterway", boatGroup);
+        LinkType waterwayType2 = new LinkType("Waterway", null, waterCompatibility);
         assertTrue("waterwayType2 is equal to the first", waterwayType.equals(waterwayType2));
     }
 
