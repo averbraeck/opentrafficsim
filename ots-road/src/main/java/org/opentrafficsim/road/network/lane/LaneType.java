@@ -120,9 +120,9 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     }
     
     /**
-     * Private constructor 
-     * @param id
-     * @param inverted
+     * Private constructor for a LaneType.
+     * @param id String; id of the new LaneType
+     * @param inverted boolean; if true; the compatibility is longitudinally inverted
      */
     private LaneType(final String id, final boolean inverted)
     {
@@ -131,10 +131,10 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
     }
     
     /**
-     * Construct a new Lane type based on another Lane type with inverted compatibility.
+     * Construct a new Lane type based on another Lane type with longitudinally inverted compatibility.
      * @return LaneType; the new lane type
      */
-    public LaneType inv()
+    public final LaneType inv()
     {
         return new LaneType(getId(), true);
     }

@@ -14,6 +14,14 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
+import nl.tudelft.simulation.immutablecollections.ImmutableList;
+import nl.tudelft.simulation.language.Throw;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
@@ -29,7 +37,6 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -39,14 +46,6 @@ import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.immutablecollections.Immutable;
-import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
-import nl.tudelft.simulation.immutablecollections.ImmutableList;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important
