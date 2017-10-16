@@ -1,13 +1,11 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
 import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
