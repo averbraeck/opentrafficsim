@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
@@ -13,6 +13,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
@@ -48,6 +49,9 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     /** Type of synchronization. */
     private final Synchronization synchronization;
 
+    /** Type of gap-acceptance. */
+    private final GapAcceptance gapAcceptance;
+
     /** Mandatory incentives. */
     private final Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
 
@@ -65,13 +69,13 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
      * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
      */
     public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
-            final Parameters defaultCarFollowingParameters,
-            final PerceptionFactory perceptionFactory) throws GTUException
+            final Parameters defaultCarFollowingParameters, final PerceptionFactory perceptionFactory) throws GTUException
     {
         this.carFollowingModelFactory = carFollowingModelFactory;
         this.defaultCarFollowingParameters = defaultCarFollowingParameters;
         this.perceptionFactory = perceptionFactory;
         this.synchronization = Synchronization.PASSIVE;
+        this.gapAcceptance = GapAcceptance.INFORMED;
     }
 
     /**
@@ -80,14 +84,15 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
      * @param defaultCarFollowingParameters default set of parameters for the car-following model
      * @param perceptionFactory perception factory
      * @param synchronization type of synchronization
+     * @param gapAcceptance gap-acceptance
      * @param mandatoryIncentives mandatory incentives
      * @param voluntaryIncentives voluntary incentives
      * @param accelerationIncentives acceleration incentives
      * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
      */
     public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
-            final Parameters defaultCarFollowingParameters,
-            final PerceptionFactory perceptionFactory, final Synchronization synchronization,
+            final Parameters defaultCarFollowingParameters, final PerceptionFactory perceptionFactory,
+            final Synchronization synchronization, final GapAcceptance gapAcceptance,
             final Set<MandatoryIncentive> mandatoryIncentives, final Set<VoluntaryIncentive> voluntaryIncentives,
             final Set<AccelerationIncentive> accelerationIncentives) throws GTUException
     {
@@ -95,6 +100,7 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
         this.defaultCarFollowingParameters = defaultCarFollowingParameters;
         this.perceptionFactory = perceptionFactory;
         this.synchronization = synchronization;
+        this.gapAcceptance = gapAcceptance;
         this.mandatoryIncentives.addAll(mandatoryIncentives);
         this.voluntaryIncentives.addAll(voluntaryIncentives);
         this.accelerationIncentives.addAll(accelerationIncentives);
@@ -118,7 +124,7 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
     {
 
         LMRS lmrs = new LMRS(this.carFollowingModelFactory.generateCarFollowingModel(), gtu,
-                this.perceptionFactory.generatePerception(gtu), this.synchronization);
+                this.perceptionFactory.generatePerception(gtu), this.synchronization, this.gapAcceptance);
         if (this.mandatoryIncentives.isEmpty())
         {
             lmrs.setDefaultIncentives();

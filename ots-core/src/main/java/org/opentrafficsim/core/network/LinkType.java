@@ -44,7 +44,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
     static
     {
-        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<LinkType>((LinkType) null);
+        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
         NONE = new LinkType("NONE", null, compatibility);
         compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
         ROAD = new LinkType("ROAD", null, compatibility);
@@ -66,7 +66,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     public LinkType(final String id, final LinkType parent, final GTUCompatibility<LinkType> compatibility)
     {
         super(id, parent);
-        this.compatibility = new GTUCompatibility<LinkType>(compatibility);
+        this.compatibility = new GTUCompatibility<>(compatibility);
     }
 
     /** {@inheritDoc} */

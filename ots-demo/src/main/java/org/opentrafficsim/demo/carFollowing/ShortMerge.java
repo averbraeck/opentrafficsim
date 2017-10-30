@@ -26,9 +26,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
@@ -77,6 +77,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
@@ -110,7 +111,7 @@ public class ShortMerge extends AbstractWrappableAnimation
 {
 
     /** Network. */
-    static final String NETWORK = "shortMerge";
+    static final String NETWORK = "shortWeave";
 
     /** Truck fraction. */
     static final double TRUCK_FRACTION = 0.15;
@@ -119,7 +120,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     static final double LEFT_FRACTION = 0.6;
 
     /** Main demand. */
-    static final Frequency MAIN_DEMAND = new Frequency(1200, FrequencyUnit.PER_HOUR);
+    static final Frequency MAIN_DEMAND = new Frequency(1000, FrequencyUnit.PER_HOUR);
 
     /** Ramp demand. */
     static final Frequency RAMP_DEMAND = new Frequency(0, FrequencyUnit.PER_HOUR);
@@ -336,7 +337,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             accelerationIncentives.add(new AccelerationConflicts());
             LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory =
                     new LMRSFactory(idmPlusFactory, params, new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION,
-                            mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
+                            GapAcceptance.INFORMED, mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
 
             GTUType car = new GTUType("car", CAR);
             GTUType truck = new GTUType("truck", TRUCK);

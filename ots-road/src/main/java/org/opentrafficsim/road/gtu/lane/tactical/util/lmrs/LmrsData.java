@@ -21,6 +21,9 @@ public final class LmrsData
 
     /** Form of synchronization. */
     private final Synchronization synchronization;
+    
+    /** Form of gap-acceptance. */
+    private final GapAcceptance gapAcceptance;
 
     /** Most recent leaders. */
     private final Set<String> leaders = new HashSet<>();
@@ -33,10 +36,12 @@ public final class LmrsData
 
     /**
      * @param synchronization synchronization
+     * @param gapAcceptance gap-acceptance
      */
-    public LmrsData(final Synchronization synchronization)
+    public LmrsData(final Synchronization synchronization, final GapAcceptance gapAcceptance)
     {
         this.synchronization = synchronization;
+        this.gapAcceptance = gapAcceptance;
     }
 
     /**
@@ -108,6 +113,15 @@ public final class LmrsData
     Synchronization getSynchronization()
     {
         return this.synchronization;
+    }
+    
+    /**
+     * Return the gap-acceptance.
+     * @return gap-acceptance
+     */
+    GapAcceptance getGapAcceptance()
+    {
+        return this.gapAcceptance;
     }
 
     /** {@inheritDoc} */

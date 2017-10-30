@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -464,7 +465,7 @@ final class Links
 
         // Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link = new CrossSectionLink(parser.getNetwork(), linkTag.name, linkTag.nodeStartTag.node,
-                linkTag.nodeEndTag.node, LinkType.ALL, designLine, simulator,
+                linkTag.nodeEndTag.node, LinkType.ROAD, designLine, simulator,
                 new HashMap<GTUType, LongitudinalDirectionality>(), linkTag.laneKeepingPolicy);
         linkTag.link = link;
     }
@@ -529,12 +530,10 @@ final class Links
                 Double negativeOffset = -(0.5 * roadWidth - totalLaneWidth - laneWidth / 2);
                 Length lateralOffset = new Length(negativeOffset, LengthUnit.METER);
 
-                LaneType laneType = LaneType.ALL;
-                linkDirection = LongitudinalDirectionality.DIR_PLUS;
-                csl.addDirectionality(GTUType.ALL, linkDirection);
+                LaneType laneType = LaneType.FREEWAY;
                 Speed speedLimit = new Speed(Double.parseDouble(linkTag.legalSpeed), SpeedUnit.KM_PER_HOUR);
                 // OvertakingConditions overtakingConditions; TODO (not clear yet)
-                Lane lane = new Lane(csl, name, lateralOffset, thisLaneWidth, laneType, linkDirection, speedLimit, null);
+                Lane lane = new Lane(csl, name, lateralOffset, thisLaneWidth, laneType, speedLimit, null);
                 if (!linkTag.sensors.isEmpty())
                 {
                     for (SensorTag sensorTag : linkTag.sensors)
@@ -544,7 +543,8 @@ final class Links
                             Length pos = new Length(Double.parseDouble(sensorTag.positionStr), LengthUnit.METER);
                             if (pos.lt(lane.getLength()))
                             {
-                                new SimpleReportingSensor(sensorTag.name, lane, pos, RelativePosition.FRONT, simulator);
+                                new SimpleReportingSensor(sensorTag.name, lane, pos, RelativePosition.FRONT, simulator,
+                                        Compatible.EVERYTHING);
                             }
                         }
                     }
@@ -608,8 +608,6 @@ final class Links
 
         List<CrossSectionElement> cseList = new ArrayList<>();
         List<Lane> lanes = new ArrayList<>();
-        // TODO Map<GTUType, LongitudinalDirectionality> linkDirections = new HashMap<>();
-        LongitudinalDirectionality linkDirection = LongitudinalDirectionality.DIR_NONE;
 
         // add information from the lanes
         // first the total width is computed
@@ -632,9 +630,7 @@ final class Links
         }
 
         // some generic definitions necessary to create a Lane object
-        LaneType laneType = LaneType.ALL;
-        linkDirection = LongitudinalDirectionality.DIR_PLUS;
-        csl.addDirectionality(GTUType.ALL, linkDirection);
+        LaneType laneType = LaneType.FREEWAY;
         Speed speedLimit = new Speed(Double.parseDouble(linkTag.legalSpeed), SpeedUnit.KM_PER_HOUR);
 
         // The lanes are ordered from the outside to the inner side of the road
@@ -679,7 +675,7 @@ final class Links
                 // the road offset is negative if the lanes are at the right side of the median (for right hand rule)
                 // OvertakingConditions overtakingConditions; TODO (not clear yet)
                 Lane lane = new Lane(csl, name, lateralOffsetStart, lateralOffsetEnd, thisLaneWidth, thisLaneWidth, laneType,
-                        linkDirection, speedLimit, null);
+                        speedLimit, null);
                 cseList.add(lane);
                 lanes.add(lane);
                 linkTag.lanes.put(name, lane);

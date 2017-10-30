@@ -223,8 +223,8 @@ public class XmlNetworkLaneParser implements Serializable
             throw new SAXException("XmlNetworkLaneParser.build: XML document does not have a DEFINITIONS tag");
 
         // make the GTUTypes ALL and NONE to get started
-        this.gtuTypes.put("ALL", GTUType.ALL);
-        this.gtuTypes.put("NONE", GTUType.NONE);
+        this.gtuTypes.put("ALL", GTUType.VEHICLE);
+        //this.gtuTypes.put("NONE", GTUType.NONE);
 
         // parse the DEFINITIONS tags
         for (Node definitionNode : definitionNodes)
@@ -276,7 +276,7 @@ public class XmlNetworkLaneParser implements Serializable
         {
             // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
             // TODO Automate addition of Routes to network
-            this.network.addRoute(GTUType.ALL, routeTag.route);
+            this.network.addRoute(GTUType.VEHICLE, routeTag.route);
         }
         return this.network;
     }

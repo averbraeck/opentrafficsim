@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.network.factory.osm.output;
 
 import static org.opentrafficsim.core.gtu.GTUType.BICYCLE;
-import static org.opentrafficsim.core.gtu.GTUType.SHIP;
-import static org.opentrafficsim.core.gtu.GTUType.PEDESTRIAN;
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.PEDESTRIAN;
+import static org.opentrafficsim.core.gtu.GTUType.SHIP;
 
 import java.awt.Color;
 import java.io.Serializable;
@@ -25,11 +25,13 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
+import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -151,7 +153,7 @@ public final class Convert
         OTSLine3D designLine = new OTSLine3D(coordinates);
         // XXX How to figure out whether to keep left, right or keep lane?
         // XXX How to figure out if this is a lane in one or two directions? For now, two is assumed...
-        result = new CrossSectionLink(network, link.getId(), start, end, LinkType.ALL, designLine, simulator,
+        result = new CrossSectionLink(network, link.getId(), start, end, LinkType.ROAD, designLine, simulator,
                 LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
         return result;
     }
@@ -250,7 +252,7 @@ public final class Convert
                         laneType = makeLaneType(SHIP);
                         break;
                     default:
-                        laneType = makeLaneType(GTUType.NONE);
+                        laneType = makeLaneType(GTUType.WATER_WAY_USER);
                         break;
                 }
                 laneAttributes = new LaneAttributes(laneType, Color.CYAN, LongitudinalDirectionality.DIR_BOTH);
@@ -562,19 +564,22 @@ public final class Convert
             }
         }
         LaneType laneType = laneAttributes.getLaneType();
-        if (laneType.isCompatible(CAR))
+        if (laneType.isCompatible(CAR, GTUDirectionality.DIR_PLUS) || laneType.isCompatible(CAR, GTUDirectionality.DIR_MINUS))
         {
             return defaultLaneWidth;
         }
-        else if (laneType.isCompatible(BICYCLE))
+        else if (laneType.isCompatible(BICYCLE, GTUDirectionality.DIR_PLUS)
+                || laneType.isCompatible(BICYCLE, GTUDirectionality.DIR_MINUS))
         {
             return 0.8d; // TODO German default bikepath width
         }
-        else if (laneType.isCompatible(PEDESTRIAN))
+        else if (laneType.isCompatible(PEDESTRIAN, GTUDirectionality.DIR_PLUS)
+                || laneType.isCompatible(PEDESTRIAN, GTUDirectionality.DIR_MINUS))
         {
             return 0.95d; // TODO German default footpath width
         }
-        else if (laneType.isCompatible(SHIP))
+        else if (laneType.isCompatible(SHIP, GTUDirectionality.DIR_PLUS)
+                || laneType.isCompatible(SHIP, GTUDirectionality.DIR_MINUS))
         {
             for (OSMTag tag : link.getTags())
             {
@@ -634,10 +639,8 @@ public final class Convert
             Color color = Color.LIGHT_GRAY;
             LaneType laneType = laneAttributes.getLaneType();
             Length latPos = new Length(offset, LengthUnit.METER);
-            Map<GTUType, LongitudinalDirectionality> directionality = new HashMap<>();
-            directionality.put(GTUType.ALL, laneAttributes.getDirectionality());
             Map<GTUType, Speed> speedLimit = new HashMap<>();
-            speedLimit.put(GTUType.ALL, new Speed(100, SpeedUnit.KM_PER_HOUR));
+            speedLimit.put(GTUType.VEHICLE, new Speed(100, SpeedUnit.KM_PER_HOUR));
             Lane newLane = null;
             // FIXME the following code assumes right-hand-side driving.
             if (osmlink.hasTag("hasPreceding") && offset >= 0 || osmlink.hasTag("hasFollowing") && offset < 0)
@@ -645,7 +648,7 @@ public final class Convert
                 color = Color.RED;
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, directionality, speedLimit,
+                        laneAttributes.getWidth(), laneType, speedLimit,
                         new OvertakingConditions.LeftAndRight());
                 new SinkSensor(newLane, new Length(0.25, LengthUnit.METER), simulator);
             }
@@ -654,7 +657,7 @@ public final class Convert
                 color = Color.BLUE;
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, directionality, speedLimit,
+                        laneAttributes.getWidth(), laneType, speedLimit,
                         new OvertakingConditions.LeftAndRight());
             }
             else
@@ -662,7 +665,7 @@ public final class Convert
                 color = laneAttributes.getColor();
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, directionality, speedLimit,
+                        laneAttributes.getWidth(), laneType, speedLimit,
                         new OvertakingConditions.LeftAndRight());
             }
             if (simulator instanceof OTSAnimatorInterface)
@@ -697,7 +700,8 @@ public final class Convert
             }
             name.append(gtu.getId());
         }
-        LaneType result = new LaneType(name.toString(), LaneType.ALL, gtuTypes);
+        GTUCompatibility<LaneType> compatibility = new GTUCompatibility((LaneType) null);
+        LaneType result = new LaneType(name.toString(), null, compatibility);
         return result;
     }
 
@@ -841,7 +845,7 @@ class LaneAttributes implements Serializable
     {
         if (lt == null)
         {
-            this.laneType = Convert.makeLaneType(GTUType.NONE);
+            this.laneType = Convert.makeLaneType(GTUType.VEHICLE);
         }
         else
         {
@@ -862,7 +866,7 @@ class LaneAttributes implements Serializable
     {
         if (laneType == null)
         {
-            this.laneType = Convert.makeLaneType(GTUType.NONE);
+            this.laneType = Convert.makeLaneType(GTUType.VEHICLE);
         }
         else
         {

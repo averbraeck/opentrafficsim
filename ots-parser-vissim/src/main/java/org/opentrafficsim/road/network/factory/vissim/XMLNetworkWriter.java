@@ -188,7 +188,8 @@ public class XMLNetworkWriter
                 }
                 lane.setDIRECTION("FORWARD");
                 ROADLAYOUT.LANE.SPEEDLIMIT speedLimit = new ROADLAYOUT.LANE.SPEEDLIMIT();
-                speedLimit.setLEGALSPEEDLIMIT(inputLane.getSpeedLimit(GTUType.ALL).getInUnit(SpeedUnit.KM_PER_HOUR) + " km/h");
+                speedLimit.setLEGALSPEEDLIMIT(
+                        inputLane.getSpeedLimit(GTUType.VEHICLE).getInUnit(SpeedUnit.KM_PER_HOUR) + " km/h");
                 speedLimit.setGTUTYPE("CAR");
                 lane.getSPEEDLIMIT().add(speedLimit);
                 rla.getLANEOrNOTRAFFICLANEOrSHOULDER().add(lane);

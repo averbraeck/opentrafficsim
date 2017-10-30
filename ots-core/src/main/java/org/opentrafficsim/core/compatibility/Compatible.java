@@ -16,6 +16,19 @@ import org.opentrafficsim.core.gtu.GTUType;
  */
 public interface Compatible
 {
+    
+    /**
+     * Default {@code Compatible} that allows every GTU type in every direction.
+     */
+    Compatible EVERYTHING = new Compatible()
+    {
+        @Override
+        public boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+        {
+            return true;
+        }
+    };
+    
     /**
      * Test if a GTUType is handled by the infrastructure in the given direction. For Lane and Link, <cite>handled</cite> means
      * that GTUs of this type can travel over this infrastructure in the direction. For Sensors it means that the sensor will

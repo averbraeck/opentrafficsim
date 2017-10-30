@@ -15,9 +15,6 @@ import java.util.Set;
 
 import javax.swing.JLabel;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -28,6 +25,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartPanel;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -49,6 +47,9 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -87,7 +88,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         GTUType gtuType = CAR;
         LaneType laneType = LaneType.TWO_WAY_LANE;
         Lane lane = CarTest.makeLane(this.network, laneType);
-        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position, detectedGTUTypes, this.simulator);
+        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position,
+                Compatible.EVERYTHING, this.simulator);
         assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
         assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(), 0.0001);
         try
@@ -147,8 +149,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
                 new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(1000, SECOND));
         // Construct a car
         Parameters parameters = DefaultTestParameters.create();
-        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("1", gtuType, length, width, maxSpeed, this.simulator, 
-                this.network);
+        LaneBasedIndividualGTU gtu =
+                new LaneBasedIndividualGTU("1", gtuType, length, width, maxSpeed, this.simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, speed);
@@ -339,7 +341,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         Length position = new Length(123, METER);
         LaneType laneType = LaneType.TWO_WAY_LANE;
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime,
-                CarTest.makeLane(this.network, laneType), position, detectedGTUTypes, this.simulator);
+                CarTest.makeLane(this.network, laneType), position, Compatible.EVERYTHING, this.simulator);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;

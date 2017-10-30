@@ -106,7 +106,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0) };
         OTSLine3D line = new OTSLine3D(coordinates);
-        CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ALL, line, simulator,
+        CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ROAD, line, simulator,
                 LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }
@@ -126,12 +126,10 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType, final Length latPos,
             final Length width) throws NamingException, NetworkException, OTSGeometryException
     {
-        Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
-        speedMap.put(GTUType.ALL, new Speed(100, KM_PER_HOUR));
+        speedMap.put(GTUType.VEHICLE, new Speed(100, KM_PER_HOUR));
         // XXX Decide what type of overtaking conditions we want in this test
-        Lane result = new Lane(link, id, latPos, latPos, width, width, laneType, directionalityMap, speedMap,
+        Lane result = new Lane(link, id, latPos, latPos, width, width, laneType, speedMap,
                 new OvertakingConditions.LeftAndRight());
         return result;
     }
@@ -180,13 +178,13 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         // Let's see if adjacent lanes are accessible
         // lanes: | 0 : 1 : 2 | in case of three lanes
         assertEquals("Leftmost lane should not have accessible adjacent lanes on the LEFT side", 0,
-                lanes[0].accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType).size());
+                lanes[0].accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType, GTUDirectionality.DIR_PLUS).size());
         assertEquals("Leftmost lane should have one accessible adjacent lane on the RIGHT side", 1,
-                lanes[0].accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType).size());
+                lanes[0].accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType, GTUDirectionality.DIR_PLUS).size());
         assertEquals("Rightmost lane should have one accessible adjacent lane on the LEFT side", 1,
-                lanes[1].accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType).size());
+                lanes[1].accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType, GTUDirectionality.DIR_PLUS).size());
         assertEquals("Rightmost lane should not have accessible adjacent lanes on the RIGHT side", 0,
-                lanes[1].accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType).size());
+                lanes[1].accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType, GTUDirectionality.DIR_PLUS).size());
 
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions
