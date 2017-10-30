@@ -219,7 +219,7 @@ class FillTag implements Serializable
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
-        RouteGenerator rg = new FixedRouteGenerator(new CompleteRoute("fixed route", GTUType.ALL, nodeList));
+        RouteGenerator rg = new FixedRouteGenerator(new CompleteRoute("fixed route", GTUType.VEHICLE, nodeList));
 
         // TODO create a FILL
 

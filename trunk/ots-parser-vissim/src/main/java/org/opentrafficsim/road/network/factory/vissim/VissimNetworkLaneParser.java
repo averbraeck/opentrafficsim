@@ -168,8 +168,8 @@ public class VissimNetworkLaneParser implements Serializable
         }
 
         // make the GTUTypes ALL and NONE to get started
-        this.gtuTypes.put("ALL", GTUType.ALL);
-        this.gtuTypes.put("NONE", GTUType.NONE);
+        this.gtuTypes.put("ALL", GTUType.VEHICLE);
+        //this.gtuTypes.put("NONE", GTUType.NONE);
 
         // Read the link (and connector) tags and ...
         // Construct the nodes as Vissim does not use Nodes!!

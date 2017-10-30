@@ -26,6 +26,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsData;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
@@ -94,12 +95,13 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
      * @param gtu GTU
      * @param lanePerception perception
      * @param synchronization type of synchronization
+     * @param gapAcceptance gap-acceptance
      */
     public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu, final LanePerception lanePerception,
-            final Synchronization synchronization)
+            final Synchronization synchronization, final GapAcceptance gapAcceptance)
     {
         super(carFollowingModel, gtu, lanePerception);
-        this.lmrsData = new LmrsData(synchronization);
+        this.lmrsData = new LmrsData(synchronization, gapAcceptance);
     }
 
     /**

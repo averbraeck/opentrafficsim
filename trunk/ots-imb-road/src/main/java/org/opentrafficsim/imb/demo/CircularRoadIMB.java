@@ -8,7 +8,6 @@ import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
@@ -35,6 +34,7 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -696,7 +696,6 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                 this.paths.get(laneIndex).add(lanes1[laneIndex]);
                 this.paths.get(laneIndex).add(lanes2[laneIndex]);
             }
-            // create a sensor on every lane
             int sensorNr = 0;
             for (Lane lane : lanes1)
             {
@@ -877,7 +876,8 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                 final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator)
                 throws NetworkException, OTSGeometryException
         {
-            super(id, lane, position, triggerPosition, simulator, LaneBasedObject.makeGeometry(lane, position));
+            super(id, lane, position, triggerPosition, simulator, LaneBasedObject.makeGeometry(lane, position),
+                    Compatible.EVERYTHING);
             try
             {
                 new SensorAnimation(this, position, simulator, Color.RED);

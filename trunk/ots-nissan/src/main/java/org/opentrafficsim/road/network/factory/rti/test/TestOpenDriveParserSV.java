@@ -374,9 +374,11 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
             nodesVia1.add(link8.getStartNode());
             try
             {
-                cr1 = this.network.getShortestRouteBetween(GTUType.ALL, link1.getStartNode(), link1.getStartNode(), nodesVia1);
+                cr1 = this.network.getShortestRouteBetween(GTUType.VEHICLE, link1.getStartNode(), link1.getStartNode(),
+                        nodesVia1);
                 Collections.reverse(nodesVia1);
-                cr2 = this.network.getShortestRouteBetween(GTUType.ALL, link1.getStartNode(), link1.getStartNode(), nodesVia1);
+                cr2 = this.network.getShortestRouteBetween(GTUType.VEHICLE, link1.getStartNode(), link1.getStartNode(),
+                        nodesVia1);
             }
             catch (NetworkException exception)
             {
@@ -388,9 +390,11 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
             nodesVia2.add(link5.getEndNode());
             try
             {
-                cr3 = this.network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
+                cr3 = this.network.getShortestRouteBetween(GTUType.VEHICLE, link3.getStartNode(), link3.getStartNode(),
+                        nodesVia2);
                 Collections.reverse(nodesVia2);
-                cr4 = this.network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
+                cr4 = this.network.getShortestRouteBetween(GTUType.VEHICLE, link3.getStartNode(), link3.getStartNode(),
+                        nodesVia2);
             }
             catch (NetworkException exception)
             {
@@ -402,9 +406,11 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
             nodesVia3.add(link8.getEndNode());
             try
             {
-                cr5 = this.network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
+                cr5 = this.network.getShortestRouteBetween(GTUType.VEHICLE, link6.getStartNode(), link6.getStartNode(),
+                        nodesVia3);
                 Collections.reverse(nodesVia3);
-                cr6 = this.network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
+                cr6 = this.network.getShortestRouteBetween(GTUType.VEHICLE, link6.getStartNode(), link6.getStartNode(),
+                        nodesVia3);
             }
             catch (NetworkException exception)
             {
@@ -457,7 +463,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     }
                 }
 
-                if (lane.getDirectionality(carType).equals(LongitudinalDirectionality.DIR_MINUS))
+                if (lane.getLaneType().getDirectionality(carType).equals(LongitudinalDirectionality.DIR_MINUS))
                 {
                     dir = GTUDirectionality.DIR_MINUS;
                 }

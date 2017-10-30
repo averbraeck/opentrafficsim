@@ -26,9 +26,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -64,6 +64,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -576,7 +577,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         public final LMRS create(final LaneBasedGTU gtu) throws GTUException
         {
             DefaultLMRSPerceptionFactory pFac = new DefaultLMRSPerceptionFactory();
-            LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE);
+            LMRS lmrs =
+                    new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE, GapAcceptance.INFORMED);
             lmrs.setDefaultIncentives();
             if (gtu.getGTUType().isOfType(GTUType.SCHEDULED_BUS))
             {
@@ -610,8 +612,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public void setValues(final Parameters defaultCharacteristics, final GTUType gtuType)
-                throws ParameterException
+        public void setValues(final Parameters defaultCharacteristics, final GTUType gtuType) throws ParameterException
         {
 
             defaultCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.METER));

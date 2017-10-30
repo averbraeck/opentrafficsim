@@ -22,6 +22,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -128,7 +129,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
         OTSNetwork network = new OTSNetwork("network");
         OTSNode prevNode = null;
         Lane[] result = new Lane[lengths.length];
-        LaneType laneType = LaneType.ALL;
+        LaneType laneType = LaneType.FREEWAY;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
         double cumulativeLength = 0;
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
@@ -234,7 +235,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                     }
                 }
                 TrafficLightSensor tls = new TrafficLightSensor(sensorId, pA.getLane(), pA.getPosition(), pB.getLane(),
-                        pB.getPosition(), intermediateLanes, entryPosition, exitPosition, simulator);
+                        pB.getPosition(), intermediateLanes, entryPosition, exitPosition, simulator, Compatible.EVERYTHING);
                 assertEquals("Id should match the provided id", sensorId, tls.getId());
                 assertEquals("Simulator should match", simulator, tls.getSimulator());
                 assertEquals("Entry position", entryPosition, tls.getPositionTypeEntry());

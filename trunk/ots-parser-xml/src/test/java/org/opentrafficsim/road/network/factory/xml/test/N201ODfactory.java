@@ -169,7 +169,7 @@ public class N201ODfactory
                     Route route = new Route(origin + "->" + destination);
                     try
                     {
-                        route = network.getShortestRouteBetween(GTUType.ALL, origin, destination);
+                        route = network.getShortestRouteBetween(GTUType.VEHICLE, origin, destination);
                     }
                     catch (NetworkException exception)
                     {

@@ -283,17 +283,17 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 destroyLink(nlp, this.network, "3766111");
 
                 Lane lane109 = makeLane(this.network, "3766068.1", "3766068.0", "3", "3766059.7", "3766059.150", "2", "3766109",
-                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation109 = new LaneAnimationOD(lane109, this.simulator, Color.gray);
                 nlp.animationMap.put(lane109, animation109);
 
                 Lane lane110 = makeLane(this.network, "3766068.1", "3766068.0", "4", "3766059.7", "3766059.150", "3", "3766110",
-                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation110 = new LaneAnimationOD(lane110, this.simulator, Color.gray);
                 nlp.animationMap.put(lane110, animation110);
 
                 Lane lane111 = makeLane(this.network, "3766068.1", "3766068.0", "5", "3766059.7", "3766059.150", "4", "3766111",
-                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation111 = new LaneAnimationOD(lane111, this.simulator, Color.gray);
                 nlp.animationMap.put(lane111, animation111);
 
@@ -302,22 +302,22 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 destroyLink(nlp, this.network, "3766177");
 
                 Lane lane175 = makeLane(this.network, "3766059.1", "3766059.0", "3", "3766054.5", "3766054.191", "2", "3766175",
-                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation175 = new LaneAnimationOD(lane175, this.simulator, Color.gray);
                 nlp.animationMap.put(lane175, animation175);
 
                 Lane lane176 = makeLane(this.network, "3766059.1", "3766059.0", "4", "3766054.5", "3766054.191", "3", "3766176",
-                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation176 = new LaneAnimationOD(lane176, this.simulator, Color.gray);
                 nlp.animationMap.put(lane176, animation176);
 
                 Lane lane177 = makeLane(this.network, "3766059.1", "3766059.0", "5", "3766054.5", "3766054.191", "4", "3766177",
-                        "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                        "-1", LinkType.ROAD, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation177 = new LaneAnimationOD(lane177, this.simulator, Color.gray);
                 nlp.animationMap.put(lane177, animation177);
 
                 Lane lane191x = makeLane(this.network, "3766054.5", "3766054.191", "-6", "3766059.1", "3766059.0", "-4",
-                        "3766191x", "-1", LinkType.ALL, LaneKeepingPolicy.KEEP_LANE);
+                        "3766191x", "-1", LinkType.ROAD, LaneKeepingPolicy.KEEP_LANE);
                 Renderable2D animation191x = new LaneAnimationOD(lane191x, this.simulator, Color.gray);
                 nlp.animationMap.put(lane191x, animation191x);
 
@@ -678,7 +678,8 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 if (cse instanceof Lane)
                 {
                     Lane lane = (Lane) cse;
-                    if (lane.getDirectionality(this.carType).equals(dir) || lane.getDirectionality(this.carType).isBoth())
+                    if (lane.getLaneType().getDirectionality(this.carType).equals(dir)
+                            || lane.getLaneType().getDirectionality(this.carType).isBoth())
                     {
                         lanes.add(lane);
                     }
@@ -814,9 +815,8 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             OTSLine3D designLine = Bezier.cubic(64, sp, ep);
             CrossSectionLink newLink = new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine, this.simulator,
                     laneKeepingPolicy);
-            newLink.addDirectionality(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
             Lane newLane = new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
-                    LongitudinalDirectionality.DIR_PLUS, sLane.getSpeedLimit(GTUType.ALL), sLane.getOvertakingConditions());
+                    sLane.getSpeedLimit(GTUType.VEHICLE), sLane.getOvertakingConditions());
             return newLane;
         }
 

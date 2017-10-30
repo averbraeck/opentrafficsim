@@ -382,7 +382,7 @@ public enum Synchronization implements LmrsParameters
                         a = gentleUrgency(acc, desire, params);
                     }
                 }
-                else if (!LmrsUtil.acceptGapNeighbors(perception, params, sli, cfm, desire, ownSpeed, lat))
+                else if (!LmrsUtil.acceptLaneChange(perception, params, sli, cfm, desire, ownSpeed, lat, lmrsData.getGapAcceptance()))
                 {
                     a = stopForEnd(xCur, xMerge, params, ownSpeed, cfm, sli);
                     // but no stronger than getting behind the leader

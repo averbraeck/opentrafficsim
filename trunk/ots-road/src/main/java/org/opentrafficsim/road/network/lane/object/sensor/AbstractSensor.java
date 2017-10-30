@@ -127,10 +127,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
             double w45 = lane.getWidth(longitudinalPosition).si * 0.45;
             DirectedPoint c = lane.getCenterLine().getLocation(longitudinalPosition);
             double a = c.getRotZ();
-            OTSPoint3D p1 =
-                    new OTSPoint3D(c.x + w45 * Math.cos(a + Math.PI / 2), c.y - w45 * Math.sin(a + Math.PI / 2), c.z);
-            OTSPoint3D p2 =
-                    new OTSPoint3D(c.x - w45 * Math.cos(a + Math.PI / 2), c.y + w45 * Math.sin(a + Math.PI / 2), c.z);
+            OTSPoint3D p1 = new OTSPoint3D(c.x + w45 * Math.cos(a + Math.PI / 2), c.y - w45 * Math.sin(a + Math.PI / 2), c.z);
+            OTSPoint3D p2 = new OTSPoint3D(c.x - w45 * Math.cos(a + Math.PI / 2), c.y + w45 * Math.sin(a + Math.PI / 2), c.z);
             return new OTSLine3D(p1, p2);
         }
         catch (OTSGeometryException exception)
@@ -202,8 +200,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
         }
         else if (!this.getLane().equals(other.getLane()))
             return false;
-        if (Double.doubleToLongBits(this.getLongitudinalPosition().si) != Double.doubleToLongBits(other
-                .getLongitudinalPosition().si))
+        if (Double.doubleToLongBits(this.getLongitudinalPosition().si) != Double
+                .doubleToLongBits(other.getLongitudinalPosition().si))
             return false;
         if (this.positionType == null)
         {

@@ -460,7 +460,7 @@ final class Links
 
         // Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, linkTag.nodeStartTag.node,
-                linkTag.nodeEndTag.node, LinkType.ALL, designLine, simulator,
+                linkTag.nodeEndTag.node, LinkType.ROAD, designLine, simulator,
                 new HashMap<GTUType, LongitudinalDirectionality>(), linkTag.laneKeepingPolicy);
 
         if (linkTag.priority != null)
@@ -514,7 +514,7 @@ final class Links
                         case BLOCKED:
                         case DASHED:
                             Stripe dashedLine = new Stripe(csl, cseTag.offset, cseTag.width);
-                            dashedLine.addPermeability(GTUType.ALL, Permeable.BOTH);
+                            dashedLine.addPermeability(GTUType.VEHICLE, Permeable.BOTH);
                             if (simulator != null && simulator instanceof AnimatorInterface)
                             {
                                 try
@@ -547,7 +547,7 @@ final class Links
 
                         case LEFTONLY:
                             Stripe leftOnlyLine = new Stripe(csl, cseTag.offset, cseTag.width);
-                            leftOnlyLine.addPermeability(GTUType.ALL, Permeable.LEFT); // TODO correct?
+                            leftOnlyLine.addPermeability(GTUType.VEHICLE, Permeable.LEFT); // TODO correct?
                             if (simulator != null && simulator instanceof AnimatorInterface)
                             {
                                 try
@@ -564,7 +564,7 @@ final class Links
 
                         case RIGHTONLY:
                             Stripe rightOnlyLine = new Stripe(csl, cseTag.offset, cseTag.width);
-                            rightOnlyLine.addPermeability(GTUType.ALL, Permeable.RIGHT); // TODO correct?
+                            rightOnlyLine.addPermeability(GTUType.VEHICLE, Permeable.RIGHT); // TODO correct?
                             if (simulator != null && simulator instanceof AnimatorInterface)
                             {
                                 try
@@ -614,8 +614,6 @@ final class Links
                         if (laneOverrideTag.direction != null)
                             direction = laneOverrideTag.direction;
                     }
-                    Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
-                    directionality.put(GTUType.ALL, direction);
                     if (linkDirection.equals(LongitudinalDirectionality.DIR_NONE))
                     {
                         linkDirection = direction;
@@ -635,12 +633,9 @@ final class Links
                         }
                     }
 
-                    // XXX: Quick hack to solve the error that the lane directionality has not (yet) been registered at the link
-                    csl.addDirectionality(GTUType.ALL, linkDirection);
-
-                    // XXX: LaneTypes with compatibilities might have to be defined in a new way -- LaneType.ALL for now...
+                    // XXX: LaneTypes with compatibilities might have to be defined in a new way -- LaneType.FREEWAY for now...
                     Lane lane = new Lane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,
-                            LaneType.ALL, directionality, cseTag.legalSpeedLimits, overtakingConditions);
+                            LaneType.FREEWAY, cseTag.legalSpeedLimits, overtakingConditions);
                     // System.out.println(OTSGeometry.printCoordinates("#link design line: \nc1,0,0\n#",
                     // lane.getParentLink().getDesignLine(), "\n "));
                     // System.out.println(OTSGeometry.printCoordinates("#lane center line: \nc0,1,0\n#", lane.getCenterLine(),
@@ -794,8 +789,5 @@ final class Links
             }
 
         } // for (CrossSectionElementTag cseTag : roadTypeTag.cseTags.values())
-
-        // add the calculated direction to the link
-        csl.addDirectionality(GTUType.ALL, linkDirection);
     }
 }

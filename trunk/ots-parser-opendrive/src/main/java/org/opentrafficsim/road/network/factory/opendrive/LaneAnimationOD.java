@@ -151,9 +151,12 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
         PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
         // paintLine(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine());
         paintLine(graphics, Color.white, lane.getLocation(), lane.getContour());
-        paintArrow(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine(), 0.25, lane.getDirectionality(GTUType.ALL));
-        paintArrow(graphics, Color.green, lane.getLocation(), lane.getCenterLine(), 0.50, lane.getDirectionality(GTUType.ALL));
-        paintArrow(graphics, Color.blue, lane.getLocation(), lane.getCenterLine(), 0.75, lane.getDirectionality(GTUType.ALL));
+        paintArrow(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine(), 0.25,
+                lane.getLaneType().getDirectionality(GTUType.VEHICLE));
+        paintArrow(graphics, Color.green, lane.getLocation(), lane.getCenterLine(), 0.50,
+                lane.getLaneType().getDirectionality(GTUType.VEHICLE));
+        paintArrow(graphics, Color.blue, lane.getLocation(), lane.getCenterLine(), 0.75,
+                lane.getLaneType().getDirectionality(GTUType.VEHICLE));
     }
 
     /** {@inheritDoc} */

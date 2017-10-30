@@ -20,6 +20,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.compatibility.Compatibility;
+import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -29,6 +31,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -278,20 +281,21 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         }, truckSimulator, network);
 
         // Create some LaneTypes
-        Set<GTUType> trucksForbiddenSet = new HashSet<>();
-        trucksForbiddenSet.add(passengerCar.getGTUType());
-        LaneType trucksForbidden = new LaneType("No Trucks", LaneType.ALL, trucksForbiddenSet);
+        GTUCompatibility<LaneType> noTrucks = new GTUCompatibility<>((LaneType) null);
+        noTrucks.addAllowedGTUType(passengerCar.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
+        LaneType trucksForbidden = new LaneType("No Trucks", LaneType.FREEWAY, noTrucks);
 
-        Set<GTUType> trucksOnlySet = new HashSet<>();
-        trucksOnlySet.add(truck.getGTUType());
-        LaneType trucksOnly = new LaneType("Trucks Only", LaneType.ALL, trucksOnlySet);
+        GTUCompatibility<LaneType> truckOnly = new GTUCompatibility<>((LaneType) null);
+        truckOnly.addAllowedGTUType(truck.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
+        LaneType trucksOnly = new LaneType("Trucks Only", LaneType.FREEWAY, truckOnly);
 
-        LaneType bicycleLane = new LaneType("Bicycles Only", LaneType.ALL, new HashSet<GTUType>());
+        GTUCompatibility<LaneType> bicyclesOnly = new GTUCompatibility<>((LaneType) null);
+        LaneType bicycleLane = new LaneType("Bicycles Only", LaneType.FREEWAY, bicyclesOnly);
 
-        Set<GTUType> urbanRoadSet = new HashSet<>();
-        urbanRoadSet.add(passengerCar.getGTUType());
-        trucksOnlySet.add(truck.getGTUType());
-        LaneType urbanRoad = new LaneType("Urban road - open to all traffic", LaneType.ALL, urbanRoadSet);
+        GTUCompatibility<LaneType> urban = new GTUCompatibility<>((LaneType) null);
+        urban.addAllowedGTUType(passengerCar.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
+        urban.addAllowedGTUType(truck.getGTUType(), LongitudinalDirectionality.DIR_BOTH);
+        LaneType urbanRoad = new LaneType("Urban road - open to all traffic", LaneType.FREEWAY, urban);
 
         // Now we test all combinations
         // TODO assertTrue("Passengers cars are allowed on a no trucks lane", passengerCar.isCompatible(trucksForbidden));
