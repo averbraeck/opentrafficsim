@@ -28,6 +28,24 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 public class IDMPlus extends AbstractIDM
 {
 
+    /**
+     * Default constructor using default models for desired headway and desired speed.
+     */
+    public IDMPlus()
+    {
+        super(HEADWAY, DESIRED_SPEED);
+    }
+    
+    /**
+     * Constructor with modular models for desired headway and desired speed.
+     * @param desiredHeadwayModel desired headway model
+     * @param desiredSpeedModel desired speed model
+     */
+    public IDMPlus(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
+    {
+        super(desiredHeadwayModel, desiredSpeedModel);
+    }
+    
     /** {@inheritDoc} */
     @Override
     public final String getName()

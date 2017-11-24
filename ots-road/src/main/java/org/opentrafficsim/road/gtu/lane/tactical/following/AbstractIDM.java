@@ -5,6 +5,7 @@ import java.util.SortedMap;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -55,20 +56,36 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
     public static final ParameterTypeDouble DELTA = new ParameterTypeDouble("delta",
             "Acceleration flattening exponent towards desired speed.", 4.0, ConstraintInterface.POSITIVE);
 
-    /** {@inheritDoc} */
-    @Override
-    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+    /** Default IDM desired headway model. */
+    public static final DesiredHeadwayModel HEADWAY = new DesiredHeadwayModel()
     {
-        Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo).multiplyBy(parameters.getParameter(FSPEED));
-        Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
-        return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
+        @Override
+        public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
+        {
+            return Length.createSI(parameters.getParameter(S0).si + speed.si * parameters.getParameter(T).si);
+        }
+    };
+    
+    /** Default IDM desired speed model. */
+    public static final DesiredSpeedModel DESIRED_SPEED = new DesiredSpeedModel()
     {
-        return parameters.getParameter(S0).plus(speed.multiplyBy(parameters.getParameter(T)));
+        @Override
+        public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+        {
+            Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo).multiplyBy(parameters.getParameter(FSPEED));
+            Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
+            return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
+        }
+    };
+    
+    /**
+     * Constructor with modular models for desired headway and desired speed.
+     * @param desiredHeadwayModel desired headway model
+     * @param desiredSpeedModel desired speed model
+     */
+    public AbstractIDM(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
+    {
+        super(desiredHeadwayModel, desiredSpeedModel);
     }
 
     /**
@@ -102,8 +119,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
             return new Acceleration(aFree, AccelerationUnit.SI);
         }
         // return combined acceleration
-        return combineInteractionTerm(new Acceleration(aFree, AccelerationUnit.SI), parameters, speed, desiredSpeed,
-                desiredHeadway, leaders);
+        return combineInteractionTerm(Acceleration.createSI(aFree), parameters, speed, desiredSpeed, desiredHeadway, leaders);
     }
 
     /**
