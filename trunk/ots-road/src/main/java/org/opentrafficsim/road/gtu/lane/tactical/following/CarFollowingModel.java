@@ -5,9 +5,9 @@ import java.util.SortedMap;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -28,30 +28,12 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface CarFollowingModel
+public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedModel
 {
 
     /** Parameter type for car-following model. */
     ParameterTypeClass<CarFollowingModel> CAR_FOLLOWING_MODEL = new ParameterTypeClass<>("cf.model", "car-following model",
             ParameterTypeClass.getValueClass(CarFollowingModel.class));
-
-    /**
-     * Determines the desired speed.
-     * @param parameters parameters
-     * @param speedInfo info regarding the desired speed for car-following
-     * @throws ParameterException if parameter exception occurs
-     * @return desired speed
-     */
-    Speed desiredSpeed(Parameters parameters, SpeedLimitInfo speedInfo) throws ParameterException;
-
-    /**
-     * Determines the desired headway in equilibrium conditions, i.e. no speed difference with the leader.
-     * @param parameters parameters
-     * @param speed speed to determine the desired headway at
-     * @throws ParameterException if parameter exception occurs
-     * @return desired headway
-     */
-    Length desiredHeadway(Parameters parameters, Speed speed) throws ParameterException;
 
     /**
      * Determination of car-following acceleration, possibly based on multiple leaders. The implementation should be able to

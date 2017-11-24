@@ -6,8 +6,8 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 import nl.tudelft.simulation.language.Throw;
@@ -24,6 +24,36 @@ import nl.tudelft.simulation.language.Throw;
 public abstract class AbstractCarFollowingModel implements CarFollowingModel
 {
 
+    /** Desired headway model. */
+    private DesiredHeadwayModel desiredHeadwayModel;
+
+    /** Desired speed model. */
+    private DesiredSpeedModel desiredSpeedModel;
+
+    /**
+     * @param desiredHeadwayModel desired headway model
+     * @param desiredSpeedModel desired speed model
+     */
+    public AbstractCarFollowingModel(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
+    {
+        this.desiredHeadwayModel = desiredHeadwayModel;
+        this.desiredSpeedModel = desiredSpeedModel;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
+    {
+        return this.desiredHeadwayModel.desiredHeadway(parameters, speed);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+    {
+        return this.desiredSpeedModel.desiredSpeed(parameters, speedInfo);
+    }
+
     /**
      * Forwards the calculation to a similar method with desired speed and desired (equilibrium) headway pre-calculated.
      * Additionally, if the headway to the (first) leader is negative, <tt>Double.NEGATIVE_INFINITY</tt> is returned as an
@@ -39,9 +69,8 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      * @throws NullPointerException if any input is null
      */
     @Override
-    public final Acceleration followingAcceleration(final Parameters parameters,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo, final SortedMap<Length, Speed> leaders)
-            throws ParameterException
+    public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
+            final SpeedLimitInfo speedLimitInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
     {
         Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
@@ -67,8 +96,8 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      * @return car-following acceleration
      * @throws ParameterException if parameter exception occurs
      */
-    protected abstract Acceleration followingAcceleration(Parameters parameters, Speed speed,
-            Speed desiredSpeed, Length desiredHeadway, SortedMap<Length, Speed> leaders) throws ParameterException;
+    protected abstract Acceleration followingAcceleration(Parameters parameters, Speed speed, Speed desiredSpeed,
+            Length desiredHeadway, SortedMap<Length, Speed> leaders) throws ParameterException;
 
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")

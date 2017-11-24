@@ -17,6 +17,9 @@ import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractCarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredHeadwayModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredSpeedModel;
+import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -29,7 +32,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 public class ToledoCarFollowing extends AbstractCarFollowingModel
 {
 
@@ -101,22 +103,36 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
     public static final ParameterTypeDouble SIGMADEC = new ParameterTypeDouble("Sigma_DEC",
             "Car-following deceleration standard deviation.", Math.exp(0.156));
 
-    /** {@inheritDoc} */
-    @Override
-    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+    /** Toledo desired headway model. */
+    private static final DesiredHeadwayModel HEADWAY = new DesiredHeadwayModel()
     {
-        return parameters
-                .getParameter(CDS)
-                .plus(parameters.getParameter(BETADS))
-                .plus(parameters.getParameter(ALPHADS).multiplyBy(
-                        parameters.getParameter(ToledoLaneChangeParameters.ERROR_TERM)));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
+        @Override
+        public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
+        {
+            return parameters.getParameter(HSTAR).multiplyBy(speed);
+        }
+    };
+    
+    /** Toledo desired speed model. */
+    private static final DesiredSpeedModel DESIRED_SPEED = new DesiredSpeedModel()
     {
-        return parameters.getParameter(HSTAR).multiplyBy(speed);
+        @Override
+        public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+        {
+            return parameters
+                    .getParameter(CDS)
+                    .plus(parameters.getParameter(BETADS))
+                    .plus(parameters.getParameter(ALPHADS).multiplyBy(
+                            parameters.getParameter(ToledoLaneChangeParameters.ERROR_TERM)));
+        }
+    };   
+    
+    /**
+     * Constructor using Toledo models for desired headway ans speed.
+     */
+    public ToledoCarFollowing()
+    {
+        super(HEADWAY, DESIRED_SPEED);
     }
 
     /** {@inheritDoc} */

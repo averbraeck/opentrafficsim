@@ -2,12 +2,11 @@ package org.opentrafficsim.road.gtu.lane.tactical.following;
 
 import java.util.SortedMap;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
 
 /**
  * Implementation of the IDM. See <a
@@ -22,6 +21,24 @@ import org.opentrafficsim.base.parameters.ParameterException;
  */
 public class IDM extends AbstractIDM
 {
+    
+    /**
+     * Default constructor using default models for desired headway and desired speed.
+     */
+    public IDM()
+    {
+        super(HEADWAY, DESIRED_SPEED);
+    }
+    
+    /**
+     * Constructor with modular models for desired headway and desired speed.
+     * @param desiredHeadwayModel desired headway model
+     * @param desiredSpeedModel desired speed model
+     */
+    public IDM(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
+    {
+        super(desiredHeadwayModel, desiredSpeedModel);
+    }
     
     /** {@inheritDoc} */
     @Override
@@ -48,7 +65,7 @@ public class IDM extends AbstractIDM
                 dynamicDesiredHeadway(parameters, speed, desiredHeadway, leaders.get(leaders.firstKey())).si
                         / leaders.firstKey().si;
         double aInt = -a.si * sRatio * sRatio;
-        return new Acceleration(aFree.si + aInt, AccelerationUnit.SI);
+        return Acceleration.createSI(aFree.si + aInt);
     }
 
 }
