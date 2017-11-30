@@ -144,8 +144,8 @@ public enum Synchronization implements LmrsParameters
                     relativeLane), perception, RelativeLane.CURRENT))
             {
                 Parameters params2 = leader.getParameters();
-                double desire = lat.equals(LateralDirectionality.LEFT) && params2.contains(DRIGHT) ? params2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) && params2.contains(DLEFT) ? params2.getParameter(DLEFT) : 0;
+                double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
+                        : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
                 {
                     Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
@@ -171,12 +171,9 @@ public enum Synchronization implements LmrsParameters
             Acceleration a = Acceleration.POSITIVE_INFINITY;
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            SortedSet<
-                    HeadwayGTU> set =
-                            removeAllUpstreamOfConflicts(
-                                    removeAllUpstreamOfConflicts(perception.getPerceptionCategory(NeighborsPerception.class)
-                                            .getLeaders(relativeLane), perception, relativeLane),
-                                    perception, RelativeLane.CURRENT);
+            SortedSet<HeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
+                    relativeLane), perception, RelativeLane.CURRENT);
             HeadwayGTU leader = null;
             if (set != null)
             {
@@ -199,8 +196,8 @@ public enum Synchronization implements LmrsParameters
             if (leader != null)
             {
                 Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-                Acceleration aSingle =
-                        LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, params, sli, cfm);
+                Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,
+                        params, sli, cfm);
                 a = Acceleration.min(a, aSingle);
             }
             a = gentleUrgency(a, desire, params);
@@ -382,7 +379,8 @@ public enum Synchronization implements LmrsParameters
                         a = gentleUrgency(acc, desire, params);
                     }
                 }
-                else if (!LmrsUtil.acceptLaneChange(perception, params, sli, cfm, desire, ownSpeed, lat, lmrsData.getGapAcceptance()))
+                else if (!LmrsUtil.acceptLaneChange(perception, params, sli, cfm, desire, ownSpeed, lat,
+                        lmrsData.getGapAcceptance()))
                 {
                     a = stopForEnd(xCur, xMerge, params, ownSpeed, cfm, sli);
                     // but no stronger than getting behind the leader
@@ -445,8 +443,8 @@ public enum Synchronization implements LmrsParameters
                     relativeLane), perception, RelativeLane.CURRENT))
             {
                 Parameters params2 = leader.getParameters();
-                double desire = lat.equals(LateralDirectionality.LEFT) && params2.contains(DRIGHT) ? params2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) && params2.contains(DLEFT) ? params2.getParameter(DLEFT) : 0;
+                double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
+                        : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
                 if (desire >= dCoop && leader.getDistance().gt0())
                 {
                     Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
@@ -472,9 +470,8 @@ public enum Synchronization implements LmrsParameters
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    abstract Acceleration synchronize(LanePerception perception, Parameters params, SpeedLimitInfo sli,
-            CarFollowingModel cfm, double desire, LateralDirectionality lat, LmrsData lmrsData)
-            throws ParameterException, OperationalPlanException;
+    abstract Acceleration synchronize(LanePerception perception, Parameters params, SpeedLimitInfo sli, CarFollowingModel cfm,
+            double desire, LateralDirectionality lat, LmrsData lmrsData) throws ParameterException, OperationalPlanException;
 
     /**
      * Determine acceleration for cooperation.
@@ -488,9 +485,8 @@ public enum Synchronization implements LmrsParameters
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    abstract Acceleration cooperate(LanePerception perception, Parameters params, SpeedLimitInfo sli,
-            CarFollowingModel cfm, LateralDirectionality lat, Desire ownDesire)
-            throws ParameterException, OperationalPlanException;
+    abstract Acceleration cooperate(LanePerception perception, Parameters params, SpeedLimitInfo sli, CarFollowingModel cfm,
+            LateralDirectionality lat, Desire ownDesire) throws ParameterException, OperationalPlanException;
 
     /**
      * Removes all GTUs from the set, that are found upstream on the conflicting lane of a conflict in the current lane.
@@ -708,8 +704,8 @@ public enum Synchronization implements LmrsParameters
      * @return acceleration to stop for a split or dead-end, accounting for infrastructure
      * @throws ParameterException if parameter is not defined
      */
-    static Acceleration stopForEnd(final Length xCur, final Length xMerge, final Parameters params,
-            final Speed ownSpeed, final CarFollowingModel cfm, final SpeedLimitInfo sli) throws ParameterException
+    static Acceleration stopForEnd(final Length xCur, final Length xMerge, final Parameters params, final Speed ownSpeed,
+            final CarFollowingModel cfm, final SpeedLimitInfo sli) throws ParameterException
     {
         if (xCur.lt0())
         {

@@ -72,29 +72,54 @@ public class Parameters implements Serializable
     {
         Throw.when(value == null, ParameterException.class,
                 "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
-        parameterType.check(value, this);
-        saveSetParameter(parameterType, value);
+        saveSetParameter(parameterType, value, false);
     }
 
     /**
-     * Remember the current value for recovery on reset.
+     * Set parameter value of given parameter type, store old value to allow a reset.
+     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
+     * @param value T; new value for the parameter of type <code>parameterType</code>.
+     * @param <T> Class of value.
+     * @throws ParameterException If the value does not comply with value type constraints.
+     */
+    public final <T> void setParameterResettable(final ParameterType<T> parameterType, final T value) throws ParameterException
+    {
+        Throw.when(value == null, ParameterException.class,
+                "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
+        saveSetParameter(parameterType, value, true);
+    }
+
+    /**
+     * Sets a parameter value while checking conditions.
      * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type
      * @param value T; new value for the parameter
+     * @param resettable boolean; whether the parameter set should be resettable
      * @param <T> Class of the value
      * @throws ParameterException If the value does not comply with constraints.
      */
-    private <T> void saveSetParameter(final ParameterType<T> parameterType, final T value) throws ParameterException
+    private <T> void saveSetParameter(final ParameterType<T> parameterType, final T value, final boolean resettable)
+            throws ParameterException
     {
+        parameterType.check(value, this);
         parameterType.checkConstraint(value);
         checkCopyOnWrite();
-        if (this.parameters.containsKey(parameterType))
+        if (resettable)
         {
-            this.previous.put(parameterType, this.parameters.get(parameterType));
+            Object prevValue = this.parameters.get(parameterType);
+            if (prevValue == null)
+            {
+                // remember that there was no value before this set
+                this.previous.put(parameterType, EMPTY);
+            }
+            else
+            {
+                this.previous.put(parameterType, prevValue);
+            }
         }
         else
         {
-            // remember that there was no value before this set
-            this.previous.put(parameterType, EMPTY);
+            // no reset after non-resettale set
+            this.previous.remove(parameterType);
         }
         this.parameters.put(parameterType, value);
     }
@@ -106,19 +131,19 @@ public class Parameters implements Serializable
      */
     public final void resetParameter(final ParameterType<?> parameterType) throws ParameterException
     {
-        Throw.when(!this.previous.containsKey(parameterType), ParameterException.class,
-                "Reset on parameter of type '%s' could not be performed, it was not set.", parameterType.getId());
         checkCopyOnWrite();
-        if (this.previous.get(parameterType) instanceof Empty)
+        Object prevValue = this.previous.remove(parameterType);
+        Throw.when(prevValue == null, ParameterException.class,
+                "Reset on parameter of type '%s' could not be performed, it was not set resettable.", parameterType.getId());
+        if (prevValue instanceof Empty)
         {
             // no value was set before last set, so make parameter type not set
             this.parameters.remove(parameterType);
         }
         else
         {
-            this.parameters.put(parameterType, this.previous.get(parameterType));
+            this.parameters.put(parameterType, prevValue);
         }
-        this.previous.remove(parameterType); // prevent consecutive resets
     }
 
     /**
@@ -144,22 +169,26 @@ public class Parameters implements Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public <T> T getParameter(final ParameterType<T> parameterType) throws ParameterException
     {
-        checkContains(parameterType);
         @SuppressWarnings("unchecked")
         // set methods guarantee matching of parameter type and value
         T result = (T) this.parameters.get(parameterType);
+        Throw.when(result == null, ParameterException.class, "Could not get parameter of type '%s' as it was not set.",
+                parameterType.getId());
         return result;
     }
 
     /**
-     * Check whether parameter has been set.
-     * @param parameterType Parameter type.
-     * @throws ParameterException If parameter is not present.
+     * Returns a parameter value, or {@code null} if not present. This can be used to prevent frequent calls to both
+     * {@code contains()} and {@code getParameter()} in performance critical code.
+     * @param parameterType ParameterType<T>; parameter type
+     * @param <T> type of parameter value
+     * @return parameter value, or {@code null} if not present
      */
-    private void checkContains(final ParameterType<?> parameterType) throws ParameterException
+    @SuppressWarnings("unchecked")
+    public final <T> T getParameterOrNull(final ParameterType<T> parameterType)
     {
-        Throw.when(!contains(parameterType), ParameterException.class,
-                "Could not get parameter of type '%s' as it was not set.", parameterType.getId());
+        // set methods guarantee matching of parameter type and value
+        return (T) this.parameters.get(parameterType);
     }
 
     /**
@@ -182,7 +211,7 @@ public class Parameters implements Serializable
     }
 
     /**
-     * Sets the default value of a parameter.
+     * Sets the default value of a parameter. Default value sets are not resettable.
      * @param parameter AbstractParameterType&lt;T&gt;; the parameter to set the default value of
      * @param <T> Class of the value
      * @return Parameters; this set of parameters (for method chaining)
@@ -193,7 +222,7 @@ public class Parameters implements Serializable
         T defaultValue = parameter.getDefaultValue();
         try
         {
-            saveSetParameter(parameter, defaultValue);
+            saveSetParameter(parameter, defaultValue, false);
         }
         catch (ParameterException pe)
         {
@@ -204,8 +233,8 @@ public class Parameters implements Serializable
     }
 
     /**
-     * Sets the default values of all accessible parameters defined in the given class.<br>
-     * TODO Determin if this method should call checkCopyOnWrite and/or backup the current values in this.previous
+     * Sets the default values of all accessible parameters defined in the given class. Default value sets are not
+     * resettable.<br>
      * @param clazz Class&lt;?&gt;; class with parameters
      * @return Parameters; this set of parameters (for method chaining)
      */
@@ -215,7 +244,7 @@ public class Parameters implements Serializable
     }
 
     /**
-     * Sets the default values of all accessible parameters defined in the given class.
+     * Sets the default values of all accessible parameters defined in the given class. Default value sets are not resettable.
      * @param clazz Class&lt;?&gt;; class with parameters
      * @param <T> Class of the value
      * @return this set of parameters (for method chaining)
@@ -235,7 +264,7 @@ public class Parameters implements Serializable
                     field.setAccessible(true);
                     ParameterType<T> p = (ParameterType<T>) field.get(clazz);
                     T defaultValue = p.getDefaultValue();
-                    saveSetParameter(p, defaultValue);
+                    saveSetParameter(p, defaultValue, false);
                 }
                 catch (IllegalArgumentException iare)
                 {
@@ -258,16 +287,13 @@ public class Parameters implements Serializable
     }
 
     /**
-     * Sets all parameters from the given set in this set. <br>
-     * TODO Determine whether this method should call checkCopyOnWrite and/or make backups in this.previous
+     * Sets all parameters from the given set in this set. These sets are not resettable.<br>
      * @param referenceSet Parameters; set of parameters to set in this set
      */
     public final void setAll(final Parameters referenceSet)
     {
-        for (ParameterType<?> key : referenceSet.parameters.keySet())
-        {
-            this.parameters.put(key, referenceSet.parameters.get(key));
-        }
+        checkCopyOnWrite();
+        this.parameters.putAll(referenceSet.parameters);
     }
 
     /** {@inheritDoc} */

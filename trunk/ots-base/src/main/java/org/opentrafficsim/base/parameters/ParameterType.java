@@ -297,8 +297,7 @@ public class ParameterType<T> extends Type<ParameterType<T>> implements Serializ
     @Override
     public String toString()
     {
-        return "ParameterType [id=" + this.id + ", description=" + this.description + ", valueClass=" + this.valueClass
-                + "]";
+        return "ParameterType [id=" + this.id + ", description=" + this.description + ", valueClass=" + this.valueClass + "]";
     }
 
 }

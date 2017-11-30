@@ -39,7 +39,7 @@ public class IncentiveGetInLane implements MandatoryIncentive
     protected static final ParameterTypeSpeed VCONG = ParameterTypes.VCONG;
     
     /** Hierarchy parameter. */
-    protected static final ParameterTypeDouble HIERARCHY = LmrsParameters.HIERARCHY;
+    protected static final ParameterTypeDouble SOCIO = LmrsParameters.SOCIO;
     
     /** {@inheritDoc} */
     @Override
@@ -49,7 +49,7 @@ public class IncentiveGetInLane implements MandatoryIncentive
     {
 
         Speed vCong = parameters.getParameter(VCONG);
-        double hierarchy = parameters.getParameter(HIERARCHY);
+        double socio = parameters.getParameter(SOCIO);
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         SortedSet<InfrastructureLaneChangeInfo> info = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);
@@ -107,7 +107,7 @@ public class IncentiveGetInLane implements MandatoryIncentive
                 }
             }
         }
-        return new Desire(left * hierarchy, right * hierarchy);
+        return new Desire(left * socio, right * socio);
     }
 
     /** {@inheritDoc} */

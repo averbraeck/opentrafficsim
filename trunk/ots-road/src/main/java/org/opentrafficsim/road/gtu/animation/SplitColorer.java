@@ -47,7 +47,7 @@ public class SplitColorer implements GTUColorer
 
     static
     {
-        LEGEND = new ArrayList<>(3);
+        LEGEND = new ArrayList<>(4);
         LEGEND.add(new LegendEntry(LEFT, "Left", "Left"));
         LEGEND.add(new LegendEntry(RIGHT, "Right", "Right"));
         LEGEND.add(new LegendEntry(OTHER, "Other", "Other"));

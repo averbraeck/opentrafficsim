@@ -57,35 +57,27 @@ public class DesiredHeadwayColorer implements GTUColorer, Serializable
     public final Color getColor(final GTU gtu)
     {
         Parameters params = gtu.getParameters();
-        if (!params.contains(ParameterTypes.TMIN) || !params.contains(ParameterTypes.TMAX) || !params.contains(ParameterTypes.T))
+        Double tMin = params.getParameterOrNull(ParameterTypes.TMIN).si;
+        Double tMax = params.getParameterOrNull(ParameterTypes.TMAX).si;
+        Double t = params.getParameterOrNull(ParameterTypes.T).si;
+        if (tMin == null || tMax == null || t == null)
         {
             return UNKNOWN;
         }
-        try
+        if (t <= tMin)
         {
-            double tMin = params.getParameter(ParameterTypes.TMIN).si;
-            double tMax = params.getParameter(ParameterTypes.TMAX).si;
-            double t = params.getParameter(ParameterTypes.T).si;
-            if (t <= tMin)
-            {
-                return LOW;
-            }
-            if (t >= tMax)
-            {
-                return HIGH;
-            }
-            double tMean = (tMin + tMax) / 2.0;
-            if (t < tMean)
-            {
-                return ColorInterpolator.interpolateColor(LOW, MIDDLE, (t - tMin) / (tMean - tMin));
-            }
-            return ColorInterpolator.interpolateColor(MIDDLE, HIGH, (t - tMean) / (tMax - tMean));
+            return LOW;
         }
-        catch (ParameterException exception)
+        if (t >= tMax)
         {
-            // Should not happen, we check parameters
-            throw new RuntimeException("Could not obtain parameter", exception);
+            return HIGH;
         }
+        double tMean = (tMin + tMax) / 2.0;
+        if (t < tMean)
+        {
+            return ColorInterpolator.interpolateColor(LOW, MIDDLE, (t - tMin) / (tMean - tMin));
+        }
+        return ColorInterpolator.interpolateColor(MIDDLE, HIGH, (t - tMean) / (tMax - tMean));
     }
 
     /** {@inheritDoc} */

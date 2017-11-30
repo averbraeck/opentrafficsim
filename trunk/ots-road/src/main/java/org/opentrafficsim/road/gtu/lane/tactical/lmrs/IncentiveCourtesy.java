@@ -5,10 +5,11 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
+import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -38,11 +39,20 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
+public class IncentiveCourtesy implements VoluntaryIncentive
 {
 
     /** Comfortable deceleration parameter type. */
     protected static final ParameterTypeAcceleration B = ParameterTypes.B;
+    
+    /** Socio-courtesy parameter. */
+    protected static final ParameterTypeDouble SOCIO = LmrsParameters.SOCIO;
+    
+    /** Current left lane change desire. */
+    protected static final ParameterTypeDouble DLEFT = LmrsParameters.DLEFT;
+
+    /** Current right lane change desire. */
+    protected static final ParameterTypeDouble DRIGHT = LmrsParameters.DRIGHT;
     
     /** {@inheritDoc} */
     @Override
@@ -55,7 +65,7 @@ public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
         double dRightYes = 0;
         double dLeftNo = 0;
         double dRightNo = 0;
-        double courtesy = parameters.getParameter(COURTESY);
+        double socio = parameters.getParameter(SOCIO);
         Acceleration b = parameters.getParameter(B);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -159,8 +169,8 @@ public class IncentiveCourtesy implements VoluntaryIncentive, LmrsParameters
             }
         }
         // note: noLeft and noRight weighted with 1 always
-        dLeftYes *= courtesy;
-        dRightYes *= courtesy;
+        dLeftYes *= socio;
+        dRightYes *= socio;
         return new Desire(dLeftYes - dLeftNo, dRightYes - dRightNo);
 
     }

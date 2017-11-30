@@ -276,8 +276,8 @@ public class ParametersTest implements ConstraintInterface
         @Override
         public void check(final Speed v, final Parameters paramsa) throws ParameterException
         {
-            Throw.when(paramsa.contains(v2) && v.si > paramsa.getParameter(v2).si, ParameterException.class,
-                    "Value of v1 is larger than value of v2.");
+            Speed u2 = paramsa.getParameterOrNull(v2);
+            Throw.when(u2 != null && v.si > u2.si, ParameterException.class, "Value of v1 is larger than value of v2.");
         }
     };
 
@@ -291,8 +291,8 @@ public class ParametersTest implements ConstraintInterface
         @Override
         public void check(final Speed v, final Parameters paramsa) throws ParameterException
         {
-            Throw.when(paramsa.contains(v1) && v.si < paramsa.getParameter(v1).si, ParameterException.class,
-                    "Value of v2 is smaller than value of v1.");
+            Speed u1 = paramsa.getParameterOrNull(v1);
+            Throw.when(u1 != null && v.si < u1.si, ParameterException.class, "Value of v2 is smaller than value of v1.");
         }
     };
 
@@ -320,7 +320,7 @@ public class ParametersTest implements ConstraintInterface
 
         // exception for get after reset to no value: no value -> set -> reset -> get
         params = new Parameters();
-        params.setParameter(a, 1);
+        params.setParameterResettable(a, 1);
         params.resetParameter(a);
         try
         {
@@ -334,7 +334,7 @@ public class ParametersTest implements ConstraintInterface
 
         // exception for multiple resets: no value -> set -> reset -> reset
         params = new Parameters();
-        params.setParameter(a, 1);
+        params.setParameterResettable(a, 1);
         params.resetParameter(a);
         try
         {
@@ -348,8 +348,8 @@ public class ParametersTest implements ConstraintInterface
 
         // exception for multiple resets: set -> set -> reset -> reset
         params = new Parameters();
-        params.setParameter(a, 1);
-        params.setParameter(a, 2);
+        params.setParameterResettable(a, 1);
+        params.setParameterResettable(a, 2);
         params.resetParameter(a);
         try
         {
@@ -363,9 +363,9 @@ public class ParametersTest implements ConstraintInterface
 
         // no exception: set -> reset -> set -> reset
         params = new Parameters();
-        params.setParameter(a, 1);
+        params.setParameterResettable(a, 1);
         params.resetParameter(a);
-        params.setParameter(a, 2);
+        params.setParameterResettable(a, 2);
         try
         {
             params.resetParameter(a);
@@ -378,8 +378,42 @@ public class ParametersTest implements ConstraintInterface
 
         // same value: set(1) -> set(2) -> reset -> get(1?)
         params = new Parameters();
+        params.setParameterResettable(a, 1);
+        params.setParameterResettable(a, 2);
+        params.resetParameter(a);
+        assertEquals("Value after reset should be the same as before last set.", 1.0, (double) params.getParameter(a), 0.0);
+        
+        // no reset after (none resettable) set
+        params = new Parameters();
         params.setParameter(a, 1);
+        try
+        {
+            params.resetParameter(a);
+            fail("Reset should fail after regular set.");
+        }
+        catch (ParameterException pe)
+        {
+            // should fail
+        }
+        
+        // no reset after (none resettable) set, even with resettable set before
+        params = new Parameters();
+        params.setParameterResettable(a, 1);
         params.setParameter(a, 2);
+        try
+        {
+            params.resetParameter(a);
+            fail("Reset should fail after regular set, dispite resettable set before.");
+        }
+        catch (ParameterException pe)
+        {
+            // should fail
+        }
+        
+        // same value: regular set(1) -> set(2) -> reset -> get(1?)
+        params = new Parameters();
+        params.setParameter(a, 1);
+        params.setParameterResettable(a, 2);
         params.resetParameter(a);
         assertEquals("Value after reset should be the same as before last set.", 1.0, (double) params.getParameter(a), 0.0);
 
@@ -540,9 +574,8 @@ public class ParametersTest implements ConstraintInterface
         ParameterType<?> ld;
         if (clazz.equals(ParameterTypeNumeric.class))
         {
-            ld =
-                    clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
-                            getClass(defaultValue));
+            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
+                    getClass(defaultValue));
         }
         else
         {
@@ -567,15 +600,13 @@ public class ParametersTest implements ConstraintInterface
         {
             if (clazz.equals(ParameterTypeNumeric.class))
             {
-                ld =
-                        clazz.getDeclaredConstructor(String.class, String.class, Class.class, Constraint.class).newInstance(
-                                "v", "vcong", getClass(defaultValue), POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Constraint.class).newInstance("v",
+                        "vcong", getClass(defaultValue), POSITIVE);
             }
             else
             {
-                ld =
-                        clazz.getDeclaredConstructor(String.class, String.class, Constraint.class).newInstance("v", "vcong",
-                                POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Constraint.class).newInstance("v", "vcong",
+                        POSITIVE);
             }
             try
             {
@@ -591,15 +622,13 @@ public class ParametersTest implements ConstraintInterface
         // value set
         if (clazz.equals(ParameterTypeNumeric.class))
         {
-            ld =
-                    clazz.getDeclaredConstructor(String.class, String.class, Class.class, Number.class).newInstance("v",
-                            "vcong", getClass(defaultValue), defaultValue);
+            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Number.class).newInstance("v", "vcong",
+                    getClass(defaultValue), defaultValue);
         }
         else
         {
-            ld =
-                    clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
-                            defaultValue);
+            ld = clazz.getDeclaredConstructor(String.class, String.class, getClass(defaultValue)).newInstance("v", "vcong",
+                    defaultValue);
         }
         try
         {
@@ -614,15 +643,13 @@ public class ParametersTest implements ConstraintInterface
         {
             if (clazz.equals(ParameterTypeNumeric.class))
             {
-                ld =
-                        clazz.getDeclaredConstructor(String.class, String.class, Class.class, Number.class, Constraint.class)
-                                .newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Number.class, Constraint.class)
+                        .newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
             }
             else
             {
-                ld =
-                        clazz.getDeclaredConstructor(String.class, String.class, defaultValue.getClass(),
-                                Constraint.class).newInstance("v", "vcong", defaultValue, POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, defaultValue.getClass(), Constraint.class)
+                        .newInstance("v", "vcong", defaultValue, POSITIVE);
             }
             try
             {
@@ -671,8 +698,8 @@ public class ParametersTest implements ConstraintInterface
         paramsA.setAll(paramsB);
         assertTrue("When merging set B with set A, set A should contain the parameters of set B.",
                 paramsA.contains(ParameterTypes.B));
-        assertTrue("When merging set B with set A, parameter values should be equal.", paramsA.getParameter(ParameterTypes.B)
-                .eq(paramsB.getParameter(ParameterTypes.B)));
+        assertTrue("When merging set B with set A, parameter values should be equal.",
+                paramsA.getParameter(ParameterTypes.B).eq(paramsB.getParameter(ParameterTypes.B)));
         assertFalse("When merging set B with set A, set B should not contain the parameters of set A.",
                 paramsB.contains(ParameterTypes.A));
     }

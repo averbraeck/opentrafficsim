@@ -220,18 +220,8 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     @Override
     public final String toString()
     {
-        String mandatory;
-        mandatory = "mandatoryIncentives=" + this.mandatoryIncentives + ", ";
-        String voluntary;
-        if (!this.voluntaryIncentives.isEmpty())
-        {
-            voluntary = "voluntaryIncentives=" + this.voluntaryIncentives;
-        }
-        else
-        {
-            voluntary = "voluntaryIncentives=[]";
-        }
-        return "LMRS [" + mandatory + voluntary + "]";
+        return "LMRS [mandatoryIncentives=" + this.mandatoryIncentives + ", voluntaryIncentives=" + this.voluntaryIncentives
+                + ", accelerationIncentives = " + this.accelerationIncentives + "]";
     }
 
 }
