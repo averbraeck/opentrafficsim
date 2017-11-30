@@ -237,7 +237,7 @@ public final class ConflictUtil
                     // if this lowers our acceleration, we need to check if we are able to pass upstream conflicts still in time
 
                     // stop for j'th conflict, if deceleration is too strong, for next one
-                    parameters.setParameter(ParameterTypes.S0, parameters.getParameter(S0_CONF));
+                    parameters.setParameterResettable(ParameterTypes.S0, parameters.getParameter(S0_CONF));
                     Acceleration aCF = new Acceleration(-Double.MAX_VALUE, AccelerationUnit.SI);
                     while (aCF.si < -6.0 && j < prevStarts.size())
                     {
@@ -345,7 +345,7 @@ public final class ConflictUtil
              *                             /       /
              */
             // {@formatter:on}
-            parameters.setParameter(ParameterTypes.S0, parameters.getParameter(S0_CONF));
+            parameters.setParameterResettable(ParameterTypes.S0, parameters.getParameter(S0_CONF));
             Acceleration aStop =
                     CarFollowingUtil.stop(carFollowingModel, parameters, speed, speedLimitInfo, conflict.getDistance());
             parameters.resetParameter(ParameterTypes.S0);

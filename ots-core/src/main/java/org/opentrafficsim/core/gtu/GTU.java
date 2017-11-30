@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -145,4 +146,50 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * Payload: [String id, DirectedPoint lastPosition, Length odometer]
      */
     EventType DESTROY_EVENT = new EventType("GTU.DESTROY");
+
+    /**
+     * Returns a value from cache if it was cached at the current simulation time. It returns {@code null} otherwise.
+     * @param key CacheKey<T>; identifier of what is calculated
+     * @return value from cache if it was cached at the current simulation time or {@code null} otherwise
+     * @param <T> type of value
+     */
+    <T> T getCachedValue(CacheKey<T> key);
+
+    /**
+     * Caches a value at the current time. It may be retrieved later without recalculation. {@code null} values are not
+     * accepted.
+     * @param key CacheKey<T>; identifier of what is calculated
+     * @param value T; calculated value
+     * @param <T> type of value
+     * @throws NullPointerException when an input is {@code null}
+     */
+    <T> void cacheValue(CacheKey<T> key, T value);
+
+    /**
+     * Returns a value from cache, or calculates it if it is not present. {@code null} values are not accepted.
+     * @param key CacheKey<T>; identifier of what is calculated
+     * @param calculator Supplier<T>; calculates the value if it isn't cached yet
+     * @return T; value from cache, or calculated if it is not present
+     * @param <T> type of value
+     */
+    <T> T getOrCalculateValue(CacheKey<T> key, Supplier<? extends T> calculator);
+
+    /**
+     * Empty key class for caching. The reason {@code Object} isn't used is that here a generic type {@code T} can be defined.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 28 nov. 2017 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * @param <T> value type linked to the key
+     */
+    final class CacheKey<T>
+    {
+        //
+    }
+
 }

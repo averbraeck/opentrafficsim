@@ -71,7 +71,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveHierarchal;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
@@ -330,7 +330,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             if (ADDITIONAL_INCENTIVES)
             {
                 voluntaryIncentives.add(new IncentiveCourtesy());
-                voluntaryIncentives.add(new IncentiveHierarchal());
+                voluntaryIncentives.add(new IncentiveSocioSpeed());
             }
             accelerationIncentives.add(new AccelerationSpeedLimitTransition());
             accelerationIncentives.add(new AccelerationTrafficLights());
@@ -366,9 +366,9 @@ public class ShortMerge extends AbstractWrappableAnimation
 
             BehavioralCharacteristicsFactoryByType bcFactory = new BehavioralCharacteristicsFactoryByType();
             bcFactory.addGaussianParameter(car, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, stream);
-            bcFactory.addGaussianParameter(car, LmrsParameters.HIERARCHY, 0.5, 0.1, stream);
+            bcFactory.addGaussianParameter(car, LmrsParameters.SOCIO, 0.5, 0.1, stream);
             bcFactory.addParameter(truck, ParameterTypes.A, new Acceleration(0.8, AccelerationUnit.SI));
-            bcFactory.addGaussianParameter(truck, LmrsParameters.HIERARCHY, 0.5, 0.1, stream);
+            bcFactory.addGaussianParameter(truck, LmrsParameters.SOCIO, 0.5, 0.1, stream);
 
             Generator<Duration> headwaysA1 = new HeadwayGenerator(MAIN_DEMAND);
             Generator<Duration> headwaysA2 = new HeadwayGenerator(MAIN_DEMAND);

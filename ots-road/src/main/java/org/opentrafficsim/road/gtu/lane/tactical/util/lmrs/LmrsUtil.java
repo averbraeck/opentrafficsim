@@ -2,19 +2,17 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
@@ -102,35 +100,7 @@ public final class LmrsUtil implements LmrsParameters
         {
             initHeadwayRelaxation(params, leaders.first());
         }
-        Acceleration a;
-        CarFollowingModel regularFollowing = carFollowingModel;
-        SortedSet<HeadwayGTU> followers =
-                perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(RelativeLane.CURRENT);
-        if (!followers.isEmpty())
-        {
-            HeadwayGTU follower = followers.first();
-            Speed desiredSpeedFollower =
-                    follower.getCarFollowingModel().desiredSpeed(follower.getParameters(), follower.getSpeedLimitInfo());
-            Speed desiredSpeed = carFollowingModel.desiredSpeed(params, sli);
-            if (desiredSpeed.lt(desiredSpeedFollower))
-            {
-                // wrap car-following model with adjusted desired speed
-                CarFollowingModel carFollowingModelWrapped = new CarFollowingModelWrapper(carFollowingModel,
-                        Speed.interpolate(desiredSpeed, desiredSpeedFollower, params.getParameter(HIERARCHY)));
-                a = CarFollowingUtil.followLeaders(carFollowingModelWrapped, params, speed, sli, leaders);
-                // remember this wrapper for when following the second leader during a lane change
-                regularFollowing = carFollowingModelWrapped;
-            }
-            else
-            {
-                a = CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli, leaders);
-            }
-        }
-        else
-        {
-            a = CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli, leaders);
-        }
-
+        Acceleration a = CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli, leaders);
         // during a lane change, both leaders are followed
         LateralDirectionality initiatedLaneChange;
         TurnIndicatorIntent turnIndicatorStatus = TurnIndicatorIntent.NONE;
@@ -140,7 +110,7 @@ public final class LmrsUtil implements LmrsParameters
             initiatedLaneChange = LateralDirectionality.NONE;
             SortedSet<HeadwayGTU> secondLeaders =
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(secondLane);
-            Acceleration aSecond = CarFollowingUtil.followLeaders(regularFollowing, params, speed, sli, secondLeaders);
+            Acceleration aSecond = CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli, secondLeaders);
             if (!secondLeaders.isEmpty() && lmrsData.isNewLeader(secondLeaders.first()))
             {
                 initHeadwayRelaxation(params, secondLeaders.first());
@@ -179,7 +149,7 @@ public final class LmrsUtil implements LmrsParameters
                     // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
                     lmrsData.isNewLeader(leaders.first());
                 }
-                a = Acceleration.min(a, CarFollowingUtil.followLeaders(regularFollowing, params, speed, sli,
+                a = Acceleration.min(a, CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli,
                         perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.LEFT)));
             }
             else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree && acceptRight)
@@ -195,7 +165,7 @@ public final class LmrsUtil implements LmrsParameters
                     // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
                     lmrsData.isNewLeader(leaders.first());
                 }
-                a = Acceleration.min(a, CarFollowingUtil.followLeaders(regularFollowing, params, speed, sli,
+                a = Acceleration.min(a, CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli,
                         perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.RIGHT)));
             }
             else
@@ -277,9 +247,10 @@ public final class LmrsUtil implements LmrsParameters
      */
     private static void initHeadwayRelaxation(final Parameters params, final HeadwayGTU leader) throws ParameterException
     {
-        if (leader.getParameters().contains(DLC))
+        Double dlc = leader.getParameters().getParameterOrNull(DLC);
+        if (dlc != null)
         {
-            setDesiredHeadway(params, leader.getParameters().getParameter(DLC));
+            setDesiredHeadway(params, dlc);
         }
         // else could not be perceived
     }
@@ -513,7 +484,7 @@ public final class LmrsUtil implements LmrsParameters
         double tDes = limitedDesire * params.getParameter(ParameterTypes.TMIN).si
                 + (1 - limitedDesire) * params.getParameter(ParameterTypes.TMAX).si;
         double t = params.getParameter(ParameterTypes.T).si;
-        params.setParameter(ParameterTypes.T, new Duration(tDes < t ? tDes : t, DurationUnit.SI));
+        params.setParameterResettable(ParameterTypes.T, Duration.createSI(tDes < t ? tDes : t));
     }
 
     /**
@@ -549,83 +520,6 @@ public final class LmrsUtil implements LmrsParameters
         // reset T
         resetDesiredHeadway(params);
         return a;
-    }
-
-    /**
-     * Wrapper for car-following model to adjust desired speed.
-     * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 apr. 2017 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    private static final class CarFollowingModelWrapper implements CarFollowingModel
-    {
-
-        /** Wrapped car-following model. */
-        private final CarFollowingModel carFollowingModel;
-
-        /** Desired speed. */
-        private final Speed desiredSpeed;
-
-        /**
-         * @param carFollowingModel car-following model
-         * @param desiredSpeed desired speed
-         */
-        CarFollowingModelWrapper(final CarFollowingModel carFollowingModel, final Speed desiredSpeed)
-        {
-            this.carFollowingModel = carFollowingModel;
-            this.desiredSpeed = desiredSpeed;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
-        {
-            return this.desiredSpeed;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
-        {
-            return this.carFollowingModel.desiredHeadway(parameters, speed);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-                final SpeedLimitInfo speedLimitInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
-        {
-            return this.carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getName()
-        {
-            return this.carFollowingModel.getName();
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getLongName()
-        {
-            return this.carFollowingModel.getLongName();
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
-        {
-            return "CarFollowingModelWrapper [carFollowingModel=" + this.carFollowingModel.getName() + ", desiredSpeed="
-                    + this.desiredSpeed + "]";
-        }
-
     }
 
 }

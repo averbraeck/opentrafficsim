@@ -10,7 +10,7 @@ import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveHierarchal;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeed;
@@ -43,7 +43,7 @@ public class LmrsSwitchableColorer extends SwitchableGTUColorer
                 new DesiredHeadwayColorer(), new TotalDesireColorer(), new IncentiveColorer(IncentiveRoute.class),
                 new IncentiveColorer(IncentiveSpeedWithCourtesy.class), new IncentiveColorer(IncentiveSpeed.class),
                 new IncentiveColorer(IncentiveKeep.class), new IncentiveColorer(IncentiveGetInLane.class),
-                new IncentiveColorer(IncentiveCourtesy.class), new IncentiveColorer(IncentiveHierarchal.class),
+                new IncentiveColorer(IncentiveCourtesy.class), new IncentiveColorer(IncentiveSocioSpeed.class),
                 new IncentiveColorer(IncentiveBusStop.class));
     }
 

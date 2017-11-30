@@ -65,5 +65,5 @@ public interface Perception extends Serializable
      * @param perceptionCategory perception category to remove
      */
     void removePerceptionCategory(PerceptionCategory perceptionCategory);
-
+    
 }

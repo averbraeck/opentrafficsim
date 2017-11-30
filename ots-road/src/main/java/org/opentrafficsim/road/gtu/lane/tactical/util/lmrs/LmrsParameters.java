@@ -25,20 +25,24 @@ public interface LmrsParameters
 {
 
     /** Free lane change desire threshold. */
-    ParameterTypeDouble DFREE = new ParameterTypeDouble("dFree", "Free lane change desire threshold.", 0.365,
-            ConstraintInterface.UNITINTERVAL)
-    {
-        /** */
-        private static final long serialVersionUID = 20160413L;
+    ParameterTypeDouble DFREE =
+            new ParameterTypeDouble("dFree", "Free lane change desire threshold.", 0.365, ConstraintInterface.UNITINTERVAL)
+            {
+                /** */
+                private static final long serialVersionUID = 20160413L;
 
-        public void check(final double value, final Parameters params) throws ParameterException
-        {
-            Throw.when(params.contains(DSYNC) && value >= params.getParameter(DSYNC), ParameterException.class,
-                    "Value of dFree is above or equal to dSync.");
-            Throw.when(params.contains(DCOOP) && value >= params.getParameter(DCOOP), ParameterException.class,
-                    "Value of dFree is above or equal to dCoop.");
-        }
-    };
+                /** {@inheritDoc} */
+                @Override
+                public void check(final Double value, final Parameters params) throws ParameterException
+                {
+                    Double dSync = params.getParameterOrNull(DSYNC);
+                    Throw.when(dSync != null && value >= dSync, ParameterException.class,
+                            "Value of dFree is above or equal to dSync.");
+                    Double dCoop = params.getParameterOrNull(DCOOP);
+                    Throw.when(dCoop != null && value >= dCoop, ParameterException.class,
+                            "Value of dFree is above or equal to dCoop.");
+                }
+            };
 
     /** Synchronized lane change desire threshold. */
     ParameterTypeDouble DSYNC = new ParameterTypeDouble("dSync", "Synchronized lane change desire threshold.", 0.577,
@@ -47,11 +51,15 @@ public interface LmrsParameters
         /** */
         private static final long serialVersionUID = 20160413L;
 
-        public void check(final double value, final Parameters params) throws ParameterException
+        /** {@inheritDoc} */
+        @Override
+        public void check(final Double value, final Parameters params) throws ParameterException
         {
-            Throw.when(params.contains(DFREE) && value <= params.getParameter(DFREE), ParameterException.class,
+            Double dFree = params.getParameterOrNull(DFREE);
+            Throw.when(dFree != null && value <= dFree, ParameterException.class,
                     "Value of dSync is below or equal to dFree.");
-            Throw.when(params.contains(DCOOP) && value >= params.getParameter(DCOOP), ParameterException.class,
+            Double dCoop = params.getParameterOrNull(DCOOP);
+            Throw.when(dCoop != null && value >= dCoop, ParameterException.class,
                     "Value of dSync is above or equal to dCoop.");
         }
     };
@@ -63,12 +71,14 @@ public interface LmrsParameters
         /** */
         private static final long serialVersionUID = 20160413L;
 
-        public void check(final double value, final Parameters params) throws ParameterException
+        /** {@inheritDoc} */
+        @Override
+        public void check(final Double value, final Parameters params) throws ParameterException
         {
-            Throw.when(params.contains(DFREE) && value <= params.getParameter(DFREE), ParameterException.class,
-                    "Value of dCoop is below or equal to dFree.");
-            Throw.when(params.contains(DSYNC) && value <= params.getParameter(DSYNC), ParameterException.class,
-                    "Value of dCoop is below or equal to dSync.");
+            Double dFree = params.getParameterOrNull(DFREE);
+            Throw.when(dFree != null && value <= dFree, ParameterException.class, "Value of dCoop is below or equal to dFree.");
+            Double dSync = params.getParameterOrNull(DSYNC);
+            Throw.when(dSync != null && value <= dSync, ParameterException.class, "Value of dCoop is below or equal to dSync.");
         }
     };
 
@@ -82,13 +92,14 @@ public interface LmrsParameters
     ParameterTypeDouble DLC = new ParameterTypeDouble("dLaneChange", "Desire of current lane change.", 0.0);
 
     /** Anticipation speed difference at full lane change desired. */
-    ParameterTypeSpeed VGAIN = new ParameterTypeSpeed("vGain", "Anticipation speed difference at "
-            + "full lane change desired.", new Speed(69.6, SpeedUnit.KM_PER_HOUR), ConstraintInterface.POSITIVE);
+    ParameterTypeSpeed VGAIN =
+            new ParameterTypeSpeed("vGain", "Anticipation speed difference at " + "full lane change desired.",
+                    new Speed(69.6, SpeedUnit.KM_PER_HOUR), ConstraintInterface.POSITIVE);
 
     /** Courtesy parameter. */
     ParameterTypeDouble COURTESY = new ParameterTypeDouble("Courtesy", "Courtesy level for courtesy lane changes.", 1.0);
 
-    /** Hierarchy parameter. */
-    ParameterTypeDouble HIERARCHY = new ParameterTypeDouble("Hierarchy", "Hierarchy level for hierarchal lane changes.", 1.0);
+    /** Socio-courtesy parameter. */
+    ParameterTypeDouble SOCIO = new ParameterTypeDouble("Socio-courtesy", "Courtesy level for social lane changes.", 1.0);
 
 }

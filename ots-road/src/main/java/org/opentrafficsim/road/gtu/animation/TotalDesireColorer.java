@@ -29,20 +29,13 @@ public class TotalDesireColorer extends DesireColorer
     public final Color getColor(final GTU gtu)
     {
         Parameters params = gtu.getParameters();
-        if (params.contains(LmrsParameters.DLEFT) && params.contains(LmrsParameters.DRIGHT))
+        Double dLeft = params.getParameterOrNull(LmrsParameters.DLEFT);
+        Double dRight = params.getParameterOrNull(LmrsParameters.DRIGHT);
+        if (dLeft == null || dRight == null)
         {
-            try
-            {
-                double dLeft = params.getParameter(LmrsParameters.DLEFT);
-                double dRight = params.getParameter(LmrsParameters.DRIGHT);
-                return getColor(dLeft, dRight);
-            }
-            catch (ParameterException exception)
-            {
-                exception.printStackTrace();
-            }
+            return NA;
         }
-        return NA;
+        return getColor(dLeft, dRight);
     }
 
     /** {@inheritDoc} */

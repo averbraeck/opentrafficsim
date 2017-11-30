@@ -75,7 +75,7 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
         this.defaultCarFollowingParameters = defaultCarFollowingParameters;
         this.perceptionFactory = perceptionFactory;
         this.synchronization = Synchronization.PASSIVE;
-        this.gapAcceptance = GapAcceptance.INFORMED;
+        this.gapAcceptance = GapAcceptanceModels.INFORMED;
     }
 
     /**
