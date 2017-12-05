@@ -41,6 +41,9 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
     /** Two-directional rail link. */
     public static final LinkType RAIL_WAY;
+    
+    /** Virtual connection between nodes, e.g. to distribute demand. */
+    public static final LinkType CONNECTOR;
 
     static
     {
@@ -54,6 +57,8 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
         compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
         RAIL_WAY = new LinkType("WATER_WAY", null, compatibility);
+        compatibility = new GTUCompatibility<>((LinkType) null);
+        CONNECTOR = new LinkType("CONNECTOR", null, compatibility);
     }
 
     /**
@@ -74,6 +79,46 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     public final Boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
     {
         return this.compatibility.isCompatible(gtuType, directionality);
+    }
+    
+    /**
+     * @return whether this is {@code NONE}
+     */
+    public final boolean isNone()
+    {
+        return this.equals(NONE);
+    }
+    
+    /**
+     * @return whether this is {@code ROAD}
+     */
+    public final boolean isRoad()
+    {
+        return this.equals(ROAD);
+    }
+    
+    /**
+     * @return whether this is {@code WATER_WAY}
+     */
+    public final boolean isWaterWay()
+    {
+        return this.equals(WATER_WAY);
+    }
+    
+    /**
+     * @return whether this is {@code RAIL_WAY}
+     */
+    public final boolean isRailWay()
+    {
+        return this.equals(RAIL_WAY);
+    }
+    
+    /**
+     * @return whether this is {@code CONNECTOR}
+     */
+    public final boolean isConnector()
+    {
+        return this.equals(CONNECTOR);
     }
 
     /** {@inheritDoc} */
