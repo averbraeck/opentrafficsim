@@ -69,15 +69,15 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.GapAcceptanceModels;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
@@ -337,7 +337,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             accelerationIncentives.add(new AccelerationConflicts());
             LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory =
                     new LMRSFactory(idmPlusFactory, params, new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION,
-                            GapAcceptance.INFORMED, mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
+                            GapAcceptanceModels.INFORMED, mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
 
             GTUType car = new GTUType("car", CAR);
             GTUType truck = new GTUType("truck", TRUCK);

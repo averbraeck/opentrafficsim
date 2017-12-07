@@ -28,6 +28,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -79,8 +80,8 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                 {
                     TrafCODDemo model = new TrafCODDemo();
                     // 1 hour simulation run for testing
-                    model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0,
-                            DurationUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -92,7 +93,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
 
     /** TrafCOD controller display. */
     private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
-    
+
     /** The TrafCOD controller. */
     private TrafCOD trafCOD;
 
@@ -126,7 +127,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
     {
         return new TrafCODModel();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected final void addAnimationToggles()
@@ -164,24 +165,22 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                 trafficLights.add(new SimpleTrafficLight("TL11", laneNX, new Length(296, LengthUnit.METER),
                         (OTSDEVSSimulatorInterface) theSimulator));
                 Set<TrafficLightSensor> sensors = new HashSet<>();
-                sensors.add(new TrafficLightSensor("D081", laneWX, new Length(292, LengthUnit.METER), laneWX, new Length(294,
-                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator));
-                sensors.add(new TrafficLightSensor("D082", laneWX, new Length(260, LengthUnit.METER), laneWX, new Length(285,
-                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator));
-                sensors.add(new TrafficLightSensor("D111", laneNX, new Length(292, LengthUnit.METER), laneNX, new Length(294,
-                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator));
-                sensors.add(new TrafficLightSensor("D112", laneNX, new Length(260, LengthUnit.METER), laneNX, new Length(285,
-                        LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator));
+                sensors.add(new TrafficLightSensor("D081", laneWX, new Length(292, LengthUnit.METER), laneWX,
+                        new Length(294, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                        (OTSDEVSSimulatorInterface) theSimulator, Compatible.EVERYTHING));
+                sensors.add(new TrafficLightSensor("D082", laneWX, new Length(260, LengthUnit.METER), laneWX,
+                        new Length(285, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                        (OTSDEVSSimulatorInterface) theSimulator, Compatible.EVERYTHING));
+                sensors.add(new TrafficLightSensor("D111", laneNX, new Length(292, LengthUnit.METER), laneNX,
+                        new Length(294, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                        (OTSDEVSSimulatorInterface) theSimulator, Compatible.EVERYTHING));
+                sensors.add(new TrafficLightSensor("D112", laneNX, new Length(260, LengthUnit.METER), laneNX,
+                        new Length(285, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
+                        (OTSDEVSSimulatorInterface) theSimulator, Compatible.EVERYTHING));
                 String controllerName = "Simple TrafCOD controller";
-                TrafCODDemo.this.trafCOD =
-                        new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
-                                trafficLights, sensors,
-                                (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
-                                TrafCODDemo.this.controllerDisplayPanel);
+                TrafCODDemo.this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
+                        trafficLights, sensors, (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
+                        TrafCODDemo.this.controllerDisplayPanel);
                 TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
@@ -221,7 +220,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
         {
             return this.network;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public void notify(final EventInterface event) throws RemoteException

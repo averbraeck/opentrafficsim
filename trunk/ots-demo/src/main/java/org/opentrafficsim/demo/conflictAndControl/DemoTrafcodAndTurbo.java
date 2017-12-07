@@ -29,6 +29,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -228,13 +229,13 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
                                 sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                         lane.getLength().minus(headDetectorMargin), lane,
                                         lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
-                                        RelativePosition.FRONT, RelativePosition.REAR,
-                                        (OTSDEVSSimulatorInterface) theSimulator));
+                                        RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator,
+                                        Compatible.EVERYTHING));
                                 sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
                                         lane.getLength().minus(longDetectorMargin), lane,
                                         lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
-                                        RelativePosition.FRONT, RelativePosition.REAR,
-                                        (OTSDEVSSimulatorInterface) theSimulator));
+                                        RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator,
+                                        Compatible.EVERYTHING));
                             }
                             else
                             {
@@ -245,13 +246,13 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
                                 sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                         lane.getLength().minus(headDetectorMargin), lane,
                                         lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
-                                        RelativePosition.FRONT, RelativePosition.REAR,
-                                        (OTSDEVSSimulatorInterface) theSimulator));
+                                        RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator,
+                                        Compatible.EVERYTHING));
                                 sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
                                         lane.getLength().minus(longDetectorMargin), lane,
                                         lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
-                                        RelativePosition.FRONT, RelativePosition.REAR,
-                                        (OTSDEVSSimulatorInterface) theSimulator));
+                                        RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator,
+                                        Compatible.EVERYTHING));
 
                             }
 

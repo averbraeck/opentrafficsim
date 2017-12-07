@@ -13,10 +13,6 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -29,6 +25,7 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -62,6 +59,10 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Demonstrate the FundamentalDiagram plot.
@@ -167,7 +168,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 int xs = (int) lane.getParentLink().getStartNode().getPoint().x;
                 int xe = (int) lane.getParentLink().getEndNode().getPoint().x;
                 fd = new FundamentalDiagramLane("Fundamental Diagram for [" + xs + ", " + xe + "] m", new Duration(1.0, SECOND),
-                        lane, detectedGTUTypes, (OTSDEVSSimulatorInterface) this.model.getSimulator());
+                        lane, Compatible.EVERYTHING, (OTSDEVSSimulatorInterface) this.model.getSimulator());
                 fd.setTitle("Fundamental Diagram Graph");
                 fd.setExtendedState(Frame.MAXIMIZED_BOTH);
                 this.model.getFundamentalDiagrams().add(fd);
@@ -307,7 +308,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 int last = this.lanes.size() - 1;
                 Lane sinkLane = new Lane(endLink, "sinkLane", this.lanes.get(last).getLateralCenterPosition(1.0),
                         this.lanes.get(last).getLateralCenterPosition(1.0), this.lanes.get(last).getWidth(1.0),
-                        this.lanes.get(last).getWidth(1.0), laneType, LongitudinalDirectionality.DIR_PLUS, this.speedLimit,
+                        this.lanes.get(last).getWidth(1.0), laneType, this.speedLimit,
                         new OvertakingConditions.None());
                 new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
             }

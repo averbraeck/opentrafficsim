@@ -68,37 +68,37 @@ public class TestModel implements OTSModelInterface, UNITS
         {
             OTSNode n0 = new OTSNode(this.network, "N0", new OTSPoint3D(-25.0, 0.0));
             OTSNode n1 = new OTSNode(this.network, "N1", new OTSPoint3D(0.0, 0.0));
-            CrossSectionLink l01 = new CrossSectionLink(this.network, "L01", n0, n1, LinkType.ALL,
+            CrossSectionLink l01 = new CrossSectionLink(this.network, "L01", n0, n1, LinkType.ROAD,
                     new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(-25.0, 0.0), new OTSPoint3D(0.0, 0.0) }), this.simulator,
                     LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
 
             OTSNode n2 = new OTSNode(this.network, "N2", new OTSPoint3D(25.0, 20.0));
-            CrossSectionLink l12 = new CrossSectionLink(this.network, "L12", n1, n2, LinkType.ALL,
+            CrossSectionLink l12 = new CrossSectionLink(this.network, "L12", n1, n2, LinkType.ROAD,
                     new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(0.0, 0.0), new OTSPoint3D(25.0, 20.0) }), this.simulator,
                     LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
 
             OTSNode n3 = new OTSNode(this.network, "N3", new OTSPoint3D(50.0, 0.0));
-            CrossSectionLink l23 = new CrossSectionLink(this.network, "L23", n2, n3, LinkType.ALL,
+            CrossSectionLink l23 = new CrossSectionLink(this.network, "L23", n2, n3, LinkType.ROAD,
                     new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(25.0, 20.0), new OTSPoint3D(50.0, 0.0) }), this.simulator,
                     LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
 
             OTSNode n4 = new OTSNode(this.network, "N4", new OTSPoint3D(75.0, -20.0));
-            CrossSectionLink l34 = new CrossSectionLink(this.network, "L34", n3, n4, LinkType.ALL,
+            CrossSectionLink l34 = new CrossSectionLink(this.network, "L34", n3, n4, LinkType.ROAD,
                     new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(50.0, 0.0), new OTSPoint3D(75.0, -20.0) }), this.simulator,
                     LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
 
             OTSNode n5 = new OTSNode(this.network, "N5", new OTSPoint3D(100.0, 0.0));
-            CrossSectionLink l45 = new CrossSectionLink(this.network, "L45", n4, n5, LinkType.ALL,
+            CrossSectionLink l45 = new CrossSectionLink(this.network, "L45", n4, n5, LinkType.ROAD,
                     new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(75.0, -20.0), new OTSPoint3D(100.0, 0.0) }), this.simulator,
                     LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
 
             OTSNode n6 = new OTSNode(this.network, "N6", new OTSPoint3D(125.0, 0.0));
-            CrossSectionLink l56 = new CrossSectionLink(this.network, "L56", n5, n6, LinkType.ALL,
+            CrossSectionLink l56 = new CrossSectionLink(this.network, "L56", n5, n6, LinkType.ROAD,
                     new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(100.0, 0.0), new OTSPoint3D(125.0, 0.0) }), this.simulator,
                     LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
 
             OTSNode n7 = new OTSNode(this.network, "N7", new OTSPoint3D(300.0, 0.0));
-            CrossSectionLink l67 = new CrossSectionLink(this.network, "L67", n6, n7, LinkType.ALL,
+            CrossSectionLink l67 = new CrossSectionLink(this.network, "L67", n6, n7, LinkType.ROAD,
                     new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(125.0, 0.0), new OTSPoint3D(150.0, 0.0),
                             new OTSPoint3D(175.0, 20.0), new OTSPoint3D(200.0, 0.0), new OTSPoint3D(225.0, -20.0),
                             new OTSPoint3D(250.0, 0.0), new OTSPoint3D(300.0, 0.0) }), this.simulator,
@@ -165,18 +165,18 @@ public class TestModel implements OTSModelInterface, UNITS
 
         Lane laneELL = new NoTrafficLane(link, "ELL", new Length(8.25, METER), new Length(8.25, METER), m05, m05);
         Lane laneL1 = new Lane(link, "L1", new Length(6.25, METER), new Length(6.25, METER), m35, m35, null,
-                LongitudinalDirectionality.DIR_MINUS, speedLimit, new OvertakingConditions.LeftAndRight());
+                speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneL2 = new Lane(link, "L2", new Length(2.75, METER), new Length(2.75, METER), m35, m35, null,
-                LongitudinalDirectionality.DIR_MINUS, speedLimit, new OvertakingConditions.LeftAndRight());
+                speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneELM = new NoTrafficLane(link, "ELM", new Length(0.75, METER), new Length(0.75, METER), m05, m05);
 
         Shoulder sM = new Shoulder(link, "sM", new Length(0.0, METER), m10);
 
         Lane laneERM = new NoTrafficLane(link, "ERM", new Length(-0.75, METER), new Length(-0.75, METER), m05, m05);
         Lane laneR2 = new Lane(link, "R2", new Length(-2.75, METER), new Length(-2.75, METER), m35, m35, null,
-                LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.LeftAndRight());
+                speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneR1 = new Lane(link, "R1", new Length(-6.25, METER), new Length(-6.25, METER), m35, m35, null,
-                LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.LeftAndRight());
+                speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneERR = new NoTrafficLane(link, "ERR", new Length(-8.25, METER), new Length(-8.25, METER), m05, m05);
 
         Shoulder sR = new Shoulder(link, "sR", new Length(-9.0, METER), m10);

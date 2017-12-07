@@ -30,6 +30,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -81,8 +82,8 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                 {
                     TrafCODDemo2 model = new TrafCODDemo2();
                     // 1 hour simulation run for testing
-                    model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0,
-                            DurationUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                    model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
+                            new ArrayList<Property<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
@@ -178,17 +179,20 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                 {
                     for (int laneNumber = 3; laneNumber >= 1; laneNumber--)
                     {
-                        Lane lane =
-                                (Lane) ((CrossSectionLink) this.network.getLink(direction, direction + "C"))
-                                        .getCrossSectionElement("FORWARD" + laneNumber);
-                        trafficLights.add(new SimpleTrafficLight(String.format("TL%02d", stream), lane, lane.getLength().minus(
-                                stopLineMargin), (OTSDEVSSimulatorInterface) theSimulator));
-                        sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane, lane.getLength().minus(
-                                headDetectorMargin), lane, lane.getLength().minus(headDetectorMargin).plus(headDetectorLength),
-                                null, RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator));
-                        sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane, lane.getLength().minus(
-                                longDetectorMargin), lane, lane.getLength().minus(longDetectorMargin).plus(longDetectorLength),
-                                null, RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator));
+                        Lane lane = (Lane) ((CrossSectionLink) this.network.getLink(direction, direction + "C"))
+                                .getCrossSectionElement("FORWARD" + laneNumber);
+                        trafficLights.add(new SimpleTrafficLight(String.format("TL%02d", stream), lane,
+                                lane.getLength().minus(stopLineMargin), (OTSDEVSSimulatorInterface) theSimulator));
+                        sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
+                                lane.getLength().minus(headDetectorMargin), lane,
+                                lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
+                                RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator,
+                                Compatible.EVERYTHING));
+                        sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
+                                lane.getLength().minus(longDetectorMargin), lane,
+                                lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
+                                RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator,
+                                Compatible.EVERYTHING));
                         stream++;
                     }
                 }

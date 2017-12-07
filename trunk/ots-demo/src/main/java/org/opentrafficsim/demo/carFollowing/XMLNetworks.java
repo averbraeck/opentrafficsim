@@ -870,7 +870,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
                     lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
-                    LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.LeftAndRight());
+                    this.speedLimit, new OvertakingConditions.LeftAndRight());
             new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
         }
         return lanes;

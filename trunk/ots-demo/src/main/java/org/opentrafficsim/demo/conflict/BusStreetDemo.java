@@ -60,11 +60,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.GapAcceptanceModels;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -163,7 +163,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                 URL url = URLResource.getResource("/conflict/BusStreet.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
                 this.network = nlp.build(url);
-                ConflictBuilder.buildConflicts(this.network, GTUType.ALL, this.simulator,
+                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
                 // Add bus stops
@@ -578,7 +578,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         {
             DefaultLMRSPerceptionFactory pFac = new DefaultLMRSPerceptionFactory();
             LMRS lmrs =
-                    new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE, GapAcceptance.INFORMED);
+                    new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE,
+                            GapAcceptanceModels.INFORMED);
             lmrs.setDefaultIncentives();
             if (gtu.getGTUType().isOfType(GTUType.SCHEDULED_BUS))
             {
