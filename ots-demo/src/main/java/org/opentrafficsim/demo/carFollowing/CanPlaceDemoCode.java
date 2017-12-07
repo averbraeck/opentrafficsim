@@ -38,7 +38,7 @@ public class CanPlaceDemoCode implements LaneBasedGTUGenerator.RoomChecker
         Lane lane = null;
         for (DirectedLanePosition dlp : laneBasedGTUCharacteristics.getInitialLongitudinalPositions())
         {
-            if (dlp.getLane().getLaneType().isCompatible(laneBasedGTUCharacteristics.getGTUType()))
+            if (dlp.getLane().getLaneType().isCompatible(laneBasedGTUCharacteristics.getGTUType(), dlp.getGtuDirection()))
             {
                 lane = dlp.getLane();
                 break;

@@ -246,11 +246,11 @@ public final class ShapeFileReader implements UNITS
                 {
                     CrossSectionLink linkAB = null;
                     CrossSectionLink linkBA = null;
-                    linkAB = new CrossSectionLink(network, nr, nodeA, nodeB, LinkType.ALL,
+                    linkAB = new CrossSectionLink(network, nr, nodeA, nodeB, LinkType.ROAD,
                             new OTSLine3D(new OTSPoint3D[] { nodeA.getPoint(), nodeB.getPoint() }), simulator,
                             LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkAB, typeWegVak, simulator);
-                    linkBA = new CrossSectionLink(network, nrBA, nodeB, nodeA, LinkType.ALL,
+                    linkBA = new CrossSectionLink(network, nrBA, nodeB, nodeA, LinkType.ROAD,
                             new OTSLine3D(new OTSPoint3D[] { nodeB.getPoint(), nodeA.getPoint() }), simulator,
                             LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkBA, typeWegVak, simulator);
@@ -436,6 +436,7 @@ public final class ShapeFileReader implements UNITS
             {
                 LongitudinalDirectionality dir =
                         (i < 0) ? LongitudinalDirectionality.DIR_PLUS : LongitudinalDirectionality.DIR_MINUS;
+                // TODO Lane doesn't take direction anymore, this is given in the LaneType
                 String lr = i < 0 ? "L" : "R";
                 //
                 Lane laneEM = new NoTrafficLane(link, lr + "." + "EM", new Length(i * 0.75, METER), new Length(i * 0.75, METER),
@@ -446,7 +447,7 @@ public final class ShapeFileReader implements UNITS
                 {
                     lat += i * 1.75;
                     Lane lane = new Lane(link, "lane." + lr + "." + j, new Length(lat, METER), new Length(lat, METER), m35, m35,
-                            null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
+                            null, speedLimit, new OvertakingConditions.LeftAndRight());
                     new LaneAnimation(lane, simulator, Color.GRAY, false);
                     lat += i * 1.75;
                 }
@@ -498,6 +499,7 @@ public final class ShapeFileReader implements UNITS
             }
             for (int i = -1; i <= 1; i += 2)
             {
+                // TODO Lane doesn't take direction anymore, this is given in the LaneType
                 LongitudinalDirectionality dir =
                         (i < 0) ? LongitudinalDirectionality.DIR_PLUS : LongitudinalDirectionality.DIR_MINUS;
                 double lat = middenberm ? 0.5 : 0.0;
@@ -506,7 +508,7 @@ public final class ShapeFileReader implements UNITS
                     lat += i * 1.5;
                     String lr = i < 0 ? "L" : "R";
                     Lane lane = new Lane(link, "lane." + lr + "." + j, new Length(lat, METER), new Length(lat, METER), m30, m30,
-                            null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
+                            null, speedLimit, new OvertakingConditions.LeftAndRight());
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
                     lat += i * 1.5;
                 }
@@ -532,7 +534,7 @@ public final class ShapeFileReader implements UNITS
         try
         {
             Lane lane = new Lane(link, "lane", new Length(0.0, METER), new Length(0.0, METER), m60, m60, null,
-                    LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.LeftAndRight());
+                    speedLimit, new OvertakingConditions.LeftAndRight());
             new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
         }
         catch (NamingException | RemoteException | OTSGeometryException ne)

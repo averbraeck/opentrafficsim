@@ -289,7 +289,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
             // No overtaking, single (sink) lane
             Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                     this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                    LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
+                    this.speedLimit, new OvertakingConditions.None());
             new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
         }
         catch (NamingException | NetworkException | OTSGeometryException exception1)
