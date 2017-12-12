@@ -65,7 +65,7 @@ public interface Node extends Locatable, Serializable, Identifiable
      * @param gtuType the GTU type to determine the next links for
      * @param prevLink the incoming link to the Node
      * @return a set of links connecting from the previous link via this Node for the given GTU type
-     * @throws NetworkException if thhe incoming link is not connected to this node for the given GTU type
+     * @throws NetworkException if the incoming link is not connected to this node for the given GTU type
      */
     Set<Link> nextLinks(GTUType gtuType, Link prevLink) throws NetworkException;
 

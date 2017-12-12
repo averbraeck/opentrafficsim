@@ -529,14 +529,10 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                         else if ("LMRS".equals(tacticalPlannerName))
                         {
                             // provide default parameters with the car-following model
-                            Parameters defaultBehavioralCFCharacteristics = new Parameters();
-                            defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
-                            this.strategicalPlannerGeneratorCars =
-                                    new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
-                                            defaultBehavioralCFCharacteristics, new DefaultLMRSPerceptionFactory()));
-                            this.strategicalPlannerGeneratorTrucks =
-                                    new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
-                                            defaultBehavioralCFCharacteristics, new DefaultLMRSPerceptionFactory()));
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
+                            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
                         }
                         else if ("Toledo".equals(tacticalPlannerName))
                         {
@@ -759,32 +755,31 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                 return new Duration(XMLSamplerModel.this.headwayGenerator.draw(), DurationUnit.SI);
             }
         }, Long.MAX_VALUE, new Time(0, TimeUnit.BASE_SECOND), new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND), this.gtuColorer,
-                templateDistribution, initialPositions, this.network,
-                /*-
-                new LaneBasedGTUGenerator.RoomChecker()
-                {
-                    @Override
-                    public Speed canPlace(Speed leaderSpeed, org.djunits.value.vdouble.scalar.Length headway,
-                            LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException
-                    {
-                        // This implementation simply returns null if the headway is less than the headway wanted for driving at
-                        // the current speed of the leader
-                        if (headway.lt(laneBasedGTUCharacteristics
-                                .getStrategicalPlanner()
-                                .getDrivingCharacteristics()
-                                .getGTUFollowingModel()
-                                .minimumHeadway(leaderSpeed, leaderSpeed, new Length(0.1, LengthUnit.METER),
-                                        new Length(Double.MAX_VALUE, LengthUnit.SI),
-                                        lane.getSpeedLimit(SMLSamplerModel.this.gtuType),
-                                        laneBasedGTUCharacteristics.getMaximumSpeed())))
-                        {
-                            return null;
-                        }
-                        return leaderSpeed;
-                    }
-                }
-                 */
-                roomChecker);
+                templateDistribution, initialPositions, this.network, this.simulator, /*-
+                                                                                      new LaneBasedGTUGenerator.RoomChecker()
+                                                                                      {
+                                                                                      @Override
+                                                                                      public Speed canPlace(Speed leaderSpeed, org.djunits.value.vdouble.scalar.Length headway,
+                                                                                      LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException
+                                                                                      {
+                                                                                      // This implementation simply returns null if the headway is less than the headway wanted for driving at
+                                                                                      // the current speed of the leader
+                                                                                      if (headway.lt(laneBasedGTUCharacteristics
+                                                                                      .getStrategicalPlanner()
+                                                                                      .getDrivingCharacteristics()
+                                                                                      .getGTUFollowingModel()
+                                                                                      .minimumHeadway(leaderSpeed, leaderSpeed, new Length(0.1, LengthUnit.METER),
+                                                                                              new Length(Double.MAX_VALUE, LengthUnit.SI),
+                                                                                              lane.getSpeedLimit(SMLSamplerModel.this.gtuType),
+                                                                                              laneBasedGTUCharacteristics.getMaximumSpeed())))
+                                                                                      {
+                                                                                      return null;
+                                                                                      }
+                                                                                      return leaderSpeed;
+                                                                                      }
+                                                                                      }
+                                                                                      */
+                roomChecker, this.idGenerator);
     }
 
     /**
@@ -807,7 +802,7 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
             final Set<DirectedLanePosition> initialPositions,
             final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory) throws GTUException
     {
-        return new LaneBasedTemplateGTUType(this.gtuType, this.idGenerator, new Generator<Length>()
+        return new LaneBasedTemplateGTUType(this.gtuType, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -828,7 +823,7 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
             {
                 return maximumSpeedDistribution.draw();
             }
-        }, this.simulator,
+        },
                 /*-new Generator<LaneBasedStrategicalPlanner>()
                 {
                     public LaneBasedStrategicalPlanner draw() throws ProbabilityException, ParameterException
@@ -853,7 +848,7 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                     {
                         return initialSpeedDistribution.draw();
                     }
-                }, this.network);
+                });
 
     }
 
@@ -880,8 +875,8 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
         {
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
-                    lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
-                    this.speedLimit, new OvertakingConditions.LeftAndRight());
+                    lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType, this.speedLimit,
+                    new OvertakingConditions.LeftAndRight());
             new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
         }
         return lanes;

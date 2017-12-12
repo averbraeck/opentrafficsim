@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opentrafficsim.base.Identifiable;
+
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -19,7 +21,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Categorization implements Serializable
+public class Categorization implements Serializable, Identifiable
 {
 
     /** Empty categorization. */
@@ -92,6 +94,23 @@ public class Categorization implements Serializable
     public final String getId()
     {
         return this.id;
+    }
+    
+    /**
+     * Returns whether the categorization contains a class that is, or is a sub type of, the given class.
+     * @param clazz Class; class to check
+     * @return whether the categorization contains a class that is, or is a sub type of, the given class
+     */
+    public final boolean entails(final Class<?> clazz)
+    {
+        for (Class<?> clazz2 : this.classes)
+        {
+            if (clazz.isAssignableFrom(clazz2))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** {@inheritDoc} */

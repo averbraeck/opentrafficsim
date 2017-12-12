@@ -305,7 +305,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.laneType = laneType;
         checkDirectionality();
         this.speedLimitMap = new LinkedHashMap<>();
-        this.speedLimitMap.put(GTUType.CAR, speedLimit);
+        this.speedLimitMap.put(GTUType.VEHICLE, speedLimit);
         this.overtakingConditions = overtakingConditions;
     }
 

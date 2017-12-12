@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
@@ -17,14 +16,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @param <T> class of the tactical planner generated
  */
 
-public interface LaneBasedTacticalPlannerFactory<T extends LaneBasedTacticalPlanner>
+public interface LaneBasedTacticalPlannerFactory<T extends LaneBasedTacticalPlanner> extends ModelComponentFactory
 {
-
-    /**
-     * Returns a new set of parameters with default values for the next tactical planner that will be generated.
-     * @return set of parameters with default values for the next tactical planner that will be generated
-     */
-    Parameters getDefaultParameters();
 
     /**
      * Creates a new tactical planner for the given GTU.

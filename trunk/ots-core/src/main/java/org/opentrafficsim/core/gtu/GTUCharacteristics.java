@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
  * Characteristics of a GTU. This class is used to store all characteristics of a (not-yet constructed) GTU.
@@ -27,9 +24,6 @@ public class GTUCharacteristics implements Serializable
     /** The type of the GTU. */
     private final GTUType gtuType;
 
-    /** The id generator that will generate the id of the GTU. */
-    private final IdGenerator idGenerator;
-
     /** Length of the GTU. */
     private final Length length;
 
@@ -39,32 +33,20 @@ public class GTUCharacteristics implements Serializable
     /** Maximum speed of the GTU. */
     private final Speed maximumSpeed;
 
-    /** The simulator that controls the GTU. */
-    private final OTSDEVSSimulatorInterface simulator;
-
-    /** The OTSNetwork that all generated GTUs will be registered in. */
-    private final OTSNetwork network;
-
     /**
      * Construct a new set of GTUCharacteristics.
      * @param gtuType GTUType; type of the (not yet constructed) GTU
-     * @param idGenerator IdGenerator; the id generator for the (not yet constructed) GTU
      * @param length Length; the length of the (non yet constructed) GTU
      * @param width Length; the width of the (non yet constructed) GTU
      * @param maximumSpeed Length; the maximum speed of the (non yet constructed) GTU
-     * @param simulator OTSDEVSSimulatorInterface; the simulator that controls the (not yet constructed) GTU
-     * @param network OTSNetwork; the network that will contain the GTU
      */
-    public GTUCharacteristics(final GTUType gtuType, final IdGenerator idGenerator, final Length length, final Length width,
-            final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
+    public GTUCharacteristics(final GTUType gtuType, final Length length, final Length width,
+            final Speed maximumSpeed)
     {
         this.gtuType = gtuType;
-        this.idGenerator = idGenerator;
         this.length = length;
         this.width = width;
         this.maximumSpeed = maximumSpeed;
-        this.simulator = simulator;
-        this.network = network;
     }
 
     /**
@@ -74,15 +56,6 @@ public class GTUCharacteristics implements Serializable
     public final GTUType getGTUType()
     {
         return this.gtuType;
-    }
-
-    /**
-     * Retrieve the id generator.
-     * @return IdGenerator
-     */
-    public final IdGenerator getIdGenerator()
-    {
-        return this.idGenerator;
     }
 
     /**
@@ -110,24 +83,6 @@ public class GTUCharacteristics implements Serializable
     public final Speed getMaximumSpeed()
     {
         return this.maximumSpeed;
-    }
-
-    /**
-     * Retrieve the simulator.
-     * @return OTSDEVSSimulatorInterface
-     */
-    public final OTSDEVSSimulatorInterface getSimulator()
-    {
-        return this.simulator;
-    }
-
-    /**
-     * Retrieve the network.
-     * @return OTSNetwork
-     */
-    public final OTSNetwork getNetwork()
-    {
-        return this.network;
     }
 
     /** {@inheritDoc} */

@@ -36,7 +36,7 @@ public class CanPlaceDemoCode implements LaneBasedGTUGenerator.RoomChecker
         // This simple minded implementation returns null if the headway is less than the headway wanted for driving at
         // the current speed of the leader
         Lane lane = null;
-        for (DirectedLanePosition dlp : laneBasedGTUCharacteristics.getInitialLongitudinalPositions())
+        for (DirectedLanePosition dlp : laneBasedGTUCharacteristics.getInitialPosition())
         {
             if (dlp.getLane().getLaneType().isCompatible(laneBasedGTUCharacteristics.getGTUType(), dlp.getGtuDirection()))
             {

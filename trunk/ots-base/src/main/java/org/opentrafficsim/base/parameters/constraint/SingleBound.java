@@ -242,7 +242,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
 
         /** {@inheritDoc} */
         @Override
-        public String toString()
+        public final String toString()
         {
             return String.format(this.stringFormat, this.bound);
         }

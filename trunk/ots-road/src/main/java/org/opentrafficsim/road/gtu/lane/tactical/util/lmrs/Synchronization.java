@@ -238,8 +238,9 @@ public enum Synchronization implements LmrsParameters
             Duration lc = params.getParameter(ParameterTypes.LCDUR);
             Speed tagSpeed = x0.divideBy(t0);
             double dCoop = params.getParameter(DCOOP);
-            Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-            Length ownLength = perception.getPerceptionCategory(EgoPerception.class).getLength();
+            EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
+            Speed ownSpeed = ego.getSpeed();
+            Length ownLength = ego.getLength();
             Length dx;
             try
             {
@@ -499,12 +500,12 @@ public enum Synchronization implements LmrsParameters
     static SortedSet<HeadwayGTU> removeAllUpstreamOfConflicts(final SortedSet<HeadwayGTU> set, final LanePerception perception,
             final RelativeLane relativeLane) throws OperationalPlanException
     {
-        if (!perception.contains(IntersectionPerception.class))
+        IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
+        if (intersection == null)
         {
             return set;
         }
-        Set<HeadwayConflict> conflicts =
-                perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(relativeLane);
+        Set<HeadwayConflict> conflicts = intersection.getConflicts(relativeLane);
         if (conflicts != null)
         {
             for (HeadwayConflict conflict : conflicts)

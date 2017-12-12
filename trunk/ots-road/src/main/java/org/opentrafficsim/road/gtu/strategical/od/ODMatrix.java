@@ -8,14 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.djunits.value.vdouble.vector.DurationVector;
+import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
+import org.djunits.value.vdouble.vector.TimeVector;
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -38,7 +39,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ODMatrix implements Serializable
+public class ODMatrix implements Serializable, Identifiable
 {
 
     /** */
@@ -57,7 +58,7 @@ public class ODMatrix implements Serializable
     private final Categorization categorization;
 
     /** Global time vector. */
-    private final DurationVector globalTimeVector;
+    private final TimeVector globalTimeVector;
 
     /** Global interpolation of the data. */
     private final Interpolation globalInterpolation;
@@ -76,7 +77,7 @@ public class ODMatrix implements Serializable
      * @throws NullPointerException if any input is null
      */
     public ODMatrix(final String id, final List<Node> origins, final List<Node> destinations,
-            final Categorization categorization, final DurationVector globalTimeVector, final Interpolation globalInterpolation)
+            final Categorization categorization, final TimeVector globalTimeVector, final Interpolation globalInterpolation)
     {
         Throw.whenNull(id, "Id may not be null.");
         Throw.when(origins == null || origins.contains(null), NullPointerException.class, "Origin may not be or contain null.");
@@ -138,7 +139,7 @@ public class ODMatrix implements Serializable
     /**
      * @return globalTimeVector.
      */
-    public final DurationVector getGlobalTimeVector()
+    public final TimeVector getGlobalTimeVector()
     {
         return this.globalTimeVector;
     }
@@ -178,7 +179,7 @@ public class ODMatrix implements Serializable
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
-            final FrequencyVector demand, final DurationVector timeVector, final Interpolation interpolation)
+            final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation)
     {
         Throw.whenNull(origin, "Origin may not be null.");
         Throw.whenNull(destination, "Destination may not be null.");
@@ -210,7 +211,7 @@ public class ODMatrix implements Serializable
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
-            final FrequencyVector demand, final DurationVector timeVector, final Interpolation interpolation,
+            final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation,
             final double fraction)
     {
         Throw.whenNull(demand, "Demand data may not be null.");
@@ -247,7 +248,7 @@ public class ODMatrix implements Serializable
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
-            final FrequencyVector demand, final DurationVector timeVector, final Interpolation interpolation,
+            final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation,
             final double[] fraction)
     {
         Throw.whenNull(demand, "Demand data may not be null.");
@@ -303,7 +304,7 @@ public class ODMatrix implements Serializable
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    public final DurationVector getTimeVector(final Node origin, final Node destination, final Category category)
+    public final TimeVector getTimeVector(final Node origin, final Node destination, final Category category)
     {
         ODEntry odEntry = getODEntry(origin, destination, category);
         if (odEntry == null)
@@ -335,16 +336,18 @@ public class ODMatrix implements Serializable
     /**
      * Returns the demand at given time. If given time is before the first time slice or after the last time slice, 0 demand is
      * returned.
-     * @param origin origin
-     * @param destination destination
-     * @param category category
-     * @param time time
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
+     * @param time Duration; time
+     * @param sliceStart boolean; whether the time is at the start of an arbitrary time slice
      * @return demand for given origin, destination and categorization, at given time
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    public final Frequency getDemand(final Node origin, final Node destination, final Category category, final Duration time)
+    public final Frequency getDemand(final Node origin, final Node destination, final Category category, final Time time,
+            final boolean sliceStart)
     {
         Throw.whenNull(time, "Time may not be null.");
         ODEntry odEntry = getODEntry(origin, destination, category);
@@ -352,7 +355,7 @@ public class ODMatrix implements Serializable
         {
             return new Frequency(0.0, FrequencyUnit.PER_HOUR); // Frequency.ZERO gives "Hz" which is not nice for flow
         }
-        return odEntry.getDemand(time);
+        return odEntry.getDemand(time, sliceStart);
     }
 
     /**
@@ -364,7 +367,7 @@ public class ODMatrix implements Serializable
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    private ODEntry getODEntry(final Node origin, final Node destination, final Category category)
+    public ODEntry getODEntry(final Node origin, final Node destination, final Category category)
     {
         Throw.whenNull(origin, "Origin may not be null.");
         Throw.whenNull(destination, "Destination may not be null.");
@@ -410,7 +413,7 @@ public class ODMatrix implements Serializable
                 "Destination '%s' is not part of the OD matrix.", destination);
         return new HashSet<>(this.demandData.get(origin).get(destination).keySet());
     }
-    
+
     /******************************************************************************************************/
     /****************************************** TRIP METHODS **********************************************/
     /******************************************************************************************************/
@@ -441,7 +444,7 @@ public class ODMatrix implements Serializable
      * @throws NullPointerException if an input is null
      */
     public final void putTripsVector(final Node origin, final Node destination, final Category category, final int[] trips,
-            final DurationVector timeVector)
+            final TimeVector timeVector)
     {
         // this is what we need here, other checks in putDemandVector
         Throw.whenNull(trips, "Demand data may not be null.");
@@ -454,8 +457,8 @@ public class ODMatrix implements Serializable
         {
             for (int i = 0; i < trips.length; i++)
             {
-                flow[i] = trips[i]
-                        / (timeVector.get(i + 1).getInUnit(DurationUnit.HOUR) - timeVector.get(i).getInUnit(DurationUnit.HOUR));
+                flow[i] = trips[i] / (timeVector.get(i + 1).getInUnit(TimeUnit.BASE_HOUR)
+                        - timeVector.get(i).getInUnit(TimeUnit.BASE_HOUR));
             }
             // last value can remain zero as initialized
             putDemandVector(origin, destination, category, new FrequencyVector(flow, FrequencyUnit.PER_HOUR, StorageType.DENSE),
@@ -485,7 +488,7 @@ public class ODMatrix implements Serializable
             return null;
         }
         int[] trips = new int[demand.size() - 1];
-        DurationVector time = getTimeVector(origin, destination, category);
+        TimeVector time = getTimeVector(origin, destination, category);
         Interpolation interpolation = getInterpolation(origin, destination, category);
         for (int i = 0; i < trips.length; i++)
         {
@@ -516,7 +519,7 @@ public class ODMatrix implements Serializable
      */
     public final int getTrips(final Node origin, final Node destination, final Category category, final int periodIndex)
     {
-        DurationVector time = getTimeVector(origin, destination, category);
+        TimeVector time = getTimeVector(origin, destination, category);
         if (time == null)
         {
             return 0;
@@ -557,14 +560,14 @@ public class ODMatrix implements Serializable
         Interpolation interpolation = getInterpolation(origin, destination, category);
         Throw.when(!interpolation.equals(Interpolation.STEPWISE), UnsupportedOperationException.class,
                 "Can only increase the number of trips for data with stepwise interpolation.");
-        DurationVector time = getTimeVector(origin, destination, category);
+        TimeVector time = getTimeVector(origin, destination, category);
         Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IllegalArgumentException.class,
                 "Period index out of range.");
         FrequencyVector demand = getDemandVector(origin, destination, category);
         try
         {
-            double additionalDemand = trips / (time.get(periodIndex + 1).getInUnit(DurationUnit.HOUR)
-                    - time.get(periodIndex).getInUnit(DurationUnit.HOUR));
+            double additionalDemand = trips / (time.get(periodIndex + 1).getInUnit(TimeUnit.BASE_HOUR)
+                    - time.get(periodIndex).getInUnit(TimeUnit.BASE_HOUR));
             double[] dem = demand.getValuesInUnit(FrequencyUnit.PER_HOUR);
             dem[periodIndex] += additionalDemand;
             putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR, StorageType.DENSE),
@@ -641,7 +644,7 @@ public class ODMatrix implements Serializable
         int sum = 0;
         for (Category category : getCategories(origin, destination))
         {
-            DurationVector time = getTimeVector(origin, destination, category);
+            TimeVector time = getTimeVector(origin, destination, category);
             FrequencyVector demand = getDemandVector(origin, destination, category);
             Interpolation interpolation = getInterpolation(origin, destination, category);
             for (int i = 0; i < time.size() - 1; i++)
@@ -659,11 +662,11 @@ public class ODMatrix implements Serializable
         }
         return sum;
     }
-    
+
     /******************************************************************************************************/
     /****************************************** OTHER METHODS *********************************************/
     /******************************************************************************************************/
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -855,7 +858,7 @@ public class ODMatrix implements Serializable
         Route bc2 = new Route("BC2");
         Route bd1 = new Route("BD1");
 
-        DurationVector timeVector = new DurationVector(new double[] { 0, 1200, 3600 }, DurationUnit.SECOND, StorageType.DENSE);
+        TimeVector timeVector = new TimeVector(new double[] { 0, 1200, 3600 }, TimeUnit.BASE_SECOND, StorageType.DENSE);
         ODMatrix odMatrix = new ODMatrix("TestOD", origins, destinations, categorization, timeVector, Interpolation.LINEAR);
 
         Category category = new Category(categorization, 0.0, ac1, "car");
@@ -901,19 +904,20 @@ public class ODMatrix implements Serializable
         category = new Category(categorization, 0.0, ac2, "truck");
         for (double t = -100; t <= 3700; t += 100)
         {
-            Duration time = new Duration(t, DurationUnit.SECOND);
-            System.out.println("@ t = " + time + ", q = " + odMatrix.getDemand(a, c, category, time));
+            Time time = new Time(t, TimeUnit.BASE_SECOND);
+            System.out.println("@ t = " + time + ", q = " + odMatrix.getDemand(a, c, category, time, false) + " (slice end)");
+            System.out.println("@ t = " + time + ", q = " + odMatrix.getDemand(a, c, category, time, true) + " (slice start)");
         }
 
-        System.out.println("For OD       that does not exist; q = " + odMatrix.getDemand(c, a, category, Duration.ZERO));
+        System.out.println("For OD       that does not exist; q = " + odMatrix.getDemand(c, a, category, Time.ZERO, true));
         category = new Category(categorization, 0.0, ac2, "does not exist");
-        System.out.println("For category that does not exist; q = " + odMatrix.getDemand(a, c, category, Duration.ZERO));
+        System.out.println("For category that does not exist; q = " + odMatrix.getDemand(a, c, category, Time.ZERO, true));
 
     }
 
     /**
-     * An ODEntry contains a demand vector, and optionally a time vector and interpolation method that may differ from the
-     * global time vector or interpolation method.
+     * An ODEntry contains a demand vector, a time vector and interpolation method that may differ from the global time vector
+     * or interpolation method.
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -924,14 +928,14 @@ public class ODMatrix implements Serializable
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private class ODEntry
+    public class ODEntry
     {
 
         /** Demand vector. */
         private final FrequencyVector demandVector;
 
         /** Time vector, may be null. */
-        private final DurationVector timeVector;
+        private final TimeVector timeVector;
 
         /** Interpolation, may be null. */
         private final Interpolation interpolation;
@@ -942,7 +946,7 @@ public class ODMatrix implements Serializable
          * @param interpolation interpolation
          * @throws IllegalArgumentException if the demand data has a different length than time data
          */
-        ODEntry(final FrequencyVector demandVector, final DurationVector timeVector, final Interpolation interpolation)
+        ODEntry(final FrequencyVector demandVector, final TimeVector timeVector, final Interpolation interpolation)
         {
             Throw.when(demandVector.size() != timeVector.size(), IllegalArgumentException.class,
                     "Demand data has different length than time vector.");
@@ -954,36 +958,13 @@ public class ODMatrix implements Serializable
         /**
          * Returns the demand at given time. If given time is before the first time slice or after the last time slice, 0 demand
          * is returned.
-         * @param time time of demand requested
+         * @param time Time; time of demand requested
+         * @param sliceStart boolean; whether the time is at the start of an arbitrary time slice
          * @return demand at given time
          */
-        public final Frequency getDemand(final Duration time)
+        public final Frequency getDemand(final Time time, final boolean sliceStart)
         {
-            try
-            {
-                // empty data or before start or after end, return 0
-                if (this.timeVector.size() == 0 || time.lt(this.timeVector.get(0))
-                        || time.ge(this.timeVector.get(this.timeVector.size() - 1)))
-                {
-                    return new Frequency(0.0, FrequencyUnit.PER_HOUR); // Frequency.ZERO give "Hz" which is not nice for flow
-                }
-                // interpolate
-                for (int i = 0; i < this.timeVector.size() - 1; i++)
-                {
-                    if (this.timeVector.get(i + 1).ge(time))
-                    {
-                        return this.interpolation.interpolate(this.demandVector.get(i), this.timeVector.get(i),
-                                this.demandVector.get(i + 1), this.timeVector.get(i + 1), time);
-                    }
-                }
-            }
-            catch (ValueException ve)
-            {
-                // should not happen, vector lengths are checked when given is input
-                throw new RuntimeException("Index out of bounds.", ve);
-            }
-            // should not happen
-            throw new RuntimeException("Demand interpolation failed.");
+            return this.interpolation.interpolateVector(time, this.demandVector, this.timeVector, sliceStart);
         }
 
         /**
@@ -997,7 +978,7 @@ public class ODMatrix implements Serializable
         /**
          * @return timeVector
          */
-        final DurationVector getTimeVector()
+        final TimeVector getTimeVector()
         {
             return this.timeVector;
         }

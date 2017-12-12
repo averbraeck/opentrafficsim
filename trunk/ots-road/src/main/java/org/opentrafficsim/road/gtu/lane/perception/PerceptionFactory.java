@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.ModelComponentFactory;
 
 /**
  * Interface for perception initialization.
@@ -13,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface PerceptionFactory
+public interface PerceptionFactory extends ModelComponentFactory
 {
 
     /**

@@ -28,14 +28,15 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactoryByType;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -161,7 +162,7 @@ public final class AHFEUtil
         LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory =
                 new LMRSFactoryAHFE(idmPlusFactory, params, delayedPerceptionFactory);
 
-        BehavioralCharacteristicsFactoryByType bcFactory = new BehavioralCharacteristicsFactoryByType();
+        ParameterFactoryByType bcFactory = new ParameterFactoryByType();
         // Length lookAhead = new Length(1000.0, LengthUnit.SI);
         // Length lookAheadStdev = new Length(250.0, LengthUnit.SI);
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
@@ -208,27 +209,27 @@ public final class AHFEUtil
         // TODO gaussian 85 +/- 2.5 for match with default LMRS
         SpeedGenerator speedTruck = new SpeedGenerator(new Speed(80.0, SpeedUnit.KM_PER_HOUR),
                 new Speed(95.0, SpeedUnit.KM_PER_HOUR), streams.get("gtuClass"));
-        GTUTypeGenerator gtuTypeGeneratorLeft = new GTUTypeGenerator(simulator);
-        GTUTypeGenerator gtuTypeGeneratorRight = new GTUTypeGenerator(simulator);
+        GTUTypeGenerator gtuTypeGeneratorLeft = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
+        GTUTypeGenerator gtuTypeGeneratorRight = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
         if (truckFraction < 1 - leftFraction)
         {
-            gtuTypeGeneratorLeft.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                    new GTUType("car", CAR), speedCar, 1.0);
+            gtuTypeGeneratorLeft.addType(new ConstantGenerator<>(Length.createSI(4.0)),
+                    new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car", CAR), speedCar, 1.0);
             double p = truckFraction / (1 - leftFraction);
-            gtuTypeGeneratorRight.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                    new GTUType("car", CAR), speedCar, 1.0 - p);
-            gtuTypeGeneratorRight.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI),
-                    new GTUType("truck", TRUCK), speedTruck, p);
+            gtuTypeGeneratorRight.addType(new ConstantGenerator<>(Length.createSI(4.0)),
+                    new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car", CAR), speedCar, 1.0 - p);
+            gtuTypeGeneratorRight.addType(new ConstantGenerator<>(Length.createSI(15.0)),
+                    new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck", TRUCK), speedTruck, p);
         }
         else
         {
             double p = (truckFraction - (1 - leftFraction)) / leftFraction;
-            gtuTypeGeneratorLeft.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                    new GTUType("car", CAR), speedCar, 1.0 - p);
-            gtuTypeGeneratorLeft.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI),
-                    new GTUType("truck", TRUCK), speedTruck, p);
-            gtuTypeGeneratorRight.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI),
-                    new GTUType("truck", TRUCK), speedTruck, 1.0);
+            gtuTypeGeneratorLeft.addType(new ConstantGenerator<>(Length.createSI(4.0)),
+                    new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car", CAR), speedCar, 1.0 - p);
+            gtuTypeGeneratorLeft.addType(new ConstantGenerator<>(Length.createSI(15.0)),
+                    new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck", TRUCK), speedTruck, p);
+            gtuTypeGeneratorRight.addType(new ConstantGenerator<>(Length.createSI(15.0)),
+                    new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck", TRUCK), speedTruck, 1.0);
         }
 
         TimeVector timeVector =
@@ -313,7 +314,7 @@ public final class AHFEUtil
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
             final RouteGenerator routeGenerator, final IdGenerator idGenerator, final OTSDEVSSimulatorInterface simulator,
             final OTSNetwork network, final GTUTypeGenerator gtuTypeGenerator, final HeadwayGeneratorDemand headwayGenerator,
-            final GTUColorer gtuColorer, final RoomChecker roomChecker, final BehavioralCharacteristicsFactory bcFactory,
+            final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime)
             throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
     {
@@ -326,10 +327,10 @@ public final class AHFEUtil
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
 
         CharacteristicsGenerator characteristicsGenerator = new CharacteristicsGenerator(strategicalFactory, routeGenerator,
-                idGenerator, simulator, network, gtuTypeGenerator, generationSpeed, initialLongitudinalPositions);
+                simulator, gtuTypeGenerator, generationSpeed, initialLongitudinalPositions);
 
         new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO, simulationTime, gtuColorer,
-                characteristicsGenerator, initialLongitudinalPositions, network, roomChecker);
+                characteristicsGenerator, initialLongitudinalPositions, network, simulator, roomChecker, idGenerator);
     }
 
     /**
@@ -372,7 +373,7 @@ public final class AHFEUtil
 
         /** {@inheritDoc} */
         @Override
-        public final Parameters getDefaultParameters()
+        public final Parameters getParameters()
         {
             Parameters parameters = new Parameters();
             parameters.setDefaultParameters(ParameterTypes.class);
@@ -447,6 +448,13 @@ public final class AHFEUtil
             perception.addPerceptionCategory(new DelayedNeighborsPerception(perception, this.anticipation));
             // perception.addPerceptionCategory(new DirectIntersectionPerception(perception));
             return perception;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Parameters getParameters()
+        {
+            return new Parameters();
         }
 
     }

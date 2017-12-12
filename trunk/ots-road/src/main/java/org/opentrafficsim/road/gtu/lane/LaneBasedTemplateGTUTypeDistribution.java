@@ -46,13 +46,6 @@ public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharact
 
     /** {@inheritDoc} */
     @Override
-    public final OTSDEVSSimulatorInterface getSimulator() throws ProbabilityException
-    {
-        return this.distribution.get(0).getObject().getSimulator();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String toString()
     {
         return "LaneBasedTemplateGTUTypeDistribution [distribution=" + this.distribution + "]";

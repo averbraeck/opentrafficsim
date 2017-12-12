@@ -68,7 +68,7 @@ public class CompleteRoute extends Route
 
     /** {@inheritDoc} */
     @Override
-    public final void addNode(final Node node) throws NetworkException
+    public final CompleteRoute addNode(final Node node) throws NetworkException
     {
         if (getNodes().size() > 0)
         {
@@ -80,6 +80,7 @@ public class CompleteRoute extends Route
             }
         }
         super.addNode(node);
+        return this;
     }
 
     /**

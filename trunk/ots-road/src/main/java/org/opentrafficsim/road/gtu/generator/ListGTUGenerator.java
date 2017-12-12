@@ -166,17 +166,16 @@ public class ListGTUGenerator implements Serializable
      */
     protected final void generateCar()
     {
-        // TODO use given position in the constructor?
-        Length initialPosition = new Length(0, LengthUnit.METER);
-        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>();
+        Set<DirectedLanePosition> initialPosition = new LinkedHashSet<>();
         // TODO use given directionality in the constructor?
         try
         {
-            initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
+            // TODO use given position in the constructor?
+            initialPosition.add(new DirectedLanePosition(this.lane, Length.ZERO, GTUDirectionality.DIR_PLUS));
             Length vehicleLength = new Length(4, LengthUnit.METER);
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
                     new Length(1.8, LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR), this.simulator, this.network);
-            gtu.initWithAnimation(this.strategicalPlanner, initialPositions, this.initialSpeed, DefaultCarAnimation.class,
+            gtu.initWithAnimation(this.strategicalPlanner, initialPosition, this.initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
             scheduleNextVehicle();
         }

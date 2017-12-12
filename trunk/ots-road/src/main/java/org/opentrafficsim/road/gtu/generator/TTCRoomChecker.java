@@ -47,7 +47,7 @@ public class TTCRoomChecker implements RoomChecker
             final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException
     {
         Speed speed = Speed.min(leaderSpeed, laneBasedGTUCharacteristics.getMaximumSpeed());
-        for (DirectedLanePosition dlp : laneBasedGTUCharacteristics.getInitialLongitudinalPositions())
+        for (DirectedLanePosition dlp : laneBasedGTUCharacteristics.getInitialPosition())
         {
             if (dlp.getLane().getLaneType().isCompatible(laneBasedGTUCharacteristics.getGTUType(), dlp.getGtuDirection()))
             {

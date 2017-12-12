@@ -746,14 +746,10 @@ public class ModelControlDemo extends ModelStarter
                             else if ("LMRS".equals(tacticalPlannerName))
                             {
                                 // provide default parameters with the car-following model
-                                Parameters defaultBehavioralCFCharacteristics = new Parameters();
-                                defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
-                                this.strategicalPlannerGeneratorCars =
-                                        new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
-                                                defaultBehavioralCFCharacteristics, new DefaultLMRSPerceptionFactory()));
-                                this.strategicalPlannerGeneratorTrucks =
-                                        new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(),
-                                                defaultBehavioralCFCharacteristics, new DefaultLMRSPerceptionFactory()));
+                                this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                        new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
+                                this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                                        new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
                             }
                             else if ("Toledo".equals(tacticalPlannerName))
                             {

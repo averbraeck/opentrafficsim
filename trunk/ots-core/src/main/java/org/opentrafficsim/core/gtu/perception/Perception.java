@@ -59,6 +59,14 @@ public interface Perception extends Serializable
      * @throws OperationalPlanException if the perception category is not present
      */
     <T extends PerceptionCategory> T getPerceptionCategory(Class<T> category) throws OperationalPlanException;
+    
+    /**
+     * Returns the given perception category, or {@code null} if not present.
+     * @param category perception category class
+     * @param <T> perception category
+     * @return given perception category
+     */
+    <T extends PerceptionCategory> T getPerceptionCategoryOrNull(Class<T> category);
 
     /**
      * Remove give perception category.

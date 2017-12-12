@@ -393,14 +393,9 @@ class GeneratorTag implements Serializable
         }
         if (generatorTag.tacticalPlannerName.equals("LMRS"))
         {
-            // provide default parameters with the car-following model
-            Parameters defaultBehavioralCFCharacteristics = new Parameters();
-            defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
-            defaultBehavioralCFCharacteristics.setDefaultParameters(TrafficLightUtil.class);
             try
             {
-                return new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics,
-                        new DefaultLMRSPerceptionFactory());
+                return new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory());
             }
             catch (GTUException exception)
             {

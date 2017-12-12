@@ -31,8 +31,7 @@ public class AccelerationSpeedLimitTransition implements AccelerationIncentive
     @Override
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws OperationalPlanException, ParameterException
+            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException
     {
         SpeedLimitProspect slp = perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(lane);
         simplePlan.minimizeAcceleration(SpeedLimitUtil.considerSpeedLimitTransitions(params, speed, slp, carFollowingModel));

@@ -18,6 +18,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import nl.tudelft.simulation.language.Throw;
 
 /**
+ * Generates headways based on demand.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -26,8 +27,10 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @deprecated {@code ODApplyer} connects an OD to a network, and has a much more flexible and theoretically sound
+ *             implementation. This class is for use in legacy code (A58 SimSmartMobility, AHFE).
  */
-// TODO Link this class to an OD
+@Deprecated
 public class HeadwayGeneratorDemand implements Generator<Duration>
 {
 

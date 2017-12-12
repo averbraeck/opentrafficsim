@@ -32,17 +32,17 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
  */
 public class IncentiveRoute implements MandatoryIncentive
 {
-    
+
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
-    
+
     /** Look-ahead time for mandatory lane changes parameter type. */
     public static final ParameterTypeDuration T0 = ParameterTypes.T0;
 
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final Parameters parameters,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
+    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
         // desire to leave current lane
@@ -83,15 +83,15 @@ public class IncentiveRoute implements MandatoryIncentive
      * @throws ParameterException in case of a parameter exception
      * @throws OperationalPlanException in case of perception exceptions
      */
-    private static double getDesireToLeave(final Parameters params, final LanePerception perception,
-            final RelativeLane lane) throws ParameterException, OperationalPlanException
+    private static double getDesireToLeave(final Parameters params, final LanePerception perception, final RelativeLane lane)
+            throws ParameterException, OperationalPlanException
     {
         Speed v = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         double dOut = 0.0;
-        if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane))
+        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        if (infra.getCrossSection().contains(lane))
         {
-            for (InfrastructureLaneChangeInfo info : perception.getPerceptionCategory(InfrastructurePerception.class)
-                    .getInfrastructureLaneChangeInfo(lane))
+            for (InfrastructureLaneChangeInfo info : infra.getInfrastructureLaneChangeInfo(lane))
             {
                 double d = getDesireToLeave(params, info.getRemainingDistance(), info.getRequiredNumberOfLaneChanges(), v);
                 dOut = d > dOut ? d : dOut;

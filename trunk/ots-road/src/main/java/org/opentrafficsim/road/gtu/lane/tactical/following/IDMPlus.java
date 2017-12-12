@@ -6,9 +6,8 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 
 /**
  * Implementation of the IDM+. See Schakel, W.J., Knoop, V.L., and Van Arem, B. (2012),
@@ -35,7 +34,7 @@ public class IDMPlus extends AbstractIDM
     {
         super(HEADWAY, DESIRED_SPEED);
     }
-    
+
     /**
      * Constructor with modular models for desired headway and desired speed.
      * @param desiredHeadwayModel desired headway model
@@ -45,7 +44,7 @@ public class IDMPlus extends AbstractIDM
     {
         super(desiredHeadwayModel, desiredSpeedModel);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String getName()
@@ -62,14 +61,13 @@ public class IDMPlus extends AbstractIDM
 
     /** {@inheritDoc} */
     @Override
-    protected final Acceleration combineInteractionTerm(final Acceleration aFree,
-            final Parameters parameters, final Speed speed, final Speed desiredSpeed,
-            final Length desiredHeadway, final SortedMap<Length, Speed> leaders) throws ParameterException
+    protected final Acceleration combineInteractionTerm(final Acceleration aFree, final Parameters parameters,
+            final Speed speed, final Speed desiredSpeed, final Length desiredHeadway, final SortedMap<Length, Speed> leaders)
+            throws ParameterException
     {
-        Acceleration a = parameters.getParameter(ParameterTypes.A);
-        double sRatio =
-                dynamicDesiredHeadway(parameters, speed, desiredHeadway, leaders.get(leaders.firstKey())).si
-                        / leaders.firstKey().si;
+        Acceleration a = parameters.getParameter(A);
+        double sRatio = dynamicDesiredHeadway(parameters, speed, desiredHeadway, leaders.get(leaders.firstKey())).si
+                / leaders.firstKey().si;
         double aInt = a.si * (1 - sRatio * sRatio);
         return new Acceleration(aInt < aFree.si ? aInt : aFree.si, AccelerationUnit.SI);
     }

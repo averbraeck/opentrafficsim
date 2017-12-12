@@ -15,6 +15,21 @@
       <action issue="OTS-332" type="update">
         OTS-332. Make GTUType and LaneType hierarchal
       </action>
+      <action issue="OTS-345" type="add">   
+        OTS-345. Create utility to apply an OD matrix on the network
+      </action>
+      <action issue="OTS-346" type="update">
+        OTS-346. Streamline parameter creation using factories
+      </action>
+      <action issue="OTS-347" type="add">
+        OTS-347. Create Generator<O> for constant values
+      </action>
+      <action issue="OTS-349" type="add">
+        OTS-349. Provide default GTUCharacteristics for GTUTypes
+      </action>
+      <action issue="OTS-350" type"fix">
+        OTS-350. Acceleration <-10m/s^2 at vehicle generation with LMRS
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">

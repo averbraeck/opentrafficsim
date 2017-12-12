@@ -143,7 +143,8 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             speedError = params.getParameter(VERROR);
             accelerationError = params.getParameter(AERROR);
             length = getPerception().getGtu().getLength();
-            egoSpeed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
+            EgoPerception ego = getPerception().getPerceptionCategory(EgoPerception.class);
+            egoSpeed = ego.getSpeed();
             dt = params.getParameter(DT);
             try
             {
@@ -155,7 +156,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             }
             if (!ta.eq0())
             {
-                Acceleration acceleration = getPerception().getPerceptionCategory(EgoPerception.class).getAcceleration();
+                Acceleration acceleration = ego.getAcceleration();
                 traveledDistance = traveledDistance.plus(this.anticipation.egoAnticipation(egoSpeed, acceleration, ta));
             }
             this.rearrangeTime = time;

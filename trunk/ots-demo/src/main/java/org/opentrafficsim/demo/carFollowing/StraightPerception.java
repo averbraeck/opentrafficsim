@@ -805,20 +805,19 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             Length maxDistance = lanePathInfo.getPath().getLength();
 
             // look at the conditions for headway
-            Headway headway = getPerception().getPerceptionCategory(DefaultSimplePerception.class).getForwardHeadwayGTU();
+            DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
+            Headway headwayGTU = simplePerception.getForwardHeadwayGTU();
             AccelerationStep accelerationStep = null;
-            if (headway.getDistance().le(maxDistance))
+            if (headwayGTU.getDistance().le(maxDistance))
             {
-                accelerationStep = ((GTUFollowingModelOld) this.getCarFollowingModel()).computeAccelerationStepWithNoLeader(
-                        getGtu(), maxDistance,
-                        getPerception().getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
+                accelerationStep = ((GTUFollowingModelOld) this.getCarFollowingModel())
+                        .computeAccelerationStepWithNoLeader(getGtu(), maxDistance, simplePerception.getSpeedLimit());
             }
             else
             {
                 // TODO do not use the speed of the other GTU, but the PERCEIVED speed
                 accelerationStep = ((GTUFollowingModelOld) this.getCarFollowingModel()).computeAccelerationStep(getGtu(),
-                        headway.getSpeed(), headway.getDistance(), maxDistance,
-                        getPerception().getPerceptionCategory(DefaultSimplePerception.class).getSpeedLimit());
+                        headwayGTU.getSpeed(), headwayGTU.getDistance(), maxDistance, simplePerception.getSpeedLimit());
             }
 
             // see if we have to continue standing still. In that case, generate a stand still plan

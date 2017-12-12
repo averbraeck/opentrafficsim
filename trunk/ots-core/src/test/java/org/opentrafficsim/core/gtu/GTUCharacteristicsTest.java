@@ -51,38 +51,24 @@ public class GTUCharacteristicsTest implements OTSModelInterface
         // Make two sets of values so we can prove that the constructed GTUCharacteristics sets are really distinct.
         GTUType gtuTypeA = new GTUType("Type A", VEHICLE);
         GTUType gtuTypeB = new GTUType("Type B", VEHICLE);
-        IdGenerator idGeneratorA = new IdGenerator("A");
-        IdGenerator idGeneratorB = new IdGenerator("B");
         Length lengthA = new Length(5, LengthUnit.METER);
         Length lengthB = new Length(10, LengthUnit.METER);
         Length widthA = new Length(2, LengthUnit.METER);
         Length widthB = new Length(2.5, LengthUnit.METER);
         Speed maximumSpeedA = new Speed(180, SpeedUnit.KM_PER_HOUR);
         Speed maximumSpeedB = new Speed(130, SpeedUnit.KM_PER_HOUR);
-        OTSDEVSSimulatorInterface simulatorA = new SimpleSimulator(new Time(0, TimeUnit.BASE), new Duration(0, DurationUnit.SI),
-                new Duration(1000, DurationUnit.SI), this);
-        OTSDEVSSimulatorInterface simulatorB = new SimpleSimulator(new Time(0, TimeUnit.BASE), new Duration(0, DurationUnit.SI),
-                new Duration(1000, DurationUnit.SI), this);
-        OTSNetwork networkA = new OTSNetwork("testGTUCharacteristics A");
-        OTSNetwork networkB = new OTSNetwork("testGTUCharacteristics B");
         GTUCharacteristics gtucA =
-                new GTUCharacteristics(gtuTypeA, idGeneratorA, lengthA, widthA, maximumSpeedA, simulatorA, networkA);
+                new GTUCharacteristics(gtuTypeA, lengthA, widthA, maximumSpeedA);
         GTUCharacteristics gtucB =
-                new GTUCharacteristics(gtuTypeB, idGeneratorB, lengthB, widthB, maximumSpeedB, simulatorB, networkB);
+                new GTUCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB);
         assertEquals("gtuTypeA", gtuTypeA, gtucA.getGTUType());
         assertEquals("gtuTypeB", gtuTypeB, gtucB.getGTUType());
-        assertEquals("idGeneratorA", idGeneratorA, gtucA.getIdGenerator());
-        assertEquals("idGeneratorB", idGeneratorB, gtucB.getIdGenerator());
         assertEquals("lengthA", lengthA, gtucA.getLength());
         assertEquals("lengthB", lengthB, gtucB.getLength());
         assertEquals("widthA", widthA, gtucA.getWidth());
         assertEquals("widthB", widthB, gtucB.getWidth());
         assertEquals("maximumSpeedA", maximumSpeedA, gtucA.getMaximumSpeed());
         assertEquals("maximumSpeedB", maximumSpeedB, gtucB.getMaximumSpeed());
-        assertEquals("simulatorA", simulatorA, gtucA.getSimulator());
-        assertEquals("simulatorB", simulatorB, gtucB.getSimulator());
-        assertEquals("networkA", networkA, gtucA.getNetwork());
-        assertEquals("networkB", networkB, gtucB.getNetwork());
     }
 
     /** ... */

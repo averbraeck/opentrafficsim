@@ -39,7 +39,8 @@ public enum GapAcceptanceModels implements GapAcceptance
                 final CarFollowingModel cfm, final double desire, final Speed ownSpeed, final LateralDirectionality lat)
                 throws ParameterException, OperationalPlanException
         {
-            if (perception.getPerceptionCategory(NeighborsPerception.class).isGtuAlongside(lat))
+            NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+            if (neighbors.isGtuAlongside(lat))
             {
                 // gtu alongside
                 return false;
@@ -63,7 +64,7 @@ public enum GapAcceptanceModels implements GapAcceptance
             Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
             for (
 
-    HeadwayGTU follower : perception.getPerceptionCategory(NeighborsPerception.class).getFirstFollowers(lat))
+    HeadwayGTU follower : neighbors.getFirstFollowers(lat))
             {
                 if (follower.getSpeed().gt0() || follower.getAcceleration().gt0())
                 {
@@ -89,7 +90,8 @@ public enum GapAcceptanceModels implements GapAcceptance
                 final CarFollowingModel cfm, final double desire, final Speed ownSpeed, final LateralDirectionality lat)
                 throws ParameterException, OperationalPlanException
         {
-            if (perception.getPerceptionCategory(NeighborsPerception.class).isGtuAlongside(lat))
+            NeighborsPerception neigbors = perception.getPerceptionCategory(NeighborsPerception.class);
+            if (neigbors.isGtuAlongside(lat))
             {
                 // gtu alongside
                 return false;
@@ -99,7 +101,7 @@ public enum GapAcceptanceModels implements GapAcceptance
             Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
             for (
 
-    HeadwayGTU follower : perception.getPerceptionCategory(NeighborsPerception.class).getFirstFollowers(lat))
+    HeadwayGTU follower : neigbors.getFirstFollowers(lat))
             {
                 if (follower.getSpeed().gt0() || follower.getAcceleration().gt0())
                 {

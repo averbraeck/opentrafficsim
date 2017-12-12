@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +11,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -24,14 +24,14 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUTypeGenerator
+public class GTUTypeGenerator implements Generator<GTUTypeInfo>
 {
 
     /** GTU lengths. */
-    private final List<Length> lengths = new ArrayList<>();
+    private final List<Generator<Length>> lengths = new ArrayList<>();
 
     /** GTU widths. */
-    private final List<Length> widths = new ArrayList<>();
+    private final List<Generator<Length>> widths = new ArrayList<>();
 
     /** GTU types. */
     private final List<GTUType> gtuTypes = new ArrayList<>();
@@ -48,25 +48,19 @@ public class GTUTypeGenerator
     /** Simulator. */
     private final OTSSimulatorInterface simulator;
 
-    /** Stream name of GTU class generation. */
-    private static final String GTU_CLASS_STREAM = "gtuClass";
+    /** Random number stream. */
+    private final StreamInterface stream;
 
     /**
      * @param simulator the simulator to use
+     * @param stream random number stream
      */
-    public GTUTypeGenerator(final OTSSimulatorInterface simulator)
+    public GTUTypeGenerator(final OTSSimulatorInterface simulator, final StreamInterface stream)
     {
         Throw.whenNull(simulator, "Simulator may not be null.");
-        try
-        {
-            Throw.whenNull(simulator.getReplication().getStream(GTU_CLASS_STREAM), "Could not obtain random stream '"
-                    + GTU_CLASS_STREAM + "'.");
-        }
-        catch (RemoteException exception)
-        {
-            throw new RuntimeException("Could not obtain replication.", exception);
-        }
+        Throw.whenNull(stream, "Stream for random numbers may not be null.");
         this.simulator = simulator;
+        this.stream = stream;
     }
 
     /**
@@ -76,7 +70,7 @@ public class GTUTypeGenerator
      * @param maximumSpeed maximum speed of the GTU
      * @param probability the probability to generate with these characteristics
      */
-    public final void addType(final Length length, final Length width, final GTUType gtuType,
+    public final void addType(final Generator<Length> length, final Generator<Length> width, final GTUType gtuType,
             final Generator<Speed> maximumSpeed, final double probability)
     {
         this.lengths.add(length);
@@ -92,112 +86,26 @@ public class GTUTypeGenerator
      */
     public final GTUTypeInfo draw()
     {
-        double r;
-        try
-        {
-            r = this.simulator.getReplication().getStream(GTU_CLASS_STREAM).nextDouble() * this.probabilitySum;
-        }
-        catch (RemoteException exception)
-        {
-            throw new RuntimeException("Could not obtain replication.", exception);
-        }
         int i = 0;
-        double probCumSum = this.probabilities.get(0);
-        while (r > probCumSum && i < this.probabilities.size() - 1)
+        if (this.gtuTypes.size() == 1)
         {
-            i++;
-            probCumSum += this.probabilities.get(i);
+            double r = this.stream.nextDouble();
+            double probCumSum = this.probabilities.get(0);
+            while (r > probCumSum && i < this.probabilities.size() - 1)
+            {
+                i++;
+                probCumSum += this.probabilities.get(i);
+            }
         }
         try
         {
-            return new GTUTypeInfo(this.lengths.get(i), this.widths.get(i), this.gtuTypes.get(i), this.maximumSpeeds.get(i)
-                    .draw());
+            return new GTUTypeInfo(this.lengths.get(i).draw(), this.widths.get(i).draw(), this.gtuTypes.get(i),
+                    this.maximumSpeeds.get(i).draw());
         }
         catch (ProbabilityException | ParameterException exception)
         {
             throw new RuntimeException("Could not draw speed.", exception);
         }
-    }
-
-    /**
-     * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 19 nov. 2016 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    public class GTUTypeInfo
-    {
-
-        /** Length. */
-        private final Length length;
-
-        /** Width. */
-        private final Length width;
-
-        /** GTU type. */
-        private final GTUType gtuType;
-
-        /** Maximum speed. */
-        private final Speed maximumSpeed;
-
-        /**
-         * @param length length of the GTU
-         * @param width width of the GTU
-         * @param gtuType GTU type
-         * @param maximumSpeed maximum speed of the GTU
-         */
-        public GTUTypeInfo(final Length length, final Length width, final GTUType gtuType, final Speed maximumSpeed)
-        {
-            this.length = length;
-            this.width = width;
-            this.gtuType = gtuType;
-            this.maximumSpeed = maximumSpeed;
-        }
-
-        /**
-         * @return length.
-         */
-        public final Length getLength()
-        {
-            return this.length;
-        }
-
-        /**
-         * @return width.
-         */
-        public final Length getWidth()
-        {
-            return this.width;
-        }
-
-        /**
-         * @return gtuType.
-         */
-        public final GTUType getGtuType()
-        {
-            return this.gtuType;
-        }
-
-        /**
-         * @return maximumSpeed.
-         */
-        public final Speed getMaximumSpeed()
-        {
-            return this.maximumSpeed;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final String toString()
-        {
-            return "GTUTypeInfo [length=" + this.length + ", width=" + this.width + ", gtuType=" + this.gtuType
-                    + ", maximumSpeed=" + this.maximumSpeed + "]";
-        }
-
     }
 
     /** {@inheritDoc} */

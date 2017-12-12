@@ -1,10 +1,10 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUType;
 
 /**
- * Forwards default characteristics.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -14,14 +14,15 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class BehavioralCharacteristicsFactoryDefault implements BehavioralCharacteristicsFactory
+public interface ParameterFactory
 {
 
-    /** {@inheritDoc} */
-    @Override
-    public void setValues(final Parameters defaultCharacteristics, final GTUType gtuType)
-    {
-        //
-    }
+    /**
+     * Creates a set of parameters for the provided GTU type.
+     * @param parameters Parameters; parameters
+     * @param gtuType GTUType; GTU type
+     * @throws ParameterException when illegal parameter value is set
+     */
+    void setValues(Parameters parameters, GTUType gtuType) throws ParameterException;
 
 }
