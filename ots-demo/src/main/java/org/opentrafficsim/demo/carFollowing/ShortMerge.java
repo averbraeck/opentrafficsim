@@ -30,6 +30,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
+import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -40,8 +41,8 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactoryByType;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -138,7 +139,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     private static final long serialVersionUID = 20170407L;
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface sim;
+    private OTSDEVSSimulatorInterface simulator;
 
     /** {@inheritDoc} */
     @Override
@@ -183,7 +184,7 @@ public class ShortMerge extends AbstractWrappableAnimation
      */
     public final OTSDEVSSimulatorInterface getSimulator()
     {
-        return this.sim;
+        return this.simulator;
     }
 
     /**
@@ -191,7 +192,7 @@ public class ShortMerge extends AbstractWrappableAnimation
      */
     public final void setSimulator(final OTSDEVSSimulatorInterface simulator)
     {
-        this.sim = simulator;
+        this.simulator = simulator;
     }
 
     /**
@@ -336,7 +337,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             accelerationIncentives.add(new AccelerationTrafficLights());
             accelerationIncentives.add(new AccelerationConflicts());
             LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory =
-                    new LMRSFactory(idmPlusFactory, params, new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION,
+                    new LMRSFactory(idmPlusFactory, new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION,
                             GapAcceptanceModels.INFORMED, mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
 
             GTUType car = new GTUType("car", CAR);
@@ -364,7 +365,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             CrossSectionLink linkA = (CrossSectionLink) this.network.getLink("AB");
             CrossSectionLink linkF = (CrossSectionLink) this.network.getLink("FF2");
 
-            BehavioralCharacteristicsFactoryByType bcFactory = new BehavioralCharacteristicsFactoryByType();
+            ParameterFactoryByType bcFactory = new ParameterFactoryByType();
             bcFactory.addGaussianParameter(car, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, stream);
             bcFactory.addGaussianParameter(car, LmrsParameters.SOCIO, 0.5, 0.1, stream);
             bcFactory.addParameter(truck, ParameterTypes.A, new Acceleration(0.8, AccelerationUnit.SI));
@@ -379,19 +380,19 @@ public class ShortMerge extends AbstractWrappableAnimation
                     new Speed(200.0, SpeedUnit.KM_PER_HOUR), stream);
             SpeedGenerator speedTruck =
                     new SpeedGenerator(new Speed(80.0, SpeedUnit.KM_PER_HOUR), new Speed(95.0, SpeedUnit.KM_PER_HOUR), stream);
-            GTUTypeGenerator gtuTypeAllCar = new GTUTypeGenerator(ShortMerge.this.getSimulator());
-            GTUTypeGenerator gtuType1Lane = new GTUTypeGenerator(ShortMerge.this.getSimulator());
-            GTUTypeGenerator gtuType3rdLane = new GTUTypeGenerator(ShortMerge.this.getSimulator());
-            gtuTypeAllCar.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car", CAR),
-                    speedCar, 1.0);
-            gtuType1Lane.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car", CAR),
-                    speedCar, 1.0 - TRUCK_FRACTION);
-            gtuType1Lane.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI), new GTUType("truck", TRUCK),
-                    speedTruck, TRUCK_FRACTION);
-            gtuType3rdLane.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car", CAR),
-                    speedCar, 1.0 - 3 * TRUCK_FRACTION);
-            gtuType3rdLane.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI), new GTUType("truck", TRUCK),
-                    speedTruck, 3 * TRUCK_FRACTION);
+            GTUTypeGenerator gtuTypeAllCar = new GTUTypeGenerator(ShortMerge.this.getSimulator(), streams.get("gtuType"));
+            GTUTypeGenerator gtuType1Lane = new GTUTypeGenerator(ShortMerge.this.getSimulator(), streams.get("gtuType"));
+            GTUTypeGenerator gtuType3rdLane = new GTUTypeGenerator(ShortMerge.this.getSimulator(), streams.get("gtuType"));
+            gtuTypeAllCar.addType(new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
+                    new GTUType("car", CAR), speedCar, 1.0);
+            gtuType1Lane.addType(new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
+                    new GTUType("car", CAR), speedCar, 1.0 - TRUCK_FRACTION);
+            gtuType1Lane.addType(new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
+                    new GTUType("truck", TRUCK), speedTruck, TRUCK_FRACTION);
+            gtuType3rdLane.addType(new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
+                    new GTUType("car", CAR), speedCar, 1.0 - 3 * TRUCK_FRACTION);
+            gtuType3rdLane.addType(new ConstantGenerator<>(Length.createSI(15.0)),
+                    new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck", TRUCK), speedTruck, 3 * TRUCK_FRACTION);
 
             makeGenerator(getLane(linkA, "FORWARD1"), speedA, "gen1", routeGeneratorA, idGenerator, gtuTypeAllCar, headwaysA1,
                     this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME);
@@ -404,11 +405,13 @@ public class ShortMerge extends AbstractWrappableAnimation
             }
             else
             {
-                GTUTypeGenerator gtuType2ndLane = new GTUTypeGenerator(ShortMerge.this.getSimulator());
-                gtuType2ndLane.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car", CAR),
-                        speedCar, 1.0 - 2 * TRUCK_FRACTION);
-                gtuType2ndLane.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI),
-                        new GTUType("truck", TRUCK), speedTruck, 2 * TRUCK_FRACTION);
+                GTUTypeGenerator gtuType2ndLane = new GTUTypeGenerator(ShortMerge.this.getSimulator(), streams.get("gtuType"));
+                gtuType2ndLane.addType(new ConstantGenerator<>(Length.createSI(4.0)),
+                        new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car", CAR), speedCar,
+                        1.0 - 2 * TRUCK_FRACTION);
+                gtuType2ndLane.addType(new ConstantGenerator<>(Length.createSI(15.0)),
+                        new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck", TRUCK), speedTruck,
+                        2 * TRUCK_FRACTION);
                 makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", routeGeneratorA, idGenerator, gtuType2ndLane,
                         headwaysA2, this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME);
             }
@@ -452,7 +455,7 @@ public class ShortMerge extends AbstractWrappableAnimation
         private void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
                 final RouteGenerator routeGenerator, final IdGenerator idGenerator, final GTUTypeGenerator gtuTypeGenerator,
                 final Generator<Duration> headwayGenerator, final GTUColorer gtuColorer, final RoomChecker roomChecker,
-                final BehavioralCharacteristicsFactory bcFactory, final LaneBasedTacticalPlannerFactory<?> tacticalFactory,
+                final ParameterFactory bcFactory, final LaneBasedTacticalPlannerFactory<?> tacticalFactory,
                 final Time simulationTime) throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
         {
 
@@ -465,11 +468,11 @@ public class ShortMerge extends AbstractWrappableAnimation
                     new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
 
             CharacteristicsGenerator characteristicsGenerator = new CharacteristicsGenerator(strategicalFactory, routeGenerator,
-                    idGenerator, ShortMerge.this.getSimulator(), this.network, gtuTypeGenerator, generationSpeed,
-                    initialLongitudinalPositions);
+                    ShortMerge.this.getSimulator(), gtuTypeGenerator, generationSpeed, initialLongitudinalPositions);
 
             new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO, simulationTime, gtuColorer,
-                    characteristicsGenerator, initialLongitudinalPositions, this.network, roomChecker);
+                    characteristicsGenerator, initialLongitudinalPositions, this.network, ShortMerge.this.getSimulator(),
+                    roomChecker, idGenerator);
         }
 
     }

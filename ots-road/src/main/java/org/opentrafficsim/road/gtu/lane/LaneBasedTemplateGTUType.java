@@ -7,11 +7,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -48,32 +45,27 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
 
     /**
      * @param gtuType The GTUType to make it identifiable.
-     * @param idGenerator IdGenerator; the id generator used to generate names for GTUs constructed using this TemplateGTUType.
-     *            Provide null to use the default id generator of AbstractGTU.
      * @param lengthGenerator Generator&lt;Length&gt; generator for the length of the GTU type (parallel with driving
      *            direction).
      * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
      *            direction).
      * @param maximumSpeedGenerator Generator&lt;Speed&gt;; generator for the maximum speed of the GTU type (in the driving
      *            direction).
-     * @param simulator the simulator.
      * @param strategicalPlannerFactory Factory for the strategical planner (e.g., route determination)
      * @param routeGenerator route generator
      * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the initial lanes, directions and positions of
      *            generated GTUs
      * @param initialSpeedGenerator Generator&lt;Speed&gt;; the generator for the initial speed of generated GTUs
-     * @param network OTSNetwork; the network that all generated GTUs are registered in
      * @throws NullPointerException when one or more parameters are null
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedTemplateGTUType(final GTUType gtuType, final IdGenerator idGenerator,
-            final Generator<Length> lengthGenerator, final Generator<Length> widthGenerator,
-            final Generator<Speed> maximumSpeedGenerator, final OTSDEVSSimulatorInterface simulator,
+    public LaneBasedTemplateGTUType(final GTUType gtuType, final Generator<Length> lengthGenerator,
+            final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
             final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final RouteGenerator routeGenerator,
-            final Set<DirectedLanePosition> initialLongitudinalPositions, final Generator<Speed> initialSpeedGenerator,
-            final OTSNetwork network) throws NullPointerException
+            final Set<DirectedLanePosition> initialLongitudinalPositions, final Generator<Speed> initialSpeedGenerator)
+            throws NullPointerException
     {
-        super(gtuType, idGenerator, lengthGenerator, widthGenerator, maximumSpeedGenerator, simulator, network);
+        super(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator);
         Throw.whenNull(strategicalPlannerFactory, "strategicalPlannerFactory is null");
         Throw.whenNull(routeGenerator, "Route generator is null");
         Throw.whenNull(initialLongitudinalPositions, "initialLongitudinalPositions is null");

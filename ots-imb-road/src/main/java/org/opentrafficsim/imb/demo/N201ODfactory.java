@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.vector.DurationVector;
+import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -104,7 +104,7 @@ public class N201ODfactory
         try
         {
             matrix = new ODMatrix("N201demo", origins, destinations, Categorization.UNCATEGORIZED,
-                    new DurationVector(new double[] { 0, 3600 }, DurationUnit.SI, StorageType.DENSE), Interpolation.STEPWISE);
+                    new TimeVector(new double[] { 0, 3600 }, TimeUnit.BASE, StorageType.DENSE), Interpolation.STEPWISE);
         }
         catch (ValueException exception)
         {

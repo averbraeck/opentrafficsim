@@ -39,13 +39,13 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public abstract class AbstractLaneChangeModel implements LaneChangeModel
 {
-    
+
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /** Comfortable deceleration parameter type. */
     protected static final ParameterTypeAcceleration B = ParameterTypes.B;
-    
+
     /** Attempt to overcome rounding errors. */
     private static Acceleration extraThreshold = new Acceleration(0.000001, AccelerationUnit.SI);
 
@@ -69,10 +69,9 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
-            Lane nonPreferredLane = perception.getPerceptionCategory(DefaultSimplePerception.class)
-                    .bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
-            Lane preferredLane = perception.getPerceptionCategory(DefaultSimplePerception.class)
-                    .bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
+            DefaultSimplePerception simplePerception = perception.getPerceptionCategory(DefaultSimplePerception.class);
+            Lane nonPreferredLane = simplePerception.bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
+            Lane preferredLane = simplePerception.bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
             AbstractLaneBasedTacticalPlanner albtp = (AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner();
             if (null == albtp)
             {
@@ -93,8 +92,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             Acceleration straightA = applyDriverPersonality(straightAccelerationSteps).plus(laneChangeThreshold);
             DualAccelerationStep nonPreferredAccelerationSteps = null == nonPreferredLane ? null
                     : gtuFollowingModel.computeDualAccelerationStep(gtu, nonPreferredLaneGTUs, headway, speedLimit);
-            if (null != nonPreferredAccelerationSteps && nonPreferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu
-                    .getStrategicalPlanner().getParameters().getParameter(B).getSI())
+            if (null != nonPreferredAccelerationSteps && nonPreferredAccelerationSteps.getFollowerAcceleration()
+                    .getSI() < -gtu.getStrategicalPlanner().getParameters().getParameter(B).getSI())
             {
                 nonPreferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
             }
@@ -102,8 +101,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                     null == nonPreferredLane ? null : applyDriverPersonality(nonPreferredAccelerationSteps);
             DualAccelerationStep preferredAccelerationSteps = null == preferredLane ? null
                     : gtuFollowingModel.computeDualAccelerationStep(gtu, preferredLaneGTUs, headway, speedLimit);
-            if (null != preferredAccelerationSteps && preferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu
-                    .getStrategicalPlanner().getParameters().getParameter(B).getSI())
+            if (null != preferredAccelerationSteps && preferredAccelerationSteps.getFollowerAcceleration()
+                    .getSI() < -gtu.getStrategicalPlanner().getParameters().getParameter(B).getSI())
             {
                 preferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
             }

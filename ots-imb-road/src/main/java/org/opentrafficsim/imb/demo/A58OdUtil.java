@@ -25,14 +25,15 @@ import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactoryByType;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -133,7 +134,7 @@ public class A58OdUtil
         // throw new RuntimeException(exception1);
         // }
 
-        BehavioralCharacteristicsFactoryByType bcFactory = new BehavioralCharacteristicsFactoryByType();
+        ParameterFactoryByType bcFactory = new ParameterFactoryByType();
         Length lookAhead = new Length(1000.0, LengthUnit.SI);
         Length lookAheadStdev = new Length(250.0, LengthUnit.SI);
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
@@ -222,15 +223,15 @@ public class A58OdUtil
 
             HeadwayGeneratorDemand headwayGenerator = new HeadwayGeneratorDemand(timeVector, demandVector, simulator);
 
-            GTUTypeGenerator gtuTypeGenerator = new GTUTypeGenerator(simulator);
+            GTUTypeGenerator gtuTypeGenerator = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
             SpeedGenerator speedCar = new SpeedGenerator(new Speed(100.0, SpeedUnit.KM_PER_HOUR),
                     new Speed(180.0, SpeedUnit.KM_PER_HOUR), streams.get("gtuClass"));
             SpeedGenerator speedTruck = new SpeedGenerator(new Speed(80.0, SpeedUnit.KM_PER_HOUR),
                     new Speed(95.0, SpeedUnit.KM_PER_HOUR), streams.get("gtuClass"));
-            gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI), new GTUType("car", CAR),
-                    speedCar, (1.0 - penetrationRate));
-            gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                    new GTUType("car_equipped", CAR), speedCar, penetrationRate);
+            gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(4.0)),
+                    new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car", CAR), speedCar, (1.0 - penetrationRate));
+            gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(4.0)),
+                    new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car_equipped", CAR), speedCar, penetrationRate);
 
             Map<String, Lane> lanesById = new HashMap<>();
             for (Lane lane : link.getLanes())
@@ -248,15 +249,19 @@ public class A58OdUtil
                             headwayGenerator, gtuColorer, roomChecker, bcFactory, tacticalFactory);
                 }
                 // add trucks
-                gtuTypeGenerator = new GTUTypeGenerator(simulator);
-                gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                        new GTUType("car", CAR), speedCar, (1.0 - penetrationRate) * (1 - truckFrac));
-                gtuTypeGenerator.addType(new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
-                        new GTUType("car_equipped", CAR), speedCar, penetrationRate * (1 - truckFrac));
-                gtuTypeGenerator.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI),
-                        new GTUType("truck", TRUCK), speedTruck, (1.0 - penetrationRate) * truckFrac);
-                gtuTypeGenerator.addType(new Length(15.0, LengthUnit.SI), new Length(2.5, LengthUnit.SI),
-                        new GTUType("truck_equipped", TRUCK), speedTruck, penetrationRate * truckFrac);
+                gtuTypeGenerator = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
+                gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(4.0)),
+                        new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car", CAR), speedCar,
+                        (1.0 - penetrationRate) * (1 - truckFrac));
+                gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(4.0)),
+                        new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car_equipped", CAR), speedCar,
+                        penetrationRate * (1 - truckFrac));
+                gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(15.0)),
+                        new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck", TRUCK), speedTruck,
+                        (1.0 - penetrationRate) * truckFrac);
+                gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(15.0)),
+                        new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck_equipped", TRUCK), speedTruck,
+                        penetrationRate * truckFrac);
                 Lane lane = lanesById.get("A" + nLanes);
                 Speed generationSpeed = new Speed(nLanes == 1 ? 60.0 : 120, SpeedUnit.KM_PER_HOUR);
                 String id = link.getId() + ":A" + nLanes;
@@ -325,7 +330,7 @@ public class A58OdUtil
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
             final RouteGenerator routeGenerator, final IdGenerator idGenerator, final OTSDEVSSimulatorInterface simulator,
             final OTSNetwork network, final GTUTypeGenerator gtuTypeGenerator, final HeadwayGeneratorDemand headwayGenerator,
-            final GTUColorer gtuColorer, final RoomChecker roomChecker, final BehavioralCharacteristicsFactory bcFactory,
+            final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory)
             throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
     {
@@ -338,10 +343,10 @@ public class A58OdUtil
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
 
         CharacteristicsGenerator characteristicsGenerator = new CharacteristicsGenerator(strategicalFactory, routeGenerator,
-                idGenerator, simulator, network, gtuTypeGenerator, generationSpeed, initialLongitudinalPositions);
+                simulator, gtuTypeGenerator, generationSpeed, initialLongitudinalPositions);
 
         new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO, simPeriod, gtuColorer,
-                characteristicsGenerator, initialLongitudinalPositions, network, roomChecker);
+                characteristicsGenerator, initialLongitudinalPositions, network, simulator, roomChecker, idGenerator);
     }
 
     /**

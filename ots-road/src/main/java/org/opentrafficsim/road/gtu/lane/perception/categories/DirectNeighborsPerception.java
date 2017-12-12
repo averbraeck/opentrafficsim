@@ -231,7 +231,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     private void branchUpstream(final LaneStructureRecord record, final Length dx, final Set<LaneStructureRecord> set)
     {
         Length pos = record.getStartDistance().neg().minus(dx);
-        if (pos.lt0())
+        if (pos.lt0() && !record.getPrev().isEmpty())
         {
             for (LaneStructureRecord prev : record.getPrev())
             {

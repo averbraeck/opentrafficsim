@@ -64,13 +64,15 @@ public class Route implements Serializable, Identifiable
     /**
      * Add a node to the end of the node list.
      * @param node the node to add.
+     * @return Route; this route for method chaining
      * @throws NetworkException in case node could not be added to the route.
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public void addNode(final Node node) throws NetworkException
+    public Route addNode(final Node node) throws NetworkException
     {
         this.nodes.add(node);
         this.nodeSet.add(node);
+        return this;
     }
 
     /**

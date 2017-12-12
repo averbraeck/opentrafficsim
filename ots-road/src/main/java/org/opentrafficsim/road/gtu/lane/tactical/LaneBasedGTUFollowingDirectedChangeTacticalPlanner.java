@@ -86,16 +86,16 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 {
     /** */
     private static final long serialVersionUID = 20160129L;
-    
+
     /** Acceleration parameter type. */
     protected static final ParameterTypeAcceleration A = ParameterTypes.A;
 
     /** Desired headway parameter type. */
     protected static final ParameterTypeDuration T = ParameterTypes.T;
-    
+
     /** Speed limit adherance factor parameter type. */
     protected static final ParameterTypeDouble FSPEED = ParameterTypes.FSPEED;
-    
+
     /** Comfortable deceleration parameter type. */
     protected static final ParameterTypeAcceleration B = ParameterTypes.B;
 
@@ -558,8 +558,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         Collection<Headway> sameLaneTraffic = new HashSet<>();
         // TODO should it be getObjectType().isGtu() or !getObjectType().isDistanceOnly() ?
         // XXX Object & GTU
-        if (simplePerception.getForwardHeadwayGTU() != null && perception.getPerceptionCategory(DefaultSimplePerception.class)
-                .getForwardHeadwayGTU().getObjectType().isGtu())
+        if (simplePerception.getForwardHeadwayGTU() != null && simplePerception.getForwardHeadwayGTU().getObjectType().isGtu())
         {
             sameLaneTraffic.add(simplePerception.getForwardHeadwayGTU());
         }

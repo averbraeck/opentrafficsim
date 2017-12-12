@@ -5,8 +5,8 @@ import java.io.Serializable;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactoryDefault;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryDefault;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
@@ -36,8 +36,8 @@ public class LaneBasedStrategicalRoutePlannerFactory
     /** Factory for tactical planners. */
     private final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory;
 
-    /** Characteristics factory. */
-    private final BehavioralCharacteristicsFactory parametersFactory;
+    /** Parameter factory. */
+    private final ParameterFactory parameterFactory;
 
     /**
      * Constructor with factory for tactical planners.
@@ -47,7 +47,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory)
     {
         this.tacticalPlannerFactory = tacticalPlannerFactory;
-        this.parametersFactory = new BehavioralCharacteristicsFactoryDefault();
+        this.parameterFactory = new ParameterFactoryDefault();
     }
 
     /**
@@ -57,20 +57,20 @@ public class LaneBasedStrategicalRoutePlannerFactory
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
-            final BehavioralCharacteristicsFactory parametersFactory)
+            final ParameterFactory parametersFactory)
     {
         this.tacticalPlannerFactory = tacticalPlannerFactory;
-        this.parametersFactory = parametersFactory;
+        this.parameterFactory = parametersFactory;
     }
 
     /** {@inheritDoc} */
     @Override
     public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route) throws GTUException
     {
-        Parameters parameters = this.tacticalPlannerFactory.getDefaultParameters();
+        Parameters parameters = this.tacticalPlannerFactory.getParameters();
         try
         {
-            this.parametersFactory.setValues(parameters, gtu.getGTUType());
+            this.parameterFactory.setValues(parameters, gtu.getGTUType());
         }
         catch (ParameterException exception)
         {

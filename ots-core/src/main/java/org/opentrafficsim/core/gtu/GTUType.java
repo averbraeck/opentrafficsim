@@ -1,7 +1,12 @@
 package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.HierarchicalType;
 
 /**
@@ -24,25 +29,25 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
 
     /** Super type for all road users. */
     public static final GTUType ROAD_USER;
-    
+
     /** Super type for all water way users. */
     public static final GTUType WATER_WAY_USER;
-    
+
     /** Super type for all rail users. */
     public static final GTUType RAIL_WAY_USER;
-    
+
     /** Super type for pedestrians. */
     public static final GTUType PEDESTRIAN;
 
     /** Super type for bicycle. */
     public static final GTUType BICYCLE;
-    
+
     /** Super type for mopeds. */
     public static final GTUType MOPED;
 
     /** Super type for vehicles. */
     public static final GTUType VEHICLE;
-    
+
     /** Super type for emergency vehicles. */
     public static final GTUType EMERGENCY_VEHICLE;
 
@@ -51,7 +56,7 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
 
     /** Super type for trains. */
     public static final GTUType TRAIN;
-    
+
     /** Super type for cars. */
     public static final GTUType CAR;
 
@@ -67,7 +72,6 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     /** Super type for scheduled busses. */
     public static final GTUType SCHEDULED_BUS;
 
-    /* static block to guarantee that ALL is always on the first place, and NONE on the second, for code reproducibility. */
     static
     {
         ROAD_USER = new GTUType("ROAD_USER", null);
@@ -78,9 +82,9 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
         TRAIN = new GTUType("TRAIN", RAIL_WAY_USER);
         PEDESTRIAN = new GTUType("PEDESTRIAN", ROAD_USER);
         BICYCLE = new GTUType("BICYCLE", ROAD_USER);
-        
+
         MOPED = new GTUType("MOPED", BICYCLE);
-        
+
         VEHICLE = new GTUType("VEHICLE", ROAD_USER);
         EMERGENCY_VEHICLE = new GTUType("EMERGENCY_VEHICLE", VEHICLE);
         CAR = new GTUType("CAR", VEHICLE);
@@ -88,6 +92,49 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
         BUS = new GTUType("BUS", VEHICLE);
         TRUCK = new GTUType("TRUCK", VEHICLE);
         SCHEDULED_BUS = new GTUType("SCHEDULED BUS", BUS);
+    }
+
+    /** Default characteristics per GTU Type. */
+    private static final Map<GTUType, GTUCharacteristics> DEFAULT_CHARACTERISTICS = new HashMap<>();
+    static
+    {
+        // CAR and TRUCK from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
+        // TRUCK and BUS are non-articulated
+        DEFAULT_CHARACTERISTICS.put(GTUType.CAR, new GTUCharacteristics(GTUType.CAR, Length.createSI(4.19),
+                Length.createSI(1.7), new Speed(180, SpeedUnit.KM_PER_HOUR)));
+        DEFAULT_CHARACTERISTICS.put(GTUType.TRUCK, new GTUCharacteristics(GTUType.TRUCK, Length.createSI(12.0),
+                Length.createSI(2.55), new Speed(85, SpeedUnit.KM_PER_HOUR)));
+        DEFAULT_CHARACTERISTICS.put(GTUType.BUS, new GTUCharacteristics(GTUType.CAR, Length.createSI(12.0),
+                Length.createSI(2.55), new Speed(90, SpeedUnit.KM_PER_HOUR)));
+        DEFAULT_CHARACTERISTICS.put(GTUType.VAN, new GTUCharacteristics(GTUType.CAR, Length.createSI(5.0), Length.createSI(2.4),
+                new Speed(180, SpeedUnit.KM_PER_HOUR)));
+        DEFAULT_CHARACTERISTICS.put(GTUType.EMERGENCY_VEHICLE, new GTUCharacteristics(GTUType.CAR, Length.createSI(5.0),
+                Length.createSI(2.55), new Speed(180, SpeedUnit.KM_PER_HOUR)));
+    }
+
+    /**
+     * Returns default characteristics for given GTUType. 
+     * @param gtuType GTUType GTU type
+     * @return default characteristics for given GTUType
+     * @throws GTUException if there are no default characteristics for the GTU type
+     */
+    public static GTUCharacteristics defaultCharacteristics(final GTUType gtuType) throws GTUException
+    {
+        GTUCharacteristics defaultCharacteristics = DEFAULT_CHARACTERISTICS.get(gtuType);
+        if (defaultCharacteristics == null)
+        {
+            GTUType parent = gtuType.getParent();
+            if (parent != null)
+            {
+                return defaultCharacteristics(parent);
+            }
+            else
+            {
+                // due too recursion, we can't mention the gtu type in the message
+                throw new GTUException("GTUType is not of any types with default characteristics.");
+            }
+        }
+        return defaultCharacteristics;
     }
 
     /**

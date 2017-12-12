@@ -7,19 +7,18 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
@@ -77,10 +76,9 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
     {
 
         // zero if no lane change is possible
-        double leftDist = perception.getPerceptionCategory(InfrastructurePerception.class)
-                .getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si;
-        double rightDist = perception.getPerceptionCategory(InfrastructurePerception.class)
-                .getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si;
+        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        double leftDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si;
+        double rightDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si;
 
         // gather some info
         Speed vCur = anticipationSpeed(RelativeLane.CURRENT, parameters, perception, carFollowingModel);
@@ -106,8 +104,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
 
         // left desire
         Dimensionless dLeft;
-        if (leftDist > 0.0 && perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection()
-                .contains(RelativeLane.LEFT))
+        if (leftDist > 0.0 && infra.getCrossSection().contains(RelativeLane.LEFT))
         {
             Speed vLeft = anticipationSpeed(RelativeLane.LEFT, parameters, perception, carFollowingModel);
             dLeft = aGain.multiplyBy(vLeft.minus(vCur)).divideBy(vGain);
@@ -119,8 +116,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
 
         // right desire
         Dimensionless dRight;
-        if (rightDist > 0.0 && perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection()
-                .contains(RelativeLane.RIGHT))
+        if (rightDist > 0.0 && infra.getCrossSection().contains(RelativeLane.RIGHT))
         {
             Speed vRight = anticipationSpeed(RelativeLane.RIGHT, parameters, perception, carFollowingModel);
             dRight = aGain.multiplyBy(vRight.minus(vCur)).divideBy(vGain);
@@ -149,16 +145,17 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
             final CarFollowingModel cfm) throws ParameterException, OperationalPlanException
     {
 
-        SpeedLimitInfo sli = perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(lane)
-                .getSpeedLimitInfo(Length.ZERO);
+        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+        SpeedLimitInfo sli = infra.getSpeedLimitProspect(lane).getSpeedLimitInfo(Length.ZERO);
         Speed anticipationSpeed = cfm.desiredSpeed(params, sli);
         Speed desiredSpeed = new Speed(anticipationSpeed);
         Length x0 = params.getParameter(LOOKAHEAD);
 
         // leaders with right indicators on left lane of considered lane
-        if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane.getLeft()))
+        if (infra.getCrossSection().contains(lane.getLeft()))
         {
-            for (HeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane.getLeft()))
+            for (HeadwayGTU headwayGTU : neighbors.getLeaders(lane.getLeft()))
             {
                 // leaders on the current lane with indicator to an adjacent lane are not considered
                 if (headwayGTU.isRightTurnIndicatorOn() && !lane.getLeft().equals(RelativeLane.CURRENT))
@@ -169,10 +166,9 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         }
 
         // leaders with left indicators on right lane of considered lane
-        if (perception.getPerceptionCategory(InfrastructurePerception.class).getCrossSection().contains(lane.getRight()))
+        if (infra.getCrossSection().contains(lane.getRight()))
         {
-            for (HeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class)
-                    .getLeaders(lane.getRight()))
+            for (HeadwayGTU headwayGTU : neighbors.getLeaders(lane.getRight()))
             {
                 // leaders on the current lane with indicator to an adjacent lane are not considered
                 if (headwayGTU.isLeftTurnIndicatorOn() && !lane.getRight().equals(RelativeLane.CURRENT))
@@ -183,20 +179,21 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         }
 
         // leaders in the considered lane
-        for (HeadwayGTU headwayGTU : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane))
+        for (HeadwayGTU headwayGTU : neighbors.getLeaders(lane))
         {
             anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayGTU);
         }
 
         // conflicts in the considered lane
-        if (perception.contains(DirectIntersectionPerception.class))
+        EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
+        if (perception.contains(IntersectionPerception.class))
         {
             for (HeadwayConflict headwayConflict : perception.getPerceptionCategory(IntersectionPerception.class)
                     .getConflicts(lane))
             {
-                Length vehicleLength = perception.getPerceptionCategory(EgoPerception.class).getLength();
-                Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-                SortedSet<HeadwayGTU> leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
+                Length vehicleLength = ego.getLength();
+                Speed speed = ego.getSpeed();
+                SortedSet<HeadwayGTU> leaders = neighbors.getLeaders(lane);
                 if (!headwayConflict.getConflictType().isCrossing())
                 {
                     // consider first downstream vehicle on split or merge (ignore others)
@@ -238,7 +235,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
                     }
                     case GIVE_WAY:
                     {
-                        Acceleration acceleration = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
+                        Acceleration acceleration = ego.getAcceleration();
                         if (ConflictUtil.stopForGiveWayConflict(headwayConflict, leaders, speed, acceleration, vehicleLength,
                                 params, sli, cfm))
                         {
@@ -248,7 +245,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
                     }
                     case STOP:
                     {
-                        Acceleration acceleration = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
+                        Acceleration acceleration = ego.getAcceleration();
                         if (ConflictUtil.stopForStopConflict(headwayConflict, leaders, speed, acceleration, vehicleLength,
                                 params, sli, cfm))
                         {

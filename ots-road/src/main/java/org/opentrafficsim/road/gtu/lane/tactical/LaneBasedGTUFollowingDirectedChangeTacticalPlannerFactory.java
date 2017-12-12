@@ -71,7 +71,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory
 
     /** {@inheritDoc} */
     @Override
-    public final Parameters getDefaultParameters()
+    public final Parameters getParameters()
     {
         Parameters params = new Parameters().setDefaultParameters(ParameterTypes.class);
         try

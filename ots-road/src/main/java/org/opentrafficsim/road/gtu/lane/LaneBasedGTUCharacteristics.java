@@ -33,7 +33,7 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     private final Speed speed;
 
     /** The initial lanes, positions and direction of the GTU. */
-    private final Set<DirectedLanePosition> initialLongitudinalPositions;
+    private final Set<DirectedLanePosition> initialPosition;
 
     /**
      * Construct a new set of lane based GTU characteristics.
@@ -41,19 +41,18 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
      * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory; the strategical planner for the GTU
      * @param route route
      * @param speed Speed; the initial speed of the GTU
-     * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the lane, initial position and direction of the GTU
+     * @param initialPosition Set&lt;DirectedLanePosition&gt;; the lane, initial position and direction of the GTU
      */
     public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics,
             final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route,
-            final Speed speed, final Set<DirectedLanePosition> initialLongitudinalPositions)
+            final Speed speed, final Set<DirectedLanePosition> initialPosition)
     {
-        super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getIdGenerator(), gtuCharacteristics.getLength(),
-                gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed(), gtuCharacteristics.getSimulator(),
-                gtuCharacteristics.getNetwork());
+        super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getLength(),
+                gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed());
         this.strategicalPlannerFactory = laneBasedStrategicalPlannerFactory;
         this.route = route;
         this.speed = speed;
-        this.initialLongitudinalPositions = initialLongitudinalPositions;
+        this.initialPosition = initialPosition;
     }
 
     /**
@@ -83,9 +82,9 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     /**
      * @return Set&lt;DirectedLanePosition&gt;; the position and direction on each lane that the GTU will initially be on
      */
-    public final Set<DirectedLanePosition> getInitialLongitudinalPositions()
+    public final Set<DirectedLanePosition> getInitialPosition()
     {
-        return this.initialLongitudinalPositions;
+        return this.initialPosition;
     }
 
 }

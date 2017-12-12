@@ -24,7 +24,7 @@ public class ToledoFactory implements LaneBasedTacticalPlannerFactory<Toledo>
 
     /** {@inheritDoc} */
     @Override
-    public final Parameters getDefaultParameters()
+    public final Parameters getParameters()
     {
         Parameters parameters = new Parameters();
         try

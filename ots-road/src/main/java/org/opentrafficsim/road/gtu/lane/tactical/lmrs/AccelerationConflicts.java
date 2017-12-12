@@ -44,11 +44,12 @@ public class AccelerationConflicts implements AccelerationIncentive
     @Override
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException,
-            GTUException
+            final Parameters params, final SpeedLimitInfo speedLimitInfo)
+            throws OperationalPlanException, ParameterException, GTUException
     {
-        Acceleration acceleration = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
-        Length length = perception.getPerceptionCategory(EgoPerception.class).getLength();
+        EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
+        Acceleration acceleration = ego.getAcceleration();
+        Length length = ego.getLength();
         SortedSet<HeadwayConflict> conflicts =
                 perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
         SortedSet<HeadwayGTU> leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);

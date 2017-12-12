@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.demo.generators;
 
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 
@@ -22,6 +23,13 @@ public class IDMPlusOldFactory implements CarFollowingModelFactory<IDMPlusOld>
     public IDMPlusOld generateCarFollowingModel()
     {
         return new IDMPlusOld();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Parameters getParameters()
+    {
+        return new Parameters();
     }
 
 }

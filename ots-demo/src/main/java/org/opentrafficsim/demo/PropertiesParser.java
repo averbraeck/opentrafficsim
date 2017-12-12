@@ -182,12 +182,8 @@ public final class PropertiesParser
                     else if ("LMRS".equals(tacticalPlannerName))
                     {
                         // provide default parameters with the car-following model
-                        Parameters defaultBehavioralCFCharacteristics = new Parameters();
-                        defaultBehavioralCFCharacteristics.setDefaultParameters(AbstractIDM.class);
-                        defaultBehavioralCFCharacteristics.setDefaultParameters(TrafficLightUtil.class);
                         return new LaneBasedStrategicalRoutePlannerFactory(
-                                new LMRSFactory(new IDMPlusFactory(), defaultBehavioralCFCharacteristics,
-                                        new DefaultLMRSPerceptionFactory()));
+                                new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
                     }
                     else if ("Toledo".equals(tacticalPlannerName))
                     {

@@ -40,7 +40,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.BehavioralCharacteristicsFactory;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
@@ -248,7 +248,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
             new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO,
                     new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND), this.gtuColorer, characteristicsGenerator,
-                    initialLongitudinalPositions, this.network, roomChecker);
+                    initialLongitudinalPositions, this.network, this.simulator, roomChecker, new IdGenerator(""));
         }
 
     }
@@ -352,12 +352,6 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         /** Position. */
         private final Set<DirectedLanePosition> initialLongitudinalPositions;
 
-        /** Network. */
-        private final OTSNetwork network;
-
-        /** Id generator. */
-        private final IdGenerator idGenerator = new IdGenerator("");
-
         /** Strategical planner factory. */
         private final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> plannerFactory;
 
@@ -391,7 +385,6 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             this.simulator = simulator;
             this.probabilities = probabilities;
             this.initialLongitudinalPositions = initialLongitudinalPositions;
-            this.network = network;
             List<Node> carNodesN = new ArrayList<>();
             carNodesN.add(network.getNode("A"));
             carNodesN.add(network.getNode("B"));
@@ -453,7 +446,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             this.busNodes2.add(network.getNode("O"));
 
             this.plannerFactory = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactoryCarBus(),
-                    new BehavioralCharacteristicsFactoryCarBus());
+                    new ParameterFactoryCarBus());
         }
 
         /** {@inheritDoc} */
@@ -525,18 +518,11 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     throw new RuntimeException("Reaching default of switch case.");
             }
 
-            GTUCharacteristics gtuCharacteristics = new GTUCharacteristics(gtuType, this.idGenerator, length, width,
-                    maximumSpeed, this.simulator, this.network);
+            GTUCharacteristics gtuCharacteristics =
+                    new GTUCharacteristics(gtuType, length, width, maximumSpeed);
 
             return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route,
                     new Speed(50.0, SpeedUnit.KM_PER_HOUR), this.initialLongitudinalPositions);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public OTSDEVSSimulatorInterface getSimulator() throws ProbabilityException
-        {
-            return this.simulator;
         }
 
     }
@@ -562,7 +548,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final Parameters getDefaultParameters()
+        public final Parameters getParameters()
         {
             Parameters parameters = new Parameters();
             parameters.setDefaultParameters(ParameterTypes.class);
@@ -577,9 +563,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         public final LMRS create(final LaneBasedGTU gtu) throws GTUException
         {
             DefaultLMRSPerceptionFactory pFac = new DefaultLMRSPerceptionFactory();
-            LMRS lmrs =
-                    new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE,
-                            GapAcceptanceModels.INFORMED);
+            LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE,
+                    GapAcceptanceModels.INFORMED);
             lmrs.setDefaultIncentives();
             if (gtu.getGTUType().isOfType(GTUType.SCHEDULED_BUS))
             {
@@ -603,27 +588,27 @@ public class BusStreetDemo extends AbstractWrappableAnimation
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private class BehavioralCharacteristicsFactoryCarBus implements BehavioralCharacteristicsFactory
+    private class ParameterFactoryCarBus implements ParameterFactory
     {
 
         /** */
-        BehavioralCharacteristicsFactoryCarBus()
+        ParameterFactoryCarBus()
         {
         }
 
         /** {@inheritDoc} */
         @Override
-        public void setValues(final Parameters defaultCharacteristics, final GTUType gtuType) throws ParameterException
+        public void setValues(final Parameters parameters, final GTUType gtuType) throws ParameterException
         {
 
-            defaultCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.METER));
+            parameters.setParameter(ParameterTypes.LOOKAHEAD, new Length(100.0, LengthUnit.METER));
             if (gtuType.isOfType(GTUType.CAR))
             {
-                defaultCharacteristics.setParameter(LmrsParameters.VGAIN, new Speed(3.0, SpeedUnit.METER_PER_SECOND));
+                parameters.setParameter(LmrsParameters.VGAIN, new Speed(3.0, SpeedUnit.METER_PER_SECOND));
             }
             else if (gtuType.isOfType(GTUType.SCHEDULED_BUS))
             {
-                defaultCharacteristics.setParameter(ParameterTypes.A,
+                parameters.setParameter(ParameterTypes.A,
                         new Acceleration(0.8, AccelerationUnit.METER_PER_SECOND_2));
             }
             else

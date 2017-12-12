@@ -1,5 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
@@ -36,6 +39,22 @@ public class DefaultLMRSPerceptionFactory implements PerceptionFactory
         perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
         perception.addPerceptionCategory(new DirectIntersectionPerception(perception, HeadwayGtuType.COPY));
         return perception;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Parameters getParameters()
+    {
+        try
+        {
+            return new Parameters().setDefaultParameter(ParameterTypes.LOOKAHEAD)
+                    .setDefaultParameter(ParameterTypes.LOOKBACKOLD).setDefaultParameter(ParameterTypes.PERCEPTION)
+                    .setDefaultParameter(ParameterTypes.LOOKBACK);
+        }
+        catch (ParameterException pe)
+        {
+            throw new RuntimeException(pe);
+        }
     }
 
 }

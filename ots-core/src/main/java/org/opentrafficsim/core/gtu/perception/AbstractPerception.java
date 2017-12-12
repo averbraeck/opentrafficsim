@@ -74,8 +74,20 @@ public abstract class AbstractPerception implements Perception
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("unchecked")
     public final <T extends PerceptionCategory> T getPerceptionCategory(final Class<T> category) throws OperationalPlanException
+    {
+        T cat = getPerceptionCategoryOrNull(category);
+        if (cat != null)
+        {
+            return cat;
+        }
+        throw new OperationalPlanException("Perception category" + category + " is not present.");
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("unchecked")
+    public final <T extends PerceptionCategory> T getPerceptionCategoryOrNull(final Class<T> category)
     {
         for (Class<?> clazz : this.perceptionCategories.keySet())
         {
@@ -86,7 +98,7 @@ public abstract class AbstractPerception implements Perception
                 return (T) this.perceptionCategories.get(clazz);
             }
         }
-        throw new OperationalPlanException("Perception category" + category + " is not present.");
+        return null;
     }
 
     /** {@inheritDoc} */

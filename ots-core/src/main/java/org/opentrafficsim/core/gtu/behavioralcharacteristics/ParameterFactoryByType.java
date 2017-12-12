@@ -20,6 +20,7 @@ import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
+ * Sets parameter values based on the the GTU type. This includes stochastic parameters.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -29,7 +30,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class BehavioralCharacteristicsFactoryByType implements BehavioralCharacteristicsFactory
+public class ParameterFactoryByType implements ParameterFactory
 {
 
     /** Parameters. */
@@ -118,7 +119,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
     @Override
     public String toString()
     {
-        return "BehavioralCharacteristicsFactoryByType [map=" + this.map + "]";
+        return "ParameterFactoryByType [map=" + this.map + "]";
     }
 
     /**
@@ -136,7 +137,7 @@ public class BehavioralCharacteristicsFactoryByType implements BehavioralCharact
     {
         /**
          * Set value for parameter.
-         * @param parameters
+         * @param parameters Parameters; parameters
          */
         void setValue(Parameters parameters);
     }

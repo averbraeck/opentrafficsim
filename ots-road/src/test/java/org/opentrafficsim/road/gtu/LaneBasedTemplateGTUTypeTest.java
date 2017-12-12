@@ -73,109 +73,104 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
     @Test
     public final void constructorTest() throws Exception
     {
-        OTSNetwork network = new OTSNetwork("network");
         GTUType pcType = CAR;
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 4), METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcWidth =
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 1.6), METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 1.6), METER);
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcMaximumSpeed =
-                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 180), KM_PER_HOUR);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcInitialSpeed =
-                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 125), KM_PER_HOUR);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 125), KM_PER_HOUR);
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
-        SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
-        LaneBasedTemplateGTUType passengerCar =
-                new LaneBasedTemplateGTUType(pcType, new IdGenerator("Passenger car "), new Generator<Length>()
+        LaneBasedTemplateGTUType passengerCar = new LaneBasedTemplateGTUType(pcType, new Generator<Length>()
+        {
+            @Override
+            public Length draw()
+            {
+                return pcLength.draw();
+            }
+        }, new Generator<Length>()
+        {
+            @Override
+            public Length draw()
+            {
+                return pcWidth.draw();
+            }
+        }, new Generator<Speed>()
+        {
+            @Override
+            public Speed draw()
+            {
+                return pcMaximumSpeed.draw();
+            }
+        }, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null),
+                /*-new Generator<LaneBasedStrategicalPlanner>()
                 {
-                    @Override
-                    public Length draw()
+                    public LaneBasedStrategicalPlanner draw()
                     {
-                        return pcLength.draw();
+                        return null;
                     }
-                }, new Generator<Length>()
-                {
-                    @Override
-                    public Length draw()
-                    {
-                        return pcWidth.draw();
-                    }
-                }, new Generator<Speed>()
+                }, 
+                */
+                initialLongitudinalPositions, new Generator<Speed>()
                 {
                     @Override
                     public Speed draw()
                     {
-                        return pcMaximumSpeed.draw();
+                        return pcInitialSpeed.draw();
                     }
-                }, simulator, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null),
-                        /*-new Generator<LaneBasedStrategicalPlanner>()
-                        {
-                            public LaneBasedStrategicalPlanner draw()
-                            {
-                                return null;
-                            }
-                        }, 
-                        */
-                        initialLongitudinalPositions, new Generator<Speed>()
-                        {
-                            @Override
-                            public Speed draw()
-                            {
-                                return pcInitialSpeed.draw();
-                            }
-                        }, network);
-        verifyFields(passengerCar, pcType, pcLength, pcWidth, pcMaximumSpeed, pcInitialSpeed, simulator);
+                });
+        verifyFields(passengerCar, pcType, pcLength, pcWidth, pcMaximumSpeed, pcInitialSpeed);
         GTUType truckType = TRUCK;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckLength =
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 18), METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 18), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckWidth =
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 2.2), METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.2), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
-                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 110), KM_PER_HOUR);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 110), KM_PER_HOUR);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckInitialSpeed =
-                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 85), KM_PER_HOUR);
-        SimpleSimulator truckSimulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
-        LaneBasedTemplateGTUType truck =
-                new LaneBasedTemplateGTUType(truckType, new IdGenerator("Truck "), new Generator<Length>()
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 85), KM_PER_HOUR);
+        LaneBasedTemplateGTUType truck = new LaneBasedTemplateGTUType(truckType, new Generator<Length>()
+        {
+            @Override
+            public Length draw()
+            {
+                return truckLength.draw();
+            }
+        }, new Generator<Length>()
+        {
+            @Override
+            public Length draw()
+            {
+                return truckWidth.draw();
+            }
+        }, new Generator<Speed>()
+        {
+            @Override
+            public Speed draw()
+            {
+                return truckMaximumSpeed.draw();
+            }
+        }, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null),
+                /*-new Generator<LaneBasedStrategicalPlanner>()
                 {
-                    @Override
-                    public Length draw()
+                    public LaneBasedStrategicalPlanner draw()
                     {
-                        return truckLength.draw();
+                        return null;
                     }
-                }, new Generator<Length>()
-                {
-                    @Override
-                    public Length draw()
-                    {
-                        return truckWidth.draw();
-                    }
-                }, new Generator<Speed>()
+                },
+                */
+                initialLongitudinalPositions, new Generator<Speed>()
                 {
                     @Override
                     public Speed draw()
                     {
-                        return truckMaximumSpeed.draw();
+                        return truckInitialSpeed.draw();
                     }
-                }, truckSimulator, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null),
-                        /*-new Generator<LaneBasedStrategicalPlanner>()
-                        {
-                            public LaneBasedStrategicalPlanner draw()
-                            {
-                                return null;
-                            }
-                        },
-                        */
-                        initialLongitudinalPositions, new Generator<Speed>()
-                        {
-                            @Override
-                            public Speed draw()
-                            {
-                                return truckInitialSpeed.draw();
-                            }
-                        }, network);
-        verifyFields(truck, truckType, truckLength, truckWidth, truckMaximumSpeed, truckInitialSpeed, truckSimulator);
+                });
+        verifyFields(truck, truckType, truckLength, truckWidth, truckMaximumSpeed, truckInitialSpeed);
     }
 
     /**
@@ -217,17 +212,14 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
     public final void compatibleLaneTypeTest() throws Exception
     {
         // Create some TemplateGTUTypes
-        OTSNetwork network = new OTSNetwork("network");
         GTUType pc = CAR;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 4), METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcWidth =
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 1.6), METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 1.6), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcMaximumSpeed =
-                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 180), KM_PER_HOUR);
-        OTSModelInterface model = new DummyModelForTemplateGTUTest();
-        SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
-        TemplateGTUType passengerCar = new TemplateGTUType(pc, new IdGenerator("Passenger car "), new Generator<Length>()
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
+        TemplateGTUType passengerCar = new TemplateGTUType(pc, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -248,16 +240,15 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
             {
                 return pcMaximumSpeed.draw();
             }
-        }, simulator, network);
+        });
         GTUType truckType = TRUCK;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckLength =
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 18), METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 18), METER);
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckWidth =
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistConstant(this.stream, 2.2), METER);
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.2), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
-                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 110), KM_PER_HOUR);
-        SimpleSimulator truckSimulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
-        TemplateGTUType truck = new TemplateGTUType(truckType, new IdGenerator("Truck "), new Generator<Length>()
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 110), KM_PER_HOUR);
+        TemplateGTUType truck = new TemplateGTUType(truckType, new Generator<Length>()
         {
             @Override
             public Length draw()
@@ -278,7 +269,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
             {
                 return truckMaximumSpeed.draw();
             }
-        }, truckSimulator, network);
+        });
 
         // Create some LaneTypes
         GTUCompatibility<LaneType> noTrucks = new GTUCompatibility<>((LaneType) null);
@@ -316,7 +307,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
      * @param width Length; the expected width
      * @param maximumSpeed Speed; the expected maximum speed
      * @param initialSpeed Speed; the initial speed
-     * @param simulator OTSDEVSSimulatorInterface; the expected simulator
      * @throws ProbabilityException in case of probability drawing exception
      * @throws ParameterException in case of a parameter problem.
      * @throws GTUException in case of a GTU exception
@@ -326,7 +316,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> length,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> width,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed,
-            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
+            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeed)
             throws ProbabilityException, ParameterException, NamingException, GTUException
     {
         assertTrue("Type should be " + gtuType, gtuType.equals(templateGTUType.getGTUType()));
@@ -337,7 +327,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 characteristics.getMaximumSpeed().getSI(), 0.0001);
         assertEquals("Initial speed should be " + initialSpeed, initialSpeed.draw().getSI(), characteristics.getSpeed().getSI(),
                 0.0001);
-        assertEquals("Simulator", simulator, templateGTUType.getSimulator());
     }
 }
 

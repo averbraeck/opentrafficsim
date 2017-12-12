@@ -1,14 +1,12 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.util.SortedSet;
-import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTU.CacheKey;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
@@ -64,10 +62,11 @@ public class SocioDesiredSpeedModel implements DesiredSpeedModel
         {
             desiredSpeed = this.baseModel.desiredSpeed(parameters, speedInfo);
             SortedSet<HeadwayGTU> followers;
-            try
+            NeighborsPerception neighbors =
+                    this.gtu.getTacticalPlanner().getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class);
+            if (neighbors != null)
             {
-                followers = this.gtu.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.class)
-                        .getFollowers(RelativeLane.CURRENT);
+                followers = neighbors.getFollowers(RelativeLane.CURRENT);
                 if (!followers.isEmpty())
                 {
                     HeadwayGTU follower = followers.first();
@@ -78,10 +77,6 @@ public class SocioDesiredSpeedModel implements DesiredSpeedModel
                         desiredSpeed = Speed.interpolate(desiredSpeed, desiredSpeedFollower, parameters.getParameter(SOCIO));
                     }
                 }
-            }
-            catch (@SuppressWarnings("unused") OperationalPlanException ope)
-            {
-                // no neighbors perception, keep value of base model
             }
             this.gtu.cacheValue(SPEEDKEY, desiredSpeed);
         }

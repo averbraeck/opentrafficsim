@@ -30,8 +30,7 @@ public class AccelerationTrafficLights implements AccelerationIncentive
     @Override
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final LaneBasedGTU gtu,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws ParameterException, OperationalPlanException
+            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, OperationalPlanException
     {
         simplePlan.minimizeAcceleration(TrafficLightUtil.respondToTrafficLights(params,
                 perception.getPerceptionCategory(IntersectionPerception.class).getTrafficLights(lane), carFollowingModel, speed,
