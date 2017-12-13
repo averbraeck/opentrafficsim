@@ -95,7 +95,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
 
     /** The GTU colorer that will be linked to each generated GTU. */
     final GTUColorer gtuColorer;
-    
+
     /** ID generator. */
     final IdGenerator idGenerator;
 
@@ -168,8 +168,11 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable
         }
         if (this.generatedGTUs < this.maxGTUs)
         {
-            this.simulator.scheduleEventRel(this.interarrivelTimeGenerator.draw(), this, this, "generateCharacteristics",
-                    new Object[] {});
+            Duration headway = this.interarrivelTimeGenerator.draw();
+            if (headway != null)
+            {
+                this.simulator.scheduleEventRel(headway, this, this, "generateCharacteristics", new Object[] {});
+            }
         }
     }
 

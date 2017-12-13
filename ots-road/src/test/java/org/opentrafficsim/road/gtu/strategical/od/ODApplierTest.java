@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,8 +41,8 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.strategical.od.ArrivalsHeadwayGenerator.HeadwayRandomization;
 import org.opentrafficsim.road.gtu.strategical.od.ODApplier.GeneratorObjects;
-import org.opentrafficsim.road.gtu.strategical.od.ODApplier.HeadwayRandomization;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -174,10 +175,12 @@ public class ODApplierTest
      * @throws SimRuntimeException on exception
      * @throws ParameterException on exception
      * @throws ProbabilityException on exception
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
      */
     @Test
-    public void headwayGeneratorTest()
-            throws ValueException, NetworkException, ParameterException, SimRuntimeException, ProbabilityException
+    public void headwayGeneratorTest() throws ValueException, NetworkException, ParameterException, SimRuntimeException,
+            ProbabilityException, IllegalArgumentException, IllegalAccessException
     {
 
         this.time = Time.ZERO;
@@ -255,55 +258,63 @@ public class ODApplierTest
             assertEquals(headwayGenerator.draw(), null);
         }
 
-        // Stepwise&linear interpolation with exponential headways tests (only total test)
-        for (Interpolation interpolation : Interpolation.values())
+        // All interpolations and randomizations tests (only total test)
+        Field[] headwayFields = HeadwayRandomization.class.getDeclaredFields();
+        for (Field headwayField : headwayFields)
         {
-            this.time = Time.ZERO;
-            odOptions = new ODOptions().set(ODOptions.HEADWAY, HeadwayRandomization.EXPONENTIAL).setReadOnly();
-            od = getOD(new double[] { 1200, 2400, 3600, 4800, 6000, 7200 }, new double[] { 1000, 2000, 0, 0, 2000, 0 },
-                    interpolation, nodeA, nodeB, lane1, lane2);
-            generatorObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
-            assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
-            for (String id : generatorObjects.keySet())
+            if (headwayField.getType().equals(HeadwayRandomization.class))
             {
-                Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
-                double factor = id.equals("A1") ? 0.4 : 0.6;
-                double n = 0;
-                int nSims = 10;
-                for (int i = 0; i < nSims; i++) // 10 simulations
+                HeadwayRandomization headwayRandomization = (HeadwayRandomization) headwayField.get(null);
+                for (Interpolation interpolation : Interpolation.values())
                 {
-                    // simulate entire demand period and check total number of vehicles
-                    while (this.time.si < 7200)
+                    this.time = Time.ZERO;
+                    odOptions = new ODOptions().set(ODOptions.HEADWAY, headwayRandomization).setReadOnly();
+                    od = getOD(new double[] { 1200, 2400, 3600, 4800, 6000, 7200 }, new double[] { 1000, 2000, 0, 0, 2000, 0 },
+                            interpolation, nodeA, nodeB, lane1, lane2);
+                    generatorObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
+                    assertEquals("Incorrect number of generators created or returned.", generatorObjects.size(), 2);
+                    for (String id : generatorObjects.keySet())
                     {
-                        Duration headway = headwayGenerator.draw();
-                        if (headway != null)
+                        Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
+                        double factor = id.equals("A1") ? 0.4 : 0.6;
+                        double n = 0;
+                        int nSims = 10;
+                        for (int i = 0; i < nSims; i++) // 10 simulations
                         {
-                            n++;
-                            this.time = this.time.plus(headway);
+                            // simulate entire demand period and check total number of vehicles
+                            while (this.time.si < 7200)
+                            {
+                                Duration headway = headwayGenerator.draw();
+                                if (headway != null)
+                                {
+                                    n++;
+                                    this.time = this.time.plus(headway);
+                                }
+                                else
+                                {
+                                    this.time = Time.createSI(7200);
+                                }
+                            }
+                            this.time = Time.ZERO;
+                        }
+                        double nDemand;
+                        if (interpolation.isStepWise())
+                        {
+                            nDemand = factor * 1200 * (1000 + 2000 + 2000) / 3600;
                         }
                         else
                         {
-                            this.time = Time.createSI(7200);
+                            nDemand = factor * 1200 * (1500 + 1000 + 1000 + 1000) / 3600;
                         }
+                        n /= nSims;
+                        double p = 100 * (n / nDemand - 1);
+                        System.out.println(String.format(
+                                "A demand of %.2f resulted in %.0f vehicles (%s%.2f%%) as mean over %d simulations (%s demand, %s headways).",
+                                nDemand, n, p > 0 ? "+" : "", p, nSims, interpolation.name(), headwayRandomization.getName()));
+                        assertTrue(String.format("Demand generated with exponential headways was more than 5%% off (%s%.2f%%).",
+                                p > 0 ? "+" : "", p), Math.abs(p) < 5);
                     }
-                    this.time = Time.ZERO;
                 }
-                double nDemand;
-                if (interpolation.isStepWise())
-                {
-                    nDemand = factor * 1200 * (1000 + 2000 + 2000) / 3600;
-                }
-                else
-                {
-                    nDemand = factor * 1200 * (1500 + 1000 + 1000 + 1000) / 3600;
-                }
-                n /= nSims;
-                double p = 100 * (n / nDemand - 1);
-                System.out.println(
-                        String.format("A demand of %.2f resulted in %.0f vehicles (%s%.2f%%) as mean over %d simulations.",
-                                nDemand, n, p > 0 ? "+" : "", p, nSims));
-                assertTrue(String.format("Demand generated with exponential headways was more than 5%% off (%s%.2f%%).",
-                        p > 0 ? "+" : "", p), Math.abs(p) < 5);
             }
         }
 

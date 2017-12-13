@@ -31,6 +31,7 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
+import org.opentrafficsim.road.gtu.strategical.od.ArrivalsHeadwayGenerator.HeadwayRandomization;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix.ODEntry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -268,7 +269,7 @@ public final class ODApplier
                 }
                 // functional generation elements
                 HeadwayRandomization randomization = odOptions.get(ODOptions.HEADWAY);
-                ODHeadwayGenerator headwayGenerator = new ODHeadwayGenerator(root, simulator, stream, randomization);
+                ArrivalsHeadwayGenerator headwayGenerator = new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
                 GTUColorer gtuColorer = odOptions.get(ODOptions.COLORER);
                 ODCharacteristicsGenerator characteristicsGenerator =
                         new ODCharacteristicsGenerator(root, simulator, odOptions.get(ODOptions.GTU_TYPE), initialPosition);
@@ -375,7 +376,7 @@ public final class ODApplier
      * @param <T> type of contained object
      * @param <K> type of child nodes
      */
-    public static class DemandNode<T, K extends DemandNode<?, ?>>
+    public static class DemandNode<T, K extends DemandNode<?, ?>> implements Arrivals
     {
 
         // TODO Markov chain: on average same probabilities, but after a truck higher truck probability, after car higher car
@@ -458,26 +459,6 @@ public final class ODApplier
         }
 
         /**
-         * Returns the total demand for branching nodes, or the demand at a leaf node, at the given time.
-         * @param time Time; simulation time
-         * @param sliceStart boolean; whether the time is at the start of an arbitrary time slice
-         * @return Frequency; returns the total demand for branching nodes, or the demand at a leaf node, at the given time
-         */
-        public Frequency getFrequency(final Time time, final boolean sliceStart)
-        {
-            if (this.odEntry != null)
-            {
-                return this.odEntry.getDemand(time, sliceStart);
-            }
-            Frequency f = new Frequency(0.0, FrequencyUnit.PER_HOUR);
-            for (K child : this.children)
-            {
-                f = f.plus(child.getFrequency(time, sliceStart));
-            }
-            return f;
-        }
-
-        /**
          * Returns the node object.
          * @return T; node object
          */
@@ -503,11 +484,24 @@ public final class ODApplier
             return null;
         }
 
-        /**
-         * Returns the start time of the next time slice after the given time or {@code null} if no such slice exists.
-         * @param time Time; time after which the first slice start time is requested
-         * @return start time of the next time slice after the given time or {@code null} if no such slice exists
-         */
+        /** {@inheritDoc} */
+        @Override
+        public Frequency getFrequency(final Time time, final boolean sliceStart)
+        {
+            if (this.odEntry != null)
+            {
+                return this.odEntry.getDemand(time, sliceStart);
+            }
+            Frequency f = new Frequency(0.0, FrequencyUnit.PER_HOUR);
+            for (K child : this.children)
+            {
+                f = f.plus(child.getFrequency(time, sliceStart));
+            }
+            return f;
+        }
+        
+        /** {@inheritDoc} */
+        @Override
         public Time nextTimeSlice(final Time time)
         {
             if (this.odEntry != null)
@@ -529,199 +523,6 @@ public final class ODApplier
             }
             return out;
         }
-
-    }
-
-    /**
-     * Headway generation based on OD demand.
-     * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 dec. 2017 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    private static class ODHeadwayGenerator implements Generator<Duration>
-    {
-
-        /** Root node with origin. */
-        private final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root;
-
-        /** Simulator. */
-        private final OTSDEVSSimulatorInterface simulator;
-
-        /** Random stream to draw headway. */
-        private final StreamInterface stream;
-
-        /** Random headway generator. */
-        private final HeadwayRandomization randomization;
-
-        /**
-         * @param root DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>; root node with origin
-         * @param simulator OTSDEVSSimulatorInterface; simulator
-         * @param stream StreamInterface; random stream to draw headway
-         * @param randomization Randomization; random headway generator
-         */
-        ODHeadwayGenerator(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final OTSDEVSSimulatorInterface simulator, final StreamInterface stream,
-                final HeadwayRandomization randomization)
-        {
-            this.root = root;
-            this.simulator = simulator;
-            this.stream = stream;
-            this.randomization = randomization;
-        }
-
-        /**
-         * Returns a new headway {@code h} assuming that the previous vehicle arrived at the current time {@code t0}. The
-         * vehicle thus arrives at {@code t1 = t0 + h}. This method guarantees that no vehicle arrives during periods where
-         * demand is zero, while maintaining random headways based on average demand over a certain time period.<br>
-         * <br>
-         * The general method is to find {@code h} such that the integral of the demand pattern {@code D} from {@code t0} until
-         * {@code t1} equals {@code r}: &#931;{@code D(t0 > t1) = r}. One can think of {@code r} as being 1 and representing an
-         * additional vehicle to arrive. The headway {@code h} that results correlates directly to the mean demand between
-         * {@code t0} and {@code t1}.<br>
-         * <br>
-         * The value of {@code r} always has a mean of 1, but may vary between specific vehicle arrivals depending on
-         * randomization. When assuming constant headways for any given demand level, {@code r} always equals 1. For
-         * exponentially distributed headways {@code r} may range anywhere between 0 and infinity.<br>
-         * <br>
-         * This usage of {@code r} guarantees that no vehicles arrive during periods with 0 demand. For example:
-         * <ul>
-         * <li>Suppose we have 0 demand between 300s and 400s.</li>
-         * <li>The previous vehicle was generated at 299s.</li>
-         * <li>The demand at 299s equals 1800veh/h (1 veh per 2s).</li>
-         * <li>For both constant and exponentially distributed headways, the expected next vehicle arrival based on this demand
-         * value alone would be 299 + 2 = 301s. This is within the 0-demand period and should not happen. It's also not
-         * theoretically sound, as the demand from 299s until 301s is not 1800veh/h on average.</li>
-         * <li>Using integration we find that the surface of demand from 299s until 300s equals 0.5 veh for stepwise demand, and
-         * 0.25 veh for linear demand. Consequently, the vehicle will not arrive until later slices integrate to an additional
-         * 0.5 veh or 0.75 veh respectively. This additional surface under the demand curve is only found after 400s.</li>
-         * <li>In case the exponential headway distribution would have resulted in {@code r} < 0.5 (stepwise demand) or 0.25
-         * (linear demand), a vehicle will simply arrive between 299s and 300s.</li>
-         * </ul>
-         * Depending on possibly varying demand patterns in child nodes of the root node, the algorithm may integrate over
-         * several time slices, where a slice ends whenever the first child node has a new slice. This assures that during each
-         * slice the child nodes as well as their sum have a linear demand pattern. Trapezoidal integration can be used.<br>
-         * <br>
-         * @return Duration; new headway
-         * @throws ProbabilityException if the stored collection is empty
-         * @throws ParameterException in case of a parameter exception
-         */
-        @Override
-        public Duration draw() throws ProbabilityException, ParameterException
-        {
-            Time now = this.simulator.getSimulatorTime().getTime();
-            // initial slice times and frequencies
-            Time t1 = now;
-            double f1 = this.root.getFrequency(t1, true).si;
-            Time t2 = this.root.nextTimeSlice(t1);
-            if (t2 == null)
-            {
-                return null; // no new vehicle
-            }
-            double f2 = this.root.getFrequency(t2, false).si;
-            // next vehicle's random factor
-            double rem = this.randomization.draw(this.stream);
-            // integrate until rem (by reducing it to 0.0, possibly in steps per slice)
-            while (rem > 0.0)
-            {
-                // extrapolate to find 'integration = rem' in this slice giving demand slope, this may beyond the slice length
-                double dt = t2.si - t1.si;
-                double t;
-                if (f1 == f2) // no slope
-                {
-                    if (f1 > 0.0)
-                    {
-                        t = rem / f1; // rem = t * f1, t = rem / f1
-                    }
-                    else
-                    {
-                        t = Double.POSITIVE_INFINITY; // no demand in this slice
-                    }
-                }
-                else
-                {
-                    // reverse of trapezoidal rule: rem = t * (f1 + (f1 + t * slope)) / 2
-                    double slope = (f2 - f1) / dt;
-                    double sqrt = 2 * slope * rem + f1 * f1;
-                    if (sqrt >= 0.0)
-                    {
-                        t = (-f1 + Math.sqrt(sqrt)) / slope;
-                    }
-                    else
-                    {
-                        t = Double.POSITIVE_INFINITY; // not sufficient demand in this slice, with negative slope
-                    }
-                }
-                if (t > dt)
-                {
-                    // next slice
-                    rem -= dt * (f1 + f2) / 2; // subtract integral of this slice using trapezoidal rule
-                    t1 = t2;
-                    t2 = this.root.nextTimeSlice(t1);
-                    if (t2 == null)
-                    {
-                        return null; // no new vehicle
-                    }
-                    f1 = this.root.getFrequency(t1, true).si; // we can't use f1 = f2 due to possible steps in demand
-                    f2 = this.root.getFrequency(t2, false).si;
-                }
-                else
-                {
-                    // return resulting integration times
-                    return Duration.createSI(t1.si + t - now.si);
-                }
-            }
-            throw new RuntimeException("Exception while determining headway from DemandNode.");
-        }
-
-    }
-
-    /**
-     * Headway randomization.
-     * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 5 dec. 2017 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    public enum HeadwayRandomization
-    {
-
-        /** Constant headway. */
-        CONSTANT
-        {
-            @Override
-            double draw(final StreamInterface stream)
-            {
-                return 1.0;
-            }
-        },
-
-        /** Exponential headway distribution. */
-        EXPONENTIAL
-        {
-            @Override
-            double draw(final StreamInterface stream)
-            {
-                return -Math.log(stream.nextDouble());
-            }
-        };
-
-        /**
-         * Draws a randomized headway factor.
-         * @param stream StreamInterface; random number stream
-         * @return randomized headway factor
-         */
-        abstract double draw(StreamInterface stream);
 
     }
 
