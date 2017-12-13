@@ -153,12 +153,16 @@ public class ODMatrix implements Serializable, Identifiable
     }
 
     /**
+     * Add a demand vector to OD.
      * @param origin origin
      * @param destination destination
      * @param category category
      * @param demand demand data, length has to be equal to the global time vector
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
+     * @throws IllegalArgumentException if demand is negative or time not strictly increasing
+     * @throws IllegalArgumentException if the route (if in the category) is not from the origin to the destination
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
@@ -168,6 +172,9 @@ public class ODMatrix implements Serializable, Identifiable
     }
 
     /**
+     * Add a demand vector to OD. In this method, which all other methods that add or put demand indirectly refer to, many
+     * consistency and validity checks are performed. These do not include checks on network connectivity, since the network may
+     * be subject to change during simulation.
      * @param origin origin
      * @param destination destination
      * @param category category
@@ -176,6 +183,9 @@ public class ODMatrix implements Serializable, Identifiable
      * @param interpolation interpolation
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
+     * @throws IllegalArgumentException if demand is negative or time not strictly increasing
+     * @throws IllegalArgumentException if the route (if in the category) is not from the origin to the destination
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
@@ -193,7 +203,44 @@ public class ODMatrix implements Serializable, Identifiable
                 "Destination '%s' is not part of the OD matrix.", destination);
         Throw.when(!this.categorization.equals(category.getCategorization()), IllegalArgumentException.class,
                 "Provided category %s does not belong to the categorization %s.", category, this.categorization);
-        ODEntry odEntry = new ODEntry(demand, timeVector, interpolation); // performs checks on vector length
+        Throw.when(demand.size() != timeVector.size() || demand.size() < 2, IllegalArgumentException.class,
+                "Demand data has different length than time vector, or has less than 2 values.");
+        for (double q : demand.getValuesSI())
+        {
+            Throw.when(q < 0.0, IllegalArgumentException.class, "Demand contains negative value(s).");
+        }
+        double prevTime;
+        try
+        {
+            prevTime = timeVector.get(0).eq0() ? -1.0 : 0.0;
+        }
+        catch (ValueException exception)
+        {
+            // verified to be > 1, so no empty vector
+            throw new RuntimeException("Unexpected exception while checking time vector.", exception);
+        }
+        for (double time : timeVector.getValuesSI())
+        {
+            Throw.when(prevTime >= time, IllegalArgumentException.class,
+                    "Time vector is not strictly increasing, or contains negative time.");
+            prevTime = time;
+        }
+        if (this.categorization.entails(Route.class))
+        {
+            Route route = category.get(Route.class);
+            try
+            {
+                Throw.when(!route.originNode().equals(origin) || !route.destinationNode().equals(destination),
+                        IllegalArgumentException.class,
+                        "Route from %s to %s does not comply with origin %s and destination %s.", route.originNode(),
+                        route.destinationNode(), origin, destination);
+            }
+            catch (NetworkException exception)
+            {
+                throw new IllegalArgumentException("Route in OD has no nodes.", exception);
+            }
+        }
+        ODEntry odEntry = new ODEntry(demand, timeVector, interpolation);
         this.demandData.get(origin).get(destination).put(category, odEntry);
     }
 
@@ -208,11 +255,13 @@ public class ODMatrix implements Serializable, Identifiable
      * @param fraction fraction of demand for this category
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
+     * @throws IllegalArgumentException if demand is negative or time not strictly increasing
+     * @throws IllegalArgumentException if the route (if in the category) is not from the origin to the destination
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
-            final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation,
-            final double fraction)
+            final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation, final double fraction)
     {
         Throw.whenNull(demand, "Demand data may not be null.");
         double[] in = demand.getValuesInUnit();
@@ -245,6 +294,9 @@ public class ODMatrix implements Serializable, Identifiable
      * @param fraction fraction of demand for this category
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
+     * @throws IllegalArgumentException if demand is negative or time not strictly increasing
+     * @throws IllegalArgumentException if the route (if in the category) is not from the origin to the destination
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
@@ -422,9 +474,13 @@ public class ODMatrix implements Serializable, Identifiable
      * @param origin origin
      * @param destination destination
      * @param category category
-     * @param trips trip data, length has to be equal to the global time vector - 1
+     * @param trips trip data, length has to be equal to the global time vector - 1, each value is the number of trips during a
+     *            period
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
+     * @throws IllegalArgumentException if demand is negative or time not strictly increasing
+     * @throws IllegalArgumentException if the route (if in the category) is not from the origin to the destination
      * @throws NullPointerException if an input is null
      */
     public final void putTripsVector(final Node origin, final Node destination, final Category category, final int[] trips)
@@ -437,10 +493,13 @@ public class ODMatrix implements Serializable, Identifiable
      * @param origin origin
      * @param destination destination
      * @param category category
-     * @param trips trip data, length has to be equal to the time vector - 1
+     * @param trips trip data, length has to be equal to the time vector - 1, each value is the number of trips during a period
      * @param timeVector time vector
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
+     * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
+     * @throws IllegalArgumentException if demand is negative or time not strictly increasing
+     * @throws IllegalArgumentException if the route (if in the category) is not from the origin to the destination
      * @throws NullPointerException if an input is null
      */
     public final void putTripsVector(final Node origin, final Node destination, final Category category, final int[] trips,
@@ -514,7 +573,7 @@ public class ODMatrix implements Serializable, Identifiable
      * @return demand for given origin, destination and categorization, at given time
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
-     * @throws IllegalArgumentException if the period is outside of the specified range
+     * @throws IndexOutOfBoundsException if the period is outside of the specified range
      * @throws NullPointerException if an input is null
      */
     public final int getTrips(final Node origin, final Node destination, final Category category, final int periodIndex)
@@ -524,7 +583,7 @@ public class ODMatrix implements Serializable, Identifiable
         {
             return 0;
         }
-        Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IllegalArgumentException.class,
+        Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IndexOutOfBoundsException.class,
                 "Period index out of range.");
         FrequencyVector demand = getDemandVector(origin, destination, category);
         Interpolation interpolation = getInterpolation(origin, destination, category);
@@ -550,8 +609,8 @@ public class ODMatrix implements Serializable, Identifiable
      * @param trips trips to add (may be negative)
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
-     * @throws IllegalArgumentException if the period is outside of the specified range
-     * @throws UnsupportedOperationException if the interpolation of the data is not stepwise
+     * @throws IndexOutOfBoundsException if the period is outside of the specified range
+     * @throws UnsupportedOperationException if the interpolation of the data is not stepwise, or demand becomes negtive
      * @throws NullPointerException if an input is null
      */
     public final void increaseTrips(final Node origin, final Node destination, final Category category, final int periodIndex,
@@ -561,7 +620,7 @@ public class ODMatrix implements Serializable, Identifiable
         Throw.when(!interpolation.equals(Interpolation.STEPWISE), UnsupportedOperationException.class,
                 "Can only increase the number of trips for data with stepwise interpolation.");
         TimeVector time = getTimeVector(origin, destination, category);
-        Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IllegalArgumentException.class,
+        Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IndexOutOfBoundsException.class,
                 "Period index out of range.");
         FrequencyVector demand = getDemandVector(origin, destination, category);
         try
@@ -570,13 +629,14 @@ public class ODMatrix implements Serializable, Identifiable
                     - time.get(periodIndex).getInUnit(TimeUnit.BASE_HOUR));
             double[] dem = demand.getValuesInUnit(FrequencyUnit.PER_HOUR);
             dem[periodIndex] += additionalDemand;
+            Throw.when(dem[periodIndex] < 0.0, UnsupportedOperationException.class, "Demand may not become negative.");
             putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR, StorageType.DENSE),
                     time, Interpolation.STEPWISE);
         }
         catch (ValueException exception)
         {
             // should not happen as the index was checked
-            throw new RuntimeException("Could not get number of trips.", exception);
+            throw new RuntimeException("Unexpected exception while getting number of trips.", exception);
         }
     }
 
@@ -617,6 +677,8 @@ public class ODMatrix implements Serializable, Identifiable
     /**
      * Calculates total number of trips over time for the complete matrix.
      * @return total number of trips over time for the complete matrix
+     * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
+     * @throws NullPointerException if an input is null
      */
     public final int matrixTotal()
     {
@@ -656,7 +718,7 @@ public class ODMatrix implements Serializable, Identifiable
                 catch (ValueException exception)
                 {
                     // should not happen as we loop over the array length
-                    throw new RuntimeException("Could not determine total trips over time.", exception);
+                    throw new RuntimeException("Unexcepted exception while determining total trips over time.", exception);
                 }
             }
         }
@@ -944,12 +1006,9 @@ public class ODMatrix implements Serializable, Identifiable
          * @param demandVector demand vector
          * @param timeVector time vector
          * @param interpolation interpolation
-         * @throws IllegalArgumentException if the demand data has a different length than time data
          */
         ODEntry(final FrequencyVector demandVector, final TimeVector timeVector, final Interpolation interpolation)
         {
-            Throw.when(demandVector.size() != timeVector.size(), IllegalArgumentException.class,
-                    "Demand data has different length than time vector.");
             this.demandVector = demandVector;
             this.timeVector = timeVector;
             this.interpolation = interpolation;
