@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
@@ -64,6 +65,10 @@ public class ODOptions
     /** Room checker option. */
     public static final Option<RoomChecker> ROOM =
             new Option<>(new ConstantGenerator<>(new TTCRoomChecker(Duration.createSI(10.0))));
+
+    // TODO this may be origin / generator specific, or even road/lane type specific
+    /** Markov chain for GTU type. */
+    public static final Option<MarkovCorrelation<GTUType, Frequency>> MARKOV = new Option<>(new ConstantGenerator<>(null));
 
     /** Options. */
     private Map<Option<?>, Object> options = new HashMap<>();
