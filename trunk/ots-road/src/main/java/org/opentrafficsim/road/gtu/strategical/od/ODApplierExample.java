@@ -19,6 +19,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -46,6 +47,7 @@ import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.strategical.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation.TYPE;
@@ -221,9 +223,11 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 category = new Category(categorization, lane2, GTUType.TRUCK, route);
                 od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .2);
                 // options
-                ODOptions odOptions = new ODOptions().set(ODOptions.COLORER, this.colorer).setReadOnly();
+                MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
+                markov.addState(GTUType.TRUCK, 0.95);
+                ODOptions odOptions =
+                        new ODOptions().set(ODOptions.COLORER, this.colorer).set(ODOptions.MARKOV, markov).setReadOnly();
                 ODApplier.applyOD(this.network, od, this.simulator, odOptions);
-                
 
             }
             catch (NetworkException | OTSGeometryException | NamingException | ValueException | ParameterException exception)

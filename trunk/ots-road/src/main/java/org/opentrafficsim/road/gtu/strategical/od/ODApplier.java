@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.strategical.od;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Link;
@@ -119,6 +121,12 @@ public final class ODApplier
 
         final Categorization categorization = od.getCategorization();
         final boolean laneBased = categorization.entails(Lane.class);
+        boolean markovian = odOptions.get(ODOptions.MARKOV) != null;
+        if (markovian && !od.getCategorization().entails(GTUType.class))
+        {
+            markovian = false;
+            System.out.println("Ignoring ODOptions.MARKOV as the OD categorization doesn't include GTUTypes.");
+        }
 
         // TODO clean up stream acquiring code after task OTS-315 has been completed
         StreamInterface stream = simulator.getReplication().getStream("generation");
@@ -154,9 +162,14 @@ public final class ODApplier
              * in the outer loop can simply be used.
              */
             Map<Lane, DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>> originNodePerLane = new HashMap<>();
+            MarkovChain markovChain = null;
             if (!laneBased)
             {
                 rootNode = new DemandNode<>(origin, stream);
+                if (markovian)
+                {
+                    markovChain = new MarkovChain(odOptions.get(ODOptions.MARKOV));
+                }
             }
             for (Node destination : od.getDestinations())
             {
@@ -166,7 +179,14 @@ public final class ODApplier
                     DemandNode<Node, DemandNode<Category, ?>> destinationNode = null;
                     if (!laneBased)
                     {
-                        destinationNode = new DemandNode<>(destination, stream);
+                        if (markovian)
+                        {
+                            destinationNode = new DemandNode<>(destination, stream, markovChain);
+                        }
+                        else
+                        {
+                            destinationNode = new DemandNode<>(destination, stream);
+                        }
                         rootNode.addChild(destinationNode);
                     }
                     for (Category category : categories)
@@ -175,13 +195,21 @@ public final class ODApplier
                         {
                             // obtain or create root and destination nodes
                             Lane lane = category.get(Lane.class);
+                            markovChain = new MarkovChain(odOptions.get(ODOptions.MARKOV)); // one for each generator
                             if (originNodePerLane.containsKey(lane))
                             {
                                 rootNode = originNodePerLane.get(lane);
                                 destinationNode = rootNode.getChild(destination);
                                 if (destinationNode == null)
                                 {
-                                    destinationNode = new DemandNode<>(destination, stream);
+                                    if (markovian)
+                                    {
+                                        destinationNode = new DemandNode<>(destination, stream, markovChain);
+                                    }
+                                    else
+                                    {
+                                        destinationNode = new DemandNode<>(destination, stream);
+                                    }
                                     rootNode.addChild(destinationNode);
                                 }
                             }
@@ -189,13 +217,29 @@ public final class ODApplier
                             {
                                 rootNode = new DemandNode<>(origin, stream);
                                 originNodePerLane.put(lane, rootNode);
-                                destinationNode = new DemandNode<>(destination, stream);
+                                if (markovian)
+                                {
+                                    destinationNode = new DemandNode<>(destination, stream, markovChain);
+                                }
+                                else
+                                {
+                                    destinationNode = new DemandNode<>(destination, stream);
+                                }
                                 rootNode.addChild(destinationNode);
                             }
                         }
-                        DemandNode<Category, ?> categoryNode =
-                                new DemandNode<>(category, od.getODEntry(origin, destination, category));
-                        destinationNode.addChild(categoryNode);
+                        DemandNode<Category, ?> categoryNode;
+                        if (markovian)
+                        {
+                            categoryNode =
+                                    new DemandNode<>(category, od.getODEntry(origin, destination, category));
+                            destinationNode.addLeaf(categoryNode, category.get(GTUType.class));
+                        }
+                        else
+                        {
+                            categoryNode = new DemandNode<>(category, od.getODEntry(origin, destination, category));
+                            destinationNode.addChild(categoryNode);
+                        }
                     }
                 }
             }
@@ -224,7 +268,6 @@ public final class ODApplier
             }
             else
             {
-
                 Set<DirectedLanePosition> positionSet = new HashSet<>();
                 for (Link link : origin.getLinks())
                 {
@@ -269,7 +312,8 @@ public final class ODApplier
                 }
                 // functional generation elements
                 HeadwayRandomization randomization = odOptions.get(ODOptions.HEADWAY);
-                ArrivalsHeadwayGenerator headwayGenerator = new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
+                ArrivalsHeadwayGenerator headwayGenerator =
+                        new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
                 GTUColorer gtuColorer = odOptions.get(ODOptions.COLORER);
                 ODCharacteristicsGenerator characteristicsGenerator =
                         new ODCharacteristicsGenerator(root, simulator, odOptions.get(ODOptions.GTU_TYPE), initialPosition);
@@ -376,11 +420,8 @@ public final class ODApplier
      * @param <T> type of contained object
      * @param <K> type of child nodes
      */
-    public static class DemandNode<T, K extends DemandNode<?, ?>> implements Arrivals
+    private static class DemandNode<T, K extends DemandNode<?, ?>> implements Arrivals
     {
-
-        // TODO Markov chain: on average same probabilities, but after a truck higher truck probability, after car higher car
-        // probability
 
         /** Node object. */
         private final T object;
@@ -394,28 +435,65 @@ public final class ODApplier
         /** Demand data. */
         private final ODEntry odEntry;
 
+        /** Unique GTU types of leaf nodes. */
+        private final List<GTUType> gtuTypes;
+
+        /** Number of leaf nodes for the unique GTU types. */
+        private final List<Integer> gtuTypeCounts;
+
+        /** GTU type of leaf nodes. */
+        private final Map<K, GTUType> gtuTypesPerChild;
+
+        /** Markov chain for GTU type selection. */
+        private final MarkovChain markov;
+
         /**
-         * Constructor for branching node.
+         * Constructor for branching node, without Markov selection.
          * @param object T; node object
          * @param stream StreamInterface; random stream to draw child node
          */
-        public DemandNode(final T object, final StreamInterface stream)
+        DemandNode(final T object, final StreamInterface stream)
         {
             this.object = object;
             this.stream = stream;
             this.odEntry = null;
+            this.gtuTypes = null;
+            this.gtuTypeCounts = null;
+            this.gtuTypesPerChild = null;
+            this.markov = null;
+        }
+        
+        /**
+         * Constructor for branching node, with Markov selection.
+         * @param object T; node object
+         * @param stream StreamInterface; random stream to draw child node
+         * @param markov MarkovChain; Markov chain
+         */
+        DemandNode(final T object, final StreamInterface stream, final MarkovChain markov)
+        {
+            this.object = object;
+            this.stream = stream;
+            this.odEntry = null;
+            this.gtuTypes = new ArrayList<>();
+            this.gtuTypeCounts = new ArrayList<>();
+            this.gtuTypesPerChild = new HashMap<>();
+            this.markov = markov;
         }
 
         /**
-         * Constructor for leaf node.
+         * Constructor for leaf node, without Markov selection.
          * @param object T; node object
          * @param odEntry ODEntry; demand data
          */
-        public DemandNode(final T object, final ODEntry odEntry)
+        DemandNode(final T object, final ODEntry odEntry)
         {
             this.object = object;
             this.stream = null;
             this.odEntry = odEntry;
+            this.gtuTypes = null;
+            this.gtuTypeCounts = null;
+            this.gtuTypesPerChild = null;
+            this.markov = null;
         }
 
         /**
@@ -428,6 +506,29 @@ public final class ODApplier
         }
 
         /**
+         * Adds child to a branching node.
+         * @param child K; child node
+         * @param gtuType GTUType; gtu type for Markov chain
+         */
+        public void addLeaf(final K child, final GTUType gtuType)
+        {
+            Throw.when(this.gtuTypes == null, IllegalStateException.class,
+                    "Adding leaf with GTUType in not possible on a non-Markov node.");
+            addChild(child);
+            this.gtuTypesPerChild.put(child, gtuType);
+            if (!this.gtuTypes.contains(gtuType))
+            {
+                this.gtuTypes.add(gtuType);
+                this.gtuTypeCounts.add(1);
+            }
+            else
+            {
+                int index = this.gtuTypes.indexOf(gtuType);
+                this.gtuTypeCounts.set(index, this.gtuTypeCounts.get(index) + 1);
+            }
+        }
+
+        /**
          * Randomly draws a child node.
          * @param time Duration; simulation time
          * @return K; randomly drawn child node
@@ -435,25 +536,73 @@ public final class ODApplier
         public K draw(final Time time)
         {
             Throw.when(this.children.isEmpty(), RuntimeException.class, "Calling draw on a leaf node in the demand tree.");
-            double[] cumulFrequencies = new double[this.children.size()];
-            double sum = 0;
-            int index = 0;
-            for (K child : this.children)
+            // data that allows a draw
+            double frequencySum = 0;
+            double[] cumulFrequencies;
+            List<K> drawChildren;
+            if (this.markov == null)
             {
-                double f = child.getFrequency(time, true).si; // sliceStart = true is arbitrary
-                sum += f;
-                cumulFrequencies[index] = sum;
-                index++;
+                // regular draw, loop childs and collect their frequencies
+                cumulFrequencies = new double[this.children.size()];
+                int index = 0;
+                for (K child : this.children)
+                {
+                    double f = child.getFrequency(time, true).si; // sliceStart = true is arbitrary
+                    frequencySum += f;
+                    cumulFrequencies[index] = frequencySum;
+                    index++;
+                }
+                drawChildren = this.children;
             }
-            Throw.when(sum == 0.0, RuntimeException.class, "Draw on destination or category when demand is 0.");
-            double r = this.stream.nextDouble() * sum;
-            for (int i = 0; i < this.children.size(); i++)
+            else
+            {
+                // markov chain draw, the markov chain only selects a GTU type, not a child node
+                GTUType[] gtuTypeArray = new GTUType[this.gtuTypes.size()];
+                gtuTypeArray = this.gtuTypes.toArray(gtuTypeArray);
+                Frequency[] steadyState = new Frequency[this.gtuTypes.size()];
+                Arrays.fill(steadyState, Frequency.ZERO);
+                Map<K, Frequency> frequencies = new HashMap<>(); // stored frequencies, saves us from calculating them twice
+                for (K child : this.children)
+                {
+                    GTUType gtuType = this.gtuTypesPerChild.get(child);
+                    int index = this.gtuTypes.indexOf(gtuType);
+                    Frequency f = child.getFrequency(time, true); // sliceStart = true is arbitrary
+                    frequencies.put(child, f);
+                    steadyState[index] = steadyState[index].plus(f); 
+                }
+                GTUType nextGtuType = this.markov.draw(gtuTypeArray, steadyState, this.stream);
+                // select only child nodes registered to the next GTU type
+                int gtuTypeIndex = this.gtuTypes.indexOf(nextGtuType);
+                int nChildren = this.gtuTypeCounts.get(gtuTypeIndex);
+                cumulFrequencies = new double[nChildren];
+                drawChildren = new ArrayList<>(nChildren);
+                int index = 0;
+                for (K child : this.children)
+                {
+                    if (this.gtuTypesPerChild.get(child).equals(nextGtuType))
+                    {
+                        double f = frequencies.get(child).si;
+                        frequencySum += f;
+                        cumulFrequencies[index] = frequencySum;
+                        drawChildren.add(child);
+                        index++;
+                    }
+                }
+            }
+            // draw from list
+            Throw.when(frequencySum <= 0.0, RuntimeException.class,
+                    "Draw on destination or category when demand is 0 or negative.");
+            if (drawChildren.size() == 1)
+            {
+                return drawChildren.get(0);
+            }
+            double r = this.stream.nextDouble() * frequencySum;
+            for (int i = 0; i < drawChildren.size(); i++)
             {
                 if (r <= cumulFrequencies[i])
                 {
-                    return this.children.get(i);
+                    return drawChildren.get(i);
                 }
-                i++;
             }
             return this.children.get(this.children.size() - 1); // due to rounding
         }
@@ -499,7 +648,7 @@ public final class ODApplier
             }
             return f;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public Time nextTimeSlice(final Time time)
@@ -524,6 +673,42 @@ public final class ODApplier
             return out;
         }
 
+    }
+
+    /**
+     * Wrapper class around a {@code MarkovCorrelation}, including the last type. One of these should be used for each vehicle
+     * generator.
+     */
+    private static class MarkovChain
+    {
+        /** Markov correlation for GTU type selection. */
+        private final MarkovCorrelation<GTUType, Frequency> markov;
+
+        /** Previously returned GTU type. */
+        private GTUType previousGtuType = null;
+
+        /**
+         * Constructor.
+         * @param markov MarkovCorrelation<GTUType, Frequency>; Markov correlation for GTU type selection
+         */
+        MarkovChain(final MarkovCorrelation<GTUType, Frequency> markov)
+        {
+            this.markov = markov;
+        }
+
+        /**
+         * Returns a next GTU type drawn using a Markov chain.
+         * @param gtuTypes GTUType[]; GTUTypes to consider
+         * @param intensities Frequency[]; frequency for each GTU type, i.e. the steady-state
+         * @param stream StreamInterface; stream for random numbers
+         * @return next GTU type drawn using a Markov chain
+         */
+        public GTUType draw(final GTUType[] gtuTypes, final Frequency[] intensities, final StreamInterface stream)
+        {
+            GTUType nextGtuType = this.markov.drawState(this.previousGtuType, gtuTypes, intensities, stream);
+            this.previousGtuType = nextGtuType;
+            return nextGtuType;
+        }
     }
 
     /**
