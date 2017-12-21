@@ -22,13 +22,16 @@
         OTS-346. Streamline parameter creation using factories
       </action>
       <action issue="OTS-347" type="add">
-        OTS-347. Create Generator<O> for constant values
+        OTS-347. Create Generator&lt;O&gt; for constant values
       </action>
       <action issue="OTS-349" type="add">
         OTS-349. Provide default GTUCharacteristics for GTUTypes
       </action>
-      <action issue="OTS-350" type"fix">
-        OTS-350. Acceleration <-10m/s^2 at vehicle generation with LMRS
+      <action issue="OTS-350" type="fix">
+        OTS-350. Acceleration &lt;-10m/s^2 at vehicle generation with LMRS
+      </action>
+      <action issue="OTS-353" type="add">
+        OTS-353. Markov chains in vehicle generation
       </action>
     </release>
 
