@@ -195,7 +195,6 @@ public final class ODApplier
                         {
                             // obtain or create root and destination nodes
                             Lane lane = category.get(Lane.class);
-                            markovChain = new MarkovChain(odOptions.get(ODOptions.MARKOV)); // one for each generator
                             if (originNodePerLane.containsKey(lane))
                             {
                                 rootNode = originNodePerLane.get(lane);
@@ -204,6 +203,7 @@ public final class ODApplier
                                 {
                                     if (markovian)
                                     {
+                                        markovChain = new MarkovChain(odOptions.get(ODOptions.MARKOV)); // 1 for each generator
                                         destinationNode = new DemandNode<>(destination, stream, markovChain);
                                     }
                                     else
@@ -219,6 +219,7 @@ public final class ODApplier
                                 originNodePerLane.put(lane, rootNode);
                                 if (markovian)
                                 {
+                                    markovChain = new MarkovChain(odOptions.get(ODOptions.MARKOV)); // 1 for each generator
                                     destinationNode = new DemandNode<>(destination, stream, markovChain);
                                 }
                                 else
