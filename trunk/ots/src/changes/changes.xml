@@ -33,6 +33,12 @@
       <action issue="OTS-353" type="add">
         OTS-353. Markov chains in vehicle generation
       </action>
+      <action issue="OTS-352" type="add">
+        OTS-352. Division of origin demand over multiple links and lanes
+      </action>
+      <action issue="OTS-354" type="add">
+        OTS-354. Remove initial speed and position from LaneBasedGTUCharacteristics
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">

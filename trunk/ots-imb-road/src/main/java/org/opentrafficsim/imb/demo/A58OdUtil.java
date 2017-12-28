@@ -43,6 +43,7 @@ import org.opentrafficsim.imb.demo.generators.IDMPlusOldFactory;
 import org.opentrafficsim.imb.demo.generators.RouteGeneratorProbability;
 import org.opentrafficsim.road.gtu.generator.CharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.generator.GTUTypeGenerator;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.HeadwayGeneratorDemand;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
@@ -246,7 +247,7 @@ public class A58OdUtil
                     Speed generationSpeed = new Speed(120, SpeedUnit.KM_PER_HOUR); // by definition > 1 lane on this loop
                     String id = link.getId() + ":A" + i;
                     makeGenerator(lane, generationSpeed, id, routeGenerator, idGenerator, simulator, network, gtuTypeGenerator,
-                            headwayGenerator, gtuColorer, roomChecker, bcFactory, tacticalFactory);
+                            headwayGenerator, gtuColorer, roomChecker, bcFactory, tacticalFactory, streams.get("gtuClass"));
                 }
                 // add trucks
                 gtuTypeGenerator = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
@@ -266,7 +267,7 @@ public class A58OdUtil
                 Speed generationSpeed = new Speed(nLanes == 1 ? 60.0 : 120, SpeedUnit.KM_PER_HOUR);
                 String id = link.getId() + ":A" + nLanes;
                 makeGenerator(lane, generationSpeed, id, routeGenerator, idGenerator, simulator, network, gtuTypeGenerator,
-                        headwayGenerator, gtuColorer, roomChecker, bcFactory, tacticalFactory);
+                        headwayGenerator, gtuColorer, roomChecker, bcFactory, tacticalFactory, streams.get("gtuClass"));
             }
             catch (SimRuntimeException | ProbabilityException | GTUException | ParameterException exception)
             {
@@ -322,6 +323,7 @@ public class A58OdUtil
      * @param roomChecker the checker to see if there is room for the GTU
      * @param bcFactory the factory to generate parameters for the GTU
      * @param tacticalFactory the generator for the tactical planner
+     * @param stream randum number stream
      * @throws SimRuntimeException in case of scheduling problems
      * @throws ProbabilityException in case of an illegal probability distribution
      * @throws GTUException in case the GTU is inconsistent
@@ -331,7 +333,7 @@ public class A58OdUtil
             final RouteGenerator routeGenerator, final IdGenerator idGenerator, final OTSDEVSSimulatorInterface simulator,
             final OTSNetwork network, final GTUTypeGenerator gtuTypeGenerator, final HeadwayGeneratorDemand headwayGenerator,
             final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
-            final LaneBasedTacticalPlannerFactory<?> tacticalFactory)
+            final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final StreamInterface stream)
             throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
     {
         Set<DirectedLanePosition> initialLongitudinalPositions = new HashSet<>();
@@ -343,10 +345,11 @@ public class A58OdUtil
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
 
         CharacteristicsGenerator characteristicsGenerator = new CharacteristicsGenerator(strategicalFactory, routeGenerator,
-                simulator, gtuTypeGenerator, generationSpeed, initialLongitudinalPositions);
+                simulator, gtuTypeGenerator, generationSpeed);
 
         new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO, simPeriod, gtuColorer,
-                characteristicsGenerator, initialLongitudinalPositions, network, simulator, roomChecker, idGenerator);
+                characteristicsGenerator, GeneratorPositions.create(initialLongitudinalPositions, stream), network, simulator,
+                roomChecker, idGenerator);
     }
 
     /**

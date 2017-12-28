@@ -80,9 +80,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 1.6), METER);
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
-        final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcInitialSpeed =
-                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 125), KM_PER_HOUR);
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
         LaneBasedTemplateGTUType passengerCar = new LaneBasedTemplateGTUType(pcType, new Generator<Length>()
         {
@@ -105,24 +102,8 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
             {
                 return pcMaximumSpeed.draw();
             }
-        }, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null),
-                /*-new Generator<LaneBasedStrategicalPlanner>()
-                {
-                    public LaneBasedStrategicalPlanner draw()
-                    {
-                        return null;
-                    }
-                }, 
-                */
-                initialLongitudinalPositions, new Generator<Speed>()
-                {
-                    @Override
-                    public Speed draw()
-                    {
-                        return pcInitialSpeed.draw();
-                    }
-                });
-        verifyFields(passengerCar, pcType, pcLength, pcWidth, pcMaximumSpeed, pcInitialSpeed);
+        }, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null));
+        verifyFields(passengerCar, pcType, pcLength, pcWidth, pcMaximumSpeed);
         GTUType truckType = TRUCK;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> truckLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 18), METER);
@@ -130,8 +111,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.2), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 110), KM_PER_HOUR);
-        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckInitialSpeed =
-                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 85), KM_PER_HOUR);
         LaneBasedTemplateGTUType truck = new LaneBasedTemplateGTUType(truckType, new Generator<Length>()
         {
             @Override
@@ -153,24 +132,8 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
             {
                 return truckMaximumSpeed.draw();
             }
-        }, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null),
-                /*-new Generator<LaneBasedStrategicalPlanner>()
-                {
-                    public LaneBasedStrategicalPlanner draw()
-                    {
-                        return null;
-                    }
-                },
-                */
-                initialLongitudinalPositions, new Generator<Speed>()
-                {
-                    @Override
-                    public Speed draw()
-                    {
-                        return truckInitialSpeed.draw();
-                    }
-                });
-        verifyFields(truck, truckType, truckLength, truckWidth, truckMaximumSpeed, truckInitialSpeed);
+        }, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null));
+        verifyFields(truck, truckType, truckLength, truckWidth, truckMaximumSpeed);
     }
 
     /**
@@ -306,7 +269,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
      * @param length Length; the expected length
      * @param width Length; the expected width
      * @param maximumSpeed Speed; the expected maximum speed
-     * @param initialSpeed Speed; the initial speed
      * @throws ProbabilityException in case of probability drawing exception
      * @throws ParameterException in case of a parameter problem.
      * @throws GTUException in case of a GTU exception
@@ -315,8 +277,7 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
     private void verifyFields(final LaneBasedTemplateGTUType templateGTUType, final GTUType gtuType,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> length,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> width,
-            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed,
-            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeed)
+            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed)
             throws ProbabilityException, ParameterException, NamingException, GTUException
     {
         assertTrue("Type should be " + gtuType, gtuType.equals(templateGTUType.getGTUType()));
@@ -325,8 +286,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         assertEquals("Width should be " + width, width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001);
         assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(),
                 characteristics.getMaximumSpeed().getSI(), 0.0001);
-        assertEquals("Initial speed should be " + initialSpeed, initialSpeed.draw().getSI(), characteristics.getSpeed().getSI(),
-                0.0001);
     }
 }
 

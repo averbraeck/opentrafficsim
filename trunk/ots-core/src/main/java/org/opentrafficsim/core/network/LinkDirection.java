@@ -71,6 +71,52 @@ public class LinkDirection implements Serializable
 
     /** {@inheritDoc} */
     @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.direction == null) ? 0 : this.direction.hashCode());
+        result = prime * result + ((this.link == null) ? 0 : this.link.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        LinkDirection other = (LinkDirection) obj;
+        if (this.direction != other.direction)
+        {
+            return false;
+        }
+        if (this.link == null)
+        {
+            if (other.link != null)
+            {
+                return false;
+            }
+        }
+        else if (!this.link.equals(other.link))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "LinkDirection [link=" + this.link + ", direction=" + this.direction + "]";

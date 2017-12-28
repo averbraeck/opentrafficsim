@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.network.LinkDirection;
 
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -34,6 +35,9 @@ public class DirectedLanePosition implements Serializable
 
     /** The direction the vehicle is driving to -- either in the direction of the design line, or against it. */
     private final GTUDirectionality gtuDirection;
+
+    /** Link direction. */
+    private LinkDirection linkDirection = null;
 
     /**
      * Construct a new DirectedLanePosition.
@@ -99,6 +103,19 @@ public class DirectedLanePosition implements Serializable
             return p;
         }
         return new DirectedPoint(p.x, p.y, p.z, p.getRotX(), p.getRotY(), p.getRotZ() + Math.PI);
+    }
+    
+    /**
+     * Returns the link direction in the direction of this lane direction.
+     * @return link direction in the direction of this lane direction
+     */
+    public final LinkDirection getLinkDirection()
+    {
+        if (this.linkDirection == null)
+        {
+            this.linkDirection = new LinkDirection(this.lane.getParentLink(), this.gtuDirection);
+        }
+        return this.linkDirection;
     }
 
     /** {@inheritDoc} */

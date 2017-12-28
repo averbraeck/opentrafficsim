@@ -1029,7 +1029,7 @@ public class ODMatrix implements Serializable, Identifiable
         /**
          * @return demandVector
          */
-        final FrequencyVector getDemandVector()
+        public final FrequencyVector getDemandVector()
         {
             return this.demandVector;
         }
@@ -1037,7 +1037,7 @@ public class ODMatrix implements Serializable, Identifiable
         /**
          * @return timeVector
          */
-        final TimeVector getTimeVector()
+        public final TimeVector getTimeVector()
         {
             return this.timeVector;
         }
@@ -1045,7 +1045,7 @@ public class ODMatrix implements Serializable, Identifiable
         /**
          * @return interpolation
          */
-        final Interpolation getInterpolation()
+        public final Interpolation getInterpolation()
         {
             return this.interpolation;
         }

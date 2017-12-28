@@ -1,12 +1,10 @@
-package org.opentrafficsim.road.gtu.strategical.od;
+package org.opentrafficsim.road.gtu.generator.od;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -17,16 +15,20 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.road.gtu.generator.ArrivalsHeadwayGenerator.HeadwayRandomization;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.Bias;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.od.ArrivalsHeadwayGenerator.HeadwayRandomization;
+import org.opentrafficsim.road.gtu.strategical.od.Categorization;
+import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -67,15 +69,20 @@ public class ODOptions
             new Option<>(new ConstantGenerator<>(new TTCRoomChecker(Duration.createSI(10.0))));
 
     // TODO this may be origin / generator specific, or even road/lane type specific
-    /** Markov chain for GTU type. */
+    /** Markov chain for GTU type option. */
     public static final Option<MarkovCorrelation<GTUType, Frequency>> MARKOV = new Option<>(new ConstantGenerator<>(null));
+
+    // TODO this may be origin / generator specific, or even road type specific
+    /** Lane bias. Default is Truck: truck right (strong right, max 2 lanes), Vehicle (other): weak left. */
+    public static final Option<LaneBiases> BIAS = new Option<>(new ConstantGenerator<>(
+            new LaneBiases().addBias(GTUType.TRUCK, Bias.TRUCK_RIGHT).addBias(GTUType.VEHICLE, Bias.WEAK_LEFT)));
 
     /** Options. */
     private Map<Option<?>, Object> options = new HashMap<>();
 
     /**
      * Set option value.
-     * @param option Option<K>; option
+     * @param option Option&lt;K&gt;; option
      * @param value K; option value
      * @param <K> value type
      * @return this option set
@@ -89,7 +96,7 @@ public class ODOptions
 
     /**
      * Get option value.
-     * @param option Option<K>; option
+     * @param option Option&lt;K&gt;; option
      * @param <K> value type
      * @return K; option value
      */
@@ -178,8 +185,8 @@ public class ODOptions
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
-                final Set<DirectedLanePosition> initialPosition) throws GTUException
+        public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category)
+                throws GTUException
         {
             Categorization categorization = category.getCategorization();
             // GTU characteristics
@@ -223,19 +230,7 @@ public class ODOptions
                             + " for GTU of type " + gtuType, exception);
                 }
             }
-            // speed
-            Speed speed;
-            try
-            {
-                speed = Speed.min(gtuCharacteristics.getMaximumSpeed(),
-                        initialPosition.iterator().next().getLane().getSpeedLimit(gtuCharacteristics.getGTUType()));
-            }
-            catch (@SuppressWarnings("unused") NetworkException exception)
-            {
-                speed = gtuCharacteristics.getMaximumSpeed();
-            }
-            return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, speed,
-                    initialPosition);
+            return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route);
         }
 
     }

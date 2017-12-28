@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.generator;
 
+import java.util.Set;
+
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -44,10 +46,11 @@ public class TTCRoomChecker implements RoomChecker
     /** {@inheritDoc} */
     @Override
     public final Speed canPlace(final Speed leaderSpeed, final Length headway,
-            final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException
+            final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics, final Set<DirectedLanePosition> initialPosition)
+            throws NetworkException
     {
         Speed speed = Speed.min(leaderSpeed, laneBasedGTUCharacteristics.getMaximumSpeed());
-        for (DirectedLanePosition dlp : laneBasedGTUCharacteristics.getInitialPosition())
+        for (DirectedLanePosition dlp : initialPosition)
         {
             if (dlp.getLane().getLaneType().isCompatible(laneBasedGTUCharacteristics.getGTUType(), dlp.getGtuDirection()))
             {

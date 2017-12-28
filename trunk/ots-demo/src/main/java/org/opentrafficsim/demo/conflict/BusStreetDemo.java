@@ -48,6 +48,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
@@ -204,7 +205,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                 stop = new BusStop("De verkeerde afslag", lane, lane.getLength(), "De verkeerde afslag", this.simulator);
                 stop.setLines(lines12);
 
-                makeGenerator();
+                makeGenerator(streams.get("generation"));
 
             }
             catch (Exception exception)
@@ -229,12 +230,14 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
         /**
          * Make the generator.
+         * @param stream random number stream
          * @throws GTUException on exception
          * @throws ParameterException on exception
          * @throws ProbabilityException on exception
          * @throws SimRuntimeException on exception
          */
-        private void makeGenerator() throws GTUException, SimRuntimeException, ProbabilityException, ParameterException
+        private void makeGenerator(final StreamInterface stream)
+                throws GTUException, SimRuntimeException, ProbabilityException, ParameterException
         {
             Lane lane = ((CrossSectionLink) this.network.getLink("AB")).getLanes().get(0);
             String id = lane.getId();
@@ -248,7 +251,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
             new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO,
                     new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND), this.gtuColorer, characteristicsGenerator,
-                    initialLongitudinalPositions, this.network, this.simulator, roomChecker, new IdGenerator(""));
+                    GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, this.simulator, roomChecker,
+                    new IdGenerator(""));
         }
 
     }
@@ -445,8 +449,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             this.busNodes2.add(network.getNode("M"));
             this.busNodes2.add(network.getNode("O"));
 
-            this.plannerFactory = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactoryCarBus(),
-                    new ParameterFactoryCarBus());
+            this.plannerFactory =
+                    new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactoryCarBus(), new ParameterFactoryCarBus());
         }
 
         /** {@inheritDoc} */
@@ -518,11 +522,9 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     throw new RuntimeException("Reaching default of switch case.");
             }
 
-            GTUCharacteristics gtuCharacteristics =
-                    new GTUCharacteristics(gtuType, length, width, maximumSpeed);
+            GTUCharacteristics gtuCharacteristics = new GTUCharacteristics(gtuType, length, width, maximumSpeed);
 
-            return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route,
-                    new Speed(50.0, SpeedUnit.KM_PER_HOUR), this.initialLongitudinalPositions);
+            return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route);
         }
 
     }
@@ -608,8 +610,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             }
             else if (gtuType.isOfType(GTUType.SCHEDULED_BUS))
             {
-                parameters.setParameter(ParameterTypes.A,
-                        new Acceleration(0.8, AccelerationUnit.METER_PER_SECOND_2));
+                parameters.setParameter(ParameterTypes.A, new Acceleration(0.8, AccelerationUnit.METER_PER_SECOND_2));
             }
             else
             {

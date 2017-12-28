@@ -48,6 +48,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.road.gtu.generator.CharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.generator.GTUTypeGenerator;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.HeadwayGeneratorDemand;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
@@ -260,16 +261,16 @@ public final class AHFEUtil
         CrossSectionLink rightLink = (CrossSectionLink) network.getLink("RIGHTINPRE");
         makeGenerator(getLane(leftLink, "FORWARD1"), genSpeed, "LEFTLEFT", fixedRouteGeneratorLeft, idGenerator, simulator,
                 network, gtuTypeGeneratorLeft, leftLeftHeadways, gtuColorer, roomChecker, bcFactory, tacticalFactory,
-                simulationTime);
+                simulationTime, streams.get("gtuClass"));
         makeGenerator(getLane(leftLink, "FORWARD2"), genSpeed, "LEFTRIGHT", fixedRouteGeneratorLeft, idGenerator, simulator,
                 network, gtuTypeGeneratorRight, leftRightHeadways, gtuColorer, roomChecker, bcFactory, tacticalFactory,
-                simulationTime);
+                simulationTime, streams.get("gtuClass"));
         makeGenerator(getLane(rightLink, "FORWARD1"), genSpeed, "RIGHTLEFT", fixedRouteGeneratorRight, idGenerator, simulator,
                 network, gtuTypeGeneratorLeft, rightLeftHeadways, gtuColorer, roomChecker, bcFactory, tacticalFactory,
-                simulationTime);
+                simulationTime, streams.get("gtuClass"));
         makeGenerator(getLane(rightLink, "FORWARD2"), genSpeed, "RIGHTRIGHT", fixedRouteGeneratorRight, idGenerator, simulator,
                 network, gtuTypeGeneratorRight, rightRightHeadways, gtuColorer, roomChecker, bcFactory, tacticalFactory,
-                simulationTime);
+                simulationTime, streams.get("gtuClass"));
 
     }
 
@@ -306,6 +307,7 @@ public final class AHFEUtil
      * @param bcFactory the factory to generate parameters for the GTU
      * @param tacticalFactory the generator for the tactical planner
      * @param simulationTime simulation time
+     * @param stream random number stream
      * @throws SimRuntimeException in case of scheduling problems
      * @throws ProbabilityException in case of an illegal probability distribution
      * @throws GTUException in case the GTU is inconsistent
@@ -315,7 +317,7 @@ public final class AHFEUtil
             final RouteGenerator routeGenerator, final IdGenerator idGenerator, final OTSDEVSSimulatorInterface simulator,
             final OTSNetwork network, final GTUTypeGenerator gtuTypeGenerator, final HeadwayGeneratorDemand headwayGenerator,
             final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
-            final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime)
+            final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)
             throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
     {
         Set<DirectedLanePosition> initialLongitudinalPositions = new HashSet<>();
@@ -327,10 +329,11 @@ public final class AHFEUtil
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
 
         CharacteristicsGenerator characteristicsGenerator = new CharacteristicsGenerator(strategicalFactory, routeGenerator,
-                simulator, gtuTypeGenerator, generationSpeed, initialLongitudinalPositions);
+                simulator, gtuTypeGenerator, generationSpeed);
 
         new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO, simulationTime, gtuColorer,
-                characteristicsGenerator, initialLongitudinalPositions, network, simulator, roomChecker, idGenerator);
+                characteristicsGenerator, GeneratorPositions.create(initialLongitudinalPositions, stream), network, simulator,
+                roomChecker, idGenerator);
     }
 
     /**

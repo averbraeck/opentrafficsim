@@ -29,7 +29,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * initial version Sep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class LinkAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
+public class LinkAnimation extends Renderable2D<Link> implements ClonableRenderable2DInterface<Link>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20140000L;
@@ -59,7 +59,8 @@ public class LinkAnimation extends Renderable2D implements ClonableRenderable2DI
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        PaintLine.paintLine(graphics, Color.RED, this.width, getSource().getLocation(), ((Link) getSource()).getDesignLine());
+        Color color = getSource().getLinkType().isConnector() ? Color.BLUE : Color.RED;
+        PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), getSource().getDesignLine());
     }
 
     /** {@inheritDoc} */
@@ -73,11 +74,11 @@ public class LinkAnimation extends Renderable2D implements ClonableRenderable2DI
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+    public ClonableRenderable2DInterface<Link> clone(final Link newSource, final OTSSimulatorInterface newSimulator)
             throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
-        return new LinkAnimation((Link) newSource, newSimulator, this.width);
+        return new LinkAnimation(newSource, newSimulator, this.width);
     }
 
     /** {@inheritDoc} */

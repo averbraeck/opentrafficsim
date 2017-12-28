@@ -113,6 +113,7 @@ public class LMRSFactory implements LaneBasedTacticalPlannerFactory<LMRS>, Seria
         try
         {
             parameters.setDefaultParameter(ParameterTypes.VCONG);
+            parameters.setDefaultParameter(ParameterTypes.T0);
         }
         catch (ParameterException exception)
         {
