@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.strategical.od;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;

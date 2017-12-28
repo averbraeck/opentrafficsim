@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.strategical.od;
+package org.opentrafficsim.road.gtu.generator;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -42,7 +42,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
      * @param stream StreamInterface; random stream to draw headway
      * @param randomization Randomization; random headway generator
      */
-    ArrivalsHeadwayGenerator(final Arrivals arrivals, final OTSDEVSSimulatorInterface simulator, final StreamInterface stream,
+    public ArrivalsHeadwayGenerator(final Arrivals arrivals, final OTSDEVSSimulatorInterface simulator, final StreamInterface stream,
             final HeadwayRandomization randomization)
     {
         this.arrivals = arrivals;

@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import java.util.Set;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -31,12 +33,13 @@ public class CanPlaceDemoCode implements LaneBasedGTUGenerator.RoomChecker
     /** {@inheritDoc} */
     @Override
     public final Speed canPlace(final Speed leaderSpeed, final org.djunits.value.vdouble.scalar.Length headway,
-            final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException
+            final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics, final Set<DirectedLanePosition> initialPosition)
+            throws NetworkException
     {
         // This simple minded implementation returns null if the headway is less than the headway wanted for driving at
         // the current speed of the leader
         Lane lane = null;
-        for (DirectedLanePosition dlp : laneBasedGTUCharacteristics.getInitialPosition())
+        for (DirectedLanePosition dlp : initialPosition)
         {
             if (dlp.getLane().getLaneType().isCompatible(laneBasedGTUCharacteristics.getGTUType(), dlp.getGtuDirection()))
             {

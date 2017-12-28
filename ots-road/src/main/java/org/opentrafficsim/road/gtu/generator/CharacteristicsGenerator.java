@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.util.Set;
-
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
@@ -13,7 +11,6 @@ import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
  * <p>
@@ -43,28 +40,22 @@ public class CharacteristicsGenerator implements LaneBasedGTUCharacteristicsGene
     /** GTU generation speed. */
     private final Speed generationSpeed;
 
-    /** GTU generation positions. */
-    private final Set<DirectedLanePosition> positions;
-
     /**
      * @param strategicalFactory strategical planner factory
      * @param routeGenerator route generator
      * @param simulator the simulator
      * @param gtuTypeGenerator the generator for the GTU type
      * @param generationSpeed the initial speed
-     * @param positions the positions for generation
      */
     public CharacteristicsGenerator(final LaneBasedStrategicalRoutePlannerFactory strategicalFactory,
             final RouteGenerator routeGenerator, final OTSDEVSSimulatorInterface simulator,
-            final Generator<GTUTypeInfo> gtuTypeGenerator, final Speed generationSpeed,
-            final Set<DirectedLanePosition> positions)
+            final Generator<GTUTypeInfo> gtuTypeGenerator, final Speed generationSpeed)
     {
         this.strategicalFactory = strategicalFactory;
         this.routeGenerator = routeGenerator;
         this.simulator = simulator;
         this.gtuTypeGenerator = gtuTypeGenerator;
         this.generationSpeed = generationSpeed;
-        this.positions = positions;
     }
 
     /** {@inheritDoc} */
@@ -74,8 +65,7 @@ public class CharacteristicsGenerator implements LaneBasedGTUCharacteristicsGene
         GTUTypeInfo info = this.gtuTypeGenerator.draw();
         GTUCharacteristics gtuCharacteristics =
                 new GTUCharacteristics(info.getGtuType(), info.getLength(), info.getWidth(), info.getMaximumSpeed());
-        return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.strategicalFactory, this.routeGenerator.draw(),
-                Speed.min(this.generationSpeed, info.getMaximumSpeed()), this.positions);
+        return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.strategicalFactory, this.routeGenerator.draw());
     }
 
     /** {@inheritDoc} */
@@ -84,7 +74,7 @@ public class CharacteristicsGenerator implements LaneBasedGTUCharacteristicsGene
     {
         return "CharacteristicsGenerator [strategicalFactory=" + this.strategicalFactory + ", routeGenerator="
                 + this.routeGenerator + ", simulator=" + this.simulator + ", gtuTypeGenerator=" + this.gtuTypeGenerator
-                + ", generationSpeed=" + this.generationSpeed + ", positions=" + this.positions + "]";
+                + ", generationSpeed=" + this.generationSpeed + "]";
     }
 
 }

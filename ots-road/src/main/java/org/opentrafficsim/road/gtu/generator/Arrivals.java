@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.strategical.od;
+package org.opentrafficsim.road.gtu.generator;
 
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;

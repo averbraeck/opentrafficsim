@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.strategical.od;
+package org.opentrafficsim.road.gtu.generator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -387,7 +387,7 @@ public class MarkovCorrelation<S, I extends Number>
         /**
          * Adds a node to the matrix.
          * @param state S; state of the node
-         * @param node MarkovNode<S, I>; node
+         * @param node MarkovNode&lt;S, I&gt;; node
          */
         void addNode(final S state, final MarkovNode<S, I> node)
         {

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane;
 
-import java.util.Set;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -11,7 +9,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -40,9 +37,6 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     /** Generator for the initial speed of the next GTU. */
     private Generator<Speed> initialSpeedGenerator;
 
-    /** Initial longitudinal positions of all generated GTUs. */
-    private Set<DirectedLanePosition> initialLongitudinalPositions;
-
     /**
      * @param gtuType The GTUType to make it identifiable.
      * @param lengthGenerator Generator&lt;Length&gt; generator for the length of the GTU type (parallel with driving
@@ -53,27 +47,19 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
      *            direction).
      * @param strategicalPlannerFactory Factory for the strategical planner (e.g., route determination)
      * @param routeGenerator route generator
-     * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the initial lanes, directions and positions of
-     *            generated GTUs
-     * @param initialSpeedGenerator Generator&lt;Speed&gt;; the generator for the initial speed of generated GTUs
      * @throws NullPointerException when one or more parameters are null
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedTemplateGTUType(final GTUType gtuType, final Generator<Length> lengthGenerator,
             final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
-            final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final RouteGenerator routeGenerator,
-            final Set<DirectedLanePosition> initialLongitudinalPositions, final Generator<Speed> initialSpeedGenerator)
+            final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final RouteGenerator routeGenerator)
             throws NullPointerException
     {
         super(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator);
         Throw.whenNull(strategicalPlannerFactory, "strategicalPlannerFactory is null");
         Throw.whenNull(routeGenerator, "Route generator is null");
-        Throw.whenNull(initialLongitudinalPositions, "initialLongitudinalPositions is null");
-        Throw.whenNull(initialSpeedGenerator, "initialSpeedGenerator is null");
         this.strategicalPlannerFactory = strategicalPlannerFactory;
         this.routeGenerator = routeGenerator;
-        this.initialLongitudinalPositions = initialLongitudinalPositions;
-        this.initialSpeedGenerator = initialSpeedGenerator;
     }
 
     /**
@@ -85,8 +71,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     @Override
     public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
-        return new LaneBasedGTUCharacteristics(super.draw(), this.strategicalPlannerFactory, this.routeGenerator.draw(),
-                this.initialSpeedGenerator.draw(), this.initialLongitudinalPositions);
+        return new LaneBasedGTUCharacteristics(super.draw(), this.strategicalPlannerFactory, this.routeGenerator.draw());
     }
 
     /** {@inheritDoc} */
@@ -94,8 +79,8 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("LaneBasedGTUTemplate [%s, %s, %s, %s]", this.initialLongitudinalPositions,
-                this.strategicalPlannerFactory, this.initialSpeedGenerator, super.toString());
+        return String.format("LaneBasedGTUTemplate [%s, %s, %s]", this.strategicalPlannerFactory, this.initialSpeedGenerator,
+                super.toString());
     }
 
 }

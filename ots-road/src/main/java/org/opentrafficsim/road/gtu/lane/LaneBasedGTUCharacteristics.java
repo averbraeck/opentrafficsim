@@ -1,12 +1,8 @@
 package org.opentrafficsim.road.gtu.lane;
 
-import java.util.Set;
-
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
  * Characteristics for a lane base GTU. This class is used to store all characteristics of a (not-yet constructed) LaneBasedGTU.
@@ -29,30 +25,19 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     /** Route. */
     private final Route route;
 
-    /** The maximum speed of the GTU. */
-    private final Speed speed;
-
-    /** The initial lanes, positions and direction of the GTU. */
-    private final Set<DirectedLanePosition> initialPosition;
-
     /**
      * Construct a new set of lane based GTU characteristics.
      * @param gtuCharacteristics GTUCharacteristics; characteristics of the super GTU type to be used for the GTU
      * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory; the strategical planner for the GTU
      * @param route route
-     * @param speed Speed; the initial speed of the GTU
-     * @param initialPosition Set&lt;DirectedLanePosition&gt;; the lane, initial position and direction of the GTU
      */
     public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics,
-            final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route,
-            final Speed speed, final Set<DirectedLanePosition> initialPosition)
+            final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route)
     {
         super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getLength(),
                 gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed());
         this.strategicalPlannerFactory = laneBasedStrategicalPlannerFactory;
         this.route = route;
-        this.speed = speed;
-        this.initialPosition = initialPosition;
     }
 
     /**
@@ -69,22 +54,6 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     public final Route getRoute()
     {
         return this.route;
-    }
-
-    /**
-     * @return Speed; the maximum speed of the GTU
-     */
-    public final Speed getSpeed()
-    {
-        return this.speed;
-    }
-
-    /**
-     * @return Set&lt;DirectedLanePosition&gt;; the position and direction on each lane that the GTU will initially be on
-     */
-    public final Set<DirectedLanePosition> getInitialPosition()
-    {
-        return this.initialPosition;
     }
 
 }

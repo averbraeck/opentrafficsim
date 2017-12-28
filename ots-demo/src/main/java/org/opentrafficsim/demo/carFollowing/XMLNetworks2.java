@@ -786,7 +786,6 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
      * @param lengthDistribution distribution of the GTU length
      * @param widthDistribution distribution of the GTU width
      * @param maximumSpeedDistribution distribution of the GTU's maximum speed
-     * @param initialSpeedDistribution distribution of the GTU's initial speed
      * @param initialPositions initial position(s) of the GTU on the Lane(s)
      * @param strategicalPlannerFactory factory to generate the strategical planner for the GTU
      * @return template for a GTU
@@ -796,7 +795,6 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDistribution,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
-            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDistribution,
             final Set<DirectedLanePosition> initialPositions,
             final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory) throws GTUException
     {
@@ -839,14 +837,7 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
                         }
                     }
                 }*/
-                strategicalPlannerFactory, this.routeGenerator, initialPositions, new Generator<Speed>()
-                {
-                    @Override
-                    public Speed draw()
-                    {
-                        return initialSpeedDistribution.draw();
-                    }
-                });
+                strategicalPlannerFactory, this.routeGenerator);
 
     }
 

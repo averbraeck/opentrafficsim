@@ -64,6 +64,7 @@ import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -733,7 +734,6 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 3, 6), METER),
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 1.6, 2.0), METER),
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 140, 180), KM_PER_HOUR),
-                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 100, 125), KM_PER_HOUR),
                 initialPositions, this.strategicalPlannerGeneratorCars);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(this.carProbability, template));
@@ -741,7 +741,6 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 8, 14), METER),
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 2.0, 2.5), METER),
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 100, 140), KM_PER_HOUR),
-                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 80, 90), KM_PER_HOUR),
                 initialPositions, this.strategicalPlannerGeneratorTrucks);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
@@ -755,30 +754,31 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                 return new Duration(XMLSamplerModel.this.headwayGenerator.draw(), DurationUnit.SI);
             }
         }, Long.MAX_VALUE, new Time(0, TimeUnit.BASE_SECOND), new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND), this.gtuColorer,
-                templateDistribution, initialPositions, this.network, this.simulator, /*-
-                                                                                      new LaneBasedGTUGenerator.RoomChecker()
-                                                                                      {
-                                                                                      @Override
-                                                                                      public Speed canPlace(Speed leaderSpeed, org.djunits.value.vdouble.scalar.Length headway,
-                                                                                      LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException
-                                                                                      {
-                                                                                      // This implementation simply returns null if the headway is less than the headway wanted for driving at
-                                                                                      // the current speed of the leader
-                                                                                      if (headway.lt(laneBasedGTUCharacteristics
-                                                                                      .getStrategicalPlanner()
-                                                                                      .getDrivingCharacteristics()
-                                                                                      .getGTUFollowingModel()
-                                                                                      .minimumHeadway(leaderSpeed, leaderSpeed, new Length(0.1, LengthUnit.METER),
-                                                                                              new Length(Double.MAX_VALUE, LengthUnit.SI),
-                                                                                              lane.getSpeedLimit(SMLSamplerModel.this.gtuType),
-                                                                                              laneBasedGTUCharacteristics.getMaximumSpeed())))
-                                                                                      {
-                                                                                      return null;
-                                                                                      }
-                                                                                      return leaderSpeed;
-                                                                                      }
-                                                                                      }
-                                                                                      */
+                templateDistribution, GeneratorPositions.create(initialPositions, stream), this.network, this.simulator,
+                /*-
+                new LaneBasedGTUGenerator.RoomChecker()
+                {
+                @Override
+                public Speed canPlace(Speed leaderSpeed, org.djunits.value.vdouble.scalar.Length headway,
+                LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException
+                {
+                // This implementation simply returns null if the headway is less than the headway wanted for driving at
+                // the current speed of the leader
+                if (headway.lt(laneBasedGTUCharacteristics
+                .getStrategicalPlanner()
+                .getDrivingCharacteristics()
+                .getGTUFollowingModel()
+                .minimumHeadway(leaderSpeed, leaderSpeed, new Length(0.1, LengthUnit.METER),
+                      new Length(Double.MAX_VALUE, LengthUnit.SI),
+                      lane.getSpeedLimit(SMLSamplerModel.this.gtuType),
+                      laneBasedGTUCharacteristics.getMaximumSpeed())))
+                {
+                return null;
+                }
+                return leaderSpeed;
+                }
+                }
+                */
                 roomChecker, this.idGenerator);
     }
 
@@ -788,7 +788,6 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
      * @param lengthDistribution distribution of the GTU length
      * @param widthDistribution distribution of the GTU width
      * @param maximumSpeedDistribution distribution of the GTU's maximum speed
-     * @param initialSpeedDistribution distribution of the GTU's initial speed
      * @param initialPositions initial position(s) of the GTU on the Lane(s)
      * @param strategicalPlannerFactory factory to generate the strategical planner for the GTU
      * @return template for a GTU
@@ -798,7 +797,6 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDistribution,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
-            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDistribution,
             final Set<DirectedLanePosition> initialPositions,
             final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory) throws GTUException
     {
@@ -841,14 +839,7 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                         }
                     }
                 }*/
-                strategicalPlannerFactory, this.routeGenerator, initialPositions, new Generator<Speed>()
-                {
-                    @Override
-                    public Speed draw()
-                    {
-                        return initialSpeedDistribution.draw();
-                    }
-                });
+                strategicalPlannerFactory, this.routeGenerator);
 
     }
 

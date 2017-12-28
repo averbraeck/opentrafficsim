@@ -1,11 +1,9 @@
-package org.opentrafficsim.road.gtu.strategical.od;
-
-import java.util.Set;
+package org.opentrafficsim.road.gtu.generator.od;
 
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+import org.opentrafficsim.road.gtu.strategical.od.Category;
 
 /**
  * Interface for classes that generate GTU characteristics based on an OD. Contrary to lower-level vehicle generation, the OD
@@ -27,11 +25,9 @@ public interface GTUCharacteristicsGeneratorOD
      * @param origin Node; origin
      * @param destination Node; destination
      * @param category Category; category (GTU type, route, or more)
-     * @param initialPosition Set<DirectedLanePosition>; initial position
      * @return LaneBasedGTUCharacteristics
      * @throws GTUException if characteristics could not be generated for the GTUException
      */
-    LaneBasedGTUCharacteristics draw(Node origin, Node destination, Category category,
-            Set<DirectedLanePosition> initialPosition) throws GTUException;
+    LaneBasedGTUCharacteristics draw(Node origin, Node destination, Category category) throws GTUException;
 
 }

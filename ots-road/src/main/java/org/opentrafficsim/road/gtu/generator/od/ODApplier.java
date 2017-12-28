@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.strategical.od;
+package org.opentrafficsim.road.gtu.generator.od;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,11 +29,19 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.generator.Arrivals;
+import org.opentrafficsim.road.gtu.generator.ArrivalsHeadwayGenerator;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
+import org.opentrafficsim.road.gtu.generator.ArrivalsHeadwayGenerator.HeadwayRandomization;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
-import org.opentrafficsim.road.gtu.strategical.od.ArrivalsHeadwayGenerator.HeadwayRandomization;
+import org.opentrafficsim.road.gtu.strategical.od.Categorization;
+import org.opentrafficsim.road.gtu.strategical.od.Category;
+import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix.ODEntry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -118,6 +126,7 @@ public final class ODApplier
                 "Method ODApplier.applyOD() should be invoked at simulation time 0.");
 
         // TODO sinks? white extension links?
+        // TODO area's of no lane change after generators?
 
         final Categorization categorization = od.getCategorization();
         final boolean laneBased = categorization.entails(Lane.class);
@@ -145,9 +154,6 @@ public final class ODApplier
             }
         }
 
-        // TODO generator locations was misunderstood; it's the lanes of 1 cross-section, not a choice for the generator to
-        // select one of multiple locations. We will probably need to add this to the vehicle generator, i.e. to use a
-        // Set<Set<DirectedLanePosition>>
         Map<String, GeneratorObjects> output = new HashMap<>();
         for (Node origin : od.getOrigins())
         {
@@ -232,8 +238,7 @@ public final class ODApplier
                         DemandNode<Category, ?> categoryNode;
                         if (markovian)
                         {
-                            categoryNode =
-                                    new DemandNode<>(category, od.getODEntry(origin, destination, category));
+                            categoryNode = new DemandNode<>(category, od.getODEntry(origin, destination, category));
                             destinationNode.addLeaf(categoryNode, category.get(GTUType.class));
                         }
                         else
@@ -272,11 +277,7 @@ public final class ODApplier
                 Set<DirectedLanePosition> positionSet = new HashSet<>();
                 for (Link link : origin.getLinks())
                 {
-                    if (link instanceof CrossSectionLink)
-                    {
-                        setDirectedLanePosition((CrossSectionLink) link, origin, positionSet);
-                    }
-                    else if (link.getLinkType().isConnector())
+                    if (link.getLinkType().isConnector())
                     {
                         Node connectedNode = link.getStartNode().equals(origin) ? link.getEndNode() : link.getStartNode();
                         for (Link connectedLink : connectedNode.getLinks())
@@ -286,6 +287,10 @@ public final class ODApplier
                                 setDirectedLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
                             }
                         }
+                    }
+                    else if (link instanceof CrossSectionLink)
+                    {
+                        setDirectedLanePosition((CrossSectionLink) link, origin, positionSet);
                     }
                 }
                 initialPositions.put(rootNode, positionSet);
@@ -317,9 +322,10 @@ public final class ODApplier
                         new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
                 GTUColorer gtuColorer = odOptions.get(ODOptions.COLORER);
                 ODCharacteristicsGenerator characteristicsGenerator =
-                        new ODCharacteristicsGenerator(root, simulator, odOptions.get(ODOptions.GTU_TYPE), initialPosition);
+                        new ODCharacteristicsGenerator(root, simulator, odOptions.get(ODOptions.GTU_TYPE));
                 RoomChecker roomChecker = odOptions.get(ODOptions.ROOM);
                 IdGenerator idGenerator = odOptions.get(ODOptions.ID);
+                LaneBiases biases = odOptions.get(ODOptions.BIAS);
                 // bounds
                 int maxGTUs = Integer.MAX_VALUE;
                 Time startTime = Time.ZERO;
@@ -329,7 +335,8 @@ public final class ODApplier
                 {
                     LaneBasedGTUGenerator generator =
                             new LaneBasedGTUGenerator(id, headwayGenerator, maxGTUs, startTime, endTime, gtuColorer,
-                                    characteristicsGenerator, initialPosition, network, simulator, roomChecker, idGenerator);
+                                    characteristicsGenerator, GeneratorPositions.create(initialPosition, stream, biases),
+                                    network, simulator, roomChecker, idGenerator);
                     output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
                 }
                 catch (SimRuntimeException exception)
@@ -361,13 +368,17 @@ public final class ODApplier
             @Override
             public int compare(final Entry<K, V> o1, final Entry<K, V> o2)
             {
-                String linkId1 = o1.getValue().iterator().next().getLane().getParentLink().getId();
-                String linkId2 = o2.getValue().iterator().next().getLane().getParentLink().getId();
+                DirectedLanePosition lanePos1 = o1.getValue().iterator().next();
+                String linkId1 = lanePos1.getLane().getParentLink().getId();
+                DirectedLanePosition lanePos2 = o2.getValue().iterator().next();
+                String linkId2 = lanePos2.getLane().getParentLink().getId();
                 int c = linkId1.compareToIgnoreCase(linkId2);
                 if (c == 0)
                 {
-                    Length lat1 = o1.getValue().iterator().next().getLane().getLateralCenterPosition(0.0);
-                    Length lat2 = o2.getValue().iterator().next().getLane().getLateralCenterPosition(0.0);
+                    Length pos1 = lanePos1.getGtuDirection().isPlus() ? Length.ZERO : lanePos1.getLane().getLength();
+                    Length lat1 = lanePos1.getLane().getLateralCenterPosition(pos1);
+                    Length pos2 = lanePos2.getGtuDirection().isPlus() ? Length.ZERO : lanePos2.getLane().getLength();
+                    Length lat2 = lanePos2.getLane().getLateralCenterPosition(pos2);
                     return lat1.compareTo(lat2);
                 }
                 return c;
@@ -380,7 +391,7 @@ public final class ODApplier
      * {@code Node}.
      * @param link CrossSectionLink; link with lanes to add positions for
      * @param node Node; node on the side where positions should be placed
-     * @param positionSet Set<DirectedLanePosition>; set to add position to
+     * @param positionSet Set&lt;DirectedLanePosition&gt;; set to add position to
      */
     private static void setDirectedLanePosition(final CrossSectionLink link, final Node node,
             final Set<DirectedLanePosition> positionSet)
@@ -463,7 +474,7 @@ public final class ODApplier
             this.gtuTypesPerChild = null;
             this.markov = null;
         }
-        
+
         /**
          * Constructor for branching node, with Markov selection.
          * @param object T; node object
@@ -569,7 +580,7 @@ public final class ODApplier
                     int index = this.gtuTypes.indexOf(gtuType);
                     Frequency f = child.getFrequency(time, true); // sliceStart = true is arbitrary
                     frequencies.put(child, f);
-                    steadyState[index] = steadyState[index].plus(f); 
+                    steadyState[index] = steadyState[index].plus(f);
                 }
                 GTUType nextGtuType = this.markov.draw(gtuTypeArray, steadyState, this.stream);
                 // select only child nodes registered to the next GTU type
@@ -690,7 +701,7 @@ public final class ODApplier
 
         /**
          * Constructor.
-         * @param markov MarkovCorrelation<GTUType, Frequency>; Markov correlation for GTU type selection
+         * @param markov MarkovCorrelation&lt;GTUType, Frequency&gt;; Markov correlation for GTU type selection
          */
         MarkovChain(final MarkovCorrelation<GTUType, Frequency> markov)
         {
@@ -736,23 +747,17 @@ public final class ODApplier
         /** Characteristics generator based on OD information. */
         private final GTUCharacteristicsGeneratorOD charachteristicsGenerator;
 
-        /** Initial position. */
-        private final Set<DirectedLanePosition> initialPosition;
-
         /**
-         * @param root DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>; root node with origin
+         * @param root DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;; root node with origin
          * @param simulator OTSDEVSSimulatorInterface; simulator
          * @param charachteristicsGenerator GTUCharacteristicsGeneratorOD; characteristics generator based on OD information
-         * @param initialPosition Set<DirectedLanePosition>; initial position
          */
         ODCharacteristicsGenerator(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final OTSDEVSSimulatorInterface simulator, final GTUCharacteristicsGeneratorOD charachteristicsGenerator,
-                final Set<DirectedLanePosition> initialPosition)
+                final OTSDEVSSimulatorInterface simulator, final GTUCharacteristicsGeneratorOD charachteristicsGenerator)
         {
             this.root = root;
             this.simulator = simulator;
             this.charachteristicsGenerator = charachteristicsGenerator;
-            this.initialPosition = initialPosition;
         }
 
         /** {@inheritDoc} */
@@ -766,7 +771,7 @@ public final class ODApplier
             Node destination = destinationNode.getObject();
             Category category = destinationNode.draw(time).getObject();
             // forward to lower-level generator
-            return this.charachteristicsGenerator.draw(origin, destination, category, this.initialPosition);
+            return this.charachteristicsGenerator.draw(origin, destination, category);
         }
 
     }
