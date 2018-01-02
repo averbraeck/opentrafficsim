@@ -1042,8 +1042,8 @@ public class OTSLine3D implements Locatable, Serializable
                 return mid;
             }
         }
-        throw new OTSGeometryException(
-                "Could not find position " + pos + " on line with length indexes: " + this.lengthIndexedLine);
+        throw new OTSGeometryException("Could not find position " + pos + " on line with length indexes: "
+                + Arrays.toString(this.lengthIndexedLine));
     }
 
     /**
