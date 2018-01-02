@@ -224,7 +224,7 @@ public class OTSLine3DTest
      * Print a Path2D to the console.
      * @param path Path2D; the path
      */
-    private void printPath2D(final Path2D path)
+    public final void printPath2D(final Path2D path)
     {
         PathIterator pi = path.getPathIterator(null);
         double[] p = new double[6];
