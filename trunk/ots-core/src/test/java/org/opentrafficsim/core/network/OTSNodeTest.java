@@ -216,11 +216,15 @@ public class OTSNodeTest
             // Ignore expected exception
         }
         GTUType unrelatedGTUType = new GTUType("junk", GTUType.SHIP);
-        Set<Link> nextLinks = node.nextLinks(unrelatedGTUType, network.getLink("link from neighbor node 1"));
-        assertEquals("There should be no nextLinks for an unrelated GTU type", 0, nextLinks.size());
-        // Check to be sure there is no typo or other stupid error
-        nextLinks = node.nextLinks(GTUType.VEHICLE, network.getLink("link from neighbor node 1"));
-        assertEquals("There should be one nextLinks for GTUType.ALL", 1, nextLinks.size());
+        try
+        {
+            node.nextLinks(unrelatedGTUType, network.getLink("link from neighbor node 1"));
+            fail("nextLinks for unsupported GTUType should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
         // Create a link that does not allow traffic TO the node
         Link oneWay =
                 new OTSLink(network, "one way toward reverse", n1, node, LinkType.ROAD, new OTSLine3D(n1.getPoint(),
@@ -387,11 +391,15 @@ public class OTSNodeTest
             // Ignore expected exception
         }
         GTUType unrelatedGTUType = new GTUType("junk", GTUType.SHIP);
-        Set<Link> nextLinks = node.nextLinks(unrelatedGTUType, network.getLink("link from neighbor node 1"));
-        assertEquals("There should be no nextLinks for an unrelated GTU type", 0, nextLinks.size());
-        // Check to be sure there is no typo or other stupid error
-        nextLinks = node.nextLinks(GTUType.VEHICLE, network.getLink("link from neighbor node 1"));
-        assertEquals("There should be one nextLinks for GTUType.ALL", 1, nextLinks.size());
+        try
+        {
+            node.nextLinks(unrelatedGTUType, network.getLink("link from neighbor node 1"));
+            fail("nextLinks for unsupported GTUType should have thrown a NetworkException");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
         // Create a link that does not allow traffic TO the node
         Link oneWay =
                 new OTSLink(network, "one way toward reverse", n1, node, LinkType.ROAD, new OTSLine3D(n1.getPoint(),
