@@ -42,6 +42,18 @@ public interface StrategicalPlanner
      * @return route, may be null
      */
     Route getRoute();
+    
+    /**
+     * Returns the origin.
+     * @return origin, may be null
+     */
+    Node getOrigin();
+    
+    /**
+     * Returns the destination.
+     * @return destination, may be null
+     */
+    Node getDestination();
 
     /**
      * Generate a new tactical planner for the GTU.
@@ -58,7 +70,7 @@ public interface StrategicalPlanner
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */
-    Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType) throws NetworkException;
+    Node nextNode(Link link, GTUDirectionality direction, GTUType gtuType) throws NetworkException;
 
     /**
      * Determine the next link and driving direction (with or against the design line) in a network based on a current Link we
@@ -70,7 +82,7 @@ public interface StrategicalPlanner
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */
-    LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+    LinkDirection nextLinkDirection(Link link, GTUDirectionality direction, GTUType gtuType)
             throws NetworkException;
 
     /**
@@ -81,7 +93,7 @@ public interface StrategicalPlanner
      * @return Node; the next node in the route AFTER the current node
      * @throws NetworkException when no route planner is present or the node cannot be found in the route of the GTU
      */
-    Node nextNode(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException;
+    Node nextNode(Node node, Link previousLink, GTUType gtuType) throws NetworkException;
 
     /**
      * Determine the next link and driving direction (with or against the design line) in a network based on a node and a
@@ -93,6 +105,6 @@ public interface StrategicalPlanner
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */
-    LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException;
+    LinkDirection nextLinkDirection(Node node, Link previousLink, GTUType gtuType) throws NetworkException;
 
 }

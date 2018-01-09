@@ -108,6 +108,9 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
     /** ID generator. */
     private final IdGenerator idGenerator;
 
+    /** Initial distance over which lane changes shouldn't be performed. */
+    private Length noLaneChangeDistance = null;
+
     /**
      * Construct a new lane base GTU generator.
      * @param id String; name of the new GTU generator
@@ -148,6 +151,15 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
         this.idGenerator = idGenerator;
         simulator.scheduleEventAbs(startTime.plus(this.interarrivelTimeGenerator.draw()), this, this, "generateCharacteristics",
                 new Object[] {});
+    }
+
+    /**
+     * Sets the initial distance over which lane changes shouldn't be performed.
+     * @param noLaneChangeDistance Length; initial distance over which lane changes shouldn't be performed
+     */
+    public void setNoLaneChangeDistance(final Length noLaneChangeDistance)
+    {
+        this.noLaneChangeDistance = noLaneChangeDistance;
     }
 
     /**
@@ -324,8 +336,11 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
                                 characteristics.getWidth(), characteristics.getMaximumSpeed(), this.simulator, this.network);
                 gtu.setMaximumAcceleration(new Acceleration(3.0, AccelerationUnit.METER_PER_SECOND_2));
                 gtu.setMaximumDeceleration(new Acceleration(-8.0, AccelerationUnit.METER_PER_SECOND_2));
-                gtu.initWithAnimation(characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute()),
+                gtu.initWithAnimation(
+                        characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
+                                characteristics.getOrigin(), characteristics.getDestination()),
                         position.getPosition(), safeSpeed, DefaultCarAnimation.class, this.gtuColorer);
+                gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
             }
         }
         int queueLength = queue.size();

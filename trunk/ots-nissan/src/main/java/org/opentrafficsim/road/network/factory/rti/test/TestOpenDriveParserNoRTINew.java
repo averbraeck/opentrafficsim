@@ -707,7 +707,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             Length carLength = this.lengthDist.draw();
             LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("" + (++this.lastId), this.carType, carLength,
                     this.widthDist.draw(), this.maxSpeedDist.draw(), this.simulator, network);
-            car.init(laneBasedStrategicalPlannerFactory.create(car, route), lanepositionSet, Speed.ZERO);
+            car.init(laneBasedStrategicalPlannerFactory.create(car, route, null, null), lanepositionSet, Speed.ZERO);
             this.rtiCars.add(car);
         }
 

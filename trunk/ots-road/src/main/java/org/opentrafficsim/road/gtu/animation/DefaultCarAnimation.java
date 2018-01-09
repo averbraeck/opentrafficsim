@@ -17,6 +17,7 @@ import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -35,7 +36,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DefaultCarAnimation extends Renderable2D implements ClonableRenderable2DInterface, Serializable
+public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
+        implements ClonableRenderable2DInterface<LaneBasedGTU>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
@@ -56,7 +58,7 @@ public class DefaultCarAnimation extends Renderable2D implements ClonableRendera
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedIndividualGTU gtu, final OTSSimulatorInterface simulator)
+    public DefaultCarAnimation(final LaneBasedGTU gtu, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
         this(gtu, simulator, null);
@@ -70,8 +72,8 @@ public class DefaultCarAnimation extends Renderable2D implements ClonableRendera
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedIndividualGTU gtu, final OTSSimulatorInterface simulator,
-            final GTUColorer gtuColorer) throws NamingException, RemoteException
+    public DefaultCarAnimation(final LaneBasedGTU gtu, final OTSSimulatorInterface simulator, final GTUColorer gtuColorer)
+            throws NamingException, RemoteException
     {
         super(gtu, simulator);
         if (null == gtuColorer)
@@ -99,7 +101,7 @@ public class DefaultCarAnimation extends Renderable2D implements ClonableRendera
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        final LaneBasedIndividualGTU car = (LaneBasedIndividualGTU) getSource();
+        final LaneBasedGTU car = getSource();
 
         if (car.isDestroyed())
         {
@@ -109,7 +111,7 @@ public class DefaultCarAnimation extends Renderable2D implements ClonableRendera
                 {
                     destroy();
                 }
-                catch (Exception e)
+                catch (@SuppressWarnings("unused") Exception e)
                 {
                     System.err.println("Error while destroying GTU " + car.getId());
                 }
@@ -172,11 +174,11 @@ public class DefaultCarAnimation extends Renderable2D implements ClonableRendera
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
-            throws NamingException, RemoteException
+    public ClonableRenderable2DInterface<LaneBasedGTU> clone(final LaneBasedGTU newSource,
+            final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
-        return new DefaultCarAnimation((LaneBasedIndividualGTU) newSource, newSimulator, this.gtuColorer);
+        return new DefaultCarAnimation(newSource, newSimulator, this.gtuColorer);
     }
 
     /** {@inheritDoc} */
@@ -239,7 +241,7 @@ public class DefaultCarAnimation extends Renderable2D implements ClonableRendera
                     {
                         destroy();
                     }
-                    catch (Exception e)
+                    catch (@SuppressWarnings("unused") Exception e)
                     {
                         System.err.println("Error while destroying text animation of GTU " + car.getId());
                     }

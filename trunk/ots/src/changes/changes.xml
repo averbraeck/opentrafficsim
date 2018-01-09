@@ -39,6 +39,18 @@
       <action issue="OTS-354" type="add">
         OTS-354. Remove initial speed and position from LaneBasedGTUCharacteristics
       </action>
+      <action issue="OTS-358" type="fix">
+        OTS-358. Different simulation outcome in debugger mode
+      </action>
+      <action issue="OTS-359" type="add">
+        OTS-359. Add origin and destination to strategical planner
+      </action>
+      <action issue="OTS-360" type="fix">
+        OTS-360. Clean up GTU Renderable2D raw code
+      </action>
+      <action issue="OTS-361" type="add">
+        OTS-361. No lane change distance in LaneBasedGTUGenerator and ODOptions
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">

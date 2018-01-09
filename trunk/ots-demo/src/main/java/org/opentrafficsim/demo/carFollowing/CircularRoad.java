@@ -708,11 +708,11 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
         Route route = null;
         if (!generateTruck)
         {
-            strategicalPlanner = this.strategicalPlannerGeneratorCars.create(gtu, route);
+            strategicalPlanner = this.strategicalPlannerGeneratorCars.create(gtu, route, null, null);
         }
         else
         {
-            strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu, route);
+            strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu, route, null, null);
         }
 
         // init

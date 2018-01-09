@@ -520,7 +520,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                     {
                         LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(String.valueOf(i), carType, carLength,
                                 widthDist.draw(), maxSpeedDist.draw(), this.simulator, this.network);
-                        car.init(strategicalPlannerFactory.create(car, cr), lanepositionSet, Speed.ZERO);
+                        car.init(strategicalPlannerFactory.create(car, cr, null, null), lanepositionSet, Speed.ZERO);
                         this.rtiCars.add(car);
                     }
                     catch (NamingException | NetworkException | GTUException | OTSGeometryException exception)

@@ -429,7 +429,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
                     new Length(1.8, METER), this.speedDistribution.draw(), this.simulator, this.network);
             Route route = null;
-            LaneBasedStrategicalPlanner strategicalPlanner = this.strategicalPlannerFactory.create(gtu, route);
+            LaneBasedStrategicalPlanner strategicalPlanner = this.strategicalPlannerFactory.create(gtu, route, null, null);
             gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
             this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar", new Object[] { lane });

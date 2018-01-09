@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.generator;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
@@ -52,11 +51,12 @@ public class GeneratorAnimation extends Renderable2D<LaneBasedGTUGenerator>
     {
         graphics.setColor(Color.BLACK);
         graphics.setFont(FONT);
+        DirectedPoint p = getSource().getLocation();
         Map<GeneratorLanePosition, Integer> map = getSource().getQueueLengths();
         for (GeneratorLanePosition lanePosition : map.keySet())
         {
             DirectedPoint point = lanePosition.getPosition().iterator().next().getLocation();
-            graphics.drawString(map.get(lanePosition) + "", (int) point.x, (int) point.y);
+            graphics.drawString(map.get(lanePosition) + "", (int) (point.x - p.x), (int) (-point.y + p.y));
         }
     }
 

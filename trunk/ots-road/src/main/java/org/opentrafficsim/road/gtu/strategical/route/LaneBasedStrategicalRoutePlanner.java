@@ -19,6 +19,7 @@ import org.opentrafficsim.road.gtu.strategical.AbstractLaneBasedStrategicalPlann
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.language.Throw;
@@ -37,19 +38,27 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner implements
-        LaneBasedStrategicalPlanner, Serializable
+public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner
+        implements LaneBasedStrategicalPlanner, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150724L;
 
     /** The route to drive. */
-    private final Route route;
+    private Route route;
+
+    /** Origin node. */
+    private final Node origin;
+
+    /** Destination node. */
+    private final Node destination;
 
     /** The fixed tactical planner to use for the GTU. */
     private final TacticalPlanner fixedTacticalPlanner;
 
     /**
+     * Constructor for a strategical planner without route. This can only be used if the network does not have splits, or split
+     * fractions are used.
      * @param parameters the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      * @param gtu GTU
@@ -58,21 +67,27 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     public LaneBasedStrategicalRoutePlanner(final Parameters parameters, final TacticalPlanner fixedTacticalPlanner,
             final LaneBasedGTU gtu) throws GTUException
     {
-        this(parameters, fixedTacticalPlanner, null, gtu);
+        this(parameters, fixedTacticalPlanner, null, gtu, null, null);
     }
 
     /**
+     * Constructor for a strategical planner with route. If the route is {@code null}, a shortest path to the destination is
+     * derived.
      * @param parameters the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      * @param route the route to drive
      * @param gtu GTU
+     * @param origin origin node
+     * @param destination destination node
      * @throws GTUException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final Parameters parameters, final TacticalPlanner fixedTacticalPlanner,
-            final Route route, final LaneBasedGTU gtu) throws GTUException
+            final Route route, final LaneBasedGTU gtu, final Node origin, final Node destination) throws GTUException
     {
         super(parameters, gtu);
         this.route = route;
+        this.origin = origin;
+        this.destination = destination;
         this.fixedTacticalPlanner = fixedTacticalPlanner;
         Throw.when(fixedTacticalPlanner == null, GTUException.class,
                 "Fixed Tactical Planner for a Strategical planner is null");
@@ -121,8 +136,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         if (node.getLinks().size() == 1 && previousLink != null)
         {
             // end node
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node
-                    + " has no successors");
+            throw new NetworkException(
+                    "LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node + " has no successors");
         }
         if (node.getLinks().size() == 1 && previousLink == null)
         {
@@ -175,10 +190,10 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                         if (cse instanceof Lane)
                         {
                             Lane lane = (Lane) cse;
-                            if ((link.getStartNode().equals(node) && lane.getLaneType().isCompatible(gtuType,
-                                    GTUDirectionality.DIR_PLUS))
-                                    || (link.getEndNode().equals(node) && lane.getLaneType().isCompatible(gtuType,
-                                            GTUDirectionality.DIR_MINUS)))
+                            if ((link.getStartNode().equals(node)
+                                    && lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_PLUS))
+                                    || (link.getEndNode().equals(node)
+                                            && lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_MINUS)))
                             {
                                 out = true;
                             }
@@ -200,20 +215,20 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         }
 
         // more than 2 links... We have to check the route!
-        if (this.route == null)
+        if (getRoute() == null)
         {
             throw new NetworkException("LaneBasedStrategicalRoutePlanner does not have a route");
         }
         int i = this.route.getNodes().indexOf(node);
         if (i == -1)
         {
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
-                    + previousLink + ", but node " + node + " not in route " + this.route);
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from " + previousLink
+                    + ", but node " + node + " not in route " + this.route);
         }
         if (i == this.route.getNodes().size() - 1)
         {
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
-                    + previousLink + ", but the GTU reached the last node for route " + this.route);
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from " + previousLink
+                    + ", but the GTU reached the last node for route " + this.route);
         }
         Node nextNode = this.route.getNode(i + 1);
 
@@ -250,15 +265,43 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     @Override
     public final Route getRoute()
     {
+        if (this.route == null && this.destination != null)
+        {
+            try
+            {
+                DirectedLanePosition pos = getGtu().getReferencePosition();
+                CrossSectionLink link = pos.getLane().getParentLink();
+                Node from = pos.getGtuDirection().isPlus() ? link.getStartNode() : link.getEndNode();
+                this.route = link.getNetwork().getShortestRouteBetween(getGtu().getGTUType(), from, this.destination);
+            }
+            catch (GTUException | NetworkException exception)
+            {
+                throw new RuntimeException("Route could not be determined.", exception);
+            }
+        }
         return this.route;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final Node getOrigin()
+    {
+        return this.origin;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final Node getDestination()
+    {
+        return this.destination;
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "LaneBasedStrategicalRoutePlanner [route=" + this.route + ", fixedTacticalPlanner="
-                + this.fixedTacticalPlanner + "]";
+        return "LaneBasedStrategicalRoutePlanner [route=" + this.route + ", fixedTacticalPlanner=" + this.fixedTacticalPlanner
+                + "]";
     }
 
 }

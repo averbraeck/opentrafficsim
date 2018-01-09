@@ -71,7 +71,8 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     @Override
     public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
-        return new LaneBasedGTUCharacteristics(super.draw(), this.strategicalPlannerFactory, this.routeGenerator.draw());
+        return new LaneBasedGTUCharacteristics(super.draw(), this.strategicalPlannerFactory, this.routeGenerator.draw(), null,
+                null);
     }
 
     /** {@inheritDoc} */

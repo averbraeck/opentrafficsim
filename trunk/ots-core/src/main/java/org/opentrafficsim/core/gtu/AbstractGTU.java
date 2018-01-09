@@ -408,7 +408,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         {
             return this.odometer.plus(this.operationalPlan.getTraveledDistance(this.simulator.getSimulatorTime().getTime()));
         }
-        catch (OperationalPlanException ope)
+        catch (@SuppressWarnings("unused") OperationalPlanException ope)
         {
             return this.odometer;
         }
@@ -524,7 +524,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             }
             return this.cacheLocation;
         }
-        catch (OperationalPlanException exception)
+        catch (@SuppressWarnings("unused") OperationalPlanException exception)
         {
             return new DirectedPoint(0, 0, 0);
         }

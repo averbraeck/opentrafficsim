@@ -121,6 +121,12 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
 
     /** Destroy the GTU from the simulation and animation. */
     void destroy();
+    
+    /** 
+     * Returns whether the GTU is destroyed. 
+     * @return whether the GTU is destroyed
+     */
+    boolean isDestroyed();
 
     /**
      * Return the base color of the GTU (not the state-based color).

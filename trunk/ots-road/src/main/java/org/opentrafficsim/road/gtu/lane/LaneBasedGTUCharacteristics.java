@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane;
 
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 
@@ -25,19 +26,29 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     /** Route. */
     private final Route route;
 
+    /** Origin. */
+    private final Node origin;
+
+    /** Destination. */
+    private final Node destination;
+
     /**
      * Construct a new set of lane based GTU characteristics.
      * @param gtuCharacteristics GTUCharacteristics; characteristics of the super GTU type to be used for the GTU
      * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory; the strategical planner for the GTU
      * @param route route
+     * @param origin origin
+     * @param destination destination
      */
     public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics,
-            final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route)
+            final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route, final Node origin, final Node destination)
     {
         super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getLength(),
                 gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed());
         this.strategicalPlannerFactory = laneBasedStrategicalPlannerFactory;
         this.route = route;
+        this.origin = origin;
+        this.destination = destination;
     }
 
     /**
@@ -54,6 +65,22 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     public final Route getRoute()
     {
         return this.route;
+    }
+
+    /**
+     * @return Node; origin
+     */
+    public Node getOrigin()
+    {
+        return this.origin;
+    }
+    
+    /**
+     * @return Node; destination
+     */
+    public Node getDestination()
+    {
+        return this.destination;
     }
 
 }

@@ -246,8 +246,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
             Generator<Duration> headwayGenerator =
                     new HeadwayGenerator(new Frequency(800, FrequencyUnit.PER_HOUR), this.simulator);
-            LaneBasedGTUCharacteristicsGenerator characteristicsGenerator = new CharacteristicsGenerator(this.simulator,
-                    new double[] { 0.9, 0.06, 0.04 }, initialLongitudinalPositions, this.network);
+            LaneBasedGTUCharacteristicsGenerator characteristicsGenerator =
+                    new CharacteristicsGenerator(this.simulator, new double[] { 0.9, 0.06, 0.04 }, this.network);
             RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
             new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO,
                     new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND), this.gtuColorer, characteristicsGenerator,
@@ -353,9 +353,6 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         /** Probabilities. */
         private final double[] probabilities;
 
-        /** Position. */
-        private final Set<DirectedLanePosition> initialLongitudinalPositions;
-
         /** Strategical planner factory. */
         private final LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> plannerFactory;
 
@@ -380,15 +377,13 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         /**
          * @param simulator simulator
          * @param probabilities probabilities
-         * @param initialLongitudinalPositions positions
          * @param network network
          */
         public CharacteristicsGenerator(final OTSDEVSSimulatorInterface simulator, final double[] probabilities,
-                final Set<DirectedLanePosition> initialLongitudinalPositions, final OTSNetwork network)
+                final OTSNetwork network)
         {
             this.simulator = simulator;
             this.probabilities = probabilities;
-            this.initialLongitudinalPositions = initialLongitudinalPositions;
             List<Node> carNodesN = new ArrayList<>();
             carNodesN.add(network.getNode("A"));
             carNodesN.add(network.getNode("B"));
@@ -524,7 +519,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
             GTUCharacteristics gtuCharacteristics = new GTUCharacteristics(gtuType, length, width, maximumSpeed);
 
-            return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route);
+            return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route, null, null);
         }
 
     }
