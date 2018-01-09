@@ -58,6 +58,9 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
         compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
         RAIL_WAY = new LinkType("WATER_WAY", null, compatibility);
         compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
+        compatibility.addAllowedGTUType(GTUType.WATER_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
+        compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
         CONNECTOR = new LinkType("CONNECTOR", null, compatibility);
     }
 

@@ -128,6 +128,18 @@ public class GTUTest implements OTSModelInterface
             {
                 return GTUTest.this.gtuOfStrategicalPlanner;
             }
+
+            @Override
+            public Node getOrigin()
+            {
+                return null;
+            }
+
+            @Override
+            public Node getDestination()
+            {
+                return null;
+            }
         };
         DirectedPoint initialLocation =
                 new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));

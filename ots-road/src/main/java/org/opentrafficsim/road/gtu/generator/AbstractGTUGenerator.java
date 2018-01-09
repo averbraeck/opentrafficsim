@@ -207,7 +207,7 @@ public abstract class AbstractGTUGenerator implements Serializable
 
             if (enoughSpace(carBuilder))
             {
-                carBuilder.build(this.strategicalPlannerFactory, this.routeGenerator.draw());
+                carBuilder.build(this.strategicalPlannerFactory, this.routeGenerator.draw(), null, null);
             }
             else
             {
@@ -468,7 +468,7 @@ public abstract class AbstractGTUGenerator implements Serializable
             if (enoughSpace(carBuilder))
             {
                 this.carBuilderList.remove(0);
-                carBuilder.build(this.strategicalPlannerFactory, this.routeGenerator.draw());
+                carBuilder.build(this.strategicalPlannerFactory, this.routeGenerator.draw(), null, null);
             }
         }
 

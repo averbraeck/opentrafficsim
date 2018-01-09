@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,12 +32,12 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.generator.Arrivals;
 import org.opentrafficsim.road.gtu.generator.ArrivalsHeadwayGenerator;
+import org.opentrafficsim.road.gtu.generator.ArrivalsHeadwayGenerator.HeadwayRandomization;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
-import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
-import org.opentrafficsim.road.gtu.generator.ArrivalsHeadwayGenerator.HeadwayRandomization;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
@@ -126,7 +127,6 @@ public final class ODApplier
                 "Method ODApplier.applyOD() should be invoked at simulation time 0.");
 
         // TODO sinks? white extension links?
-        // TODO area's of no lane change after generators?
 
         final Categorization categorization = od.getCategorization();
         final boolean laneBased = categorization.entails(Lane.class);
@@ -167,7 +167,7 @@ public final class ODApplier
              * used if the categorization contains lanes. For non-lane based demand, the root node and destination node created
              * in the outer loop can simply be used.
              */
-            Map<Lane, DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>> originNodePerLane = new HashMap<>();
+            Map<Lane, DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>> originNodePerLane = new LinkedHashMap<>();
             MarkovChain markovChain = null;
             if (!laneBased)
             {
@@ -252,7 +252,7 @@ public final class ODApplier
 
             // Step 2: gather DirectedLanePositions for each generator pertaining to each DemandNode<...>
             Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<DirectedLanePosition>> initialPositions =
-                    new HashMap<>();
+                    new LinkedHashMap<>();
             if (laneBased)
             {
                 for (Lane lane : originNodePerLane.keySet())
@@ -274,7 +274,7 @@ public final class ODApplier
             }
             else
             {
-                Set<DirectedLanePosition> positionSet = new HashSet<>();
+                Set<DirectedLanePosition> positionSet = new LinkedHashSet<>();
                 for (Link link : origin.getLinks())
                 {
                     if (link.getLinkType().isConnector())
@@ -333,10 +333,12 @@ public final class ODApplier
                 // and finally, the generator
                 try
                 {
+                    System.out.println(initialPosition);
                     LaneBasedGTUGenerator generator =
                             new LaneBasedGTUGenerator(id, headwayGenerator, maxGTUs, startTime, endTime, gtuColorer,
                                     characteristicsGenerator, GeneratorPositions.create(initialPosition, stream, biases),
                                     network, simulator, roomChecker, idGenerator);
+                    generator.setNoLaneChangeDistance(odOptions.get(ODOptions.NO_LC));
                     output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
                 }
                 catch (SimRuntimeException exception)

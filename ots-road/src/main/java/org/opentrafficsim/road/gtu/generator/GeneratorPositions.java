@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -132,12 +134,12 @@ public final class GeneratorPositions implements Locatable
     {
 
         // group directions per link
-        Map<LinkDirection, Set<DirectedLanePosition>> linkSplit = new HashMap<>();
+        Map<LinkDirection, Set<DirectedLanePosition>> linkSplit = new LinkedHashMap<>();
         for (DirectedLanePosition position : positions)
         {
             if (!linkSplit.containsKey(position.getLinkDirection()))
             {
-                linkSplit.put(position.getLinkDirection(), new HashSet<>());
+                linkSplit.put(position.getLinkDirection(), new LinkedHashSet<>());
             }
             linkSplit.get(position.getLinkDirection()).add(position);
         }

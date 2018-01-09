@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -55,7 +56,7 @@ public class OTSNode implements Node, Locatable, Serializable
     private final Angle slope;
 
     /** The links connected to the Node. */
-    private final Set<Link> links = new HashSet<Link>();
+    private final Set<Link> links = new LinkedHashSet<>();
 
     /** The cached immutable set of links to return. */
     private ImmutableSet<Link> cachedLinks = null;

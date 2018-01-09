@@ -45,8 +45,8 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
-import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.animation.LmrsSwitchableColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorAnimation;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.Bias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
@@ -149,6 +149,13 @@ public class ODApplierExample extends AbstractWrappableAnimation
         return new ODApplierExampleModel(colorer);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected GTUColorer getColorer()
+    {
+        return new LmrsSwitchableColorer();
+    }
+
     /**
      * The simulation model.
      */
@@ -183,7 +190,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
         {
             this.simulator = (OTSDEVSSimulatorInterface) sim;
             Map<String, StreamInterface> streams = new HashMap<>();
-            streams.put("generation", new MersenneTwister());
+            streams.put("generation", new MersenneTwister(1L));
             this.simulator.getReplication().setStreams(streams);
 
             this.network = new OTSNetwork("ODApplierExample");
@@ -191,7 +198,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
             {
                 // Network
                 OTSPoint3D pointA = new OTSPoint3D(-100, 50, 0);
-                OTSPoint3D pointA1 = new OTSPoint3D(0, 100, 0);
+                OTSPoint3D pointA1 = new OTSPoint3D(50, 50, 0);
                 OTSPoint3D pointA2 = new OTSPoint3D(0, 0, 0);
                 OTSPoint3D pointA3 = new OTSPoint3D(0, -100, 0);
                 OTSPoint3D pointB = new OTSPoint3D(1000, 0, 0);
@@ -261,11 +268,11 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 Categorization categorization;
                 if (ODApplierExample.LANE_BASED)
                 {
-                    categorization = new Categorization("ODExample", Lane.class, GTUType.class, Route.class);
+                    categorization = new Categorization("ODExample", Lane.class, GTUType.class);
                 }
                 else
                 {
-                    categorization = new Categorization("ODExample", GTUType.class, Route.class);
+                    categorization = new Categorization("ODExample", GTUType.class);
                 }
                 List<Node> origins = new ArrayList<>();
                 origins.add(nodeA);
@@ -278,35 +285,34 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 double f = 2.0;
                 FrequencyVector demand = new FrequencyVector(new double[] { 0 * f, 1000 * f, 3000 * f, 7000 * f, 0 * f },
                         FrequencyUnit.PER_HOUR, StorageType.DENSE);
-                Route route = new Route("AB").addNode(nodeA).addNode(nodeB);
 
                 if (ODApplierExample.LANE_BASED)
                 {
-                    Category category = new Category(categorization, lane1, GTUType.CAR, route);
+                    Category category = new Category(categorization, lane1, GTUType.CAR);
                     od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .4);
-                    category = new Category(categorization, lane2, GTUType.CAR, route);
+                    category = new Category(categorization, lane2, GTUType.CAR);
                     od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .25);
-                    category = new Category(categorization, lane2, GTUType.TRUCK, route);
+                    category = new Category(categorization, lane2, GTUType.TRUCK);
                     od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .05);
-                    category = new Category(categorization, lane3, GTUType.CAR, route);
+                    category = new Category(categorization, lane3, GTUType.CAR);
                     od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .1);
-                    category = new Category(categorization, lane3, GTUType.TRUCK, route);
+                    category = new Category(categorization, lane3, GTUType.TRUCK);
                     od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .2);
                 }
                 else
                 {
-                    Category category = new Category(categorization, GTUType.CAR, route);
-                    od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .998);
-                    category = new Category(categorization, GTUType.TRUCK, route);
-                    od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .002);
+                    Category category = new Category(categorization, GTUType.CAR);
+                    od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .9);
+                    category = new Category(categorization, GTUType.TRUCK);
+                    od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .1);
                 }
                 // options
                 MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
                 markov.addState(GTUType.TRUCK, 0.95);
                 LaneBiases biases =
-                        new LaneBiases().addBias(GTUType.TRUCK, Bias.TRUCK_RIGHT).addBias(GTUType.VEHICLE, Bias.STRONG_LEFT);
+                        new LaneBiases().addBias(GTUType.TRUCK, Bias.TRUCK_RIGHT).addBias(GTUType.VEHICLE, Bias.LEFT);
                 ODOptions odOptions = new ODOptions().set(ODOptions.COLORER, this.colorer).set(ODOptions.MARKOV, markov)
-                        .set(ODOptions.BIAS, biases).setReadOnly();
+                        .set(ODOptions.BIAS, biases).set(ODOptions.NO_LC, Length.createSI(300)).setReadOnly();
                 Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
                 for (String str : generatedObjects.keySet())
                 {

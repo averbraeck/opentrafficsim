@@ -5,13 +5,13 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
@@ -76,6 +76,9 @@ public class ODOptions
     /** Lane bias. Default is Truck: truck right (strong right, max 2 lanes), Vehicle (other): weak left. */
     public static final Option<LaneBiases> BIAS = new Option<>(new ConstantGenerator<>(
             new LaneBiases().addBias(GTUType.TRUCK, Bias.TRUCK_RIGHT).addBias(GTUType.VEHICLE, Bias.WEAK_LEFT)));
+
+    /** Initial distance over which lane changes shouldn't be performed option. */
+    public static final Option<Length> NO_LC = new Option<>(new ConstantGenerator<>(null));
 
     /** Options. */
     private Map<Option<?>, Object> options = new HashMap<>();
@@ -213,24 +216,9 @@ public class ODOptions
                     new LaneBasedStrategicalRoutePlannerFactory(
                             new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
             // route
-            Route route;
-            if (categorization.entails(Route.class))
-            {
-                route = category.get(Route.class);
-            }
-            else
-            {
-                try
-                {
-                    route = origin.getNetwork().getShortestRouteBetween(gtuCharacteristics.getGTUType(), origin, destination);
-                }
-                catch (NetworkException exception)
-                {
-                    throw new GTUException("No possible route for demand from " + origin + " to " + destination
-                            + " for GTU of type " + gtuType, exception);
-                }
-            }
-            return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route);
+            Route route = categorization.entails(Route.class) ? category.get(Route.class) : null;
+            return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, origin,
+                    destination);
         }
 
     }

@@ -937,11 +937,11 @@ public class ModelControlDemo extends ModelStarter
             LaneBasedStrategicalPlanner strategicalPlanner;
             if (!generateTruck)
             {
-                strategicalPlanner = this.strategicalPlannerGeneratorCars.create(gtu, null);
+                strategicalPlanner = this.strategicalPlannerGeneratorCars.create(gtu, null, null, null);
             }
             else
             {
-                strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu, null);
+                strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu, null, null, null);
             }
 
             // init

@@ -1027,7 +1027,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             dlp = getReferencePosition();
         }
-        catch (GTUException e)
+        catch (@SuppressWarnings("unused") GTUException e)
         {
             // ignore. not important at destroy
         }
@@ -1042,7 +1042,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 {
                     leaveLane(lane, true);
                 }
-                catch (GTUException e)
+                catch (@SuppressWarnings("unused") GTUException e)
                 {
                     // ignore. not important at destroy
                 }

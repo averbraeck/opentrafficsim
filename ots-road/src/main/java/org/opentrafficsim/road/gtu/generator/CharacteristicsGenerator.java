@@ -65,7 +65,8 @@ public class CharacteristicsGenerator implements LaneBasedGTUCharacteristicsGene
         GTUTypeInfo info = this.gtuTypeGenerator.draw();
         GTUCharacteristics gtuCharacteristics =
                 new GTUCharacteristics(info.getGtuType(), info.getLength(), info.getWidth(), info.getMaximumSpeed());
-        return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.strategicalFactory, this.routeGenerator.draw());
+        return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.strategicalFactory, this.routeGenerator.draw(), null,
+                null);
     }
 
     /** {@inheritDoc} */

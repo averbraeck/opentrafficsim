@@ -3,7 +3,8 @@ package org.opentrafficsim.road.gtu.strategical.od;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -98,7 +99,7 @@ public class ODMatrix implements Serializable, Identifiable
             Map<Node, Map<Category, ODEntry>> map = new HashMap<>();
             for (Node destination : destinations)
             {
-                map.put(destination, new HashMap<>());
+                map.put(destination, new LinkedHashMap<>());
             }
             this.demandData.put(origin, map);
         }
@@ -463,7 +464,7 @@ public class ODMatrix implements Serializable, Identifiable
                 origin);
         Throw.when(!this.destinations.contains(destination), IllegalArgumentException.class,
                 "Destination '%s' is not part of the OD matrix.", destination);
-        return new HashSet<>(this.demandData.get(origin).get(destination).keySet());
+        return new LinkedHashSet<>(this.demandData.get(origin).get(destination).keySet());
     }
 
     /******************************************************************************************************/

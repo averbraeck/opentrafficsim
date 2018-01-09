@@ -2,11 +2,12 @@ package org.opentrafficsim.road.gtu.strategical.route;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryDefault;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
@@ -65,7 +66,8 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route) throws GTUException
+    public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route, final Node origin,
+            final Node destination) throws GTUException
     {
         Parameters parameters = this.tacticalPlannerFactory.getParameters();
         try
@@ -77,7 +79,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
             throw new GTUException("Parameter was set to illegal value.", exception);
         }
         LaneBasedStrategicalRoutePlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
-                this.tacticalPlannerFactory.create(gtu), route, gtu);
+                this.tacticalPlannerFactory.create(gtu), route, gtu, origin, destination);
         return strategicalPlanner;
     }
 
