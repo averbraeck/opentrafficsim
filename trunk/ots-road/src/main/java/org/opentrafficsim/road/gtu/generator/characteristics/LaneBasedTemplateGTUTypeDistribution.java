@@ -1,11 +1,10 @@
-package org.opentrafficsim.road.gtu.lane;
+package org.opentrafficsim.road.gtu.generator.characteristics;
 
 import java.io.Serializable;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 
 /**

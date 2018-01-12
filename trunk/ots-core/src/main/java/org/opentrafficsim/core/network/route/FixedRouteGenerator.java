@@ -2,6 +2,7 @@ package org.opentrafficsim.core.network.route;
 
 import java.io.Serializable;
 
+import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.network.Node;
 
 /**
@@ -14,13 +15,10 @@ import org.opentrafficsim.core.network.Node;
  * initial version 20 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FixedRouteGenerator implements RouteGenerator, Serializable
+public class FixedRouteGenerator extends ConstantGenerator<Route> implements RouteGenerator, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
-
-    /** The route that is returned on every call to generateRoute. */
-    private final Route route;
 
     /**
      * Construct a new FixedRouteGenerator.
@@ -28,23 +26,7 @@ public class FixedRouteGenerator implements RouteGenerator, Serializable
      */
     public FixedRouteGenerator(final Route route)
     {
-        this.route = route;
-    }
-
-    /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
-    @Override
-    public Route draw()
-    {
-        return this.route;
-    }
-
-    /**
-     * @return the fixed route.
-     */
-    public final Route getRoute()
-    {
-        return this.route;
+        super(route);
     }
 
     /** {@inheritDoc} */
@@ -54,7 +36,7 @@ public class FixedRouteGenerator implements RouteGenerator, Serializable
         StringBuilder result = new StringBuilder();
         result.append("FixedRouteGenerator");
         String separator = " [";
-        for (Node node : this.route.getNodes())
+        for (Node node : getValue().getNodes())
         {
             result.append(separator);
             result.append(node);

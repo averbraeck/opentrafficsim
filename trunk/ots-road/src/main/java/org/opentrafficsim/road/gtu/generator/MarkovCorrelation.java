@@ -69,7 +69,7 @@ public class MarkovCorrelation<S, I extends Number>
      * 
      * Effective correlations of states depend on correlations of other states as well, so the given correlation is not
      * guaranteed to result. One can easily see this from a system with 2 states: A and B. Suppose B has correlation. In order
-     * to maintain the same overall steady-state (occurrence proportion of A and B), if follows that state A also must be seen
+     * to maintain the same overall steady-state (occurrence proportion of A and B), it follows that state A also must be seen
      * more frequently to follow itself.
      * 
      * <pre>
@@ -126,7 +126,7 @@ public class MarkovCorrelation<S, I extends Number>
      * <li>Set all <i>p_jj</i> for all <i>j</i> unequal to <i>i</i> such that row <i>j</i> sums to 1.</li>
      * </ol>
      * Knowing that each value <i>p_ij</i> gets reduced for correlation of state <i>i</i> and <i>j</i>, and realizing that the
-     * reduction factors <i>f</i> equal (1 - <i>c_i</i>) and (1 - <i>c_j</i>) respectively, the effectively correlation can be
+     * reduction factors <i>f</i> equal (1 - <i>c_i</i>) and (1 - <i>c_j</i>) respectively, the effective correlation can be
      * calculated by adding all reductions in a row to the diagonal value <i>p_ii</i> and using {@code eq. 1}.<br>
      * <br>
      * See also "Construction of Transition Matrices of Reversible Markov Chains" by Qian Jiang.
@@ -536,7 +536,7 @@ public class MarkovCorrelation<S, I extends Number>
 
     /**
      * Container for a fixed state. Each state is reflected in a single object of this class. They are grouped in matrices,
-     * possibly all in the route. Subsets of all states may be grouped in a matrix, but no state is present in more than one
+     * possibly all in the root. Subsets of all states may be grouped in a matrix, but no state is present in more than one
      * matrix.
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.

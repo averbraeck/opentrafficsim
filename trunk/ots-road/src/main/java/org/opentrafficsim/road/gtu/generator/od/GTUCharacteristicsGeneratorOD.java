@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.generator.od;
 
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 
 /**

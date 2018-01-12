@@ -12,7 +12,7 @@ package org.opentrafficsim.core.distributions;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <O> type of the object returned by the draw method
  */
-public final class ConstantGenerator<O> implements Generator<O>
+public class ConstantGenerator<O> implements Generator<O>
 {
 
     /** Value. */
@@ -30,6 +30,15 @@ public final class ConstantGenerator<O> implements Generator<O>
     /** {@inheritDoc} */
     @Override
     public O draw()
+    {
+        return this.value;
+    }
+    
+    /**
+     * Returns the value.
+     * @return O; value
+     */
+    public O getValue()
     {
         return this.value;
     }

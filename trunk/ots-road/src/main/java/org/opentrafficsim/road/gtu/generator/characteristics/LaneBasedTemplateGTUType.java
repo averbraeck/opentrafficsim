@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane;
+package org.opentrafficsim.road.gtu.generator.characteristics;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;

@@ -30,6 +30,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -519,7 +520,15 @@ public class ModelControlA58 extends ModelStarter
             CoordinateTransform rdto0 = new CoordinateTransformRD(0, 0);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
 
-            A58OdUtil.createDemand(this.network, this.gtuColorer, this.simulator, ModelControlA58.this.getPenetrationRate());
+            try
+            {
+                A58OdUtil.createDemand(this.network, this.gtuColorer, this.simulator,
+                        ModelControlA58.this.getPenetrationRate());
+            }
+            catch (ProbabilityException exception)
+            {
+                throw new SimRuntimeException(exception);
+            }
 
         }
 

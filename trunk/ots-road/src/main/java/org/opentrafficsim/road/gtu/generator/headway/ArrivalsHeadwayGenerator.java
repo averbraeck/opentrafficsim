@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.generator;
+package org.opentrafficsim.road.gtu.generator.headway;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;

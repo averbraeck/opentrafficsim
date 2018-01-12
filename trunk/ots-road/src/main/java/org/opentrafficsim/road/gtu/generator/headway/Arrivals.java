@@ -1,10 +1,11 @@
-package org.opentrafficsim.road.gtu.generator;
+package org.opentrafficsim.road.gtu.generator.headway;
 
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 
 /**
- * Interface for arrivals in an {@code ArrivalsHeadwayGenerator}.
+ * Interface for arrivals in an {@code ArrivalsHeadwayGenerator}. Arrivals are defined as a piece-wise linear frequency over
+ * time.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
