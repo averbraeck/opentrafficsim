@@ -29,8 +29,9 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
+import org.opentrafficsim.core.distributions.Distribution;
+import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -52,14 +53,14 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.LmrsSwitchableColorer;
-import org.opentrafficsim.road.gtu.generator.CharacteristicsGenerator;
-import org.opentrafficsim.road.gtu.generator.GTUTypeGenerator;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
-import org.opentrafficsim.road.gtu.generator.SpeedGenerator;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
@@ -95,6 +96,7 @@ import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -377,47 +379,59 @@ public class ShortMerge extends AbstractWrappableAnimation
             Generator<Duration> headwaysA3 = new HeadwayGenerator(MAIN_DEMAND);
             Generator<Duration> headwaysF = new HeadwayGenerator(RAMP_DEMAND);
 
-            SpeedGenerator speedCar = new SpeedGenerator(new Speed(160.0, SpeedUnit.KM_PER_HOUR),
-                    new Speed(200.0, SpeedUnit.KM_PER_HOUR), stream);
-            SpeedGenerator speedTruck =
-                    new SpeedGenerator(new Speed(80.0, SpeedUnit.KM_PER_HOUR), new Speed(95.0, SpeedUnit.KM_PER_HOUR), stream);
-            GTUTypeGenerator gtuTypeAllCar = new GTUTypeGenerator(ShortMerge.this.getSimulator(), streams.get("gtuClass"));
-            GTUTypeGenerator gtuType1Lane = new GTUTypeGenerator(ShortMerge.this.getSimulator(), streams.get("gtuClass"));
-            GTUTypeGenerator gtuType3rdLane = new GTUTypeGenerator(ShortMerge.this.getSimulator(), streams.get("gtuClass"));
-            gtuTypeAllCar.addType(new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
-                    new GTUType("car", CAR), speedCar, 1.0);
-            gtuType1Lane.addType(new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
-                    new GTUType("car", CAR), speedCar, 1.0 - TRUCK_FRACTION);
-            gtuType1Lane.addType(new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)),
-                    new GTUType("truck", TRUCK), speedTruck, TRUCK_FRACTION);
-            gtuType3rdLane.addType(new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)),
-                    new GTUType("car", CAR), speedCar, 1.0 - 3 * TRUCK_FRACTION);
-            gtuType3rdLane.addType(new ConstantGenerator<>(Length.createSI(15.0)),
-                    new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck", TRUCK), speedTruck, 3 * TRUCK_FRACTION);
+            // speed generators
+            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar =
+                    new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 160, 200), SpeedUnit.KM_PER_HOUR);
+            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
+                    new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 80, 95), SpeedUnit.KM_PER_HOUR);
+            // strategical planner factory
+            LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
+                    new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
+            // vehicle templates, with routes
+            LaneBasedTemplateGTUType carA =
+                    new LaneBasedTemplateGTUType(new GTUType("car", CAR), new ConstantGenerator<>(Length.createSI(4.0)),
+                            new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, routeGeneratorA);
+            LaneBasedTemplateGTUType carF =
+                    new LaneBasedTemplateGTUType(new GTUType("car", CAR), new ConstantGenerator<>(Length.createSI(4.0)),
+                            new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, routeGeneratorF);
+            LaneBasedTemplateGTUType truckA =
+                    new LaneBasedTemplateGTUType(new GTUType("truck", TRUCK), new ConstantGenerator<>(Length.createSI(15.0)),
+                            new ConstantGenerator<>(Length.createSI(2.5)), speedTruck, strategicalFactory, routeGeneratorA);
+            LaneBasedTemplateGTUType truckF =
+                    new LaneBasedTemplateGTUType(new GTUType("truck", TRUCK), new ConstantGenerator<>(Length.createSI(15.0)),
+                            new ConstantGenerator<>(Length.createSI(2.5)), speedTruck, strategicalFactory, routeGeneratorF);
+            //
+            Distribution<LaneBasedTemplateGTUType> gtuTypeAllCarA = new Distribution<>(streams.get("gtuClass"));
+            gtuTypeAllCarA.add(new FrequencyAndObject<>(1.0, carA));
 
-            makeGenerator(getLane(linkA, "FORWARD1"), speedA, "gen1", routeGeneratorA, idGenerator, gtuTypeAllCar, headwaysA1,
-                    this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
+            Distribution<LaneBasedTemplateGTUType> gtuType1LaneF = new Distribution<>(streams.get("gtuClass"));
+            gtuType1LaneF.add(new FrequencyAndObject<>(1.0 - 2 * TRUCK_FRACTION, carF));
+            gtuType1LaneF.add(new FrequencyAndObject<>(2 * TRUCK_FRACTION, truckF));
+
+            Distribution<LaneBasedTemplateGTUType> gtuType2ndLaneA = new Distribution<>(streams.get("gtuClass"));
+            gtuType2ndLaneA.add(new FrequencyAndObject<>(1.0 - 2 * TRUCK_FRACTION, carA));
+            gtuType2ndLaneA.add(new FrequencyAndObject<>(2 * TRUCK_FRACTION, truckA));
+
+            Distribution<LaneBasedTemplateGTUType> gtuType3rdLaneA = new Distribution<>(streams.get("gtuClass"));
+            gtuType3rdLaneA.add(new FrequencyAndObject<>(1.0 - 3 * TRUCK_FRACTION, carA));
+            gtuType3rdLaneA.add(new FrequencyAndObject<>(3 * TRUCK_FRACTION, truckA));
+
+            makeGenerator(getLane(linkA, "FORWARD1"), speedA, "gen1", idGenerator, gtuTypeAllCarA, headwaysA1, this.colorer,
+                    roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             if (NETWORK.equals("shortWeave"))
             {
-                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", routeGeneratorA, idGenerator, gtuTypeAllCar,
-                        headwaysA2, this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
-                makeGenerator(getLane(linkA, "FORWARD3"), speedA, "gen3", routeGeneratorA, idGenerator, gtuType3rdLane,
-                        headwaysA3, this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
+                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuTypeAllCarA, headwaysA2, this.colorer,
+                        roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
+                makeGenerator(getLane(linkA, "FORWARD3"), speedA, "gen3", idGenerator, gtuType3rdLaneA, headwaysA3,
+                        this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             }
             else
             {
-                GTUTypeGenerator gtuType2ndLane = new GTUTypeGenerator(ShortMerge.this.getSimulator(), streams.get("gtuType"));
-                gtuType2ndLane.addType(new ConstantGenerator<>(Length.createSI(4.0)),
-                        new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car", CAR), speedCar,
-                        1.0 - 2 * TRUCK_FRACTION);
-                gtuType2ndLane.addType(new ConstantGenerator<>(Length.createSI(15.0)),
-                        new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck", TRUCK), speedTruck,
-                        2 * TRUCK_FRACTION);
-                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", routeGeneratorA, idGenerator, gtuType2ndLane,
-                        headwaysA2, this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
+                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuType2ndLaneA, headwaysA2,
+                        this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             }
-            makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", routeGeneratorF, idGenerator, gtuType1Lane, headwaysF,
-                    this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
+            makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, this.colorer,
+                    roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
 
             new SpeedSign("sign1", getLane(linkA, "FORWARD1"), LongitudinalDirectionality.DIR_PLUS, Length.createSI(10),
                     (OTSSimulatorInterface) this.getSimulator(), new Speed(130.0, SpeedUnit.KM_PER_HOUR));
@@ -439,9 +453,8 @@ public class ShortMerge extends AbstractWrappableAnimation
          * @param lane the reference lane for this generator
          * @param generationSpeed the speed of the GTU
          * @param id the id of the generator itself
-         * @param routeGenerator the generator for the route
          * @param idGenerator the generator for the ID
-         * @param gtuTypeGenerator the type generator for the GTU
+         * @param distribution the type generator for the GTU
          * @param headwayGenerator the headway generator for the GTU
          * @param gtuColorer the GTU colorer for animation
          * @param roomChecker the checker to see if there is room for the GTU
@@ -454,27 +467,21 @@ public class ShortMerge extends AbstractWrappableAnimation
          * @throws GTUException in case the GTU is inconsistent
          * @throws ParameterException in case a parameter for the perception is missing
          */
-        private void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
-                final RouteGenerator routeGenerator, final IdGenerator idGenerator, final GTUTypeGenerator gtuTypeGenerator,
-                final Generator<Duration> headwayGenerator, final GTUColorer gtuColorer, final RoomChecker roomChecker,
-                final ParameterFactory bcFactory, final LaneBasedTacticalPlannerFactory<?> tacticalFactory,
-                final Time simulationTime, final StreamInterface stream)
-                throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
+        private void makeGenerator(final Lane lane, final Speed generationSpeed, final String id, final IdGenerator idGenerator,
+                final Distribution<LaneBasedTemplateGTUType> distribution, final Generator<Duration> headwayGenerator,
+                final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
+                final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime,
+                final StreamInterface stream) throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
         {
 
             Set<DirectedLanePosition> initialLongitudinalPositions = new HashSet<>();
             // TODO DIR_MINUS
             initialLongitudinalPositions
                     .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
-
-            LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
-
-            CharacteristicsGenerator characteristicsGenerator = new CharacteristicsGenerator(strategicalFactory, routeGenerator,
-                    ShortMerge.this.getSimulator(), gtuTypeGenerator, generationSpeed);
-
-            new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO, simulationTime, gtuColorer,
-                    characteristicsGenerator, GeneratorPositions.create(initialLongitudinalPositions, stream), this.network,
+            LaneBasedTemplateGTUTypeDistribution characteristicsGenerator =
+                    new LaneBasedTemplateGTUTypeDistribution(distribution);
+            new LaneBasedGTUGenerator(id, headwayGenerator, gtuColorer, characteristicsGenerator,
+                    GeneratorPositions.create(initialLongitudinalPositions, stream), this.network,
                     ShortMerge.this.getSimulator(), roomChecker, idGenerator);
         }
 

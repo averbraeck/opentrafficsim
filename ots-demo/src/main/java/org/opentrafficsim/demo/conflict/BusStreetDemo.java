@@ -17,7 +17,6 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -51,10 +50,10 @@ import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectBusStopPerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
@@ -249,8 +248,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             LaneBasedGTUCharacteristicsGenerator characteristicsGenerator =
                     new CharacteristicsGenerator(this.simulator, new double[] { 0.9, 0.06, 0.04 }, this.network);
             RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
-            new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO,
-                    new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND), this.gtuColorer, characteristicsGenerator,
+            new LaneBasedGTUGenerator(id, headwayGenerator, this.gtuColorer, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, this.simulator, roomChecker,
                     new IdGenerator(""));
         }

@@ -8,6 +8,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.HierarchicalType;
+import org.opentrafficsim.core.network.LinkType;
 
 /**
  * A GTU type identifies the type of a GTU. <br>
@@ -111,7 +112,7 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
         DEFAULT_CHARACTERISTICS.put(GTUType.EMERGENCY_VEHICLE, new GTUCharacteristics(GTUType.CAR, Length.createSI(5.0),
                 Length.createSI(2.55), new Speed(180, SpeedUnit.KM_PER_HOUR)));
     }
-
+    
     /**
      * Returns default characteristics for given GTUType. 
      * @param gtuType GTUType GTU type

@@ -67,6 +67,7 @@ import org.djunits.value.vdouble.scalar.Temperature;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.scalar.Torque;
 import org.djunits.value.vdouble.scalar.Volume;
+import org.opentrafficsim.core.distributions.Generator;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 
@@ -88,7 +89,7 @@ public interface ContinuousDistDoubleScalar
      * @param <RU> The relative unit type belonging to AU
      */
     class Abs<T extends AbstractDoubleScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
-            extends AbstractContinuousDistScalar implements Absolute, Serializable
+            extends AbstractContinuousDistScalar implements Absolute, Serializable, Generator<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -151,7 +152,7 @@ public interface ContinuousDistDoubleScalar
      * @param <U> The unit type used
      */
     class Rel<T extends AbstractDoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractContinuousDistScalar
-            implements Relative, Serializable
+            implements Relative, Serializable, Generator<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;

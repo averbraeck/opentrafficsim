@@ -18,7 +18,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
@@ -35,16 +34,15 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -60,7 +58,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locatable
+public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGenerator
 {
     /** */
     private static final long serialVersionUID = 20160000L;
@@ -77,12 +75,6 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
 
     /** Generates most properties of the GTUs. */
     private final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator;
-
-    /** End time of this generator. */
-    private final Time endTime;
-
-    /** Maximum number of GTUs to generate. */
-    private final long maxGTUs;
 
     /** Total number of GTUs generated so far. */
     private long generatedGTUs = 0;
@@ -115,9 +107,6 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
      * Construct a new lane base GTU generator.
      * @param id String; name of the new GTU generator
      * @param interarrivelTimeGenerator Generator&lt;Duration&gt;; generator for the interval times between GTUs
-     * @param maxGTUs long; maximum number of GTUs to generate
-     * @param startTime Time; time at which the first GTU will be generated
-     * @param endTime Time; time after which no more GTUs will be generated
      * @param gtuColorer GTUColorer; the GTU colorer that will be used by all generated GTUs
      * @param laneBasedGTUCharacteristicsGenerator LaneBasedGTUCharacteristicsGenerator; generator of the characteristics of
      *            each GTU
@@ -131,9 +120,8 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
      * @throws ProbabilityException pe
      * @throws ParameterException if drawing from the interarrival generator fails
      */
-    public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator, final long maxGTUs,
-            final Time startTime, final Time endTime, final GTUColorer gtuColorer,
-            final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
+    public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
+            final GTUColorer gtuColorer, final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final OTSNetwork network, final OTSDEVSSimulatorInterface simulator,
             final RoomChecker roomChecker, final IdGenerator idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException
@@ -141,15 +129,13 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
         this.id = id;
         this.interarrivelTimeGenerator = interarrivelTimeGenerator;
         this.laneBasedGTUCharacteristicsGenerator = laneBasedGTUCharacteristicsGenerator;
-        this.endTime = endTime;
-        this.maxGTUs = maxGTUs;
         this.generatorPositions = generatorPositions;
         this.network = network;
         this.simulator = simulator;
         this.roomChecker = roomChecker;
         this.gtuColorer = gtuColorer;
         this.idGenerator = idGenerator;
-        simulator.scheduleEventAbs(startTime.plus(this.interarrivelTimeGenerator.draw()), this, this, "generateCharacteristics",
+        simulator.scheduleEventRel(this.interarrivelTimeGenerator.draw(), this, this, "generateCharacteristics",
                 new Object[] {});
     }
 
@@ -173,10 +159,6 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
     @SuppressWarnings("unused")
     private void generateCharacteristics() throws ProbabilityException, SimRuntimeException, ParameterException, GTUException
     {
-        if (this.generatedGTUs >= this.maxGTUs || this.simulator.getSimulatorTime().get().ge(this.endTime))
-        {
-            return; // Do not reschedule
-        }
         synchronized (this.unplacedTemplates)
         {
             this.generatedGTUs++;
@@ -214,13 +196,10 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
                 this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { lanePosition });
             }
         }
-        if (this.generatedGTUs < this.maxGTUs)
+        Duration headway = this.interarrivelTimeGenerator.draw();
+        if (headway != null)
         {
-            Duration headway = this.interarrivelTimeGenerator.draw();
-            if (headway != null)
-            {
-                this.simulator.scheduleEventRel(headway, this, this, "generateCharacteristics", new Object[] {});
-            }
+            this.simulator.scheduleEventRel(headway, this, this, "generateCharacteristics", new Object[] {});
         }
     }
 
@@ -384,24 +363,6 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
     }
 
     /**
-     * Retrieve the end time of this LaneBasedGTUGenerator.
-     * @return Time; the time after which this LaneBasedGTUGenerator will not generate any more GTUs
-     */
-    public final Time getEndTime()
-    {
-        return this.endTime;
-    }
-
-    /**
-     * Retrieve the maximum number of GTUs to generate.
-     * @return long; once this number of GTUS is generated, this LaneBasedGTUGenerator will stop generating any more GTUs
-     */
-    public final long getMaxGTUs()
-    {
-        return this.maxGTUs;
-    }
-
-    /**
      * Retrieve the GTUColorer that this LaneBasedGTUGenerator assigns to all generated GTUs.
      * @return GtuColorer; the GTUColorer that this LaneBasedGTUGenerator assigns to all generated GTUs
      */
@@ -450,21 +411,23 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, Locata
      * Returns the number of vehicles in queue per included position for animation.
      * @return number of vehicles in queue per included position for animation
      */
-    public Map<GeneratorLanePosition, Integer> getQueueLengths()
+    public Map<DirectedPoint, Integer> getQueueLengths()
     {
-        Map<GeneratorLanePosition, Integer> result = new HashMap<>();
+        Map<DirectedPoint, Integer> result = new HashMap<>();
         for (CrossSectionLink link : this.unplacedTemplates.keySet())
         {
             for (GeneratorLanePosition lanePosition : this.unplacedTemplates.get(link).keySet())
             {
-                result.put(lanePosition, this.unplacedTemplates.get(link).get(lanePosition).size());
+                result.put(lanePosition.getPosition().iterator().next().getLocation(),
+                        this.unplacedTemplates.get(link).get(lanePosition).size());
             }
         }
         for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
         {
-            if (!result.containsKey(lanePosition))
+            DirectedPoint p = lanePosition.getPosition().iterator().next().getLocation();
+            if (!result.containsKey(p))
             {
-                result.put(lanePosition, 0);
+                result.put(p, 0);
             }
         }
         return result;

@@ -4,6 +4,7 @@ import static org.djunits.value.StorageType.DENSE;
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -26,8 +28,12 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
+import org.opentrafficsim.core.distributions.Distribution;
+import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
+import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -38,20 +44,19 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.route.RouteGenerator;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.imb.demo.generators.IDMPlusOldFactory;
 import org.opentrafficsim.imb.demo.generators.RouteGeneratorProbability;
-import org.opentrafficsim.road.gtu.generator.CharacteristicsGenerator;
-import org.opentrafficsim.road.gtu.generator.GTUTypeGenerator;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
-import org.opentrafficsim.road.gtu.generator.HeadwayGeneratorDemand;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
-import org.opentrafficsim.road.gtu.generator.SpeedGenerator;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
 import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -59,6 +64,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.Throw;
@@ -107,9 +113,10 @@ public class A58OdUtil
      * @param gtuColorer the GTU colorer
      * @param simulator the simulator
      * @param penetrationRate the penetration rate parameter
+     * @throws ProbabilityException
      */
     public static void createDemand(final OTSNetwork network, final GTUColorer gtuColorer,
-            final OTSDEVSSimulatorInterface simulator, double penetrationRate)
+            final OTSDEVSSimulatorInterface simulator, double penetrationRate) throws ProbabilityException
     {
 
         Map<String, StreamInterface> streams = new HashMap<>();
@@ -168,6 +175,8 @@ public class A58OdUtil
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED, 2.0);
 
+        LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
+                new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
         for (String source : demandMap.keySet())
         {
             OTSNode from = (OTSNode) network.getNode(nodeMap.get(source + " source"));
@@ -224,15 +233,32 @@ public class A58OdUtil
 
             HeadwayGeneratorDemand headwayGenerator = new HeadwayGeneratorDemand(timeVector, demandVector, simulator);
 
-            GTUTypeGenerator gtuTypeGenerator = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
-            SpeedGenerator speedCar = new SpeedGenerator(new Speed(100.0, SpeedUnit.KM_PER_HOUR),
-                    new Speed(180.0, SpeedUnit.KM_PER_HOUR), streams.get("gtuClass"));
-            SpeedGenerator speedTruck = new SpeedGenerator(new Speed(80.0, SpeedUnit.KM_PER_HOUR),
-                    new Speed(95.0, SpeedUnit.KM_PER_HOUR), streams.get("gtuClass"));
-            gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(4.0)),
-                    new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car", CAR), speedCar, (1.0 - penetrationRate));
-            gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(4.0)),
-                    new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car_equipped", CAR), speedCar, penetrationRate);
+            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar = new ContinuousDistDoubleScalar.Rel<>(
+                    new DistUniform(streams.get("gtuClass"), 160, 200), SpeedUnit.KM_PER_HOUR);
+            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck = new ContinuousDistDoubleScalar.Rel<>(
+                    new DistUniform(streams.get("gtuClass"), 80, 95), SpeedUnit.KM_PER_HOUR);
+
+            LaneBasedTemplateGTUType car =
+                    new LaneBasedTemplateGTUType(new GTUType("car", CAR), new ConstantGenerator<>(Length.createSI(4.0)),
+                            new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, routeGenerator);
+            LaneBasedTemplateGTUType carEquipped = new LaneBasedTemplateGTUType(new GTUType("car_equipped", CAR),
+                    new ConstantGenerator<>(Length.createSI(4.0)), new ConstantGenerator<>(Length.createSI(2.0)), speedCar,
+                    strategicalFactory, routeGenerator);
+            LaneBasedTemplateGTUType truck =
+                    new LaneBasedTemplateGTUType(new GTUType("truck", TRUCK), new ConstantGenerator<>(Length.createSI(15.0)),
+                            new ConstantGenerator<>(Length.createSI(2.5)), speedTruck, strategicalFactory, routeGenerator);
+            LaneBasedTemplateGTUType truckEquipped = new LaneBasedTemplateGTUType(new GTUType("truck_equipped", TRUCK),
+                    new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)), speedTruck,
+                    strategicalFactory, routeGenerator);
+
+            Distribution<LaneBasedTemplateGTUType> gtuTypeLeft = new Distribution<>(streams.get("gtuClass"));
+            gtuTypeLeft.add(new FrequencyAndObject<>(1.0 - penetrationRate, car));
+            gtuTypeLeft.add(new FrequencyAndObject<>(penetrationRate, carEquipped));
+            Distribution<LaneBasedTemplateGTUType> gtuTypeRight = new Distribution<>(streams.get("gtuClass"));
+            gtuTypeRight.add(new FrequencyAndObject<>((1.0 - penetrationRate) * (1 - truckFrac), car));
+            gtuTypeRight.add(new FrequencyAndObject<>(penetrationRate * (1 - truckFrac), carEquipped));
+            gtuTypeRight.add(new FrequencyAndObject<>((1.0 - penetrationRate) * truckFrac, truck));
+            gtuTypeRight.add(new FrequencyAndObject<>(penetrationRate * truckFrac, truckEquipped));
 
             Map<String, Lane> lanesById = new HashMap<>();
             for (Lane lane : link.getLanes())
@@ -246,28 +272,14 @@ public class A58OdUtil
                     Lane lane = lanesById.get("A" + i);
                     Speed generationSpeed = new Speed(120, SpeedUnit.KM_PER_HOUR); // by definition > 1 lane on this loop
                     String id = link.getId() + ":A" + i;
-                    makeGenerator(lane, generationSpeed, id, routeGenerator, idGenerator, simulator, network, gtuTypeGenerator,
-                            headwayGenerator, gtuColorer, roomChecker, bcFactory, tacticalFactory, streams.get("gtuClass"));
+                    makeGenerator(lane, generationSpeed, id, idGenerator, simulator, network, gtuTypeLeft, headwayGenerator,
+                            gtuColorer, roomChecker, bcFactory, tacticalFactory, streams.get("gtuClass"));
                 }
-                // add trucks
-                gtuTypeGenerator = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
-                gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(4.0)),
-                        new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car", CAR), speedCar,
-                        (1.0 - penetrationRate) * (1 - truckFrac));
-                gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(4.0)),
-                        new ConstantGenerator<>(Length.createSI(2.0)), new GTUType("car_equipped", CAR), speedCar,
-                        penetrationRate * (1 - truckFrac));
-                gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(15.0)),
-                        new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck", TRUCK), speedTruck,
-                        (1.0 - penetrationRate) * truckFrac);
-                gtuTypeGenerator.addType(new ConstantGenerator<>(Length.createSI(15.0)),
-                        new ConstantGenerator<>(Length.createSI(2.5)), new GTUType("truck_equipped", TRUCK), speedTruck,
-                        penetrationRate * truckFrac);
                 Lane lane = lanesById.get("A" + nLanes);
                 Speed generationSpeed = new Speed(nLanes == 1 ? 60.0 : 120, SpeedUnit.KM_PER_HOUR);
                 String id = link.getId() + ":A" + nLanes;
-                makeGenerator(lane, generationSpeed, id, routeGenerator, idGenerator, simulator, network, gtuTypeGenerator,
-                        headwayGenerator, gtuColorer, roomChecker, bcFactory, tacticalFactory, streams.get("gtuClass"));
+                makeGenerator(lane, generationSpeed, id, idGenerator, simulator, network, gtuTypeRight, headwayGenerator,
+                        gtuColorer, roomChecker, bcFactory, tacticalFactory, streams.get("gtuClass"));
             }
             catch (SimRuntimeException | ProbabilityException | GTUException | ParameterException exception)
             {
@@ -313,11 +325,10 @@ public class A58OdUtil
      * @param lane the reference lane for this generator
      * @param generationSpeed the speed of the GTU
      * @param id the id of the generator itself
-     * @param routeGenerator the generator for the route
      * @param idGenerator the generator for the ID
      * @param simulator the simulator
      * @param network the network
-     * @param gtuTypeGenerator the type generator for the GTU
+     * @param distribution the type generator for the GTU
      * @param headwayGenerator the headway generator for the GTU
      * @param gtuColorer the GTU colorer for animation
      * @param roomChecker the checker to see if there is room for the GTU
@@ -330,8 +341,8 @@ public class A58OdUtil
      * @throws ParameterException in case a parameter for the perception is missing
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
-            final RouteGenerator routeGenerator, final IdGenerator idGenerator, final OTSDEVSSimulatorInterface simulator,
-            final OTSNetwork network, final GTUTypeGenerator gtuTypeGenerator, final HeadwayGeneratorDemand headwayGenerator,
+            final IdGenerator idGenerator, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network,
+            final Distribution<LaneBasedTemplateGTUType> distribution, final HeadwayGeneratorDemand headwayGenerator,
             final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final StreamInterface stream)
             throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
@@ -340,16 +351,9 @@ public class A58OdUtil
         // TODO DIR_MINUS
         initialLongitudinalPositions
                 .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
-
-        LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
-                new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
-
-        CharacteristicsGenerator characteristicsGenerator = new CharacteristicsGenerator(strategicalFactory, routeGenerator,
-                simulator, gtuTypeGenerator, generationSpeed);
-
-        new LaneBasedGTUGenerator(id, headwayGenerator, Long.MAX_VALUE, Time.ZERO, simPeriod, gtuColorer,
-                characteristicsGenerator, GeneratorPositions.create(initialLongitudinalPositions, stream), network, simulator,
-                roomChecker, idGenerator);
+        LaneBasedTemplateGTUTypeDistribution characteristicsGenerator = new LaneBasedTemplateGTUTypeDistribution(distribution);
+        new LaneBasedGTUGenerator(id, headwayGenerator, gtuColorer, characteristicsGenerator,
+                GeneratorPositions.create(initialLongitudinalPositions, stream), network, simulator, roomChecker, idGenerator);
     }
 
     /**
@@ -829,6 +833,191 @@ public class A58OdUtil
         nodeMap.put("Restplace Kriekampen source", "N33WB");
         nodeMap.put("Junction De Baars North W dest", "N36WB");
         nodeMap.put("Junction De Baars South W dest", "N37WB");
+    }
+
+    /**
+     * Generates headways based on demand.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 17 nov. 2016 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private static class HeadwayGeneratorDemand implements Generator<Duration>
+    {
+
+        /** Interpolation of demand. */
+        private final Interpolation interpolation;
+
+        /** Vector of time. */
+        private final TimeVector timeVector;
+
+        /** Vector of flow values. */
+        private final FrequencyVector demandVector;
+
+        /** Simulator. */
+        private final OTSSimulatorInterface simulator;
+
+        /** Stream name of headway generation. */
+        private static final String HEADWAY_STREAM = "headwayGeneration";
+
+        /**
+         * @param timeVector a time vector
+         * @param demandVector the corresponding demand vector
+         * @param simulator the simulator
+         */
+        public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
+                final OTSSimulatorInterface simulator)
+        {
+            this(timeVector, demandVector, simulator, Interpolation.STEPWISE);
+        }
+
+        /**
+         * @param timeVector a time vector
+         * @param demandVector the corresponding demand vector
+         * @param simulator the simulator
+         * @param interpolation interpolation type
+         */
+        public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
+                final OTSSimulatorInterface simulator, final Interpolation interpolation)
+        {
+            Throw.whenNull(timeVector, "Time vector may not be null.");
+            Throw.whenNull(demandVector, "Demand vector may not be null.");
+            Throw.whenNull(simulator, "Simulator may not be null.");
+            Throw.whenNull(interpolation, "Interpolation may not be null.");
+            try
+            {
+                Throw.whenNull(simulator.getReplication().getStream(HEADWAY_STREAM),
+                        "Could not obtain random stream '" + HEADWAY_STREAM + "'.");
+            }
+            catch (RemoteException exception)
+            {
+                throw new RuntimeException("Could not obtain replication.", exception);
+            }
+            for (int i = 0; i < timeVector.size() - 1; i++)
+            {
+                try
+                {
+                    Throw.when(timeVector.get(i).ge(timeVector.get(i + 1)), IllegalArgumentException.class,
+                            "Time vector is not increasing.");
+                }
+                catch (ValueException exception)
+                {
+                    throw new RuntimeException(
+                            "Value out of range of time vector. Note that HeadwayGenerator does not create a safe copy.",
+                            exception);
+                }
+            }
+            Throw.when(timeVector.size() != demandVector.size(), IllegalArgumentException.class,
+                    "Time and flow vector should be of the same size.");
+            Throw.when(timeVector.size() < 2, IllegalArgumentException.class,
+                    "Time and flow vector should be at least of size 2.");
+            this.timeVector = timeVector;
+            this.demandVector = demandVector;
+            this.simulator = simulator;
+            this.interpolation = interpolation;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final Duration draw() throws ProbabilityException, ParameterException
+        {
+            Time time = this.simulator.getSimulatorTime().getTime();
+            try
+            {
+                Throw.when(time.lt(this.timeVector.get(0)), IllegalArgumentException.class,
+                        "Cannot return a headway at time before first time in vector.");
+
+                // get time period of current time
+                int i = 0;
+                while (this.timeVector.get(i + 1).lt(time) && i < this.timeVector.size() - 1)
+                {
+                    i++;
+                }
+                try
+                {
+                    return nextArrival(i, time.minus(this.timeVector.get(i)), 1.0).minus(time);
+                }
+                catch (RemoteException exception)
+                {
+                    throw new RuntimeException("Could not obtain replication.", exception);
+                }
+            }
+            catch (ValueException exception)
+            {
+                throw new RuntimeException(
+                        "Value out of range of time or demand vector. Note that HeadwayGenerator does not create safe copies.",
+                        exception);
+            }
+        }
+
+        /**
+         * Recursive determination of the next arrival time. Each recursion moves to the next time period. This occurs if a
+         * randomly determined arrival falls outside of a time period, or when demand in a time period is 0.
+         * @param i index of time period
+         * @param start reference time from start of period i, pertains to previous arrival, or zero during recursion
+         * @param fractionRemaining remaining fraction of headway to apply due to time in earlier time periods
+         * @return time of next arrival
+         * @throws ValueException in case of an illegal time vector
+         * @throws RemoteException in case of not being able to retrieve the replication
+         */
+        private Time nextArrival(final int i, final Duration start, final double fractionRemaining)
+                throws ValueException, RemoteException
+        {
+
+            // escape if beyond specified time by infinite next arrival (= no traffic)
+            if (i == this.timeVector.size() - 1)
+            {
+                return new Time(Double.POSITIVE_INFINITY, TimeUnit.BASE);
+            }
+
+            // skip zero-demand periods
+            if (this.demandVector.get(i).equals(Frequency.ZERO))
+            {
+                // after zero-demand, the next headway is a random fraction of a random headway as there is no previous arrival
+                return nextArrival(i + 1, Duration.ZERO,
+                        this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble());
+            }
+
+            // calculate headway from demand
+            Frequency demand;
+            if (this.interpolation.isStepWise())
+            {
+                demand = this.demandVector.get(i);
+            }
+            else
+            {
+                double f = start.si / (this.timeVector.get(i + 1).si - this.timeVector.get(i).si);
+                demand = Frequency.interpolate(this.demandVector.get(i), this.demandVector.get(i + 1), f);
+            }
+            double t = -Math.log(this.simulator.getReplication().getStream(HEADWAY_STREAM).nextDouble()) / demand.si;
+
+            // calculate arrival
+            Time arrival = new Time(this.timeVector.get(i).si + start.si + t * fractionRemaining, TimeUnit.BASE);
+
+            // go to next period if arrival is beyond current period
+            if (arrival.gt(this.timeVector.get(i + 1)))
+            {
+                double inStep = this.timeVector.get(i + 1).si - (this.timeVector.get(i).si + start.si);
+                return nextArrival(i + 1, Duration.ZERO, fractionRemaining - inStep / t);
+            }
+
+            return arrival;
+
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "HeadwayGeneratorDemand [interpolation=" + this.interpolation + ", timeVector=" + this.timeVector
+                    + ", demandVector=" + this.demandVector + ", simulator=" + this.simulator + "]";
+        }
+
     }
 
 }

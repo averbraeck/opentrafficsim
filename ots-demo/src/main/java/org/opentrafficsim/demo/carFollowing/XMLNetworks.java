@@ -13,15 +13,6 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.jstats.distributions.DistContinuous;
-import nl.tudelft.simulation.jstats.distributions.DistErlang;
-import nl.tudelft.simulation.jstats.distributions.DistUniform;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -73,15 +64,14 @@ import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
-import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
@@ -106,6 +96,15 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+import nl.tudelft.simulation.jstats.distributions.DistErlang;
+import nl.tudelft.simulation.jstats.distributions.DistUniform;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * <p>
@@ -742,8 +741,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             {
                 return new Duration(XMLNetworkModel.this.headwayGenerator.draw(), DurationUnit.SECOND);
             }
-        }, Long.MAX_VALUE, new Time(0, TimeUnit.BASE_SECOND), new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND), this.gtuColorer,
-                templateDistribution, GeneratorPositions.create(initialPositions, stream), this.network, this.simulator,
+        }, this.gtuColorer, templateDistribution, GeneratorPositions.create(initialPositions, stream), this.network,
+                this.simulator,
                 /*-
                 new LaneBasedGTUGenerator.RoomChecker()
                 {

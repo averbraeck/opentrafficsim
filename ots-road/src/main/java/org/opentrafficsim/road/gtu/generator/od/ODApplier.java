@@ -28,18 +28,19 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.generator.Arrivals;
-import org.opentrafficsim.road.gtu.generator.ArrivalsHeadwayGenerator;
-import org.opentrafficsim.road.gtu.generator.ArrivalsHeadwayGenerator.HeadwayRandomization;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
+import org.opentrafficsim.road.gtu.generator.headway.Arrivals;
+import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator;
+import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayRandomization;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
@@ -130,12 +131,7 @@ public final class ODApplier
 
         final Categorization categorization = od.getCategorization();
         final boolean laneBased = categorization.entails(Lane.class);
-        boolean markovian = odOptions.get(ODOptions.MARKOV) != null;
-        if (markovian && !od.getCategorization().entails(GTUType.class))
-        {
-            markovian = false;
-            System.out.println("Ignoring ODOptions.MARKOV as the OD categorization doesn't include GTUTypes.");
-        }
+        boolean markovian = od.getCategorization().entails(GTUType.class);
 
         // TODO clean up stream acquiring code after task OTS-315 has been completed
         StreamInterface stream = simulator.getReplication().getStream("generation");
@@ -171,10 +167,15 @@ public final class ODApplier
             MarkovChain markovChain = null;
             if (!laneBased)
             {
-                rootNode = new DemandNode<>(origin, stream);
+                rootNode = new DemandNode<>(origin, stream, null);
+                LinkType linkType = getLinkTypeFromNode(origin);
                 if (markovian)
                 {
-                    markovChain = new MarkovChain(odOptions.get(ODOptions.MARKOV));
+                    MarkovCorrelation<GTUType, Frequency> correlation = odOptions.get(ODOptions.MARKOV, null, origin, linkType);
+                    if (correlation != null)
+                    {
+                        markovChain = new MarkovChain(correlation);
+                    }
                 }
             }
             for (Node destination : od.getDestinations())
@@ -185,14 +186,7 @@ public final class ODApplier
                     DemandNode<Node, DemandNode<Category, ?>> destinationNode = null;
                     if (!laneBased)
                     {
-                        if (markovian)
-                        {
-                            destinationNode = new DemandNode<>(destination, stream, markovChain);
-                        }
-                        else
-                        {
-                            destinationNode = new DemandNode<>(destination, stream);
-                        }
+                        destinationNode = new DemandNode<>(destination, stream, markovChain);
                         rootNode.addChild(destinationNode);
                     }
                     for (Category category : categories)
@@ -201,37 +195,28 @@ public final class ODApplier
                         {
                             // obtain or create root and destination nodes
                             Lane lane = category.get(Lane.class);
-                            if (originNodePerLane.containsKey(lane))
+                            rootNode = originNodePerLane.get(lane);
+                            if (rootNode == null)
                             {
-                                rootNode = originNodePerLane.get(lane);
-                                destinationNode = rootNode.getChild(destination);
-                                if (destinationNode == null)
-                                {
-                                    if (markovian)
-                                    {
-                                        markovChain = new MarkovChain(odOptions.get(ODOptions.MARKOV)); // 1 for each generator
-                                        destinationNode = new DemandNode<>(destination, stream, markovChain);
-                                    }
-                                    else
-                                    {
-                                        destinationNode = new DemandNode<>(destination, stream);
-                                    }
-                                    rootNode.addChild(destinationNode);
-                                }
-                            }
-                            else
-                            {
-                                rootNode = new DemandNode<>(origin, stream);
+                                rootNode = new DemandNode<>(origin, stream, null);
                                 originNodePerLane.put(lane, rootNode);
+                            }
+                            destinationNode = rootNode.getChild(destination);
+                            if (destinationNode == null)
+                            {
+                                markovChain = null;
                                 if (markovian)
                                 {
-                                    markovChain = new MarkovChain(odOptions.get(ODOptions.MARKOV)); // 1 for each generator
-                                    destinationNode = new DemandNode<>(destination, stream, markovChain);
+                                    MarkovCorrelation<GTUType, Frequency> correlation =
+                                            odOptions.get(ODOptions.MARKOV, lane, origin, lane.getParentLink().getLinkType());
+                                    if (correlation != null)
+                                    {
+                                        markovChain = new MarkovChain(correlation); // 1 for each generator
+                                    }
                                 }
-                                else
-                                {
-                                    destinationNode = new DemandNode<>(destination, stream);
-                                }
+                                System.out.println(
+                                        String.format("Adding destination node to %s using markov %s.", lane, markovChain));
+                                destinationNode = new DemandNode<>(destination, stream, markovChain);
                                 rootNode.addChild(destinationNode);
                             }
                         }
@@ -317,28 +302,34 @@ public final class ODApplier
                     originGeneratorCounts.put(o, count);
                 }
                 // functional generation elements
-                HeadwayRandomization randomization = odOptions.get(ODOptions.HEADWAY);
+                Lane lane;
+                LinkType linkType;
+                if (laneBased)
+                {
+                    lane = initialPosition.iterator().next().getLane();
+                    linkType = lane.getParentLink().getLinkType();
+                }
+                else
+                {
+                    lane = null;
+                    linkType = getLinkTypeFromNode(o);
+                }
+                HeadwayRandomization randomization = odOptions.get(ODOptions.HEADWAY_DIST, lane, o, linkType);
                 ArrivalsHeadwayGenerator headwayGenerator =
                         new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
-                GTUColorer gtuColorer = odOptions.get(ODOptions.COLORER);
+                GTUColorer gtuColorer = odOptions.get(ODOptions.GTU_COLORER, lane, o, linkType);
                 ODCharacteristicsGenerator characteristicsGenerator =
-                        new ODCharacteristicsGenerator(root, simulator, odOptions.get(ODOptions.GTU_TYPE));
-                RoomChecker roomChecker = odOptions.get(ODOptions.ROOM);
-                IdGenerator idGenerator = odOptions.get(ODOptions.ID);
-                LaneBiases biases = odOptions.get(ODOptions.BIAS);
-                // bounds
-                int maxGTUs = Integer.MAX_VALUE;
-                Time startTime = Time.ZERO;
-                Time endTime = Time.createSI(Double.POSITIVE_INFINITY);
+                        new ODCharacteristicsGenerator(root, simulator, odOptions.get(ODOptions.GTU_TYPE, lane, o, linkType));
+                RoomChecker roomChecker = odOptions.get(ODOptions.ROOM_CHECKER, lane, o, linkType);
+                IdGenerator idGenerator = odOptions.get(ODOptions.GTU_ID, lane, o, linkType);
+                LaneBiases biases = odOptions.get(ODOptions.LANE_BIAS, lane, o, linkType);
                 // and finally, the generator
                 try
                 {
-                    System.out.println(initialPosition);
-                    LaneBasedGTUGenerator generator =
-                            new LaneBasedGTUGenerator(id, headwayGenerator, maxGTUs, startTime, endTime, gtuColorer,
-                                    characteristicsGenerator, GeneratorPositions.create(initialPosition, stream, biases),
-                                    network, simulator, roomChecker, idGenerator);
-                    generator.setNoLaneChangeDistance(odOptions.get(ODOptions.NO_LC));
+                    LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator(id, headwayGenerator, gtuColorer,
+                            characteristicsGenerator, GeneratorPositions.create(initialPosition, stream, biases), network,
+                            simulator, roomChecker, idGenerator);
+                    generator.setNoLaneChangeDistance(odOptions.get(ODOptions.NO_LC_DIST, lane, o, linkType));
                     output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
                 }
                 catch (SimRuntimeException exception)
@@ -354,6 +345,53 @@ public final class ODApplier
             }
         }
         return output;
+    }
+
+    /**
+     * Returns the common ancestor {@code LinkType} of all links connected to the node, moving through connectors.
+     * @param node Node; origin node
+     * @return common ancestor {@code LinkType} of all links connected to the node, moving through connectors
+     */
+    private final static LinkType getLinkTypeFromNode(final Node node)
+    {
+        return getLinkTypeFromNode0(node, false);
+    }
+
+    /**
+     * Returns the common ancestor {@code LinkType} of all links connected to the node, moving through connectors.
+     * @param node Node; origin node
+     * @param ignoreConnectors boolean; ignore connectors
+     * @return common ancestor {@code LinkType} of all links connected to the node, moving through connectors
+     */
+    private final static LinkType getLinkTypeFromNode0(final Node node, final boolean ignoreConnectors)
+    {
+        LinkType linkType = null;
+        for (Link link : node.getLinks())
+        {
+            LinkType next = link.getLinkType();
+            if (!ignoreConnectors && next.isConnector())
+            {
+                Node otherNode = link.getStartNode().equals(node) ? link.getEndNode() : link.getStartNode();
+                next = getLinkTypeFromNode0(otherNode, true);
+            }
+            if (next != null && !next.isConnector())
+            {
+                if (linkType == null)
+                {
+                    linkType = next;
+                }
+                else
+                {
+                    linkType = linkType.commonAncestor(next);
+                    if (linkType == null)
+                    {
+                        // incompatible link types
+                        return null;
+                    }
+                }
+            }
+        }
+        return linkType;
     }
 
     /**
@@ -450,32 +488,16 @@ public final class ODApplier
         private final ODEntry odEntry;
 
         /** Unique GTU types of leaf nodes. */
-        private final List<GTUType> gtuTypes;
+        private final List<GTUType> gtuTypes = new ArrayList<>();
 
         /** Number of leaf nodes for the unique GTU types. */
-        private final List<Integer> gtuTypeCounts;
+        private final List<Integer> gtuTypeCounts = new ArrayList<>();
 
         /** GTU type of leaf nodes. */
-        private final Map<K, GTUType> gtuTypesPerChild;
+        private final Map<K, GTUType> gtuTypesPerChild = new HashMap<>();
 
         /** Markov chain for GTU type selection. */
         private final MarkovChain markov;
-
-        /**
-         * Constructor for branching node, without Markov selection.
-         * @param object T; node object
-         * @param stream StreamInterface; random stream to draw child node
-         */
-        DemandNode(final T object, final StreamInterface stream)
-        {
-            this.object = object;
-            this.stream = stream;
-            this.odEntry = null;
-            this.gtuTypes = null;
-            this.gtuTypeCounts = null;
-            this.gtuTypesPerChild = null;
-            this.markov = null;
-        }
 
         /**
          * Constructor for branching node, with Markov selection.
@@ -488,9 +510,6 @@ public final class ODApplier
             this.object = object;
             this.stream = stream;
             this.odEntry = null;
-            this.gtuTypes = new ArrayList<>();
-            this.gtuTypeCounts = new ArrayList<>();
-            this.gtuTypesPerChild = new HashMap<>();
             this.markov = markov;
         }
 
@@ -504,9 +523,6 @@ public final class ODApplier
             this.object = object;
             this.stream = null;
             this.odEntry = odEntry;
-            this.gtuTypes = null;
-            this.gtuTypeCounts = null;
-            this.gtuTypesPerChild = null;
             this.markov = null;
         }
 

@@ -84,6 +84,21 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Ty
         return false;
     }
     
+    /**
+     * Returns the common ancestor of both types.
+     * @param type T; other type.
+     * @return common ancestor of both types, {@code null} if none
+     */
+    public final T commonAncestor(final T type)
+    {
+        T otherType = type;
+        while (otherType != null && !isOfType(otherType))
+        {
+            otherType = otherType.getParent();
+        }
+        return otherType;
+    }
+    
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")

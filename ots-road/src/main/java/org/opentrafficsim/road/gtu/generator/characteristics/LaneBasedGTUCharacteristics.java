@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane;
+package org.opentrafficsim.road.gtu.generator.characteristics;
 
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.network.Node;
@@ -41,10 +41,11 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
      * @param destination destination
      */
     public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics,
-            final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route, final Node origin, final Node destination)
+            final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route,
+            final Node origin, final Node destination)
     {
-        super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getLength(),
-                gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed());
+        super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getLength(), gtuCharacteristics.getWidth(),
+                gtuCharacteristics.getMaximumSpeed());
         this.strategicalPlannerFactory = laneBasedStrategicalPlannerFactory;
         this.route = route;
         this.origin = origin;
@@ -74,7 +75,7 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     {
         return this.origin;
     }
-    
+
     /**
      * @return Node; destination
      */

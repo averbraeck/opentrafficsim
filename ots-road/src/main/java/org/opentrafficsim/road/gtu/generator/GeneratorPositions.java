@@ -31,7 +31,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Helper class for vehicle generation which can draw the next GTU position to try to place a GTU. If the GTU can not be placed,
- * it should be included in a queue. This class required the number of unplaced GTU's per lane, in order to appropriately divide
+ * it should be included in a queue. This class requires the number of unplaced GTU's per lane, in order to appropriately divide
  * traffic over the lanes.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -185,7 +185,9 @@ public final class GeneratorPositions implements Locatable
      * Draw a new position to generate a GTU. The link is drawn by giving each link a weight equal to the number of accessible
      * lanes for the GTU type. Next, a lane is drawn using (optionally biased) weights.
      * @param gtuType GTUType; GTU type
-     * @param unplaced Map&lt;CrossSectionLink, Map&lt;Integer, Integer&gt;&gt;; number of unplaced GTUs per lane
+     * @param unplaced Map&lt;CrossSectionLink, Map&lt;Integer, Integer&gt;&gt;; number of unplaced GTUs per lane. The lane
+     *            number should match with {@code GeneratorLanePosition.getLaneNumber()}, where 1 is the right-most lane.
+     *            Missing lanes are assumed to have no queue.
      * @return GeneratorLanePosition; new position to generate a GTU
      */
     public GeneratorLanePosition draw(final GTUType gtuType, final Map<CrossSectionLink, Map<Integer, Integer>> unplaced)
@@ -363,7 +365,9 @@ public final class GeneratorPositions implements Locatable
          * @param gtuType GTUType; GTU type
          * @param stream StreamInterface; stream for random numbers
          * @param biases LaneBiases; biases for GTU types
-         * @param unplaced Map&lt;Integer, Integer&gt;; number of unplaced GTUs per lane
+         * @param unplaced Map&lt;Integer, Integer&gt;; number of unplaced GTUs per lane. The lane number should match with
+         *            {@code GeneratorLanePosition.getLaneNumber()}, where 1 is the right-most lane. Missing lanes are assumed
+         *            to have no queue.
          * @return GeneratorLanePosition; specific GeneratorLanePosition utilizing lane biases of GTU types
          */
         GeneratorLanePosition draw(final GTUType gtuType, final StreamInterface stream, final LaneBiases biases,
@@ -443,7 +447,9 @@ public final class GeneratorPositions implements Locatable
          * @param gtuType GTUType; GTU type
          * @param stream StreamInterface; stream for random numbers
          * @param biases LaneBiases; biases for GTU types
-         * @param unplaced Map&lt;CrossSectionLink, Map&lt;Integer, Integer&gt;&gt;; number of unplaced GTUs per lane
+         * @param unplaced Map&lt;CrossSectionLink, Map&lt;Integer, Integer&gt;&gt;; number of unplaced GTUs per lane. The lane
+         *            number should match with {@code GeneratorLanePosition.getLaneNumber()}, where 1 is the right-most lane.
+         *            Missing lanes are assumed to have no queue.
          * @return GeneratorLanePosition; draws a LinkPosition using number of accessible lanes for the GTUType as weight, and a
          *         GeneratorLanePosition from that
          */

@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**

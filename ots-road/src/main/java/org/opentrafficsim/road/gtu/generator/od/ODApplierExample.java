@@ -28,6 +28,7 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -46,8 +47,9 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.animation.LmrsSwitchableColorer;
-import org.opentrafficsim.road.gtu.generator.GeneratorAnimation;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.Bias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
@@ -89,7 +91,13 @@ public class ODApplierExample extends AbstractWrappableAnimation
 {
 
     /** Lane based or not. */
-    static final boolean LANE_BASED = false;
+    static final boolean LANE_BASED = true;
+
+    /** Simulation period. */
+    static final Duration PERIOD = new Duration(6000.0, DurationUnit.MINUTE);
+
+    /** Demand factor. */
+    static final Double DEMAND = 1.0;
 
     /** */
     private static final long serialVersionUID = 20171211L;
@@ -108,8 +116,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 {
                     ODApplierExample animation = new ODApplierExample();
                     // 1 hour simulation run for testing
-                    animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<Property<?>>(), null, true);
+                    animation.buildAnimator(Time.ZERO, Duration.ZERO, PERIOD, new ArrayList<Property<?>>(), null, true);
 
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
@@ -216,8 +223,11 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 CrossSectionLink linkAA3 = new CrossSectionLink(this.network, "AA3", nodeA, nodeA3, LinkType.CONNECTOR,
                         new OTSLine3D(pointA, pointA3), this.simulator, LongitudinalDirectionality.DIR_PLUS,
                         LaneKeepingPolicy.KEEP_RIGHT);
+                GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
+                compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
+                LinkType linkType2 = new LinkType("ROAD2", null, compatibility);
                 CrossSectionLink linkA1B =
-                        new CrossSectionLink(this.network, "A1B", nodeA1, nodeB, LinkType.ROAD, new OTSLine3D(pointA1, pointB),
+                        new CrossSectionLink(this.network, "A1B", nodeA1, nodeB, linkType2, new OTSLine3D(pointA1, pointB),
                                 this.simulator, LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
                 CrossSectionLink linkA2B =
                         new CrossSectionLink(this.network, "A2B", nodeA2, nodeB, LinkType.ROAD, new OTSLine3D(pointA2, pointB),
@@ -275,29 +285,39 @@ public class ODApplierExample extends AbstractWrappableAnimation
                     categorization = new Categorization("ODExample", GTUType.class);
                 }
                 List<Node> origins = new ArrayList<>();
-                origins.add(nodeA);
+                if (ODApplierExample.LANE_BASED)
+                {
+                    origins.add(nodeA1);
+                    origins.add(nodeA2);
+                    origins.add(nodeA3);
+                }
+                else
+                {
+                    origins.add(nodeA);
+                }
                 List<Node> destinations = new ArrayList<>();
                 destinations.add(nodeB);
-                TimeVector timeVector =
-                        new TimeVector(new double[] { 5, 600, 610, 1800, 3000 }, TimeUnit.BASE, StorageType.DENSE);
+                double fT = PERIOD.si / 3600;
+                TimeVector timeVector = new TimeVector(new double[] { 5 * fT, 600 * fT, 610 * fT, 1800 * fT, 3000 * fT },
+                        TimeUnit.BASE, StorageType.DENSE);
                 ODMatrix od =
                         new ODMatrix("ODExample", origins, destinations, categorization, timeVector, Interpolation.LINEAR);
-                double f = 2.0;
-                FrequencyVector demand = new FrequencyVector(new double[] { 0 * f, 1000 * f, 3000 * f, 7000 * f, 0 * f },
+                FrequencyVector demand = new FrequencyVector(new double[] { 0 * DEMAND, 1000 * DEMAND, 3000 * DEMAND, 7000 * DEMAND, 0 * DEMAND },
                         FrequencyUnit.PER_HOUR, StorageType.DENSE);
 
                 if (ODApplierExample.LANE_BASED)
                 {
+                    // TODO too many truck are being generated
                     Category category = new Category(categorization, lane1, GTUType.CAR);
-                    od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .4);
+                    od.putDemandVector(nodeA2, nodeB, category, demand, timeVector, Interpolation.LINEAR, .4);
                     category = new Category(categorization, lane2, GTUType.CAR);
-                    od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .25);
+                    od.putDemandVector(nodeA2, nodeB, category, demand, timeVector, Interpolation.LINEAR, .25);
                     category = new Category(categorization, lane2, GTUType.TRUCK);
-                    od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .05);
+                    od.putDemandVector(nodeA2, nodeB, category, demand, timeVector, Interpolation.LINEAR, .05);
                     category = new Category(categorization, lane3, GTUType.CAR);
-                    od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .1);
+                    od.putDemandVector(nodeA2, nodeB, category, demand, timeVector, Interpolation.LINEAR, .1);
                     category = new Category(categorization, lane3, GTUType.TRUCK);
-                    od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .2);
+                    od.putDemandVector(nodeA2, nodeB, category, demand, timeVector, Interpolation.LINEAR, .2);
                 }
                 else
                 {
@@ -311,12 +331,13 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 markov.addState(GTUType.TRUCK, 0.95);
                 LaneBiases biases =
                         new LaneBiases().addBias(GTUType.TRUCK, Bias.TRUCK_RIGHT).addBias(GTUType.VEHICLE, Bias.LEFT);
-                ODOptions odOptions = new ODOptions().set(ODOptions.COLORER, this.colorer).set(ODOptions.MARKOV, markov)
-                        .set(ODOptions.BIAS, biases).set(ODOptions.NO_LC, Length.createSI(300)).setReadOnly();
+                ODOptions odOptions = new ODOptions().set(ODOptions.GTU_COLORER, this.colorer)
+                        .set(lane0, ODOptions.GTU_COLORER, new DefaultSwitchableGTUColorer()).set(ODOptions.MARKOV, markov)
+                        .set(ODOptions.LANE_BIAS, biases).set(ODOptions.NO_LC_DIST, Length.createSI(300)).setReadOnly();
                 Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
                 for (String str : generatedObjects.keySet())
                 {
-                    new GeneratorAnimation(generatedObjects.get(str).getGenerator(), this.simulator);
+                    new GTUGeneratorAnimation(generatedObjects.get(str).getGenerator(), this.simulator);
                 }
 
             }

@@ -9,6 +9,7 @@ import org.opentrafficsim.core.compatibility.Compatibility;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 
 /**

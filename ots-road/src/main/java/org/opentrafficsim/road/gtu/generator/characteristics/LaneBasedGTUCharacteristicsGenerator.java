@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane;
+package org.opentrafficsim.road.gtu.generator.characteristics;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ProbabilityException;

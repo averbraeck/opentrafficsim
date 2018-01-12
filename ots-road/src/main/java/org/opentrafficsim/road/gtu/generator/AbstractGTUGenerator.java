@@ -1,10 +1,17 @@
 package org.opentrafficsim.road.gtu.generator;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import javax.media.j3d.BoundingBox;
+import javax.media.j3d.Bounds;
+import javax.vecmath.Point3d;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -15,6 +22,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -39,6 +47,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Common code for LaneBasedGTU generators that may have to postpone putting a GTU on the road due to congestion growing into
@@ -55,7 +64,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractGTUGenerator implements Serializable
+public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
 {
     /** */
     private static final long serialVersionUID = 20150202L;
@@ -114,6 +123,9 @@ public abstract class AbstractGTUGenerator implements Serializable
     /** Number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected long numberGTUs = 0;
+    
+    /** Bounds for animation. */
+    private final Bounds bounds;
 
     /**
      * @param name the name of the generator
@@ -159,7 +171,16 @@ public abstract class AbstractGTUGenerator implements Serializable
         this.strategicalPlannerFactory = strategicalPlannerFactory;
         this.routeGenerator = routeGenerator;
         this.network = network;
-
+        DirectedPoint p;
+        try
+        {
+            p = this.getLocation();
+            this.bounds = new BoundingBox(new Point3d(p.x - 1, p.y - 1, 0.0), new Point3d(p.x + 1, p.y + 1, 0.0));
+        }
+        catch (@SuppressWarnings("unused") RemoteException exception)
+        {
+            throw new RuntimeException("Bounds for generator cannot be determined.");
+        }
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
     }
 
@@ -569,6 +590,43 @@ public abstract class AbstractGTUGenerator implements Serializable
     public final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> getStrategicalPlannerFactory()
     {
         return this.strategicalPlannerFactory;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DirectedPoint getLocation() throws RemoteException
+    {
+        try
+        {
+            return this.lane.getCenterLine().getLocation(this.position);
+        }
+        catch (@SuppressWarnings("unused") OTSGeometryException exception)
+        {
+            return this.lane.getLocation();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Bounds getBounds() throws RemoteException
+    {
+        return this.bounds;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Map<DirectedPoint, Integer> getQueueLengths()
+    {
+        Map<DirectedPoint, Integer> map = new HashMap<>();
+        try
+        {
+            map.put(getLocation(), this.carBuilderList.size());
+        }
+        catch (@SuppressWarnings("unused") RemoteException exception)
+        {
+            throw new RuntimeException("Locartion for generator queue cannot be determined.");
+        }
+        return map;
     }
 
 }
