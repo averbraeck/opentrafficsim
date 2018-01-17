@@ -9,12 +9,10 @@ import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
@@ -25,11 +23,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
+
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Utilities for demos, e.g. parsing.
@@ -148,13 +147,14 @@ public final class PropertiesParser
      * @param properties the properties to parse
      * @param gtuFollowingModel the car following model in case it is needed
      * @param laneChangeModel the lane change model in case it is needed
+     * @param stream random stream
      * @return LaneBasedStrategicalPlannerFactory; the tactical planner factory
      * @throws PropertyException in case parsing fails
      * @throws GTUException in case LMRS Factory cannot be created
      */
     public static LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> parseStrategicalPlannerFactory(
             final List<Property<?>> properties, final GTUFollowingModelOld gtuFollowingModel,
-            final LaneChangeModel laneChangeModel) throws PropertyException, GTUException
+            final LaneChangeModel laneChangeModel, final StreamInterface stream) throws PropertyException, GTUException
     {
         for (Property<?> ap : new CompoundProperty("", "", "", properties, false, 0))
         {
@@ -183,7 +183,7 @@ public final class PropertiesParser
                     {
                         // provide default parameters with the car-following model
                         return new LaneBasedStrategicalRoutePlannerFactory(
-                                new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
+                                new LMRSFactory(new IDMPlusFactory(stream), new DefaultLMRSPerceptionFactory()));
                     }
                     else if ("Toledo".equals(tacticalPlannerName))
                     {

@@ -2,18 +2,16 @@ package org.opentrafficsim.road.gtu.strategical.route;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryDefault;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.AbstractLaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 
 /**
  * Factory for creating {@code LaneBasedStrategicalRoutePlanner} using any {@code LaneBasedTacticalPlannerFactory}.
@@ -26,19 +24,12 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 public class LaneBasedStrategicalRoutePlannerFactory
-        implements LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>, Serializable
+        extends AbstractLaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160811L;
-
-    /** Factory for tactical planners. */
-    private final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory;
-
-    /** Parameter factory. */
-    private final ParameterFactory parameterFactory;
 
     /**
      * Constructor with factory for tactical planners.
@@ -47,8 +38,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory)
     {
-        this.tacticalPlannerFactory = tacticalPlannerFactory;
-        this.parameterFactory = new ParameterFactoryDefault();
+        super(tacticalPlannerFactory);
     }
 
     /**
@@ -60,8 +50,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
             final ParameterFactory parametersFactory)
     {
-        this.tacticalPlannerFactory = tacticalPlannerFactory;
-        this.parameterFactory = parametersFactory;
+        super(tacticalPlannerFactory, parametersFactory);
     }
 
     /** {@inheritDoc} */
@@ -69,25 +58,24 @@ public class LaneBasedStrategicalRoutePlannerFactory
     public final LaneBasedStrategicalPlanner create(final LaneBasedGTU gtu, final Route route, final Node origin,
             final Node destination) throws GTUException
     {
-        Parameters parameters = this.tacticalPlannerFactory.getParameters();
-        try
-        {
-            this.parameterFactory.setValues(parameters, gtu.getGTUType());
-        }
-        catch (ParameterException exception)
-        {
-            throw new GTUException("Parameter was set to illegal value.", exception);
-        }
-        LaneBasedStrategicalRoutePlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
-                this.tacticalPlannerFactory.create(gtu), route, gtu, origin, destination);
+        LaneBasedStrategicalRoutePlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
+                nextParameters(gtu.getGTUType()), nextTacticalPlanner(gtu), route, gtu, origin, destination);
         return strategicalPlanner;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected Parameters getParameters()
+    {
+        // no specific parameters required for a LaneBasedStrategicalRoutePlanner
+        return null;
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "LaneBasedStrategicalRoutePlannerFactory [tacticalPlannerFactory=" + this.tacticalPlannerFactory + "]";
+        return "LaneBasedStrategicalRoutePlannerFactory [tacticalPlannerFactory=" + getTacticalPlannerFactory() + "]";
     }
 
 }

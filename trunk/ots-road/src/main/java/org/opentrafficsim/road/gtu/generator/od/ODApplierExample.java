@@ -28,7 +28,6 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -49,8 +48,9 @@ import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.animation.LmrsSwitchableColorer;
+import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
-import org.opentrafficsim.road.gtu.generator.GeneratorPositions.Bias;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
@@ -61,6 +61,7 @@ import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation.TYPE;
+import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -69,6 +70,9 @@ import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
@@ -91,13 +95,13 @@ public class ODApplierExample extends AbstractWrappableAnimation
 {
 
     /** Lane based or not. */
-    static final boolean LANE_BASED = true;
+    static final boolean LANE_BASED = false;
 
     /** Simulation period. */
-    static final Duration PERIOD = new Duration(6000.0, DurationUnit.MINUTE);
+    static final Duration PERIOD = new Duration(60.0, DurationUnit.MINUTE);
 
     /** Demand factor. */
-    static final Double DEMAND = 1.0;
+    static final Double DEMAND = 2.0;
 
     /** */
     private static final long serialVersionUID = 20171211L;
@@ -223,18 +227,15 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 CrossSectionLink linkAA3 = new CrossSectionLink(this.network, "AA3", nodeA, nodeA3, LinkType.CONNECTOR,
                         new OTSLine3D(pointA, pointA3), this.simulator, LongitudinalDirectionality.DIR_PLUS,
                         LaneKeepingPolicy.KEEP_RIGHT);
-                GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
-                compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
-                LinkType linkType2 = new LinkType("ROAD2", null, compatibility);
-                CrossSectionLink linkA1B =
-                        new CrossSectionLink(this.network, "A1B", nodeA1, nodeB, linkType2, new OTSLine3D(pointA1, pointB),
-                                this.simulator, LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
-                CrossSectionLink linkA2B =
-                        new CrossSectionLink(this.network, "A2B", nodeA2, nodeB, LinkType.ROAD, new OTSLine3D(pointA2, pointB),
-                                this.simulator, LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
-                CrossSectionLink linkA3B =
-                        new CrossSectionLink(this.network, "A3B", nodeA3, nodeB, LinkType.ROAD, new OTSLine3D(pointA3, pointB),
-                                this.simulator, LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
+                CrossSectionLink linkA1B = new CrossSectionLink(this.network, "A1B", nodeA1, nodeB, LinkType.FREEWAY,
+                        new OTSLine3D(pointA1, pointB), this.simulator, LongitudinalDirectionality.DIR_PLUS,
+                        LaneKeepingPolicy.KEEP_RIGHT);
+                CrossSectionLink linkA2B = new CrossSectionLink(this.network, "A2B", nodeA2, nodeB, LinkType.FREEWAY,
+                        new OTSLine3D(pointA2, pointB), this.simulator, LongitudinalDirectionality.DIR_PLUS,
+                        LaneKeepingPolicy.KEEP_RIGHT);
+                CrossSectionLink linkA3B = new CrossSectionLink(this.network, "A3B", nodeA3, nodeB, LinkType.FREEWAY,
+                        new OTSLine3D(pointA3, pointB), this.simulator, LongitudinalDirectionality.DIR_PLUS,
+                        LaneKeepingPolicy.KEEP_RIGHT);
                 Lane lane0 = new Lane(linkA1B, "lane0", Length.createSI(0.0), Length.createSI(3.5), LaneType.HIGHWAY,
                         new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Lane lane1 = new Lane(linkA2B, "lane1", Length.createSI(3.5), Length.createSI(3.5), LaneType.HIGHWAY,
@@ -273,6 +274,15 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 new SinkSensor(lane2, Length.createSI(900), this.simulator);
                 new SinkSensor(lane3, Length.createSI(900), this.simulator);
                 new SinkSensor(lane4, Length.createSI(904), this.simulator);
+                // traffic light
+                TrafficLight trafficLight = new SimpleTrafficLight("light1", lane1, Length.createSI(800.0), this.simulator);
+                new TrafficLightAnimation(trafficLight, this.simulator);
+                this.simulator.scheduleEventAbs(Time.createSI(30 * 60), this, trafficLight, "setTrafficLightColor",
+                        new Object[] { TrafficLightColor.YELLOW });
+                this.simulator.scheduleEventAbs(Time.createSI(30 * 60 + 6), this, trafficLight, "setTrafficLightColor",
+                        new Object[] { TrafficLightColor.RED });
+                this.simulator.scheduleEventAbs(Time.createSI(35 * 60), this, trafficLight, "setTrafficLightColor",
+                        new Object[] { TrafficLightColor.GREEN });
 
                 // OD
                 Categorization categorization;
@@ -302,12 +312,12 @@ public class ODApplierExample extends AbstractWrappableAnimation
                         TimeUnit.BASE, StorageType.DENSE);
                 ODMatrix od =
                         new ODMatrix("ODExample", origins, destinations, categorization, timeVector, Interpolation.LINEAR);
-                FrequencyVector demand = new FrequencyVector(new double[] { 0 * DEMAND, 1000 * DEMAND, 3000 * DEMAND, 7000 * DEMAND, 0 * DEMAND },
+                FrequencyVector demand = new FrequencyVector(
+                        new double[] { 0 * DEMAND, 1000 * DEMAND, 3000 * DEMAND, 7000 * DEMAND, 0 * DEMAND },
                         FrequencyUnit.PER_HOUR, StorageType.DENSE);
 
                 if (ODApplierExample.LANE_BASED)
                 {
-                    // TODO too many truck are being generated
                     Category category = new Category(categorization, lane1, GTUType.CAR);
                     od.putDemandVector(nodeA2, nodeB, category, demand, timeVector, Interpolation.LINEAR, .4);
                     category = new Category(categorization, lane2, GTUType.CAR);
@@ -328,12 +338,13 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 }
                 // options
                 MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
-                markov.addState(GTUType.TRUCK, 0.95);
-                LaneBiases biases =
-                        new LaneBiases().addBias(GTUType.TRUCK, Bias.TRUCK_RIGHT).addBias(GTUType.VEHICLE, Bias.LEFT);
+                markov.addState(GTUType.TRUCK, 0.4);
+                LaneBiases biases = new LaneBiases().addBias(GTUType.VEHICLE, LaneBias.bySpeed(130, 80)).addBias(GTUType.TRUCK,
+                        LaneBias.TRUCK_RIGHT);
                 ODOptions odOptions = new ODOptions().set(ODOptions.GTU_COLORER, this.colorer)
+                        .set(ODOptions.ROOM_CHECKER, new CFBARoomChecker())
                         .set(lane0, ODOptions.GTU_COLORER, new DefaultSwitchableGTUColorer()).set(ODOptions.MARKOV, markov)
-                        .set(ODOptions.LANE_BIAS, biases).set(ODOptions.NO_LC_DIST, Length.createSI(300)).setReadOnly();
+                        .set(ODOptions.LANE_BIAS, biases).set(ODOptions.NO_LC_DIST, Length.createSI(100.0)).setReadOnly();
                 Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
                 for (String str : generatedObjects.keySet())
                 {

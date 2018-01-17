@@ -35,6 +35,9 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
 
     /** Random headway generator. */
     private final HeadwayRandomization randomization;
+    
+    /** First GTU. */
+    private boolean first = true;
 
     /**
      * @param arrivals Arrivals; arrivals
@@ -99,6 +102,12 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         double f2 = this.arrivals.getFrequency(t2, false).si;
         // next vehicle's random factor
         double rem = this.randomization.draw(this.stream);
+        if (this.first)
+        {
+            // first headway may be partially in the past, take a random factor
+            rem *= this.stream.nextDouble();
+            this.first = false;
+        }
         // integrate until rem (by reducing it to 0.0, possibly in steps per slice)
         while (rem > 0.0)
         {

@@ -380,7 +380,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
             this.carFollowingModel = PropertiesParser.parseGTUFollowingModelOld(this.properties, "Car");
             this.laneChangeModel = PropertiesParser.parseLaneChangeModel(this.properties);
             this.strategicalPlannerFactory = PropertiesParser.parseStrategicalPlannerFactory(this.properties,
-                    this.carFollowingModel, this.laneChangeModel);
+                    this.carFollowingModel, this.laneChangeModel, this.stream);
         }
         catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | PropertyException
                 | GTUException exception)

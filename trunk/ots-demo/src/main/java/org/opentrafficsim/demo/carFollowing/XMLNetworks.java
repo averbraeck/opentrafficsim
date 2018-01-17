@@ -123,7 +123,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
 
     /** The model. */
     private XMLNetworkModel model;
-
+    
     /**
      * Define the XMLNetworks.
      */
@@ -286,6 +286,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
 
     /** Id generator (used by all generators). */
     private IdGenerator idGenerator = new IdGenerator("");
+    
+    /** Random stream. */
+    private StreamInterface stream = new MersenneTwister(1234); // Use a fixed seed for the demos
 
     /**
      * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
@@ -523,9 +526,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         {
                             // provide default parameters with the car-following model
                             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
+                                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
                             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
+                                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
                         }
                         else if ("Toledo".equals(tacticalPlannerName))
                         {
@@ -712,23 +715,22 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     private LaneBasedGTUGenerator makeGenerator(final Lane lane)
             throws GTUException, SimRuntimeException, ProbabilityException, ParameterException
     {
-        StreamInterface stream = new MersenneTwister(1234); // Use a fixed seed for the demos
         Distribution<LaneBasedTemplateGTUType> distribution = new Distribution<>(stream);
         Length initialPosition = new Length(16, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
 
-        LaneBasedTemplateGTUType template = makeTemplate(stream, lane,
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 3, 6), METER),
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 1.6, 2.0), METER),
-                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 140, 180), KM_PER_HOUR),
+        LaneBasedTemplateGTUType template = makeTemplate(this.stream, lane,
+                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 3, 6), METER),
+                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 1.6, 2.0), METER),
+                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(this.stream, 140, 180), KM_PER_HOUR),
                 initialPositions, this.strategicalPlannerGeneratorCars);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(this.carProbability, template));
-        template = makeTemplate(stream, lane,
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 8, 14), METER),
-                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(stream, 2.0, 2.5), METER),
-                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 100, 140), KM_PER_HOUR),
+        template = makeTemplate(this.stream, lane,
+                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 8, 14), METER),
+                new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 2.0, 2.5), METER),
+                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(this.stream, 100, 140), KM_PER_HOUR),
                 initialPositions, this.strategicalPlannerGeneratorTrucks);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));

@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.gtu.strategical;
 
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -17,7 +20,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> class of the strategical planner generated
  */
-
 public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategicalPlanner>
 {
 
@@ -31,5 +33,34 @@ public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategic
      * @throws GTUException if the gtu is not suitable in any way for the creation of the strategical planner
      */
     T create(LaneBasedGTU gtu, Route route, Node origin, Node destination) throws GTUException;
+
+    /**
+     * Peek to see the desired speed of the next GTU to be generated at the given location. The default implementation returns
+     * {@code null}, at which point the GTU generator will use some other speed.
+     * @param gtuType GTUType; GTU type
+     * @param speedLimit Speed; speed limit
+     * @param maxGtuSpeed Speed; maximum GTU speed
+     * @return desired speed of the next GTU to be generated at the given location, may be {@code null} at which point the GTU
+     *         generator will use some other speed
+     * @throws GTUException on parameter exception or network exception
+     */
+    default Speed peekDesiredSpeed(GTUType gtuType, Speed speedLimit, Speed maxGtuSpeed) throws GTUException
+    {
+        return null;
+    }
+
+    /**
+     * Peek to see the desired headway of the next GTU to be generated at the given speed. The default implementation returns
+     * {@code null}, at which point the GTU generator will only generate GTU's at fixed locations.
+     * @param gtuType GTUType; GTU type
+     * @param speed Speed; speed the GTU might be generated at
+     * @return Length; desired headway of the next GTU to be generated at the given speed, may be {@code null} at which point
+     *         the GTU generator only generate GTU's at fixed locations
+     * @throws GTUException on parameter exception or network exception
+     */
+    default Length peekDesiredHeadway(GTUType gtuType, Speed speed) throws GTUException
+    {
+        return null;
+    }
 
 }

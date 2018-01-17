@@ -34,7 +34,6 @@ import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -67,7 +66,6 @@ import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
@@ -104,6 +102,8 @@ import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.Simulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Demonstrate an implementation of ModelEvent.
@@ -472,7 +472,7 @@ public class ModelControlDemo extends ModelStarter
         private List<List<Lane>> paths = new ArrayList<>();
 
         /** The random number generator used to decide what kind of GTU to generate. */
-        private Random randomGenerator = new Random(12345);
+        private StreamInterface randomGenerator = new MersenneTwister(12345);
 
         /** The GTUColorer for the generated vehicles. */
         private final GTUColorer gtuColorer;
@@ -747,9 +747,9 @@ public class ModelControlDemo extends ModelStarter
                             {
                                 // provide default parameters with the car-following model
                                 this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                        new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
+                                        new LMRSFactory(new IDMPlusFactory(this.randomGenerator), new DefaultLMRSPerceptionFactory()));
                                 this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                        new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
+                                        new LMRSFactory(new IDMPlusFactory(this.randomGenerator), new DefaultLMRSPerceptionFactory()));
                             }
                             else if ("Toledo".equals(tacticalPlannerName))
                             {

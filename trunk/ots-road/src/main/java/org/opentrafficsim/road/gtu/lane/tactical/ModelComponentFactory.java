@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 
 /**
@@ -46,6 +47,8 @@ public interface ModelComponentFactory
      * used utilities should be included.<br>
      * <br>
      * @return parameters for the given component
+     * @throws ParameterException on parameter exception
      */
-    Parameters getParameters();
+    Parameters getParameters() throws ParameterException;
+    
 }

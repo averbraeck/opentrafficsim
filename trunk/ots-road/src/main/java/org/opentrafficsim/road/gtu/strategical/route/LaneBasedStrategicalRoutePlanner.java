@@ -148,10 +148,6 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         }
         if (node.getLinks().size() == 2)
         {
-            // if (node.getId().contains("68.158"))
-            // {
-            // System.err.println(node + ", size=2");
-            // }
             for (Link link : node.getLinks())
             {
                 if (!link.equals(previousLink))
@@ -232,27 +228,14 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         }
         Node nextNode = this.route.getNode(i + 1);
 
-        // if (node.getId().contains("68.158"))
-        // {
-        // System.err.println(node + ", route, nextNode = " + nextNode);
-        // }
-
         for (Link link : links)
         {
             if (link.getStartNode().equals(nextNode) && link.getEndNode().equals(node))
             {
-                // if (node.getId().contains("68.158"))
-                // {
-                // System.err.println(node + ", returned " + link);
-                // }
                 return new LinkDirection(link, GTUDirectionality.DIR_MINUS);
             }
             if (link.getEndNode().equals(nextNode) && link.getStartNode().equals(node))
             {
-                // if (node.getId().contains("68.158"))
-                // {
-                // System.err.println(node + ", route, returned " + link);
-                // }
                 return new LinkDirection(link, GTUDirectionality.DIR_PLUS);
             }
         }

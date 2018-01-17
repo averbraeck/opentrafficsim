@@ -259,15 +259,15 @@ public class ShortMerge extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
+        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> sim)
                 throws SimRuntimeException, RemoteException
         {
-            ShortMerge.this.setSimulator((OTSDEVSSimulatorInterface) simulator);
+            ShortMerge.this.setSimulator((OTSDEVSSimulatorInterface) sim);
 
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) simulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) sim);
                 this.network = new OTSNetwork("ShortMerge");
                 nlp.build(stream, this.network);
 
@@ -317,7 +317,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
             IdGenerator idGenerator = new IdGenerator("");
 
-            CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory();
+            CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory(streams.get("gtuClass"));
             Parameters params = new Parameters();
             params.setDefaultParameter(AbstractIDM.DELTA);
 

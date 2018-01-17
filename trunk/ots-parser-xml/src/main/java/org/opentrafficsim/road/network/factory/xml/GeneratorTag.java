@@ -52,6 +52,7 @@ import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * <p>
@@ -358,14 +359,15 @@ class GeneratorTag implements Serializable
         Time startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.ZERO;
         Time endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
         Length position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
-        LaneBasedTacticalPlannerFactory<?> tacticalPlannerFactory = makeTacticalPlannerFactory(generatorTag);
+        LaneBasedTacticalPlannerFactory<?> tacticalPlannerFactory =
+                makeTacticalPlannerFactory(generatorTag, simulator.getReplication().getStream("GENERAL"));
         LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalPlannerFactory);
-        GTUGeneratorIndividual generator = new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
-                generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
-                generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane,
-                position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlannerFactory, routeGenerator,
-                parser.network);
+        GTUGeneratorIndividual generator = new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator,
+                generatorTag.gtuTag.gtuType, gtuClass, generatorTag.initialSpeedDist, generatorTag.iatDist,
+                generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist,
+                generatorTag.maxGTUs, startTime, endTime, lane, position, generatorTag.gtuDirection, generatorTag.gtuColorer,
+                strategicalPlannerFactory, routeGenerator, parser.network);
         try
         {
             new GTUGeneratorAnimation(generator, simulator);
@@ -384,9 +386,11 @@ class GeneratorTag implements Serializable
     /**
      * Factories are: IDM|MOBIL/IDM|DIRECTION/IDM|LMRS|TOLEDO.
      * @param generatorTag the tag to parse
+     * @param stream random number stream
      * @return a LaneBasedTacticalPlannerFactory according to the tag
      */
-    static LaneBasedTacticalPlannerFactory<?> makeTacticalPlannerFactory(final GeneratorTag generatorTag)
+    static LaneBasedTacticalPlannerFactory<?> makeTacticalPlannerFactory(final GeneratorTag generatorTag,
+            final StreamInterface stream)
     {
         if (generatorTag.tacticalPlannerName == null || generatorTag.tacticalPlannerName.equals("IDM"))
         {
@@ -404,7 +408,7 @@ class GeneratorTag implements Serializable
         {
             try
             {
-                return new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory());
+                return new LMRSFactory(new IDMPlusFactory(stream), new DefaultLMRSPerceptionFactory());
             }
             catch (GTUException exception)
             {

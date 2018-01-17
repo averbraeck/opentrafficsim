@@ -16,10 +16,15 @@ import javax.media.j3d.BoundingBox;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkDirection;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.BySpeed;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.ByValue;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -60,7 +65,7 @@ public final class GeneratorPositions implements Locatable
     /** Bounds. */
     private final Bounds bounds;
 
-    /** Set of all positions for animation. */
+    /** Set of all positions. */
     private final Set<GeneratorLanePosition> allPositions = new HashSet<>();
 
     /**
@@ -188,11 +193,13 @@ public final class GeneratorPositions implements Locatable
      * @param unplaced Map&lt;CrossSectionLink, Map&lt;Integer, Integer&gt;&gt;; number of unplaced GTUs per lane. The lane
      *            number should match with {@code GeneratorLanePosition.getLaneNumber()}, where 1 is the right-most lane.
      *            Missing lanes are assumed to have no queue.
+     * @param desiredSpeed Speed; desired speed, possibly used to determine the biased road position
      * @return GeneratorLanePosition; new position to generate a GTU
      */
-    public GeneratorLanePosition draw(final GTUType gtuType, final Map<CrossSectionLink, Map<Integer, Integer>> unplaced)
+    public GeneratorLanePosition draw(final GTUType gtuType, final Map<CrossSectionLink, Map<Integer, Integer>> unplaced,
+            final Speed desiredSpeed)
     {
-        return this.position.draw(gtuType, this.stream, this.biases, unplaced);
+        return this.position.draw(gtuType, this.stream, this.biases, unplaced, desiredSpeed);
     }
 
     /** {@inheritDoc} */
@@ -216,6 +223,37 @@ public final class GeneratorPositions implements Locatable
     public Set<GeneratorLanePosition> getAllPositions()
     {
         return this.allPositions;
+    }
+
+    /**
+     * Returns the speed limit for the given GTU type, prior to the GTU position being determined.
+     * @param gtuType GTUType; GTU type
+     * @return speed limit for the given GTU type, prior to the GTU position being determined
+     */
+    public Speed speedLimit(GTUType gtuType)
+    {
+        Speed speedLimit = null;
+        for (GeneratorLanePosition pos : this.allPositions)
+        {
+            for (DirectedLanePosition lane : pos.getPosition())
+            {
+                try
+                {
+                    Speed limit = lane.getLane().getSpeedLimit(gtuType);
+                    if (speedLimit == null || limit.lt(speedLimit))
+                    {
+                        speedLimit = limit;
+                    }
+                }
+                catch (@SuppressWarnings("unused") NetworkException exception)
+                {
+                    // ignore
+                }
+            }
+        }
+        Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GTUType %s.",
+                gtuType);
+        return speedLimit;
     }
 
     /**
@@ -368,10 +406,11 @@ public final class GeneratorPositions implements Locatable
          * @param unplaced Map&lt;Integer, Integer&gt;; number of unplaced GTUs per lane. The lane number should match with
          *            {@code GeneratorLanePosition.getLaneNumber()}, where 1 is the right-most lane. Missing lanes are assumed
          *            to have no queue.
+         * @param desiredSpeed Speed; desired speed, possibly used to determine the biased road position
          * @return GeneratorLanePosition; specific GeneratorLanePosition utilizing lane biases of GTU types
          */
         GeneratorLanePosition draw(final GTUType gtuType, final StreamInterface stream, final LaneBiases biases,
-                final Map<Integer, Integer> unplaced)
+                final Map<Integer, Integer> unplaced, final Speed desiredSpeed)
         {
             double[] cumulWeights = new double[this.positions.size()];
             double totalWeight = 0.0;
@@ -389,8 +428,8 @@ public final class GeneratorPositions implements Locatable
                             found = true;
                             int laneNum = lanePosition.getLaneNumber();
                             int unplacedTemplates = unplaced == null ? 0 : unplaced.getOrDefault(laneNum, 0);
-                            totalWeight +=
-                                    biases.getBias(type).calculateWeight(laneNum, getNumberOfLanes(gtuType), unplacedTemplates);
+                            totalWeight += biases.getBias(type).calculateWeight(laneNum, getNumberOfLanes(gtuType),
+                                    unplacedTemplates, desiredSpeed);
                         }
                         type = type.getParent();
                     }
@@ -450,11 +489,12 @@ public final class GeneratorPositions implements Locatable
          * @param unplaced Map&lt;CrossSectionLink, Map&lt;Integer, Integer&gt;&gt;; number of unplaced GTUs per lane. The lane
          *            number should match with {@code GeneratorLanePosition.getLaneNumber()}, where 1 is the right-most lane.
          *            Missing lanes are assumed to have no queue.
+         * @param desiredSpeed Speed; desired speed, possibly used to determine the biased road position
          * @return GeneratorLanePosition; draws a LinkPosition using number of accessible lanes for the GTUType as weight, and a
          *         GeneratorLanePosition from that
          */
         GeneratorLanePosition draw(final GTUType gtuType, final StreamInterface stream, final LaneBiases biases,
-                final Map<CrossSectionLink, Map<Integer, Integer>> unplaced)
+                final Map<CrossSectionLink, Map<Integer, Integer>> unplaced, final Speed desiredSpeed)
         {
             double[] cumulWeights = new double[this.positions.size()];
             double totalWeight = 0.0;
@@ -469,11 +509,11 @@ public final class GeneratorPositions implements Locatable
                 if (r <= cumulWeights[i])
                 {
                     GeneratorLinkPosition position = this.positions.get(i);
-                    return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()));
+                    return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()), desiredSpeed);
                 }
             }
             GeneratorLinkPosition position = this.positions.get(this.positions.size() - 1);
-            return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()));
+            return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()), desiredSpeed);
         }
 
     }
@@ -493,7 +533,7 @@ public final class GeneratorPositions implements Locatable
     {
 
         /** Biases per GTU type. */
-        private final Map<GTUType, Bias> biases = new HashMap<>();
+        private final Map<GTUType, LaneBias> biases = new HashMap<>();
 
         /**
          * Adds a GTU bias for randomly drawing a lane.
@@ -501,7 +541,7 @@ public final class GeneratorPositions implements Locatable
          * @param bias Bias; bias
          * @return LaneBiases; lane biases for method chaining
          */
-        public LaneBiases addBias(final GTUType gtuType, final Bias bias)
+        public LaneBiases addBias(final GTUType gtuType, final LaneBias bias)
         {
             Throw.whenNull(gtuType, "GTU type may not be null.");
             Throw.whenNull(bias, "Bias may not be null.");
@@ -524,9 +564,9 @@ public final class GeneratorPositions implements Locatable
          * @param gtuType GTUType; GTU type
          * @return Bias; bias of the GTU type
          */
-        public Bias getBias(final GTUType gtuType)
+        public LaneBias getBias(final GTUType gtuType)
         {
-            return this.biases.getOrDefault(gtuType, Bias.NONE);
+            return this.biases.getOrDefault(gtuType, LaneBias.NONE);
         }
 
         /** {@inheritDoc} */
@@ -550,44 +590,66 @@ public final class GeneratorPositions implements Locatable
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public static final class Bias
+    public static final class LaneBias
     {
 
         /** No bias. */
-        public static final Bias NONE = new Bias(0.0, 0.0, Integer.MAX_VALUE);
+        public static final LaneBias NONE = new LaneBias(new ByValue(0.0), 0.0, Integer.MAX_VALUE);
 
         /** Weak left-hand bias, 2nd left lane contains 50% relative to left most lane, in free traffic. */
-        public static final Bias WEAK_LEFT = new Bias(1.0, 1.0, Integer.MAX_VALUE);
+        public static final LaneBias WEAK_LEFT = new LaneBias(new ByValue(1.0), 1.0, Integer.MAX_VALUE);
 
         /** Left-hand bias, 2nd left lane contains 25% relative to left most lane, in free traffic. */
-        public static final Bias LEFT = new Bias(1.0, 2.0, Integer.MAX_VALUE);
+        public static final LaneBias LEFT = new LaneBias(new ByValue(1.0), 2.0, Integer.MAX_VALUE);
 
         /** Strong left-hand bias, 2nd left lane contains 3.125% relative to left most lane, in free traffic. */
-        public static final Bias STRONG_LEFT = new Bias(1.0, 5.0, Integer.MAX_VALUE);
+        public static final LaneBias STRONG_LEFT = new LaneBias(new ByValue(1.0), 5.0, Integer.MAX_VALUE);
 
         /** Weak middle bias, 2nd left lane contains 50% relative to left most lane, in free traffic. */
-        public static final Bias WEAK_MIDDLE = new Bias(0.5, 1.0, Integer.MAX_VALUE);
+        public static final LaneBias WEAK_MIDDLE = new LaneBias(new ByValue(0.5), 1.0, Integer.MAX_VALUE);
 
         /** Middle bias, 2nd left lane contains 25% relative to left most lane, in free traffic. */
-        public static final Bias MIDDLE = new Bias(0.5, 2.0, Integer.MAX_VALUE);
+        public static final LaneBias MIDDLE = new LaneBias(new ByValue(0.5), 2.0, Integer.MAX_VALUE);
 
         /** Strong middle bias, 2nd left lane contains 3.125% relative to left most lane, in free traffic. */
-        public static final Bias STRONG_MIDDLE = new Bias(0.5, 5.0, Integer.MAX_VALUE);
+        public static final LaneBias STRONG_MIDDLE = new LaneBias(new ByValue(0.5), 5.0, Integer.MAX_VALUE);
 
         /** Weak right-hand bias, 2nd right lane contains 50% relative to right most lane, in free traffic. */
-        public static final Bias WEAK_RIGHT = new Bias(0.0, 1.0, Integer.MAX_VALUE);
+        public static final LaneBias WEAK_RIGHT = new LaneBias(new ByValue(0.0), 1.0, Integer.MAX_VALUE);
 
         /** Right-hand bias, 2nd right lane contains 25% relative to right most lane, in free traffic. */
-        public static final Bias RIGHT = new Bias(0.0, 2.0, Integer.MAX_VALUE);
+        public static final LaneBias RIGHT = new LaneBias(new ByValue(0.0), 2.0, Integer.MAX_VALUE);
 
         /** Strong right-hand bias, 2nd right lane contains 3.125% relative to right most lane, in free traffic. */
-        public static final Bias STRONG_RIGHT = new Bias(0.0, 5.0, Integer.MAX_VALUE);
+        public static final LaneBias STRONG_RIGHT = new LaneBias(new ByValue(0.0), 5.0, Integer.MAX_VALUE);
 
         /** Strong right-hand bias, limited to a maximum of 2 lanes. */
-        public static final Bias TRUCK_RIGHT = new Bias(0.0, 5.0, 2);
+        public static final LaneBias TRUCK_RIGHT = new LaneBias(new ByValue(0.0), 5.0, 2);
 
-        /** Position on the road (0 = full left, 1 = full right). */
-        private final double roadPosition;
+        /**
+         * Returns a bias by speed with normal extent.
+         * @param leftSpeed Speed; desired speed for full left bias
+         * @param rightSpeed Speed; desired speed for full right bias
+         * @return bias by speed with normal extent
+         */
+        public static LaneBias bySpeed(final Speed leftSpeed, final Speed rightSpeed)
+        {
+            return new LaneBias(new BySpeed(leftSpeed, rightSpeed), 2.0, Integer.MAX_VALUE);
+        }
+
+        /**
+         * Returns a bias by speed with normal extent. Convenience km/h input.
+         * @param leftSpeedKm double; desired speed for full left bias
+         * @param rightSpeedKm double; desired speed for full right bias
+         * @return bias by speed with normal extent
+         */
+        public static LaneBias bySpeed(final double leftSpeedKm, final double rightSpeedKm)
+        {
+            return bySpeed(new Speed(leftSpeedKm, SpeedUnit.KM_PER_HOUR), new Speed(rightSpeedKm, SpeedUnit.KM_PER_HOUR));
+        }
+
+        /** Provider of position on the road (0 = full left, 1 = full right). */
+        private final RoadPosition roadPosition;
 
         /** Bias extent. */
         private final double bias;
@@ -597,15 +659,13 @@ public final class GeneratorPositions implements Locatable
 
         /**
          * Constructor.
-         * @param roadPosition double; lateral position on the road (0 = right, 0.5 = middle, 1 = left)
+         * @param roadPosition RoadPosition; lateral position on the road (0 = right, 0.5 = middle, 1 = left)
          * @param bias double; bias extent, lower values create more spread traffic, 0.0 causes no lane preference
          * @param stickyLanes double; number of lanes to consider in either direction, including the preferred lane
          * @throws IllegalArgumentException if not 0 &le; roadPosition &le; 1 & bias &ge; 0 & stickyLanes &ge; 1
          */
-        public Bias(final double roadPosition, final double bias, final double stickyLanes)
+        public LaneBias(final RoadPosition roadPosition, final double bias, final double stickyLanes)
         {
-            Throw.when(roadPosition < 0.0 || roadPosition > 1.0, IllegalArgumentException.class,
-                    "Road position should be in the range [0...1].");
             Throw.when(bias < 0.0, IllegalArgumentException.class, "Bias should be positive or 0.");
             Throw.when(stickyLanes < 1.0, IllegalArgumentException.class, "Sticky lanes should be 1.0 or larger.");
             this.roadPosition = roadPosition;
@@ -644,11 +704,13 @@ public final class GeneratorPositions implements Locatable
          * @param laneNumFromRight int; number of lane counted from right to left
          * @param numberOfLanes int; total number of lanes
          * @param numberOfUnplacedGTUs int; number of GTU's in the generation queue
+         * @param desiredSpeed Speed; desired speed, possibly used to determine the biased road position
          * @return double; random draw weight for given lane
          */
-        public double calculateWeight(final int laneNumFromRight, final int numberOfLanes, final int numberOfUnplacedGTUs)
+        public double calculateWeight(final int laneNumFromRight, final int numberOfLanes, final int numberOfUnplacedGTUs,
+                final Speed desiredSpeed)
         {
-            double n = 1 + Math.abs((1 + this.roadPosition * (numberOfLanes - 1.0)) - laneNumFromRight);
+            double n = 1 + Math.abs((1 + this.roadPosition.getValue(desiredSpeed) * (numberOfLanes - 1.0)) - laneNumFromRight);
             if (n >= this.stickyLanes + 1.0)
             {
                 // we add 1 to the check, as a set of lanes [2.6 1.6 1.4] should give at least a lane for stickyLanes = 1
@@ -666,8 +728,7 @@ public final class GeneratorPositions implements Locatable
             long temp;
             temp = Double.doubleToLongBits(this.bias);
             result = prime * result + (int) (temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(this.roadPosition);
-            result = prime * result + (int) (temp ^ (temp >>> 32));
+            result = prime * result + ((this.roadPosition == null) ? 0 : this.roadPosition.hashCode());
             temp = Double.doubleToLongBits(this.stickyLanes);
             result = prime * result + (int) (temp ^ (temp >>> 32));
             return result;
@@ -689,12 +750,19 @@ public final class GeneratorPositions implements Locatable
             {
                 return false;
             }
-            Bias other = (Bias) obj;
+            LaneBias other = (LaneBias) obj;
             if (Double.doubleToLongBits(this.bias) != Double.doubleToLongBits(other.bias))
             {
                 return false;
             }
-            if (Double.doubleToLongBits(this.roadPosition) != Double.doubleToLongBits(other.roadPosition))
+            if (this.roadPosition == null)
+            {
+                if (other.roadPosition != null)
+                {
+                    return false;
+                }
+            }
+            else if (!this.roadPosition.equals(other.roadPosition))
             {
                 return false;
             }
@@ -711,6 +779,198 @@ public final class GeneratorPositions implements Locatable
         {
             return "Bias [roadPosition=" + this.roadPosition + ", bias=" + this.bias + ", stickyLanes=" + this.stickyLanes
                     + "]";
+        }
+
+    }
+
+    /**
+     * Interface for preferred road position for a lane bias.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 jan. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    interface RoadPosition
+    {
+
+        /**
+         * Returns the road position (0.0 = right, 1.0 = left).
+         * @param desiredSpeed Speed; desired speed at the generator
+         * @return road position (0.0 = right, 1.0 = left)
+         */
+        double getValue(final Speed desiredSpeed);
+
+        /**
+         * Fixed road position.
+         * <p>
+         * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+         * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+         * <p>
+         * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 jan. 2018 <br>
+         * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+         * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+         * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+         */
+        public class ByValue implements RoadPosition
+        {
+
+            /** Road position. */
+            private double value;
+
+            /**
+             * Constructor.
+             * @param value double; road position
+             */
+            public ByValue(double value)
+            {
+                Throw.when(value < 0.0 || value > 1.0, IllegalArgumentException.class,
+                        "Road position value should be in the range [0...1].");
+                this.value = value;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getValue(final Speed desiredSpeed)
+            {
+                return this.value;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public int hashCode()
+            {
+                final int prime = 31;
+                int result = 1;
+                long temp;
+                temp = Double.doubleToLongBits(this.value);
+                result = prime * result + (int) (temp ^ (temp >>> 32));
+                return result;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean equals(final Object obj)
+            {
+                if (this == obj)
+                {
+                    return true;
+                }
+                if (obj == null)
+                {
+                    return false;
+                }
+                if (getClass() != obj.getClass())
+                {
+                    return false;
+                }
+                ByValue other = (ByValue) obj;
+                if (Double.doubleToLongBits(this.value) != Double.doubleToLongBits(other.value))
+                {
+                    return false;
+                }
+                return true;
+            }
+
+        }
+
+        /**
+         * Road position based on desired speed.
+         * <p>
+         * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+         * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+         * <p>
+         * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 jan. 2018 <br>
+         * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+         * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+         * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+         */
+        public class BySpeed implements RoadPosition
+        {
+
+            /** Desired speed at left side of the road. */
+            private Speed leftSpeed;
+
+            /** Desired speed at the right side of the road. */
+            private Speed rightSpeed;
+
+            /**
+             * Constructor.
+             * @param leftSpeed Speed; desired speed at left side of the road
+             * @param rightSpeed Speed; desired speed at right side of the road
+             */
+            public BySpeed(final Speed leftSpeed, final Speed rightSpeed)
+            {
+                Throw.when(leftSpeed.eq(rightSpeed), IllegalArgumentException.class,
+                        "Left speed and right speed may not be equal. Use LaneBias.NONE.");
+                this.leftSpeed = leftSpeed;
+                this.rightSpeed = rightSpeed;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double getValue(final Speed desiredSpeed)
+            {
+                double value = (desiredSpeed.si - this.rightSpeed.si) / (this.leftSpeed.si - this.rightSpeed.si);
+                return value < 0.0 ? 0.0 : (value > 1.0 ? 1.0 : value);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public int hashCode()
+            {
+                final int prime = 31;
+                int result = 1;
+                result = prime * result + ((this.leftSpeed == null) ? 0 : this.leftSpeed.hashCode());
+                result = prime * result + ((this.rightSpeed == null) ? 0 : this.rightSpeed.hashCode());
+                return result;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean equals(final Object obj)
+            {
+                if (this == obj)
+                {
+                    return true;
+                }
+                if (obj == null)
+                {
+                    return false;
+                }
+                if (getClass() != obj.getClass())
+                {
+                    return false;
+                }
+                BySpeed other = (BySpeed) obj;
+                if (this.leftSpeed == null)
+                {
+                    if (other.leftSpeed != null)
+                    {
+                        return false;
+                    }
+                }
+                else if (!this.leftSpeed.equals(other.leftSpeed))
+                {
+                    return false;
+                }
+                if (this.rightSpeed == null)
+                {
+                    if (other.rightSpeed != null)
+                    {
+                        return false;
+                    }
+                }
+                else if (!this.rightSpeed.equals(other.rightSpeed))
+                {
+                    return false;
+                }
+                return true;
+            }
+
         }
 
     }

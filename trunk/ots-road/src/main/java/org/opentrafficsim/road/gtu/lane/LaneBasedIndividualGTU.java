@@ -91,8 +91,6 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
 
         // sensor positions.
-        // We take the rear position of the Car to be the reference point. So the front is the length
-        // of the Car away from the reference point in the positive (driving) X-direction.
         Length dx2 = new Length(getLength().getSI() / 2.0, LengthUnit.METER);
         Length dy2 = new Length(getWidth().getSI() / 2.0, LengthUnit.METER);
         this.frontPos = new RelativePosition(dx2, Length.ZERO, Length.ZERO, RelativePosition.FRONT);

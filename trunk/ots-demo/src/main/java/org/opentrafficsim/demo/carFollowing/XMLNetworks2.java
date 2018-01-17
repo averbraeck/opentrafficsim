@@ -246,6 +246,9 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
 
+    /** Random stream. */
+    private StreamInterface stream = new MersenneTwister(12346);
+    
     /** The random number generator used to decide what kind of GTU to generate. */
     // private Random randomGenerator = new Random(12346);
 
@@ -539,9 +542,9 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
                         {
                             // provide default parameters with the car-following model
                             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
+                                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
                             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
+                                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
                         }
                         else if ("Toledo".equals(tacticalPlannerName))
                         {

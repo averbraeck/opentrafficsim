@@ -3,7 +3,6 @@ package org.opentrafficsim.road.gtu.generator.od;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
@@ -16,11 +15,11 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
-import org.opentrafficsim.road.gtu.generator.GeneratorPositions.Bias;
+import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
-import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayRandomization;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
@@ -32,6 +31,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -66,15 +66,14 @@ public class ODOptions
             new Option<>("gtu type", new DefaultGTUCharacteristicsGeneratorOD());
 
     /** Room checker option. */
-    public static final Option<RoomChecker> ROOM_CHECKER =
-            new Option<>("room checker", new TTCRoomChecker(Duration.createSI(10.0)));
+    public static final Option<RoomChecker> ROOM_CHECKER = new Option<>("room checker", new CFBARoomChecker());
 
     /** Markov chain for GTU type option. */
     public static final Option<MarkovCorrelation<GTUType, Frequency>> MARKOV = new Option<>("markov", null);
 
     /** Lane bias. Default is Truck: truck right (strong right, max 2 lanes), Vehicle (other): weak left. */
     public static final Option<LaneBiases> LANE_BIAS = new Option<>("lane bias",
-            new LaneBiases().addBias(GTUType.TRUCK, Bias.TRUCK_RIGHT).addBias(GTUType.VEHICLE, Bias.WEAK_LEFT));
+            new LaneBiases().addBias(GTUType.TRUCK, LaneBias.TRUCK_RIGHT).addBias(GTUType.VEHICLE, LaneBias.WEAK_LEFT));
 
     /** Initial distance over which lane changes shouldn't be performed option. */
     public static final Option<Length> NO_LC_DIST = new Option<>("no lc distance", null);
@@ -378,8 +377,8 @@ public class ODOptions
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category)
-                throws GTUException
+        public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
+                final StreamInterface randomStream) throws GTUException
         {
             Categorization categorization = category.getCategorization();
             // GTU characteristics
@@ -404,7 +403,7 @@ public class ODOptions
             // strategical factory
             LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(
-                            new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory()));
+                            new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()));
             // route
             Route route = categorization.entails(Route.class) ? category.get(Route.class) : null;
             return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, origin,

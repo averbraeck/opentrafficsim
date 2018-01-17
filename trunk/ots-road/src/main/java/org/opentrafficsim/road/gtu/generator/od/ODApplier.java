@@ -214,8 +214,6 @@ public final class ODApplier
                                         markovChain = new MarkovChain(correlation); // 1 for each generator
                                     }
                                 }
-                                System.out.println(
-                                        String.format("Adding destination node to %s using markov %s.", lane, markovChain));
                                 destinationNode = new DemandNode<>(destination, stream, markovChain);
                                 rootNode.addChild(destinationNode);
                             }
@@ -318,8 +316,8 @@ public final class ODApplier
                 ArrivalsHeadwayGenerator headwayGenerator =
                         new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
                 GTUColorer gtuColorer = odOptions.get(ODOptions.GTU_COLORER, lane, o, linkType);
-                ODCharacteristicsGenerator characteristicsGenerator =
-                        new ODCharacteristicsGenerator(root, simulator, odOptions.get(ODOptions.GTU_TYPE, lane, o, linkType));
+                ODCharacteristicsGenerator characteristicsGenerator = new ODCharacteristicsGenerator(root, simulator,
+                        odOptions.get(ODOptions.GTU_TYPE, lane, o, linkType), stream);
                 RoomChecker roomChecker = odOptions.get(ODOptions.ROOM_CHECKER, lane, o, linkType);
                 IdGenerator idGenerator = odOptions.get(ODOptions.GTU_ID, lane, o, linkType);
                 LaneBiases biases = odOptions.get(ODOptions.LANE_BIAS, lane, o, linkType);
@@ -765,17 +763,23 @@ public final class ODApplier
         /** Characteristics generator based on OD information. */
         private final GTUCharacteristicsGeneratorOD charachteristicsGenerator;
 
+        /** Stream for random numbers. */
+        private final StreamInterface randomStream;
+
         /**
          * @param root DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;; root node with origin
          * @param simulator OTSDEVSSimulatorInterface; simulator
          * @param charachteristicsGenerator GTUCharacteristicsGeneratorOD; characteristics generator based on OD information
+         * @param randomStream StreamInterface; stream for random numbers
          */
         ODCharacteristicsGenerator(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final OTSDEVSSimulatorInterface simulator, final GTUCharacteristicsGeneratorOD charachteristicsGenerator)
+                final OTSDEVSSimulatorInterface simulator, final GTUCharacteristicsGeneratorOD charachteristicsGenerator,
+                final StreamInterface randomStream)
         {
             this.root = root;
             this.simulator = simulator;
             this.charachteristicsGenerator = charachteristicsGenerator;
+            this.randomStream = randomStream;
         }
 
         /** {@inheritDoc} */
@@ -789,7 +793,7 @@ public final class ODApplier
             Node destination = destinationNode.getObject();
             Category category = destinationNode.draw(time).getObject();
             // forward to lower-level generator
-            return this.charachteristicsGenerator.draw(origin, destination, category);
+            return this.charachteristicsGenerator.draw(origin, destination, category, this.randomStream);
         }
 
     }
