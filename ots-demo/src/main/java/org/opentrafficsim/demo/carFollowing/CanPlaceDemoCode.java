@@ -1,13 +1,17 @@
 package org.opentrafficsim.demo.carFollowing;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -21,7 +25,9 @@ import org.opentrafficsim.road.network.lane.Lane;
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 15, 2016 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @deprecated contains inconsistencies and old model classes
  */
+@Deprecated
 public class CanPlaceDemoCode implements LaneBasedGTUGenerator.RoomChecker
 {
     /** Maximum distance supplied to the minimumHeadway method of the GTUFollowingModel. */
@@ -32,16 +38,20 @@ public class CanPlaceDemoCode implements LaneBasedGTUGenerator.RoomChecker
 
     /** {@inheritDoc} */
     @Override
-    public final Speed canPlace(final Speed leaderSpeed, final org.djunits.value.vdouble.scalar.Length headway,
-            final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics, final Set<DirectedLanePosition> initialPosition)
-            throws NetworkException
+    public final Placement canPlace(final SortedSet<HeadwayGTU> leaders, final LaneBasedGTUCharacteristics characteristics,
+            final Duration since, final Set<DirectedLanePosition> initialPosition) throws NetworkException
     {
+        if (leaders.isEmpty())
+        {
+            Speed speedLimit = initialPosition.iterator().next().getLane().getSpeedLimit(characteristics.getGTUType());
+            return new Placement(Speed.min(characteristics.getMaximumSpeed(), speedLimit), initialPosition);
+        }
         // This simple minded implementation returns null if the headway is less than the headway wanted for driving at
         // the current speed of the leader
         Lane lane = null;
         for (DirectedLanePosition dlp : initialPosition)
         {
-            if (dlp.getLane().getLaneType().isCompatible(laneBasedGTUCharacteristics.getGTUType(), dlp.getGtuDirection()))
+            if (dlp.getLane().getLaneType().isCompatible(characteristics.getGTUType(), dlp.getGtuDirection()))
             {
                 lane = dlp.getLane();
                 break;
@@ -50,18 +60,19 @@ public class CanPlaceDemoCode implements LaneBasedGTUGenerator.RoomChecker
         if (null == lane)
         {
             throw new NetworkException(
-                    "No " + laneBasedGTUCharacteristics.getGTUType() + "-compatible lane in initial longitudinal positions");
+                    "No " + characteristics.getGTUType() + "-compatible lane in initial longitudinal positions");
         }
         // Use the speed limit of the first compatible lane in the initial longitudinal positions.
-        Speed speedLimit = lane.getSpeedLimit(laneBasedGTUCharacteristics.getGTUType());
-        Speed maximumSpeed = laneBasedGTUCharacteristics.getMaximumSpeed();
+        Speed speedLimit = lane.getSpeedLimit(characteristics.getGTUType());
+        Speed maximumSpeed = characteristics.getMaximumSpeed();
         GTUFollowingModelOld gfm = new IDMOld();
-        if (headway.lt(// laneBasedGTUCharacteristics.getStrategicalPlanner().getBehavioralCharacteristics().getGTUFollowingModel()
-                gfm.minimumHeadway(leaderSpeed, leaderSpeed, precision, maxDistance, speedLimit, maximumSpeed)))
+        HeadwayGTU leader = leaders.first();
+        if (leader.getDistance()
+                .lt(gfm.minimumHeadway(leader.getSpeed(), leader.getSpeed(), precision, maxDistance, speedLimit, maximumSpeed)))
         {
-            return null;
+            return Placement.NO;
         }
-        return leaderSpeed;
+        return new Placement(leader.getSpeed(), initialPosition);
     }
 
 }

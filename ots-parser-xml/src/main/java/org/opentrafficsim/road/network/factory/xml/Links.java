@@ -458,9 +458,9 @@ final class Links
 
         OTSLine3D designLine = OTSLine3D.createAndCleanOTSLine3D(coordinates);
 
-        // Directionality has to be added later when the lanes and their direction are known.
+        // TODO: Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, linkTag.nodeStartTag.node,
-                linkTag.nodeEndTag.node, LinkType.ROAD, designLine, simulator,
+                linkTag.nodeEndTag.node, LinkType.FREEWAY, designLine, simulator,
                 new HashMap<GTUType, LongitudinalDirectionality>(), linkTag.laneKeepingPolicy);
 
         if (linkTag.priority != null)

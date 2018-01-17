@@ -13,8 +13,8 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
  * <p>
@@ -66,10 +66,14 @@ public class SplitColorer implements GTUColorer
         LinkDirection linkDir;
         try
         {
-            DirectedLanePosition pos = laneGtu.getReferencePosition();
-            linkDir = new LinkDirection(pos.getLane().getParentLink(), pos.getGtuDirection());
+            linkDir = laneGtu.getReferencePosition().getLinkDirection();
         }
-        catch (GTUException exception)
+        catch (@SuppressWarnings("unused") GTUException exception)
+        {
+            return UNKNOWN;
+        }
+        Route route = laneGtu.getStrategicalPlanner().getRoute();
+        if (route == null)
         {
             return UNKNOWN;
         }
@@ -89,7 +93,7 @@ public class SplitColorer implements GTUColorer
                             gtu.getGTUType());
                 }
             }
-            catch (NetworkException exception)
+            catch (@SuppressWarnings("unused") NetworkException exception)
             {
                 System.err.println("Network exception while defining split color for GTU.");
                 return UNKNOWN;

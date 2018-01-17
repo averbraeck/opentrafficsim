@@ -1,8 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import org.opentrafficsim.base.parameters.Parameters;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
+ * Factory for IDM.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -12,26 +13,16 @@ import org.opentrafficsim.base.parameters.Parameters;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class IDMFactory implements CarFollowingModelFactory<IDM>
+public class IDMFactory extends AbstractIDMFactory<IDM>
 {
 
-    /** Single instance as it is state-less. */
-    private final IDM idm = new IDM();
-
-    /** {@inheritDoc} */
-    @Override
-    public final IDM generateCarFollowingModel()
+    /**
+     * Constructor. 
+     * @param randomStream StreamInterface; random number stream
+     */
+    public IDMFactory(final StreamInterface randomStream)
     {
-        return this.idm;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Parameters getParameters()
-    {
-        Parameters parameters = new Parameters();
-        parameters.setDefaultParameters(AbstractIDM.class);
-        return parameters;
+        super(new IDM(), randomStream);
     }
 
     /** {@inheritDoc} */

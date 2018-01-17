@@ -1,15 +1,19 @@
 package org.opentrafficsim.road.gtu.generator;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
@@ -45,24 +49,31 @@ public class TTCRoomChecker implements RoomChecker
 
     /** {@inheritDoc} */
     @Override
-    public final Speed canPlace(final Speed leaderSpeed, final Length headway,
-            final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics, final Set<DirectedLanePosition> initialPosition)
-            throws NetworkException
+    public final Placement canPlace(final SortedSet<HeadwayGTU> leaders, final LaneBasedGTUCharacteristics characteristics,
+            final Duration since, final Set<DirectedLanePosition> initialPosition) throws NetworkException, GTUException
     {
-        Speed speed = Speed.min(leaderSpeed, laneBasedGTUCharacteristics.getMaximumSpeed());
+        Speed speedLimit = initialPosition.iterator().next().getLane().getSpeedLimit(characteristics.getGTUType());
+        Speed desiredSpeedProxy = Speed.min(characteristics.getMaximumSpeed(), speedLimit);
+        if (leaders.isEmpty())
+        {
+            return new Placement(desiredSpeedProxy, initialPosition);
+        }
+        HeadwayGTU leader = leaders.first();
+        Speed speed = Speed.min(leader.getSpeed(), desiredSpeedProxy);
         for (DirectedLanePosition dlp : initialPosition)
         {
-            if (dlp.getLane().getLaneType().isCompatible(laneBasedGTUCharacteristics.getGTUType(), dlp.getGtuDirection()))
+            if (dlp.getLane().getLaneType().isCompatible(characteristics.getGTUType(), dlp.getGtuDirection()))
             {
-                speed = Speed.min(speed, dlp.getLane().getSpeedLimit(laneBasedGTUCharacteristics.getGTUType()));
+                speed = Speed.min(speed, dlp.getLane().getSpeedLimit(characteristics.getGTUType()));
             }
         }
-        if ((speed.le(leaderSpeed) || headway.divideBy(speed.minus(leaderSpeed)).gt(this.ttc))
-                && headway.gt(speed.multiplyBy(new Duration(1.0, DurationUnit.SI)).plus(new Length(3.0, LengthUnit.SI))))
+        if ((speed.le(leader.getSpeed()) || leader.getDistance().divideBy(speed.minus(leader.getSpeed())).gt(this.ttc))
+                && leader.getDistance()
+                        .gt(speed.multiplyBy(new Duration(1.0, DurationUnit.SI)).plus(new Length(3.0, LengthUnit.SI))))
         {
-            return speed;
+            return new Placement(speed, initialPosition);
         }
-        return null;
+        return Placement.NO;
     }
 
     /** {@inheritDoc} */

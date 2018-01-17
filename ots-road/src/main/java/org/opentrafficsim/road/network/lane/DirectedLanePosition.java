@@ -106,6 +106,15 @@ public class DirectedLanePosition implements Serializable
     }
     
     /**
+     * Returns the lane direction in the direction of this lane direction.
+     * @return lane direction in the direction of this lane direction
+     */
+    public final LaneDirection getLaneDirection()
+    {
+        return new LaneDirection(this.lane, this.gtuDirection);
+    }
+    
+    /**
      * Returns the link direction in the direction of this lane direction.
      * @return link direction in the direction of this lane direction
      */

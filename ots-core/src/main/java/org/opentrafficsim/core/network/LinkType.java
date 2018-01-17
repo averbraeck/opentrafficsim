@@ -33,8 +33,11 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     /** The link type that does not allow any vehicles, or pedestrians. */
     public static final LinkType NONE;
 
-    /** Two-directional road, accessible to all GTU types (including PEDESTRIAN). */
+    /** Two-directional road, accessible to all road GTU types (including PEDESTRIAN). */
     public static final LinkType ROAD;
+    
+    /** One-directional road, accessible to all road GTU types (excluding PEDESTRIAN and BICYCLE). */ 
+    public static final LinkType FREEWAY;
 
     /** Two-directional water way. */
     public static final LinkType WATER_WAY;
@@ -45,12 +48,20 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     /** Virtual connection between nodes, e.g. to distribute demand. */
     public static final LinkType CONNECTOR;
 
+    
+
     static
     {
         GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
         NONE = new LinkType("NONE", null, compatibility);
+        compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
         ROAD = new LinkType("ROAD", null, compatibility);
+        compatibility = new GTUCompatibility<>((LinkType) null);
+        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGTUType(GTUType.PEDESTRIAN, LongitudinalDirectionality.DIR_NONE);
+        compatibility.addAllowedGTUType(GTUType.BICYCLE, LongitudinalDirectionality.DIR_NONE);
+        FREEWAY = new LinkType("FREEWAY", ROAD, compatibility);
         compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.WATER_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
         WATER_WAY = new LinkType("WATER_WAY", null, compatibility);

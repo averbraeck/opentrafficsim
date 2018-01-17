@@ -5,6 +5,8 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
+
 /**
  * Interface for classes that generate GTU characteristics based on an OD. Contrary to lower-level vehicle generation, the OD
  * can pre-determine some information, such as GTU type and route.
@@ -25,9 +27,11 @@ public interface GTUCharacteristicsGeneratorOD
      * @param origin Node; origin
      * @param destination Node; destination
      * @param category Category; category (GTU type, route, or more)
+     * @param randomStream StreamInterface; stream for random numbers
      * @return LaneBasedGTUCharacteristics
      * @throws GTUException if characteristics could not be generated for the GTUException
      */
-    LaneBasedGTUCharacteristics draw(Node origin, Node destination, Category category) throws GTUException;
+    LaneBasedGTUCharacteristics draw(Node origin, Node destination, Category category, StreamInterface randomStream)
+            throws GTUException;
 
 }

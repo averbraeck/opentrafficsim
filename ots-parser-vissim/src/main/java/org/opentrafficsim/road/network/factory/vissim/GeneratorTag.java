@@ -11,7 +11,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -29,14 +28,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFac
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
@@ -47,6 +44,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * <p>
@@ -364,7 +362,9 @@ class GeneratorTag implements Serializable
         Time startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.ZERO;
         Time endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time(Double.MAX_VALUE, TimeUnit.BASE_SECOND);
         Length position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
-        LaneBasedTacticalPlannerFactory<?> tacticalPlannerFactory = makeTacticalPlannerFactory(generatorTag);
+        // TODO is the default stream present?
+        LaneBasedTacticalPlannerFactory<?> tacticalPlannerFactory =
+                makeTacticalPlannerFactory(generatorTag, simulator.getReplication().getStream("default"));
         LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalPlannerFactory);
         new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
@@ -383,9 +383,11 @@ class GeneratorTag implements Serializable
     /**
      * Factories are: IDM|MOBIL/IDM|DIRECTION/IDM|LMRS|TOLEDO.
      * @param generatorTag the tag to parse
+     * @param stream random number stream
      * @return a LaneBasedTacticalPlannerFactory according to the tag
      */
-    static LaneBasedTacticalPlannerFactory<?> makeTacticalPlannerFactory(final GeneratorTag generatorTag)
+    static LaneBasedTacticalPlannerFactory<?> makeTacticalPlannerFactory(final GeneratorTag generatorTag,
+            final StreamInterface stream)
     {
         if (generatorTag.tacticalPlannerName == null || generatorTag.tacticalPlannerName.equals("IDM"))
         {
@@ -403,7 +405,7 @@ class GeneratorTag implements Serializable
         {
             try
             {
-                return new LMRSFactory(new IDMPlusFactory(), new DefaultLMRSPerceptionFactory());
+                return new LMRSFactory(new IDMPlusFactory(stream), new DefaultLMRSPerceptionFactory());
             }
             catch (GTUException exception)
             {

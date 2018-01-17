@@ -7,18 +7,20 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
@@ -38,11 +40,15 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharact
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -64,7 +70,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     private static final long serialVersionUID = 20160000L;
 
     /** FIFO for templates that have not been generated yet due to insufficient room/headway, per position, and per link. */
-    private final Map<CrossSectionLink, Map<GeneratorLanePosition, Queue<LaneBasedGTUCharacteristics>>> unplacedTemplates =
+    private final Map<CrossSectionLink, Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>>> unplacedTemplates =
             new HashMap<>();
 
     /** Name of the GTU generator. */
@@ -169,7 +175,8 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             for (CrossSectionLink link : this.unplacedTemplates.keySet())
             {
                 Map<Integer, Integer> linkMap = new HashMap<>();
-                Map<GeneratorLanePosition, Queue<LaneBasedGTUCharacteristics>> linkTemplates = this.unplacedTemplates.get(link);
+                Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>> linkTemplates =
+                        this.unplacedTemplates.get(link);
                 for (GeneratorLanePosition lanePosition : linkTemplates.keySet())
                 {
                     linkMap.put(lanePosition.getLaneNumber(), linkTemplates.get(lanePosition).size());
@@ -177,20 +184,23 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
                 unplaced.put(link, linkMap);
             }
             // position draw
-            GeneratorLanePosition lanePosition = this.generatorPositions.draw(gtuType, unplaced);
+            Speed desiredSpeed = characteristics.getStrategicalPlannerFactory().peekDesiredSpeed(gtuType,
+                    this.generatorPositions.speedLimit(gtuType), characteristics.getMaximumSpeed());
+            GeneratorLanePosition lanePosition = this.generatorPositions.draw(gtuType, unplaced, desiredSpeed);
             // add template in the right map location
             if (!this.unplacedTemplates.containsKey(lanePosition.getLink()))
             {
                 this.unplacedTemplates.put(lanePosition.getLink(), new HashMap<>());
             }
-            Map<GeneratorLanePosition, Queue<LaneBasedGTUCharacteristics>> linkMap =
+            Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>> linkMap =
                     this.unplacedTemplates.get(lanePosition.getLink());
             if (!linkMap.containsKey(lanePosition))
             {
                 linkMap.put(lanePosition, new LinkedList<>());
             }
-            Queue<LaneBasedGTUCharacteristics> queue = linkMap.get(lanePosition);
-            queue.add(characteristics);
+            Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue = linkMap.get(lanePosition);
+            queue.add(new TimeStampedObject<LaneBasedGTUCharacteristics>(characteristics,
+                    this.simulator.getSimulatorTime().getTime()));
             if (queue.size() == 1)
             {
                 this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { lanePosition });
@@ -217,115 +227,94 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     private void tryToPlaceGTU(final GeneratorLanePosition position) throws SimRuntimeException, GTUException, NamingException,
             NetworkException, OTSGeometryException, ProbabilityException
     {
-        // System.out.println("entered tryToPlaceGTU");
-        LaneBasedGTUCharacteristics characteristics;
-        Queue<LaneBasedGTUCharacteristics> queue = this.unplacedTemplates.get(position.getLink()).get(position);
+        TimeStampedObject<LaneBasedGTUCharacteristics> timedCharacteristics;
+        Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue =
+                this.unplacedTemplates.get(position.getLink()).get(position);
         synchronized (queue)
         {
-            characteristics = queue.peek();
+            timedCharacteristics = queue.peek();
         }
-        if (null == characteristics)
+        if (null == timedCharacteristics)
         {
             return; // Do not re-schedule this method
         }
-        Length shortestHeadway = new Length(Double.MAX_VALUE, LengthUnit.SI);
-        Speed leaderSpeed = null;
-        // TODO ALL? we need to stop for all gtus...
-        GTUType gtuType = characteristics.getGTUType();
-        for (DirectedLanePosition dlp : position.getPosition())
+
+        LaneBasedGTUCharacteristics characteristics = timedCharacteristics.getObject();
+        SortedSet<HeadwayGTU> leaders = new TreeSet<>();
+        for (DirectedLanePosition dirPos : position.getPosition())
         {
-            Lane lane = dlp.getLane();
-            // GOTCHA look for the first GTU with FRONT after the start position (not REAR)
-            LaneBasedGTU leader = lane.getGtuAhead(dlp.getPosition(), dlp.getGtuDirection(), RelativePosition.FRONT,
-                    this.simulator.getSimulatorTime().getTime());
-            // no leader on current lane, but lane may be short
-            Length headway = Length.ZERO;
-            GTUDirectionality leaderDir = dlp.getGtuDirection();
-            // TODO look beyond splitting lane
-            while (leader == null && (leaderDir.isPlus() && lane.nextLanes(gtuType).size() == 1)
-                    || (leaderDir.isMinus() && lane.prevLanes(gtuType).size() == 1) && headway.si < 300)
-            {
-                headway = headway.plus(lane.getLength());
-                if (leaderDir.isPlus())
-                {
-                    leaderDir = lane.nextLanes(gtuType).values().iterator().next();
-                    lane = lane.nextLanes(gtuType).keySet().iterator().next();
-                }
-                else
-                {
-                    leaderDir = lane.prevLanes(gtuType).values().iterator().next();
-                    lane = lane.prevLanes(gtuType).keySet().iterator().next();
-                }
-                leader = lane.getGtuAhead(Length.ZERO, leaderDir, RelativePosition.FRONT,
-                        this.simulator.getSimulatorTime().getTime());
-            }
-            if (null != leader)
-            {
-                Length egoPos =
-                        dlp.getGtuDirection().isPlus() ? dlp.getPosition() : dlp.getLane().getLength().minus(dlp.getPosition());
-                Length leaderPos = leaderDir.isPlus() ? leader.position(lane, leader.getRear())
-                        : lane.getLength().minus(leader.position(lane, leader.getRear()));
-                headway = headway.plus(leaderPos.minus(egoPos));
-                // What? Allow accident?
-                // if (headway.si < 0)
-                // {
-                // headway = new Length(Math.abs(headway.si), headway.getUnit());
-                // }
-                // TODO this is a hack, what if the reference position is not the middle?
-                headway = new Length(headway.si - characteristics.getLength().si / 2, LengthUnit.SI);
-                if (shortestHeadway.gt(headway))
-                {
-                    shortestHeadway = headway;
-                    leaderSpeed = leader.getSpeed();
-                }
-            }
+            // TODO subtracting halve the vehicle length as a hack, reference position can be different
+            getFirstLeaders(dirPos.getLaneDirection(),
+                    dirPos.getPosition().neg().minus(characteristics.getLength().divideBy(2.0)), dirPos.getPosition(), leaders);
         }
-        if (shortestHeadway.si > 0)
+        Duration since = this.simulator.getSimulatorTime().getTime().minus(timedCharacteristics.getTimestamp());
+        Placement placement = this.roomChecker.canPlace(leaders, characteristics, since, position.getPosition());
+        if (placement.canPlace())
         {
-            Speed safeSpeed = characteristics.getMaximumSpeed();
-            for (DirectedLanePosition lanePos : position.getPosition())
+            // There is enough room; remove the template from the queue and construct the new GTU
+            synchronized (queue)
             {
-                if (lanePos.getLane().getLaneType().isCompatible(gtuType, lanePos.getGtuDirection()))
-                {
-                    Speed speedLimit = lanePos.getLane().getSpeedLimit(gtuType);
-                    if (speedLimit.lt(safeSpeed))
-                    {
-                        safeSpeed = speedLimit;
-                    }
-                }
+                queue.remove();
             }
-            if (null != leaderSpeed)
-            {
-                safeSpeed = this.roomChecker.canPlace(leaderSpeed, shortestHeadway, characteristics, position.getPosition());
-            }
-            if (null != safeSpeed)
-            {
-                // There is enough room; remove the template from the queue and construct the new GTU
-                synchronized (queue)
-                {
-                    queue.remove();
-                }
-                if (safeSpeed.gt(characteristics.getMaximumSpeed()))
-                {
-                    safeSpeed = characteristics.getMaximumSpeed();
-                }
-                String gtuId = this.idGenerator.nextId();
-                LaneBasedIndividualGTU gtu =
-                        new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), characteristics.getLength(),
-                                characteristics.getWidth(), characteristics.getMaximumSpeed(), this.simulator, this.network);
-                gtu.setMaximumAcceleration(new Acceleration(3.0, AccelerationUnit.METER_PER_SECOND_2));
-                gtu.setMaximumDeceleration(new Acceleration(-8.0, AccelerationUnit.METER_PER_SECOND_2));
-                gtu.initWithAnimation(
-                        characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
-                                characteristics.getOrigin(), characteristics.getDestination()),
-                        position.getPosition(), safeSpeed, DefaultCarAnimation.class, this.gtuColorer);
-                gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
-            }
+            String gtuId = this.idGenerator.nextId();
+            LaneBasedIndividualGTU gtu =
+                    new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), characteristics.getLength(),
+                            characteristics.getWidth(), characteristics.getMaximumSpeed(), this.simulator, this.network);
+            gtu.setMaximumAcceleration(new Acceleration(3.0, AccelerationUnit.METER_PER_SECOND_2));
+            gtu.setMaximumDeceleration(new Acceleration(-8.0, AccelerationUnit.METER_PER_SECOND_2));
+            gtu.initWithAnimation(
+                    characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
+                            characteristics.getOrigin(), characteristics.getDestination()),
+                    placement.getPosition(), placement.getSpeed(), DefaultCarAnimation.class, this.gtuColorer);
+            gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
         }
-        int queueLength = queue.size();
-        if (queueLength > 0)
+        if (queue.size() > 0)
         {
             this.simulator.scheduleEventRel(this.reTryInterval, this, this, "tryToPlaceGTU", new Object[] { position });
+        }
+    }
+
+    /**
+     * Adds the first GTU on the lane to the set, or any number or leaders on downstream lane(s) if there is no GTU on the lane.
+     * @param lane LaneDirection; lane to search on
+     * @param startDistance Length; distance from generator location (nose) to start of the lane
+     * @param beyond Length; location to search downstream of which is the generator position, or the start for downstream lanes
+     * @param set Set&lt;HeadwayGTU&gt;; set to add the GTU's to
+     * @throws GTUException if a GTU is incorrectly positioned on a lane
+     */
+    private void getFirstLeaders(final LaneDirection lane, final Length startDistance, final Length beyond,
+            final Set<HeadwayGTU> set) throws GTUException
+    {
+        LaneBasedGTU next = lane.getLane().getGtuAhead(beyond, lane.getDirection(), RelativePosition.FRONT,
+                this.simulator.getSimulatorTime().getTime());
+        if (next != null)
+        {
+            Length headway;
+            if (lane.getDirection().isPlus())
+            {
+                headway = startDistance.plus(next.position(lane.getLane(), next.getRear()));
+            }
+            else
+            {
+                headway = startDistance.plus(lane.getLane().getLength().minus(next.position(lane.getLane(), next.getRear())));
+            }
+            if (headway.si < 300)
+            {
+                set.add(new HeadwayGTUReal(next, headway, true));
+            }
+            return;
+        }
+        Map<Lane, GTUDirectionality> downstreamLanes = lane.getLane().downstreamLanes(lane.getDirection(), GTUType.VEHICLE);
+        for (Lane downstreamLane : downstreamLanes.keySet())
+        {
+            Length startDistanceDownstream = startDistance.plus(lane.getLane().getLength());
+            if (startDistanceDownstream.si > 300)
+            {
+                return;
+            }
+            GTUDirectionality dir = downstreamLanes.get(downstreamLane);
+            Length beyondDownstream = dir.isPlus() ? Length.ZERO : downstreamLane.getLength();
+            getFirstLeaders(new LaneDirection(downstreamLane, dir), startDistanceDownstream, beyondDownstream, set);
         }
     }
 
@@ -373,24 +362,100 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
 
     /**
      * Interface for class that checks that there is sufficient room for a proposed new GTU and returns the maximum safe speed
-     * for the proposed new GTU.
+     * and position for the proposed new GTU.
      */
     public interface RoomChecker
     {
         /**
-         * Return the maximum safe speed for a new GTU with the specified characteristics. Return null if there is no safe
-         * speed. This method will never be called if the newly proposed GTU overlaps with the leader. Nor will this method be
-         * called if there is no leader.
-         * @param leaderSpeed Speed; speed of the nearest leader
-         * @param headway Length; net distance to the nearest leader (always &gt; 0)
-         * @param laneBasedGTUCharacteristics LaneBasedGTUCharacteristics; characteristics of the proposed new GTU
+         * Return the maximum safe speed and position for a new GTU with the specified characteristics. Returns
+         * {@code Placement.NO} if there is no safe speed and position. This method might be called with an empty leader set
+         * such that the desired speed can be implemented.
+         * @param leaders SortedSet&lt;HeadwayGTU&gt;; leaders, usually 1, possibly more after a branch
+         * @param characteristics LaneBasedGTUCharacteristics; characteristics of the proposed new GTU
+         * @param since Duration; time since the GTU wanted to arrive
          * @param initialPosition Set&lt;DirectedLanePosition&gt;; initial position
          * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the
          *         current time
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
+         * @throws GTUException on parameter exception
          */
-        Speed canPlace(Speed leaderSpeed, Length headway, LaneBasedGTUCharacteristics laneBasedGTUCharacteristics,
-                Set<DirectedLanePosition> initialPosition) throws NetworkException;
+        Placement canPlace(SortedSet<HeadwayGTU> leaders, LaneBasedGTUCharacteristics characteristics, Duration since,
+                Set<DirectedLanePosition> initialPosition) throws NetworkException, GTUException;
+    }
+
+    /**
+     * Placement contains the information that a {@code RoomChecker} returns.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 12 jan. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static final class Placement
+    {
+
+        /** Value if the GTU cannot be placed. */
+        public static final Placement NO = new Placement();
+
+        /** Speed. */
+        private final Speed speed;
+
+        /** Position. */
+        private final Set<DirectedLanePosition> position;
+
+        /**
+         * Constructor for NO.
+         */
+        private Placement()
+        {
+            this.speed = null;
+            this.position = null;
+        }
+
+        /**
+         * Constructor.
+         * @param speed Speed; speed
+         * @param position Set&lt;DirectedLanePosition&gt;; position
+         */
+        public Placement(final Speed speed, Set<DirectedLanePosition> position)
+        {
+            Throw.whenNull(speed, "Speed may not be null. Use Placement.NO if the GTU cannot be placed.");
+            Throw.whenNull(position, "Position may not be null. Use Placement.NO if the GTU cannot be placed.");
+            this.speed = speed;
+            this.position = position;
+        }
+
+        /**
+         * Returns whether the GTU can be placed.
+         * @return whether the GTU can be placed
+         */
+        public boolean canPlace()
+        {
+            return this.speed != null && this.position != null;
+        }
+
+        /**
+         * Returns the speed.
+         * @return Speed; speed
+         */
+        public Speed getSpeed()
+        {
+            return this.speed;
+        }
+
+        /**
+         * Returns the position.
+         * @return Set&lt;DirectedLanePosition&gt;; position
+         */
+        public Set<DirectedLanePosition> getPosition()
+        {
+            return this.position;
+        }
+
     }
 
     /** {@inheritDoc} */

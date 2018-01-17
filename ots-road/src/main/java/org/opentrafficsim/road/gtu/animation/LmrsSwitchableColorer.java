@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.animation;
 
+import java.awt.Color;
+
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -10,13 +12,14 @@ import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 
 /**
+ * Colorer for LMRS.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -38,7 +41,8 @@ public class LmrsSwitchableColorer extends SwitchableGTUColorer
      */
     public LmrsSwitchableColorer() throws IndexOutOfBoundsException
     {
-        super(0, new IDGTUColorer(), new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
+        super(0, new FixedColor(Color.BLUE), GTUTypeColorer.defaultInstance(), new IDGTUColorer(),
+                new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
                 new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)), new SplitColorer(),
                 new DesiredHeadwayColorer(), new TotalDesireColorer(), new IncentiveColorer(IncentiveRoute.class),
                 new IncentiveColorer(IncentiveSpeedWithCourtesy.class), new IncentiveColorer(IncentiveSpeed.class),

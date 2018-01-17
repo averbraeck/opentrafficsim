@@ -157,7 +157,7 @@ public final class AHFEUtil
         TTCRoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
         IdGenerator idGenerator = new IdGenerator("");
 
-        CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory();
+        CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory(streams.get("gtuClass"));
         PerceptionFactory delayedPerceptionFactory =
                 new DelayedPerceptionFactory(Anticipation.valueOf(anticipationStrategy.toUpperCase()));
         Parameters params = new Parameters();
