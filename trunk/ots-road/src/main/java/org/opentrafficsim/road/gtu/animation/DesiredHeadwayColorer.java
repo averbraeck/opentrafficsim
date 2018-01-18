@@ -5,9 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.animation.ColorInterpolator;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;

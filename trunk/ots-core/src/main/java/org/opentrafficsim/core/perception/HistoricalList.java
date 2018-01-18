@@ -44,6 +44,7 @@ public class HistoricalList<T, L extends List<T>> extends HistoricalCollection<T
      * order. Multiple events at one time are accepted.
      * @param value T; value
      */
+    @Override
     public final synchronized void add(final T value)
     {
         getEvents().add(new AddEvent<>(now().si, value, getCollection().size(), getCollection()));
@@ -54,6 +55,7 @@ public class HistoricalList<T, L extends List<T>> extends HistoricalCollection<T
      * at one time are accepted.
      * @param value T; value
      */
+    @Override
     public final synchronized void remove(final T value)
     {
         getEvents().add(new RemoveEvent<>(now().si, value, getCollection())); // note: different RemoveEvent class than at super
@@ -103,7 +105,7 @@ public class HistoricalList<T, L extends List<T>> extends HistoricalCollection<T
     }
 
     /**
-     * Class for events that add a value to the collection.
+     * Class for events that add a value to the list.
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -142,7 +144,7 @@ public class HistoricalList<T, L extends List<T>> extends HistoricalCollection<T
     }
 
     /**
-     * Class for events that remove a value to the collection.
+     * Class for events that remove a value from the list.
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>

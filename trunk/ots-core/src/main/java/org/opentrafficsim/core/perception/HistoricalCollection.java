@@ -69,6 +69,7 @@ public class HistoricalCollection<T, C extends Collection<T>> extends AbstractHi
     }
 
     /** {@inheritDoc} */
+    @Override
     public final synchronized void clear(final T value)
     {
         this.internalCollection.remove(value);
@@ -188,7 +189,7 @@ public class HistoricalCollection<T, C extends Collection<T>> extends AbstractHi
     }
 
     /**
-     * Class for events that remove a value to the collection.
+     * Class for events that remove a value from the collection.
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
