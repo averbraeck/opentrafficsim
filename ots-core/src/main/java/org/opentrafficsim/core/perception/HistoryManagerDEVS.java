@@ -1,8 +1,5 @@
 package org.opentrafficsim.core.perception;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -20,12 +17,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class HistoryManagerDEVS implements HistoryManager
+public class HistoryManagerDEVS extends HistoryManager
 {
 
-    /** Set of all {@code Historicals}. */
-    private final Set<AbstractHistorical<?, ?>> historicals = new HashSet<>();
-    
     /** Simulator. */
     private final OTSDEVSSimulatorInterface simulator;
     
@@ -49,6 +43,7 @@ public class HistoryManagerDEVS implements HistoryManager
         this.simulator = simulator;
         this.history = history;
         this.cleanUpInterval = cleanUpInterval;
+        cleanUpHistory(); // start clean-up event chain
     }
 
     /** {@inheritDoc} */
@@ -58,22 +53,12 @@ public class HistoryManagerDEVS implements HistoryManager
         return this.simulator.getSimulatorTime().getTime();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void registerHistorical(AbstractHistorical<?, ?> historical)
-    {
-        if (historical != null)
-        {
-            this.historicals.add(historical);
-        }
-    }
-    
     /**
      * Cleans up the history of all registered {@code Historicals}.
      */
     protected final void cleanUpHistory()
     {
-        for (AbstractHistorical<?, ?> historical : this.historicals)
+        for (AbstractHistorical<?, ?> historical : getHistoricals())
         {
             historical.cleanUpHistory(this.history);
         }

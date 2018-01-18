@@ -54,6 +54,9 @@
       <action issue="OTS-147" type="update">
         OTS-147. Tactical planner methods for GTU generation
       </action>
+      <action issue="OTS-355" type="add">
+        OTS-355. Tools for perception in the recent past
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
