@@ -12,6 +12,14 @@ import java.util.ArrayList;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -30,14 +38,6 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -125,7 +125,7 @@ public class AimsunControl extends AbstractWrappableAnimation
         }
         System.exit(0);
     }
-    
+
     /**
      * Create a nice hex dump of a bunch of bytes.
      * @param bytes byte[]; the bytes
@@ -176,7 +176,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                 int size =
                         ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
                                 + (sizeBytes[3] & 0xff);
-                System.out.println("expecting " + size + " bytes");
+                // System.out.println("expecting " + size + " bytes");
                 byte[] buffer = new byte[size];
                 // inputStream.read(buffer);
                 fillBuffer(inputStream, buffer);
@@ -194,21 +194,14 @@ public class AimsunControl extends AbstractWrappableAnimation
                         System.out.println("Received CREATESIMULATION message");
                         AimsunControlProtoBuf.CreateSimulation createSimulation = message.getCreateSimulation();
                         this.networkXML = createSimulation.getNetworkXML();
-                        // String network = null; // IOUtils.toString(URLResource.getResource("/aimsun/singleRoad.xml"));
-                        // URLConnection conn = URLResource.getResource("/aimsun/singleRoad.xml").openConnection();
-                        // try (BufferedReader reader =
-                        // new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)))
-                        // {
-                        // network = reader.lines().collect(Collectors.joining("\n"));
-                        // }
-                        // this.networkXML = network;
                         Duration runDuration = new Duration(createSimulation.getRunTime(), DurationUnit.SECOND);
+                        System.out.println("runDuration " + runDuration);
                         Duration warmupDuration = new Duration(createSimulation.getWarmUpTime(), DurationUnit.SECOND);
                         try
                         {
                             SimpleAnimator animator =
-                                    buildAnimator(Time.ZERO, warmupDuration, runDuration, new ArrayList<Property<?>>(), null,
-                                            true);
+                                    buildAnimator(Time.ZERO, warmupDuration, runDuration, new ArrayList<Property<?>>(),
+                                            null, true);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
                         }
                         catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception1)
@@ -262,8 +255,9 @@ public class AimsunControl extends AbstractWrappableAnimation
                                     AimsunControlProtoBuf.OTSMessage.newBuilder();
                             resultBuilder.setGtuPositions(gtuPositions);
                             AimsunControlProtoBuf.OTSMessage result = resultBuilder.build();
-                            System.out.println("About to transmit " + result.toString());
                             size = result.getSerializedSize();
+                            System.out.print("Transmitting " + this.model.getNetwork().getGTUs().size()
+                                    + " GTU positions encoded in " + size + " bytes ... ");
                             sizeBytes[0] = (byte) ((size >> 24) & 0xff);
                             sizeBytes[1] = (byte) ((size >> 16) & 0xff);
                             sizeBytes[2] = (byte) ((size >> 8) & 0xff);
@@ -272,6 +266,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                             buffer = new byte[size];
                             buffer = result.toByteArray();
                             outputStream.write(buffer);
+                            System.out.println("Done");
                             // result.writeDelimitedTo(outputStream);
                         }
                         catch (SimRuntimeException | OperationalPlanException exception)
@@ -309,10 +304,11 @@ public class AimsunControl extends AbstractWrappableAnimation
      * Fill a buffer from a stream; retry until the buffer is entirely filled.
      * @param in InputStream; the input stream for the data
      * @param buffer byte[]; the buffer
+     * @throws IOException when it is not possible to fill the entire buffer
      */
-    static void fillBuffer(final InputStream in, final byte[] buffer)
+    static void fillBuffer(final InputStream in, final byte[] buffer) throws IOException
     {
-        System.out.println("Need to read " + buffer.length + " bytes");
+        System.out.print("Need to read " + buffer.length + " bytes ... ");
         int offset = 0;
         while (true)
         {
@@ -324,17 +320,26 @@ public class AimsunControl extends AbstractWrappableAnimation
                     break;
                 }
                 offset += bytesRead;
-                if (offset >= buffer.length)
+                if (buffer.length == offset)
                 {
                     System.out.println("Got all " + buffer.length + " requested bytes");
                     break;
                 }
-                System.out.println("Now got " + offset + " bytes; need to read " + (buffer.length - offset) + " more bytes");
+                if (buffer.length < offset)
+                {
+                    System.out.println("Oops: Got more than " + buffer.length + " requested bytes");
+                    break;
+                }
+                System.out.print("Now got " + offset + " bytes; need to read " + (buffer.length - offset) + " more bytes ");
             }
             catch (Exception exception)
             {
                 exception.printStackTrace();
             }
+        }
+        if (offset != buffer.length)
+        {
+            throw new IOException("Got only " + offset + " of expected " + buffer.length + " bytes");
         }
     }
 
@@ -385,6 +390,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                 this.simulator = theSimulator;
                 // URL url = URLResource.getResource("/aimsun/singleRoad.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
+                @SuppressWarnings("synthetic-access")
                 String xml = AimsunControl.this.networkXML;
                 this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
             }
