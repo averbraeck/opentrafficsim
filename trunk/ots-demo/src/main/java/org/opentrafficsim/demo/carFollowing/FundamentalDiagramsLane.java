@@ -35,7 +35,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -297,19 +296,18 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                     OTSNode next = new OTSNode(this.network, "Node " + (laneNr + 1),
                             new OTSPoint3D(node.getPoint().x + this.laneLength.si, 0, 0));
                     Lane lane = LaneFactory.makeLane(this.network, "Lane", node, next, null, laneType, this.speedLimit,
-                            this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                            this.simulator);
                     this.lanes.add(lane);
                     node = next;
                 }
                 // create SinkLane
                 OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(node.getPoint().x + 50.0, 0, 0));
                 CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", node, end, null,
-                        LongitudinalDirectionality.DIR_PLUS, simulator);
+                        simulator);
                 int last = this.lanes.size() - 1;
                 Lane sinkLane = new Lane(endLink, "sinkLane", this.lanes.get(last).getLateralCenterPosition(1.0),
                         this.lanes.get(last).getLateralCenterPosition(1.0), this.lanes.get(last).getWidth(1.0),
-                        this.lanes.get(last).getWidth(1.0), laneType, this.speedLimit,
-                        new OvertakingConditions.None());
+                        this.lanes.get(last).getWidth(1.0), laneType, this.speedLimit, new OvertakingConditions.None());
                 new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
             }
             catch (NamingException | NetworkException | OTSGeometryException exception)
@@ -411,8 +409,9 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 Parameters parameters = DefaultsFactory.getDefaultParameters();
                 this.block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
                         Speed.ZERO, this.simulator, this.network);
-                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, this.block), this.block);
+                this.block.setParameters(parameters);
                 this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
                         this.gtuColorer);
             }
@@ -454,8 +453,9 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
 
                 LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
                         new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
-                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
+                gtu.setParameters(parameters);
                 gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                         this.gtuColorer);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

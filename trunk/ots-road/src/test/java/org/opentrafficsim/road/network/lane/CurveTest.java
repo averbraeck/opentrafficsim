@@ -58,7 +58,8 @@ public class CurveTest
      * @throws GTUException on error
      */
     @Test
-    public final void curveTest() throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GTUException
+    public final void curveTest()
+            throws OTSGeometryException, SimRuntimeException, NamingException, NetworkException, GTUException
     {
         final int laneCount = 1;
         GTUType gtuType = CAR;
@@ -71,12 +72,12 @@ public class CurveTest
         OTSNode curveEnd = new OTSNode(network, "curveEnd", new OTSPoint3D(150, 60, 0));
         OTSNode destination = new OTSNode(network, "destination", new OTSPoint3D(150, 150, 0));
         Lane[] straight1 = LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType,
-                speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
+                speedLimit, simulator);
         Lane[] straight2 = LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType,
-                speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
+                speedLimit, simulator);
         OTSLine3D curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
         Lane[] curve = LaneFactory.makeMultiLane(network, "bezier", curveStart, curveEnd, curveLine.getPoints(), laneCount,
-                laneType, speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
+                laneType, speedLimit, simulator);
         Lane[][] laneSets = new Lane[][] { straight1, curve, straight2 };
         Length initialPosition = new Length(5, LengthUnit.METER);
         Speed speed = new Speed(10, SpeedUnit.SI);

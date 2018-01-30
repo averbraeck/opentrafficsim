@@ -129,8 +129,6 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             perception.perceive();
 
             Length maximumForwardHeadway = laneBasedGTU.getParameters().getParameter(LOOKAHEAD);
-            Length maximumReverseHeadway = laneBasedGTU.getParameters().getParameter(LOOKBACKOLD);
-            Time now = getGtu().getSimulator().getSimulatorTime().getTime();
             DefaultSimplePerception simplePerception = perception.getPerceptionCategory(DefaultSimplePerception.class);
             Speed speedLimit = simplePerception.getSpeedLimit();
 
@@ -138,7 +136,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             Headway sameLaneLeader = simplePerception.getForwardHeadwayGTU();
             // TODO how to handle objects on this lane or another lane???
             Headway sameLaneFollower = simplePerception.getBackwardHeadway();
-            Collection<Headway> sameLaneTraffic = new ArrayList<Headway>();
+            Collection<Headway> sameLaneTraffic = new ArrayList<>();
             if (sameLaneLeader.getObjectType().isGtu())
             {
                 sameLaneTraffic.add(sameLaneLeader);
@@ -560,7 +558,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         }
         // We have now found the first upcoming branching Node
         // Which continuing link is the one we need?
-        Map<Lane, Length> suitabilityOfLanesBeforeBranch = new HashMap<Lane, Length>();
+        Map<Lane, Length> suitabilityOfLanesBeforeBranch = new HashMap<>();
         Link linkAfterBranch =
                 gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink, gtu.getGTUType()).getLink();
         GTUDirectionality drivingDirectionOnNextLane =

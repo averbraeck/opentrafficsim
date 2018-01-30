@@ -24,6 +24,9 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Ty
     /** Parent type. */
     private final T parent;
 
+    /** Cached hash code. */
+    private int hashCode;
+
     /**
      * Constructor for creating the top level types in subclasses.
      * @param id The id of the type to make it identifiable.
@@ -83,7 +86,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Ty
         }
         return false;
     }
-    
+
     /**
      * Returns the common ancestor of both types.
      * @param type T; other type.
@@ -98,17 +101,20 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Ty
         }
         return otherType;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.parent == null) ? 0 : this.parent.hashCode());
-        return result;
+        if (this.hashCode == 0)
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+            this.hashCode = prime * result + ((this.parent == null) ? 0 : this.parent.hashCode());
+        }
+        return this.hashCode;
     }
 
     /** {@inheritDoc} */

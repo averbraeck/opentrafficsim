@@ -22,6 +22,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -50,6 +51,9 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
 
     /** */
     private static final long serialVersionUID = 20161211L;
+    
+    /** GTU colorer. */
+    private GTUColorer colorer = new DefaultSwitchableGTUColorer();
 
     /** {@inheritDoc} */
     @Override
@@ -80,6 +84,12 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
     {
         return "Turbo roundabout demonstration";
     }
+    
+    @Override
+    protected GTUColorer getColorer()
+    {
+        return this.colorer;
+    }
 
     /**
      * The simulation model.
@@ -95,7 +105,7 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
 
         /** Simulator. */
         private OTSDEVSSimulatorInterface simulator;
-
+        
         /** {@inheritDoc} */
         @Override
         public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0)
@@ -105,7 +115,7 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
             try
             {
                 URL url = URLResource.getResource("/conflict/TurboRoundabout.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator, getColorer());
                 this.network = nlp.build(url);
 
                 // add conflicts

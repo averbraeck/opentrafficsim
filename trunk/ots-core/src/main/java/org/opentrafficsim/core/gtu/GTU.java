@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -88,14 +89,37 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     /** @return the current speed of the GTU, along the direction of movement. */
     Speed getSpeed();
 
+    /**
+     * @param time Time; time at which to obtain the speed
+     * @return the current speed of the GTU, along the direction of movement.
+     */
+    Speed getSpeed(Time time);
+
     /** @return the current acceleration of the GTU, along the direction of movement. */
     Acceleration getAcceleration();
 
-    /** @return Length; the current odometer value. */
+    /**
+     * @param time Time; time at which to obtain the acceleration
+     * @return the current acceleration of the GTU, along the direction of movement.
+     */
+    Acceleration getAcceleration(Time time);
+
+    /**
+     * @return Length; the current odometer value.
+     */
     Length getOdometer();
+
+    /**
+     * @param time Time; time to obtain the odometer at
+     * @return Length; the odometer value at given time.
+     */
+    Length getOdometer(Time time);
 
     /** @return Parameters. */
     Parameters getParameters();
+
+    /** @param parameters Parameters; parameters */
+    void setParameters(Parameters parameters);
 
     /**
      * @return StrategicalPlanner; the planner responsible for the overall 'mission' of the GTU, usually indicating where it
@@ -103,14 +127,39 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      */
     StrategicalPlanner getStrategicalPlanner();
 
-    /** @return TacticalPlanner; the current tactical planner that can generate an operational plan */
-    TacticalPlanner getTacticalPlanner();
+    /**
+     * @param time Time; time to obtain the strategical planner at
+     * @return StrategicalPlanner; the planner responsible for the overall 'mission' of the GTU, usually indicating where it
+     *         needs to go. It operates by instantiating tactical planners to do the work.
+     */
+    StrategicalPlanner getStrategicalPlanner(Time time);
 
-    /** @return the current operational plan for the GTU. */
+    /** @return TacticalPlanner; the current tactical planner that can generate an operational plan */
+    TacticalPlanner<?, ?> getTacticalPlanner();
+
+    /**
+     * @param time Time; time to obtain the tactical planner at
+     * @return TacticalPlanner; the tactical planner that can generate an operational plan at the given time
+     */
+    TacticalPlanner<?, ?> getTacticalPlanner(Time time);
+
+    /** @return the current operational plan for the GTU */
     OperationalPlan getOperationalPlan();
 
-    /** @return the status of the turn indicator. */
+    /**
+     * @param time Time; time to obtain the operational plan at
+     * @return the operational plan for the GTU at the given time.
+     */
+    OperationalPlan getOperationalPlan(Time time);
+
+    /** @return the status of the turn indicator */
     TurnIndicatorStatus getTurnIndicatorStatus();
+
+    /**
+     * @param time Time; time to obtain the turn indicator status at
+     * @return the status of the turn indicator at the given time
+     */
+    TurnIndicatorStatus getTurnIndicatorStatus(Time time);
 
     /**
      * Set the status of the turn indicator.
@@ -121,9 +170,9 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
 
     /** Destroy the GTU from the simulation and animation. */
     void destroy();
-    
-    /** 
-     * Returns whether the GTU is destroyed. 
+
+    /**
+     * Returns whether the GTU is destroyed.
      * @return whether the GTU is destroyed
      */
     boolean isDestroyed();
@@ -157,28 +206,28 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * Returns a value from cache if it was cached at the current simulation time. It returns {@code null} otherwise.
      * @param key CacheKey<T>; identifier of what is calculated
      * @return value from cache if it was cached at the current simulation time or {@code null} otherwise
-     * @param <T> type of value
+     * @param <K> type of value
      */
-    <T> T getCachedValue(CacheKey<T> key);
+    <K> K getCachedValue(CacheKey<K> key);
 
     /**
      * Caches a value at the current time. It may be retrieved later without recalculation. {@code null} values are not
      * accepted.
      * @param key CacheKey<T>; identifier of what is calculated
      * @param value T; calculated value
-     * @param <T> type of value
+     * @param <K> type of value
      * @throws NullPointerException when an input is {@code null}
      */
-    <T> void cacheValue(CacheKey<T> key, T value);
+    <K> void cacheValue(CacheKey<K> key, K value);
 
     /**
      * Returns a value from cache, or calculates it if it is not present. {@code null} values are not accepted.
      * @param key CacheKey<T>; identifier of what is calculated
      * @param calculator Supplier<T>; calculates the value if it isn't cached yet
      * @return T; value from cache, or calculated if it is not present
-     * @param <T> type of value
+     * @param <K> type of value
      */
-    <T> T getOrCalculateValue(CacheKey<T> key, Supplier<? extends T> calculator);
+    <K> K getOrCalculateValue(CacheKey<K> key, Supplier<? extends K> calculator);
 
     /**
      * Empty key class for caching. The reason {@code Object} isn't used is that here a generic type {@code T} can be defined.
@@ -187,7 +236,8 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 28 nov. 2017 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author$,
+     *          initial version 28 nov. 2017 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>

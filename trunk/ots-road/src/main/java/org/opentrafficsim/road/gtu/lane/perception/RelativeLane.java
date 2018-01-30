@@ -42,6 +42,9 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
     /** Number of lanes to lateral direction. */
     private final int numLanes;
 
+    /** Rank, for sorting. Is equal to number of lanes, but negative for left lanes. */
+    private final int rank;
+
     /**
      * Constructor.
      * @param lat lateral direction (use {@code null} for the current lane)
@@ -52,12 +55,13 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
     public RelativeLane(final LateralDirectionality lat, final int numLanes)
     {
         Throw.whenNull(lat, "Lateral directionality may not be null.");
-        Throw.when(lat.equals(LateralDirectionality.NONE) && numLanes != 0, IllegalArgumentException.class,
+        Throw.when(lat.isNone() && numLanes != 0, IllegalArgumentException.class,
                 "Number of lanes must be zero if the lateral directionality is NONE.");
         Throw.when(numLanes < 0, IllegalArgumentException.class,
                 "Relative lane with %d lanes in %s direction is not allowed, use values > 0.", numLanes, lat);
         this.lat = lat;
         this.numLanes = numLanes;
+        this.rank = lat.isLeft() ? -numLanes : numLanes;
     }
 
     /**
@@ -149,48 +153,50 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
      */
     public final RelativeLane add(final RelativeLane relativeLane)
     {
-        int nThis = this.lat.isNone() ? 0 : this.lat.isLeft() ? -this.numLanes : this.numLanes;
-        int nOther = relativeLane.lat.isNone() ? 0 : relativeLane.lat.isLeft() ? -relativeLane.numLanes : relativeLane.numLanes;
-        int nSum = nThis + nOther;
-        if (nSum < 0)
+        int rankSum = this.rank + relativeLane.rank;
+        if (rankSum < 0)
         {
-            return new RelativeLane(LateralDirectionality.LEFT, -nSum);
+            return new RelativeLane(LateralDirectionality.LEFT, -rankSum);
         }
-        if (nSum > 0)
+        if (rankSum > 0)
         {
-            return new RelativeLane(LateralDirectionality.RIGHT, nSum);
+            return new RelativeLane(LateralDirectionality.RIGHT, rankSum);
         }
         return CURRENT;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final int hashCode()
+    public int hashCode()
     {
-        int result = 17;
-        result = 31 * result + (this.lat != null ? this.lat.hashCode() : 0);
-        result = 31 * result + this.numLanes;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.rank;
         return result;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final boolean equals(final Object obj)
+    public boolean equals(Object obj)
     {
-        if (obj == this)
+        if (this == obj)
         {
             return true;
         }
-        if (!(obj instanceof RelativeLane))
+        if (obj == null)
         {
             return false;
         }
-        RelativeLane rel = (RelativeLane) obj;
-        if (rel.lat == this.lat && rel.numLanes == this.numLanes)
+        if (getClass() != obj.getClass())
         {
-            return true;
+            return false;
         }
-        return false;
+        RelativeLane other = (RelativeLane) obj;
+        if (this.rank != other.rank) // relative lane us uniquely defined by the rank
+        {
+            return false;
+        }
+        return true;
     }
 
     /** {@inheritDoc} */
@@ -208,9 +214,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
     @Override
     public final int compareTo(final RelativeLane rel)
     {
-        int nThis = this.lat.isNone() ? 0 : this.lat.isLeft() ? -this.numLanes : this.numLanes;
-        int nRel = rel.lat.isNone() ? 0 : rel.lat.isLeft() ? -rel.numLanes : rel.numLanes;
-        return nThis - nRel;
+        return this.rank - rel.rank;
     }
 
 }

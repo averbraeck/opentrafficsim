@@ -17,6 +17,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -111,6 +112,19 @@ public class XmlNetworkLaneParser implements Serializable
     public XmlNetworkLaneParser(final OTSDEVSSimulatorInterface simulator)
     {
         this.simulator = simulator;
+        LaneTypeTag laneTypeTagNoTraffic = new LaneTypeTag();
+        laneTypeTagNoTraffic.name = "NOTRAFFIC";
+        this.laneTypeTags.put(laneTypeTagNoTraffic.name, laneTypeTagNoTraffic);
+    }
+    
+    /**
+     * @param simulator the simulator for creating the animation. Null if no animation needed.
+     * @param colorer GTU colorer
+     */
+    public XmlNetworkLaneParser(final OTSDEVSSimulatorInterface simulator, final GTUColorer colorer)
+    {
+        this.simulator = simulator;
+        GTUColorerTag.defaultColorer = colorer;
         LaneTypeTag laneTypeTagNoTraffic = new LaneTypeTag();
         laneTypeTagNoTraffic.name = "NOTRAFFIC";
         this.laneTypeTags.put(laneTypeTagNoTraffic.name, laneTypeTagNoTraffic);

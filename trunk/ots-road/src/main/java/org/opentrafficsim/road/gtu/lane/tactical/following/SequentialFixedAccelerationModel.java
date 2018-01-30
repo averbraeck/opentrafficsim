@@ -35,7 +35,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     private static final long serialVersionUID = 20150206L;
 
     /** The list of result values of this SequentialFixedAccelerationModel. */
-    private final List<FixedAccelerationModel> steps = new ArrayList<FixedAccelerationModel>();
+    private final List<FixedAccelerationModel> steps = new ArrayList<>();
 
     /** The simulator engine. */
     private final OTSDEVSSimulatorInterface simulator;

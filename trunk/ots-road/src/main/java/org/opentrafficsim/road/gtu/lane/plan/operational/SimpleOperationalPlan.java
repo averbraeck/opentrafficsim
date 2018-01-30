@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.plan.operational;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -41,25 +42,32 @@ public class SimpleOperationalPlan implements Serializable
 
     /** Distance to object causing turn indicator intent. */
     private Length indicatorObjectDistance = null;
+    
+    /** Duration of the plan. */
+    private final Duration duration;
 
     /**
      * @param acceleration acceleration
+     * @param duration duration
      */
-    public SimpleOperationalPlan(final Acceleration acceleration)
+    public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration)
     {
-        this(acceleration, LateralDirectionality.NONE);
+        this(acceleration, duration, LateralDirectionality.NONE);
     }
 
     /**
      * @param acceleration acceleration
+     * @param duration duration
      * @param laneChangeDirection lane change direction, may be {@code null}.
      */
-    public SimpleOperationalPlan(final Acceleration acceleration, final LateralDirectionality laneChangeDirection)
+    public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration, final LateralDirectionality laneChangeDirection)
     {
         Throw.whenNull(acceleration, "Acceleration may not be null.");
+        Throw.whenNull(duration, "Duration may not be null.");
         Throw.whenNull(laneChangeDirection, "Lane change direction may not be null.");
         checkAcceleration(acceleration);
         this.acceleration = acceleration;
+        this.duration = duration;
         this.laneChangeDirection = laneChangeDirection;
     }
 
@@ -69,6 +77,14 @@ public class SimpleOperationalPlan implements Serializable
     public final Acceleration getAcceleration()
     {
         return this.acceleration;
+    }
+    
+    /**
+     * @return duration.
+     */
+    public Duration getDuration()
+    {
+        return this.duration;
     }
 
     /**

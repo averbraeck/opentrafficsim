@@ -49,7 +49,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -273,7 +272,7 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
 
     /** Random stream. */
     private StreamInterface stream = new MersenneTwister(12346);
-    
+
     /** The random number generator used to decide what kind of GTU to generate. */
     // private Random randomGenerator = new Random(12346);
 
@@ -616,28 +615,25 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
             if (merge)
             {
                 setupGenerator(LaneFactory.makeMultiLane(this.network, "From2a to From2b", from2a, from2b, null, lanesOnBranch,
-                        0, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator,
-                        LongitudinalDirectionality.DIR_PLUS));
+                        0, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
                 LaneFactory.makeMultiLaneBezier(this.network, "From2b to FirstVia", from2a, from2b, firstVia, secondVia,
                         lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
-                        this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                        this.simulator);
             }
             else
             {
                 LaneFactory.makeMultiLaneBezier(this.network, "SecondVia to end2a", firstVia, secondVia, end2a, end2b,
                         lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
-                        this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                        this.simulator);
                 setupSink(LaneFactory.makeMultiLane(this.network, "end2a to end2b", end2a, end2b, null, lanesOnBranch,
-                        lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator,
-                        LongitudinalDirectionality.DIR_PLUS), laneType);
+                        lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator), laneType);
             }
 
             Lane[] startLanes = LaneFactory.makeMultiLane(this.network, "From to FirstVia", from, firstVia, null,
-                    merge ? lanesOnMain : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator,
-                    LongitudinalDirectionality.DIR_PLUS);
+                    merge ? lanesOnMain : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator);
             setupGenerator(startLanes);
             Lane[] common = LaneFactory.makeMultiLane(this.network, "FirstVia to SecondVia", firstVia, secondVia, null,
-                    lanesOnCommon, laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                    lanesOnCommon, laneType, this.speedLimit, this.simulator);
             if (merge)
             {
                 for (int i = lanesOnCommonCompressed; i < lanesOnCommon; i++)
@@ -646,8 +642,7 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
                 }
             }
             setupSink(LaneFactory.makeMultiLane(this.network, "SecondVia to end", secondVia, end, null,
-                    merge ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator,
-                    LongitudinalDirectionality.DIR_PLUS), laneType);
+                    merge ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator), laneType);
 
             for (int index = 0; index < lanesOnCommon; index++)
             {
@@ -862,7 +857,7 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
         Node end = new OTSNode(this.network, link.getId() + "END", new OTSPoint3D(endX, endY, to.getPoint().z));
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null,
-                LongitudinalDirectionality.DIR_PLUS, this.simulator);
+                this.simulator);
         for (Lane lane : lanes)
         {
             // Overtaking left and right allowed on the sinkLane
@@ -897,8 +892,9 @@ class XMLSamplerModel implements OTSModelInterface, UNITS, EventListenerInterfac
         Parameters parameters = DefaultsFactory.getDefaultParameters();
         LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(1, METER),
                 lane.getWidth(1), Speed.ZERO, this.simulator, this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
+        block.setParameters(parameters);
         block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class, this.gtuColorer);
         return lane;
     }

@@ -151,8 +151,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         Parameters parameters = DefaultTestParameters.create();
         LaneBasedIndividualGTU gtu =
                 new LaneBasedIndividualGTU("1", gtuType, length, width, maxSpeed, this.simulator, this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
+        gtu.setParameters(parameters);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, speed);
         this.simulator.runUpTo(new Time(124, TimeUnit.BASE_SECOND));
         while (this.simulator.isRunning())
@@ -240,9 +241,10 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         parameters = DefaultTestParameters.create();
         LaneBasedIndividualGTU gtuX =
                 new LaneBasedIndividualGTU("1234", gtuType, length, width, maxSpeed, this.simulator, this.network);
-        strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+        strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtuX), gtuX);
         gtuX.init(strategicalPlanner, initialLongitudinalPositions, speed);
+        gtuX.setParameters(parameters);
         this.simulator.runUpTo(new Time(125, TimeUnit.BASE_SECOND));
         while (this.simulator.isRunning())
         {

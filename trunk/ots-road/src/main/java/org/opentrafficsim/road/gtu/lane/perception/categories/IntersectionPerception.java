@@ -4,7 +4,6 @@ import java.util.SortedSet;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
@@ -19,8 +18,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
-public interface IntersectionPerception extends PerceptionCategory
+public interface IntersectionPerception extends LaneBasedPerceptionCategory
 {
 
     /**

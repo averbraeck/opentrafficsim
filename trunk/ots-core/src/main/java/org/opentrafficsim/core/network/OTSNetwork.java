@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -100,7 +101,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final ImmutableMap<String, Node> getNodeMap()
     {
-        return new ImmutableHashMap<String, Node>(this.nodeMap, Immutable.WRAP);
+        return new ImmutableHashMap<>(this.nodeMap, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -161,7 +162,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final ImmutableMap<String, Link> getLinkMap()
     {
-        return new ImmutableHashMap<String, Link>(this.linkMap, Immutable.WRAP);
+        return new ImmutableHashMap<>(this.linkMap, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -255,7 +256,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final ImmutableMap<String, ObjectInterface> getObjectMap()
     {
-        return new ImmutableHashMap<String, ObjectInterface>(this.objectMap, Immutable.WRAP);
+        return new ImmutableHashMap<>(this.objectMap, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -271,7 +272,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
                 result.put(key, o);
             }
         }
-        return new ImmutableHashMap<String, ObjectInterface>(result, Immutable.WRAP);
+        return new ImmutableHashMap<>(result, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -329,7 +330,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap()
     {
-        return new ImmutableHashMap<String, InvisibleObjectInterface>(this.invisibleObjectMap, Immutable.WRAP);
+        return new ImmutableHashMap<>(this.invisibleObjectMap, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -346,7 +347,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
                 result.put(key, o);
             }
         }
-        return new ImmutableHashMap<String, InvisibleObjectInterface>(result, Immutable.WRAP);
+        return new ImmutableHashMap<>(result, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -410,7 +411,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             routes.putAll(this.routeMap.get(gtuType));
         }
-        return new ImmutableHashMap<String, Route>(routes, Immutable.WRAP);
+        return new ImmutableHashMap<>(routes, Immutable.WRAP);
     }
 
     /** {@inheritDoc} */
@@ -492,7 +493,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final Set<Route> getRoutesBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo)
     {
-        Set<Route> routes = new HashSet<>();
+        Set<Route> routes = new LinkedHashSet<>();
         if (this.routeMap.containsKey(gtuType))
         {
             for (Route route : this.routeMap.get(gtuType).values())
@@ -504,7 +505,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
                         routes.add(route);
                     }
                 }
-                catch (NetworkException ne)
+                catch (@SuppressWarnings("unused") NetworkException ne)
                 {
                     // thrown if no nodes exist in the route. Do not add the route in that case.
                 }
@@ -519,10 +520,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     {
         // TODO take connections into account, and possibly do node expansion to build the graph
         @SuppressWarnings("rawtypes")
-        Class linkEdgeClass = LinkEdge.class;
-        @SuppressWarnings("unchecked")
-        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph =
-                new SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>(linkEdgeClass);
+        Class<LinkEdge> linkEdgeClass = LinkEdge.class;
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleDirectedWeightedGraph<>(linkEdgeClass);
         for (Node node : this.nodeMap.values())
         {
             graph.addVertex(node);
@@ -674,7 +673,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final Set<GTU> getGTUs()
     {
         // defensive copy
-        return new HashSet<GTU>(this.gtuMap.values());
+        return new HashSet<>(this.gtuMap.values());
     }
 
     /** {@inheritDoc} */
@@ -774,9 +773,10 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      * @param newSource the new source object to attach the cloned animation objects to
      * @param oldSimulator the old simulator when the old objects can be found
      * @param newSimulator the new simulator where the new simulation objects need to be registered
+     * @param <T> locatable type
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public static void cloneAnimation(final Locatable oldSource, final Locatable newSource,
+    public static <T extends Locatable> void cloneAnimation(final Locatable oldSource, final T newSource,
             final OTSSimulatorInterface oldSimulator, final OTSSimulatorInterface newSimulator)
     {
         if (!(oldSimulator instanceof AnimatorInterface) || !(newSimulator instanceof AnimatorInterface))
@@ -792,15 +792,16 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             while (list.hasMore())
             {
                 Binding binding = list.next();
-                Renderable2DInterface animationObject = (Renderable2DInterface) binding.getObject();
-                Locatable locatable = animationObject.getSource();
+                @SuppressWarnings("unchecked")
+                Renderable2DInterface<T> animationObject = (Renderable2DInterface<T>) binding.getObject();
+                T locatable = animationObject.getSource();
                 if (oldSource.equals(locatable) && animationObject instanceof ClonableRenderable2DInterface)
                 {
-                    ((ClonableRenderable2DInterface) animationObject).clone(newSource, newSimulator);
+                    ((ClonableRenderable2DInterface<T>) animationObject).clone(newSource, newSimulator);
                 }
             }
         }
-        catch (NamingException | RemoteException exception)
+        catch (@SuppressWarnings("unused") NamingException | RemoteException exception)
         {
             System.err.println("Error when cloning animation objects for object " + oldSource);
         }
@@ -818,7 +819,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             gtu.destroy();
         }
 
-        Set<Renderable2DInterface> animationObjects = new HashSet<>();
+        Set<Renderable2DInterface<?>> animationObjects = new HashSet<>();
         try
         {
             EventContext context = (EventContext) ContextUtil.lookup(simulator.getReplication().getContext(), "/animation/2D");
@@ -826,23 +827,23 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             while (list.hasMore())
             {
                 Binding binding = list.next();
-                Renderable2DInterface animationObject = (Renderable2DInterface) binding.getObject();
+                Renderable2DInterface<?> animationObject = (Renderable2DInterface<?>) binding.getObject();
                 animationObjects.add(animationObject);
             }
 
-            for (Renderable2DInterface ao : animationObjects)
+            for (Renderable2DInterface<?> ao : animationObjects)
             {
                 try
                 {
                     ao.destroy();
                 }
-                catch (Exception e)
+                catch (@SuppressWarnings("unused") Exception e)
                 {
                     //
                 }
             }
         }
-        catch (NamingException | RemoteException exception)
+        catch (@SuppressWarnings("unused") NamingException | RemoteException exception)
         {
             System.err.println("Error when destroying animation objects");
         }
@@ -874,7 +875,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             while (list.hasMore())
             {
                 Binding binding = list.next();
-                Renderable2DInterface animationObject = (Renderable2DInterface) binding.getObject();
+                Renderable2DInterface<?> animationObject = (Renderable2DInterface<?>) binding.getObject();
                 Locatable locatable = animationObject.getSource();
                 if (clazz.isAssignableFrom(locatable.getClass()))
                 {
@@ -882,7 +883,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
                 }
             }
         }
-        catch (NamingException | RemoteException exception)
+        catch (@SuppressWarnings("unused") NamingException | RemoteException exception)
         {
             System.err.println("Error when destroying animation objects for class " + clazz.getSimpleName());
         }

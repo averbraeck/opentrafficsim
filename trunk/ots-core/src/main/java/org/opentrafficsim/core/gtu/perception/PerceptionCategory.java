@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu.perception;
 
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -14,8 +15,10 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <G> GTU type
+ * @param <P> perception type
  */
-public interface PerceptionCategory
+public interface PerceptionCategory<G extends GTU, P extends Perception<G>>
 {
 
     /**

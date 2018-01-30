@@ -2,11 +2,12 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import nl.tudelft.simulation.language.Throw;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -16,6 +17,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * A LaneStructureRecord contains information about the lanes that can be accessed from this lane by a GTUType. It tells whether
@@ -35,6 +38,10 @@ public class LaneStructureRecord implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;
+    
+    /** Cache of allows route information. */
+    // TODO clear on network change, with an event listener?
+    private static Map<Lane, Map<Route, Map<GTUType, Map<Boolean, Boolean>>>> allowsRouteCache = new HashMap<>();
 
     /** The lane of the LSR. */
     private final Lane lane;
@@ -55,7 +62,7 @@ public class LaneStructureRecord implements Serializable
     private Length cutOffStart = null;
 
     /** Distance to start of the record, negative for backwards. */
-    private final Length startDistance;
+    private Length startDistance;
 
     /**
      * The next LSRs. The list is empty if no LSRs are available. Next is relative to the driving direction, not to the design
@@ -69,6 +76,35 @@ public class LaneStructureRecord implements Serializable
      */
     private List<LaneStructureRecord> prevList = new ArrayList<>();
 
+    /** Record who's start start distance is used to calculate the start distance of this record. */
+    LaneStructureRecord source; // TODO make private after debuggin
+
+    /** Start distance link between records. */
+    private RecordLink sourceLink;
+
+    /** Set of records who's starting position depends on this record. */
+    private final Set<LaneStructureRecord> dependentRecords = new LinkedHashSet<>();
+
+    /**
+     * Constructor.
+     * @param lane Lane; lane
+     * @param direction GTUDirectionality; direction of travel for the GTU
+     * @param startDistanceSource LaneStructureRecord; record on which the start distance is based
+     * @param recordLink RecordLink; link type to source
+     */
+    public LaneStructureRecord(final Lane lane, final GTUDirectionality direction,
+            final LaneStructureRecord startDistanceSource, final RecordLink recordLink)
+    {
+        this.lane = lane;
+        this.gtuDirectionality = direction;
+        this.source = startDistanceSource;
+        this.sourceLink = recordLink;
+        if (startDistanceSource != null)
+        {
+            startDistanceSource.dependentRecords.add(this);
+        }
+    }
+
     /**
      * @param lane the lane of the LSR
      * @param direction the direction on which we process this lane
@@ -79,6 +115,58 @@ public class LaneStructureRecord implements Serializable
         this.lane = lane;
         this.gtuDirectionality = direction;
         this.startDistance = startDistance;
+
+        this.source = null;
+        this.sourceLink = null;
+    }
+
+    /**
+     * Change the source of the distance.
+     * @param startDistanceSource LaneStructureRecord; record on which the start distance is based
+     * @param recordLink RecordLink; link type to source
+     */
+    void changeStartDistanceSource(final LaneStructureRecord startDistanceSource, final RecordLink recordLink)
+    {
+        // clear link
+        if (this.source != null)
+        {
+            this.source.dependentRecords.remove(this);
+        }
+        // set new link
+        this.source = startDistanceSource;
+        this.sourceLink = recordLink;
+        if (this.source != null)
+        {
+            this.source.dependentRecords.add(this);
+        }
+    }
+
+    /**
+     * Updates the start distance, including all records who's start distance depends on this value. Advised is to only initiate
+     * this at the root record. Note that before this is invoked, all record-links should be updated.
+     * @param fractionalPosition double; fractional position at the current cross-section
+     * @param laneStructure LaneStructure; parent lane structure
+     */
+    final void updateStartDistance(final double fractionalPosition, final LaneStructure laneStructure)
+    {
+        this.startDistance = this.sourceLink.calculateStartDistance(this.source, this, fractionalPosition);
+        if (this.startDistance.si < 0.0 && this.startDistance.si + this.lane.getLength().si > 0.0)
+        {
+            laneStructure.addToCrossSection(this);
+        }
+        for (LaneStructureRecord record : this.dependentRecords)
+        {
+            record.updateStartDistance(fractionalPosition, laneStructure);
+        }
+    }
+
+    /**
+     * Returns the source of the start distance.
+     * @return LaneStructureRecord; source of the start distance
+     */
+    final LaneStructureRecord getStartDistanceSource()
+    {
+        return this.source;
     }
 
     /**
@@ -86,8 +174,8 @@ public class LaneStructureRecord implements Serializable
      */
     public final Node getFromNode()
     {
-        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getStartNode() : this.lane.getParentLink()
-                .getEndNode();
+        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getStartNode()
+                : this.lane.getParentLink().getEndNode();
     }
 
     /**
@@ -95,8 +183,8 @@ public class LaneStructureRecord implements Serializable
      */
     public final Node getToNode()
     {
-        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode() : this.lane.getParentLink()
-                .getStartNode();
+        return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode()
+                : this.lane.getParentLink().getStartNode();
     }
 
     /**
@@ -106,8 +194,8 @@ public class LaneStructureRecord implements Serializable
      */
     public final Length getDistanceToPosition(final Length longitudinalPosition)
     {
-        return this.startDistance.plus(this.gtuDirectionality.isPlus() ? longitudinalPosition : this.lane.getLength().minus(
-                longitudinalPosition));
+        return this.startDistance.plus(
+                this.gtuDirectionality.isPlus() ? longitudinalPosition : this.lane.getLength().minus(longitudinalPosition));
     }
 
     /**
@@ -201,7 +289,7 @@ public class LaneStructureRecord implements Serializable
     }
 
     /**
-     * Returns whether (the end of) this lane allows the route to be followed.
+     * Returns whether (the end of) this lane allows the route to be followed, using caching.
      * @param route Route; the route to follow
      * @param gtuType GTUType; gtu type
      * @param end boolean; whether to consider the end (or otherwise the lane itself, i.e. allow lane change from this lane)
@@ -209,6 +297,43 @@ public class LaneStructureRecord implements Serializable
      * @throws NetworkException if no destination node
      */
     private boolean allowsRoute(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
+    {
+        Map<Route, Map<GTUType, Map<Boolean, Boolean>>> map1 = allowsRouteCache.get(this.lane);
+        if (map1 == null)
+        {
+            map1 = new HashMap<>();
+            allowsRouteCache.put(this.lane, map1);
+        }
+        Map<GTUType, Map<Boolean, Boolean>> map2 = map1.get(route);
+        if (map2 == null)
+        {
+            map2 = new HashMap<>();
+            map1.put(route, map2);
+        }
+        Map<Boolean, Boolean> map3 = map2.get(gtuType);
+        if (map3 == null)
+        {
+            map3 = new HashMap<>();
+            map2.put(gtuType, map3);
+        }
+        Boolean allows = map3.get(end);
+        if (allows == null)
+        {
+            allows = allowsRoute0(route, gtuType, end);
+            map3.put(end, allows);
+        }
+        return allows;
+    }
+    
+    /**
+     * Returns whether (the end of) this lane allows the route to be followed.
+     * @param route Route; the route to follow
+     * @param gtuType GTUType; gtu type
+     * @param end boolean; whether to consider the end (or otherwise the lane itself, i.e. allow lane change from this lane)
+     * @return whether the end of this lane allows the route to be followed
+     * @throws NetworkException if no destination node
+     */
+    private boolean allowsRoute0(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
     {
 
         // driving without route
@@ -226,8 +351,8 @@ public class LaneStructureRecord implements Serializable
         }
 
         // link is on the route, but lane markings may still prevent the route from being followed
-        Set<LaneStructureRecord> currentSet = new HashSet<>();
-        Set<LaneStructureRecord> nextSet = new HashSet<>();
+        Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
+        Set<LaneStructureRecord> nextSet = new LinkedHashSet<>();
         currentSet.add(this);
 
         boolean firstLoop = true;
@@ -246,14 +371,14 @@ public class LaneStructureRecord implements Serializable
                             // reached destination, by definition ok
                             return true;
                         }
-                        if (route.contains(next.getToNode()))
+                        if (route.indexOf(next.getToNode()) == to + 1)
                         {
                             nextSet.add(next);
                         }
                     }
                 }
                 currentSet = nextSet;
-                nextSet = new HashSet<>();
+                nextSet = new LinkedHashSet<>();
             }
             firstLoop = false;
 
@@ -291,12 +416,6 @@ public class LaneStructureRecord implements Serializable
                 {
                     nLanesOnNextLink++;
                 }
-                // if (l.getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
-                // || ((l.getDirectionality(gtuType).isForward() && nextRecord.getDirection().isPlus()) || (l
-                // .getDirectionality(gtuType).isBackward() && nextRecord.getDirection().isMinus())))
-                // {
-                // nLanesOnNextLink++;
-                // }
             }
             if (nextSet.size() == nLanesOnNextLink)
             {
@@ -305,7 +424,7 @@ public class LaneStructureRecord implements Serializable
             }
 
             currentSet = nextSet;
-            nextSet = new HashSet<>();
+            nextSet = new LinkedHashSet<>();
 
         }
 
@@ -317,25 +436,25 @@ public class LaneStructureRecord implements Serializable
      * Returns whether continuing on this lane will allow the route to be followed, while the lane itself is not on the route.
      * @param route Route; the route to follow
      * @param gtuType GTUType; gtu type
-     * @param source LaneStructureRecord; source record, should be {@code null} to prevent loop recognition on first iteration
+     * @param original LaneStructureRecord; source record, should be {@code null} to prevent loop recognition on first iteration
      * @return whether continuing on this lane will allow the route to be followed
      * @throws NetworkException if no destination node
      */
-    private boolean leadsToRoute(final Route route, final GTUType gtuType, final LaneStructureRecord source)
+    private boolean leadsToRoute(final Route route, final GTUType gtuType, final LaneStructureRecord original)
             throws NetworkException
     {
-        if (source == this)
+        if (original == this)
         {
             return false; // stop loop
         }
-        if (source != null && allowsRoute(route, gtuType))
+        if (original != null && allowsRoute(route, gtuType))
         {
             return true;
         }
         // move downstream until we are at the route
         for (LaneStructureRecord record : getNext())
         {
-            boolean leadsTo = record.leadsToRoute(route, gtuType, source == null ? this : source);
+            boolean leadsTo = record.leadsToRoute(route, gtuType, original == null ? this : original);
             if (leadsTo)
             {
                 return true;
@@ -386,15 +505,11 @@ public class LaneStructureRecord implements Serializable
     }
 
     /**
-     * @param nextList set the next LSRs. The list is empty if no LSRs are available. Next is relative to the driving direction,
-     *            not to the design line direction.
-     * @throws GTUException if the records is cut-off at the end
+     * Clears the next list.
      */
-    public final void setNextList(final List<LaneStructureRecord> nextList) throws GTUException
+    final void clearNextList()
     {
-        Throw.when(this.cutOffEnd != null && !nextList.isEmpty(), GTUException.class,
-                "Cannot set next records to a record that was cut-off at the end.");
-        this.nextList = nextList;
+        this.nextList.clear();
     }
 
     /**
@@ -418,15 +533,11 @@ public class LaneStructureRecord implements Serializable
     }
 
     /**
-     * @param prevList set the next LSRs. The list is empty if no LSRs are available. Previous is relative to the driving
-     *            direction, not to the design line direction.
-     * @throws GTUException if the records is cut-off at the start
+     * Clears the prev list.
      */
-    public final void setPrevList(final List<LaneStructureRecord> prevList) throws GTUException
+    final void clearPrevList()
     {
-        Throw.when(this.cutOffStart != null && !prevList.isEmpty(), GTUException.class,
-                "Cannot set previous records to a record that was cut-off at the start.");
-        this.prevList = prevList;
+        this.prevList.clear();
     }
 
     /**
@@ -442,7 +553,7 @@ public class LaneStructureRecord implements Serializable
 
     /**
      * Sets this record as being cut-off, i.e. there are no next records due to cut-off.
-     * @param cutOffEnd where this lane was cut-off (in the driving direction) resulting in no prev lanes
+     * @param cutOffEnd where this lane was cut-off (in the driving direction) resulting in no next lanes
      * @throws GTUException if there are next records
      */
     public final void setCutOffEnd(final Length cutOffEnd) throws GTUException
@@ -454,7 +565,7 @@ public class LaneStructureRecord implements Serializable
 
     /**
      * Sets this record as being cut-off, i.e. there are no previous records due to cut-off.
-     * @param cutOffStart where this lane was cut-off (in the driving direction) resulting in no next lanes
+     * @param cutOffStart where this lane was cut-off (in the driving direction) resulting in no prev lanes
      * @throws GTUException if there are previous records
      */
     public final void setCutOffStart(final Length cutOffStart) throws GTUException
@@ -501,6 +612,22 @@ public class LaneStructureRecord implements Serializable
     }
 
     /**
+     * Clears the cut-off at the end.
+     */
+    public final void clearCutOffEnd()
+    {
+        this.cutOffEnd = null;
+    }
+
+    /**
+     * Clears the cut-off at the start.
+     */
+    public final void clearCutOffStart()
+    {
+        this.cutOffStart = null;
+    }
+
+    /**
      * Returns whether the record forms a dead-end.
      * @return whether the record forms a dead-end
      */
@@ -532,13 +659,101 @@ public class LaneStructureRecord implements Serializable
     {
         return this.startDistance;
     }
-
+    
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         // left and right may cause stack overflow
         return "LaneStructureRecord [lane=" + this.lane + ", direction=" + this.gtuDirectionality + "]";
+    }
+
+    /**
+     * Link between records that defines the dependence of start position and hence how this is updated as the GTU moves.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 22 jan. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public enum RecordLink
+    {
+
+        /** This record is upstream of the start distance source. */
+        UP
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Length calculateStartDistance(final LaneStructureRecord startDistanceSource, final LaneStructureRecord self,
+                    final double fractionalPosition)
+            {
+                return startDistanceSource.getStartDistance().minus(self.getLane().getLength());
+            }
+        },
+
+        /** This record is downstream of the start distance source. */
+        DOWN
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Length calculateStartDistance(final LaneStructureRecord startDistanceSource, final LaneStructureRecord self,
+                    final double fractionalPosition)
+            {
+                return startDistanceSource.getStartDistance().plus(startDistanceSource.getLane().getLength());
+            }
+        },
+
+        /** This record is laterally adjacent to the start distance source, and found in an upstream search. */
+        LATERAL_END
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Length calculateStartDistance(final LaneStructureRecord startDistanceSource, final LaneStructureRecord self,
+                    final double fractionalPosition)
+            {
+                return startDistanceSource.getStartDistance().plus(startDistanceSource.getLane().getLength())
+                        .minus(self.getLane().getLength());
+            }
+        },
+
+        /** This record is laterally adjacent to the start distance source, and found in a downstream search. */
+        LATERAL_START
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Length calculateStartDistance(final LaneStructureRecord startDistanceSource, final LaneStructureRecord self,
+                    final double fractionalPosition)
+            {
+                return startDistanceSource.getStartDistance();
+            }
+        },
+
+        /** Part of the current cross-section. */
+        CROSS
+        {
+            /** {@inheritDoc} */
+            @Override
+            public Length calculateStartDistance(final LaneStructureRecord startDistanceSource, final LaneStructureRecord self,
+                    final double fractionalPosition)
+            {
+                return self.getLane().getLength().multiplyBy(fractionalPosition).neg();
+            }
+        };
+
+        /**
+         * Calculate the start position of this record based on a neighboring source.
+         * @param startDistanceSource LaneStructureRecord; source record in the tree
+         * @param self LaneStructureRecord; own record
+         * @param fractionalPosition double; fractional position on the cross-section
+         * @return start position of this record based on a neighboring source
+         */
+        public abstract Length calculateStartDistance(LaneStructureRecord startDistanceSource, LaneStructureRecord self,
+                double fractionalPosition);
+
     }
 
 }

@@ -53,12 +53,70 @@ public abstract class AbstractHistorical<T, E extends Event<T>>
     }
 
     /**
-     * Returns the list of events for sub classes to use.
-     * @return List;&lt;E&gt; list of events for sub classes to use
+     * Returns a list of events, ordered last to first, that includes all events <i>after</i> {@code time}.
+     * @param time Time; past time up to which to include events
+     * @return List; list of events, ordered last to first, that includes all events <i>after</i> {@code time}
      */
-    protected final List<E> getEvents()
+    protected final List<E> getEvents(final Time time)
     {
-        return this.events;
+        List<E> list = new ArrayList<>();
+        int i = this.events.size() - 1;
+        while (i >= 0 && this.events.get(i).getTime() > time.si)
+        {
+            list.add(this.events.get(i));
+            i--;
+        }
+        return list;
+    }
+    
+    /**
+     * Returns the most recent event from <i>before</i> {@code time}, or the oldest if no such event.
+     * @param time Time; past time at which to obtain event
+     * @return E; most recent event from <i>before</i> {@code time}
+     */
+    protected final E getEvent(final Time time)
+    {
+        E prev = null;
+        for (E event : this.events)
+        {
+            if (event.getTime() > time.si)
+            {
+                break;
+            }
+            prev = event;
+        }
+        if (prev == null && !this.events.isEmpty())
+        {
+            return this.events.get(0);
+        }
+        return prev;
+    }
+    
+    /**
+     * Returns the last event.
+     * @return E; last event
+     */
+    protected final E getLastEvent()
+    {
+        return this.events.isEmpty() ? null : this.events.get(this.events.size() - 1);
+    }
+    
+    /**
+     * Removes the given event.
+     * @param event E; event to remove
+     */
+    protected final void removeEvent(final E event)
+    {
+        this.events.remove(event);
+    }
+
+    /**
+     * Adds the event to the list of events.
+     * @param event E; event to add
+     */
+    protected final void addEvent(final E event)
+    {
+        this.events.add(event);
     }
 
     /**
@@ -76,7 +134,7 @@ public abstract class AbstractHistorical<T, E extends Event<T>>
             }
         }
     }
-    
+
     /**
      * Removes events that are no longer needed to guarantee the history time. This is invoked by the history manager.
      * @param history Duration; history time to keep
@@ -84,16 +142,17 @@ public abstract class AbstractHistorical<T, E extends Event<T>>
     protected final void cleanUpHistory(final Duration history)
     {
         double past = now().si - history.si;
-        while (getEvents().size() > 1 && getEvents().get(1).getTime() < past)
+        while (this.events.size() > 1 && this.events.get(1).getTime() < past)
         {
-            getEvents().remove(0);
+            this.events.remove(0);
         }
     }
 
     /**
      * Interface for event types.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 1 jan. 2018 <br>
@@ -104,7 +163,7 @@ public abstract class AbstractHistorical<T, E extends Event<T>>
      */
     static interface Event<T>
     {
-        
+
         /**
          * Returns the time of this event.
          * @return double; time of this event
@@ -116,13 +175,14 @@ public abstract class AbstractHistorical<T, E extends Event<T>>
          * @return T; value of this event
          */
         public abstract T getValue();
-        
+
     }
-    
+
     /**
      * Standard event which stores a time and value.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 1 jan. 2018 <br>
@@ -163,6 +223,13 @@ public abstract class AbstractHistorical<T, E extends Event<T>>
         public T getValue()
         {
             return this.value;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "EventValue [time=" + this.time + ", value=" + this.value + "]";
         }
 
     }

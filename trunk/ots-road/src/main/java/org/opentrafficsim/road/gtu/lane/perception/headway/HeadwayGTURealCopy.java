@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -95,7 +96,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     {
         super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getSpeed(), gtu.getAcceleration(), gtuStatus);
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
-        this.parameters = new Parameters(gtu.getParameters());
+        this.parameters = new ParameterSet(gtu.getParameters());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
         this.route = gtu.getStrategicalPlanner().getRoute();
     }
@@ -114,7 +115,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
         super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getSpeed(),
                 gtu.getAcceleration());
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
-        this.parameters = new Parameters(gtu.getParameters());
+        this.parameters = new ParameterSet(gtu.getParameters());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
         this.route = gtu.getStrategicalPlanner().getRoute();
     }

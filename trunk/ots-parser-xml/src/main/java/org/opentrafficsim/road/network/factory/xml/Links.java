@@ -5,11 +5,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -460,8 +457,7 @@ final class Links
 
         // TODO: Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link = new CrossSectionLink(parser.network, linkTag.name, linkTag.nodeStartTag.node,
-                linkTag.nodeEndTag.node, LinkType.FREEWAY, designLine, simulator,
-                new HashMap<GTUType, LongitudinalDirectionality>(), linkTag.laneKeepingPolicy);
+                linkTag.nodeEndTag.node, LinkType.FREEWAY, designLine, simulator, linkTag.laneKeepingPolicy);
 
         if (linkTag.priority != null)
         {
@@ -676,7 +672,7 @@ final class Links
                                 Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz, new Class[] {
                                         String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
                                 Length position = LinkTag.parseBeginEndPosition(trafficLightTag.positionStr, lane);
-                                SimpleTrafficLight trafficLight = (SimpleTrafficLight) trafficLightConstructor
+                                trafficLightConstructor
                                         .newInstance(new Object[] { trafficLightTag.name, lane, position, simulator });
                             }
                             catch (ClassNotFoundException | NoSuchMethodException | InstantiationException

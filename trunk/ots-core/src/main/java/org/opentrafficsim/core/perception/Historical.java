@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.perception;
 
-import java.util.List;
-
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.perception.AbstractHistorical.EventValue;
 
@@ -30,6 +28,17 @@ public class Historical<T> extends AbstractHistorical<T, EventValue<T>>
     {
         super(historyManager);
     }
+    
+    /**
+     * Constructor.
+     * @param historyManager HistoryManager; history manager
+     * @param initialValue T; initial value
+     */
+    public Historical(final HistoryManager historyManager, final T initialValue)
+    {
+        super(historyManager);
+        set(initialValue);
+    }
 
     /**
      * Set value at the current simulation time. If a value is already given at this time, it is overwritten. Values should be
@@ -38,13 +47,12 @@ public class Historical<T> extends AbstractHistorical<T, EventValue<T>>
      */
     public final synchronized void set(final T value)
     {
-        List<EventValue<T>> events = getEvents();
-        double time = now().si;
-        if (!events.isEmpty() && events.get(events.size() - 1).getTime() == time)
+        EventValue<T> event = getLastEvent();
+        if (event != null && event.getTime() == now().si)
         {
-            events.remove(events.size() - 1);
+            removeEvent(event);
         }
-        events.add(new EventValue<>(time, value));
+        addEvent(new EventValue<>(now().si, value));
     }
 
     /**
@@ -53,12 +61,8 @@ public class Historical<T> extends AbstractHistorical<T, EventValue<T>>
      */
     public final synchronized T get()
     {
-        List<EventValue<T>> events = getEvents();
-        if (events.isEmpty())
-        {
-            return null;
-        }
-        return events.get(events.size() - 1).getValue();
+        EventValue<T> event = getLastEvent();
+        return event == null ? null : event.getValue();
     }
 
     /**
@@ -70,21 +74,15 @@ public class Historical<T> extends AbstractHistorical<T, EventValue<T>>
     public final synchronized T get(final Time time)
     {
         Throw.whenNull(time, "Time may not be null.");
-        // find most recent state with start time before time
-        for (int i = getEvents().size() - 1; i >= 0; i--)
-        {
-            if (getEvents().get(i).getTime() <= time.si)
-            {
-                return getEvents().get(i).getValue();
-            }
-        }
-        // return null if no history available
-        if (getEvents().isEmpty())
-        {
-            return null;
-        }
-        // return oldest if no state is old enough
-        return getEvents().get(0).getValue();
+        EventValue<T> event = getEvent(time);
+        return event == null ? null : event.getValue();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Historical [current=" + get() + "]";
+    }
+    
 }

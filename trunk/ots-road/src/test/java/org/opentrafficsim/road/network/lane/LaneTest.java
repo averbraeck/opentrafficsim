@@ -73,13 +73,13 @@ public class LaneTest implements UNITS
             // no implementation needed.
         }.getMockInstance();
         CrossSectionLink link = new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, LinkType.ROAD,
-                new OTSLine3D(coordinates), simulator, LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
+                new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEP_RIGHT);
         Length startLateralPos = new Length(2, METER);
         Length endLateralPos = new Length(5, METER);
         Length startWidth = new Length(3, METER);
         Length endWidth = new Length(4, METER);
         GTUType gtuTypeCar = CAR;
-        
+
         GTUCompatibility<LaneType> gtuCompatibility = new GTUCompatibility<>((LaneType) null);
         gtuCompatibility.addAllowedGTUType(GTUType.VEHICLE, LongitudinalDirectionality.DIR_PLUS);
         LaneType laneType = new LaneType("One way", LaneType.FREEWAY, gtuCompatibility);
@@ -87,8 +87,8 @@ public class LaneTest implements UNITS
         speedMap.put(GTUType.VEHICLE, new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
         // FIXME what overtaking conditions do we ant to test in this unit test?
-        Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType,
-                speedMap, new OvertakingConditions.LeftAndRight());
+        Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap,
+                new OvertakingConditions.LeftAndRight());
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
@@ -136,10 +136,10 @@ public class LaneTest implements UNITS
         coordinates[1] = new OTSPoint3D(200, 100);
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         link = new CrossSectionLink(network, "A to B with Kink", nodeFrom, nodeTo, LinkType.ROAD, new OTSLine3D(coordinates),
-                simulator, LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
+                simulator, LaneKeepingPolicy.KEEP_RIGHT);
         // FIXME what overtaking conditions do we ant to test in this unit test?
-        lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType,
-                speedMap, new OvertakingConditions.LeftAndRight());
+        lane = new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap,
+                new OvertakingConditions.LeftAndRight());
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
@@ -153,8 +153,8 @@ public class LaneTest implements UNITS
         Length startLateralPos2 = new Length(-8, METER);
         Length endLateralPos2 = new Length(-5, METER);
         // FIXME what overtaking conditions do we ant to test in this unit test?
-        Lane lane2 = new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType,
-                speedMap, new OvertakingConditions.LeftAndRight());
+        Lane lane2 = new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, speedMap,
+                new OvertakingConditions.LeftAndRight());
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane2.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should be empty", 0, lane2.nextLanes(gtuTypeCar).size());
@@ -204,7 +204,7 @@ public class LaneTest implements UNITS
                         // no implementation needed.
                     }.getMockInstance();
                     CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, LinkType.ROAD, line, simulator,
-                            LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
+                            LaneKeepingPolicy.KEEP_RIGHT);
                     final int[] lateralOffsets = { -10, -3, -1, 0, 1, 3, 10 };
                     for (int startLateralOffset : lateralOffsets)
                     {

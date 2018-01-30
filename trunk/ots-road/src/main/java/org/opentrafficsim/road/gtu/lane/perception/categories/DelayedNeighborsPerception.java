@@ -322,9 +322,9 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 }
             }
         }
-        catch (ParameterException pe)
+        catch (@SuppressWarnings("unused") ParameterException pe)
         {
-
+            //
         }
 
     }

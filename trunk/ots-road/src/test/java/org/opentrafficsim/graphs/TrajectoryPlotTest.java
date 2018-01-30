@@ -62,11 +62,9 @@ public class TrajectoryPlotTest implements UNITS
         OTSNode node3 = new OTSNode(network, "node 3", new OTSPoint3D(10100, 100, 0));
         List<Lane> trajectory = new ArrayList<Lane>();
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-        Lane lane1 = LaneFactory.makeMultiLane(network, "12", node1, node2, null, 1, 0, 0, laneType, speedLimit, simulator,
-                LongitudinalDirectionality.DIR_PLUS)[0];
+        Lane lane1 = LaneFactory.makeMultiLane(network, "12", node1, node2, null, 1, 0, 0, laneType, speedLimit, simulator)[0];
         trajectory.add(lane1);
-        Lane lane2 = LaneFactory.makeMultiLane(network, "23", node2, node3, null, 1, 0, 0, laneType, speedLimit, simulator,
-                LongitudinalDirectionality.DIR_PLUS)[0];
+        Lane lane2 = LaneFactory.makeMultiLane(network, "23", node2, node3, null, 1, 0, 0, laneType, speedLimit, simulator)[0];
         trajectory.add(lane2);
         TrajectoryPlot tp = new TrajectoryPlot("TestTrajectory", this.sampleInterval, trajectory, simulator);
         assertEquals("Number of trajectories should initially be 0", 0, tp.getSeriesCount());

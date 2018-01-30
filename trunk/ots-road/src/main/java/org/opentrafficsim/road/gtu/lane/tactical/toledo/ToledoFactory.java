@@ -1,8 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
@@ -26,7 +27,7 @@ public class ToledoFactory implements LaneBasedTacticalPlannerFactory<Toledo>
     @Override
     public final Parameters getParameters()
     {
-        Parameters parameters = new Parameters();
+        ParameterSet parameters = new ParameterSet();
         try
         {
             parameters.setDefaultParameter(ParameterTypes.LOOKAHEAD);

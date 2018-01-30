@@ -2,9 +2,9 @@ package org.opentrafficsim.road.gtu.lane;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +18,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -91,7 +90,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * registered. This is a list to improve reproducibility: The 'oldest' lanes on which the vehicle is registered are at the
      * front of the list, the later ones more to the back.
      */
-    private final Map<Lane, GTUDirectionality> lanesCurrentOperationalPlan = new HashMap<>();
+    private final Map<Lane, GTUDirectionality> lanesCurrentOperationalPlan = new LinkedHashMap<>();
 
     /** Pending triggers for each lane. */
     private Map<Lane, List<SimEvent<OTSSimTimeDouble>>> pendingTriggers = new HashMap<>();
@@ -280,8 +279,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     {
 
         // keep a copy of the lanes and directions (!)
-        Map<Lane, GTUDirectionality> lanesCopy = new HashMap<>(this.lanesCurrentOperationalPlan);
-        Set<Lane> lanesToBeRemoved = new HashSet<>();
+        Map<Lane, GTUDirectionality> lanesCopy = new LinkedHashMap<>(this.lanesCurrentOperationalPlan);
+        Set<Lane> lanesToBeRemoved = new LinkedHashSet<>();
         Map<Lane, Double> fractionalLanePositions = new HashMap<>();
 
         for (Lane lane : lanesCopy.keySet())
@@ -293,7 +292,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         // store the new positions, and sample statistics
         // start with current link position, these will be overwritten, except if from a lane no adjacent lane is found, i.e.
         // changing over a continuous line when probably the reference point is past the line
-        Map<Link, Double> newLinkPositionsLC = new HashMap<>(this.fractionalLinkPositions);
+        Map<Link, Double> newLinkPositionsLC = new LinkedHashMap<>(this.fractionalLinkPositions);
 
         for (Lane lane : lanesCopy.keySet())
         {
@@ -337,7 +336,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     public void initLaneChange(final LateralDirectionality laneChangeDirection) throws GTUException
     {
-        Map<Lane, GTUDirectionality> lanesCopy = new HashMap<>(this.lanesCurrentOperationalPlan);
+        Map<Lane, GTUDirectionality> lanesCopy = new LinkedHashMap<>(this.lanesCurrentOperationalPlan);
         Map<Lane, Double> fractionalLanePositions = new HashMap<>();
         for (Lane lane : lanesCopy.keySet())
         {
@@ -386,16 +385,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     protected void executeLaneChangeFinalization(final LateralDirectionality laneChangeDirection)
     {
-        Map<Lane, GTUDirectionality> lanesCopy = new HashMap<>(this.lanesCurrentOperationalPlan);
-        Set<Lane> lanesToBeRemoved = new HashSet<>();
-        Map<Lane, Double> fractionalLanePositions = new HashMap<>();
+        Map<Lane, GTUDirectionality> lanesCopy = new LinkedHashMap<>(this.lanesCurrentOperationalPlan);
+        Set<Lane> lanesToBeRemoved = new LinkedHashSet<>();
         try
         {
-            for (Lane lane : lanesCopy.keySet())
-            {
-
-                fractionalLanePositions.put(lane, fractionalPosition(lane, getReference()));
-            }
             for (Lane lane : lanesCopy.keySet())
             {
                 Iterator<Lane> iterator =
@@ -442,7 +435,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
 
         // store the new positions, and sample statistics
-        Map<Link, Double> newLinkPositions = new HashMap<>();
+        Map<Link, Double> newLinkPositions = new LinkedHashMap<>();
         for (Lane lane : this.lanesCurrentOperationalPlan.keySet())
         {
             newLinkPositions.put(lane.getParentLink(), lane.fraction(position(lane, getReference())));
@@ -564,10 +557,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     public Length position(final Lane lane, final RelativePosition relativePosition, final Time when) throws GTUException
     {
-        if (null == lane)
-        {
-            throw new GTUException("lane is null");
-        }
+//        if (null == lane)
+//        {
+//            throw new GTUException("lane is null");
+//        }
 
         int cacheIndex = 0;
         if (CACHING)
@@ -588,21 +581,21 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         synchronized (this.lock)
         {
-            if (!this.lanesCurrentOperationalPlan.containsKey(lane))
-            {
-                throw new GTUException("position() : GTU " + toString() + " is not on lane " + lane);
-            }
-            if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
-            {
-                // DO NOT USE toString() here, as it will cause an endless loop...
-                throw new GTUException(this + " does not have a fractional position on " + lane.toString());
-            }
+//            if (!this.lanesCurrentOperationalPlan.containsKey(lane))
+//            {
+//                throw new GTUException("position() : GTU " + toString() + " is not on lane " + lane);
+//            }
+//            if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
+//            {
+//                // DO NOT USE toString() here, as it will cause an endless loop...
+//                throw new GTUException(this + " does not have a fractional position on " + lane.toString());
+//            }
             double longitudinalPosition = lane.positionSI(this.fractionalLinkPositions.get(lane.getParentLink()));
-            if (getOperationalPlan() == null)
-            {
-                // no valid operational plan, e.g. during generation of a new plan
-                return new Length(longitudinalPosition + relativePosition.getDx().si, LengthUnit.SI);
-            }
+//            if (getOperationalPlan() == null)
+//            {
+//                // no valid operational plan, e.g. during generation of a new plan
+//                return Length.createSI(longitudinalPosition + relativePosition.getDx().si);
+//            }
             double loc;
             try
             {
@@ -615,6 +608,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     loc = longitudinalPosition - getOperationalPlan().getTraveledDistanceSI(when) - relativePosition.getDx().si;
                 }
             }
+            catch (NullPointerException e)
+            {
+                throw new GTUException("lanesCurrentOperationalPlan or fractionalLinkPositions is null", e);
+            }
             catch (Exception e)
             {
                 System.err.println(toString());
@@ -626,7 +623,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 System.out.println("loc is NaN");
             }
-            Length length = new Length(loc, LengthUnit.SI);
+            Length length = Length.createSI(loc);
             if (CACHING)
             {
                 this.cachedPositions.put(cacheIndex, length);
@@ -635,11 +632,21 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
     }
 
+    /** Time of reference position cache. */
+    private double referencePositionTime = Double.NaN;
+
+    /** Cached reference position. */
+    private DirectedLanePosition cachedReferencePosition = null;
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public DirectedLanePosition getReferencePosition() throws GTUException
     {
+        if (this.referencePositionTime == getSimulator().getSimulatorTime().getTime().si)
+        {
+            return this.cachedReferencePosition;
+        }
         for (Lane lane : this.lanesCurrentOperationalPlan.keySet())
         {
             double fraction = fractionalPosition(lane, getReference());
@@ -647,7 +654,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 // TODO widest lane in case we are registered on more than one lane with the reference point
                 // TODO lane that leads to our location or not if we are registered on parallel lanes?
-                return new DirectedLanePosition(lane, position(lane, getReference()), this.getDirection(lane));
+                this.cachedReferencePosition =
+                        new DirectedLanePosition(lane, position(lane, getReference()), this.getDirection(lane));
+                this.referencePositionTime = getSimulator().getSimulatorTime().getTime().si;
+                return this.cachedReferencePosition;
             }
         }
         throw new GTUException("The reference point of GTU " + this + " is not on any of the lanes on which it is registered");
@@ -985,27 +995,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedStrategicalPlanner getStrategicalPlanner()
-    {
-        return (LaneBasedStrategicalPlanner) super.getStrategicalPlanner();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Parameters getParameters()
-    {
-        return getStrategicalPlanner().getParameters();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final LaneBasedTacticalPlanner getTacticalPlanner()
-    {
-        return (LaneBasedTacticalPlanner) super.getTacticalPlanner();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final void addTrigger(final Lane lane, final SimEvent<OTSSimTimeDouble> event)
     {
         List<SimEvent<OTSSimTimeDouble>> list = this.pendingTriggers.get(lane);
@@ -1035,7 +1024,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         synchronized (this.lock)
         {
-            Set<Lane> laneSet = new HashSet<>(this.lanesCurrentOperationalPlan.keySet()); // Operate on a copy of the key set
+            Set<Lane> laneSet = new LinkedHashSet<>(this.lanesCurrentOperationalPlan.keySet()); // Operate on a copy of the key
+                                                                                                // set
             for (Lane lane : laneSet)
             {
                 try
@@ -1073,6 +1063,20 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         double dx = 0.5 * getLength().doubleValue();
         double dy = 0.5 * getWidth().doubleValue();
         return new BoundingBox(new Point3d(-dx, -dy, 0.0), new Point3d(dx, dy, 0.0));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LaneBasedStrategicalPlanner getStrategicalPlanner()
+    {
+        return (LaneBasedStrategicalPlanner) super.getStrategicalPlanner();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LaneBasedTacticalPlanner getTacticalPlanner()
+    {
+        return (LaneBasedTacticalPlanner) super.getTacticalPlanner();
     }
 
     /** {@inheritDoc} */

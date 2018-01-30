@@ -4,7 +4,6 @@ import java.util.SortedSet;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
 
@@ -19,7 +18,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface BusStopPerception extends PerceptionCategory
+public interface BusStopPerception extends LaneBasedPerceptionCategory
 {
 
     /**

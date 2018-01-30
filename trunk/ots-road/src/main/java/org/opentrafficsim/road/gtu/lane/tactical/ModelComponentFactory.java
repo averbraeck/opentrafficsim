@@ -27,7 +27,7 @@ public interface ModelComponentFactory
      * 
      * <pre>
      * Parameters parameters = this.subComponent1Factory.getParameters();
-     * parameters.setAll(this.subComponent2Factory.getParameters());
+     * this.subComponent2Factory.getParameters().setAllIn(parameters);
      * parameters.setDefaultParameters(componentClass);
      * parameters.setDefaultParameters(staticUtilityClass);
      * return parameters;
@@ -46,9 +46,9 @@ public interface ModelComponentFactory
      * The same holds for static utilities that are used. Parameters should be defined at the utility class, and parameters of
      * used utilities should be included.<br>
      * <br>
-     * @return parameters for the given component
+     * @return Parameters; parameters for the given component
      * @throws ParameterException on parameter exception
      */
     Parameters getParameters() throws ParameterException;
-    
+
 }

@@ -11,8 +11,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 
 /**
  * <p>
@@ -35,7 +35,7 @@ public class ToledoCFTester
     public static void main(final String[] args) throws ParameterException
     {
 
-        Parameters params = new Parameters();
+        ParameterSet params = new ParameterSet();
         params.setDefaultParameters(ToledoCarFollowing.class);
         ToledoCarFollowing cf = new ToledoCarFollowing();
 

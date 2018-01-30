@@ -248,11 +248,11 @@ public final class ShapeFileReader implements UNITS
                     CrossSectionLink linkBA = null;
                     linkAB = new CrossSectionLink(network, nr, nodeA, nodeB, LinkType.ROAD,
                             new OTSLine3D(new OTSPoint3D[] { nodeA.getPoint(), nodeB.getPoint() }), simulator,
-                            LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
+                            LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkAB, typeWegVak, simulator);
                     linkBA = new CrossSectionLink(network, nrBA, nodeB, nodeA, LinkType.ROAD,
                             new OTSLine3D(new OTSPoint3D[] { nodeB.getPoint(), nodeA.getPoint() }), simulator,
-                            LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
+                            LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkBA, typeWegVak, simulator);
                     if (direction == 1)
                     {
@@ -533,8 +533,8 @@ public final class ShapeFileReader implements UNITS
 
         try
         {
-            Lane lane = new Lane(link, "lane", new Length(0.0, METER), new Length(0.0, METER), m60, m60, null,
-                    speedLimit, new OvertakingConditions.LeftAndRight());
+            Lane lane = new Lane(link, "lane", new Length(0.0, METER), new Length(0.0, METER), m60, m60, null, speedLimit,
+                    new OvertakingConditions.LeftAndRight());
             new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
         }
         catch (NamingException | RemoteException | OTSGeometryException ne)

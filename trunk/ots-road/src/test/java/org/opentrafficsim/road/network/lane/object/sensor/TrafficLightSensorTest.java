@@ -143,7 +143,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 OTSNode toNode = LongitudinalDirectionality.DIR_PLUS == direction ? node : prevNode;
                 int laneOffset = LongitudinalDirectionality.DIR_PLUS == direction ? 0 : -1;
                 result[nodeNumber - 1] = LaneFactory.makeMultiLane(network, "Link" + nodeNumber, fromNode, toNode, null, 1,
-                        laneOffset, laneOffset, laneType, speedLimit, simulator, direction)[0];
+                        laneOffset, laneOffset, laneType, speedLimit, simulator)[0];
                 System.out.println("Created lane with center line " + result[nodeNumber - 1].getCenterLine()
                         + ", directionality " + direction);
             }
@@ -263,8 +263,9 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 LaneChangeModel laneChangeModel = new Egoistic();
                 GTUFollowingModelOld gtuFollowingModel = new FixedAccelerationModel(
                         new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2), new Duration(10, DurationUnit.SECOND));
-                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
+                gtu.setParameters(parameters);
                 Speed initialSpeed = new Speed(10, SpeedUnit.METER_PER_SECOND);
                 if (lanes.length == 6 && pos >= 103)
                 {

@@ -22,6 +22,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -64,9 +65,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
     static
     {
         Class<LaneBasedTacticalPlanner> type = LaneBasedTacticalPlanner.class;
-        TACTICAL_PLANNER =
-                new ParameterTypeClass<>("tactical planner", "Tactical planner class.", OTSClassUtil.getTypedClass(type),
-                        LMRS.class, ClassConstraint.newInstance(type, LMRS.class));
+        TACTICAL_PLANNER = new ParameterTypeClass<>("tactical planner", "Tactical planner class.",
+                OTSClassUtil.getTypedClass(type), LMRS.class, ClassConstraint.newInstance(type, LMRS.class));
     }
 
     /** */
@@ -117,8 +117,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Length maxHeadway) throws GTUException,
-            NetworkException
+    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Length maxHeadway)
+            throws GTUException, NetworkException
     {
         DirectedLanePosition dlp = gtu.getReferencePosition();
         return buildLanePathInfo(gtu, maxHeadway, dlp.getLane(), dlp.getPosition(), dlp.getGtuDirection());
@@ -162,7 +162,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 path = lane.getCenterLine().extract(Length.ZERO, position).reverse();
             }
         }
-        catch (OTSGeometryException exception)
+        catch (@SuppressWarnings("unused") OTSGeometryException exception)
         {
             // System.err.println(gtu + ": " + exception.getMessage());
             // System.err.println(lane + ", len=" + lane.getLength());
@@ -178,9 +178,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 
         while (distanceToEndOfLane.lt(maxHeadway))
         {
-            Map<Lane, GTUDirectionality> lanes =
-                    lastGtuDir.equals(GTUDirectionality.DIR_PLUS) ? lane.nextLanes(gtu.getGTUType()) : lane.prevLanes(gtu
-                            .getGTUType());
+            Map<Lane, GTUDirectionality> lanes = lastGtuDir.equals(GTUDirectionality.DIR_PLUS)
+                    ? lane.nextLanes(gtu.getGTUType()) : lane.prevLanes(gtu.getGTUType());
             if (lanes.size() == 0)
             {
                 // Dead end. Return with the list as is.
@@ -207,9 +206,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 try
                 {
                     ld = gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), /* gtu.getLanes().get(lane), */
-                    lastGtuDir, gtu.getGTUType());
+                            lastGtuDir, gtu.getGTUType());
                 }
-                catch (NetworkException ne)
+                catch (@SuppressWarnings("unused") NetworkException ne)
                 {
                     // no route found.
                     // return the data structure up to this point...
@@ -296,8 +295,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static NextSplitInfo determineNextSplit(final LaneBasedGTU gtu, final Length maxHeadway) throws GTUException,
-            NetworkException
+    public static NextSplitInfo determineNextSplit(final LaneBasedGTU gtu, final Length maxHeadway)
+            throws GTUException, NetworkException
     {
         Node nextSplitNode = null;
         Set<Lane> correctCurrentLanes = new HashSet<>();
@@ -403,8 +402,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     {
                         Lane l = (Lane) cse;
                         // if (connectsToPath(gtu, maxHeadway, l, position, referenceLaneDirectionality, ld.getLink()))
-                        if (connectsToPath(gtu, maxHeadway, l, l.getLength().multiplyBy(refFrac),
-                                referenceLaneDirectionality, ld.getLink()))
+                        if (connectsToPath(gtu, maxHeadway, l, l.getLength().multiplyBy(refFrac), referenceLaneDirectionality,
+                                ld.getLink()))
                         {
                             correctCurrentLanes.add(l);
                         }
@@ -542,8 +541,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
     protected static boolean noLaneDrop(final LaneBasedGTU gtu, final Length maxHeadway, final Lane startLane,
-            final Length startLanePosition, final GTUDirectionality startDirectionality) throws GTUException,
-            NetworkException
+            final Length startLanePosition, final GTUDirectionality startDirectionality) throws GTUException, NetworkException
     {
         LanePathInfo lpi = buildLanePathInfo(gtu, maxHeadway, startLane, startLanePosition, startDirectionality);
         if (lpi.getPath().getLength().lt(maxHeadway))
@@ -704,13 +702,68 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         }
         if (true)
         {
-            LanePathInfo lanePathInfo = buildLanePathInfo(gtu, forwardHeadway);
-            lanes = lanePathInfo.getLanes();
-            Length startPosition = lanePathInfo.getReferencePosition(); // gtu.getReferencePosition().getPosition();
+            // TODO this code was made to replace getLanePathInfo(), which is expensive as it concatenates OTSLine3D's
+            // this is now only done once at makePath() inside buildAccelerationPlan(). getLanePathInfo() should be removed /
+            // remade
+            DirectedLanePosition ref = gtu.getReferencePosition();
+            Length startPosition = ref.getPosition();
+            lanes = new ArrayList<>();
+            LaneDirection laneDir = ref.getLaneDirection();
+            double v = gtu.getSpeed().si;
+            double a = simplePlan.getAcceleration().si;
+            double t;
+            if (a >= 0.0)
+            {
+                t = simplePlan.getDuration().si;
+            }
+            else
+            {
+                t = Math.min(simplePlan.getDuration().si, v / -a);
+            }
+            double length = v * t + .5 * a * t * t;
+            if (laneDir.getDirection().isPlus())
+            {
+                length += startPosition.si;
+            }
+            else
+            {
+                length += (ref.getLane().getLength().si - startPosition.si);
+            }
+            while (laneDir != null && length > 0)
+            {
+                lanes.add(laneDir.getLane());
+                length -= laneDir.getLane().getLength().si;
+                Map<Lane, GTUDirectionality> next = laneDir.getLane().downstreamLanes(laneDir.getDirection(), gtu.getGTUType());
+                if (next.isEmpty())
+                {
+                    laneDir = null;
+                }
+                else if (next.size() == 1)
+                {
+                    Lane lane = next.keySet().iterator().next();
+                    GTUDirectionality dir = next.get(lane);
+                    laneDir = new LaneDirection(lane, dir);
+                }
+                else
+                {
+                    // ask strategical planner
+                    LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(laneDir.getLane().getParentLink(),
+                            laneDir.getDirection(), gtu.getGTUType());
+                    for (Lane lane : next.keySet())
+                    {
+                        GTUDirectionality dir = next.get(lane);
+                        if (lane.getParentLink().equals(ld.getLink()) && dir.equals(ld.getDirection()))
+                        {
+                            laneDir = new LaneDirection(lane, dir);
+                            break;
+                        }
+                    }
+                }
+            }
             try
             {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, startPosition, startTime,
-                        gtu.getSpeed(), simplePlan.getAcceleration(), params.getParameter(DT));
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, startPosition, startTime, gtu.getSpeed(),
+                        simplePlan.getAcceleration(), params.getParameter(DT));
             }
             catch (OTSGeometryException exception)
             {
@@ -729,8 +782,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             // registered on it, the reference lane is the to lane, while the found adjacent lane is the required from lane
             // TODO this is wrong, the other direction may not be allowed, i.e. is not accessible
             Map<Lane, Length> positions = gtu.positions(gtu.getReference());
-            LateralDirectionality lat =
-                    laneChange.isChangingLeft() ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
+            LateralDirectionality lat = laneChange.isChangingLeft() ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
             DirectedLanePosition dlp = gtu.getReferencePosition();
             Iterator<Lane> iterator =
                     dlp.getLane().accessibleAdjacentLanes(lat, gtu.getGTUType(), dlp.getGtuDirection()).iterator();
@@ -747,9 +799,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 {
                     if (lane.accessibleAdjacentLanes(lat, gtu.getGTUType(), dlp.getGtuDirection()).contains(dlp.getLane()))
                     {
-                        lanes =
-                                buildLanePathInfo(gtu, forwardHeadway, lane, positions.get(lane), dlp.getGtuDirection())
-                                        .getLanes();
+                        lanes = buildLanePathInfo(gtu, forwardHeadway, lane, positions.get(lane), dlp.getGtuDirection())
+                                .getLanes();
                     }
                 }
             }
@@ -775,9 +826,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 
         try
         {
-            return LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtu, lanes,
-                    simplePlan.getLaneChangeDirection(), gtu.getLocation(), startTime, gtu.getSpeed(),
-                    simplePlan.getAcceleration(), params.getParameter(DT), laneChange);
+            return LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtu, lanes, simplePlan.getLaneChangeDirection(),
+                    gtu.getLocation(), startTime, gtu.getSpeed(), simplePlan.getAcceleration(), params.getParameter(DT),
+                    laneChange);
         }
         catch (OTSGeometryException exception)
         {

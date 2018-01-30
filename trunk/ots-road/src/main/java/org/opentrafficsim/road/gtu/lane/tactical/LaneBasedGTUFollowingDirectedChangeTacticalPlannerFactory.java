@@ -4,9 +4,10 @@ import java.io.Serializable;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -73,7 +74,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory
     @Override
     public final Parameters getParameters()
     {
-        Parameters params = new Parameters().setDefaultParameters(ParameterTypes.class);
+        Parameters params = new ParameterSet().setDefaultParameters(ParameterTypes.class);
         try
         {
             params.setParameter(ParameterTypes.LOOKAHEAD, new Length(250, LengthUnit.SI));

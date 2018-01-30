@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -27,6 +28,8 @@ import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.perception.Historical;
+import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -66,6 +69,9 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /** The simulator to schedule activities on. */
     private final OTSDEVSSimulatorInterface simulator;
 
+    /** Model parameters. */
+    private Parameters parameters;
+
     /** The maximum acceleration. */
     private Acceleration maximumAcceleration;
 
@@ -77,16 +83,16 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * plan. In order to get a complete odometer reading, the progress of the current plan execution has to be added to this
      * value.
      */
-    private Length odometer;
+    private Historical<Length> odometer;
 
     /** The strategical planner that can instantiate tactical planners to determine mid-term decisions. */
-    private StrategicalPlanner strategicalPlanner;
+    private final Historical<StrategicalPlanner> strategicalPlanner;
 
     /** The tactical planner that can generate an operational plan. */
-    private TacticalPlanner tacticalPlanner = null;
+    private final Historical<TacticalPlanner> tacticalPlanner;
 
     /** The current operational plan, which provides a short-term movement over time. */
-    private OperationalPlan operationalPlan = null;
+    private final Historical<OperationalPlan> operationalPlan;
 
     /** The next move event as scheduled on the simulator, can be used for interrupting the current move. */
     private SimEvent<OTSSimTimeDouble> nextMoveEvent;
@@ -95,7 +101,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     private PerceivableContext perceivableContext;
 
     /** Turn indicator status. */
-    private TurnIndicatorStatus turnIndicatorStatus = TurnIndicatorStatus.NOTPRESENT;
+    private final Historical<TurnIndicatorStatus> turnIndicatorStatus;
 
     /** Is this GTU destroyed? */
     private boolean destroyed = false;
@@ -113,6 +119,18 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** Cache. */
     private final Map<CacheKey<?>, TimeStampedObject<?>> cache = new HashMap<>();
+
+    /** Cached speed time. */
+    private double cachedSpeedTime = Double.NaN;
+
+    /** Cached speed. */
+    private Speed cachedSpeed = null;
+
+    /** Cached acceleration time. */
+    private double cachedAccelerationTime = Double.NaN;
+
+    /** Cached acceleration. */
+    private Acceleration cachedAcceleration = null;
 
     /**
      * @param id String; the id of the GTU
@@ -136,9 +154,13 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.uniqueNumber = ++staticUNIQUENUMBER;
         this.gtuType = gtuType;
         this.simulator = simulator;
-        this.odometer = Length.ZERO;
+        this.odometer = new Historical<>(HistoryManager.get(simulator), Length.ZERO);
         this.perceivableContext = perceivableContext;
         this.perceivableContext.addGTU(this);
+        this.strategicalPlanner = new Historical<>(HistoryManager.get(simulator));
+        this.tacticalPlanner = new Historical<>(HistoryManager.get(simulator), null);
+        this.turnIndicatorStatus = new Historical<>(HistoryManager.get(simulator), TurnIndicatorStatus.NOTPRESENT);
+        this.operationalPlan = new Historical<>(HistoryManager.get(simulator), null);
     }
 
     /**
@@ -177,7 +199,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         Throw.when(!getId().equals(strategicalPlanner.getGtu().getId()), GTUException.class,
                 "GTU %s is initialized with a strategical planner for GTU %s", getId(), strategicalPlanner.getGtu().getId());
 
-        this.strategicalPlanner = strategicalPlanner;
+        this.strategicalPlanner.set(strategicalPlanner);
+        this.tacticalPlanner.set(strategicalPlanner.getTacticalPlanner());
         Time now = this.simulator.getSimulatorTime().getTime();
 
         // Give the GTU a 1 micrometer long operational plan, or a stand-still plan, so the first move will work
@@ -186,13 +209,13 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         {
             if (initialSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                this.operationalPlan = new OperationalPlan(this, p, now, new Duration(1E-6, DurationUnit.SECOND));
+                this.operationalPlan.set(new OperationalPlan(this, p, now, new Duration(1E-6, DurationUnit.SECOND)));
             }
             else
             {
                 OTSPoint3D p2 = new OTSPoint3D(p.x + 1E-6 * Math.cos(p.getRotZ()), p.y + 1E-6 * Math.sin(p.getRotZ()), p.z);
                 OTSLine3D path = new OTSLine3D(new OTSPoint3D(p), p2);
-                this.operationalPlan = OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed);
+                this.operationalPlan.set(OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed));
             }
 
             fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth(), getBaseColor() },
@@ -262,24 +285,29 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         // Add the odometer distance from the currently running operational plan.
         // Because a plan can be interrupted, we explicitly calculate the covered distance till 'now'
         Length currentOdometer;
-        if (this.operationalPlan != null)
+        if (this.operationalPlan.get() != null)
         {
-            currentOdometer = this.odometer.plus(this.operationalPlan.getTraveledDistance(now));
+            currentOdometer = this.odometer.get().plus(this.operationalPlan.get().getTraveledDistance(now));
         }
         else
         {
-            currentOdometer = this.odometer;
+            currentOdometer = this.odometer.get();
         }
 
         // Do we have an operational plan?
         // TODO discuss when a new tactical planner may be needed
-        if (this.tacticalPlanner == null)
+        TacticalPlanner tactPlanner = this.tacticalPlanner.get();
+        if (tactPlanner == null)
         {
             // Tell the strategical planner to provide a tactical planner
-            this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner();
+            tactPlanner = this.strategicalPlanner.get().getTacticalPlanner();
+            this.tacticalPlanner.set(tactPlanner);
         }
-        this.operationalPlan = this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
-        this.odometer = currentOdometer;
+        OperationalPlan newOperationalPlan = tactPlanner.generateOperationalPlan(now, fromLocation);
+        this.operationalPlan.set(newOperationalPlan);
+        this.cachedSpeed = null;
+        this.cachedAcceleration = null;
+        this.odometer.set(currentOdometer);
         if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
                 && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)
         {
@@ -287,13 +315,14 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             // this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
         }
 
-        if (ALIGNED && this.operationalPlan.getTotalDuration().si == 0.5)
+        // TODO allow alignment at different intervals, also different between GTU's within a single simulation
+        if (ALIGNED && newOperationalPlan.getTotalDuration().si == 0.5)
         {
             // schedule the next move at exactly 0.5 seconds on the clock
             // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
             double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
-            DirectedPoint p = (tNext - now.si < 0.5) ? this.operationalPlan.getEndLocation()
-                    : this.operationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
+            DirectedPoint p = (tNext - now.si < 0.5) ? newOperationalPlan.getEndLocation()
+                    : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
             this.nextMoveEvent = new SimEvent<>(new OTSSimTimeDouble(new Time(tNext, TimeUnit.BASE)), this, this, "move",
                     new Object[] { p });
             ALIGN_COUNT++;
@@ -302,8 +331,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         {
             // schedule the next move at the end of the current operational plan
             // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-            this.nextMoveEvent = new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this,
-                    this, "move", new Object[] { this.operationalPlan.getEndLocation() });
+            this.nextMoveEvent = new SimEvent<>(new OTSSimTimeDouble(now.plus(newOperationalPlan.getTotalDuration())), this,
+                    this, "move", new Object[] { newOperationalPlan.getEndLocation() });
         }
         this.simulator.scheduleEvent(this.nextMoveEvent);
 
@@ -327,7 +356,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException, ParameterException
     {
         this.simulator.cancelEvent(this.nextMoveEvent);
-        move(this.operationalPlan.getLocation(this.simulator.getSimulatorTime().getTime()));
+        move(this.operationalPlan.get().getLocation(this.simulator.getSimulatorTime().getTime()));
     }
 
     /** {@inheritDoc} */
@@ -352,65 +381,91 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         return RelativePosition.REFERENCE_POSITION;
     }
 
-    /**
-     * @return simulator the simulator to schedule plan changes on
-     */
+    /** {@inheritDoc} */
     @Override
     public final OTSDEVSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
 
-    /**
-     * @return strategicalPlanner the planner responsible for the overall 'mission' of the GTU, usually indicating where it
-     *         needs to go. It operates by instantiating tactical planners to do the work.
-     */
+    /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
+    public final Parameters getParameters()
+    {
+        return this.parameters;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void setParameters(final Parameters parameters)
+    {
+        this.parameters = parameters;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public StrategicalPlanner getStrategicalPlanner()
     {
-        return this.strategicalPlanner;
+        return this.strategicalPlanner.get();
     }
 
-    /**
-     * @return tacticalPlanner the tactical planner that can generate an operational plan
-     */
+    /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
+    public StrategicalPlanner getStrategicalPlanner(final Time time)
+    {
+        return this.strategicalPlanner.get(time);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public TacticalPlanner getTacticalPlanner()
     {
-        // TODO discuss when a new tactical planner may be needed
-        if (null == this.tacticalPlanner)
-        {
-            this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner();
-        }
-        return this.tacticalPlanner;
+        return this.strategicalPlanner.get().getTacticalPlanner();
     }
 
-    /**
-     * @return operationalPlan the current operational plan, which provides a short-term movement over time
-     */
+    /** {@inheritDoc} */
+    @Override
+    public TacticalPlanner getTacticalPlanner(final Time time)
+    {
+        return this.strategicalPlanner.get(time).getTacticalPlanner(time);
+    }
+
+    /** {@inheritDoc} */
     @Override
     public final OperationalPlan getOperationalPlan()
     {
-        return this.operationalPlan;
+        return this.operationalPlan.get();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final OperationalPlan getOperationalPlan(final Time time)
+    {
+        return this.operationalPlan.get(time);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Length getOdometer()
     {
-        if (this.operationalPlan == null)
+        return getOdometer(this.simulator.getSimulatorTime().getTime());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Length getOdometer(final Time time)
+    {
+        if (this.operationalPlan.get(time) == null)
         {
-            return this.odometer;
+            return this.odometer.get(time);
         }
         try
         {
-            return this.odometer.plus(this.operationalPlan.getTraveledDistance(this.simulator.getSimulatorTime().getTime()));
+            return this.odometer.get(time).plus(this.operationalPlan.get(time).getTraveledDistance(time));
         }
         catch (@SuppressWarnings("unused") OperationalPlanException ope)
         {
-            return this.odometer;
+            return this.odometer.get(time);
         }
     }
 
@@ -418,41 +473,72 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @Override
     public final Speed getSpeed()
     {
-        if (this.operationalPlan == null)
+        return getSpeed(this.simulator.getSimulatorTime().getTime());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Speed getSpeed(final Time time)
+    {
+        if (this.cachedSpeed == null || this.cachedSpeedTime != time.si)
         {
-            return Speed.ZERO;
+            this.cachedSpeedTime = time.si;
+            if (this.operationalPlan.get(time) == null)
+            {
+                this.cachedSpeed = Speed.ZERO;
+            }
+            else
+            {
+                try
+                {
+                    this.cachedSpeed = this.operationalPlan.get(time).getSpeed(time);
+                }
+                catch (OperationalPlanException ope)
+                {
+                    // this should not happen at all...
+                    System.err.println("t = " + time);
+                    System.err.println("op.validity = " + this.operationalPlan.get(time).getEndTime());
+                    throw new RuntimeException("getSpeed() could not derive a valid speed for the current operationalPlan",
+                            ope);
+                }
+            }
         }
-        try
-        {
-            return this.operationalPlan.getSpeed(this.simulator.getSimulatorTime().getTime());
-        }
-        catch (OperationalPlanException ope)
-        {
-            // this should not happen at all...
-            System.err.println("t = " + this.simulator.getSimulatorTime().getTime());
-            System.err.println("op.validity = " + this.operationalPlan.getEndTime());
-            throw new RuntimeException("getSpeed() could not derive a valid speed for the current operationalPlan", ope);
-        }
+        return this.cachedSpeed;
     }
 
     /** {@inheritDoc} */
     @Override
     public final Acceleration getAcceleration()
     {
-        if (this.operationalPlan == null)
+        return getAcceleration(this.simulator.getSimulatorTime().getTime());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Acceleration getAcceleration(final Time time)
+    {
+        if (this.cachedAcceleration == null || this.cachedAccelerationTime != time.si)
         {
-            return Acceleration.ZERO;
+            this.cachedAccelerationTime = time.si;
+            if (this.operationalPlan.get(time) == null)
+            {
+                this.cachedAcceleration = Acceleration.ZERO;
+            }
+            else
+            {
+                try
+                {
+                    this.cachedAcceleration = this.operationalPlan.get(time).getAcceleration(time);
+                }
+                catch (OperationalPlanException ope)
+                {
+                    // this should not happen at all...
+                    throw new RuntimeException(
+                            "getAcceleration() could not derive a valid acceleration for the current operationalPlan", ope);
+                }
+            }
         }
-        try
-        {
-            return this.operationalPlan.getAcceleration(this.simulator.getSimulatorTime().getTime());
-        }
-        catch (OperationalPlanException ope)
-        {
-            // this should not happen at all...
-            throw new RuntimeException(
-                    "getAcceleration() could not derive a valid acceleration for the current operationalPlan", ope);
-        }
+        return this.cachedAcceleration;
     }
 
     /**
@@ -508,7 +594,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @SuppressWarnings("checkstyle:designforextension")
     public DirectedPoint getLocation()
     {
-        if (this.operationalPlan == null)
+        if (this.operationalPlan.get() == null)
         {
             System.err.println(
                     "No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime().getTime());
@@ -520,7 +606,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             if (this.cacheLocationTime.si != this.simulator.getSimulatorTime().getTime().si)
             {
                 this.cacheLocationTime = this.simulator.getSimulatorTime().getTime();
-                this.cacheLocation = this.operationalPlan.getLocation(this.cacheLocationTime);
+                this.cacheLocation = this.operationalPlan.get().getLocation(this.cacheLocationTime);
             }
             return this.cacheLocation;
         }
@@ -534,14 +620,21 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @Override
     public final TurnIndicatorStatus getTurnIndicatorStatus()
     {
-        return this.turnIndicatorStatus;
+        return this.turnIndicatorStatus.get();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final TurnIndicatorStatus getTurnIndicatorStatus(final Time time)
+    {
+        return this.turnIndicatorStatus.get(time);
     }
 
     /** {@inheritDoc} */
     @Override
     public final void setTurnIndicatorStatus(final TurnIndicatorStatus turnIndicatorStatus)
     {
-        this.turnIndicatorStatus = turnIndicatorStatus;
+        this.turnIndicatorStatus.set(turnIndicatorStatus);
     }
 
     /** {@inheritDoc} */
@@ -575,14 +668,14 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
-    public final <T> T getCachedValue(final CacheKey<T> key)
+    public final <K> K getCachedValue(final CacheKey<K> key)
     {
         TimeStampedObject<?> tso = this.cache.get(key);
         if (tso != null)
         {
             if (tso.getTimestamp().eq(this.getSimulator().getSimulatorTime().getTime()))
             {
-                return ((TimeStampedObject<T>) tso).getObject(); // cacheValue() assures type correctness
+                return ((TimeStampedObject<K>) tso).getObject(); // cacheValue() assures type correctness
             }
             this.cache.remove(key); // removes old value
         }
@@ -591,7 +684,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public final <T> void cacheValue(final CacheKey<T> key, final T value)
+    public final <K> void cacheValue(final CacheKey<K> key, final K value)
     {
         Throw.whenNull(key, "Caching key may not be null.");
         Throw.whenNull(value, "Caching value may not be null.");
@@ -600,9 +693,9 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public final <T> T getOrCalculateValue(final CacheKey<T> key, final Supplier<? extends T> calculator)
+    public final <K> K getOrCalculateValue(final CacheKey<K> key, final Supplier<? extends K> calculator)
     {
-        T value = getCachedValue(key);
+        K value = getCachedValue(key);
         if (value == null)
         {
             // no cache, or old cache

@@ -8,9 +8,9 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -76,6 +76,8 @@ public enum Synchronization implements LmrsParameters
                     throw new OperationalPlanException("Could not obtain GTU from perception.", exception);
                 }
                 // TODO replace this hack with something that properly accounts for overshoot
+                // this method also introduces very strong deceleration at low speeds, as the time step makes bMin go from 3.4 
+                // (ignored, so maybe 1.25 acceleration applied) to >10 
                 remainingDist = remainingDist.minus(Length.createSI(10));
                 if (remainingDist.le0())
                 {
@@ -168,9 +170,11 @@ public enum Synchronization implements LmrsParameters
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
+
             Acceleration a = Acceleration.POSITIVE_INFINITY;
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
+
             SortedSet<HeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
                     relativeLane), perception, RelativeLane.CURRENT);
@@ -199,11 +203,11 @@ public enum Synchronization implements LmrsParameters
                 Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,
                         params, sli, cfm);
                 a = Acceleration.min(a, aSingle);
+                a = gentleUrgency(a, desire, params);
+                // dead end
+                a = Acceleration.min(a, NONE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData));
+                
             }
-            a = gentleUrgency(a, desire, params);
-
-            // dead end
-            a = Acceleration.min(a, NONE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData));
 
             return a;
 

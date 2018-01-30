@@ -1,95 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ROOT>
+<DEMAND xmlns="http://www.opentrafficsim.org/ots" xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../../../../../../ots-parser-xml/src/main/resources/ots-demand.xsd" xmlns:xi="http://www.w3.org/2001/XInclude" NAME="RandstadMaandagOchtend"
+  GLOBALINTERPOLATION="STEPWISE">
+
+  <LEVEL TIME="300s">300veh/h</LEVEL>
+
+  <!-- TODO: Origin demand + split fractions. -->
+  <!-- TODO: Centroid, divide demand over connectors. -->
 
   <!-- All fields required -->
   <!-- TYPE either "DEMAND" or "TRIPS", use ODMatrix or ODMatrixTrips respectively -->
   <!-- GLOBALINTERPOLATION either "STEPWISE" or "LINEAR" -->
-  <ODMATRIX NAME="RandstadMaandagOchtend" TYPE="DEMAND" GLOBALINTERPOLATION="STEPWISE">
 
-    <!-- Required, at least 1, nodes should be in network -->
-    <ORIGINS NODELIST="A B C D" />
+  <!-- Fractions for categories are optional. They can be overridden for specific OD combinations. -->
+  <!-- Fraction as value >= 0.0 and <= 1.0. -->
+  <CATEGORY NAME="CAR" FRACTION="85%" GTUTYPE="CAR" ROUTE="AB" />
+  <CATEGORY NAME="TRUCK" FRACTION="15.0%" GTUTYPE="TRUCK" />
 
-    <!-- Required, at least 1, nodes should be in network -->
-    <DESTINATIONS NODELIST="A B D E" />
+  <!-- Optional (just use empty TimeVector in constructor of ODMatrix if not specified) -->
+  <GLOBALTIME>
+    <!-- At least 2 -->
+    <!-- With a set of time units -->
+    <TIME VALUE="0s" />
+    <TIME VALUE="900s" />
+    <TIME VALUE="1h" />
+  </GLOBALTIME>
 
-    <!-- Optional, if no CATEGORIZATION defined, use Categorization.UNCATEGORIZED -->
-    <CATEGORIZATION NAME="BYGTU">
+  <!-- ================================================ -->
+  <!-- ==================== DEMAND ==================== -->
+  <!-- ================================================ -->
 
-      <!-- Required (if CATEGORIZATION defined), at least 1 -->
-      <CATEGORIZATIONITEM CLASS="org.opentrafficsim.core.gtu.GTUType" />
+  <!-- Nodes required, should be part of ODMatrix -->
+  <!-- CATEGORY should be defined in XML (but what if that is by a factory...?) -->
+  <!-- CATEGORY optional, as it can also be determined by fractions per category. If no categorization is defined, use Category.UNCATEGORIZED -->
 
-    </CATEGORIZATION>
+  <!-- Demand is defined either in flow, or in trips -->
+  <!-- One can deviate from global time/interpolation, or not -->
+  <!-- This gives 4 combinations of required (or forbidden) input, of which examples are below -->
 
-    <!-- Optional (just use empty TimeVector in constructor of ODMatrix if not specified) -->
-    <GLOBALTIME>
-      <!-- At least 2 -->
-      <!-- With a set of time units -->
-      <TIME VALUE="0s" />
-      <TIME VALUE="900s" />
-      <TIME VALUE="1h" />
-    </GLOBALTIME>
+  <!-- Demand in "veh/h", "veh/s", adhere to global time and interpolation -->
+  <DEMAND ORIGIN="A" DESTINATION="B" CATEGORY="CAR">
+    <!-- Specifying TIME forbidden if no INTERPOLATION is specified -->
+    <LEVEL VALUE="0.5veh/s" />
+    <LEVEL VALUE="1500veh/h" />
+    <LEVEL VALUE="0veh/h" />
+    <!-- Same length as GLOBALTIME -->
+  </DEMAND>
 
-    <CATEGORY NAME="CAR">
-      <!-- Not sure what to do here, the parser should create instances of classes -->
-      <!-- These instances may also be used elsewhere in the XML, e.g. GTUType("Car") or a Route -->
-      <!-- Objects within categories can be anything, with all sorts of input into the constructor -->
-      <!-- We should probably use factories and/or a CategoryType<T> for this -->
-    </CATEGORY>
-    <CATEGORY NAME="TRUCK" />
+  <!-- Demand in "veh/h", "veh/s", overrule global time and interpolation -->
+  <!-- INTERPOLATION either "STEPWISE" or "LINEAR" -->
+  <DEMAND ORIGIN="A" DESTINATION="E" CATEGORY="CAR" INTERPOLATION="LINEAR">
+    <!-- LEVELs should be in "veh/h", "veh/s" -->
+    <!-- DEMAND may also be used if ODMATRIX.TYPE="TRIPS" -->
+    <!-- ODMatrix.putDemandVector() has two versions (one with time and interpolation, and one without) -->
+    <!-- TIME required if INTERPOLATION is specified -->
+    <LEVEL TIME="0s" VALUE="0.5veh/s" />
+    <LEVEL TIME="3600s" VALUE="1500veh/h" />
+  </DEMAND>
 
-    <!-- ================================================ -->
-    <!-- ==================== DEMAND ==================== -->
-    <!-- ================================================ -->
+  <!-- We can also define demand per OD combination, but not specific to any category. This is done as above, but without specifying 
+    a categorization. Then, if there is a categorization, percentages need to be defined. -->
+  <!-- Overall demand for an OD combination can be defined by not specifying a categorization, even if a categorization is defined. 
+    This can also be defined in number of trips. -->
+  <!-- Specify (overrule) 20% truck from A to B, independent of time. -->
+  <DEMAND ORIGIN="A" DESTINATION="B" CATEGORY="TRUCK" FRACTION="20%" />
+  <!-- Specify (overrule) % truck from A to B, dependent on time, adhering to global time vector. -->
+  <DEMAND ORIGIN="A" DESTINATION="B" CATEGORY="TRUCK">
+    <LEVEL VALUE="0.20" />
+    <LEVEL VALUE="0.10" />
+    <!-- One less value than the global time vector, 3 time instances makes 2 periods -->
+  </DEMAND>
+  <!-- Specify (overrule) % truck from A to B, dependent on time, with own time vector. -->
+  <DEMAND ORIGIN="A" DESTINATION="B" CATEGORY="TRUCK">
+    <LEVEL TIME="0s" VALUE="0.20" />
+    <LEVEL TIME="1200s" VALUE="0.10" />
+    <LEVEL TIME="1h" VALUE="0.0" />
+    <!-- A final time of the last period is always required, the value is not important -->
+  </DEMAND>
 
-    <!-- Nodes required, should be part of ODMatrix -->
-    <!-- CATEGORY should be defined in XML (but what if that is by a factory...?) -->
-    <!-- CATEGORY required if CATEGORIZATION was defined, otherwise forbidden and use Category.UNCATEGORIZED -->
+  <!-- It is not required to specify all Origin/Destination/Category combinations, what is not specified is assumed 0 by ODMatrix -->
 
-    <!-- Demand is defined either in flow, or in trips -->
-    <!-- One can deviate from global time/interpolation, or not -->
-    <!-- This gives 4 combinations of required (or forbidden) input, of which examples are below -->
-
-    <!-- Demand in "veh/h" or "veh/s", adhere to global time and interpolation -->
-    <DEMAND ORIGIN="A" DESTINATION="B" CATEGORY="CAR">
-      <!-- Specifying TIME forbidden if no INTERPOLATION is specified -->
-      <LEVEL VALUE="0.5veh/s" />
-      <LEVEL VALUE="1500veh/h" />
-      <LEVEL VALUE="0veh/h" />
-      <!-- Same length as GLOBALTIME -->
-    </DEMAND>
-
-    <!-- Demand in "veh/h" or "veh/s", overrule global time and interpolation -->
-    <!-- INTERPOLATION either "STEPWISE" or "LINEAR" -->
-    <DEMAND ORIGIN="A" DESTINATION="E" CATEGORY="CAR" INTERPOLATION="LINEAR">
-      <!-- LEVELs should be in "veh/h" or "veh/s" -->
-      <!-- DEMAND may also be used if ODMATRIX.TYPE="TRIPS" -->
-      <!-- ODMatrix.putDemandVector() has two versions (one with time and interpolation, and one without) -->
-      <!-- TIME required if INTERPOLATION is specified -->
-      <LEVEL TIME="0s" VALUE="0.5veh/s" /> 
-      <LEVEL TIME="3600s" VALUE="1500veh/h" />
-    </DEMAND>
-
-    <!-- Demand in "veh", adhere to global time -->
-    <!-- TRIPS can only be used if ODMATRIX.TYPE="TRIPS" -->
-    <!-- There is no interpolation property for TRIPS -->
-    <!-- pce (passenger car equivalent) is also often used, but the OD classes do not support it yet -->
-    <TRIPS ORIGIN="A" DESTINATION="B" CATEGORY="TRUCK">
-      <!-- LEVELs should be in "veh" -->
-      <!-- ODMatrixTrips.putTripsVector() should be used, which has two versions (with or without time specified) -->
-      <NUMBER VALUE="300veh" />
-      <NUMBER VALUE="700veh" />
-      <!-- One less value than the global time vector, 3 time instances makes 2 periods -->
-    </TRIPS>
-
-    <!-- Demand in "veh", overrule global time -->
-    <TRIPS ORIGIN="A" DESTINATION="E" CATEGORY="TRUCK">
-      <NUMBER TIME="0s" VALUE="350veh" />
-      <NUMBER TIME="1200s" VALUE="550veh" />
-      <NUMBER TIME="1h" VALUE="0veh" />
-      <!-- A final time of the last period is always required -->
-    </TRIPS>
-
-    <!-- It is not required to specify all Origin/Destination/Category combinations, what is not specified is assumed 0 by ODMatrix -->
-
-  </ODMATRIX>
-</ROOT>
+</DEMAND>

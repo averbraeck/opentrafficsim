@@ -1,13 +1,13 @@
 package org.opentrafficsim.core.network;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
+
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 
 import nl.tudelft.simulation.immutablecollections.Immutable;
 import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
 import nl.tudelft.simulation.immutablecollections.ImmutableSet;
-
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 
 /**
  * Permitted longitudinal driving directions.
@@ -41,7 +41,7 @@ public enum LongitudinalDirectionality
      */
     LongitudinalDirectionality(final GTUDirectionality[] directions)
     {
-        this.directions = new ImmutableHashSet<>(new HashSet<GTUDirectionality>(Arrays.asList(directions)), Immutable.WRAP);
+        this.directions = new ImmutableHashSet<>(new LinkedHashSet<>(Arrays.asList(directions)), Immutable.WRAP);
     }
 
     /**

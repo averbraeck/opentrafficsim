@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -97,8 +98,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         {
             throw new GTUException("Route has no destination.", exception);
         }
-        Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new HashMap<>();
-        Map<LaneStructureRecord, InfrastructureLaneChangeInfo> nextSet = new HashMap<>();
+        Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new LinkedHashMap<>();
+        Map<LaneStructureRecord, InfrastructureLaneChangeInfo> nextSet = new LinkedHashMap<>();
         currentSet.put(record, new InfrastructureLaneChangeInfo(0, record.getLane().getLength().plus(record.getStartDistance()),
                 record.isDeadEnd()));
         while (!currentSet.isEmpty())
@@ -131,7 +132,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             }
             // move longitudinal
             currentSet = nextSet;
-            nextSet = new HashMap<>();
+            nextSet = new LinkedHashMap<>();
             InfrastructureLaneChangeInfo bestOk = null;
             InfrastructureLaneChangeInfo bestNotOk = null;
             boolean deadEnd = false;
@@ -198,7 +199,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                         bestOk.getRemainingDistance(), deadEnd));
             }
             currentSet = nextSet;
-            nextSet = new HashMap<>();
+            nextSet = new LinkedHashMap<>();
         }
 
         // save

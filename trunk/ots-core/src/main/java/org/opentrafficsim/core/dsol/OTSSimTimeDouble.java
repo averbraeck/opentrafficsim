@@ -2,7 +2,6 @@ package org.opentrafficsim.core.dsol;
 
 import java.io.Serializable;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
@@ -94,7 +93,7 @@ public class OTSSimTimeDouble extends SimTime<Time, Duration, OTSSimTimeDouble> 
      */
     public final Time getTime()
     {
-        return new Time(this.time.si, TimeUnit.BASE);
+        return this.time;
     }
 
     /** {@inheritDoc} */

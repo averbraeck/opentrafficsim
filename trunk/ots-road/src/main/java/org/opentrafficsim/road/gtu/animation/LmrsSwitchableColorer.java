@@ -41,7 +41,7 @@ public class LmrsSwitchableColorer extends SwitchableGTUColorer
      */
     public LmrsSwitchableColorer() throws IndexOutOfBoundsException
     {
-        super(0, new FixedColor(Color.BLUE), GTUTypeColorer.defaultInstance(), new IDGTUColorer(),
+        super(0, new FixedColor(Color.BLUE, "Blue"), GTUTypeColorer.defaultInstance(), new IDGTUColorer(),
                 new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
                 new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)), new SplitColorer(),
                 new DesiredHeadwayColorer(), new TotalDesireColorer(), new IncentiveColorer(IncentiveRoute.class),

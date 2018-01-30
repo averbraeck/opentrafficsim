@@ -27,6 +27,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
@@ -55,9 +56,9 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
-import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -160,7 +161,7 @@ public final class AHFEUtil
         CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory(streams.get("gtuClass"));
         PerceptionFactory delayedPerceptionFactory =
                 new DelayedPerceptionFactory(Anticipation.valueOf(anticipationStrategy.toUpperCase()));
-        Parameters params = new Parameters();
+        ParameterSet params = new ParameterSet();
         params.setDefaultParameter(AbstractIDM.DELTA);
         params.setParameter(ParameterTypes.TR, reactionTime);
         params.setParameter(DelayedNeighborsPerception.TA, anticipationTime);
@@ -401,10 +402,10 @@ public final class AHFEUtil
         @Override
         public final Parameters getParameters()
         {
-            Parameters parameters = new Parameters();
+            ParameterSet parameters = new ParameterSet();
             parameters.setDefaultParameters(ParameterTypes.class);
             parameters.setDefaultParameters(LmrsParameters.class);
-            parameters.setAll(this.defaultCarFollowingParameters);
+            this.defaultCarFollowingParameters.setAllIn(parameters);
             return parameters;
         }
 
@@ -480,7 +481,7 @@ public final class AHFEUtil
         @Override
         public Parameters getParameters()
         {
-            return new Parameters();
+            return new ParameterSet();
         }
 
     }

@@ -9,8 +9,6 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.InvocationTargetException;
 
-import nl.tudelft.simulation.language.Throw;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
@@ -24,6 +22,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>
@@ -46,7 +46,7 @@ public class ParametersTest implements ConstraintInterface
     @Test
     public final void defaultsTest()
     {
-        Parameters params = new Parameters().setDefaultParameters(ParameterTypes.class);
+        Parameters params = new ParameterSet().setDefaultParameters(ParameterTypes.class);
         try
         {
             assertTrue("Default value is not correctly set.",
@@ -65,7 +65,7 @@ public class ParametersTest implements ConstraintInterface
     public final void constructorTest()
     {
         // Check Parameters constructor
-        Parameters params = new Parameters();
+        ParameterSet params = new ParameterSet();
         assertNotNull("Default constructor should not return null.", params);
         if (!params.getParameters().isEmpty())
         {
@@ -197,7 +197,7 @@ public class ParametersTest implements ConstraintInterface
     {
         try
         {
-            Parameters params = new Parameters();
+            Parameters params = new ParameterSet();
             ParameterTypeAcceleration a = new ParameterTypeAcceleration("a", "along", constraint);
             params.setParameter(a, new Acceleration(value, AccelerationUnit.SI));
             if (shouldFail)
@@ -222,7 +222,7 @@ public class ParametersTest implements ConstraintInterface
     {
 
         // Check values that should work
-        Parameters params = new Parameters();
+        Parameters params = new ParameterSet();
         try
         {
             // requirement: v1 < v2
@@ -237,7 +237,7 @@ public class ParametersTest implements ConstraintInterface
         }
 
         // Check values that should not work, set v1 first
-        params = new Parameters();
+        params = new ParameterSet();
         try
         {
             // requirement: v1 < v2
@@ -251,7 +251,7 @@ public class ParametersTest implements ConstraintInterface
         }
 
         // Check values that should not work, set v2 first
-        params = new Parameters();
+        params = new ParameterSet();
         try
         {
             // requirement: v1 < v2
@@ -307,7 +307,7 @@ public class ParametersTest implements ConstraintInterface
         ParameterTypeInteger a = new ParameterTypeInteger("a", "along", 0);
 
         // exception reset without set: no value -> reset
-        Parameters params = new Parameters();
+        Parameters params = new ParameterSet();
         try
         {
             params.resetParameter(a);
@@ -319,7 +319,7 @@ public class ParametersTest implements ConstraintInterface
         }
 
         // exception for get after reset to no value: no value -> set -> reset -> get
-        params = new Parameters();
+        params = new ParameterSet();
         params.setParameterResettable(a, 1);
         params.resetParameter(a);
         try
@@ -333,7 +333,7 @@ public class ParametersTest implements ConstraintInterface
         }
 
         // exception for multiple resets: no value -> set -> reset -> reset
-        params = new Parameters();
+        params = new ParameterSet();
         params.setParameterResettable(a, 1);
         params.resetParameter(a);
         try
@@ -347,7 +347,7 @@ public class ParametersTest implements ConstraintInterface
         }
 
         // exception for multiple resets: set -> set -> reset -> reset
-        params = new Parameters();
+        params = new ParameterSet();
         params.setParameterResettable(a, 1);
         params.setParameterResettable(a, 2);
         params.resetParameter(a);
@@ -362,7 +362,7 @@ public class ParametersTest implements ConstraintInterface
         }
 
         // no exception: set -> reset -> set -> reset
-        params = new Parameters();
+        params = new ParameterSet();
         params.setParameterResettable(a, 1);
         params.resetParameter(a);
         params.setParameterResettable(a, 2);
@@ -377,14 +377,14 @@ public class ParametersTest implements ConstraintInterface
         }
 
         // same value: set(1) -> set(2) -> reset -> get(1?)
-        params = new Parameters();
+        params = new ParameterSet();
         params.setParameterResettable(a, 1);
         params.setParameterResettable(a, 2);
         params.resetParameter(a);
         assertEquals("Value after reset should be the same as before last set.", 1.0, (double) params.getParameter(a), 0.0);
         
         // no reset after (none resettable) set
-        params = new Parameters();
+        params = new ParameterSet();
         params.setParameter(a, 1);
         try
         {
@@ -397,7 +397,7 @@ public class ParametersTest implements ConstraintInterface
         }
         
         // no reset after (none resettable) set, even with resettable set before
-        params = new Parameters();
+        params = new ParameterSet();
         params.setParameterResettable(a, 1);
         params.setParameter(a, 2);
         try
@@ -411,7 +411,7 @@ public class ParametersTest implements ConstraintInterface
         }
         
         // same value: regular set(1) -> set(2) -> reset -> get(1?)
-        params = new Parameters();
+        params = new ParameterSet();
         params.setParameter(a, 1);
         params.setParameterResettable(a, 2);
         params.resetParameter(a);
@@ -457,8 +457,8 @@ public class ParametersTest implements ConstraintInterface
         // equal double values from different parameters should be equal
         ParameterTypeDouble a1 = new ParameterTypeDouble("a", "along", 0.0);
         ParameterTypeDouble a2 = new ParameterTypeDouble("a", "along", 0.0);
-        Parameters params1 = new Parameters();
-        Parameters params2 = new Parameters();
+        Parameters params1 = new ParameterSet();
+        Parameters params2 = new ParameterSet();
         params1.setParameter(a1, 4.0);
         params2.setParameter(a2, 4.0);
         assertEquals("Equal double values from different parameter types should be equal.", params1.getParameter(a1),
@@ -515,7 +515,7 @@ public class ParametersTest implements ConstraintInterface
 
         // set null value
         ParameterTypeNumeric<Speed> v = new ParameterTypeNumeric<>("v", "vlong", Speed.class);
-        Parameters params = new Parameters();
+        Parameters params = new ParameterSet();
         try
         {
             params.setParameter(v, null);
@@ -691,11 +691,11 @@ public class ParametersTest implements ConstraintInterface
     @Test
     public final void mergeTest() throws ParameterException
     {
-        Parameters paramsA = new Parameters();
+        ParameterSet paramsA = new ParameterSet();
         paramsA.setDefaultParameter(ParameterTypes.A);
-        Parameters paramsB = new Parameters();
+        ParameterSet paramsB = new ParameterSet();
         paramsB.setDefaultParameter(ParameterTypes.B);
-        paramsA.setAll(paramsB);
+        paramsB.setAllIn(paramsA);
         assertTrue("When merging set B with set A, set A should contain the parameters of set B.",
                 paramsA.contains(ParameterTypes.B));
         assertTrue("When merging set B with set A, parameter values should be equal.",

@@ -166,8 +166,8 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
                             new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
                             new Length(2.0, METER), new Duration(1.0, SECOND), 3));
-                    sequential.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND),
-                            localProperties, null, true);
+                    sequential.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), localProperties, null,
+                            true);
                     sequential.panel.getTabbedPane().addTab("info", sequential.makeInfoPane());
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
@@ -177,7 +177,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
             }
         });
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected final void addAnimationToggles()
@@ -452,7 +452,7 @@ class SequentialModel implements OTSModelInterface, UNITS
                 LongitudinalDirectionality direction =
                         line.equals(l23) && minus ? LongitudinalDirectionality.DIR_MINUS : LongitudinalDirectionality.DIR_PLUS;
                 Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, line.getPoints(), 1,
-                        laneType, this.speedLimit, this.simulator, direction);
+                        laneType, this.speedLimit, this.simulator);
                 if (i == this.nodes.size() - 1)
                 {
                     new SinkSensor(lanes[0], new Length(100.0, METER), this.simulator);
@@ -633,8 +633,9 @@ class SequentialModel implements OTSModelInterface, UNITS
             Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
                     new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
-                    new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
+            LaneBasedStrategicalPlanner strategicalPlanner =
+                    new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
+            gtu.setParameters(parameters);
             gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

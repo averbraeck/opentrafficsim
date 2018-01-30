@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
@@ -8,7 +9,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
@@ -34,10 +34,9 @@ public class DefaultLMRSPerceptionFactory implements PerceptionFactory
     {
         LanePerception perception = new CategorialLanePerception(gtu);
         perception.addPerceptionCategory(new DirectEgoPerception(perception));
-        perception.addPerceptionCategory(new DirectDefaultSimplePerception(perception));
         perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
         perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
-        perception.addPerceptionCategory(new DirectIntersectionPerception(perception, HeadwayGtuType.COPY));
+        perception.addPerceptionCategory(new DirectIntersectionPerception(perception, HeadwayGtuType.WRAP));
         return perception;
     }
 
@@ -47,7 +46,7 @@ public class DefaultLMRSPerceptionFactory implements PerceptionFactory
     {
         try
         {
-            return new Parameters().setDefaultParameter(ParameterTypes.LOOKAHEAD)
+            return new ParameterSet().setDefaultParameter(ParameterTypes.LOOKAHEAD)
                     .setDefaultParameter(ParameterTypes.LOOKBACKOLD).setDefaultParameter(ParameterTypes.PERCEPTION)
                     .setDefaultParameter(ParameterTypes.LOOKBACK);
         }

@@ -38,8 +38,10 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     /** The list of new lanes to which the GTU is driving, parallel to the referenceLaneList. */
     private final List<Lane> secondLaneList;
 
+    /** . */
     private final int lastLaneIndex;
 
+    /** . */
     private final double lastFractionalPosition;
 
     /**

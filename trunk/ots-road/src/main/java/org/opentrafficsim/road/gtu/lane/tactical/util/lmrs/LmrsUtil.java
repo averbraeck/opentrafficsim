@@ -20,7 +20,6 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -68,7 +67,7 @@ public final class LmrsUtil implements LmrsParameters
 
     /** Maximum comfortable car-following deceleration. */
     public static final ParameterTypeAcceleration B = ParameterTypes.B;
-    
+
     /** Maximum critical deceleration, e.g. stop/go at traffic light. */
     public static final ParameterTypeAcceleration BCRIT = ParameterTypes.BCRIT;
 
@@ -105,13 +104,13 @@ public final class LmrsUtil implements LmrsParameters
             final Map<Class<? extends Incentive>, Desire> desireMap)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
-
+        
         // TODO this is a hack to prevent right lane changes of all vehicles on the left lane when placed in network at t=0
         if (startTime.si == 0.0)
         {
             // return new SimpleOperationalPlan(Acceleration.ZERO, LateralDirectionality.NONE);
         }
-        
+
         // obtain objects to get info
         SpeedLimitProspect slp =
                 perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT);
@@ -252,7 +251,7 @@ public final class LmrsUtil implements LmrsParameters
         }
         lmrsData.finalizeStep();
 
-        SimpleOperationalPlan simplePlan = new SimpleOperationalPlan(a, initiatedLaneChange);
+        SimpleOperationalPlan simplePlan = new SimpleOperationalPlan(a, params.getParameter(DT), initiatedLaneChange);
         if (turnIndicatorStatus.isLeft())
         {
             simplePlan.setIndicatorIntentLeft();

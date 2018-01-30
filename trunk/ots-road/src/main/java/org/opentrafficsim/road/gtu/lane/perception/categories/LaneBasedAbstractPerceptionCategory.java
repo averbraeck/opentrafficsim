@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -18,7 +17,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPerceptionCategory
+public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPerceptionCategory<LaneBasedGTU, LanePerception>
 {
 
     /** */
@@ -42,20 +41,6 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
     public LaneBasedAbstractPerceptionCategory(final LanePerception perception)
     {
         super(perception);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final LaneBasedGTU getGtu() throws GTUException
-    {
-        return getPerception().getGtu();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final LanePerception getPerception()
-    {
-        return (LanePerception) super.getPerception();
     }
 
 }

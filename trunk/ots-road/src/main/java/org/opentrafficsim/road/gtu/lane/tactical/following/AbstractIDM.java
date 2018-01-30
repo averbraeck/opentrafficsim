@@ -5,7 +5,6 @@ import java.util.SortedMap;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -65,7 +64,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
             return Length.createSI(parameters.getParameter(S0).si + speed.si * parameters.getParameter(T).si);
         }
     };
-    
+
     /** Default IDM desired speed model. */
     public static final DesiredSpeedModel DESIRED_SPEED = new DesiredSpeedModel()
     {
@@ -77,7 +76,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
             return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
         }
     };
-    
+
     /**
      * Constructor with modular models for desired headway and desired speed.
      * @param desiredHeadwayModel desired headway model

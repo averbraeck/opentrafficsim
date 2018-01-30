@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -24,10 +25,10 @@ public class AbstractIDMFactory<T extends AbstractIDM> implements CarFollowingMo
 
     /** Single instance as it is state-less. */
     private final T idm;
-    
+
     /** Distribution for fSpeed parameter. */
     private final DistContinuous fSpeed;
-    
+
     /**
      * Sets the idm model, which should be state-less.
      * @param idm T; idm model, which should be state-less
@@ -38,7 +39,7 @@ public class AbstractIDMFactory<T extends AbstractIDM> implements CarFollowingMo
         this.idm = idm;
         this.fSpeed = new DistNormal(randomStream, 123.7 / 120.0, 0.1);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final T generateCarFollowingModel()
@@ -50,10 +51,10 @@ public class AbstractIDMFactory<T extends AbstractIDM> implements CarFollowingMo
     @Override
     public Parameters getParameters() throws ParameterException
     {
-        Parameters parameters = new Parameters();
+        ParameterSet parameters = new ParameterSet();
         parameters.setDefaultParameters(AbstractIDM.class);
         parameters.setParameter(AbstractIDM.FSPEED, this.fSpeed.draw());
         return parameters;
     }
-    
+
 }

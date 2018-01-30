@@ -18,25 +18,26 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <G> GTU type
  */
-
-public abstract class AbstractPerception implements Perception
+public abstract class AbstractPerception<G extends GTU> implements Perception<G>
 {
 
     /** */
     private static final long serialVersionUID = 20160729L;
 
     /** Set of available perception categories. */
-    private final Map<Class<? extends PerceptionCategory>, PerceptionCategory> perceptionCategories = new LinkedHashMap<>();
+    private final Map<Class<? extends PerceptionCategory<?, ?>>, PerceptionCategory<?, ?>> perceptionCategories =
+            new LinkedHashMap<>();
 
     /** GTU. */
-    private GTU gtu;
+    private G gtu;
 
     /**
      * Construct perception.
      * @param gtu GTU
      */
-    public AbstractPerception(final GTU gtu)
+    public AbstractPerception(final G gtu)
     {
         this.gtu = gtu;
     }
@@ -44,22 +45,23 @@ public abstract class AbstractPerception implements Perception
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public GTU getGtu()
+    public G getGtu()
     {
         return this.gtu;
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
-    public final void addPerceptionCategory(final PerceptionCategory perceptionCategory)
+    public final <T extends PerceptionCategory<?, ?>> void addPerceptionCategory(final T perceptionCategory)
     {
         // guarantees correct combination of class and perception category
-        this.perceptionCategories.put(perceptionCategory.getClass(), perceptionCategory);
+        this.perceptionCategories.put((Class<T>) perceptionCategory.getClass(), perceptionCategory);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final <T extends PerceptionCategory> boolean contains(final Class<T> clazz)
+    public final <T extends PerceptionCategory<?, ?>> boolean contains(final Class<T> clazz)
     {
         for (Class<?> category : this.perceptionCategories.keySet())
         {
@@ -74,7 +76,8 @@ public abstract class AbstractPerception implements Perception
 
     /** {@inheritDoc} */
     @Override
-    public final <T extends PerceptionCategory> T getPerceptionCategory(final Class<T> category) throws OperationalPlanException
+    public final <T extends PerceptionCategory<?, ?>> T getPerceptionCategory(final Class<T> category)
+            throws OperationalPlanException
     {
         T cat = getPerceptionCategoryOrNull(category);
         if (cat != null)
@@ -83,11 +86,11 @@ public abstract class AbstractPerception implements Perception
         }
         throw new OperationalPlanException("Perception category" + category + " is not present.");
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
-    public final <T extends PerceptionCategory> T getPerceptionCategoryOrNull(final Class<T> category)
+    public final <T extends PerceptionCategory<?, ?>> T getPerceptionCategoryOrNull(final Class<T> category)
     {
         for (Class<?> clazz : this.perceptionCategories.keySet())
         {
@@ -103,7 +106,7 @@ public abstract class AbstractPerception implements Perception
 
     /** {@inheritDoc} */
     @Override
-    public final void removePerceptionCategory(final PerceptionCategory perceptionCategory)
+    public final void removePerceptionCategory(final PerceptionCategory<?, ?> perceptionCategory)
     {
         for (Class<?> category : this.perceptionCategories.keySet())
         {
@@ -122,7 +125,7 @@ public abstract class AbstractPerception implements Perception
     @SuppressWarnings("checkstyle:designforextension")
     public void perceive() throws GTUException, NetworkException, ParameterException
     {
-        for (PerceptionCategory category : this.perceptionCategories.values())
+        for (PerceptionCategory<?, ?> category : this.perceptionCategories.values())
         {
             category.updateAll();
         }
@@ -135,7 +138,7 @@ public abstract class AbstractPerception implements Perception
     {
         StringBuilder s = new StringBuilder("Perception [");
         String sep = "";
-        for (PerceptionCategory cat : this.perceptionCategories.values())
+        for (PerceptionCategory<?, ?> cat : this.perceptionCategories.values())
         {
             s.append(sep);
             s.append(cat);
