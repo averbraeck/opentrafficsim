@@ -157,8 +157,9 @@ public class CarTest implements UNITS
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         Parameters parameters = DefaultTestParameters.create();
         LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(id, gtuType, length, width, maxSpeed, simulator, network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
+        gtu.setParameters(parameters);
         gtu.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
 
         return gtu;
@@ -181,11 +182,11 @@ public class CarTest implements UNITS
         OTSNode n2 = new OTSNode(network, "n2", new OTSPoint3D(100000.0, 0.0));
         OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0) };
         CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, LinkType.ROAD, new OTSLine3D(coordinates),
-                simulator, LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
+                simulator, LaneKeepingPolicy.KEEP_RIGHT);
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
-        return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType,
-                new Speed(100, KM_PER_HOUR), new OvertakingConditions.LeftAndRight());
+        return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, new Speed(100, KM_PER_HOUR),
+                new OvertakingConditions.LeftAndRight());
     }
 
     /** The helper model. */

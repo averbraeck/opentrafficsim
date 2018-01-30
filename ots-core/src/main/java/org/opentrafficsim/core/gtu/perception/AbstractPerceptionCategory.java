@@ -17,21 +17,24 @@ import org.opentrafficsim.core.gtu.GTUException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <G> GTU type
+ * @param <P> perception type
  */
-public abstract class AbstractPerceptionCategory extends Type<AbstractPerceptionCategory> implements Serializable
+public abstract class AbstractPerceptionCategory<G extends GTU, P extends Perception<G>>
+        extends Type<AbstractPerceptionCategory<G, P>> implements Serializable, PerceptionCategory<G, P>
 {
 
     /** */
     private static final long serialVersionUID = 20160811L;
 
     /** Connected perception. */
-    private final Perception perception;
+    private final P perception;
 
     /**
      * Constructor setting the perception.
      * @param perception perception
      */
-    public AbstractPerceptionCategory(final Perception perception)
+    public AbstractPerceptionCategory(final P perception)
     {
         this.perception = perception;
     }
@@ -41,7 +44,7 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
      * @return connected perception
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public Perception getPerception()
+    public P getPerception()
     {
         return this.perception;
     }
@@ -52,7 +55,7 @@ public abstract class AbstractPerceptionCategory extends Type<AbstractPerception
      * @throws GTUException if the GTU has not been initialized
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public GTU getGtu() throws GTUException
+    public G getGtu() throws GTUException
     {
         return this.perception.getGtu();
     }

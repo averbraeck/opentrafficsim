@@ -51,7 +51,7 @@ public class LinkLocationTest implements UNITS
             // no implementation needed.
         }.getMockInstance();
         CrossSectionLink link = new CrossSectionLink(network, "Link", nodeFrom, nodeTo, LinkType.ROAD, line, simulator,
-                LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
+                LaneKeepingPolicy.KEEP_RIGHT);
         Length linkLength = line.getLength();
         // Now we can make a LinkLocation.
         Length referenceLocationDistance = new Length(123, METER);

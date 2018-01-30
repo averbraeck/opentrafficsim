@@ -245,7 +245,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
         {
             getGtu().getReferencePosition();
         }
-        catch (GTUException exception)
+        catch (@SuppressWarnings("unused") GTUException exception)
         {
             // GTU was destroyed
             return;

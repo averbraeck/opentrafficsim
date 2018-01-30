@@ -43,7 +43,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -487,7 +486,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             this.lane1 = LaneFactory.makeMultiLane(this.network, "Lane1", start, halfway, coordsHalf1, 1, laneType,
-                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
+                    this.speedLimit, this.simulator)[0];
             this.path.add(this.lane1);
 
             OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
@@ -497,7 +496,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             this.lane2 = LaneFactory.makeMultiLane(this.network, "Lane2", halfway, start, coordsHalf2, 1, laneType,
-                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
+                    this.speedLimit, this.simulator)[0];
             this.path.add(this.lane2);
 
             // Put the (not very evenly spaced) cars on track1
@@ -591,8 +590,9 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
             Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
                     new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
+            gtu.setParameters(parameters);
             gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
         }

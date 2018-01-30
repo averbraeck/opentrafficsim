@@ -47,7 +47,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -431,11 +430,10 @@ class StraightModel implements OTSModelInterface, UNITS
             OTSNode to = new OTSNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
             OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
             LaneType laneType = LaneType.TWO_WAY_LANE;
-            this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
-                    LongitudinalDirectionality.DIR_PLUS);
+            this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             this.path.add(this.lane);
             CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null,
-                    LongitudinalDirectionality.DIR_PLUS, simulator);
+                    simulator);
             // No overtaking, single lane
             Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                     this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
@@ -566,8 +564,9 @@ class StraightModel implements OTSModelInterface, UNITS
             Parameters parameters = DefaultsFactory.getDefaultParameters();
             this.block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
                     Speed.ZERO, this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(new IDMOld(), this.block), this.block);
+            this.block.setParameters(parameters);
             this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
                     this.gtuColorer);
         }
@@ -607,8 +606,9 @@ class StraightModel implements OTSModelInterface, UNITS
             Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
                     new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
-                    new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
+            LaneBasedStrategicalPlanner strategicalPlanner =
+                    new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
+            gtu.setParameters(parameters);
             gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

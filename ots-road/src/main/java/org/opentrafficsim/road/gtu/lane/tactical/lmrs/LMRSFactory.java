@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -101,13 +102,13 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
     @Override
     public final Parameters getParameters() throws ParameterException
     {
-        Parameters parameters = new Parameters();
+        ParameterSet parameters = new ParameterSet();
         parameters.setDefaultParameters(LmrsUtil.class);
         parameters.setDefaultParameters(LmrsParameters.class);
         parameters.setDefaultParameters(ConflictUtil.class);
         parameters.setDefaultParameters(TrafficLightUtil.class);
-        parameters.setAll(getCarFollowingParameters());
-        parameters.setAll(this.perceptionFactory.getParameters());
+        getCarFollowingParameters().setAllIn(parameters);
+        this.perceptionFactory.getParameters().setAllIn(parameters);
         try
         {
             parameters.setDefaultParameter(ParameterTypes.VCONG);

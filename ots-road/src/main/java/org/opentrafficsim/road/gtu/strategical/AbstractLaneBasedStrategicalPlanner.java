@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.strategical;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 import nl.tudelft.simulation.language.Throw;
@@ -25,34 +24,13 @@ public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedSt
     /** GTU. */
     private final LaneBasedGTU gtu;
 
-    /** The personal driving characteristics, which contain settings for the tactical planner. */
-    private Parameters parameters;
-
     /**
-     * @param parameters the personal driving characteristics, which contain settings for the tactical planner
      * @param gtu GTU
      */
-    public AbstractLaneBasedStrategicalPlanner(final Parameters parameters,
-            final LaneBasedGTU gtu)
+    public AbstractLaneBasedStrategicalPlanner(final LaneBasedGTU gtu)
     {
-        Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(gtu, "GTU may not be null.");
-        this.parameters = parameters;
         this.gtu = gtu;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Parameters getParameters()
-    {
-        return this.parameters;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void setParameters(final Parameters parameters)
-    {
-        this.parameters = parameters;
     }
 
     /** {@inheritDoc} */

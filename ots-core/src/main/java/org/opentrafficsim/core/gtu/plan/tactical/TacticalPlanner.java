@@ -35,11 +35,14 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * initial version Nov 14, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <G> GTU type
+ * @param <P> perception type
  */
-public interface TacticalPlanner
+public interface TacticalPlanner<G extends GTU, P extends Perception<G>>
 {
 
     /** Parameter type for tactical planner. */
+    @SuppressWarnings("rawtypes")
     ParameterTypeClass<TacticalPlanner> TACTICAL_PLANNER =
             new ParameterTypeClass<>("tac.plan.", "Tactical planner", ParameterTypeClass.getValueClass(TacticalPlanner.class));
 
@@ -47,7 +50,7 @@ public interface TacticalPlanner
      * Returns the GTU.
      * @return GTU
      */
-    GTU getGtu();
+    G getGtu();
 
     /**
      * generate an operational plan, for now or for in the future.
@@ -63,8 +66,6 @@ public interface TacticalPlanner
             throws OperationalPlanException, GTUException, NetworkException, ParameterException;
 
     /** @return the perception unit belonging to this tactical planner. */
-    Perception getPerception();
+    P getPerception();
 
-    // TODO InitialXVT generateInitialXVT(GTUState gtu, DirectedPoint initialLocation, Speed desiredSpeed, GenerationPolicy
-    // generationPolicy)
 }

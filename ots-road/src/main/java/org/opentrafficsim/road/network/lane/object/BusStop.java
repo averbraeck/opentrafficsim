@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.lane.object;
 
 import java.rmi.RemoteException;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -106,7 +107,7 @@ public class BusStop extends AbstractLaneBasedObject
     {
         if (this.conflicts == null)
         {
-            this.conflicts = new HashSet<>();
+            this.conflicts = new LinkedHashSet<>();
             Lane lane = getLane();
             // conflict forces only plus or minus as direction
             GTUDirectionality dir = getDirection().isForward() ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;

@@ -9,5 +9,4 @@
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 package org.opentrafficsim.road.network.lane.conflict;

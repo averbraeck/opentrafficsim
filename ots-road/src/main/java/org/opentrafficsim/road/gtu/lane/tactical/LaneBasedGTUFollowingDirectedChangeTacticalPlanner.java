@@ -7,10 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -50,6 +46,10 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Lane-based tactical planner that implements car following behavior and rule-based lane change. This tactical planner

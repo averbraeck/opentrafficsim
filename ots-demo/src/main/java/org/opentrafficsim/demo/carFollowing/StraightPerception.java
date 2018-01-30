@@ -59,7 +59,6 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -454,11 +453,10 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             OTSNode to = new OTSNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
             OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
             LaneType laneType = LaneType.TWO_WAY_LANE;
-            this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
-                    LongitudinalDirectionality.DIR_PLUS);
+            this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             this.path.add(this.lane);
             CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null,
-                    LongitudinalDirectionality.DIR_PLUS, this.simulator);
+                    this.simulator);
             // No overtaking, single lane
             Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                     this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
@@ -589,8 +587,9 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
 
             this.block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
                     new Speed(0.0, KM_PER_HOUR), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new GTUFollowingTacticalPlannerNoPerceive(this.carFollowingModelCars, this.block), this.block);
+            this.block.setParameters(parameters);
             this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
                     this.gtuColorer);
         }
@@ -643,13 +642,14 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedPerceivingCar car = new LaneBasedPerceivingCar("" + (++this.carsCreated), this.gtuType, vehicleLength,
                     new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new GTUFollowingTacticalPlannerNoPerceive(gtuFollowingModel, car), car);
+            car.setParameters(parameters);
             car.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             car.setPerceptionInterval(new Duration(this.perceptionIntervalDist.draw(), DurationUnit.SECOND));
-            car.getStrategicalPlanner().getParameters().setParameter(ParameterTypes.LOOKAHEAD,
+            car.getParameters().setParameter(ParameterTypes.LOOKAHEAD,
                     new Length(this.forwardHeadwayDist.draw(), LengthUnit.METER));
             // .setForwardHeadwayDistance(new Length(this.forwardHeadwayDist.draw(), LengthUnit.METER));
         }

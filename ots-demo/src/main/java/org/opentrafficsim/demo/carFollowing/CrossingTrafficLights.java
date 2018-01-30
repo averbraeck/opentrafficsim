@@ -47,7 +47,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -346,7 +345,7 @@ class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
                 {
                     Lane[] lanes = LaneFactory.makeMultiLane(this.network,
                             "Lane_" + nodes[i][j].getId() + "-" + nodes[i][j + 1].getId(), nodes[i][j], nodes[i][j + 1], null,
-                            2, laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                            2, laneType, this.speedLimit, this.simulator);
                     if (j == 0)
                     {
                         for (Lane lane : lanes)

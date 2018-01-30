@@ -45,7 +45,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -679,7 +678,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                 coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             Lane[] lanes1 = LaneFactory.makeMultiLane(this.network, "FirstHalf", start, halfway, coordsHalf1, laneCount,
-                    laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                    laneType, this.speedLimit, this.simulator);
             OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
@@ -687,7 +686,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                 coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             Lane[] lanes2 = LaneFactory.makeMultiLane(this.network, "SecondHalf", halfway, start, coordsHalf2, laneCount,
-                    laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                    laneType, this.speedLimit, this.simulator);
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
                 this.paths.get(laneIndex).add(lanes1[laneIndex]);

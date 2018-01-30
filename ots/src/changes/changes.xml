@@ -57,6 +57,9 @@
       <action issue="OTS-355" type="add">
         OTS-355. Tools for perception in the recent past
       </action>
+      <action issue="OTS-364" type="update">
+        OTS-364. Dynamic LaneStructure
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">

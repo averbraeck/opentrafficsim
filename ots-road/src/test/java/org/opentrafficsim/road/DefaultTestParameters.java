@@ -3,13 +3,14 @@ package org.opentrafficsim.road;
 import java.lang.reflect.Field;
 import java.util.Set;
 
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeBoolean;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeInteger;
 import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
@@ -38,10 +39,10 @@ public final class DefaultTestParameters
      * @return Default set of parameters.
      */
     @SuppressWarnings("unchecked")
-    public static Parameters create()
+    public static ParameterSet create()
     {
 
-        Parameters params = new Parameters();
+        ParameterSet params = new ParameterSet();
 
         // set all default values using reflection
         Set<Field> fields = ClassUtil.getAllFields(ParameterTypes.class);

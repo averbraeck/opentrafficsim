@@ -71,5 +71,12 @@ public class HistoryManagerDEVS extends HistoryManager
             throw new RuntimeException(exception);
         }
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "HistoryManagerDEVS [history=" + this.history + ", cleanUpInterval=" + this.cleanUpInterval + "]";
+    }
     
 }

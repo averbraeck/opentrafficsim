@@ -4,17 +4,17 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.opentrafficsim.base.parameters.Parameters;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.AbstractLaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -54,26 +54,24 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     private final Node destination;
 
     /** The fixed tactical planner to use for the GTU. */
-    private final TacticalPlanner fixedTacticalPlanner;
+    private final LaneBasedTacticalPlanner fixedTacticalPlanner;
 
     /**
      * Constructor for a strategical planner without route. This can only be used if the network does not have splits, or split
      * fractions are used.
-     * @param parameters the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      * @param gtu GTU
      * @throws GTUException if fixed tactical planner == null
      */
-    public LaneBasedStrategicalRoutePlanner(final Parameters parameters, final TacticalPlanner fixedTacticalPlanner,
-            final LaneBasedGTU gtu) throws GTUException
+    public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu)
+            throws GTUException
     {
-        this(parameters, fixedTacticalPlanner, null, gtu, null, null);
+        this(fixedTacticalPlanner, null, gtu, null, null);
     }
 
     /**
      * Constructor for a strategical planner with route. If the route is {@code null}, a shortest path to the destination is
      * derived.
-     * @param parameters the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      * @param route the route to drive
      * @param gtu GTU
@@ -81,10 +79,10 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param destination destination node
      * @throws GTUException if fixed tactical planner == null
      */
-    public LaneBasedStrategicalRoutePlanner(final Parameters parameters, final TacticalPlanner fixedTacticalPlanner,
-            final Route route, final LaneBasedGTU gtu, final Node origin, final Node destination) throws GTUException
+    public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final Route route,
+            final LaneBasedGTU gtu, final Node origin, final Node destination) throws GTUException
     {
-        super(parameters, gtu);
+        super(gtu);
         this.route = route;
         this.origin = origin;
         this.destination = destination;
@@ -95,9 +93,16 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public final TacticalPlanner generateTacticalPlanner()
+    public final LaneBasedTacticalPlanner getTacticalPlanner()
     {
         return this.fixedTacticalPlanner;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LaneBasedTacticalPlanner getTacticalPlanner(Time time)
+    {
+        return this.fixedTacticalPlanner; // fixed anyway
     }
 
     /** {@inheritDoc} */
@@ -264,14 +269,14 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         }
         return this.route;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final Node getOrigin()
     {
         return this.origin;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final Node getDestination()

@@ -1,10 +1,17 @@
 package org.opentrafficsim.core.perception;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+
+import nl.tudelft.simulation.dsol.experiment.Replication;
 
 /**
  * History manager with automatic garbage collection by the java garbage collector using weak references to the
@@ -20,6 +27,38 @@ import org.djunits.value.vdouble.scalar.Time;
  */
 public abstract class HistoryManager
 {
+
+    // HACK ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // TODO remove this hack and obtain manager from somewhere else, OTSReplication?
+    /** Centrally stored manager. */
+    private static Map<Replication<Time, Duration, OTSSimTimeDouble>, HistoryManagerDEVS> MANAGERS = new HashMap<>();
+
+    /**
+     * Get central manager.
+     * @param simulator
+     * @return HistoryManagerDEVS; central manager
+     */
+    public static HistoryManagerDEVS get(final OTSDEVSSimulatorInterface simulator)
+    {
+        HistoryManagerDEVS manager = MANAGERS.get(simulator.getReplication());
+        if (manager == null)
+        {
+            manager = new HistoryManagerDEVS(simulator, Duration.createSI(0.0), Duration.createSI(10.0));
+            MANAGERS.put(simulator.getReplication(), manager);
+        }
+        return manager;
+    }
+    
+    /**
+     * Set central manager.
+     * @param manager
+     * @param simulator
+     */
+    public static void set(final HistoryManagerDEVS manager, final OTSDEVSSimulatorInterface simulator)
+    {
+        MANAGERS.put(simulator.getReplication(), manager);
+    }
+    // END OF HACK /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Set of all {@code Historical}s. */
     // There's no WeakSet, but this is effectively the same. Iterating over this is safe, only alive objects are returned.

@@ -27,8 +27,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
@@ -59,9 +59,9 @@ import org.opentrafficsim.road.gtu.animation.LmrsSwitchableColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
-import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -318,7 +318,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             IdGenerator idGenerator = new IdGenerator("");
 
             CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory(streams.get("gtuClass"));
-            Parameters params = new Parameters();
+            ParameterSet params = new ParameterSet();
             params.setDefaultParameter(AbstractIDM.DELTA);
 
             Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();

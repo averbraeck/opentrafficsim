@@ -36,7 +36,7 @@ public class HistoricalList<T, L extends List<T>> extends HistoricalCollection<T
      */
     public final void add(final int index, final T value)
     {
-        getEvents().add(new AddEvent<>(now().si, value, index, getCollection()));
+        addEvent(new AddEvent<>(now().si, value, index, getCollection()));
     }
 
     /**
@@ -47,7 +47,7 @@ public class HistoricalList<T, L extends List<T>> extends HistoricalCollection<T
     @Override
     public final synchronized void add(final T value)
     {
-        getEvents().add(new AddEvent<>(now().si, value, getCollection().size(), getCollection()));
+        addEvent(new AddEvent<>(now().si, value, getCollection().size(), getCollection()));
     }
 
     /**
@@ -58,7 +58,7 @@ public class HistoricalList<T, L extends List<T>> extends HistoricalCollection<T
     @Override
     public final synchronized void remove(final T value)
     {
-        getEvents().add(new RemoveEvent<>(now().si, value, getCollection())); // note: different RemoveEvent class than at super
+        addEvent(new RemoveEvent<>(now().si, value, getCollection())); // note: different RemoveEvent class than at super
     }
 
     /**
@@ -140,6 +140,13 @@ public class HistoricalList<T, L extends List<T>> extends HistoricalCollection<T
         {
             list.remove(getIndex());
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "AddEvent [time=" + getTime() + ", value=" + getValue() + ", index=" + getIndex() + "]";
+        }
 
     }
 
@@ -181,7 +188,21 @@ public class HistoricalList<T, L extends List<T>> extends HistoricalCollection<T
                 list.add(getIndex(), getValue());
             }
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "RemoveEvent [time=" + getTime() + ", value=" + getValue() + ", index=" + getIndex() + "]";
+        }
 
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "HistoricalList [current=" + getCollection() + "]";
     }
 
 }

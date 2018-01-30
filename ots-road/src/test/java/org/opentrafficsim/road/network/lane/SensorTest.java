@@ -74,9 +74,9 @@ public class SensorTest implements UNITS
         OTSModelInterface model = new DummyModelForSensorTest();
         final SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
         Lane[] lanesA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
+                new Speed(100, KM_PER_HOUR), simulator);
         Lane[] lanesB = LaneFactory.makeMultiLane(network, "B", nodeATo, nodeBTo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
+                new Speed(100, KM_PER_HOUR), simulator);
 
         // put a sensor on each of the lanes at the end of LaneA
         for (Lane lane : lanesA)
@@ -111,7 +111,8 @@ public class SensorTest implements UNITS
         LaneBasedIndividualGTU car =
                 new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed, simulator, (OTSNetwork) network);
         LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(parameters, new LaneBasedGTUFollowingTacticalPlanner(fas, car), car);
+                new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(fas, car), car);
+        car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
         simulator.runUpTo(new Time(1, TimeUnit.BASE_SECOND));
         if (!simulator.isRunning())

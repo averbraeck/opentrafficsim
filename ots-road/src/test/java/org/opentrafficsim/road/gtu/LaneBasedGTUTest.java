@@ -83,7 +83,7 @@ public class LaneBasedGTUTest implements UNITS
      * @param carLanesCovered int; number of lanes that the car covers
      * @throws Exception when something goes wrong (should not happen)
      */
-    private void leaderFollowerParallel(final int truckFromLane, final int truckUpToLane, final int carLanesCovered) 
+    private void leaderFollowerParallel(final int truckFromLane, final int truckUpToLane, final int carLanesCovered)
             throws Exception
     {
         // Perform a few sanity checks
@@ -116,7 +116,7 @@ public class LaneBasedGTUTest implements UNITS
             OTSNode toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, null, laneCount, laneType,
-                    new Speed(100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
+                    new Speed(100, KM_PER_HOUR), simulator);
             links.add(lanes[0].getParentLink());
         }
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
@@ -134,8 +134,9 @@ public class LaneBasedGTUTest implements UNITS
 
         LaneBasedIndividualGTU truck =
                 new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed, simulator, this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
+        truck.setParameters(parameters);
         truck.init(strategicalPlanner, truckPositions, truckSpeed);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
@@ -210,8 +211,9 @@ public class LaneBasedGTUTest implements UNITS
 
                 LaneBasedIndividualGTU car =
                         new LaneBasedIndividualGTU("Car", carType, carLength, carWidth, maximumSpeed, simulator, this.network);
-                strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
+                strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
+                car.setParameters(parameters);
                 car.init(strategicalPlanner, carPositions, carSpeed);
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
@@ -389,7 +391,7 @@ public class LaneBasedGTUTest implements UNITS
             OTSNode toNode = new OTSNode(this.network, "Node B", new OTSPoint3D(1000, 0, 0));
             String linkName = "AB";
             Lane lane = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, null, 1, laneType,
-                    new Speed(200, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS)[0];
+                    new Speed(200, KM_PER_HOUR), simulator)[0];
             Length carPosition = new Length(100, METER);
             Set<DirectedLanePosition> carPositions = new LinkedHashSet<>(1);
             carPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
@@ -402,8 +404,9 @@ public class LaneBasedGTUTest implements UNITS
 
             LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType,
                     new Length(4, METER), new Length(1.8, METER), maximumSpeed, simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
-                    new LaneBasedCFLCTacticalPlanner(fam, laneChangeModel, car), car);
+            LaneBasedStrategicalPlanner strategicalPlanner =
+                    new LaneBasedStrategicalRoutePlanner(new LaneBasedCFLCTacticalPlanner(fam, laneChangeModel, car), car);
+            car.setParameters(parameters);
             car.init(strategicalPlanner, carPositions, carSpeed);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time(61, TimeUnit.BASE_SECOND));

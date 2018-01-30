@@ -8,7 +8,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
@@ -26,7 +25,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface DefaultSimplePerception extends PerceptionCategory
+public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
 {
 
     /**

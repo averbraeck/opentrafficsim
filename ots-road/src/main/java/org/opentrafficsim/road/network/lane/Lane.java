@@ -14,16 +14,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.immutablecollections.Immutable;
-import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
-import nl.tudelft.simulation.immutablecollections.ImmutableList;
-import nl.tudelft.simulation.language.Throw;
-
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -47,6 +38,14 @@ import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
+import nl.tudelft.simulation.immutablecollections.ImmutableList;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important
@@ -105,6 +104,9 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     // TODO allow for direction-dependent speed limit
     private Map<GTUType, Speed> speedLimitMap;
+    
+    /** Cached speed limits; these are cleared when a speed limit is changed. */
+    private final Map<GTUType, Speed> cachedSpeedLimits = new HashMap<>();
 
     /**
      * Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of sensors is done
@@ -121,7 +123,7 @@ public class Lane extends CrossSectionElement implements Serializable
     private final SortedMap<Double, List<LaneBasedObject>> laneBasedObjects = new TreeMap<>();
 
     /** GTUs ordered by increasing longitudinal position; increasing in the direction of the center line. */
-    private final List<LaneBasedGTU> gtuList = new ArrayList<LaneBasedGTU>();
+    private final List<LaneBasedGTU> gtuList = new ArrayList<>();
 
     /**
      * Adjacent left lanes that some GTU types can change onto. Left is defined relative to the direction of the design line of
@@ -378,7 +380,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         super(newParentLink, newSimulator, animation, cse);
         this.laneType = cse.laneType;
-        this.speedLimitMap = new HashMap<GTUType, Speed>(cse.speedLimitMap);
+        this.speedLimitMap = new HashMap<>(cse.speedLimitMap);
         this.overtakingConditions = cse.overtakingConditions;
 
         if (animation)
@@ -563,7 +565,7 @@ public class Lane extends CrossSectionElement implements Serializable
         List<SingleSensor> sensorList = this.sensors.get(position);
         if (null == sensorList)
         {
-            sensorList = new ArrayList<SingleSensor>(1);
+            sensorList = new ArrayList<>(1);
             this.sensors.put(position, sensorList);
         }
         sensorList.add(sensor);
@@ -762,8 +764,8 @@ public class Lane extends CrossSectionElement implements Serializable
                         // System.out.println("Scheduling a trigger for relativePosition " + relativePosition);
                         // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
                         // + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
-                        SimEvent<OTSSimTimeDouble> event = new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(triggerTime),
-                                this, sensor, "trigger", new Object[] { gtu });
+                        SimEvent<OTSSimTimeDouble> event = new SimEvent<>(new OTSSimTimeDouble(triggerTime), this, sensor,
+                                "trigger", new Object[] { gtu });
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
@@ -793,7 +795,7 @@ public class Lane extends CrossSectionElement implements Serializable
         List<LaneBasedObject> laneBasedObjectList = this.laneBasedObjects.get(position);
         if (null == laneBasedObjectList)
         {
-            laneBasedObjectList = new ArrayList<LaneBasedObject>(1);
+            laneBasedObjectList = new ArrayList<>(1);
             this.laneBasedObjects.put(position, laneBasedObjectList);
         }
         laneBasedObjectList.add(laneBasedObject);
@@ -1074,29 +1076,96 @@ public class Lane extends CrossSectionElement implements Serializable
     public final LaneBasedGTU getGtuAhead(final Length position, final GTUDirectionality direction,
             final RelativePosition.TYPE relativePosition, final Time when) throws GTUException
     {
+        if (this.gtuList.isEmpty())
+        {
+            return null;
+        }
+        int[] search = lineSearch((int index) -> {
+            LaneBasedGTU gtu = this.gtuList.get(index);
+            return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
+        }, this.gtuList.size(), position.si);
         if (direction.equals(GTUDirectionality.DIR_PLUS))
         {
-            for (LaneBasedGTU gtu : this.gtuList)
+            if (search[1] < this.gtuList.size())
             {
-                Length gtuPos = gtu.position(this, gtu.getRelativePositions().get(relativePosition), when);
-                if (gtuPos.gt(position))
-                {
-                    return gtu;
-                }
+                return this.gtuList.get(search[1]);
             }
         }
         else
         {
-            for (int i = this.gtuList.size() - 1; i >= 0; i--)
+            if (search[0] >= 0)
             {
-                LaneBasedGTU gtu = this.gtuList.get(i);
-                if (gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).lt(position))
-                {
-                    return gtu;
-                }
+                return this.gtuList.get(search[0]);
             }
         }
         return null;
+    }
+
+    /**
+     * Searches for objects just before and after a given position.
+     * @param positions Positions; functional interface returning positions at indices
+     * @param listSize int; number of objects in the underlying list
+     * @param position double; position
+     * @return int[2]; Where int[0] is the index of the object with lower position, and int[1] with higher. In case an object is
+     *         exactly at the position int[1] - int[0] = 2. If all objects have a higher position int[0] = -1, if all objects
+     *         have a lower position int[1] = listSize.
+     * @throws GTUException
+     */
+    private int[] lineSearch(final Positions positions, final int listSize, final double position) throws GTUException
+    {
+        int[] out = new int[2];
+        // line search only works if the position is within the original domain, first catch 4 outside situations
+        double pos0 = positions.get(0);
+        double posEnd; 
+        if (position < pos0)
+        {
+            out[0] = -1;
+            out[1] = 0;
+        }
+        else if (position == pos0)
+        {
+            out[0] = -1;
+            out[1] = 1;
+        }
+        else if (position > (posEnd = positions.get(listSize - 1)))
+        {
+            out[0] = listSize - 1;
+            out[1] = listSize;
+        }
+        else if (position == posEnd)
+        {
+            out[0] = listSize - 2;
+            out[1] = listSize;
+        }
+        else
+        {
+            int low = 0;
+            int mid = (int) ((listSize - 1) * position / this.length.si);
+            mid = mid < 0 ? 0 : mid >= listSize ? listSize - 1 : mid;
+            int high = listSize - 1;
+            while (high - low > 1)
+            {
+                double midPos = positions.get(mid);
+                if (midPos < position)
+                {
+                    low = mid;
+                }
+                else if (midPos > position)
+                {
+                    high = mid;
+                }
+                else
+                {
+                    low = mid - 1;
+                    high = mid + 1;
+                    break;
+                }
+                mid = (low + high) / 2;
+            }
+            out[0] = low;
+            out[1] = high;
+        }
+        return out;
     }
 
     /**
@@ -1452,15 +1521,24 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final Speed getSpeedLimit(final GTUType gtuType) throws NetworkException
     {
-        if (this.speedLimitMap.containsKey(gtuType))
+        Speed speedLimit = this.cachedSpeedLimits.get(gtuType);
+        if (speedLimit == null)
         {
-            return this.speedLimitMap.get(gtuType);
+            if (this.speedLimitMap.containsKey(gtuType))
+            {
+                speedLimit = this.speedLimitMap.get(gtuType);
+            }
+            else if (gtuType.getParent() != null)
+            {
+                speedLimit = getSpeedLimit(gtuType.getParent());
+            }
+            else
+            {
+                throw new NetworkException("No speed limit set for GTUType " + gtuType + " on lane " + toString());
+            }
+            this.cachedSpeedLimits.put(gtuType, speedLimit);
         }
-        if (gtuType.getParent() != null)
-        {
-            return getSpeedLimit(gtuType.getParent());
-        }
-        throw new NetworkException("No speed limit set for GTUType " + gtuType + " on lane " + toString());
+        return speedLimit;
     }
 
     /**
@@ -1512,6 +1590,7 @@ public class Lane extends CrossSectionElement implements Serializable
     public final void setSpeedLimit(final GTUType gtuType, final Speed speedLimit)
     {
         this.speedLimitMap.put(gtuType, speedLimit);
+        this.cachedSpeedLimits.clear();
     }
 
     /**
@@ -1525,6 +1604,7 @@ public class Lane extends CrossSectionElement implements Serializable
     public final void removeSpeedLimit(final GTUType gtuType)
     {
         this.speedLimitMap.remove(gtuType);
+        this.cachedSpeedLimits.clear();
     }
 
     /**
@@ -1599,6 +1679,35 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         return this.gtuList == null ? new ImmutableArrayList<>(new ArrayList<>())
                 : new ImmutableArrayList<>(this.gtuList, Immutable.WRAP);
+    }
+
+    /**
+     * Returns the number of GTU's.
+     * @return int; number of GTU's.
+     */
+    public final int numberOfGtus()
+    {
+        return this.gtuList.size();
+    }
+
+    /**
+     * Returns the index of the given GTU, or -1 if not present.
+     * @param gtu LaneBasedGTU; gtu to get the index of
+     * @return int; index of the given GTU, or -1 if not present
+     */
+    public final int indexOfGtu(final LaneBasedGTU gtu)
+    {
+        return this.gtuList.indexOf(gtu);
+    }
+
+    /**
+     * Returns the index'th GTU.
+     * @param index int; index of the GTU
+     * @return LaneBasedGTU; the index'th GTU
+     */
+    public final LaneBasedGTU getGtu(final int index)
+    {
+        return this.gtuList.get(index);
     }
 
     /** {@inheritDoc} */
@@ -1705,4 +1814,28 @@ public class Lane extends CrossSectionElement implements Serializable
 
         return newLane;
     }
+
+    /**
+     * Functional interface that can be used for line searches of objects on the lane.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 28 jan. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private interface Positions
+    {
+        /**
+         * Returns the position of the index'th element.
+         * @param index int; index
+         * @return double; position of the index'th element
+         * @throws GTUException on exception
+         */
+        double get(int index) throws GTUException;
+    }
+
 }

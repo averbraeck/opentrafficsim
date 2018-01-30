@@ -149,7 +149,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
         this.voluntaryIncentives.clear();
         this.accelerationIncentives.clear();
         this.mandatoryIncentives.add(new IncentiveRoute());
-        this.mandatoryIncentives.add(new IncentiveGetInLane());
+        // this.mandatoryIncentives.add(new IncentiveGetInLane());
         this.voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
         this.voluntaryIncentives.add(new IncentiveKeep());
         this.accelerationIncentives.add(new AccelerationSpeedLimitTransition());
@@ -162,7 +162,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
-
+        
         // obtain objects to get info
         getPerception().perceive();
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)

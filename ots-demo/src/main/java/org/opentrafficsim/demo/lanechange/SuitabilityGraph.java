@@ -43,7 +43,6 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -148,19 +147,19 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                 GTUType gtuType = CAR;
                 LaneType laneType = LaneType.TWO_WAY_LANE;
                 Lane[] lanes = LaneFactory.makeMultiLane(network, "Test road", from, branchPoint, null, LANECOUNT, laneType,
-                        speedLimit, simulator, LongitudinalDirectionality.DIR_PLUS);
+                        speedLimit, simulator);
                 OTSNode destination =
                         new OTSNode(network, "Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? 100 : -100, 0));
                 LaneFactory.makeMultiLane(network, "DestinationLink", branchPoint, destination, null,
                         Math.abs(targetLaneConfiguration),
                         targetLaneConfiguration > 0 ? 0 : LANECOUNT + targetLaneConfiguration, 0, laneType, speedLimit,
-                        simulator, LongitudinalDirectionality.DIR_PLUS);
+                        simulator);
                 OTSNode nonDestination = new OTSNode(network, "Non-Destination",
                         new OTSPoint3D(1000, targetLaneConfiguration > 0 ? -100 : 100, 0));
                 LaneFactory.makeMultiLane(network, "Non-DestinationLink", branchPoint, nonDestination, null,
                         LANECOUNT - Math.abs(targetLaneConfiguration),
                         targetLaneConfiguration > 0 ? LANECOUNT - targetLaneConfiguration : 0, 0, laneType, speedLimit,
-                        simulator, LongitudinalDirectionality.DIR_PLUS);
+                        simulator);
                 CompleteRoute route = new CompleteRoute("route", gtuType);
                 route.addNode(from);
                 route.addNode(branchPoint);

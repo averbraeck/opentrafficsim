@@ -9,11 +9,10 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.Type;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -32,8 +31,8 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstractPerceptionCategory implements
-        PerceptionCategory
+public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstractPerceptionCategory
+        implements LaneBasedPerceptionCategory
 {
 
     /** Margin of 1 millisecond. */
@@ -189,7 +188,8 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
     /**
      * Superclass for delayed info.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 feb. 2017 <br>

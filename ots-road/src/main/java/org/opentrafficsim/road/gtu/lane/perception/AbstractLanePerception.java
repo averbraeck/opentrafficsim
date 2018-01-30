@@ -2,6 +2,8 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -47,7 +49,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractLanePerception extends AbstractPerception implements LanePerception
+public abstract class AbstractLanePerception extends AbstractPerception<LaneBasedGTU> implements LanePerception
 {
 
     /** */
@@ -79,19 +81,17 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         super(gtu);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final LaneBasedGTU getGtu()
-    {
-        return (LaneBasedGTU) super.getGtu();
-    }
+    // TODO remove old mode
+    private final static boolean NEWMODE = true;
 
     /** {@inheritDoc} */
     @Override
     public final LaneStructure getLaneStructure() throws ParameterException
     {
+
         if (this.laneStructure == null || this.updateTime.lt(getGtu().getSimulator().getSimulatorTime().getTime()))
         {
+
             // downstream structure length
             Length down = getGtu().getParameters().getParameter(PERCEPTION);
             // upstream structure length
@@ -103,41 +103,69 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
             // negative values for upstream
             up = up.neg();
             upMerge = upMerge.neg();
-            // Create Lane Structure
-            DirectedLanePosition dlp;
-            try
+            if (NEWMODE)
             {
-                dlp = getGtu().getReferencePosition();
-            }
-            catch (GTUException exception)
-            {
-                // Should not happen, we get the lane from the GTU
-                throw new RuntimeException("Could not get fraction on root lane.", exception);
-            }
-            Lane rootLane = dlp.getLane();
-            GTUDirectionality drivingDirection = dlp.getGtuDirection();
-            double fraction = dlp.getPosition().si / rootLane.getLength().si;
-            LaneStructureRecord rootLSR =
-                    new LaneStructureRecord(rootLane, drivingDirection, rootLane.getLength().multiplyBy(-fraction));
-            this.laneStructure = new LaneStructure(rootLSR, lookAhead);
-            this.laneStructure.addLaneStructureRecord(rootLSR, RelativeLane.CURRENT);
-            this.relativeLaneMap.clear();
-            this.relativeLaneMap.put(rootLSR, RelativeLane.CURRENT);
-            startBuild(rootLSR, fraction, getGtu().getGTUType(), drivingDirection, down, lookAhead, up, upMerge);
 
+                if (this.laneStructure == null)
+                {
+                    // TODO move parameter obtaining to inside this if-statement
+                    this.laneStructure = new LaneStructure(lookAhead, down, up, lookAhead, upMerge);
+                }
+                DirectedLanePosition dlp;
+                try
+                {
+                    dlp = getGtu().getReferencePosition();
+                    this.laneStructure.update(dlp, getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType());
+                }
+                catch (GTUException exception)
+                {
+                    throw new RuntimeException("Error while updating the lane map.", exception);
+                }
+
+            }
+            else
+            {
+
+                // OLD MODE
+
+                // Create Lane Structure
+                DirectedLanePosition dlp;
+                try
+                {
+                    dlp = getGtu().getReferencePosition();
+                }
+                catch (GTUException exception)
+                {
+                    // Should not happen, we get the lane from the GTU
+                    throw new RuntimeException("Could not get fraction on root lane.", exception);
+                }
+                Lane rootLane = dlp.getLane();
+                GTUDirectionality drivingDirection = dlp.getGtuDirection();
+                double fraction = dlp.getPosition().si / rootLane.getLength().si;
+                LaneStructureRecord rootLSR =
+                        new LaneStructureRecord(rootLane, drivingDirection, rootLane.getLength().multiplyBy(-fraction));
+                this.laneStructure = new LaneStructure(rootLSR, lookAhead);
+                this.laneStructure.addLaneStructureRecord(rootLSR, RelativeLane.CURRENT);
+                this.relativeLaneMap.clear();
+                this.relativeLaneMap.put(rootLSR, RelativeLane.CURRENT);
+                startBuild(rootLSR, fraction, getGtu().getGTUType(), drivingDirection, down, lookAhead, up, upMerge);
+            }
             // TODO possibly optimize by using a 'singleton' lane structure source, per GTUType
-            // TODO possibly build and destroy at edges only
             this.updateTime = getGtu().getSimulator().getSimulatorTime().getTime();
+
         }
+
         return this.laneStructure;
     }
 
     /**
      * Local map where relative lanes are store per record, such that other records can be linked to the correct relative lane.
      */
+    @Deprecated
     private final Map<LaneStructureRecord, RelativeLane> relativeLaneMap = new HashMap<>();
 
     /** Set of lanes that can be ignored as they are beyond build bounds. */
+    @Deprecated
     private final Set<Lane> ignoreSet = new HashSet<>();
 
     /**
@@ -167,15 +195,14 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
      * @param up Length; maximum upstream distance to build structure
      * @param upMerge Length; maximum upstream distance upstream of downstream merges to build structure
      */
+    @Deprecated
     private void startBuild(final LaneStructureRecord rootLSR, final double fraction, final GTUType gtuType,
             final GTUDirectionality drivingDirection, final Length down, final Length downSplit, final Length up,
             final Length upMerge)
     {
         // Build initial lateral set
-        Set<LaneStructureRecord> recordSet = new HashSet<>();
-        Set<Lane> laneSet = new HashSet<>();
+        Set<LaneStructureRecord> recordSet = new LinkedHashSet<>();
         recordSet.add(rootLSR);
-        laneSet.add(rootLSR.getLane());
         for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
                 LateralDirectionality.RIGHT })
         {
@@ -210,7 +237,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                 }
 
                 recordSet.add(adjacentRecord);
-                laneSet.add(lane);
                 current = adjacentRecord;
                 adjacentLanes = current.getLane().accessibleAdjacentLanes(latDirection, gtuType, drivingDirection);
             }
@@ -256,7 +282,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
      *      ----- -------------
      * </pre>
      * 
-     * TODO works only for GTUDirectionality.DIR_PLUS
      * @param recordSet current lateral set of records
      * @param gtuType GTU type
      * @param down maximum downstream distance to build structure
@@ -266,11 +291,12 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
      * @throws GTUException if an inconsistency in the lane map is encountered
      * @throws NetworkException exception during movement over the network
      */
+    @Deprecated
     private void buildDownstreamRecursive(final Set<LaneStructureRecord> recordSet, final GTUType gtuType, final Length down,
             final Length up, final Length downSplit, final Length upMerge) throws GTUException, NetworkException
     {
         // Loop lanes and put downstream lanes in sets per downstream link
-        Map<Link, Set<Lane>> laneSets = new HashMap<>();
+        Map<Link, Set<Lane>> laneSets = new LinkedHashMap<>();
         Map<Link, TreeMap<RelativeLane, LaneStructureRecord>> recordSets = new HashMap<>();
         Map<Link, Length> maxStart = new HashMap<>();
         for (LaneStructureRecord laneRecord : recordSet)
@@ -282,7 +308,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
                     Link nextLink = nextLane.getParentLink();
                     if (!laneSets.containsKey(nextLink))
                     {
-                        laneSets.put(nextLink, new HashSet<>());
+                        laneSets.put(nextLink, new LinkedHashSet<>());
                         recordSets.put(nextLink, new TreeMap<>());
                         maxStart.put(nextLink, new Length(Double.MIN_VALUE, LengthUnit.SI));
                     }
@@ -318,7 +344,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         for (Link link : laneSets.keySet())
         {
             connectLaterally(recordSets.get(link), gtuType, GTUDirectionality.DIR_PLUS);
-            Set<LaneStructureRecord> set = new HashSet<>(recordSets.get(link).values()); // collection to set
+            Set<LaneStructureRecord> set = new LinkedHashSet<>(recordSets.get(link).values()); // collection to set
             // reduce remaining downstream length if not on route, to at most 'downSplit'
             Length downLimit = down;
             if (route != null && (!route.contains(nextNode) // if no route, do not limit
@@ -364,6 +390,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
      * @throws GTUException if an inconsistency in the lane map is encountered
      * @throws NetworkException exception during movement over the network
      */
+    @Deprecated
     private Set<LaneStructureRecord> extendLateral(final Set<LaneStructureRecord> recordSet, final GTUType gtuType,
             final Length down, final Length up, final Length upMerge, final boolean downstreamBuild)
             throws GTUException, NetworkException
@@ -376,7 +403,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
                 LateralDirectionality.RIGHT })
         {
-            Set<LaneStructureRecord> expandSet = new HashSet<>();
+            Set<LaneStructureRecord> expandSet = new LinkedHashSet<>();
             Length startDistance = null;
             Length endDistance = null;
             for (LaneStructureRecord laneRecord : recordSet)
@@ -453,7 +480,6 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
     /**
      * Extends the lane structure with the upstream lanes of the current set. Per upstream link, a new set results, which are
      * expanded laterally before performing the next upstream step. <br>
-     * TODO works only for GTUDirectionality.DIR_PLUS
      * @param recordSet current lateral set of records
      * @param gtuType GTU type
      * @param down maximum downstream distance to build structure
@@ -462,6 +488,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
      * @throws GTUException if an inconsistency in the lane map is encountered
      * @throws NetworkException exception during movement over the network
      */
+    @Deprecated
     private void buildUpstreamRecursive(final Set<LaneStructureRecord> recordSet, final GTUType gtuType, final Length down,
             final Length up, final Length upMerge) throws GTUException, NetworkException
     {
@@ -510,7 +537,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
         for (Link link : laneSets.keySet())
         {
             connectLaterally(recordSets.get(link), gtuType, GTUDirectionality.DIR_PLUS);
-            Set<LaneStructureRecord> set = new HashSet<>(recordSets.get(link).values()); // collection to set
+            Set<LaneStructureRecord> set = new LinkedHashSet<>(recordSets.get(link).values()); // collection to set
             buildUpstreamRecursive(set, gtuType, down, up, upMerge);
         }
     }
@@ -523,6 +550,7 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
      * @param relativeLane relative lane
      * @return created lane structure record
      */
+    @Deprecated
     private LaneStructureRecord constructRecord(final Lane lane, final GTUDirectionality direction, final Length startDistance,
             final RelativeLane relativeLane)
     {
@@ -536,8 +564,9 @@ public abstract class AbstractLanePerception extends AbstractPerception implemen
      * Connects the lane structure records laterally if appropriate.
      * @param map Map<RelativeLane, LaneStructureRecord>; map
      * @param gtuType gtu type
-     * @param drivingDirection TODO
+     * @param drivingDirection
      */
+    @Deprecated
     private void connectLaterally(final Map<RelativeLane, LaneStructureRecord> map, final GTUType gtuType,
             final GTUDirectionality drivingDirection)
     {

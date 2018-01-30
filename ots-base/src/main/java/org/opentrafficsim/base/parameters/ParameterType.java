@@ -132,7 +132,7 @@ public class ParameterType<T> extends Type<ParameterType<T>> implements Serializ
             {
                 // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
                 // other parameter types.
-                check(defaultValue, new Parameters());
+                check(defaultValue, new ParameterSet());
             }
             catch (ParameterException pe)
             {

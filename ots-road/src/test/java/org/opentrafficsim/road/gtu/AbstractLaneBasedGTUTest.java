@@ -89,12 +89,12 @@ public class AbstractLaneBasedGTUTest implements UNITS
                 new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
 
         Lane[] lanesGroupA = LaneFactory.makeMultiLane(this.network, "A", nodeAFrom, nodeATo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
+                new Speed(100, KM_PER_HOUR), simulator);
         // A GTU can exist on several lanes at once; create another lane group to test that
         OTSNode nodeBFrom = new OTSNode(this.network, "BFrom", new OTSPoint3D(10, 0, 0));
         OTSNode nodeBTo = new OTSNode(this.network, "BTo", new OTSPoint3D(1000, 0, 0));
         Lane[] lanesGroupB = LaneFactory.makeMultiLane(this.network, "B", nodeBFrom, nodeBTo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
+                new Speed(100, KM_PER_HOUR), simulator);
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(2);
 
         Length positionA = new Length(100, METER);
@@ -126,13 +126,14 @@ public class AbstractLaneBasedGTUTest implements UNITS
         CompleteRoute route = new CompleteRoute("Route", gtuType, nodeList);
         // Now we can make a GTU
         Parameters parameters = DefaultTestParameters.create(); // new
-                                                                                              // BehavioralCharacteristics();
+                                                                // BehavioralCharacteristics();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(gfm, laneChangeModel);
         LaneBasedIndividualGTU car =
                 new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed, simulator, this.network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(parameters,
-                new LaneBasedCFLCTacticalPlanner(gfm, laneChangeModel, car), car);
+        LaneBasedStrategicalPlanner strategicalPlanner =
+                new LaneBasedStrategicalRoutePlanner(new LaneBasedCFLCTacticalPlanner(gfm, laneChangeModel, car), car);
+        car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
@@ -340,7 +341,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         OTSNode nodeCFrom = new OTSNode(this.network, "CFrom", new OTSPoint3D(10, 100, 0));
         OTSNode nodeCTo = new OTSNode(this.network, "CTo", new OTSPoint3D(1000, 0, 0));
         Lane[] lanesGroupC = LaneFactory.makeMultiLane(this.network, "C", nodeCFrom, nodeCTo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
+                new Speed(100, KM_PER_HOUR), simulator);
         car.enterLane(lanesGroupC[0], new Length(0.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS);
         for (RelativePosition relativePosition : new RelativePosition[] { car.getFront(), car.getRear() })
         {

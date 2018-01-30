@@ -154,7 +154,7 @@ public final class Convert
         // XXX How to figure out whether to keep left, right or keep lane?
         // XXX How to figure out if this is a lane in one or two directions? For now, two is assumed...
         result = new CrossSectionLink(network, link.getId(), start, end, LinkType.ROAD, designLine, simulator,
-                LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
+                LaneKeepingPolicy.KEEP_RIGHT);
         return result;
     }
 
@@ -648,8 +648,7 @@ public final class Convert
                 color = Color.RED;
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, speedLimit,
-                        new OvertakingConditions.LeftAndRight());
+                        laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
                 new SinkSensor(newLane, new Length(0.25, LengthUnit.METER), simulator);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
@@ -657,16 +656,14 @@ public final class Convert
                 color = Color.BLUE;
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, speedLimit,
-                        new OvertakingConditions.LeftAndRight());
+                        laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
             }
             else
             {
                 color = laneAttributes.getColor();
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, speedLimit,
-                        new OvertakingConditions.LeftAndRight());
+                        laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
             }
             if (simulator instanceof OTSAnimatorInterface)
             {

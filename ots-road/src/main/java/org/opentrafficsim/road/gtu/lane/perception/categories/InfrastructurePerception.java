@@ -1,13 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -23,8 +20,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
-public interface InfrastructurePerception extends PerceptionCategory
+public interface InfrastructurePerception extends LaneBasedPerceptionCategory
 {
 
     /**
@@ -143,9 +139,6 @@ public interface InfrastructurePerception extends PerceptionCategory
             updatePhysicalLaneChangePossibility(lane, LateralDirectionality.LEFT);
             updatePhysicalLaneChangePossibility(lane, LateralDirectionality.RIGHT);
         }
-        Set<RelativeLane> lanes = new HashSet<>(getCrossSection());
-        lanes.add(RelativeLane.LEFT);
-        lanes.add(RelativeLane.RIGHT);
     }
 
 }

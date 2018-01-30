@@ -27,7 +27,6 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory implements BusStopPerception
 {
 

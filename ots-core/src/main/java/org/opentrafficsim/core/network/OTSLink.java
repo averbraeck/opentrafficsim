@@ -1,21 +1,21 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.media.j3d.Bounds;
-
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * A standard implementation of a link between two OTSNodes.
@@ -55,7 +55,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     private final OTSSimulatorInterface simulator;
 
     /** The GTUs on this Link. */
-    private final Set<GTU> gtus = new HashSet<>();
+    private final Set<GTU> gtus = new LinkedHashSet<>();
 
     /**
      * Construct a new link.
@@ -124,8 +124,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         if (!this.gtus.contains(gtu))
         {
             this.gtus.add(gtu);
-            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() }, gtu.getSimulator()
-                    .getSimulatorTime());
+            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
+                    gtu.getSimulator().getSimulatorTime());
         }
     }
 
@@ -136,8 +136,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         if (this.gtus.contains(gtu))
         {
             this.gtus.remove(gtu);
-            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() }, gtu.getSimulator()
-                    .getSimulatorTime());
+            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
+                    gtu.getSimulator().getSimulatorTime());
         }
     }
 
@@ -145,7 +145,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     @Override
     public final Set<GTU> getGTUs()
     {
-        return new HashSet<GTU>(this.gtus);
+        return new LinkedHashSet<>(this.gtus);
     }
 
     /** {@inheritDoc} */

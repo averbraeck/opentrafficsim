@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.lane.conflict;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 /**
+ * Conflict rule for split conflicts.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -12,7 +13,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 public class SplitConflictRule implements ConflictRule
 {
 

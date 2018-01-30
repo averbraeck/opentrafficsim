@@ -2,9 +2,10 @@ package org.opentrafficsim.demo.carFollowing;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 
 /**
  * Factory for defaults in demos.
@@ -36,7 +37,7 @@ public final class DefaultsFactory
     public static Parameters getDefaultParameters()
     {
 
-        Parameters params = new Parameters().setDefaultParameters(ParameterTypes.class);
+        Parameters params = new ParameterSet().setDefaultParameters(ParameterTypes.class);
 
         // demos use different value from default LMRS value
         try

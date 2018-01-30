@@ -52,8 +52,8 @@ public class SubjectiveCar extends AbstractGTU
      * @throws RemoteException when animation context or simulator cannot be reached
      */
     public SubjectiveCar(final String id, final GTUType type, final OTSDEVSSimulatorInterface simulator,
-            final DirectedPoint initialLocation, final OTSNetwork network) throws SimRuntimeException, GTUException,
-            RemoteException, NamingException
+            final DirectedPoint initialLocation, final OTSNetwork network)
+            throws SimRuntimeException, GTUException, RemoteException, NamingException
     {
         super(id, type, simulator, network);
         this.position = initialLocation;
@@ -167,15 +167,7 @@ public class SubjectiveCar extends AbstractGTU
     public final DirectedPoint getLocation()
     {
         // System.out.println("Subjective car at position " + this.position);
-
         return this.getPosition();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Parameters getParameters()
-    {
-        return null;
     }
 
     /** {@inheritDoc} */

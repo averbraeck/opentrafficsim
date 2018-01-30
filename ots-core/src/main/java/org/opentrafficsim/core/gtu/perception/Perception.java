@@ -19,8 +19,9 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Nov 15, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <G> GTU type
  */
-public interface Perception extends Serializable
+public interface Perception<G extends GTU> extends Serializable
 {
     /**
      * Update the perceived information and store it in a stateful manner.
@@ -35,13 +36,13 @@ public interface Perception extends Serializable
      * @return GTU of this perception
      * @throws GTUException if the GTU has not been initialized
      */
-    GTU getGtu() throws GTUException;
+    G getGtu() throws GTUException;
 
     /**
      * Adds given perception category to the perception.
      * @param perceptionCategory perception category
      */
-    void addPerceptionCategory(PerceptionCategory perceptionCategory);
+    <T extends PerceptionCategory<?, ?>> void addPerceptionCategory(T perceptionCategory);
 
     /**
      * Returns whether the given perception category is present.
@@ -49,7 +50,7 @@ public interface Perception extends Serializable
      * @param <T> perception category
      * @return whether the given perception category is present
      */
-    <T extends PerceptionCategory> boolean contains(Class<T> clazz);
+    <T extends PerceptionCategory<?, ?>> boolean contains(Class<T> clazz);
 
     /**
      * Returns the given perception category.
@@ -58,20 +59,21 @@ public interface Perception extends Serializable
      * @return given perception category
      * @throws OperationalPlanException if the perception category is not present
      */
-    <T extends PerceptionCategory> T getPerceptionCategory(Class<T> category) throws OperationalPlanException;
-    
+    <T extends PerceptionCategory<?, ?>> T getPerceptionCategory(Class<T> category)
+            throws OperationalPlanException;
+
     /**
      * Returns the given perception category, or {@code null} if not present.
      * @param category perception category class
      * @param <T> perception category
      * @return given perception category
      */
-    <T extends PerceptionCategory> T getPerceptionCategoryOrNull(Class<T> category);
+    <T extends PerceptionCategory<?, ?>> T getPerceptionCategoryOrNull(Class<T> category);
 
     /**
      * Remove give perception category.
      * @param perceptionCategory perception category to remove
      */
-    void removePerceptionCategory(PerceptionCategory perceptionCategory);
-    
+    void removePerceptionCategory(PerceptionCategory<?, ?> perceptionCategory);
+
 }

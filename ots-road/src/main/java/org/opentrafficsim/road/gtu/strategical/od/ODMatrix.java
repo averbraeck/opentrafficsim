@@ -206,23 +206,23 @@ public class ODMatrix implements Serializable, Identifiable
                 "Provided category %s does not belong to the categorization %s.", category, this.categorization);
         Throw.when(demand.size() != timeVector.size() || demand.size() < 2, IllegalArgumentException.class,
                 "Demand data has different length than time vector, or has less than 2 values.");
-        for (double q : demand.getValuesSI())
+        for (Frequency q : demand)
         {
-            Throw.when(q < 0.0, IllegalArgumentException.class, "Demand contains negative value(s).");
+            Throw.when(q.lt0(), IllegalArgumentException.class, "Demand contains negative value(s).");
         }
-        double prevTime;
+        Time prevTime;
         try
         {
-            prevTime = timeVector.get(0).eq0() ? -1.0 : 0.0;
+            prevTime = timeVector.get(0).eq0() ? Time.createSI(-1.0) : Time.ZERO;
         }
         catch (ValueException exception)
         {
             // verified to be > 1, so no empty vector
             throw new RuntimeException("Unexpected exception while checking time vector.", exception);
         }
-        for (double time : timeVector.getValuesSI())
+        for (Time time : timeVector)
         {
-            Throw.when(prevTime >= time, IllegalArgumentException.class,
+            Throw.when(prevTime.ge(time), IllegalArgumentException.class,
                     "Time vector is not strictly increasing, or contains negative time.");
             prevTime = time;
         }

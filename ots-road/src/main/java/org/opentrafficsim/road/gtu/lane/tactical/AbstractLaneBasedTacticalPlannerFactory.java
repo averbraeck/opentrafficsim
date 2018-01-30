@@ -14,7 +14,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 /**
  * Abstract tactical planner factory which uses a car-following model factory for supplying peeked desired speed and headway. To
  * this end the next car-following model is created and used throughout all peek invocations until an implementation of this
- * class calls {@code nextCarFollowingModel()} to generate a new tactical planner. Implementations should also use 
+ * class calls {@code nextCarFollowingModel()} to generate a new tactical planner. Implementations should also use
  * {@code getCarFollowingParameters()} in the {@code getParameters()} method to include the parameters a car-following model
  * requires.
  * <p>

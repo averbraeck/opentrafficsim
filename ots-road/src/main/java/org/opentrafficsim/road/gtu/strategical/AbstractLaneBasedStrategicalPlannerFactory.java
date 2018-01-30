@@ -81,7 +81,7 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
     /**
      * Determine or return the next parameter set.
      * @param gtuType GTUType; GTU type to generate parameters for
-     * @return next parameter set
+     * @return Parameters; next parameter set
      * @throws GTUException on parameter exception
      */
     private final Parameters peekParameters(final GTUType gtuType) throws GTUException
@@ -96,7 +96,7 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
             Parameters parameters = getParameters();
             if (parameters != null)
             {
-                this.peekedParameters.setAll(parameters);
+                parameters.setAllIn(this.peekedParameters);
             }
             this.parameterFactory.setValues(this.peekedParameters, gtuType);
         }

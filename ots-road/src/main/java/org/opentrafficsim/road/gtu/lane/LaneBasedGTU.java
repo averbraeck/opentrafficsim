@@ -32,6 +32,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public interface LaneBasedGTU extends GTU
 {
+    
     /** {@inheritDoc} */
     @Override
     LaneBasedStrategicalPlanner getStrategicalPlanner();

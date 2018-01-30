@@ -219,23 +219,17 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 OTSNode nodeA3 = new OTSNode(this.network, "A3", pointA3);
                 OTSNode nodeB = new OTSNode(this.network, "B", pointB);
                 CrossSectionLink linkAA1 = new CrossSectionLink(this.network, "AA1", nodeA, nodeA1, LinkType.CONNECTOR,
-                        new OTSLine3D(pointA, pointA1), this.simulator, LongitudinalDirectionality.DIR_PLUS,
-                        LaneKeepingPolicy.KEEP_RIGHT);
+                        new OTSLine3D(pointA, pointA1), this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
                 CrossSectionLink linkAA2 = new CrossSectionLink(this.network, "AA2", nodeA, nodeA2, LinkType.CONNECTOR,
-                        new OTSLine3D(pointA, pointA2), this.simulator, LongitudinalDirectionality.DIR_PLUS,
-                        LaneKeepingPolicy.KEEP_RIGHT);
+                        new OTSLine3D(pointA, pointA2), this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
                 CrossSectionLink linkAA3 = new CrossSectionLink(this.network, "AA3", nodeA, nodeA3, LinkType.CONNECTOR,
-                        new OTSLine3D(pointA, pointA3), this.simulator, LongitudinalDirectionality.DIR_PLUS,
-                        LaneKeepingPolicy.KEEP_RIGHT);
+                        new OTSLine3D(pointA, pointA3), this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
                 CrossSectionLink linkA1B = new CrossSectionLink(this.network, "A1B", nodeA1, nodeB, LinkType.FREEWAY,
-                        new OTSLine3D(pointA1, pointB), this.simulator, LongitudinalDirectionality.DIR_PLUS,
-                        LaneKeepingPolicy.KEEP_RIGHT);
+                        new OTSLine3D(pointA1, pointB), this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
                 CrossSectionLink linkA2B = new CrossSectionLink(this.network, "A2B", nodeA2, nodeB, LinkType.FREEWAY,
-                        new OTSLine3D(pointA2, pointB), this.simulator, LongitudinalDirectionality.DIR_PLUS,
-                        LaneKeepingPolicy.KEEP_RIGHT);
+                        new OTSLine3D(pointA2, pointB), this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
                 CrossSectionLink linkA3B = new CrossSectionLink(this.network, "A3B", nodeA3, nodeB, LinkType.FREEWAY,
-                        new OTSLine3D(pointA3, pointB), this.simulator, LongitudinalDirectionality.DIR_PLUS,
-                        LaneKeepingPolicy.KEEP_RIGHT);
+                        new OTSLine3D(pointA3, pointB), this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
                 Lane lane0 = new Lane(linkA1B, "lane0", Length.createSI(0.0), Length.createSI(3.5), LaneType.HIGHWAY,
                         new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Lane lane1 = new Lane(linkA2B, "lane1", Length.createSI(3.5), Length.createSI(3.5), LaneType.HIGHWAY,

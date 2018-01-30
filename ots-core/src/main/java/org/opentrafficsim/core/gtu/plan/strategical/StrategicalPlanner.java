@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu.plan.strategical;
 
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -42,13 +43,13 @@ public interface StrategicalPlanner
      * @return route, may be null
      */
     Route getRoute();
-    
+
     /**
      * Returns the origin.
      * @return origin, may be null
      */
     Node getOrigin();
-    
+
     /**
      * Returns the destination.
      * @return destination, may be null
@@ -56,10 +57,17 @@ public interface StrategicalPlanner
     Node getDestination();
 
     /**
-     * Generate a new tactical planner for the GTU.
-     * @return a new tactical planner
+     * Get tactical planner for the GTU. The stratigical planner is free to dynamically change this.
+     * @return tactical planner
      */
-    TacticalPlanner generateTacticalPlanner();
+    TacticalPlanner getTacticalPlanner();
+
+    /**
+     * Get tactical planner for the GTU. The stratigical planner is free to dynamically change this.
+     * @param time Time; time at which to obtain the tactical planner
+     * @return tactical planner
+     */
+    TacticalPlanner getTacticalPlanner(Time time);
 
     /**
      * Determine the next node in a network based on a current Link we are on.
@@ -82,8 +90,7 @@ public interface StrategicalPlanner
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */
-    LinkDirection nextLinkDirection(Link link, GTUDirectionality direction, GTUType gtuType)
-            throws NetworkException;
+    LinkDirection nextLinkDirection(Link link, GTUDirectionality direction, GTUType gtuType) throws NetworkException;
 
     /**
      * Determine the next node in a network based on a given node.

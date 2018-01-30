@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -52,8 +53,10 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 11, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <S> strategical planner
+ * @param <T> tactical planner
  */
-public class GTUTest implements OTSModelInterface
+public class GTUTest<S extends StrategicalPlanner, T extends TacticalPlanner> implements OTSModelInterface
 
 {
 
@@ -112,7 +115,13 @@ public class GTUTest implements OTSModelInterface
             }
 
             @Override
-            public TacticalPlanner generateTacticalPlanner()
+            public TacticalPlanner getTacticalPlanner()
+            {
+                return null;
+            }
+
+            @Override
+            public TacticalPlanner getTacticalPlanner(Time time)
             {
                 return null;
             }
@@ -140,7 +149,9 @@ public class GTUTest implements OTSModelInterface
             {
                 return null;
             }
+
         };
+        Parameters parameters = new ParameterSet();
         DirectedPoint initialLocation =
                 new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));
         GTUType gtuType1 = new GTUType("gtu type 1", VEHICLE);
@@ -335,7 +346,9 @@ public class GTUTest implements OTSModelInterface
 
 }
 
-/** ... */
+/**
+ * ...
+ */
 class TestGTU extends AbstractGTU
 {
     /** */
@@ -423,13 +436,6 @@ class TestGTU extends AbstractGTU
     /** {@inheritDoc} */
     @Override
     public Bounds getBounds()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Parameters getParameters()
     {
         return null;
     }

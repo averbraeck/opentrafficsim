@@ -298,7 +298,7 @@ public class OTSNode implements Node, Locatable, Serializable
                     "nextLinks: incoming link " + prevLink + " not connected to node " + this + " for GTU type " + gtuType);
         }
 
-        Set<Link> result = new HashSet<>();
+        Set<Link> result = new LinkedHashSet<>();
 
         // -------------------------------- check if explicit connections are present
         if (this.connections != null)
@@ -448,6 +448,7 @@ public class OTSNode implements Node, Locatable, Serializable
     public OTSNode clone2(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
             throws NetworkException
     {
+        @SuppressWarnings("unchecked")
         OTSNode clone = (OTSNode) newNetwork.getNode(this.id);
         if (this.connections != null)
         {

@@ -5,8 +5,8 @@ import java.util.SortedSet;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -47,6 +47,7 @@ public class AccelerationConflicts implements AccelerationIncentive
             final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
+        
         EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
         Acceleration acceleration = ego.getAcceleration();
         Length length = ego.getLength();

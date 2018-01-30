@@ -93,7 +93,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             DualAccelerationStep nonPreferredAccelerationSteps = null == nonPreferredLane ? null
                     : gtuFollowingModel.computeDualAccelerationStep(gtu, nonPreferredLaneGTUs, headway, speedLimit);
             if (null != nonPreferredAccelerationSteps && nonPreferredAccelerationSteps.getFollowerAcceleration()
-                    .getSI() < -gtu.getStrategicalPlanner().getParameters().getParameter(B).getSI())
+                    .getSI() < -gtu.getParameters().getParameter(B).getSI())
             {
                 nonPreferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
             }
@@ -102,7 +102,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             DualAccelerationStep preferredAccelerationSteps = null == preferredLane ? null
                     : gtuFollowingModel.computeDualAccelerationStep(gtu, preferredLaneGTUs, headway, speedLimit);
             if (null != preferredAccelerationSteps && preferredAccelerationSteps.getFollowerAcceleration()
-                    .getSI() < -gtu.getStrategicalPlanner().getParameters().getParameter(B).getSI())
+                    .getSI() < -gtu.getParameters().getParameter(B).getSI())
             {
                 preferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
             }

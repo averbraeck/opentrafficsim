@@ -527,4 +527,5 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
     }
+
 }

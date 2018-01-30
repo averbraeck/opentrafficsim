@@ -93,8 +93,9 @@ public class IDMPlusTest implements UNITS
         // new LaneBasedBehavioralCharacteristics(carFollowingModel, laneChangeModel);
         LaneBasedIndividualGTU referenceCar10 =
                 new LaneBasedIndividualGTU("10", gtuType, length, width, maxSpeed, simulator, this.network);
-        LaneBasedStrategicalPlanner strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(parametersIDM,
+        LaneBasedStrategicalPlanner strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(carFollowingModel, referenceCar10), referenceCar10);
+        referenceCar10.setParameters(parametersIDM);
         referenceCar10.init(strategicalPlannerIDM, initialLongitudinalPositions, initialSpeed);
         referenceCar10.getTacticalPlanner().getPerception().perceive();
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
@@ -119,8 +120,9 @@ public class IDMPlusTest implements UNITS
 
         LaneBasedIndividualGTU leaderCar11 =
                 new LaneBasedIndividualGTU("11", gtuType, length, width, maxSpeed, simulator, this.network);
-        LaneBasedStrategicalPlanner strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(parametersFAM,
-                new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar11), leaderCar11);
+        LaneBasedStrategicalPlanner strategicalPlannerFAM =
+                new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar11), leaderCar11);
+        leaderCar11.setParameters(parametersFAM);
         leaderCar11.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
         leaderCar11.getTacticalPlanner().getPerception().perceive();
         HeadwayGTUSimple leader = new HeadwayGTUSimple(leaderCar11.getId(), leaderCar11.getGTUType(),
@@ -139,12 +141,13 @@ public class IDMPlusTest implements UNITS
         // drivingCharacteristicsFAM = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
         LaneBasedIndividualGTU leaderCar12 =
                 new LaneBasedIndividualGTU("12", gtuType, length, width, maxSpeed, simulator, this.network);
-        strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(parametersFAM,
-                new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar12), leaderCar12);
+        strategicalPlannerFAM =
+                new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar12), leaderCar12);
+        leaderCar12.setParameters(parametersFAM);
         leaderCar12.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
         leaderCar12.getTacticalPlanner().getPerception().perceive();
         // Verify that the result is independent of the order of adding in the Collection
-        Collection<Headway> leaders = new ArrayList<Headway>();
+        Collection<Headway> leaders = new ArrayList<>();
         HeadwayGTUSimple leader2 = new HeadwayGTUSimple(leaderCar12.getId(), leaderCar12.getGTUType(),
                 new Length(leaderPosition.getSI() - referenceCar10.getLength().getSI() - initialPosition.getSI(),
                         LengthUnit.SI),
@@ -167,8 +170,9 @@ public class IDMPlusTest implements UNITS
         // Test 2, cars have #20 and up
         LaneBasedIndividualGTU referenceCar20 =
                 new LaneBasedIndividualGTU("20", gtuType, length, width, maxSpeed, simulator, this.network);
-        strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(parametersIDM,
+        strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(carFollowingModel, referenceCar20), referenceCar20);
+        referenceCar20.setParameters(parametersIDM);
         referenceCar20.init(strategicalPlannerIDM, initialLongitudinalPositions, initialSpeed);
         leaders.clear();
         leaderPosition = new Length(-(3 + referenceCar20.getLength().getSI())
@@ -177,8 +181,9 @@ public class IDMPlusTest implements UNITS
         leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
         LaneBasedIndividualGTU leaderCar21 =
                 new LaneBasedIndividualGTU("21", gtuType, length, width, maxSpeed, simulator, this.network);
-        strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(parametersFAM,
-                new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar21), leaderCar21);
+        strategicalPlannerFAM =
+                new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar21), leaderCar21);
+        leaderCar21.setParameters(parametersFAM);
         leaderCar21.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
         referenceCar20.getTacticalPlanner().getPerception().perceive();
         leaderCar21.getTacticalPlanner().getPerception().perceive();
@@ -203,8 +208,9 @@ public class IDMPlusTest implements UNITS
             leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
             LaneBasedIndividualGTU leaderCar22 =
                     new LaneBasedIndividualGTU("0", gtuType, length, width, maxSpeed, simulator, this.network);
-            strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(parametersFAM,
+            strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar22), leaderCar22);
+            leaderCar22.setParameters(parametersFAM);
             leaderCar22.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
             leaderCar22.getTacticalPlanner().getPerception().perceive();
             leader = new HeadwayGTUSimple(leaderCar22.getId(), leaderCar22.getGTUType(),
@@ -228,8 +234,9 @@ public class IDMPlusTest implements UNITS
         // cars have #30 and up
         LaneBasedIndividualGTU referenceCar30 =
                 new LaneBasedIndividualGTU("30", gtuType, length, width, maxSpeed, simulator, this.network);
-        strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(parametersIDM,
+        strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(carFollowingModel, referenceCar30), referenceCar30);
+        referenceCar30.setParameters(parametersIDM);
         referenceCar30.init(strategicalPlannerIDM, initialLongitudinalPositions, initialSpeed);
         referenceCar30.getTacticalPlanner().getPerception().perceive();
         referenceAcceleration = Double.NEGATIVE_INFINITY;
@@ -247,8 +254,9 @@ public class IDMPlusTest implements UNITS
             // parametersIDM = new BehavioralCharacteristics();
             // drivingCharacteristicsIDM = new LaneBasedBehavioralCharacteristics(carFollowingModel, laneChangeModel);
             referenceCar30 = new LaneBasedIndividualGTU("30", gtuType, length, width, maxSpeed, simulator, this.network);
-            strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(parametersIDM,
+            strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(carFollowingModel, referenceCar30), referenceCar30);
+            referenceCar30.setParameters(parametersIDM);
             referenceCar30.init(strategicalPlannerIDM, initialPositions, initialSpeed);
             leaders.clear();
             Speed leaderSpeed = new Speed(integerLeaderSpeed, METER_PER_SECOND);
@@ -256,8 +264,9 @@ public class IDMPlusTest implements UNITS
             // drivingCharacteristicsFAM = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
             LaneBasedIndividualGTU leaderCar31 =
                     new LaneBasedIndividualGTU("31", gtuType, length, width, maxSpeed, simulator, this.network);
-            strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(parametersFAM,
+            strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar31), leaderCar31);
+            leaderCar31.setParameters(parametersFAM);
             if (integerLeaderSpeed == 10)
             {
                 System.out.println("asd");
@@ -294,8 +303,9 @@ public class IDMPlusTest implements UNITS
         // drivingCharacteristicsIDM = new LaneBasedBehavioralCharacteristics(carFollowingModel, laneChangeModel);
         LaneBasedIndividualGTU referenceCar40 =
                 new LaneBasedIndividualGTU("40", gtuType, length, width, maxSpeed, simulator, this.network);
-        strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(parametersIDM,
+        strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGTUFollowingTacticalPlanner(carFollowingModel, referenceCar40), referenceCar40);
+        referenceCar40.setParameters(parametersIDM);
         referenceCar40.init(strategicalPlannerIDM, initialPositions, initialSpeed);
         referenceCar40.getTacticalPlanner().getPerception().perceive();
         leaderPosition = new Length(100 + 3 + referenceCar40.getLength().getSI()
@@ -304,8 +314,9 @@ public class IDMPlusTest implements UNITS
         // drivingCharacteristicsFAM = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
         LaneBasedIndividualGTU leaderCar41 =
                 new LaneBasedIndividualGTU("41", gtuType, length, width, maxSpeed, simulator, this.network);
-        strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(parametersFAM,
-                new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar41), leaderCar41);
+        strategicalPlannerFAM =
+                new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar41), leaderCar41);
+        leaderCar41.setParameters(parametersFAM);
         leaderCar41.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
         leaderCar41.getTacticalPlanner().getPerception().perceive();
         for (int timeStep = 0; timeStep < 200; timeStep++)
@@ -320,7 +331,7 @@ public class IDMPlusTest implements UNITS
                     // System.out.println(referenceCar40 + ", t= " + simulator.getSimulatorTime().get() + ", pos="
                     // + referenceCar40.getLocation());
                 }
-                catch (InterruptedException ie)
+                catch (@SuppressWarnings("unused") InterruptedException ie)
                 {
                     ie = null; // ignore
                 }

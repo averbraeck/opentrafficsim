@@ -255,6 +255,7 @@ public final class ConflictUtil
                             if (conflictRuleTypes.get(j).equals(BusStopConflictRule.class)
                                     && aStop.lt(parameters.getParameter(ParameterTypes.BCRIT).neg()))
                             {
+                                // as it may suddenly switch state, i.e. ignore like a yellow traffic light
                                 aStop = Acceleration.POS_MAXVALUE;
                             }
                             aCF = Acceleration.max(aCF, aStop);
@@ -601,7 +602,7 @@ public final class ConflictUtil
         }
 
         // Do not stop if conflicting vehicle is standing still
-        if (conflictingVehicles.isEmpty() || conflictingVehicles.get(0).getSpeed().eq0())
+        if (conflictingVehicles.isEmpty() || conflictingVehicles.get(0).getSpeed().eq0() && conflict.isCrossing())
         {
             return false;
         }

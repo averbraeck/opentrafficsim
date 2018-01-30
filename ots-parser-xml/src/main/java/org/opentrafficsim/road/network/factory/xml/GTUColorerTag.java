@@ -28,6 +28,10 @@ final class GTUColorerTag
         // do not instantiate
     }
 
+    /** default colorer, optionally set by XMLNetworkLaneParser */
+    // TODO solve hack in better xml spec
+    static GTUColorer defaultColorer = null;
+
     /**
      * Parses the right GTUColorer from ID|SPEED|ACCELERATION|LANECHANGEURGE|SWITCHABLE.
      * @param name name of the GTUColorer
@@ -62,6 +66,8 @@ final class GTUColorerTag
      */
     static GTUColorer makeSpeedGTUColorer(final GlobalTag globalTag)
     {
+        if (defaultColorer != null)
+            return defaultColorer;
         if (globalTag.speedGTUColorerMaxSpeed != null)
         {
             return new SpeedGTUColorer(globalTag.speedGTUColorerMaxSpeed);
@@ -75,6 +81,8 @@ final class GTUColorerTag
      */
     static GTUColorer makeAccelerationGTUColorer(final GlobalTag globalTag)
     {
+        if (defaultColorer != null)
+            return defaultColorer;
         // TODO use parameters for AccelerationGTUColorer
         return new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
                 new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2));
@@ -86,6 +94,8 @@ final class GTUColorerTag
      */
     static GTUColorer makeSwitchableGTUColorer(final GlobalTag globalTag)
     {
+        if (defaultColorer != null)
+            return defaultColorer;
         GTUColorer[] gtuColorers =
                 new GTUColorer[] { new IDGTUColorer(), makeSpeedGTUColorer(globalTag), makeAccelerationGTUColorer(globalTag) };
         // TODO default colorer

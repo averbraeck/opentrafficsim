@@ -227,7 +227,7 @@ public final class Trajectory
     {
         return Arrays.copyOf(this.t, this.size);
     }
-    
+
     /**
      * Returns {@code x} value of a single sample.
      * @param index index
@@ -239,7 +239,7 @@ public final class Trajectory
         checkSample(index);
         return this.x[index];
     }
-    
+
     /**
      * Returns {@code v} value of a single sample.
      * @param index index
@@ -251,7 +251,7 @@ public final class Trajectory
         checkSample(index);
         return this.v[index];
     }
-    
+
     /**
      * Returns {@code a} value of a single sample.
      * @param index index
@@ -263,7 +263,7 @@ public final class Trajectory
         checkSample(index);
         return this.a[index];
     }
-    
+
     /**
      * Returns {@code t} value of a single sample.
      * @param index index
@@ -275,7 +275,7 @@ public final class Trajectory
         checkSample(index);
         return this.t[index];
     }
-    
+
     /**
      * Returns extended data type value of a single sample.
      * @param extendedDataType data type from which to retrieve the data

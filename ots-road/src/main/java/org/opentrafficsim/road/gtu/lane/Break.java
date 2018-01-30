@@ -32,7 +32,7 @@ public final class Break
      * @param time time to break at (or after)
      * @param additionalCondition additional condition
      */
-    public static void on(final Perception perception, final String id, final double time, final boolean additionalCondition)
+    public static void on(final Perception<?> perception, final String id, final double time, final boolean additionalCondition)
     {
         try
         {

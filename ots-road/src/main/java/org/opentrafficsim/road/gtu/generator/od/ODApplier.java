@@ -683,11 +683,11 @@ public final class ODApplier
         {
             if (this.odEntry != null)
             {
-                for (double d : this.odEntry.getTimeVector().getValuesSI())
+                for (Time d : this.odEntry.getTimeVector())
                 {
-                    if (d > time.si)
+                    if (d.gt(time))
                     {
-                        return Time.createSI(d);
+                        return d;
                     }
                 }
                 return null;

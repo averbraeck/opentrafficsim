@@ -55,7 +55,7 @@ public class HistoricalCollection<T, C extends Collection<T>> extends AbstractHi
      */
     public synchronized void add(final T value)
     {
-        getEvents().add(new AddEvent<>(now().si, value, this.internalCollection));
+        addEvent(new AddEvent<>(now().si, value, this.internalCollection));
     }
 
     /**
@@ -65,7 +65,7 @@ public class HistoricalCollection<T, C extends Collection<T>> extends AbstractHi
      */
     public synchronized void remove(final T value)
     {
-        getEvents().add(new RemoveEvent<>(now().si, value, this.internalCollection));
+        addEvent(new RemoveEvent<>(now().si, value, this.internalCollection));
     }
 
     /** {@inheritDoc} */
@@ -106,11 +106,9 @@ public class HistoricalCollection<T, C extends Collection<T>> extends AbstractHi
         Throw.when(!collection.isEmpty(), IllegalArgumentException.class, "Collection should be an empty collection.");
         // copy all current elements and decrement per event
         collection.addAll(this.internalCollection);
-        int i = getEvents().size() - 1;
-        while (i >= 0 && getEvents().get(i).getTime() > time.si)
+        for (EventCollection<T, C> event : getEvents(time))
         {
-            getEvents().get(i).restore(collection);
-            i--;
+            event.restore(collection);
         }
         return collection;
     }
@@ -186,6 +184,13 @@ public class HistoricalCollection<T, C extends Collection<T>> extends AbstractHi
             collection.remove(getValue());
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "AddEvent [time=" + getTime() + ", value=" + getValue() + "]";
+        }
+        
     }
 
     /**
@@ -224,6 +229,20 @@ public class HistoricalCollection<T, C extends Collection<T>> extends AbstractHi
             collection.add(getValue());
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "RemoveEvent [time=" + getTime() + ", value=" + getValue() + "]";
+        }
+        
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "HistoricalCollection [current=" + getCollection() + "]";
+    }
+    
 }

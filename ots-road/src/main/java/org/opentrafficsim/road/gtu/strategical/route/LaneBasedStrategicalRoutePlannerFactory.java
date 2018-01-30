@@ -59,7 +59,8 @@ public class LaneBasedStrategicalRoutePlannerFactory
             final Node destination) throws GTUException
     {
         LaneBasedStrategicalRoutePlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                nextParameters(gtu.getGTUType()), nextTacticalPlanner(gtu), route, gtu, origin, destination);
+                nextTacticalPlanner(gtu), route, gtu, origin, destination);
+        gtu.setParameters(nextParameters(gtu.getGTUType()));
         return strategicalPlanner;
     }
     

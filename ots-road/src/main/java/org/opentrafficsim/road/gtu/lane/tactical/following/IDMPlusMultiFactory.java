@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 
 /**
@@ -29,7 +30,7 @@ public class IDMPlusMultiFactory implements CarFollowingModelFactory<IDMPlusMult
     @Override
     public Parameters getParameters()
     {
-        Parameters parameters = new Parameters();
+        ParameterSet parameters = new ParameterSet();
         parameters.setDefaultParameters(AbstractIDM.class);
         return parameters;
     }
