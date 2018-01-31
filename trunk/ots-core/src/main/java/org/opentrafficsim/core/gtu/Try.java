@@ -37,12 +37,14 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
  * <pre>
  * FileInputStream fis = Try.assign(() -> new FileInputStream(fileString), IllegalArgumentException.class,
  *         "File %s is not a valid file.", fileString);
- * Try.execute(() -> fis2.close(), "Could not close the file.");
+ * Try.execute(() -> fis.close(), "Could not close the file.");
  * </pre>
  * 
  * The exception message can be formatted with additional arguments, such that the overhead of building the exception message
  * only occurs if the exception condition is met. For each method there is a version without Throwable class, in which case a
- * RuntimeException will be thrown.
+ * RuntimeException will be thrown.<br>
+ * <br>
+ * Try is not suitable for try-with-resource statements.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -626,7 +628,7 @@ public class Try
     }
 
     /**
-     * Function interface for calls to Try.assign(...). For this a lambda expression can be used.
+     * Functional interface for calls to Try.assign(...). For this a lambda expression can be used.
      * 
      * <pre>
      * FileInputStream fis = Try.assign(() -> new FileInputStream(fileString), IllegalArgumentException.class,
@@ -643,6 +645,7 @@ public class Try
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <V> value type
      */
+    @FunctionalInterface
     public interface Assignment<V>
     {
         /**
@@ -654,10 +657,10 @@ public class Try
     }
 
     /**
-     * Function interface for calls to Try.execute(...). For this a lambda expression can be used.
+     * Functional interface for calls to Try.execute(...). For this a lambda expression can be used.
      * 
      * <pre>
-     * Try.execute(() -> fis2.close(), "Could not close the file.");
+     * Try.execute(() -> fis.close(), "Could not close the file.");
      * </pre>
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -669,6 +672,7 @@ public class Try
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
+    @FunctionalInterface
     public interface Execution
     {
         /**
