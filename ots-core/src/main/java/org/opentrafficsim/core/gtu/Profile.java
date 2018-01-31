@@ -164,7 +164,7 @@ public class Profile
     {
 
         /** Start time of recording. */
-        private long start = -1;
+        private Long start = null;
 
         /** Total time of profiling. */
         private long total;
@@ -186,7 +186,7 @@ public class Profile
          */
         public void start(final long startTime)
         {
-            Throw.when(this.start > 0, IllegalStateException.class, "Can only start profiling if it was ended.");
+            Throw.when(this.start != null, IllegalStateException.class, "Can only start profiling if it was ended.");
             this.start = startTime;
         }
 
@@ -196,10 +196,10 @@ public class Profile
          */
         public void end(final long endTime)
         {
-            Throw.when(this.start < 0, IllegalStateException.class, "Can only end profiling if it was started.");
+            Throw.when(this.start == null, IllegalStateException.class, "Can only end profiling if it was started.");
             this.total += (endTime - this.start);
             this.invocations++;
-            this.start = -1;
+            this.start = null;
         }
 
         /**
