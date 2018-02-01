@@ -3,6 +3,8 @@ package org.opentrafficsim.core.perception;
 import org.djunits.value.vdouble.scalar.Time;
 
 /**
+ * Simple implementation without history that can be used inside a generic context where also implementations with history can
+ * be used.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -13,28 +15,40 @@ import org.djunits.value.vdouble.scalar.Time;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> value type
  */
-public interface Historical<T>
+public class NullHistorical<T> implements Historical<T>
 {
 
+    /** Value. */
+    private T value;
+
     /**
-     * Set value at the current simulation time. If a value is already given at this time, it is overwritten. Values should be
-     * set in chronological order.
+     * Constructor.
      * @param value T; value
      */
-    void set(T value);
+    public NullHistorical(final T value)
+    {
+        this.value = value;
+    }
 
-    /**
-     * Get value at current simulation time.
-     * @return T; value at current simulation time
-     */
-    T get();
+    /** {@inheritDoc} */
+    @Override
+    public void set(T value)
+    {
+        this.value = value;
+    }
 
-    /**
-     * Get value at given time.
-     * @param time T; time to get the value
-     * @return T; value at current time
-     * @throws NullPointerException when time is null
-     */
-    T get(Time time);
-    
+    /** {@inheritDoc} */
+    @Override
+    public T get()
+    {
+        return this.value;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public T get(Time time)
+    {
+        return this.value;
+    }
+
 }

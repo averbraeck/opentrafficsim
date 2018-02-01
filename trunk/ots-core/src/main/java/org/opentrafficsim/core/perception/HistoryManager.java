@@ -62,14 +62,14 @@ public abstract class HistoryManager
 
     /** Set of all {@code Historical}s. */
     // There's no WeakSet, but this is effectively the same. Iterating over this is safe, only alive objects are returned.
-    private final Set<AbstractHistorical<?, ?>> historicals =
-            Collections.newSetFromMap(new WeakHashMap<AbstractHistorical<?, ?>, Boolean>());
+    private final Set<HistoricalElement> historicals =
+            Collections.newSetFromMap(new WeakHashMap<HistoricalElement, Boolean>());
 
     /**
      * Registers a historical.
      * @param historical Historical; historical to register.
      */
-    public void registerHistorical(AbstractHistorical<?, ?> historical)
+    public void registerHistorical(HistoricalElement historical)
     {
         if (historical != null)
         {
@@ -81,7 +81,7 @@ public abstract class HistoryManager
      * Returns the historicals.
      * @return the historicals
      */
-    protected final Set<AbstractHistorical<?, ?>> getHistoricals()
+    protected final Set<HistoricalElement> getHistoricals()
     {
         return this.historicals;
     }
@@ -91,5 +91,25 @@ public abstract class HistoryManager
      * @return Time; current simulation time.
      */
     abstract Time now();
+    
+    /**
+     * Historical view for the history manager.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 1 feb. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public interface HistoricalElement
+    {
+        /**
+         * Removes events that are no longer needed to guarantee the history time. This is invoked by the history manager.
+         * @param history Duration; history time to keep
+         */
+        void cleanUpHistory(Duration history);
+    }
 
 }

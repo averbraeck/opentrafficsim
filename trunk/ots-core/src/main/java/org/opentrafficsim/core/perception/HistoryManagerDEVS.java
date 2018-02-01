@@ -58,7 +58,7 @@ public class HistoryManagerDEVS extends HistoryManager
      */
     protected final void cleanUpHistory()
     {
-        for (AbstractHistorical<?, ?> historical : getHistoricals())
+        for (HistoricalElement historical : getHistoricals())
         {
             historical.cleanUpHistory(this.history);
         }
