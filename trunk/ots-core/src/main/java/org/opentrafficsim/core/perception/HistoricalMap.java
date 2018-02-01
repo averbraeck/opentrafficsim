@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.perception;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.perception.HistoricalMap.EventMap;
@@ -47,6 +49,15 @@ public class HistoricalMap<K, V, M extends Map<K, V>> extends AbstractHistorical
     protected final M getMap()
     {
         return this.internalMap;
+    }
+    
+    /**
+     * Clears the collection.
+     */
+    public synchronized void clear()
+    {
+        Set<K> values = new HashSet<>(this.internalMap.keySet());
+        values.forEach(this::remove);
     }
 
     /**

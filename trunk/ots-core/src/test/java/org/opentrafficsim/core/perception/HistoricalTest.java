@@ -112,6 +112,11 @@ public class HistoricalTest
         this.time = Time.createSI(4.0);
         hist.remove("3.0");
         hist.add("4.0");
+        this.time = Time.createSI(6.0);
+        hist.clear();
+        hist.addAll(asSet("5.0", "6.0", "7.0", "8.0", "9.0"));
+        hist.removeAll(asSet("5.0", "6.0"));
+        hist.retainAll(asSet("5.0", "6.0", "7.0", "10.0"));
         assertEquals(msg, asSet("0.0"), hist.fill(Time.createSI(0.0), new HashSet<>()));
         assertEquals(msg, asSet("0.0", "1.0", "2.0"), hist.fill(Time.createSI(2.0), new HashSet<>()));
         assertEquals(msg, asSet("0.0", "1.0", "3.0"), hist.fill(Time.createSI(3.0), new HashSet<>()));
@@ -123,6 +128,7 @@ public class HistoricalTest
         hist.cleanUpHistory(this.cleanUp);
         assertEquals(msg, asSet("0.0", "1.0", "2.0"), hist.fill(Time.createSI(0.95), new HashSet<>())); // oldest available
         assertEquals(msg, asSet("0.0", "1.0", "2.0"), hist.fill(Time.createSI(2.05), new HashSet<>()));
+        assertEquals(msg, asSet("7.0"), hist.fill(Time.createSI(6.0), new HashSet<>()));
     }
 
     /**
@@ -161,6 +167,11 @@ public class HistoricalTest
         this.time = Time.createSI(4.0);
         hist.remove("3.0"); // 1.0, 0.0
         hist.add(2, "4.0"); // 1.0, 0.0, 4.0
+        this.time = Time.createSI(6.0);
+        hist.clear();
+        hist.addAll(asSet("5.0", "6.0", "7.0", "8.0", "9.0"));
+        hist.removeAll(asSet("5.0", "6.0"));
+        hist.retainAll(asSet("5.0", "6.0", "7.0", "10.0"));
         assertEquals(msg, Arrays.asList("0.0"), hist.fill(Time.createSI(0.0), new ArrayList<>()));
         assertEquals(msg, Arrays.asList("1.0", "2.0", "0.0"), hist.fill(Time.createSI(2.0), new ArrayList<>()));
         assertEquals(msg, Arrays.asList("3.0", "1.0", "0.0"), hist.fill(Time.createSI(3.0), new ArrayList<>()));
@@ -172,6 +183,7 @@ public class HistoricalTest
         hist.cleanUpHistory(this.cleanUp);
         assertEquals(msg, Arrays.asList("1.0", "2.0", "0.0"), hist.fill(Time.createSI(0.95), new ArrayList<>())); // oldest
         assertEquals(msg, Arrays.asList("1.0", "2.0", "0.0"), hist.fill(Time.createSI(2.05), new ArrayList<>()));
+        assertEquals(msg, Arrays.asList("7.0"), hist.fill(Time.createSI(6.0), new ArrayList<>()));
     }
 
     /**
@@ -195,6 +207,9 @@ public class HistoricalTest
         hist.remove(1); // 0=3.0
         this.time = Time.createSI(4.0);
         hist.put(2, "4.0"); // 0=3.0, 2=4.0
+        this.time = Time.createSI(6.0);
+        hist.clear();
+        hist.putAll(asMap(5, "5.0", 6, "6.0"));
         assertEquals(msg, asMap(0, "0.0"), hist.fill(Time.createSI(0.0), new HashMap<>()));
         assertEquals(msg, asMap(0, "1.0"), hist.fill(Time.createSI(1.0), new HashMap<>()));
         assertEquals(msg, asMap(0, "1.0", 1, "2.0"), hist.fill(Time.createSI(2.0), new HashMap<>()));
@@ -207,6 +222,7 @@ public class HistoricalTest
         hist.cleanUpHistory(this.cleanUp);
         assertEquals(msg, asMap(0, "1.0", 1, "2.0"), hist.fill(Time.createSI(0.95), new HashMap<>())); // oldest available
         assertEquals(msg, asMap(0, "1.0", 1, "2.0"), hist.fill(Time.createSI(2.05), new HashMap<>()));
+        assertEquals(msg, asMap(5, "5.0", 6, "6.0"), hist.fill(Time.createSI(6.0), new HashMap<>()));
     }
 
     /**
