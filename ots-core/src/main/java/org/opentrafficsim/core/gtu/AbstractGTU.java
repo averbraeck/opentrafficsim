@@ -29,6 +29,7 @@ import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.Historical;
+import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
@@ -89,7 +90,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     private final Historical<StrategicalPlanner> strategicalPlanner;
 
     /** The tactical planner that can generate an operational plan. */
-    private final Historical<TacticalPlanner> tacticalPlanner;
+    private final Historical<TacticalPlanner<?, ?>> tacticalPlanner;
 
     /** The current operational plan, which provides a short-term movement over time. */
     private final Historical<OperationalPlan> operationalPlan;
@@ -154,13 +155,13 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.uniqueNumber = ++staticUNIQUENUMBER;
         this.gtuType = gtuType;
         this.simulator = simulator;
-        this.odometer = new Historical<>(HistoryManager.get(simulator), Length.ZERO);
+        this.odometer = new HistoricalValue<>(HistoryManager.get(simulator), Length.ZERO);
         this.perceivableContext = perceivableContext;
         this.perceivableContext.addGTU(this);
-        this.strategicalPlanner = new Historical<>(HistoryManager.get(simulator));
-        this.tacticalPlanner = new Historical<>(HistoryManager.get(simulator), null);
-        this.turnIndicatorStatus = new Historical<>(HistoryManager.get(simulator), TurnIndicatorStatus.NOTPRESENT);
-        this.operationalPlan = new Historical<>(HistoryManager.get(simulator), null);
+        this.strategicalPlanner = new HistoricalValue<>(HistoryManager.get(simulator));
+        this.tacticalPlanner = new HistoricalValue<>(HistoryManager.get(simulator), null);
+        this.turnIndicatorStatus = new HistoricalValue<>(HistoryManager.get(simulator), TurnIndicatorStatus.NOTPRESENT);
+        this.operationalPlan = new HistoricalValue<>(HistoryManager.get(simulator), null);
     }
 
     /**
@@ -296,7 +297,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
         // Do we have an operational plan?
         // TODO discuss when a new tactical planner may be needed
-        TacticalPlanner tactPlanner = this.tacticalPlanner.get();
+        TacticalPlanner<?, ?> tactPlanner = this.tacticalPlanner.get();
         if (tactPlanner == null)
         {
             // Tell the strategical planner to provide a tactical planner
@@ -418,14 +419,14 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public TacticalPlanner getTacticalPlanner()
+    public TacticalPlanner<?, ?> getTacticalPlanner()
     {
         return this.strategicalPlanner.get().getTacticalPlanner();
     }
 
     /** {@inheritDoc} */
     @Override
-    public TacticalPlanner getTacticalPlanner(final Time time)
+    public TacticalPlanner<?, ?> getTacticalPlanner(final Time time)
     {
         return this.strategicalPlanner.get(time).getTacticalPlanner(time);
     }

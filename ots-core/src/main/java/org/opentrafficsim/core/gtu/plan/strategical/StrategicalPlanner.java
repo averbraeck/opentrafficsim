@@ -60,14 +60,14 @@ public interface StrategicalPlanner
      * Get tactical planner for the GTU. The stratigical planner is free to dynamically change this.
      * @return tactical planner
      */
-    TacticalPlanner getTacticalPlanner();
+    TacticalPlanner<?, ?> getTacticalPlanner();
 
     /**
      * Get tactical planner for the GTU. The stratigical planner is free to dynamically change this.
      * @param time Time; time at which to obtain the tactical planner
      * @return tactical planner
      */
-    TacticalPlanner getTacticalPlanner(Time time);
+    TacticalPlanner<?, ?> getTacticalPlanner(Time time);
 
     /**
      * Determine the next node in a network based on a current Link we are on.

@@ -1,12 +1,12 @@
 package org.opentrafficsim.core.perception;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.perception.AbstractHistorical.Event;
+import org.opentrafficsim.core.perception.HistoryManager.HistoricalElement;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -23,7 +23,7 @@ import nl.tudelft.simulation.language.Throw;
  * @param <T> value type
  * @param <E> event type
  */
-public abstract class AbstractHistorical<T, E extends Event<T>>
+public abstract class AbstractHistorical<T, E extends Event<T>> implements HistoricalElement
 {
 
     /** History manager. */
@@ -119,30 +119,12 @@ public abstract class AbstractHistorical<T, E extends Event<T>>
         this.events.add(event);
     }
 
-    /**
-     * Removes all events pertaining to the given value.
-     * @param value T; value to clear
-     */
-    public synchronized void clear(final T value)
-    {
-        Iterator<E> iterator = this.events.iterator();
-        while (iterator.hasNext())
-        {
-            if (iterator.next().getValue().equals(value))
-            {
-                iterator.remove();
-            }
-        }
-    }
-
-    /**
-     * Removes events that are no longer needed to guarantee the history time. This is invoked by the history manager.
-     * @param history Duration; history time to keep
-     */
-    protected final void cleanUpHistory(final Duration history)
+    /** {@inheritDoc} */
+    @Override
+    public final void cleanUpHistory(final Duration history)
     {
         double past = now().si - history.si;
-        while (this.events.size() > 1 && this.events.get(1).getTime() < past)
+        while (this.events.size() > 1 && this.events.get(0).getTime() < past)
         {
             this.events.remove(0);
         }
