@@ -1,8 +1,10 @@
 package org.opentrafficsim.core.gtu;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -21,7 +23,7 @@ public class Profile
 {
 
     /** Map containing infos. */
-    private static final Map<String, ProfileInfo> infos = new LinkedHashMap<>();
+    private static final Map<String, ProfileInfo> infos = new HashMap<>();
 
     /** Map containing most recent part id's as line numbers. */
     private static final Map<String, String> lines = new HashMap<>();
@@ -130,13 +132,16 @@ public class Profile
      */
     public static String statistics()
     {
-        // gather totals information
+        // gather totals information and sort
         double sum = 0;
         int maxInvocations = 0;
         int maxNameLength = 4;
-        for (String id : infos.keySet())
+        Map<Double, Entry<String, ProfileInfo>> sorted = new TreeMap<>(Collections.reverseOrder());
+        for (Entry<String, ProfileInfo> entry : infos.entrySet())
         {
+            String id = entry.getKey();
             ProfileInfo info = infos.get(id);
+            sorted.put(info.getTotal(), entry);
             sum += info.getTotal();
             maxInvocations = maxInvocations > info.getInvocations() ? maxInvocations : info.getInvocations();
             int nameLength = (info.getName() == null ? id : info.getName()).length();
@@ -161,9 +166,10 @@ public class Profile
         builder.append("|").append(line).append("|\n");
         
         // lines
-        for (String id : infos.keySet())
+        for (Entry<String, ProfileInfo> entry : sorted.values())
         {
-            ProfileInfo info = infos.get(id);
+            String id = entry.getKey();
+            ProfileInfo info = entry.getValue();
             if (info.getInvocations() > 0)
             {
                 double perc = 100.0 * info.getTotal() / sum;
