@@ -133,7 +133,7 @@ public class Profile
         // gather totals information
         double sum = 0;
         int maxInvocations = 0;
-        int maxNameLength = 0;
+        int maxNameLength = 4;
         for (String id : infos.keySet())
         {
             ProfileInfo info = infos.get(id);
@@ -178,7 +178,7 @@ public class Profile
                 }
                 else
                 {
-                    builder.append("        ");
+                    builder.append("          ");
                 }
                 // name
                 builder.append(" | ").append(String.format(nameLineFormat, info.getName() == null ? id : info.getName()))
