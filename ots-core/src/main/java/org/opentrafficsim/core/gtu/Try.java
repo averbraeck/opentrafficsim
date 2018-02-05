@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +46,9 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
  * only occurs if the exception condition is met. For each method there is a version without Throwable class, in which case a
  * RuntimeException will be thrown.<br>
  * <br>
- * Try is not suitable for try-with-resource statements.
+ * Try is not suitable for try-with-resource statements.<br>
+ * <br>
+ * Try also has a few methods to aid JUNIT tests: {@code testFail(...)} and {@code testNotFail(...)}.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -62,9 +66,11 @@ public class Try
         // utility class
     }
 
+    // Assign
+    
     /**
      * Tries to return a value to assign. Will throw a RuntimeException if the try fails.
-     * @param assignment Assignment&lt;V&gt;; functional interface to obtain the value
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param message String; the message to use in the throwable
      * @param <V> value type
      * @return V; value to assign
@@ -84,7 +90,7 @@ public class Try
 
     /**
      * Tries to return a value to assign. Will throw a RuntimeException if the try fails.
-     * @param assignment Assignment&lt;V&gt;; functional interface to obtain the value
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param message String; the message to use in the throwable, with formatting identifier
      * @param arg Object; value to use for the formatting identifier
      * @param <V> value type
@@ -107,7 +113,7 @@ public class Try
 
     /**
      * Tries to return a value to assign. Will throw a RuntimeException if the try fails.
-     * @param assignment Assignment&lt;V&gt;; functional interface to obtain the value
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
      * @param arg2 Object; 2nd value to use for the formatting identifiers
@@ -133,7 +139,7 @@ public class Try
 
     /**
      * Tries to return a value to assign. Will throw a RuntimeException if the try fails.
-     * @param assignment Assignment&lt;V&gt;; functional interface to obtain the value
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
      * @param arg2 Object; 2nd value to use for the formatting identifiers
@@ -161,7 +167,7 @@ public class Try
 
     /**
      * Tries to return a value to assign. Will throw a RuntimeException if the try fails.
-     * @param assignment Assignment&lt;V&gt;; functional interface to obtain the value
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
      * @param arg2 Object; 2nd value to use for the formatting identifiers
@@ -191,7 +197,7 @@ public class Try
 
     /**
      * Tries to return a value to assign. Will throw a specified Throwable if the try fails.
-     * @param assignment Assignment&lt;V&gt;; functional interface to obtain the value
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param throwableClass Class&lt;T&gt;; class of the throwable to throw
      * @param message String; the message to use in the throwable
      * @param <V> value type
@@ -214,7 +220,7 @@ public class Try
 
     /**
      * Tries to return a value to assign. Will throw a specified Throwable if the try fails.
-     * @param assignment Assignment&lt;V&gt;; functional interface to obtain the value
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param throwableClass Class&lt;T&gt;; class of the throwable to throw
      * @param message String; the message to use in the throwable, with formatting identifier
      * @param arg Object; value to use for the formatting identifier
@@ -240,7 +246,7 @@ public class Try
 
     /**
      * Tries to return a value to assign. Will throw a specified Throwable if the try fails.
-     * @param assignment Assignment&lt;V&gt;; functional interface to obtain the value
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param throwableClass Class&lt;T&gt;; class of the throwable to throw
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
@@ -268,7 +274,7 @@ public class Try
 
     /**
      * Tries to return a value to assign. Will throw a specified Throwable if the try fails.
-     * @param assignment Assignment&lt;V&gt;; functional interface to obtain the value
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param throwableClass Class&lt;T&gt;; class of the throwable to throw
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
@@ -298,7 +304,7 @@ public class Try
 
     /**
      * Tries to return a value to assign. Will throw a specified Throwable if the try fails.
-     * @param assignment Assignment&lt;V&gt;; functional interface to obtain the value
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param throwableClass Class&lt;T&gt;; class of the throwable to throw
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
@@ -328,9 +334,11 @@ public class Try
         }
     }
 
+    // Execute
+    
     /**
      * Tries to execute. Will throw a RuntimeException if the try fails.
-     * @param execution Execution; functional interface to obtain the value
+     * @param execution Execution; functional interface to execute
      * @param message String; the message to use in the throwable
      * @throws RuntimeException on failed Try
      */
@@ -348,7 +356,7 @@ public class Try
 
     /**
      * Tries to execute. Will throw a RuntimeException if the try fails.
-     * @param execution Execution; functional interface to obtain the value
+     * @param execution Execution; functional interface to execute
      * @param message String; the message to use in the throwable, with formatting identifier
      * @param arg Object; value to use for the formatting identifier
      * @throws RuntimeException on failed Try
@@ -369,7 +377,7 @@ public class Try
 
     /**
      * Tries to execute. Will throw a RuntimeException if the try fails.
-     * @param execution Execution; functional interface to obtain the value
+     * @param execution Execution; functional interface to execute
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
      * @param arg2 Object; 2nd value to use for the formatting identifiers
@@ -393,7 +401,7 @@ public class Try
 
     /**
      * Tries to execute. Will throw a RuntimeException if the try fails.
-     * @param execution Execution; functional interface to obtain the value
+     * @param execution Execution; functional interface to execute
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
      * @param arg2 Object; 2nd value to use for the formatting identifiers
@@ -419,7 +427,7 @@ public class Try
 
     /**
      * Tries to execute. Will throw a RuntimeException if the try fails.
-     * @param execution Execution; functional interface to obtain the value
+     * @param execution Execution; functional interface to execute
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
      * @param arg2 Object; 2nd value to use for the formatting identifiers
@@ -447,7 +455,7 @@ public class Try
 
     /**
      * Tries to execute. Will throw a specified Throwable if the try fails.
-     * @param execution Execution; functional interface to obtain the value
+     * @param execution Execution; functional interface to execute
      * @param throwableClass Class&lt;T&gt;; class of the throwable to throw
      * @param message String; the message to use in the throwable
      * @param <T> throwable type
@@ -468,7 +476,7 @@ public class Try
 
     /**
      * Tries to execute. Will throw a specified Throwable if the try fails.
-     * @param execution Execution; functional interface to obtain the value
+     * @param execution Execution; functional interface to execute
      * @param throwableClass Class&lt;T&gt;; class of the throwable to throw
      * @param message String; the message to use in the throwable, with formatting identifier
      * @param arg Object; value to use for the formatting identifier
@@ -492,7 +500,7 @@ public class Try
 
     /**
      * Tries to execute. Will throw a specified Throwable if the try fails.
-     * @param execution Execution; functional interface to obtain the value
+     * @param execution Execution; functional interface to execute
      * @param throwableClass Class&lt;T&gt;; class of the throwable to throw
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
@@ -518,7 +526,7 @@ public class Try
 
     /**
      * Tries to execute. Will throw a specified Throwable if the try fails.
-     * @param execution Execution; functional interface to obtain the value
+     * @param execution Execution; functional interface to execute
      * @param throwableClass Class&lt;T&gt;; class of the throwable to throw
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
@@ -546,7 +554,7 @@ public class Try
 
     /**
      * Tries to execute. Will throw a specified Throwable if the try fails.
-     * @param execution Execution; functional interface to obtain the value
+     * @param execution Execution; functional interface to execute
      * @param throwableClass Class&lt;T&gt;; class of the throwable to throw
      * @param message String; the message to use in the throwable, with formatting identifiers
      * @param arg1 Object; 1st value to use for the formatting identifiers
@@ -573,7 +581,9 @@ public class Try
             throw catchThrowable(throwableClass, message, argList, cause);
         }
     }
-
+    
+    // Core of assign/execute methods
+    
     /**
      * Core method to create the Throwable to throw.
      * @param throwableClass
@@ -626,6 +636,130 @@ public class Try
         }
         return exception;
     }
+    
+    // Test (not)fail (JUNIT)
+
+    /**
+     * Executes a JUNIT fail if the assignment succeeds.
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
+     * @param <V> value types
+     * @return V; value to assign
+     */
+    public static <V> V testFail(final Assignment<V> assignment)
+    {
+        return testFail(assignment, null);
+    }
+    
+    /**
+     * Executes a JUNIT fail if the assignment succeeds.
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
+     * @param message String; fail message
+     * @param <V> value types
+     * @return V; value to assign
+     */
+    public static <V> V testFail(final Assignment<V> assignment, final String message)
+    {
+        V value;
+        try
+        {
+            value = assignment.assign();
+            fail(message);
+        }
+        catch (@SuppressWarnings("unused") Throwable cause)
+        {
+            // expected to fail
+            value = null;
+        }
+        return value;
+    }
+    
+    /**
+     * Executes a JUNIT fail if the assignment does not succeed.
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
+     * @param <V> value types
+     * @return V; value to assign
+     */
+    public static <V> V testNotFail(final Assignment<V> assignment)
+    {
+        return testNotFail(assignment, null);
+    }
+    
+    /**
+     * Executes a JUNIT fail if the assignment does not succeed.
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
+     * @param message String; fail message
+     * @param <V> value types
+     * @return V; value to assign
+     */
+    public static <V> V testNotFail(final Assignment<V> assignment, final String message)
+    {
+        V value;
+        try
+        {
+            value = assignment.assign();
+        }
+        catch (@SuppressWarnings("unused") Throwable cause)
+        {
+            fail(message);
+            value = null;
+        }
+        return value;
+    }
+    
+    /**
+     * Executes a JUNIT fail if the execution succeeds.
+     * @param execution Execution; functional interface to execute
+     */
+    public static void testFail(final Execution execution)
+    {
+        testFail(execution, null);
+    }
+    
+    /**
+     * Executes a JUNIT fail if the execution succeeds.
+     * @param execution Execution; functional interface to execute
+     * @param message String; fail message
+     */
+    public static void testFail(final Execution execution, final String message)
+    {
+        try
+        {
+            execution.execute();
+            fail(message);
+        }
+        catch (@SuppressWarnings("unused") Throwable cause)
+        {
+            // expected to fail
+        }
+    }
+    
+    /**
+     * Executes a JUNIT fail if the execution does not succeed.
+     * @param execution Execution; functional interface to execute
+     */
+    public static void testNotFail(final Execution execution)
+    {
+        testNotFail(execution, null);
+    }
+    
+    /**
+     * Executes a JUNIT fail if the execution does not succeed.
+     * @param execution Execution; functional interface to execute
+     * @param message String; fail message
+     */
+    public static void testNotFail(final Execution execution, final String message)
+    {
+        try
+        {
+            execution.execute();
+        }
+        catch (@SuppressWarnings("unused") Throwable cause)
+        {
+            fail(message);
+        }
+    }
+
+    // Interfaces
 
     /**
      * Functional interface for calls to Try.assign(...). For this a lambda expression can be used.
