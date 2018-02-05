@@ -1,7 +1,7 @@
 /**
  * The perception package takes care of registering perceivable objects that are used in an OTS study. In a spatial model, for
- * instance, objects need to be able to find each other. The model interface guarantees access to a number of important objects
- * in the study.
+ * instance, objects need to be able to find each other. Objects, or states of objects, may be required in the past. For 
+ * instance to implement a reaction time. For this the perception package contains historical facilities.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

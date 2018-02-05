@@ -3,6 +3,7 @@ package org.opentrafficsim.core.perception;
 import org.djunits.value.vdouble.scalar.Time;
 
 /**
+ * Interface for single valued historicals.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.

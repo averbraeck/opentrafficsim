@@ -1,9 +1,18 @@
-package org.opentrafficsim.core.perception;
+package org.opentrafficsim.core.perception.collections;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
+
+import org.opentrafficsim.core.perception.HistoryManager;
 
 /**
- * Extension of {@code HistoryCollection} with index support.
+ * List-valued historical state. The current list is always maintained, and past states of the list are obtained by applying the
+ * events between now and the requested time in reverse.<br>
+ * <br>
+ * The {@code Iterator} returned by this class does not support the {@code remove()}, {@code add()} and {@code set()} methods.
+ * Any returned sublist is unmodifiable.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -12,67 +21,53 @@ import java.util.List;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <E> value type
+ * @param <E> element type
  * @param <L> list type
  */
-public class HistoricalList<E, L extends List<E>> extends HistoricalCollection<E, L>
+public abstract class AbstractHistoricalList<E, L extends List<E>> extends AbstractHistoricalCollection<E, L>
+        implements HistoricalList<E>
 {
 
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param list C; empty initial internal list
+     * @param list L; initial list
      */
-    public HistoricalList(final HistoryManager historyManager, final L list)
+    protected AbstractHistoricalList(final HistoryManager historyManager, final L list)
     {
         super(historyManager, list);
     }
 
-    /**
-     * Adds a value at the current simulation time. Values should be added or removed in chronological order. Multiple events at
-     * one time are accepted.
-     * @param index int; index to add the value
-     * @param value E; value
-     */
-    public final synchronized void add(final int index, final E value)
+    // Altering List methods
+
+    /** {@inheritDoc} */
+    @Override
+    public synchronized void add(final int index, final E value)
     {
-        addEvent(new AddEvent<>(now().si, value, index, getCollection()));
+        addEvent(new AddEvent<>(now().si, value, index));
         getCollection().add(index, value);
     }
 
-    /**
-     * Adds a value at the current simulation time, at the end of the list. Values should be added or removed in chronological
-     * order. Multiple events at one time are accepted.
-     * @param value E; value
-     * @return boolean; whether the list changed
-     */
+    /** {@inheritDoc} */
     @Override
-    public final synchronized boolean add(final E value)
+    public synchronized boolean add(final E value)
     {
-        addEvent(new AddEvent<>(now().si, value, getCollection().size(), getCollection()));
+        addEvent(new AddEvent<>(now().si, value, getCollection().size()));
         return getCollection().add(value);
     }
-    
-    /**
-     * Removes the value at the given index.
-     * @param index int; index
-     * @return E; value which is removed from the index
-     */
-    public final synchronized E remove(final int index)
+
+    /** {@inheritDoc} */
+    @Override
+    public synchronized E remove(final int index)
     {
         addEvent(new RemoveEvent<>(now().si, getCollection().get(index), index));
         return getCollection().remove(index);
     }
-    
-    /**
-     * Removes a value at the current simulation time. Values should be added or removed in chronological order. Multiple events
-     * at one time are accepted.
-     * @param value Object; value
-     * @return boolean; whether the list changed
-     */
-    @SuppressWarnings("unchecked")
+
+    /** {@inheritDoc} */
     @Override
-    public final synchronized boolean remove(final Object value)
+    @SuppressWarnings("unchecked")
+    public synchronized boolean remove(final Object value)
     {
         int index = getCollection().indexOf(value);
         if (index >= 0)
@@ -83,14 +78,10 @@ public class HistoricalList<E, L extends List<E>> extends HistoricalCollection<E
         }
         return false;
     }
-    
-    /**
-     * Replaces the value at the given index.
-     * @param index int; index
-     * @param value E; value
-     * @return E; value that is replaced
-     */
-    public final synchronized E set(final int index, final E value)
+
+    /** {@inheritDoc} */
+    @Override
+    public synchronized E set(final int index, final E value)
     {
         E previousValue = getCollection().get(index);
         if (!getCollection().get(index).equals(value))
@@ -100,6 +91,64 @@ public class HistoricalList<E, L extends List<E>> extends HistoricalCollection<E
         }
         return previousValue;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean addAll(int index, final Collection<? extends E> c)
+    {
+        for (E e : c)
+        {
+            add(index, e);
+            index++;
+        }
+        return !c.isEmpty();
+    }
+
+    // Non-altering List methods
+
+    /** {@inheritDoc} */
+    @Override
+    public E get(final int index)
+    {
+        return getCollection().get(index);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int indexOf(final Object o)
+    {
+        return getCollection().indexOf(o);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int lastIndexOf(final Object o)
+    {
+        return getCollection().lastIndexOf(o);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ListIterator<E> listIterator()
+    {
+        return listIterator(0);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ListIterator<E> listIterator(final int index)
+    {
+        return Collections.unmodifiableList(getCollection()).listIterator(index);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<E> subList(final int fromIndex, final int toIndex)
+    {
+        return Collections.unmodifiableList(getCollection().subList(fromIndex, toIndex));
+    }
+
+    // Events
 
     /**
      * Abstract super class for events that add or remove a value from the list.
@@ -115,7 +164,7 @@ public class HistoricalList<E, L extends List<E>> extends HistoricalCollection<E
      * @param <E> element type
      * @param <L> list type
      */
-    abstract private static class EventList<E, L extends List<E>> extends EventCollection<E, L>
+    public abstract static class EventList<E, L extends List<E>> extends EventCollection<E, L>
     {
 
         /** Index of the value. */
@@ -158,7 +207,7 @@ public class HistoricalList<E, L extends List<E>> extends HistoricalCollection<E
      * @param <E> element type
      * @param <L> list type
      */
-    private static class AddEvent<E, L extends List<E>> extends EventList<E, L>
+    public static class AddEvent<E, L extends List<E>> extends EventList<E, L>
     {
 
         /**
@@ -166,9 +215,8 @@ public class HistoricalList<E, L extends List<E>> extends HistoricalCollection<E
          * @param time double; time of event
          * @param value E; value of event
          * @param index int; index
-         * @param list L; internal list to apply the event on
          */
-        public AddEvent(final double time, final E value, final int index, final L list)
+        public AddEvent(final double time, final E value, final int index)
         {
             super(time, value, index);
         }
@@ -203,7 +251,7 @@ public class HistoricalList<E, L extends List<E>> extends HistoricalCollection<E
      * @param <E> element type
      * @param <L> list type
      */
-    private static class RemoveEvent<E, L extends List<E>> extends EventList<E, L>
+    public static class RemoveEvent<E, L extends List<E>> extends EventList<E, L>
     {
 
         /**
@@ -221,10 +269,7 @@ public class HistoricalList<E, L extends List<E>> extends HistoricalCollection<E
         @Override
         public void restore(final L list)
         {
-            if (getIndex() >= 0)
-            {
-                list.add(getIndex(), getValue());
-            }
+            list.add(getIndex(), getValue());
         }
 
         /** {@inheritDoc} */
@@ -234,13 +279,6 @@ public class HistoricalList<E, L extends List<E>> extends HistoricalCollection<E
             return "RemoveEvent [time=" + getTime() + ", value=" + getValue() + ", index=" + getIndex() + "]";
         }
 
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString()
-    {
-        return "HistoricalList [current=" + getCollection() + "]";
     }
 
 }

@@ -60,6 +60,9 @@
       <action issue="OTS-364" type="update">
         OTS-364. Dynamic LaneStructure
       </action>
+      <action issue="OTS-365" type="add">
+        OTS-365. Historical Collections
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">

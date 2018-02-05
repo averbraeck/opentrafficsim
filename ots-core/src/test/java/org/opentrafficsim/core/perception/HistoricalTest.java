@@ -2,11 +2,11 @@ package org.opentrafficsim.core.perception;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +15,12 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.Try;
+import org.opentrafficsim.core.perception.collections.HistoricalHashMap;
+import org.opentrafficsim.core.perception.collections.HistoricalLinkedHashSet;
+import org.opentrafficsim.core.perception.collections.HistoricalLinkedList;
+import org.opentrafficsim.core.perception.collections.HistoricalMap;
+import org.opentrafficsim.core.perception.collections.HistoricalSet;
 
 import mockit.Mock;
 import mockit.MockUp;
@@ -50,7 +56,7 @@ public class HistoricalTest
     }.getMockInstance();
 
     /** History manager. */
-    private HistoryManager historyManager = new HistoryManagerDEVS(this.simulator, this.cleanUp, this.cleanUp);
+    private HistoryManagerDEVS historyManager = new HistoryManagerDEVS(this.simulator, this.cleanUp, this.cleanUp);
 
     /**
      * Returns the set simulation time.
@@ -97,10 +103,10 @@ public class HistoricalTest
     @Test
     public void collectionTest()
     {
-        HistoricalCollection<String, Set<String>> hist = new HistoricalCollection<>(this.historyManager, new HashSet<>());
+        HistoricalSet<String> hist = new HistoricalLinkedHashSet<>(this.historyManager, new LinkedHashSet<>());
         this.time = Time.ZERO;
         String msg = "HistoricalCollection contents is incorrect.";
-        assertEquals(msg, asSet(), hist.fill(Time.createSI(-1.0), new HashSet<>()));
+        assertEquals(msg, asSet(), hist.get(Time.createSI(-1.0)));
         hist.add("0.0");
         this.time = Time.createSI(1.0);
         hist.add("1.0");
@@ -117,18 +123,23 @@ public class HistoricalTest
         hist.addAll(asSet("5.0", "6.0", "7.0", "8.0", "9.0"));
         hist.removeAll(asSet("5.0", "6.0"));
         hist.retainAll(asSet("5.0", "6.0", "7.0", "10.0"));
-        assertEquals(msg, asSet("0.0"), hist.fill(Time.createSI(0.0), new HashSet<>()));
-        assertEquals(msg, asSet("0.0", "1.0", "2.0"), hist.fill(Time.createSI(2.0), new HashSet<>()));
-        assertEquals(msg, asSet("0.0", "1.0", "3.0"), hist.fill(Time.createSI(3.0), new HashSet<>()));
-        assertEquals(msg, asSet("0.0", "1.0", "4.0"), hist.fill(Time.createSI(4.0), new HashSet<>()));
-        assertEquals(msg, asSet("0.0", "1.0", "4.0"), hist.fill(Time.createSI(5.0), new HashSet<>()));
+        Try.testFail(() -> {
+            Iterator<String> it = hist.iterator();
+            it.next();
+            it.remove();
+        }, "HistoricalSet iterator remove should fail.", UnsupportedOperationException.class);
+        assertEquals(msg, asSet("0.0"), hist.get(Time.createSI(0.0)));
+        assertEquals(msg, asSet("0.0", "1.0", "2.0"), hist.get(Time.createSI(2.0)));
+        assertEquals(msg, asSet("0.0", "1.0", "3.0"), hist.get(Time.createSI(3.0)));
+        assertEquals(msg, asSet("0.0", "1.0", "4.0"), hist.get(Time.createSI(4.0)));
+        assertEquals(msg, asSet("0.0", "1.0", "4.0"), hist.get(Time.createSI(5.0)));
         this.time = Time.createSI(11.9);
-        assertEquals(msg, asSet("0.0", "1.0"), hist.fill(Time.createSI(1.85), new HashSet<>()));
+        assertEquals(msg, asSet("0.0", "1.0"), hist.get(Time.createSI(1.85)));
         this.time = Time.createSI(12.1);
-        hist.cleanUpHistory(this.cleanUp);
-        assertEquals(msg, asSet("0.0", "1.0", "2.0"), hist.fill(Time.createSI(0.95), new HashSet<>())); // oldest available
-        assertEquals(msg, asSet("0.0", "1.0", "2.0"), hist.fill(Time.createSI(2.05), new HashSet<>()));
-        assertEquals(msg, asSet("7.0"), hist.fill(Time.createSI(6.0), new HashSet<>()));
+        this.historyManager.cleanUpHistory();
+        assertEquals(msg, asSet("0.0", "1.0", "2.0"), hist.get(Time.createSI(0.95))); // oldest available
+        assertEquals(msg, asSet("0.0", "1.0", "2.0"), hist.get(Time.createSI(2.05)));
+        assertEquals(msg, asSet("7.0"), hist.get(Time.createSI(6.0)));
     }
 
     /**
@@ -147,43 +158,49 @@ public class HistoricalTest
     }
 
     /**
-     * Tests HistoricalList
+     * Tests HistoricalLinkedList
      */
     @Test
     public void listTest()
     {
-        HistoricalList<String, List<String>> hist = new HistoricalList<>(this.historyManager, new ArrayList<>());
+        HistoricalLinkedList<String> hist = new HistoricalLinkedList<>(this.historyManager);
         this.time = Time.ZERO;
-        String msg = "HistoricalList contents is incorrect.";
-        assertEquals(msg, Arrays.asList(), hist.fill(Time.createSI(-1.0), new ArrayList<>()));
-        hist.add(0, "0.0"); // 0.0
+        String msg = "HistoricalLinkedList contents is incorrect.";
+        assertEquals(msg, Arrays.asList(), hist.get(Time.createSI(-1.0)));
+        hist.offer("0.0"); // 0.0
         this.time = Time.createSI(1.0);
-        hist.add(0, "1.0"); // 1.0, 0.0
+        hist.push("1.0"); // 1.0, 0.0
         this.time = Time.createSI(2.0);
         hist.add(1, "2.0"); // 1.0, 2.0, 0.0
         this.time = Time.createSI(3.0);
         hist.add(0, "3.0"); // 3.0, 1.0, 2.0, 0.0
-        hist.remove("2.0"); // 3.0, 1.0, 0.0
+        hist.remove("2.0"); // 3.0, 1.0, 0.0"
+        assertEquals(msg, "3.0", hist.peek());
         this.time = Time.createSI(4.0);
-        hist.remove("3.0"); // 1.0, 0.0
-        hist.add(2, "4.0"); // 1.0, 0.0, 4.0
+        assertEquals(msg, "3.0", hist.poll()); // 1.0, 0.0
+        hist.addLast("4.0"); // 1.0, 0.0, 4.0
         this.time = Time.createSI(6.0);
         hist.clear();
         hist.addAll(asSet("5.0", "6.0", "7.0", "8.0", "9.0"));
         hist.removeAll(asSet("5.0", "6.0"));
         hist.retainAll(asSet("5.0", "6.0", "7.0", "10.0"));
-        assertEquals(msg, Arrays.asList("0.0"), hist.fill(Time.createSI(0.0), new ArrayList<>()));
-        assertEquals(msg, Arrays.asList("1.0", "2.0", "0.0"), hist.fill(Time.createSI(2.0), new ArrayList<>()));
-        assertEquals(msg, Arrays.asList("3.0", "1.0", "0.0"), hist.fill(Time.createSI(3.0), new ArrayList<>()));
-        assertEquals(msg, Arrays.asList("1.0", "0.0", "4.0"), hist.fill(Time.createSI(4.0), new ArrayList<>()));
-        assertEquals(msg, Arrays.asList("1.0", "0.0", "4.0"), hist.fill(Time.createSI(5.0), new ArrayList<>()));
+        Try.testFail(() -> {
+            Iterator<String> it = hist.iterator();
+            it.next();
+            it.remove();
+        }, "Iterator remove should fail.", UnsupportedOperationException.class);
+        assertEquals(msg, Arrays.asList("0.0"), hist.get(Time.createSI(0.0)));
+        assertEquals(msg, Arrays.asList("1.0", "2.0", "0.0"), hist.get(Time.createSI(2.0)));
+        assertEquals(msg, Arrays.asList("3.0", "1.0", "0.0"), hist.get(Time.createSI(3.0)));
+        assertEquals(msg, Arrays.asList("1.0", "0.0", "4.0"), hist.get(Time.createSI(4.0)));
+        assertEquals(msg, Arrays.asList("1.0", "0.0", "4.0"), hist.get(Time.createSI(5.0)));
         this.time = Time.createSI(11.9);
-        assertEquals(msg, Arrays.asList("1.0", "0.0"), hist.fill(Time.createSI(1.85), new ArrayList<>()));
+        assertEquals(msg, Arrays.asList("1.0", "0.0"), hist.get(Time.createSI(1.85)));
         this.time = Time.createSI(12.1);
-        hist.cleanUpHistory(this.cleanUp);
-        assertEquals(msg, Arrays.asList("1.0", "2.0", "0.0"), hist.fill(Time.createSI(0.95), new ArrayList<>())); // oldest
-        assertEquals(msg, Arrays.asList("1.0", "2.0", "0.0"), hist.fill(Time.createSI(2.05), new ArrayList<>()));
-        assertEquals(msg, Arrays.asList("7.0"), hist.fill(Time.createSI(6.0), new ArrayList<>()));
+        this.historyManager.cleanUpHistory();
+        assertEquals(msg, Arrays.asList("1.0", "2.0", "0.0"), hist.get(Time.createSI(0.95))); // oldest
+        assertEquals(msg, Arrays.asList("1.0", "2.0", "0.0"), hist.get(Time.createSI(2.05)));
+        assertEquals(msg, Arrays.asList("7.0"), hist.get(Time.createSI(6.0)));
     }
 
     /**
@@ -192,11 +209,10 @@ public class HistoricalTest
     @Test
     public void mapTest()
     {
-        HistoricalMap<Integer, String, HashMap<Integer, String>> hist =
-                new HistoricalMap<>(this.historyManager, new HashMap<>());
+        HistoricalMap<Integer, String> hist = new HistoricalHashMap<>(this.historyManager);
         this.time = Time.ZERO;
         String msg = "HistoricalMap contents is incorrect.";
-        assertEquals(msg, new HashMap<>(), hist.fill(Time.createSI(-1.0), new HashMap<>()));
+        assertEquals(msg, new HashMap<>(), hist.get(Time.createSI(-1.0)));
         hist.put(0, "0.0"); // 0=0.0
         this.time = Time.createSI(1.0);
         hist.put(0, "1.0"); // 0=1.0
@@ -207,22 +223,26 @@ public class HistoricalTest
         hist.remove(1); // 0=3.0
         this.time = Time.createSI(4.0);
         hist.put(2, "4.0"); // 0=3.0, 2=4.0
+        Try.testFail(() -> hist.keySet().clear(), "HistoricalMap keySet clear should fail.",
+                UnsupportedOperationException.class);
+        Try.testSucceed(() -> hist.keySet().size(), "HistoricalMap keySet size should not fail.",
+                UnsupportedOperationException.class);
         this.time = Time.createSI(6.0);
         hist.clear();
         hist.putAll(asMap(5, "5.0", 6, "6.0"));
-        assertEquals(msg, asMap(0, "0.0"), hist.fill(Time.createSI(0.0), new HashMap<>()));
-        assertEquals(msg, asMap(0, "1.0"), hist.fill(Time.createSI(1.0), new HashMap<>()));
-        assertEquals(msg, asMap(0, "1.0", 1, "2.0"), hist.fill(Time.createSI(2.0), new HashMap<>()));
-        assertEquals(msg, asMap(0, "3.0"), hist.fill(Time.createSI(3.0), new HashMap<>()));
-        assertEquals(msg, asMap(0, "3.0", 2, "4.0"), hist.fill(Time.createSI(4.0), new HashMap<>()));
-        assertEquals(msg, asMap(0, "3.0", 2, "4.0"), hist.fill(Time.createSI(5.0), new HashMap<>()));
+        assertEquals(msg, asMap(0, "0.0"), hist.get(Time.createSI(0.0)));
+        assertEquals(msg, asMap(0, "1.0"), hist.get(Time.createSI(1.0)));
+        assertEquals(msg, asMap(0, "1.0", 1, "2.0"), hist.get(Time.createSI(2.0)));
+        assertEquals(msg, asMap(0, "3.0"), hist.get(Time.createSI(3.0)));
+        assertEquals(msg, asMap(0, "3.0", 2, "4.0"), hist.get(Time.createSI(4.0)));
+        assertEquals(msg, asMap(0, "3.0", 2, "4.0"), hist.get(Time.createSI(5.0)));
         this.time = Time.createSI(11.9);
-        assertEquals(msg, asMap(0, "1.0"), hist.fill(Time.createSI(1.85), new HashMap<>()));
+        assertEquals(msg, asMap(0, "1.0"), hist.get(Time.createSI(1.85)));
         this.time = Time.createSI(12.1);
-        hist.cleanUpHistory(this.cleanUp);
-        assertEquals(msg, asMap(0, "1.0", 1, "2.0"), hist.fill(Time.createSI(0.95), new HashMap<>())); // oldest available
-        assertEquals(msg, asMap(0, "1.0", 1, "2.0"), hist.fill(Time.createSI(2.05), new HashMap<>()));
-        assertEquals(msg, asMap(5, "5.0", 6, "6.0"), hist.fill(Time.createSI(6.0), new HashMap<>()));
+        this.historyManager.cleanUpHistory();
+        assertEquals(msg, asMap(0, "1.0", 1, "2.0"), hist.get(Time.createSI(0.95))); // oldest available
+        assertEquals(msg, asMap(0, "1.0", 1, "2.0"), hist.get(Time.createSI(2.05)));
+        assertEquals(msg, asMap(5, "5.0", 6, "6.0"), hist.get(Time.createSI(6.0)));
     }
 
     /**

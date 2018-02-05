@@ -1,20 +1,24 @@
-package org.opentrafficsim.core.perception;
+package org.opentrafficsim.core.perception.collections;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.perception.HistoricalCollection.EventCollection;
-
-import nl.tudelft.simulation.language.Throw;
+import org.opentrafficsim.core.perception.AbstractHistorical;
+import org.opentrafficsim.core.perception.HistoryManager;
+import org.opentrafficsim.core.perception.collections.AbstractHistoricalCollection.EventCollection;
 
 /**
  * Collection-valued historical state. The current collection is always maintained, and past states of the collection are
  * obtained by applying the events between now and the requested time in reverse.<br>
  * <br>
  * This implementation is suitable for sets, as add and remove events to retrieve historical states are only created if indeed
- * the underlying collection is changed.
+ * the underlying collection is changed. {@code Set} introduces no new methods relative to {@code Collection}.<br>
+ * <br>
+ * The {@code Iterator} returned by this class does not support the {@code remove()} method.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -26,22 +30,22 @@ import nl.tudelft.simulation.language.Throw;
  * @param <E> element type
  * @param <C> collection type
  */
-public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHistorical<E, EventCollection<E, C>>
+public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
+        extends AbstractHistorical<E, EventCollection<E, C>> implements HistoricalCollection<E>
 {
 
     /** Current collection. */
-    private final C internalCollection;
+    private final C current;
 
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param collection C; empty initial internal collection
+     * @param collection C; initial collection
      */
-    public HistoricalCollection(final HistoryManager historyManager, final C collection)
+    protected AbstractHistoricalCollection(final HistoryManager historyManager, final C collection)
     {
         super(historyManager);
-        Throw.when(!collection.isEmpty(), IllegalArgumentException.class, "The initial collection should be empty.");
-        this.internalCollection = collection;
+        this.current = collection;
     }
 
     /**
@@ -50,15 +54,41 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
      */
     protected final C getCollection()
     {
-        return this.internalCollection;
+        return this.current;
     }
 
     /**
-     * Adds a value at the current simulation time. Values should be added or removed in chronological order. Multiple events at
-     * one time are accepted.
-     * @param value E; value
-     * @return boolean; whether the collection changed
+     * Fill collection with the current collection.
+     * @param collection C; collection to fill
+     * @return C; input collection filled
      */
+    protected final C fill(final C collection)
+    {
+        collection.addAll(this.current);
+        return collection;
+    }
+
+    /**
+     * Fill collection with the collection at the given simulation time.
+     * @param time Time; time
+     * @param collection C; collection to fill
+     * @return C; input collection filled
+     */
+    protected final C fill(final Time time, final C collection)
+    {
+        // copy all current elements and decrement per event
+        collection.addAll(this.current);
+        for (EventCollection<E, C> event : getEvents(time))
+        {
+            event.restore(collection);
+        }
+        return collection;
+    }
+
+    // Altering Collection methods
+
+    /** {@inheritDoc} */
+    @Override
     public boolean add(final E value)
     {
         boolean added = getCollection().add(value);
@@ -68,13 +98,10 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
         }
         return added;
     }
-    
-    /**
-     * Adds all values in the given collection.
-     * @param c Collection; values to add
-     * @return boolean; whether the collection changed
-     */
-    public synchronized boolean addAll(Collection<? extends E> c)
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean addAll(final Collection<? extends E> c)
     {
         boolean changed = false;
         for (E value : c)
@@ -83,24 +110,18 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
         }
         return changed;
     }
-    
-    /**
-     * Clears the collection.
-     */
-    public synchronized void clear()
+
+    /** {@inheritDoc} */
+    @Override
+    public void clear()
     {
-        Set<E> values = new HashSet<>(this.internalCollection);
-        values.forEach(this::remove);
+        new HashSet<>(this.current).forEach(this::remove);
     }
 
-    /**
-     * Removes a value at the current simulation time. Values should be added or removed in chronological order. Multiple events
-     * at one time are accepted.
-     * @param value Object; value
-     * @return boolean; whether the collection changed
-     */
+    /** {@inheritDoc} */
+    @Override
     @SuppressWarnings("unchecked")
-    public synchronized boolean remove(Object value)
+    public boolean remove(final Object value)
     {
         boolean removed = getCollection().remove(value);
         if (removed)
@@ -109,13 +130,10 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
         }
         return removed;
     }
-    
-    /**
-     * Removes all values in the given collection.
-     * @param c Collection; values to remove
-     * @return boolean; whether the collection changed
-     */
-    public synchronized boolean removeAll(final Collection<?> c)
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean removeAll(final Collection<?> c)
     {
         boolean changed = false;
         for (Object value : c)
@@ -124,16 +142,13 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
         }
         return changed;
     }
-    
-    /**
-     * Retain all values in the given collection.
-     * @param c Collection; values to retain
-     * @return boolean; whether the collection changed
-     */
-    public synchronized boolean retainAll(Collection<?> c)
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean retainAll(final Collection<?> c)
     {
         boolean changed = false;
-        Set<E> values = new HashSet<>(this.internalCollection);
+        Set<E> values = new HashSet<>(this.current);
         for (E value : values)
         {
             if (!c.contains(value))
@@ -144,42 +159,58 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
         return changed;
     }
 
-    /**
-     * Fill collection with the current collection.
-     * @param collection C; collection to fill
-     * @return C; input collection filled
-     * @throws NullPointerException if collection is null
-     * @throws IllegalArgumentException if the collection is not empty
-     */
-    public final synchronized C fill(final C collection)
+    // Non-altering Collection methods
+
+    /** {@inheritDoc} */
+    @Override
+    public int size()
     {
-        Throw.whenNull(collection, "Collection may not be null.");
-        Throw.when(!collection.isEmpty(), IllegalArgumentException.class, "Collection should be an empty collection.");
-        collection.addAll(this.internalCollection);
-        return collection;
+        return this.current.size();
     }
 
-    /**
-     * Fill collection with the collection at the given simulation time.
-     * @param time Time; time
-     * @param collection C; collection to fill
-     * @return C; input collection filled
-     * @throws NullPointerException if time or collection is null
-     * @throws IllegalArgumentException if the collection is not empty
-     */
-    public final synchronized C fill(final Time time, final C collection)
+    /** {@inheritDoc} */
+    @Override
+    public boolean isEmpty()
     {
-        Throw.whenNull(time, "Time may not be null.");
-        Throw.whenNull(collection, "Collection may not be null.");
-        Throw.when(!collection.isEmpty(), IllegalArgumentException.class, "Collection should be an empty collection.");
-        // copy all current elements and decrement per event
-        collection.addAll(this.internalCollection);
-        for (EventCollection<E, C> event : getEvents(time))
-        {
-            event.restore(collection);
-        }
-        return collection;
+        return this.current.isEmpty();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean contains(final Object o)
+    {
+        return this.current.contains(o);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Iterator<E> iterator()
+    {
+        return Collections.unmodifiableCollection(this.current).iterator();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Object[] toArray()
+    {
+        return this.current.toArray();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <T> T[] toArray(final T[] a)
+    {
+        return this.current.toArray(a);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean containsAll(final Collection<?> c)
+    {
+        return this.current.containsAll(c);
+    }
+
+    // Events
 
     /**
      * Abstract super class for events that add or remove a value from the collection.
@@ -195,7 +226,7 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
      * @param <E> element type
      * @param <C> collection type
      */
-    abstract static class EventCollection<E, C extends Collection<E>> extends AbstractHistorical.EventValue<E> // import is removed
+    public abstract static class EventCollection<E, C extends Collection<E>> extends AbstractHistorical.EventValue<E>
     {
 
         /**
@@ -215,7 +246,7 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
         public abstract void restore(final C collection);
 
     }
-    
+
     /**
      * Event for adding value to the collection.
      * <p>
@@ -230,7 +261,7 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
      * @param <E> element type
      * @param <C> collection type
      */
-    private static class AddEvent<E, C extends Collection<E>> extends EventCollection<E, C>
+    public static class AddEvent<E, C extends Collection<E>> extends EventCollection<E, C>
     {
 
         /**
@@ -249,9 +280,9 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
         {
             collection.remove(getValue()); // events are only created upon effective addition, so we can remove it
         }
-        
+
     }
-    
+
     /**
      * Event for removing value from the collection.
      * <p>
@@ -266,7 +297,7 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
      * @param <E> element type
      * @param <C> collection type
      */
-    private static class RemoveEvent<E, C extends Collection<E>> extends EventCollection<E, C>
+    public static class RemoveEvent<E, C extends Collection<E>> extends EventCollection<E, C>
     {
 
         /**
@@ -281,11 +312,11 @@ public class HistoricalCollection<E, C extends Collection<E>> extends AbstractHi
 
         /** {@inheritDoc} */
         @Override
-        public void restore(final C set)
+        public void restore(final C collection)
         {
-            set.add(getValue()); // events are only created upon effective removal, so we can add it
+            collection.add(getValue()); // events are only created upon effective removal, so we can add it
         }
-        
+
     }
 
 }

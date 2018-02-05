@@ -20,6 +20,9 @@ import nl.tudelft.simulation.language.Throw;
 public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> implements Historical<T>
 {
 
+    /** Store last value for quick access. */
+    private T lastValue;
+    
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -44,6 +47,7 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
     @Override
     public final synchronized void set(final T value)
     {
+        this.lastValue = value;
         EventValue<T> event = getLastEvent();
         if (event != null && event.getTime() == now().si)
         {
@@ -56,8 +60,7 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
     @Override
     public final synchronized T get()
     {
-        EventValue<T> event = getLastEvent();
-        return event == null ? null : event.getValue();
+        return this.lastValue;
     }
 
     /** {@inheritDoc} */
