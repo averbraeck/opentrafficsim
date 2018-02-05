@@ -67,7 +67,7 @@ public class Try
     }
 
     // Assign
-    
+
     /**
      * Tries to return a value to assign. Will throw a RuntimeException if the try fails.
      * @param assignment Assignment&lt;V&gt;; functional interface to assign value
@@ -335,7 +335,7 @@ public class Try
     }
 
     // Execute
-    
+
     /**
      * Tries to execute. Will throw a RuntimeException if the try fails.
      * @param execution Execution; functional interface to execute
@@ -581,9 +581,9 @@ public class Try
             throw catchThrowable(throwableClass, message, argList, cause);
         }
     }
-    
+
     // Core of assign/execute methods
-    
+
     /**
      * Core method to create the Throwable to throw.
      * @param throwableClass
@@ -636,28 +636,56 @@ public class Try
         }
         return exception;
     }
-    
-    // Test (not)fail (JUNIT)
+
+    // Test fail/succeed (JUNIT)
 
     /**
      * Executes a JUNIT fail if the assignment succeeds.
      * @param assignment Assignment&lt;V&gt;; functional interface to assign value
-     * @param <V> value types
+     * @param <V> value type
      * @return V; value to assign
      */
     public static <V> V testFail(final Assignment<V> assignment)
     {
-        return testFail(assignment, null);
+        return testFail(assignment, null, Throwable.class);
     }
-    
+
     /**
      * Executes a JUNIT fail if the assignment succeeds.
      * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param message String; fail message
-     * @param <V> value types
+     * @param <V> value type
      * @return V; value to assign
      */
     public static <V> V testFail(final Assignment<V> assignment, final String message)
+    {
+        return testFail(assignment, message, Throwable.class);
+    }
+
+    /**
+     * Executes a JUNIT fail if the assignment succeeds.
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
+     * @param throwableClass Class&lt;T&gt;; throwable class to catch
+     * @param <V> value type
+     * @param <T> throwable type
+     * @return V; value to assign
+     */
+    public static <V, T extends Throwable> V testFail(final Assignment<V> assignment, final Class<T> throwableClass)
+    {
+        return testFail(assignment, null, throwableClass);
+    }
+
+    /**
+     * Executes a JUNIT fail if the assignment succeeds.
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
+     * @param message String; fail message
+     * @param throwableClass Class&lt;T&gt;; throwable class to catch
+     * @param <V> value type
+     * @param <T> throwable type
+     * @return V; value to assign
+     */
+    public static <V, T extends Throwable> V testFail(final Assignment<V> assignment, final String message,
+            final Class<T> throwableClass)
     {
         V value;
         try
@@ -665,56 +693,97 @@ public class Try
             value = assignment.assign();
             fail(message);
         }
-        catch (@SuppressWarnings("unused") Throwable cause)
+        catch (Throwable cause)
         {
+            if (!throwableClass.isAssignableFrom(cause.getClass()))
+            {
+                throw new AssertionError("Assignment failed on unexpected Throwable, expected ("
+                        + throwableClass.getSimpleName() + "), but got (" + cause.getClass().getSimpleName() + ").");
+            }
             // expected to fail
             value = null;
         }
         return value;
     }
-    
+
     /**
      * Executes a JUNIT fail if the assignment does not succeed.
      * @param assignment Assignment&lt;V&gt;; functional interface to assign value
-     * @param <V> value types
+     * @param <V> value type
      * @return V; value to assign
      */
-    public static <V> V testNotFail(final Assignment<V> assignment)
+    public static <V> V testSucceed(final Assignment<V> assignment)
     {
-        return testNotFail(assignment, null);
+        return testSucceed(assignment, null, Throwable.class);
     }
-    
+
     /**
      * Executes a JUNIT fail if the assignment does not succeed.
      * @param assignment Assignment&lt;V&gt;; functional interface to assign value
      * @param message String; fail message
-     * @param <V> value types
+     * @param <V> value type
      * @return V; value to assign
      */
-    public static <V> V testNotFail(final Assignment<V> assignment, final String message)
+    public static <V> V testSucceed(final Assignment<V> assignment, final String message)
+    {
+        return testSucceed(assignment, message, Throwable.class);
+    }
+
+    /**
+     * Executes a JUNIT fail if the assignment does not succeed.
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
+     * @param throwableClass Class&lt;T&gt;; throwable class to catch
+     * @param <V> value type
+     * @param <T> throwable type
+     * @return V; value to assign
+     */
+    public static <V, T extends Throwable> V testSucceed(final Assignment<V> assignment, final Class<T> throwableClass)
+    {
+        return testSucceed(assignment, null, throwableClass);
+    }
+
+    /**
+     * Executes a JUNIT fail if the assignment does not succeed.
+     * @param assignment Assignment&lt;V&gt;; functional interface to assign value
+     * @param message String; fail message
+     * @param throwableClass Class&lt;T&gt;; throwable class to catch
+     * @param <V> value type
+     * @param <T> throwable type
+     * @return V; value to assign
+     */
+    public static <V, T extends Throwable> V testSucceed(final Assignment<V> assignment, final String message,
+            final Class<T> throwableClass)
     {
         V value;
         try
         {
             value = assignment.assign();
         }
-        catch (@SuppressWarnings("unused") Throwable cause)
+        catch (Throwable cause)
         {
-            fail(message);
-            value = null;
+            if (throwableClass.isAssignableFrom(cause.getClass()))
+            {
+                fail(message);
+                value = null;
+            }
+            else
+            {
+                throw new AssertionError("Assignment failed on unexpected Throwable, expected ("
+                        + throwableClass.getSimpleName() + "), but got (" + cause.getClass().getSimpleName() + ").");
+            }
         }
         return value;
     }
-    
+
     /**
      * Executes a JUNIT fail if the execution succeeds.
      * @param execution Execution; functional interface to execute
      */
     public static void testFail(final Execution execution)
     {
-        testFail(execution, null);
+        testFail(execution, null, Throwable.class);
     }
-    
+
     /**
      * Executes a JUNIT fail if the execution succeeds.
      * @param execution Execution; functional interface to execute
@@ -722,40 +791,101 @@ public class Try
      */
     public static void testFail(final Execution execution, final String message)
     {
+        testFail(execution, message, Throwable.class);
+    }
+
+    /**
+     * Executes a JUNIT fail if the execution succeeds.
+     * @param execution Execution; functional interface to execute
+     * @param throwableClass Class&lt;T&gt;; throwable class to catch
+     * @param <T> throwable type
+     */
+    public static <T extends Throwable> void testFail(final Execution execution, final Class<T> throwableClass)
+    {
+        testFail(execution, null, throwableClass);
+    }
+
+    /**
+     * Executes a JUNIT fail if the execution succeeds.
+     * @param execution Execution; functional interface to execute
+     * @param message String; fail message
+     * @param throwableClass Class&lt;T&gt;; throwable class to catch
+     * @param <T> throwable type
+     */
+    public static <T extends Throwable> void testFail(final Execution execution, final String message,
+            final Class<T> throwableClass)
+    {
         try
         {
             execution.execute();
             fail(message);
         }
-        catch (@SuppressWarnings("unused") Throwable cause)
+        catch (Throwable cause)
         {
+            if (!throwableClass.isAssignableFrom(cause.getClass()))
+            {
+                throw new AssertionError("Execution failed on unexpected Throwable, expected (" + throwableClass.getSimpleName()
+                        + "), but got (" + cause.getClass().getSimpleName() + ").");
+            }
             // expected to fail
         }
     }
-    
+
     /**
      * Executes a JUNIT fail if the execution does not succeed.
      * @param execution Execution; functional interface to execute
      */
-    public static void testNotFail(final Execution execution)
+    public static void testSucceed(final Execution execution)
     {
-        testNotFail(execution, null);
+        testSucceed(execution, null, Throwable.class);
     }
-    
+
     /**
      * Executes a JUNIT fail if the execution does not succeed.
      * @param execution Execution; functional interface to execute
      * @param message String; fail message
      */
-    public static void testNotFail(final Execution execution, final String message)
+    public static void testSucceed(final Execution execution, final String message)
+    {
+        testSucceed(execution, message, Throwable.class);
+    }
+
+    /**
+     * Executes a JUNIT fail if the execution does not succeed.
+     * @param execution Execution; functional interface to execute
+     * @param throwableClass Class&lt;T&gt;; throwable class to catch
+     * @param <T> throwable type
+     */
+    public static <T extends Throwable> void testSucceed(final Execution execution, final Class<T> throwableClass)
+    {
+        testSucceed(execution, null, throwableClass);
+    }
+
+    /**
+     * Executes a JUNIT fail if the execution does not succeed.
+     * @param execution Execution; functional interface to execute
+     * @param message String; fail message
+     * @param throwableClass Class&lt;T&gt;; throwable class to catch
+     * @param <T> throwable type
+     */
+    public static <T extends Throwable> void testSucceed(final Execution execution, final String message,
+            final Class<T> throwableClass)
     {
         try
         {
             execution.execute();
         }
-        catch (@SuppressWarnings("unused") Throwable cause)
+        catch (Throwable cause)
         {
-            fail(message);
+            if (throwableClass.isAssignableFrom(cause.getClass()))
+            {
+                fail(message);
+            }
+            else
+            {
+                throw new AssertionError("Execution failed on unexpected Throwable, expected (" + throwableClass.getSimpleName()
+                        + "), but got (" + cause.getClass().getSimpleName() + ").");
+            }
         }
     }
 
