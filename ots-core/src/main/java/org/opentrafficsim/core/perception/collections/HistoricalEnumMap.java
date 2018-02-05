@@ -54,14 +54,14 @@ public class HistoricalEnumMap<K extends Enum<K>, V> extends AbstractHistoricalM
     @Override
     public EnumMap<K, V> get()
     {
-        return fill(new EnumMap<K, V>(this.clazz));
+        return fill(new EnumMap<>(this.clazz));
     }
 
     /** {@inheritDoc} */
     @Override
     public EnumMap<K, V> get(final Time time)
     {
-        return fill(time, new EnumMap<K, V>(this.clazz));
+        return fill(time, new EnumMap<>(this.clazz));
     }
 
 }

@@ -48,14 +48,14 @@ public class HistoricalTreeSet<E> extends AbstractHistoricalNavigableSet<E, Tree
     @Override
     public TreeSet<E> get()
     {
-        return fill(new TreeSet<E>());
+        return fill(new TreeSet<>());
     }
 
     /** {@inheritDoc} */
     @Override
     public TreeSet<E> get(final Time time)
     {
-        return fill(time, new TreeSet<E>());
+        return fill(time, new TreeSet<>());
     }
     
     /** {@inheritDoc} */
