@@ -5,6 +5,8 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.perception.HistoricalParameters.ParameterEvent;
+import org.opentrafficsim.core.perception.HistoricalParameters.ParameterValueSet;
 
 /**
  * Historical representation of {@code Parameters}.
@@ -17,8 +19,7 @@ import org.opentrafficsim.base.parameters.Parameters;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class HistoricalParameters extends
-        AbstractHistorical<HistoricalParameters.ParameterValueSet, HistoricalParameters.ParameterEvent> implements Parameters
+public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, ParameterEvent> implements Parameters
 {
 
     /** Current parameter set. */

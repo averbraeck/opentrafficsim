@@ -11,7 +11,28 @@ import org.opentrafficsim.core.perception.HistoryManager.HistoricalElement;
 import nl.tudelft.simulation.language.Throw;
 
 /**
- * Base class for objects or properties that can be perceived from their actual state in the past.
+ * Base class for objects or properties that can be perceived from their actual state in the past. The principle by which a past
+ * state is determined is by storing an internal event for each change to the object. Each event can be reversed, and by working
+ * from a current state backwards, any previous state within the available history can be restored.<br>
+ * <br>
+ * This class couples the historical to a {@code HistoryManager} and in response to a request from the {@code HistoryManager}
+ * will clear old events. Subclasses need to define their own events as extensions to {@code AbstractHistorical.Event}. This
+ * class provides the following methods to subclasses to work with the events.
+ * <ul>
+ * <li>{@code now()}, returns the current time from the {@code HistoryManager}, which needs to be stored with each event.</li>
+ * <li>{@code getEvents(Time)}, returns all events between now and the given time, ordered from recent to old.</li>
+ * <li>{@code getEvent(Time)}, returns the most recent event from before the given time.</li>
+ * <li>{@code getLastEvent()}, returns the most recent event.</li>
+ * <li>{@code removeEvent(Event)}, removes (oldest occurrence off) the event.</li>
+ * <li>{@code addEvent(Event)}, add the event.</li>
+ * </ul>
+ * Typically, any change results in a new event which is added with {@code addEvent(Event)}, where the event stores information
+ * such that the event can be restored. When an old state is requested, one or more events can be obtained with either of the
+ * get methods, after which they are applied to restore a previous state in a manner depending on the nature of the
+ * subclass.<br>
+ * <br>
+ * This class is defined with a single event type parameter {@code E}. Subclasses can use different event classes, so long as
+ * all of them derive from a common ancestor. For instance an 'add' and a 'remove' event that inherit from an abstract super.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -36,7 +57,7 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
      * Constructor.
      * @param historyManager HistoryManager; history manager
      */
-    public AbstractHistorical(final HistoryManager historyManager)
+    protected AbstractHistorical(final HistoryManager historyManager)
     {
         Throw.whenNull(historyManager, "History manager may not be null.");
         this.historyManager = historyManager;
@@ -68,7 +89,7 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
         }
         return list;
     }
-    
+
     /**
      * Returns the most recent event from <i>before</i> {@code time}, or the oldest if no such event.
      * @param time Time; past time at which to obtain event
@@ -91,7 +112,7 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
         }
         return prev;
     }
-    
+
     /**
      * Returns the last event.
      * @return E; last event
@@ -100,7 +121,7 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
     {
         return this.events.isEmpty() ? null : this.events.get(this.events.size() - 1);
     }
-    
+
     /**
      * Removes the given event.
      * @param event E; event to remove
@@ -173,7 +194,7 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <T> value type
      */
-    static class EventValue<T> implements Event<T>
+    public static class EventValue<T> implements Event<T>
     {
 
         /** Time of event. */
