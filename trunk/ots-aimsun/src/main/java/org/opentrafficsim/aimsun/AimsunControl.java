@@ -115,7 +115,7 @@ public class AimsunControl extends AbstractWrappableAnimation
             serverSocket.close(); // don't accept any other connections
             System.out.println("Socket time out is " + clientSocket.getSoTimeout());
             clientSocket.setSoTimeout(0);
-            System.out.println("Entering command loop");
+            System.out.println("Calling command loop");
             AimsunControl aimsunControl = new AimsunControl();
             aimsunControl.commandLoop(clientSocket);
         }
@@ -161,6 +161,7 @@ public class AimsunControl extends AbstractWrappableAnimation
      */
     private void commandLoop(final Socket socket) throws IOException
     {
+        System.out.println("Entering commandLoop - this is the newest version");
         InputStream inputStream = socket.getInputStream();
         OutputStream outputStream = socket.getOutputStream();
         while (true)
@@ -176,7 +177,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                 int size =
                         ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
                                 + (sizeBytes[3] & 0xff);
-                // System.out.println("expecting " + size + " bytes");
+                System.out.println("expecting message of " + size + " bytes");
                 byte[] buffer = new byte[size];
                 // inputStream.read(buffer);
                 fillBuffer(inputStream, buffer);
