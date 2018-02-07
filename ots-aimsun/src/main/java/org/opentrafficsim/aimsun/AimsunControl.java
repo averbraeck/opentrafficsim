@@ -313,8 +313,8 @@ public class AimsunControl extends AbstractWrappableAnimation
         int offset = 0;
         while (true)
         {
-            try
-            {
+//            try
+//            {
                 int bytesRead = in.read(buffer, offset, buffer.length - offset);
                 if (-1 == bytesRead)
                 {
@@ -332,11 +332,11 @@ public class AimsunControl extends AbstractWrappableAnimation
                     break;
                 }
                 System.out.print("Now got " + offset + " bytes; need to read " + (buffer.length - offset) + " more bytes ");
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
+//            }
+//            catch (Exception exception)
+//            {
+//                exception.printStackTrace();
+//            }
         }
         if (offset != buffer.length)
         {
