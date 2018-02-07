@@ -344,11 +344,13 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         {
             // ignore
         }
-
-        minX = minX - 0.05 * Math.abs(minX);
-        minY = minY - 0.05 * Math.abs(minY);
-        maxX = maxX + 0.05 * Math.abs(maxX);
-        maxY = maxY + 0.05 * Math.abs(maxY);
+        double relativeMargin = 0.05;
+        double xMargin = relativeMargin * (maxX - minX);
+        double yMargin = relativeMargin * (maxY - minY);
+        minX = minX - xMargin;
+        minY = minY - yMargin;
+        maxX = maxX + xMargin;
+        maxY = maxY + yMargin;
 
         return new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
     }
