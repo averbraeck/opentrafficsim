@@ -38,15 +38,16 @@ public class SpeedGTUColorer implements GTUColorer, Serializable
     public SpeedGTUColorer(final Speed maximumSpeed)
     {
         this.maximumSpeed = maximumSpeed;
-        this.legend = new ArrayList<LegendEntry>(4);
+        this.legend = new ArrayList<>(4);
         Color[] colorTable = { Color.RED, Color.YELLOW, Color.GREEN };
         Speed zeroValue = new Speed(0, maximumSpeed.getUnit());
         for (int index = 0; index < colorTable.length; index++)
         {
             double ratio = index * 1.0 / (colorTable.length - 1);
             Speed speed = Speed.interpolate(zeroValue, maximumSpeed, ratio);
-            this.legend.add(new LegendEntry(colorTable[index], speed.toString(),
-                    index == 0 ? "stationary" : "driving " + speed.toString()));
+            String label = speed.toString().replaceFirst("\\.0*|,0*", ".0");
+            this.legend.add(new LegendEntry(colorTable[index], label,
+                    index == 0 ? "stationary" : "driving " + label));
         }
     }
 

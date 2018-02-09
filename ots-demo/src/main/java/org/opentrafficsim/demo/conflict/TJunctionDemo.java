@@ -22,6 +22,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -51,9 +52,12 @@ public class TJunctionDemo extends AbstractWrappableAnimation
     /** */
     private static final long serialVersionUID = 20161211L;
 
+    /** Colorer. */
+    private GTUColorer colorer = new DefaultSwitchableGTUColorer();
+
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
+    protected final OTSModelInterface makeModel() throws OTSSimulationException
     {
         return new TJunctionModel();
     }
@@ -62,7 +66,7 @@ public class TJunctionDemo extends AbstractWrappableAnimation
     @Override
     protected final void addAnimationToggles()
     {
-        AnimationToggles.setIconAnimationTogglesFull(this);
+        AnimationToggles.setIconAnimationTogglesStandard(this);
     }
 
     /** {@inheritDoc} */
@@ -77,6 +81,13 @@ public class TJunctionDemo extends AbstractWrappableAnimation
     public final String description()
     {
         return "T-junction demonstration";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public GTUColorer getColorer()
+    {
+        return this.colorer;
     }
 
     /**
@@ -103,7 +114,7 @@ public class TJunctionDemo extends AbstractWrappableAnimation
             try
             {
                 URL url = URLResource.getResource("/conflict/TJunction.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator, TJunctionDemo.this.getColorer());
                 this.network = nlp.build(url);
 
                 // add conflicts

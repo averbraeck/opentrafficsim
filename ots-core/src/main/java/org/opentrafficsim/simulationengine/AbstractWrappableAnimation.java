@@ -1,36 +1,62 @@
 package org.opentrafficsim.simulationengine;
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.naming.NamingException;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
+import javax.swing.MenuElement;
+import javax.swing.MenuSelectionManager;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.vecmath.Point3d;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.gui.Appearance;
+import org.opentrafficsim.gui.AppearanceControl;
 import org.opentrafficsim.gui.OTSAnimationPanel;
 import org.opentrafficsim.gui.SimulatorFrame;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -78,6 +104,12 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     /** Override the replication number by this value if non-null. */
     private Integer replication = null;
 
+    /** Current appearance. */
+    private Appearance appearance = Appearance.GRAY;
+
+    /** Colorer. */
+    private GTUColorer colorer = new DefaultSwitchableGTUColorer();
+
     /**
      * Build the animator.
      * @param startTime Time; the start time
@@ -123,6 +155,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             final List<Property<?>> userModifiedProperties, final Rectangle rect, final boolean eoc)
             throws SimRuntimeException, NamingException, OTSSimulationException, PropertyException
     {
+
         this.savedUserModifiedProperties = userModifiedProperties;
         this.exitOnClose = eoc;
 
@@ -130,8 +163,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         this.savedWarmupPeriod = warmupPeriod;
         this.savedRunLength = runLength;
 
-        GTUColorer colorer = getColorer();
-        this.model = makeModel(colorer);
+        this.model = makeModel();
 
         if (null == this.model)
         {
@@ -143,7 +175,8 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
                         : buildSimpleAnimator(startTime, warmupPeriod, runLength, this.model, this.replication);
         try
         {
-            this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
+            this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this,
+                    getColorer(), this.model.getNetwork());
         }
         catch (RemoteException exception)
         {
@@ -163,9 +196,208 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         }
 
+        class AppearanceControlMenu extends JMenu implements AppearanceControl
+        {
+            /** */
+            private static final long serialVersionUID = 20180206L;
+
+            public AppearanceControlMenu(final String string)
+            {
+                super(string);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isFont()
+            {
+                return true;
+            }
+        }
+
+        // look-and-feel
+        JMenu laf = new AppearanceControlMenu("Look and feel");
+        laf.addMouseListener(new SubMenuShower(laf));
+        ButtonGroup lafGroup = new ButtonGroup();
+        lafGroup.add(addLookAndFeel(frame, laf, "javax.swing.plaf.metal.MetalLookAndFeel", "Metal"));
+        lafGroup.add(addLookAndFeel(frame, laf, "com.sun.java.swing.plaf.motif.MotifLookAndFeel", "Motif"));
+        lafGroup.add(addLookAndFeel(frame, laf, "javax.swing.plaf.nimbus.NimbusLookAndFeel", "Nimbus"));
+        lafGroup.add(addLookAndFeel(frame, laf, "com.sun.java.swing.plaf.windows.WindowsLookAndFeel", "Windows"));
+        lafGroup.add(
+                addLookAndFeel(frame, laf, "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel", "Windows classic"));
+        lafGroup.add(addLookAndFeel(frame, laf, UIManager.getSystemLookAndFeelClassName(), "System default"));
+
+        // appearance
+        JMenu app = new AppearanceControlMenu("Appearance");
+        app.addMouseListener(new SubMenuShower(app));
+        ButtonGroup appGroup = new ButtonGroup();
+        Field[] fields = Appearance.class.getDeclaredFields();
+        for (Field field : fields)
+        {
+            if (field.getType().equals(Appearance.class))
+            {
+                Try.execute(() -> appGroup.add(addAppearance(app, (Appearance) field.get(null))),
+                        "Could not add an apperance.");
+            }
+        }
+        // combine in to popup menu
+        class AppearanceControlPopupMenu extends JPopupMenu implements AppearanceControl
+        {
+            /** */
+            private static final long serialVersionUID = 20180206L;
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isFont()
+            {
+                return true;
+            }
+        }
+        JPopupMenu popMenu = new AppearanceControlPopupMenu();
+        popMenu.add(laf);
+        popMenu.add(app);
+        this.getPanel().getOtsControlPanel().setComponentPopupMenu(popMenu);
+
+        setAppearance(getAppearance()); // color elements that were just added
+
         frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE : WindowConstants.DISPOSE_ON_CLOSE);
 
         return simulator;
+    }
+
+    /**
+     * Adds a look-and-feel item.
+     * @param frame JFrame; frame to set the look-and-feel to
+     * @param group JMenu; menu to add item to
+     * @param laf String; full path of LookAndFeel
+     * @param name String; name on menu item
+     * @return JMenuItem; menu item
+     */
+    private JCheckBoxMenuItem addLookAndFeel(final JFrame frame, final JMenu group, final String laf, final String name)
+    {
+        boolean checked = UIManager.getLookAndFeel().getClass().getName().equals(laf);
+        JCheckBoxMenuItem check = new StayOpenCheckBoxMenuItem(name, checked);
+        check.addMouseListener(new MouseAdapter()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void mouseClicked(final MouseEvent e)
+            {
+                Try.execute(() -> UIManager.setLookAndFeel(laf), "Could not set look-and-feel %s", laf);
+                SwingUtilities.updateComponentTreeUI(frame);
+            }
+        });
+        group.add(check);
+        return check;
+    }
+
+    /**
+     * Adds an appearance to the menu.
+     * @param group JMenu; menu to add item to
+     * @param appear Appearance; appearance this item selects
+     * @return JMenuItem; menu item
+     */
+    private JMenuItem addAppearance(final JMenu group, final Appearance appear)
+    {
+        JCheckBoxMenuItem check = new StayOpenCheckBoxMenuItem(appear.getName(), appear.equals(getAppearance()));
+        check.addMouseListener(new MouseAdapter()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                setAppearance(appear);
+            }
+        });
+        return group.add(check);
+    }
+
+    /**
+     * Sets an appearance.
+     * @param appearance Appearance; appearance
+     */
+    public void setAppearance(final Appearance appearance)
+    {
+        this.appearance = appearance;
+        setAppearance(this.panel.getParent(), appearance);
+    }
+
+    /**
+     * Sets an appearance recursively on components.
+     * @param c Component; visual component
+     * @param appearance Appearance; look and feel
+     */
+    private void setAppearance(final Component c, final Appearance appearance)
+    {
+        if (c instanceof AppearanceControl)
+        {
+            AppearanceControl ac = (AppearanceControl) c;
+            if (ac.isBackground())
+            {
+                c.setBackground(appearance.getBackground());
+            }
+            if (ac.isForeground())
+            {
+                c.setForeground(appearance.getForeground());
+            }
+            if (ac.isFont())
+            {
+                changeFont(c, appearance.getFont());
+            }
+        }
+        else if (c instanceof AnimationPanel)
+        {
+            // animation backdrop
+            c.setBackground(appearance.getBackdrop()); // not background
+            c.setForeground(appearance.getForeground());
+            changeFont(c, appearance.getFont());
+        }
+        else
+        {
+            // default
+            c.setBackground(appearance.getBackground());
+            c.setForeground(appearance.getForeground());
+            changeFont(c, appearance.getFont());
+        }
+        if (c instanceof JSlider)
+        {
+            // labels of the slider
+            Dictionary<?, ?> dictionary = ((JSlider) c).getLabelTable();
+            Enumeration<?> keys = dictionary.keys();
+            while (keys.hasMoreElements())
+            {
+                JLabel label = (JLabel) dictionary.get(keys.nextElement());
+                label.setForeground(appearance.getForeground());
+                label.setBackground(appearance.getBackground());
+            }
+        }
+        // children
+        if (c instanceof JComponent)
+        {
+            for (Component child : ((JComponent) c).getComponents())
+            {
+                setAppearance(child, appearance);
+            }
+        }
+    }
+
+    /**
+     * Change font on component.
+     * @param c Component; component
+     * @param font String; font name
+     */
+    private void changeFont(final Component c, final String font)
+    {
+        Font prev = c.getFont();
+        c.setFont(new Font(font, prev.getStyle(), prev.getSize()));
+    }
+
+    /**
+     * Returns the appearance.
+     * @return Appearance; appearance
+     */
+    public Appearance getAppearance()
+    {
+        return this.appearance;
     }
 
     /**
@@ -173,9 +405,9 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
      * @return GTU colorer
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected GTUColorer getColorer()
+    public GTUColorer getColorer()
     {
-        return new DefaultSwitchableGTUColorer();
+        return this.colorer;
     }
 
     /**
@@ -235,6 +467,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     public final void showAnimationClass(final Class<? extends Locatable> locatableClass)
     {
         this.panel.getAnimationPanel().showClass(locatableClass);
+        this.panel.updateAnimationClassCheckBox(locatableClass);
     }
 
     /**
@@ -244,6 +477,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     public final void hideAnimationClass(final Class<? extends Locatable> locatableClass)
     {
         this.panel.getAnimationPanel().hideClass(locatableClass);
+        this.panel.updateAnimationClassCheckBox(locatableClass);
     }
 
     /**
@@ -253,6 +487,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     public final void toggleAnimationClass(final Class<? extends Locatable> locatableClass)
     {
         this.panel.getAnimationPanel().toggleClass(locatableClass);
+        this.panel.updateAnimationClassCheckBox(locatableClass);
     }
 
     /**
@@ -306,11 +541,10 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     }
 
     /**
-     * @param colorer the GTU colorer to use.
      * @return the demo model. Don't forget to keep a local copy.
      * @throws OTSSimulationException in case the construction of the model fails
      */
-    protected abstract OTSModelInterface makeModel(GTUColorer colorer) throws OTSSimulationException;
+    protected abstract OTSModelInterface makeModel() throws OTSSimulationException;
 
     /**
      * Return the initial 'home' extent for the animation. The 'Home' button returns to this extent. Override this method when a
@@ -340,7 +574,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
                 maxY = Math.max(maxY, l.y + Math.max(p3dL.y, p3dU.y));
             }
         }
-        catch (Exception e)
+        catch (@SuppressWarnings("unused") Exception e)
         {
             // ignore
         }
@@ -359,7 +593,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     @Override
     public final ArrayList<Property<?>> getProperties()
     {
-        return new ArrayList<Property<?>>(this.properties);
+        return new ArrayList<>(this.properties);
     }
 
     /** {@inheritDoc} */
@@ -425,6 +659,120 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     public final void setNextReplication(final Integer nextReplication)
     {
         this.replication = nextReplication;
+    }
+
+    /**
+     * Mouse listener which shows the submenu when the mouse enters the button.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 feb. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private class SubMenuShower extends MouseAdapter
+    {
+        /** The menu. */
+        private JMenu menu;
+
+        /**
+         * Constructor.
+         * @param menu JMenu; menu
+         */
+        public SubMenuShower(final JMenu menu)
+        {
+            this.menu = menu;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void mouseEntered(MouseEvent e)
+        {
+            MenuSelectionManager.defaultManager().setSelectedPath(
+                    new MenuElement[] { (MenuElement) this.menu.getParent(), this.menu, this.menu.getPopupMenu() });
+        }
+    }
+
+    /**
+     * Check box item that keeps the popup menu visible after clicking, so the user can click and try some options.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 feb. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private static class StayOpenCheckBoxMenuItem extends JCheckBoxMenuItem implements AppearanceControl
+    {
+        /** */
+        private static final long serialVersionUID = 20180206L;
+
+        /** Stored selection path. */
+        private static MenuElement[] path;
+
+        {
+            getModel().addChangeListener(new ChangeListener()
+            {
+
+                @Override
+                public void stateChanged(ChangeEvent e)
+                {
+                    if (getModel().isArmed() && isShowing())
+                    {
+                        setPath(MenuSelectionManager.defaultManager().getSelectedPath());
+                    }
+                }
+            });
+        }
+
+        /**
+         * Sets the path.
+         * @param path MenuElement[]; path
+         */
+        public static void setPath(final MenuElement[] path)
+        {
+            StayOpenCheckBoxMenuItem.path = path;
+        }
+
+        /**
+         * Constructor.
+         * @param text String; menu item text
+         * @param selected boolean; if the item is selected
+         */
+        public StayOpenCheckBoxMenuItem(final String text, final boolean selected)
+        {
+            super(text, selected);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void doClick(int pressTime)
+        {
+            super.doClick(pressTime);
+            for (MenuElement element : path)
+            {
+                if (element instanceof JComponent)
+                {
+                    ((JComponent) element).setVisible(true);
+                }
+            }
+            JMenu menu = (JMenu) path[path.length - 3];
+            MenuSelectionManager.defaultManager()
+                    .setSelectedPath(new MenuElement[] { (MenuElement) menu.getParent(), menu, menu.getPopupMenu() });
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean isFont()
+        {
+            return true;
+        }
     }
 
 }

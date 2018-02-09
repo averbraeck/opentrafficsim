@@ -122,10 +122,10 @@ public class N201IMB extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    protected final OTSModelInterface makeModel()
     {
         System.out.println("N201IMB.makeModel called");
-        this.model = new N201Model(getSavedUserModifiedProperties(), colorer, new OTSNetwork("N201 network"));
+        this.model = new N201Model(getSavedUserModifiedProperties(), getColorer(), new OTSNetwork("N201 network"));
         return this.model;
     }
 

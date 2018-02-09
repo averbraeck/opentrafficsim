@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo.conflictAndControl;
 
-import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
+import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import java.awt.BorderLayout;
 import java.awt.geom.Rectangle2D;
@@ -149,7 +149,7 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
+    protected final OTSModelInterface makeModel() throws OTSSimulationException
     {
         return new TrafCODModel();
     }

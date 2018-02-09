@@ -110,8 +110,9 @@ public final class AnimationToggles
         aws.addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane Ids", false,
                 true);
         aws.addToggleAnimationButtonIcon("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
-        aws.addToggleAnimationButtonText("Shoulder", Shoulder.class, "Show/hide shoulders", true);
-        aws.addToggleAnimationButtonText("GTU", GTU.class, "Show/hide GTUs", true);
+        aws.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
+                false);
+        aws.addToggleAnimationButtonIcon("GTU", GTU.class, "/icons/Gtu24.png", "Show/hide GTUs", true, false);
         aws.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids", false,
                 true);
         aws.addToggleAnimationButtonIcon("Sensor", Sensor.class, "/icons/Sensor24.png", "Show/hide sensors", true, false);
@@ -121,9 +122,11 @@ public final class AnimationToggles
                 true, false);
         aws.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
                 "Show/hide sensors Ids", false, true);
-        aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", true);
-        aws.addToggleAnimationButtonText("Generator", GTUGenerator.class, "Show/hide generators", true);
-        aws.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", false, false);
+        aws.addToggleAnimationButtonIcon("Conflict", Conflict.class, "/icons/Conflict24.png", "Show/hide conflicts", true,
+                false);
+        aws.addToggleAnimationButtonIcon("Generator", GTUGenerator.class, "/icons/Generator24.png", "Show/hide generators",
+                true, false);
+        aws.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
         aws.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops", false,
                 true);
     }
@@ -146,7 +149,7 @@ public final class AnimationToggles
         aws.addToggleAnimationButtonIcon("Stripe", Stripe.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
         aws.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
                 false);
-        aws.addToggleAnimationButtonText("GTU", GTU.class, "Show/hide GTUs", true);
+        aws.addToggleAnimationButtonIcon("GTU", GTU.class, "/icons/Gtu24.png", "Show/hide GTUs", true, false);
         aws.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids", false,
                 true);
         aws.addToggleAnimationButtonIcon("Sensor", Sensor.class, "/icons/Sensor24.png", "Show/hide sensors", false, false);
@@ -156,8 +159,13 @@ public final class AnimationToggles
                 true, false);
         aws.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
                 "Show/hide sensors Ids", false, true);
-        aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", false);
-        aws.addToggleAnimationButtonText("Generator", GTUGenerator.class, "Show/hide generators", false);
+        aws.addToggleAnimationButtonIcon("Conflict", Conflict.class, "/icons/Conflict24.png", "Show/hide conflicts", false,
+                false);
+        aws.addToggleAnimationButtonIcon("Generator", GTUGenerator.class, "/icons/Generator24.png", "Show/hide generators",
+                false, false);
+        aws.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", false, false);
+        aws.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops", false,
+                true);
     }
 
     /**

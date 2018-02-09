@@ -147,7 +147,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    protected final OTSModelInterface makeModel()
     {
         return new TestOpenDriveModel();
     }

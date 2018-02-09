@@ -345,74 +345,74 @@ public interface Network extends Identifiable
      * The (regular, not timed) event type for pub/sub indicating the addition of a Node. <br>
      * Payload: String nodeId (not an array, just a String)
      */
-    EventType NODE_ADD_EVENT = new EventType("NODE.ADD");
+    EventType NODE_ADD_EVENT = new EventType("NETWORK.NODE.ADD");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of a Node. <br>
      * Payload: String nodeId (not an array, just a String)
      */
-    EventType NODE_REMOVE_EVENT = new EventType("NODE.REMOVE");
+    EventType NODE_REMOVE_EVENT = new EventType("NETWORK.NODE.REMOVE");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Link. <br>
      * Payload: String linkId (not an array, just a String)
      */
-    EventType LINK_ADD_EVENT = new EventType("LINK.ADD");
+    EventType LINK_ADD_EVENT = new EventType("NETWORK.LINK.ADD");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of a Link. <br>
      * Payload: String linkId (not an array, just a String)
      */
-    EventType LINK_REMOVE_EVENT = new EventType("LINK.REMOVE");
+    EventType LINK_REMOVE_EVENT = new EventType("NETWORK.LINK.REMOVE");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of an ObjectInterface implementing object. <br>
      * Payload: String ObjectId (not an array, just a String)
      */
-    EventType OBJECT_ADD_EVENT = new EventType("OBJECT.ADD");
+    EventType OBJECT_ADD_EVENT = new EventType("NETWORK.OBJECT.ADD");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of an ObjectInterface implementing object. <br>
      * Payload: String objectId (not an array, just a String)
      */
-    EventType OBJECT_REMOVE_EVENT = new EventType("OBJECT.REMOVE");
+    EventType OBJECT_REMOVE_EVENT = new EventType("NETWORK.OBJECT.REMOVE");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of an InvisibleObjectInterface implementing
      * object. <br>
      * Payload: String ObjectId (not an array, just a String)
      */
-    EventType INVISIBLE_OBJECT_ADD_EVENT = new EventType("INVISIBLE_OBJECT.ADD");
+    EventType INVISIBLE_OBJECT_ADD_EVENT = new EventType("NETWORK.INVISIBLE_OBJECT.ADD");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of an InvisibleObjectInterface implementing
      * object. <br>
      * Payload: String objectId (not an array, just a String)
      */
-    EventType INVISIBLE_OBJECT_REMOVE_EVENT = new EventType("INVISIBLE_OBJECT.REMOVE");
+    EventType INVISIBLE_OBJECT_REMOVE_EVENT = new EventType("NETWORK.INVISIBLE_OBJECT.REMOVE");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Route for a gtuType. <br>
      * Payload: [String gtuTypeId, String routeId]
      */
-    EventType ROUTE_ADD_EVENT = new EventType("ROUTE.ADD");
+    EventType ROUTE_ADD_EVENT = new EventType("NETWORK.ROUTE.ADD");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of a Route for a gtuType. <br>
      * Payload: [String gtuTypeId, String routeId]
      */
-    EventType ROUTE_REMOVE_EVENT = new EventType("ROUTE.REMOVE");
+    EventType ROUTE_REMOVE_EVENT = new EventType("NETWORK.ROUTE.REMOVE");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the network. <br>
      * Payload: String gtuId (not an array, just a String)
      */
-    EventType GTU_ADD_EVENT = new EventType("GTU.ADD");
+    EventType GTU_ADD_EVENT = new EventType("NETWORK.GTU.ADD");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the network. <br>
      * Payload: String gtuId (not an array, just a String)
      */
-    EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
+    EventType GTU_REMOVE_EVENT = new EventType("NETWORK.GTU.REMOVE");
 
 }

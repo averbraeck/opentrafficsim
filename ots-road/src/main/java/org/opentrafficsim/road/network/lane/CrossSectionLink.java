@@ -50,14 +50,14 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * Payload: Object[] { String networkId, String linkId, String LaneId, Lane lane, int laneNumber } <br>
      * TODO work in a different way with lane numbers to align to standard lane numbering.
      */
-    public static final EventType LANE_ADD_EVENT = new EventType("LANE.ADD");
+    public static final EventType LANE_ADD_EVENT = new EventType("LINK.LANE.ADD");
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the removal of a Lane from a CrossSectionLink. <br>
      * Payload: Object[] { String networkId, String linkId, String LaneId } <br>
      * TODO allow for the removal of a Lane; currently this is not possible.
      */
-    public static final EventType LANE_REMOVE_EVENT = new EventType("LANE.REMOVE");
+    public static final EventType LANE_REMOVE_EVENT = new EventType("LINK.LANE.REMOVE");
 
     /**
      * Construction of a cross section link.

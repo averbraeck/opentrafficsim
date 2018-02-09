@@ -141,6 +141,9 @@ public class ShortMerge extends AbstractWrappableAnimation
     /** */
     private static final long serialVersionUID = 20170407L;
 
+    /** Colorer. */
+    private GTUColorer colorer = new LmrsSwitchableColorer();
+
     /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
@@ -170,16 +173,16 @@ public class ShortMerge extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected GTUColorer getColorer()
+    public GTUColorer getColorer()
     {
-        return new LmrsSwitchableColorer();
+        return this.colorer;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
+    protected OTSModelInterface makeModel() throws OTSSimulationException
     {
-        return new ShortMergeModel(colorer);
+        return new ShortMergeModel();
     }
 
     /**
@@ -245,17 +248,6 @@ public class ShortMerge extends AbstractWrappableAnimation
 
         /** The network. */
         private OTSNetwork network;
-
-        /** Colorer. */
-        private final GTUColorer colorer;
-
-        /**
-         * @param colorer colorer
-         */
-        ShortMergeModel(final GTUColorer colorer)
-        {
-            this.colorer = colorer;
-        }
 
         /** {@inheritDoc} */
         @Override
@@ -416,21 +408,22 @@ public class ShortMerge extends AbstractWrappableAnimation
             gtuType3rdLaneA.add(new FrequencyAndObject<>(1.0 - 3 * TRUCK_FRACTION, carA));
             gtuType3rdLaneA.add(new FrequencyAndObject<>(3 * TRUCK_FRACTION, truckA));
 
-            makeGenerator(getLane(linkA, "FORWARD1"), speedA, "gen1", idGenerator, gtuTypeAllCarA, headwaysA1, this.colorer,
+            GTUColorer color = ShortMerge.this.getColorer();
+            makeGenerator(getLane(linkA, "FORWARD1"), speedA, "gen1", idGenerator, gtuTypeAllCarA, headwaysA1, color,
                     roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             if (NETWORK.equals("shortWeave"))
             {
-                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuTypeAllCarA, headwaysA2, this.colorer,
+                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuTypeAllCarA, headwaysA2, color,
                         roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
-                makeGenerator(getLane(linkA, "FORWARD3"), speedA, "gen3", idGenerator, gtuType3rdLaneA, headwaysA3,
-                        this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
+                makeGenerator(getLane(linkA, "FORWARD3"), speedA, "gen3", idGenerator, gtuType3rdLaneA, headwaysA3, color,
+                        roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             }
             else
             {
-                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuType2ndLaneA, headwaysA2,
-                        this.colorer, roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
+                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuType2ndLaneA, headwaysA2, color,
+                        roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             }
-            makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, this.colorer,
+            makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, color,
                     roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
 
             new SpeedSign("sign1", getLane(linkA, "FORWARD1"), LongitudinalDirectionality.DIR_PLUS, Length.createSI(10),

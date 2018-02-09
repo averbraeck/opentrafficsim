@@ -21,7 +21,7 @@ public final class LmrsData
 
     /** Form of synchronization. */
     private final Synchronization synchronization;
-    
+
     /** Form of gap-acceptance. */
     private final GapAcceptance gapAcceptance;
 
@@ -114,7 +114,7 @@ public final class LmrsData
     {
         return this.synchronization;
     }
-    
+
     /**
      * Return the gap-acceptance.
      * @return gap-acceptance

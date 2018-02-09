@@ -23,6 +23,9 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
     /** Store last value for quick access. */
     private T lastValue;
     
+    /** Store last time for quick access. */
+    private double lastTime;
+    
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -45,29 +48,34 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
 
     /** {@inheritDoc} */
     @Override
-    public final synchronized void set(final T value)
+    public final void set(final T value)
     {
         this.lastValue = value;
+        this.lastTime = now().si;
         EventValue<T> event = getLastEvent();
-        if (event != null && event.getTime() == now().si)
+        if (event != null && event.getTime() == this.lastTime)
         {
             removeEvent(event);
         }
-        addEvent(new EventValue<>(now().si, value));
+        addEvent(new EventValue<>(this.lastTime, value));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final synchronized T get()
+    public final T get()
     {
         return this.lastValue;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final synchronized T get(final Time time)
+    public final T get(final Time time)
     {
         Throw.whenNull(time, "Time may not be null.");
+        if (time.si >= this.lastTime)
+        {
+            return this.lastValue;
+        }
         EventValue<T> event = getEvent(time);
         return event == null ? null : event.getValue();
     }

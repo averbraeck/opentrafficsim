@@ -49,12 +49,13 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
     /**
      * Update whether there is a GTU alongside, i.e. with overlap, in an adjacent lane.
      * @param lat LEFT or RIGHT
+     * @throws NetworkException in case of a network exception
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
      * @throws IllegalArgumentException if {@code lat} is {@code NONE}
      */
-    void updateGtuAlongside(LateralDirectionality lat) throws GTUException, ParameterException;
+    void updateGtuAlongside(LateralDirectionality lat) throws GTUException, ParameterException, NetworkException;
 
     /**
      * Update set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT. Distance will be

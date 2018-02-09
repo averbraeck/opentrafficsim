@@ -27,7 +27,6 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -127,8 +126,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
                             new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
                             new Length(2.0, METER), new Duration(1.0, SECOND), 3));
-                    osm.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND),
-                            localProperties, null, true);
+                    osm.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), localProperties, null, true);
                 }
                 catch (Exception e)
                 {
@@ -141,7 +139,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    protected final OTSModelInterface makeModel()
     {
         JFrame frame = new JFrame();
         FileDialog fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
@@ -169,7 +167,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
         }
         Convert converter = new Convert();
         System.out.println("Opening file " + filename);
-        ArrayList<OSMTag> wantedTags = new ArrayList<OSMTag>();
+        ArrayList<OSMTag> wantedTags = new ArrayList<>();
         wantedTags.add(new OSMTag("highway", "primary"));
         wantedTags.add(new OSMTag("highway", "secondary"));
         wantedTags.add(new OSMTag("highway", "tertiary"));
@@ -193,7 +191,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
         wantedTags.add(new OSMTag("highway", "secondary_link"));
         wantedTags.add(new OSMTag("highway", "primary_link"));
         wantedTags.add(new OSMTag("highway", "trunk_link"));
-        ArrayList<String> ft = new ArrayList<String>();
+        ArrayList<String> ft = new ArrayList<>();
         try
         {
             System.out.println(filepath);
@@ -261,7 +259,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
     {
         return "Load an OpenStreetMap file and show it";
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected final void addAnimationToggles()
@@ -303,7 +301,7 @@ class OSMModel implements OTSModelInterface
     private OSMNetwork osmNetwork;
 
     /** Provided lanes. */
-    private List<Lane> lanes = new ArrayList<Lane>();
+    private List<Lane> lanes = new ArrayList<>();
 
     /** */
     private ProgressListener progressListener;
@@ -351,7 +349,7 @@ class OSMModel implements OTSModelInterface
         {
             try
             {
-                otsNetwork.addLink(this.converter.convertLink(otsNetwork, osmLink, simulator));
+                otsNetwork.addLink(this.converter.convertLink(otsNetwork, osmLink, this.simulator));
             }
             catch (Exception e)
             {

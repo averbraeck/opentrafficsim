@@ -51,7 +51,7 @@ public class TestNetworkDemo extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
+    protected final OTSModelInterface makeModel() throws OTSSimulationException
     {
         return new TestNetworkModel();
     }

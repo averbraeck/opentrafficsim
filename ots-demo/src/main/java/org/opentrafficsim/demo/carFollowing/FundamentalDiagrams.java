@@ -34,7 +34,6 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -139,9 +138,9 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    protected final OTSModelInterface makeModel()
     {
-        this.model = new FundamentalDiagramPlotsModel(this.savedUserModifiedProperties, colorer);
+        this.model = new FundamentalDiagramPlotsModel(this.savedUserModifiedProperties);
         return this.model;
     }
 
@@ -266,17 +265,12 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
 
-        /** The GTUColorer for the generated vehicles. */
-        private final GTUColorer gtuColorer;
-
         /**
          * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
-         * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          */
-        FundamentalDiagramPlotsModel(final List<Property<?>> properties, final GTUColorer gtuColorer)
+        FundamentalDiagramPlotsModel(final List<Property<?>> properties)
         {
             this.fundamentalDiagramProperties = properties;
-            this.gtuColorer = gtuColorer;
         }
 
         /** {@inheritDoc} */
@@ -407,7 +401,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                         new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, this.block), this.block);
                 this.block.setParameters(parameters);
                 this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
-                        this.gtuColorer);
+                        FundamentalDiagrams.this.getColorer());
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
             {
@@ -453,7 +447,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                         new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
                 gtu.setParameters(parameters);
                 gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
-                        this.gtuColorer);
+                        FundamentalDiagrams.this.getColorer());
 
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }

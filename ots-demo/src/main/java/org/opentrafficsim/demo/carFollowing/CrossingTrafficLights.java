@@ -18,13 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.jstats.distributions.DistTriangular;
-import nl.tudelft.simulation.jstats.streams.MersenneTwister;
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -46,7 +39,6 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -71,6 +63,13 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistTriangular;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * Demonstration of a crossing with traffic lights.
@@ -194,9 +193,9 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    protected final OTSModelInterface makeModel()
     {
-        this.model = new CrossingTrafficLightstModel(this.savedUserModifiedProperties, colorer);
+        this.model = new CrossingTrafficLightstModel(this.savedUserModifiedProperties);
         return this.model;
     }
 
@@ -238,219 +237,216 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                 + "Simulation of four double lane roads with a crossing in the middle.</html>";
     }
 
-}
-
-/**
- * Simulate four double lane roads with a crossing in the middle.
- * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * </p>
- * $LastChangedDate: 2016-10-28 16:34:11 +0200 (Fri, 28 Oct 2016) $, @version $Revision: 2429 $, by $Author: pknoppers $,
- * initial version ug 1, 2014 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- */
-class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
-{
-    /** */
-    private static final long serialVersionUID = 20140815L;
-
-    /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
-
-    /** The network. */
-    private final OTSNetwork network = new OTSNetwork("network");
-
-    /** the random stream for this demo. */
-    private StreamInterface stream = new MersenneTwister(555);
-
-    /** The headway (inter-vehicle time) distribution. */
-    private ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> headwayDistribution =
-            new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 7, 9, 15), DurationUnit.SECOND);
-
-    /** The speed distribution. */
-    private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedDistribution =
-            new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 50, 60, 70), SpeedUnit.KM_PER_HOUR);
-
-    /** Number of cars created. */
-    private int carsCreated = 0;
-
-    /** Type of all GTUs. */
-    private GTUType gtuType = CAR;
-
-    /** The car following model, e.g. IDM Plus for cars. */
-    private GTUFollowingModelOld carFollowingModel;
-
-    /** The lane change model, e.g. Egoistic for cars. */
-    private LaneChangeModel laneChangeModel;
-
-    /** User settable properties. */
-    private List<Property<?>> properties = null;
-
-    /** The GTUColorer for the generated vehicles. */
-    private final GTUColorer gtuColorer;
-
-    /** the tactical planner factory for this model. */
-    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory;
-
-    /** The speed limit on all Lanes. */
-    private Speed speedLimit = new Speed(80, KM_PER_HOUR);
-
     /**
-     * @param properties the user settable properties
-     * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
+     * Simulate four double lane roads with a crossing in the middle.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * $LastChangedDate: 2016-10-28 16:34:11 +0200 (Fri, 28 Oct 2016) $, @version $Revision: 2429 $, by $Author: pknoppers $,
+     * initial version ug 1, 2014 <br>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    CrossingTrafficLightstModel(final List<Property<?>> properties, final GTUColorer gtuColorer)
+    class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
     {
-        this.properties = properties;
-        this.gtuColorer = gtuColorer;
-    }
+        /** */
+        private static final long serialVersionUID = 20140815L;
 
-    /** {@inheritDoc} */
-    @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
-    {
-        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        try
+        /** The simulator. */
+        private OTSDEVSSimulatorInterface simulator;
+
+        /** The network. */
+        private final OTSNetwork network = new OTSNetwork("network");
+
+        /** the random stream for this demo. */
+        private StreamInterface stream = new MersenneTwister(555);
+
+        /** The headway (inter-vehicle time) distribution. */
+        private ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> headwayDistribution =
+                new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 7, 9, 15), DurationUnit.SECOND);
+
+        /** The speed distribution. */
+        private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedDistribution =
+                new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 50, 60, 70), SpeedUnit.KM_PER_HOUR);
+
+        /** Number of cars created. */
+        private int carsCreated = 0;
+
+        /** Type of all GTUs. */
+        private GTUType gtuType = CAR;
+
+        /** The car following model, e.g. IDM Plus for cars. */
+        private GTUFollowingModelOld carFollowingModel;
+
+        /** The lane change model, e.g. Egoistic for cars. */
+        private LaneChangeModel laneChangeModel;
+
+        /** User settable properties. */
+        private List<Property<?>> properties = null;
+
+        /** the tactical planner factory for this model. */
+        private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory;
+
+        /** The speed limit on all Lanes. */
+        private Speed speedLimit = new Speed(80, KM_PER_HOUR);
+
+        /**
+         * @param properties the user settable properties
+         */
+        CrossingTrafficLightstModel(final List<Property<?>> properties)
         {
-            OTSNode[][] nodes = new OTSNode[4][4];
-            nodes[0][0] = new OTSNode(this.network, "sn1", new OTSPoint3D(10, -500));
-            nodes[0][1] = new OTSNode(this.network, "sn2", new OTSPoint3D(10, -20));
-            nodes[0][2] = new OTSNode(this.network, "sn3", new OTSPoint3D(10, +20));
-            nodes[0][3] = new OTSNode(this.network, "sn4", new OTSPoint3D(10, +5000));
+            this.properties = properties;
+        }
 
-            nodes[1][0] = new OTSNode(this.network, "we1", new OTSPoint3D(-500, -10));
-            nodes[1][1] = new OTSNode(this.network, "we2", new OTSPoint3D(-20, -10));
-            nodes[1][2] = new OTSNode(this.network, "we3", new OTSPoint3D(+20, -10));
-            nodes[1][3] = new OTSNode(this.network, "we4", new OTSPoint3D(+5000, -10));
-
-            nodes[2][0] = new OTSNode(this.network, "ns1", new OTSPoint3D(-10, +500));
-            nodes[2][1] = new OTSNode(this.network, "ns2", new OTSPoint3D(-10, +20));
-            nodes[2][2] = new OTSNode(this.network, "ns3", new OTSPoint3D(-10, -20));
-            nodes[2][3] = new OTSNode(this.network, "ns4", new OTSPoint3D(-10, -5000));
-
-            nodes[3][0] = new OTSNode(this.network, "ew1", new OTSPoint3D(+500, 10));
-            nodes[3][1] = new OTSNode(this.network, "ew2", new OTSPoint3D(+20, 10));
-            nodes[3][2] = new OTSNode(this.network, "ew3", new OTSPoint3D(-20, 10));
-            nodes[3][3] = new OTSNode(this.network, "ew4", new OTSPoint3D(-5000, 10));
-
-            LaneType laneType = LaneType.TWO_WAY_LANE;
-
-            Map<Lane, SimpleTrafficLight> trafficLights = new HashMap<>();
-
-            for (int i = 0; i < 4; i++)
+        /** {@inheritDoc} */
+        @Override
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
+                throws SimRuntimeException, RemoteException
+        {
+            this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+            try
             {
-                for (int j = 0; j < 3; j++)
+                OTSNode[][] nodes = new OTSNode[4][4];
+                nodes[0][0] = new OTSNode(this.network, "sn1", new OTSPoint3D(10, -500));
+                nodes[0][1] = new OTSNode(this.network, "sn2", new OTSPoint3D(10, -20));
+                nodes[0][2] = new OTSNode(this.network, "sn3", new OTSPoint3D(10, +20));
+                nodes[0][3] = new OTSNode(this.network, "sn4", new OTSPoint3D(10, +5000));
+
+                nodes[1][0] = new OTSNode(this.network, "we1", new OTSPoint3D(-500, -10));
+                nodes[1][1] = new OTSNode(this.network, "we2", new OTSPoint3D(-20, -10));
+                nodes[1][2] = new OTSNode(this.network, "we3", new OTSPoint3D(+20, -10));
+                nodes[1][3] = new OTSNode(this.network, "we4", new OTSPoint3D(+5000, -10));
+
+                nodes[2][0] = new OTSNode(this.network, "ns1", new OTSPoint3D(-10, +500));
+                nodes[2][1] = new OTSNode(this.network, "ns2", new OTSPoint3D(-10, +20));
+                nodes[2][2] = new OTSNode(this.network, "ns3", new OTSPoint3D(-10, -20));
+                nodes[2][3] = new OTSNode(this.network, "ns4", new OTSPoint3D(-10, -5000));
+
+                nodes[3][0] = new OTSNode(this.network, "ew1", new OTSPoint3D(+500, 10));
+                nodes[3][1] = new OTSNode(this.network, "ew2", new OTSPoint3D(+20, 10));
+                nodes[3][2] = new OTSNode(this.network, "ew3", new OTSPoint3D(-20, 10));
+                nodes[3][3] = new OTSNode(this.network, "ew4", new OTSPoint3D(-5000, 10));
+
+                LaneType laneType = LaneType.TWO_WAY_LANE;
+
+                Map<Lane, SimpleTrafficLight> trafficLights = new HashMap<>();
+
+                for (int i = 0; i < 4; i++)
                 {
-                    Lane[] lanes = LaneFactory.makeMultiLane(this.network,
-                            "Lane_" + nodes[i][j].getId() + "-" + nodes[i][j + 1].getId(), nodes[i][j], nodes[i][j + 1], null,
-                            2, laneType, this.speedLimit, this.simulator);
-                    if (j == 0)
+                    for (int j = 0; j < 3; j++)
                     {
-                        for (Lane lane : lanes)
+                        Lane[] lanes = LaneFactory.makeMultiLane(this.network,
+                                "Lane_" + nodes[i][j].getId() + "-" + nodes[i][j + 1].getId(), nodes[i][j], nodes[i][j + 1],
+                                null, 2, laneType, this.speedLimit, this.simulator);
+                        if (j == 0)
                         {
-                            this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar",
-                                    new Object[] { lane });
-                            SimpleTrafficLight tl = new SimpleTrafficLight(lane.getId() + "_TL", lane,
-                                    new Length(lane.getLength().minus(new Length(10.0, LengthUnit.METER))), this.simulator);
-                            trafficLights.put(lane, tl);
-                            if (i == 0 || i == 2)
+                            for (Lane lane : lanes)
                             {
-                                this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL", new Object[] { tl });
-                            }
-                            else
-                            {
-                                this.simulator.scheduleEventRel(CrossingTrafficLights.TRED, this, this, "changeTL",
-                                        new Object[] { tl });
+                                this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar",
+                                        new Object[] { lane });
+                                SimpleTrafficLight tl = new SimpleTrafficLight(lane.getId() + "_TL", lane,
+                                        new Length(lane.getLength().minus(new Length(10.0, LengthUnit.METER))), this.simulator);
+                                trafficLights.put(lane, tl);
+                                if (i == 0 || i == 2)
+                                {
+                                    this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL", new Object[] { tl });
+                                }
+                                else
+                                {
+                                    this.simulator.scheduleEventRel(CrossingTrafficLights.TRED, this, this, "changeTL",
+                                            new Object[] { tl });
+                                }
                             }
                         }
-                    }
-                    if (j == 2)
-                    {
-                        for (Lane lane : lanes)
+                        if (j == 2)
                         {
-                            new SinkSensor(lane, new Length(500.0, METER), this.simulator);
+                            for (Lane lane : lanes)
+                            {
+                                new SinkSensor(lane, new Length(500.0, METER), this.simulator);
+                            }
                         }
                     }
                 }
+
+                this.carFollowingModel = PropertiesParser.parseGTUFollowingModelOld(this.properties, "Car");
+                this.laneChangeModel = PropertiesParser.parseLaneChangeModel(this.properties);
+                this.strategicalPlannerFactory = PropertiesParser.parseStrategicalPlannerFactory(this.properties,
+                        this.carFollowingModel, this.laneChangeModel, this.stream);
             }
+            catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | PropertyException
+                    | GTUException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
 
-            this.carFollowingModel = PropertiesParser.parseGTUFollowingModelOld(this.properties, "Car");
-            this.laneChangeModel = PropertiesParser.parseLaneChangeModel(this.properties);
-            this.strategicalPlannerFactory = PropertiesParser.parseStrategicalPlannerFactory(this.properties,
-                    this.carFollowingModel, this.laneChangeModel, this.stream);
-        }
-        catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | PropertyException
-                | GTUException exception)
+        /**
+         * Change the traffic light to a new color.
+         * @param tl the traffic light
+         * @throws SimRuntimeException when scheduling fails
+         */
+        protected final void changeTL(final TrafficLight tl) throws SimRuntimeException
         {
-            exception.printStackTrace();
+            if (tl.getTrafficLightColor().isRed())
+            {
+                tl.setTrafficLightColor(TrafficLightColor.GREEN);
+                this.simulator.scheduleEventRel(CrossingTrafficLights.TGREEN, this, this, "changeTL", new Object[] { tl });
+            }
+            else if (tl.getTrafficLightColor().isGreen())
+            {
+                tl.setTrafficLightColor(TrafficLightColor.YELLOW);
+                this.simulator.scheduleEventRel(CrossingTrafficLights.TYELLOW, this, this, "changeTL", new Object[] { tl });
+            }
+            else if (tl.getTrafficLightColor().isYellow())
+            {
+                tl.setTrafficLightColor(TrafficLightColor.RED);
+                this.simulator.scheduleEventRel(CrossingTrafficLights.TRED, this, this, "changeTL", new Object[] { tl });
+            }
         }
-    }
 
-    /**
-     * Change the traffic light to a new color.
-     * @param tl the traffic light
-     * @throws SimRuntimeException when scheduling fails
-     */
-    protected final void changeTL(final TrafficLight tl) throws SimRuntimeException
-    {
-        if (tl.getTrafficLightColor().isRed())
+        /**
+         * Generate cars at a fixed rate (implemented by re-scheduling this method).
+         * @param lane the lane to generate the car on
+         */
+        protected final void generateCar(final Lane lane)
         {
-            tl.setTrafficLightColor(TrafficLightColor.GREEN);
-            this.simulator.scheduleEventRel(CrossingTrafficLights.TGREEN, this, this, "changeTL", new Object[] { tl });
+            Length initialPosition = new Length(10, METER);
+            Speed initialSpeed = new Speed(0, KM_PER_HOUR);
+            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+            try
+            {
+                initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
+                Length vehicleLength = new Length(4, METER);
+                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
+                        new Length(1.8, METER), this.speedDistribution.draw(), this.simulator, this.network);
+                Route route = null;
+                LaneBasedStrategicalPlanner strategicalPlanner = this.strategicalPlannerFactory.create(gtu, route, null, null);
+                gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
+                        CrossingTrafficLights.this.getColorer());
+                this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar",
+                        new Object[] { lane });
+            }
+            catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
+            {
+                exception.printStackTrace();
+            }
         }
-        else if (tl.getTrafficLightColor().isGreen())
-        {
-            tl.setTrafficLightColor(TrafficLightColor.YELLOW);
-            this.simulator.scheduleEventRel(CrossingTrafficLights.TYELLOW, this, this, "changeTL", new Object[] { tl });
-        }
-        else if (tl.getTrafficLightColor().isYellow())
-        {
-            tl.setTrafficLightColor(TrafficLightColor.RED);
-            this.simulator.scheduleEventRel(CrossingTrafficLights.TRED, this, this, "changeTL", new Object[] { tl });
-        }
-    }
 
-    /**
-     * Generate cars at a fixed rate (implemented by re-scheduling this method).
-     * @param lane the lane to generate the car on
-     */
-    protected final void generateCar(final Lane lane)
-    {
-        Length initialPosition = new Length(10, METER);
-        Speed initialSpeed = new Speed(0, KM_PER_HOUR);
-        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        try
+        /** {@inheritDoc} */
+        @Override
+        public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
         {
-            initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            Length vehicleLength = new Length(4, METER);
-            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
-                    new Length(1.8, METER), this.speedDistribution.draw(), this.simulator, this.network);
-            Route route = null;
-            LaneBasedStrategicalPlanner strategicalPlanner = this.strategicalPlannerFactory.create(gtu, route, null, null);
-            gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
-                    this.gtuColorer);
-            this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar", new Object[] { lane });
+            return this.simulator;
         }
-        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
+
+        /** {@inheritDoc} */
+        @Override
+        public OTSNetwork getNetwork()
         {
-            exception.printStackTrace();
+            return this.network;
         }
-    }
 
-    /** {@inheritDoc} */
-    @Override
-    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
-    {
-        return this.simulator;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OTSNetwork getNetwork()
-    {
-        return this.network;
     }
 
 }

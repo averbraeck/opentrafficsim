@@ -122,10 +122,10 @@ public class A58IMB extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    protected final OTSModelInterface makeModel()
     {
         System.out.println("A58IMB.makeModel called");
-        this.model = new A58Model(getSavedUserModifiedProperties(), colorer, new OTSNetwork("A58 network"));
+        this.model = new A58Model(getSavedUserModifiedProperties(), getColorer(), new OTSNetwork("A58 network"));
         return this.model;
     }
 
