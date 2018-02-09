@@ -26,7 +26,6 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.AbstractGTU;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
@@ -562,9 +561,9 @@ public class AHFEAnimation extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
+    protected final OTSModelInterface makeModel() throws OTSSimulationException
     {
-        return new AHFEModel(colorer);
+        return new AHFEModel();
     }
 
     /** {@inheritDoc} */
@@ -592,17 +591,6 @@ public class AHFEAnimation extends AbstractWrappableAnimation
 
         /** The network. */
         private OTSNetwork network;
-
-        /** Colorer. */
-        private final GTUColorer colorer;
-
-        /**
-         * @param colorer colorer
-         */
-        AHFEModel(final GTUColorer colorer)
-        {
-            this.colorer = colorer;
-        }
 
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
@@ -634,10 +622,10 @@ public class AHFEAnimation extends AbstractWrappableAnimation
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, this.colorer, (OTSDEVSSimulatorInterface) theSimulator, getReplication(),
-                        getAnticipationStrategy(), getReactionTime(), getAnticipationTime(), getTruckFraction(), SIMEND,
-                        getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(), getSpeedError(),
-                        getAccelerationError());
+                AHFEUtil.createDemand(this.network, AHFEAnimation.this.getColorer(), (OTSDEVSSimulatorInterface) theSimulator,
+                        getReplication(), getAnticipationStrategy(), getReactionTime(), getAnticipationTime(),
+                        getTruckFraction(), SIMEND, getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(),
+                        getSpeedError(), getAccelerationError());
 
             }
             catch (Exception exception)

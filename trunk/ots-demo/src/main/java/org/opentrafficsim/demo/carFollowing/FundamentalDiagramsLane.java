@@ -34,7 +34,6 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -139,9 +138,9 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    protected final OTSModelInterface makeModel()
     {
-        this.model = new FundamentalDiagramLanePlotsModel(this.savedUserModifiedProperties, colorer);
+        this.model = new FundamentalDiagramLanePlotsModel(this.savedUserModifiedProperties);
         return this.model;
     }
 
@@ -268,17 +267,12 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
 
-        /** The GTUColorer for the generated vehicles. */
-        private final GTUColorer gtuColorer;
-
         /**
          * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
-         * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          */
-        FundamentalDiagramLanePlotsModel(final List<Property<?>> properties, final GTUColorer gtuColorer)
+        FundamentalDiagramLanePlotsModel(final List<Property<?>> properties)
         {
             this.fundamentalDiagramsLaneProperties = properties;
-            this.gtuColorer = gtuColorer;
         }
 
         /** {@inheritDoc} */
@@ -302,8 +296,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 }
                 // create SinkLane
                 OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(node.getPoint().x + 50.0, 0, 0));
-                CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", node, end, null,
-                        simulator);
+                CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", node, end, null, this.simulator);
                 int last = this.lanes.size() - 1;
                 Lane sinkLane = new Lane(endLink, "sinkLane", this.lanes.get(last).getLateralCenterPosition(1.0),
                         this.lanes.get(last).getLateralCenterPosition(1.0), this.lanes.get(last).getWidth(1.0),
@@ -413,7 +406,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                         new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, this.block), this.block);
                 this.block.setParameters(parameters);
                 this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
-                        this.gtuColorer);
+                        FundamentalDiagramsLane.this.getColorer());
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
             {
@@ -457,7 +450,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                         new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
                 gtu.setParameters(parameters);
                 gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
-                        this.gtuColorer);
+                        FundamentalDiagramsLane.this.getColorer());
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)

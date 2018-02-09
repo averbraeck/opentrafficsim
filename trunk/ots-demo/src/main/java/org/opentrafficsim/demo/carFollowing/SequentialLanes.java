@@ -20,11 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -48,11 +43,11 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.demo.carFollowing.Straight.StraightModel;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
@@ -79,6 +74,11 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Single lane road consisting of three consecutive links.<br>
@@ -187,9 +187,9 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    protected final OTSModelInterface makeModel()
     {
-        this.model = new SequentialModel(this.savedUserModifiedProperties, colorer);
+        this.model = new SequentialModel(this.savedUserModifiedProperties);
         return this.model;
     }
 
@@ -321,329 +321,326 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
                 + "Selected trajectory and contour plots are generated during the simulation.</html>";
     }
 
-}
-
-/**
- * Build the sequential model.
- * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version 0 jan. 2015 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- */
-class SequentialModel implements OTSModelInterface, UNITS
-{
-    /** */
-    private static final long serialVersionUID = 20150130L;
-
-    /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
-
-    /** The network. */
-    private final OTSNetwork network = new OTSNetwork("network");
-
-    /** The nodes of our network in the order that all GTUs will visit them. */
-    private List<OTSNode> nodes = new ArrayList<>();
-
-    /** The car following model, e.g. IDM Plus for cars. */
-    private GTUFollowingModelOld carFollowingModelCars;
-
-    /** The car following model, e.g. IDM Plus for trucks. */
-    private GTUFollowingModelOld carFollowingModelTrucks;
-
-    /** The probability that the next generated GTU is a passenger car. */
-    private double carProbability;
-
-    /** The headway (inter-vehicle time). */
-    private Duration headway;
-
-    /** Number of cars created. */
-    private int carsCreated = 0;
-
-    /** Type of all GTUs. */
-    private GTUType gtuType = CAR;
-
-    /** Minimum distance. */
-    private Length minimumDistance = new Length(0, METER);
-
-    /** The Lane where newly created Cars initially placed on. */
-    private Lane initialLane;
-
-    /** Maximum distance. */
-    private Length maximumDistance = new Length(2001, METER);
-
-    /** The contour plots. */
-    private List<LaneBasedGTUSampler> plots = new ArrayList<>();
-
-    /** The random number generator used to decide what kind of GTU to generate. */
-    private Random randomGenerator = new Random(12345);
-
-    /** User settable properties. */
-    private List<Property<?>> properties = null;
-
-    /** The sequence of Lanes that all vehicles will follow. */
-    private List<Lane> path = new ArrayList<>();
-
-    /** The speedLimit on all Lanes. */
-    private Speed speedLimit;
-
-    /** The GTUColorer for the generated vehicles. */
-    private final GTUColorer gtuColorer;
-
     /**
-     * @param properties the user settable properties
-     * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
+     * Build the sequential model.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * <p>
+     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * initial version 0 jan. 2015 <br>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    SequentialModel(final List<Property<?>> properties, final GTUColorer gtuColorer)
+    class SequentialModel implements OTSModelInterface, UNITS
     {
-        this.properties = properties;
-        this.gtuColorer = gtuColorer;
-    }
+        /** */
+        private static final long serialVersionUID = 20150130L;
 
-    /**
-     * @return a newly created path (which all GTUs in this simulation will follow).
-     */
-    public List<Lane> getPath()
-    {
-        return new ArrayList<>(this.path);
-    }
+        /** The simulator. */
+        private OTSDEVSSimulatorInterface simulator;
 
-    /** {@inheritDoc} */
-    @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
-    {
-        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        this.speedLimit = new Speed(100, KM_PER_HOUR);
+        /** The network. */
+        private final OTSNetwork network = new OTSNetwork("network");
 
-        // TODO Bezier curves make 180 degree mistake when minus is true
-        boolean minus = false;
+        /** The nodes of our network in the order that all GTUs will visit them. */
+        private List<OTSNode> nodes = new ArrayList<>();
 
-        this.nodes = new ArrayList<>();
-        try
+        /** The car following model, e.g. IDM Plus for cars. */
+        private GTUFollowingModelOld carFollowingModelCars;
+
+        /** The car following model, e.g. IDM Plus for trucks. */
+        private GTUFollowingModelOld carFollowingModelTrucks;
+
+        /** The probability that the next generated GTU is a passenger car. */
+        private double carProbability;
+
+        /** The headway (inter-vehicle time). */
+        private Duration headway;
+
+        /** Number of cars created. */
+        private int carsCreated = 0;
+
+        /** Type of all GTUs. */
+        private GTUType gtuType = CAR;
+
+        /** Minimum distance. */
+        private Length minimumDistance = new Length(0, METER);
+
+        /** The Lane where newly created Cars initially placed on. */
+        private Lane initialLane;
+
+        /** Maximum distance. */
+        private Length maximumDistance = new Length(2001, METER);
+
+        /** The contour plots. */
+        private List<LaneBasedGTUSampler> plots = new ArrayList<>();
+
+        /** The random number generator used to decide what kind of GTU to generate. */
+        private Random randomGenerator = new Random(12345);
+
+        /** User settable properties. */
+        private List<Property<?>> properties = null;
+
+        /** The sequence of Lanes that all vehicles will follow. */
+        private List<Lane> path = new ArrayList<>();
+
+        /** The speedLimit on all Lanes. */
+        private Speed speedLimit;
+
+        /**
+         * @param properties the user settable properties
+         */
+        SequentialModel(final List<Property<?>> properties)
         {
-            OTSNode n0 = new OTSNode(this.network, "Node(0,0)", new OTSPoint3D(0, 0));
-            OTSNode n1 = new OTSNode(this.network, "Node(1000,0)", new OTSPoint3D(1000, 0));
-            OTSNode n2 = new OTSNode(this.network, "Node(1020,3)", new OTSPoint3D(1020, 3));
-            OTSNode n3 = new OTSNode(this.network, "Node(2000,197)", new OTSPoint3D(2000, 197));
-            OTSNode n4 = new OTSNode(this.network, "Node(2020,200)", new OTSPoint3D(2020, 200));
-            OTSNode n5 = new OTSNode(this.network, "Node(2200,200)", new OTSPoint3D(2200, 200));
-            this.nodes.addAll(Arrays.asList(new OTSNode[] { n0, n1, n2, n3, n4, n5 }));
-
-            LaneType laneType = LaneType.TWO_WAY_LANE;
-
-            // Now we can build a series of Links with one Lane on them
-            ArrayList<CrossSectionLink> links = new ArrayList<>();
-            OTSLine3D l01 = new OTSLine3D(n0.getPoint(), n1.getPoint());
-            OTSLine3D l12 = LaneFactory.makeBezier(n0, n1, n2, n3);
-            OTSLine3D l23 = minus ? new OTSLine3D(n3.getPoint(), n2.getPoint()) : new OTSLine3D(n2.getPoint(), n3.getPoint());
-            OTSLine3D l34 = LaneFactory.makeBezier(n2, n3, n4, n5);
-            OTSLine3D l45 = new OTSLine3D(n4.getPoint(), n5.getPoint());
-            OTSLine3D[] lines = new OTSLine3D[] { l01, l12, l23, l34, l45 };
-
-            for (int i = 1; i < this.nodes.size(); i++)
-            {
-                OTSNode fromNode = this.nodes.get(i - 1);
-                OTSNode toNode = this.nodes.get(i);
-                OTSLine3D line = lines[i - 1];
-                String linkName = fromNode.getId() + "-" + toNode.getId();
-                LongitudinalDirectionality direction =
-                        line.equals(l23) && minus ? LongitudinalDirectionality.DIR_MINUS : LongitudinalDirectionality.DIR_PLUS;
-                Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, line.getPoints(), 1,
-                        laneType, this.speedLimit, this.simulator);
-                if (i == this.nodes.size() - 1)
-                {
-                    new SinkSensor(lanes[0], new Length(100.0, METER), this.simulator);
-                }
-                this.path.add(lanes[0]);
-                links.add(lanes[0].getParentLink());
-                if (1 == i)
-                {
-                    this.initialLane = lanes[0];
-                }
-            }
-        }
-        catch (NamingException | NetworkException | OTSGeometryException exception)
-        {
-            exception.printStackTrace();
+            this.properties = properties;
         }
 
-        // 1500 [veh / hour] == 2.4s headway
-        this.headway = new Duration(3600.0 / 1500.0, SECOND);
-        // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
-        this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", null);
-        // Schedule regular updates of the graphs
-        for (int t = 1; t <= 1800; t++)
+        /**
+         * @return a newly created path (which all GTUs in this simulation will follow).
+         */
+        public List<Lane> getPath()
         {
-            this.simulator.scheduleEventAbs(new Time(t - 0.001, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
+            return new ArrayList<>(this.path);
         }
-        try
+
+        /** {@inheritDoc} */
+        @Override
+        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
+                throws SimRuntimeException, RemoteException
         {
-            String carFollowingModelName = null;
-            CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-            Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
-            if (null == cfmp)
+            this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+            this.speedLimit = new Speed(100, KM_PER_HOUR);
+
+            // TODO Bezier curves make 180 degree mistake when minus is true
+            boolean minus = false;
+
+            this.nodes = new ArrayList<>();
+            try
             {
-                throw new Error("Cannot find \"Car following model\" property");
-            }
-            if (cfmp instanceof SelectionProperty)
-            {
-                carFollowingModelName = ((SelectionProperty) cfmp).getValue();
-            }
-            else
-            {
-                throw new Error("\"Car following model\" property has wrong type");
-            }
-            for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
-            {
-                if (ap instanceof SelectionProperty)
+                OTSNode n0 = new OTSNode(this.network, "Node(0,0)", new OTSPoint3D(0, 0));
+                OTSNode n1 = new OTSNode(this.network, "Node(1000,0)", new OTSPoint3D(1000, 0));
+                OTSNode n2 = new OTSNode(this.network, "Node(1020,3)", new OTSPoint3D(1020, 3));
+                OTSNode n3 = new OTSNode(this.network, "Node(2000,197)", new OTSPoint3D(2000, 197));
+                OTSNode n4 = new OTSNode(this.network, "Node(2020,200)", new OTSPoint3D(2020, 200));
+                OTSNode n5 = new OTSNode(this.network, "Node(2200,200)", new OTSPoint3D(2200, 200));
+                this.nodes.addAll(Arrays.asList(new OTSNode[] { n0, n1, n2, n3, n4, n5 }));
+
+                LaneType laneType = LaneType.TWO_WAY_LANE;
+
+                // Now we can build a series of Links with one Lane on them
+                ArrayList<CrossSectionLink> links = new ArrayList<>();
+                OTSLine3D l01 = new OTSLine3D(n0.getPoint(), n1.getPoint());
+                OTSLine3D l12 = LaneFactory.makeBezier(n0, n1, n2, n3);
+                OTSLine3D l23 =
+                        minus ? new OTSLine3D(n3.getPoint(), n2.getPoint()) : new OTSLine3D(n2.getPoint(), n3.getPoint());
+                OTSLine3D l34 = LaneFactory.makeBezier(n2, n3, n4, n5);
+                OTSLine3D l45 = new OTSLine3D(n4.getPoint(), n5.getPoint());
+                OTSLine3D[] lines = new OTSLine3D[] { l01, l12, l23, l34, l45 };
+
+                for (int i = 1; i < this.nodes.size(); i++)
                 {
-                    SelectionProperty sp = (SelectionProperty) ap;
-                    if ("CarFollowingModel".equals(sp.getKey()))
+                    OTSNode fromNode = this.nodes.get(i - 1);
+                    OTSNode toNode = this.nodes.get(i);
+                    OTSLine3D line = lines[i - 1];
+                    String linkName = fromNode.getId() + "-" + toNode.getId();
+                    LongitudinalDirectionality direction = line.equals(l23) && minus ? LongitudinalDirectionality.DIR_MINUS
+                            : LongitudinalDirectionality.DIR_PLUS;
+                    Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, line.getPoints(), 1,
+                            laneType, this.speedLimit, this.simulator);
+                    if (i == this.nodes.size() - 1)
                     {
-                        carFollowingModelName = sp.getValue();
+                        new SinkSensor(lanes[0], new Length(100.0, METER), this.simulator);
+                    }
+                    this.path.add(lanes[0]);
+                    links.add(lanes[0].getParentLink());
+                    if (1 == i)
+                    {
+                        this.initialLane = lanes[0];
                     }
                 }
-                else if (ap instanceof ProbabilityDistributionProperty)
+            }
+            catch (NamingException | NetworkException | OTSGeometryException exception)
+            {
+                exception.printStackTrace();
+            }
+
+            // 1500 [veh / hour] == 2.4s headway
+            this.headway = new Duration(3600.0 / 1500.0, SECOND);
+            // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
+            this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", null);
+            // Schedule regular updates of the graphs
+            for (int t = 1; t <= 1800; t++)
+            {
+                this.simulator.scheduleEventAbs(new Time(t - 0.001, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
+            }
+            try
+            {
+                String carFollowingModelName = null;
+                CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
+                Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                if (null == cfmp)
                 {
-                    ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) ap;
-                    if (ap.getKey().equals("TrafficComposition"))
-                    {
-                        this.carProbability = pdp.getValue()[0];
-                    }
+                    throw new Error("Cannot find \"Car following model\" property");
                 }
-                else if (ap instanceof CompoundProperty)
+                if (cfmp instanceof SelectionProperty)
                 {
-                    CompoundProperty cp = (CompoundProperty) ap;
-                    if (ap.getKey().equals("OutputGraphs"))
+                    carFollowingModelName = ((SelectionProperty) cfmp).getValue();
+                }
+                else
+                {
+                    throw new Error("\"Car following model\" property has wrong type");
+                }
+                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                {
+                    if (ap instanceof SelectionProperty)
                     {
-                        continue; // Output settings are handled elsewhere
+                        SelectionProperty sp = (SelectionProperty) ap;
+                        if ("CarFollowingModel".equals(sp.getKey()))
+                        {
+                            carFollowingModelName = sp.getValue();
+                        }
                     }
-                    if (ap.getKey().contains("IDM"))
+                    else if (ap instanceof ProbabilityDistributionProperty)
                     {
-                        // System.out.println("Car following model name appears to be " + ap.getKey());
-                        Acceleration a = IDMPropertySet.getA(cp);
-                        Acceleration b = IDMPropertySet.getB(cp);
-                        Length s0 = IDMPropertySet.getS0(cp);
-                        Duration tSafe = IDMPropertySet.getTSafe(cp);
-                        GTUFollowingModelOld gtuFollowingModel = null;
-                        if (carFollowingModelName.equals("IDM"))
+                        ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) ap;
+                        if (ap.getKey().equals("TrafficComposition"))
                         {
-                            gtuFollowingModel = new IDMOld(a, b, s0, tSafe, 1.0);
+                            this.carProbability = pdp.getValue()[0];
                         }
-                        else if (carFollowingModelName.equals("IDM+"))
+                    }
+                    else if (ap instanceof CompoundProperty)
+                    {
+                        CompoundProperty cp = (CompoundProperty) ap;
+                        if (ap.getKey().equals("OutputGraphs"))
                         {
-                            gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
+                            continue; // Output settings are handled elsewhere
                         }
-                        else
+                        if (ap.getKey().contains("IDM"))
                         {
-                            throw new Error("Unknown gtu following model: " + carFollowingModelName);
-                        }
-                        if (ap.getKey().contains("Car"))
-                        {
-                            this.carFollowingModelCars = gtuFollowingModel;
-                        }
-                        else if (ap.getKey().contains("Truck"))
-                        {
-                            this.carFollowingModelTrucks = gtuFollowingModel;
-                        }
-                        else
-                        {
-                            throw new Error("Cannot determine gtu type for " + ap.getKey());
+                            // System.out.println("Car following model name appears to be " + ap.getKey());
+                            Acceleration a = IDMPropertySet.getA(cp);
+                            Acceleration b = IDMPropertySet.getB(cp);
+                            Length s0 = IDMPropertySet.getS0(cp);
+                            Duration tSafe = IDMPropertySet.getTSafe(cp);
+                            GTUFollowingModelOld gtuFollowingModel = null;
+                            if (carFollowingModelName.equals("IDM"))
+                            {
+                                gtuFollowingModel = new IDMOld(a, b, s0, tSafe, 1.0);
+                            }
+                            else if (carFollowingModelName.equals("IDM+"))
+                            {
+                                gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
+                            }
+                            else
+                            {
+                                throw new Error("Unknown gtu following model: " + carFollowingModelName);
+                            }
+                            if (ap.getKey().contains("Car"))
+                            {
+                                this.carFollowingModelCars = gtuFollowingModel;
+                            }
+                            else if (ap.getKey().contains("Truck"))
+                            {
+                                this.carFollowingModelTrucks = gtuFollowingModel;
+                            }
+                            else
+                            {
+                                throw new Error("Cannot determine gtu type for " + ap.getKey());
+                            }
                         }
                     }
                 }
             }
-        }
-        catch (Exception e)
-        {
-            System.out.println("Caught exception " + e);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
-    {
-        return this.simulator;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OTSNetwork getNetwork()
-    {
-        return this.network;
-    }
-
-    /**
-     * @return contourPlots
-     */
-    public final List<LaneBasedGTUSampler> getPlots()
-    {
-        return this.plots;
-    }
-
-    /**
-     * @return minimumDistance
-     */
-    public final Length getMinimumDistance()
-    {
-        return this.minimumDistance;
-    }
-
-    /**
-     * @return maximumDistance
-     */
-    public final Length getMaximumDistance()
-    {
-        return this.maximumDistance;
-    }
-
-    /**
-     * Notify the contour plots that the underlying data has changed.
-     */
-    protected final void drawGraphs()
-    {
-        for (LaneBasedGTUSampler plot : this.plots)
-        {
-            plot.reGraph();
-        }
-    }
-
-    /**
-     * Generate cars at a fixed rate (implemented by re-scheduling this method).
-     */
-    protected final void generateCar()
-    {
-        boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Length initialPosition = new Length(0, METER);
-        Speed initialSpeed = new Speed(100, KM_PER_HOUR);
-        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        try
-        {
-            initialPositions.add(new DirectedLanePosition(this.initialLane, initialPosition, GTUDirectionality.DIR_PLUS));
-            Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-            GTUFollowingModelOld gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
-            if (null == gtuFollowingModel)
+            catch (Exception e)
             {
-                throw new Error("gtuFollowingModel is null");
+                System.out.println("Caught exception " + e);
             }
-            Parameters parameters = DefaultsFactory.getDefaultParameters();
-            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
-                    new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
-            gtu.setParameters(parameters);
-            gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
-                    this.gtuColorer);
-            this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
-        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
-        {
-            exception.printStackTrace();
-        }
-    }
 
+        /** {@inheritDoc} */
+        @Override
+        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        {
+            return this.simulator;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OTSNetwork getNetwork()
+        {
+            return this.network;
+        }
+
+        /**
+         * @return contourPlots
+         */
+        public final List<LaneBasedGTUSampler> getPlots()
+        {
+            return this.plots;
+        }
+
+        /**
+         * @return minimumDistance
+         */
+        public final Length getMinimumDistance()
+        {
+            return this.minimumDistance;
+        }
+
+        /**
+         * @return maximumDistance
+         */
+        public final Length getMaximumDistance()
+        {
+            return this.maximumDistance;
+        }
+
+        /**
+         * Notify the contour plots that the underlying data has changed.
+         */
+        protected final void drawGraphs()
+        {
+            for (LaneBasedGTUSampler plot : this.plots)
+            {
+                plot.reGraph();
+            }
+        }
+
+        /**
+         * Generate cars at a fixed rate (implemented by re-scheduling this method).
+         */
+        protected final void generateCar()
+        {
+            boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
+            Length initialPosition = new Length(0, METER);
+            Speed initialSpeed = new Speed(100, KM_PER_HOUR);
+            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+            try
+            {
+                initialPositions.add(new DirectedLanePosition(this.initialLane, initialPosition, GTUDirectionality.DIR_PLUS));
+                Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
+                GTUFollowingModelOld gtuFollowingModel =
+                        generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+                if (null == gtuFollowingModel)
+                {
+                    throw new Error("gtuFollowingModel is null");
+                }
+                Parameters parameters = DefaultsFactory.getDefaultParameters();
+                LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
+                        new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
+                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
+                        new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
+                gtu.setParameters(parameters);
+                gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
+                        SequentialLanes.this.getColorer());
+                this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
+            }
+            catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+
+    }
 }

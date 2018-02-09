@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import nl.tudelft.simulation.jstats.distributions.DistNormal;
-import nl.tudelft.simulation.language.Throw;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -27,6 +24,9 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+
+import nl.tudelft.simulation.jstats.distributions.DistNormal;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Implementation of delayed neighbors perception which anticipates using constant speed.

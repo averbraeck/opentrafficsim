@@ -15,6 +15,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -104,12 +105,6 @@ public final class LmrsUtil implements LmrsParameters
             final Map<Class<? extends Incentive>, Desire> desireMap)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
-        
-        // TODO this is a hack to prevent right lane changes of all vehicles on the left lane when placed in network at t=0
-        if (startTime.si == 0.0)
-        {
-            // return new SimpleOperationalPlan(Acceleration.ZERO, LateralDirectionality.NONE);
-        }
 
         // obtain objects to get info
         SpeedLimitProspect slp =
@@ -149,62 +144,61 @@ public final class LmrsUtil implements LmrsParameters
             Desire desire = getLaneChangeDesire(params, perception, carFollowingModel, mandatoryIncentives, voluntaryIncentives,
                     desireMap);
 
-            // gap acceptance
-            boolean acceptLeft = acceptLaneChange(perception, params, sli, carFollowingModel, desire.getLeft(), speed,
-                    LateralDirectionality.LEFT, lmrsData.getGapAcceptance());
-            boolean acceptRight = acceptLaneChange(perception, params, sli, carFollowingModel, desire.getRight(), speed,
-                    LateralDirectionality.RIGHT, lmrsData.getGapAcceptance());
-
             // lane change decision
             double dFree = params.getParameter(DFREE);
-            double dSync = params.getParameter(DSYNC);
-            double dCoop = params.getParameter(DCOOP);
-            // decide
-
-            if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dFree && acceptLeft)
+            initiatedLaneChange = LateralDirectionality.NONE;
+            turnIndicatorStatus = TurnIndicatorIntent.NONE;
+            if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dFree)
             {
-                // change left
-                initiatedLaneChange = LateralDirectionality.LEFT;
-                turnIndicatorStatus = TurnIndicatorIntent.LEFT;
-                params.setParameter(DLC, desire.getLeft());
-                setDesiredHeadway(params, desire.getLeft());
-                leaders = neighbors.getLeaders(RelativeLane.LEFT);
-                if (!leaders.isEmpty())
+                if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getLeft(), speed,
+                        LateralDirectionality.LEFT, lmrsData.getGapAcceptance()))
                 {
-                    // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
-                    lmrsData.isNewLeader(leaders.first());
+                    // change left
+                    initiatedLaneChange = LateralDirectionality.LEFT;
+                    turnIndicatorStatus = TurnIndicatorIntent.LEFT;
+                    params.setParameter(DLC, desire.getLeft());
+                    setDesiredHeadway(params, desire.getLeft());
+                    leaders = neighbors.getLeaders(RelativeLane.LEFT);
+                    if (!leaders.isEmpty())
+                    {
+                        // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next
+                        // step
+                        lmrsData.isNewLeader(leaders.first());
+                    }
+                    a = Acceleration.min(a, CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli,
+                            neighbors.getLeaders(RelativeLane.LEFT)));
+                    laneChange.setLaneChangeDuration(gtu.getParameters().getParameter(LCDUR));
                 }
-                a = Acceleration.min(a, CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli,
-                        neighbors.getLeaders(RelativeLane.LEFT)));
             }
-            else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree && acceptRight)
+            else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree)
             {
-                // change right
-                initiatedLaneChange = LateralDirectionality.RIGHT;
-                turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
-                params.setParameter(DLC, desire.getRight());
-                setDesiredHeadway(params, desire.getRight());
-                leaders = neighbors.getLeaders(RelativeLane.RIGHT);
-                if (!leaders.isEmpty())
+                if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getRight(), speed,
+                        LateralDirectionality.RIGHT, lmrsData.getGapAcceptance()))
                 {
-                    // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
-                    lmrsData.isNewLeader(leaders.first());
+                    // change right
+                    initiatedLaneChange = LateralDirectionality.RIGHT;
+                    turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
+                    params.setParameter(DLC, desire.getRight());
+                    setDesiredHeadway(params, desire.getRight());
+                    leaders = neighbors.getLeaders(RelativeLane.RIGHT);
+                    if (!leaders.isEmpty())
+                    {
+                        // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next
+                        // step
+                        lmrsData.isNewLeader(leaders.first());
+                    }
+                    a = Acceleration.min(a, CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli,
+                            neighbors.getLeaders(RelativeLane.RIGHT)));
+                    laneChange.setLaneChangeDuration(gtu.getParameters().getParameter(LCDUR));
                 }
-                a = Acceleration.min(a, CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli,
-                        neighbors.getLeaders(RelativeLane.RIGHT)));
             }
-            else
-            {
-                initiatedLaneChange = LateralDirectionality.NONE;
-                turnIndicatorStatus = TurnIndicatorIntent.NONE;
-            }
-            laneChange.setLaneChangeDuration(gtu.getParameters().getParameter(LCDUR));
 
             // take action if we cannot change lane
             Acceleration aSync;
             if (initiatedLaneChange.equals(LateralDirectionality.NONE))
             {
                 // synchronize
+                double dSync = params.getParameter(DSYNC);
                 if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dSync)
                 {
                     aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel,
@@ -218,6 +212,7 @@ public final class LmrsUtil implements LmrsParameters
                     a = Acceleration.min(a, aSync);
                 }
                 // use indicators to indicate lane change need
+                double dCoop = params.getParameter(DCOOP);
                 if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dCoop)
                 {
                     // switch on left indicator
@@ -309,7 +304,7 @@ public final class LmrsUtil implements LmrsParameters
      * @throws GTUException if there is no mandatory incentive, the model requires at least one
      * @throws OperationalPlanException perception exception
      */
-    private static Desire getLaneChangeDesire(final Parameters parameters, final LanePerception perception,
+    public static Desire getLaneChangeDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
             final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives,
             final Map<Class<? extends Incentive>, Desire> desireMap)
@@ -394,16 +389,10 @@ public final class LmrsUtil implements LmrsParameters
     {
 
         // beyond start distance
-        try
+        boolean beyond = Try.assign(() -> perception.getGtu().laneChangeAllowed(), "Cannot obtain GTU.");
+        if (!beyond)
         {
-            if (!perception.getGtu().laneChangeAllowed())
-            {
-                return false;
-            }
-        }
-        catch (GTUException exception)
-        {
-            throw new RuntimeException("Cannot obtain GTU.", exception);
+            return false;
         }
 
         // legal?

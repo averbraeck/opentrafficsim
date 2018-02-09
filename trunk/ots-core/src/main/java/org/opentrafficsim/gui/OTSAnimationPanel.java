@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Field;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -25,7 +26,10 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 
@@ -35,6 +39,9 @@ import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * Animation panel with various controls.
@@ -47,7 +54,7 @@ import nl.tudelft.simulation.event.Event;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListener, WindowListener
+public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListener, WindowListener, EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -64,6 +71,9 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     /** Map of toggle names to toggle animation classes. */
     private Map<String, Class<? extends Locatable>> toggleLocatableMap = new HashMap<>();
 
+    /** Set of animation classes to toggle buttons. */
+    private Map<Class<? extends Locatable>, JToggleButton> toggleButtons = new HashMap<>();
+
     /** Set of GIS layer names to toggle GIS layers . */
     private Map<String, MapInterface> toggleGISMap = new HashMap<>();
 
@@ -79,8 +89,14 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     /** The coordinates of the cursor. */
     private final JLabel coordinateField;
 
+    /** The GTU count field. */
+    private final JLabel gtuCountField;
+
+    /** The GTU count. */
+    private int gtuCount = 0;
+
     /** The animation buttons. */
-    private final ArrayList<JButton> buttons = new ArrayList<JButton>();
+    private final ArrayList<JButton> buttons = new ArrayList<>();
 
     /** The formatter for the world coordinates. */
     private static final NumberFormat FORMATTER = NumberFormat.getInstance();
@@ -106,16 +122,19 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @param simulator the simulator or animator of the model.
      * @param wrappableAnimation the builder and rebuilder of the simulation, based on properties.
      * @param gtuColorer the colorer to use for the GTUs.
+     * @param network OTSNetwork; network
      * @throws RemoteException when notification of the animation panel fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final SimpleAnimator simulator,
-            final WrappableAnimation wrappableAnimation, final GTUColorer gtuColorer) throws RemoteException, PropertyException
+            final WrappableAnimation wrappableAnimation, final GTUColorer gtuColorer, final OTSNetwork network)
+            throws RemoteException, PropertyException
     {
         super(simulator, wrappableAnimation);
 
         // Add the animation panel as a tab.
         this.animationPanel = new AnimationPanel(extent, size, simulator);
+        this.animationPanel.showGrid(false);
         this.borderPanel = new JPanel(new BorderLayout());
         this.borderPanel.add(this.animationPanel, BorderLayout.CENTER);
         getTabbedPane().addTab(0, "animation", this.borderPanel);
@@ -140,10 +159,23 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         buttonPanel.add(makeButton("homeButton", "/Home.png", "Home", "Zoom to original extent", true));
         buttonPanel.add(makeButton("gridButton", "/Grid.png", "Grid", "Toggle grid on/off", true));
         buttonPanel.add(new JLabel("   "));
+
+        // add info labels next to buttons
+        JPanel infoTextPanel = new JPanel();
+        buttonPanel.add(infoTextPanel);
+        infoTextPanel.setMinimumSize(new Dimension(250, 20));
+        infoTextPanel.setPreferredSize(new Dimension(250, 20));
+        infoTextPanel.setLayout(new BoxLayout(infoTextPanel, BoxLayout.Y_AXIS));
         this.coordinateField = new JLabel("Mouse: ");
         this.coordinateField.setMinimumSize(new Dimension(250, 10));
         this.coordinateField.setPreferredSize(new Dimension(250, 10));
-        buttonPanel.add(this.coordinateField);
+        infoTextPanel.add(this.coordinateField);
+        this.gtuCountField = new JLabel("0 GTU's");
+        this.gtuCountField.setMinimumSize(new Dimension(250, 10));
+        this.gtuCountField.setPreferredSize(new Dimension(250, 10));
+        infoTextPanel.add(this.gtuCountField);
+        network.addListener(this, Network.GTU_ADD_EVENT);
+        network.addListener(this, Network.GTU_REMOVE_EVENT);
 
         // Tell the animation to build the list of animation objects.
         this.animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
@@ -198,7 +230,10 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     {
         JToggleButton button;
         Icon icon = OTSControlPanel.loadIcon(iconPath);
-        button = new JCheckBox(icon);
+        Icon unIcon = OTSControlPanel.loadGrayscaleIcon(iconPath);
+        button = new JCheckBox();
+        button.setSelectedIcon(icon);
+        button.setIcon(unIcon);
         button.setPreferredSize(new Dimension(32, 28));
         button.setName(name);
         button.setEnabled(true);
@@ -231,6 +266,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             this.animationPanel.hideClass(locatableClass);
         }
         this.toggleLocatableMap.put(name, locatableClass);
+        this.toggleButtons.put(locatableClass, button);
     }
 
     /**
@@ -267,6 +303,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             this.animationPanel.hideClass(locatableClass);
         }
         this.toggleLocatableMap.put(name, locatableClass);
+        this.toggleButtons.put(locatableClass, button);
     }
 
     /**
@@ -434,6 +471,32 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     }
 
     /**
+     * Update the checkmark related to a programmatically changed animation state.
+     * @param locatableClass Class; class to show the checkmark for
+     */
+    public final void updateAnimationClassCheckBox(final Class<? extends Locatable> locatableClass)
+    {
+        JToggleButton button = this.toggleButtons.get(locatableClass);
+        if (button == null)
+        {
+            return;
+        }
+        // TODO complete hack, but everything is final...
+        Field field = Try.assign(() -> ClassUtil.resolveField(AnimationPanel.class, "visibilityMap"), "No field visibilityMap");
+        field.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        Map<Class<? extends Locatable>, Boolean> map =
+                Try.assign(() -> (Map<Class<? extends Locatable>, Boolean>) field.get(this.getAnimationPanel()),
+                        "visibilityMap not a map?");
+        Boolean show = map.get(locatableClass);
+        if (show == null)
+        {
+            return;
+        }
+        button.setSelected(show);
+    }
+
+    /**
      * Display the latest world coordinate based on the mouse position on the screen.
      */
     protected final void updateWorldCoordinate()
@@ -504,7 +567,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 {
                     Thread.sleep(10);
                 }
-                catch (InterruptedException exception)
+                catch (@SuppressWarnings("unused") InterruptedException exception)
                 {
                     // nothing to do
                 }
@@ -578,6 +641,22 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         // No action
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        if (event.getType().equals(Network.GTU_ADD_EVENT))
+        {
+            this.gtuCount++;
+            this.gtuCountField.setText(this.gtuCount + " GTU's");
+        }
+        else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
+        {
+            this.gtuCount--;
+            this.gtuCountField.setText(this.gtuCount + " GTU's");
+        }
+    }
+
     /**
      * UpdateTimer class to update the coordinate on the screen.
      */
@@ -597,7 +676,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 {
                     Thread.sleep(50); // 20 times per second
                 }
-                catch (InterruptedException exception)
+                catch (@SuppressWarnings("unused") InterruptedException exception)
                 {
                     // do nothing
                 }
@@ -612,4 +691,5 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         }
 
     }
+
 }

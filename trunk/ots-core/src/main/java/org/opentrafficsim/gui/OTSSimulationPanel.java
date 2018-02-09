@@ -1,6 +1,7 @@
 package org.opentrafficsim.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Insets;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.Property;
@@ -44,11 +46,17 @@ public class OTSSimulationPanel extends JPanel
     /** The control panel to control start/stop, speed of the simulation. */
     private final OTSControlPanel otsControlPanel;
 
+    static
+    {
+        // use narrow border for TabbedPane, which cannot be changed afterwards
+        UIManager.put("TabbedPane.contentBorderInsets", new Insets(1, 1, 1, 1));
+    }
+
     /** The tabbed pane that contains the different (default) screens. */
-    private final TabbedContentPane tabbedPane = new TabbedContentPane(SwingConstants.BOTTOM);
+    private final TabbedContentPane tabbedPane = new AppearanceControlTabbedContentPane(SwingConstants.BOTTOM);
 
     /** The status bar at the bottom to indicate wall clock time and simulation time. */
-    private final StatusBar statusBar;
+    private final StatusBar statusBar = null;
 
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
@@ -60,6 +68,7 @@ public class OTSSimulationPanel extends JPanel
     public OTSSimulationPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation)
             throws RemoteException, PropertyException
     {
+
         this.simulator = simulator;
 
         this.setLayout(new BorderLayout());
@@ -69,7 +78,9 @@ public class OTSSimulationPanel extends JPanel
         this.add(this.otsControlPanel, BorderLayout.NORTH);
 
         // Let's add our console to our tabbed pane
-        this.tabbedPane.addTab("console", new JScrollPane(this.console));
+        JScrollPane cons = new JScrollPane(this.console);
+        cons.setBorder(null);
+        this.tabbedPane.addTab("console", cons);
 
         // Let's add the properties of the simulation model as a tab
         List<Property<?>> propertyList =
@@ -83,14 +94,16 @@ public class OTSSimulationPanel extends JPanel
         }
         html.append("</table></html>");
         JLabel propertySettings = new JLabel(html.toString());
-        this.tabbedPane.addTab("settings", new JScrollPane(propertySettings));
+        JScrollPane settings = new JScrollPane(propertySettings);
+        settings.setBorder(null);
+        this.tabbedPane.addTab("settings", settings);
 
         // Let's display our tabbed contentPane
         this.add(this.tabbedPane, BorderLayout.CENTER);
 
         // put a status bar at the bottom
-        this.statusBar = new StatusBar(this.simulator);
-        this.add(this.statusBar, BorderLayout.SOUTH);
+        // this.statusBar = new StatusBar(this.simulator);
+        // this.add(this.statusBar, BorderLayout.SOUTH);
     }
 
     /**
@@ -131,6 +144,32 @@ public class OTSSimulationPanel extends JPanel
     public final String toString()
     {
         return "OTSSimulationPanel [simulatorTime=" + this.simulator.getSimulatorTime().getTime() + "]";
+    }
+
+    /**
+     * TabbedContentPane which ignores appearance (it has too much colors looking ugly / becoming unreadable).
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 feb. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    static class AppearanceControlTabbedContentPane extends TabbedContentPane implements AppearanceControl
+    {
+        /** */
+        private static final long serialVersionUID = 20180206L;
+
+        /**
+         * @param tabPlacement
+         */
+        public AppearanceControlTabbedContentPane(int tabPlacement)
+        {
+            super(tabPlacement);
+        }
     }
 
 }

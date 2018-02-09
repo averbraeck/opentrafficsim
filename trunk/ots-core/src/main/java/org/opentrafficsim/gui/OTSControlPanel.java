@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
@@ -27,7 +28,9 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -89,13 +92,13 @@ public class OTSControlPanel extends JPanel
     private final Logger logger;
 
     /** The clock. */
-    private final ClockPanel clockPanel;
+    private final ClockLabel clockPanel;
 
     /** The time warp control. */
     private final TimeWarpPanel timeWarpPanel;
 
     /** The control buttons. */
-    private final ArrayList<JButton> buttons = new ArrayList<JButton>();
+    private final ArrayList<JButton> buttons = new ArrayList<>();
 
     /** Font used to display the clock and the stop time. */
     private final Font timeFont = new Font("SansSerif", Font.BOLD, 18);
@@ -135,9 +138,33 @@ public class OTSControlPanel extends JPanel
         this.timeWarpPanel = new TimeWarpPanel(0.1, 1000, 1, 3, simulator);
         buttonPanel.add(this.timeWarpPanel);
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", "Reset the simulation", false));
-        this.clockPanel = new ClockPanel();
+        class AppearanceControlLabel extends JLabel implements AppearanceControl
+        {
+            /** */
+            private static final long serialVersionUID = 20180207L;
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isForeground()
+            {
+                return true;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isBackground()
+            {
+                return true;
+            }
+        }
+        JLabel speedLabel = new AppearanceControlLabel();
+        this.clockPanel = new ClockLabel(speedLabel);
+        this.clockPanel.setMaximumSize(new Dimension(133, 35));
         buttonPanel.add(this.clockPanel);
+        speedLabel.setMaximumSize(new Dimension(66, 35));
+        buttonPanel.add(speedLabel);
         this.timeEdit = new TimeEdit(new Time(0, TimeUnit.BASE));
+        this.timeEdit.setMaximumSize(new Dimension(133, 35));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
@@ -161,8 +188,27 @@ public class OTSControlPanel extends JPanel
     private JButton makeButton(final String name, final String iconPath, final String actionCommand, final String toolTipText,
             final boolean enabled)
     {
-        // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
-        JButton result = new JButton(loadIcon(iconPath));
+        class AppearanceControlButton extends JButton implements AppearanceControl
+        {
+            /** */
+            private static final long serialVersionUID = 20180206L;
+
+            /**
+             * @param loadIcon
+             */
+            public AppearanceControlButton(final Icon loadIcon)
+            {
+                super(loadIcon);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean isFont()
+            {
+                return true;
+            }
+        }
+        JButton result = new AppearanceControlButton(loadIcon(iconPath));
         result.setName(name);
         result.setEnabled(enabled);
         result.setActionCommand(actionCommand);
@@ -183,7 +229,25 @@ public class OTSControlPanel extends JPanel
         {
             return new ImageIcon(URLResource.getResource(iconPath));
         }
-        catch (NullPointerException npe)
+        catch (@SuppressWarnings("unused") NullPointerException npe)
+        {
+            System.err.println("Could not load icon from path " + iconPath);
+            return null;
+        }
+    }
+    
+    /**
+     * Attempt to load and return an icon, which will be made gray-scale.
+     * @param iconPath String; the path that is used to load the icon
+     * @return Icon; or null if loading failed
+     */
+    public static final Icon loadGrayscaleIcon(final String iconPath)
+    {
+        try
+        {
+            return new ImageIcon(GrayFilter.createDisabledImage(ImageIO.read(URLResource.getResource(iconPath))));
+        }
+        catch (@SuppressWarnings("unused") NullPointerException | IOException e)
         {
             System.err.println("Could not load icon from path " + iconPath);
             return null;
@@ -208,8 +272,8 @@ public class OTSControlPanel extends JPanel
             final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> simEvent =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.BASE)), priority,
-                        source, eventTarget, method, args);
+                new SimEvent<>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source,
+                        eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
     }
@@ -254,7 +318,7 @@ public class OTSControlPanel extends JPanel
                 {
                     Thread.sleep(10);
                 }
-                catch (InterruptedException exception)
+                catch (@SuppressWarnings("unused") InterruptedException exception)
                 {
                     // nothing to do
                 }
@@ -320,7 +384,7 @@ public class OTSControlPanel extends JPanel
                     this.stopAtEvent = scheduleEvent(new Time(now, TimeUnit.BASE), SimEventInterface.MIN_PRIORITY, this, this,
                             "autoPauseSimulator", null);
                 }
-                catch (SimRuntimeException exception)
+                catch (@SuppressWarnings("unused") SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator", "Caught an exception "
                             + "while trying to schedule an autoPauseSimulator event at the current simulator time");
@@ -475,7 +539,7 @@ public class OTSControlPanel extends JPanel
                             this, "autoPauseSimulator", null);
                     getSimulator().start();
                 }
-                catch (SimRuntimeException exception)
+                catch (@SuppressWarnings("unused") SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator",
                             "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
@@ -550,7 +614,7 @@ public class OTSControlPanel extends JPanel
                 this.stopAtEvent = scheduleEvent(new Time(stopTime, TimeUnit.BASE), SimEventInterface.MAX_PRIORITY, this, this,
                         "autoPauseSimulator", null);
             }
-            catch (SimRuntimeException exception)
+            catch (@SuppressWarnings("unused") SimRuntimeException exception)
             {
                 this.logger.logp(Level.SEVERE, "ControlPanel", "propertyChange",
                         "Caught an exception while trying to schedule an autoPauseSimulator event");
@@ -688,7 +752,7 @@ public class OTSControlPanel extends JPanel
             int maximumTick = (int) Math.ceil(Math.log10(maximum / initialValue) * ticksPerDecade);
             this.slider = new JSlider(SwingConstants.HORIZONTAL, minimumTick, maximumTick + 1, 0);
             this.slider.setPreferredSize(new Dimension(350, 45));
-            Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
+            Hashtable<Integer, JLabel> labels = new Hashtable<>();
             for (int step = 0; step <= maximumTick; step++)
             {
                 StringBuilder text = new StringBuilder();
@@ -841,13 +905,13 @@ public class OTSControlPanel extends JPanel
     }
 
     /** JLabel that displays the simulation time. */
-    class ClockPanel extends JLabel
+    public class ClockLabel extends JLabel implements AppearanceControl
     {
         /** */
         private static final long serialVersionUID = 20141211L;
 
         /** The JLabel that displays the time. */
-        private final JLabel clockLabel;
+        private final JLabel speedLabel;
 
         /** The timer (so we can cancel it). */
         private Timer timer;
@@ -855,14 +919,21 @@ public class OTSControlPanel extends JPanel
         /** Timer update interval in msec. */
         private static final long UPDATEINTERVAL = 1000;
 
-        /** Construct a clock panel. */
-        ClockPanel()
+        /** Simulation time time. */
+        private double prevSimTime = 0;
+
+        /**
+         * Construct a clock panel.
+         * @param speedLabel JLabel; speed label
+         */
+        ClockLabel(final JLabel speedLabel)
         {
             super("00:00:00.000");
-            this.clockLabel = this;
+            this.speedLabel = speedLabel;
+            speedLabel.setFont(getTimeFont());
             this.setFont(getTimeFont());
             this.timer = new Timer();
-            this.timer.scheduleAtFixedRate(new TimeUpdateTask(), 0, ClockPanel.UPDATEINTERVAL);
+            this.timer.scheduleAtFixedRate(new TimeUpdateTask(), 0, ClockLabel.UPDATEINTERVAL);
         }
 
         /**
@@ -897,9 +968,19 @@ public class OTSControlPanel extends JPanel
                 double now = Math.round(getSimulator().getSimulatorTime().getTime().getSI() * 1000) / 1000d;
                 int seconds = (int) Math.floor(now);
                 int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
-                getClockLabel().setText(String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60,
+                ClockLabel.this.setText(String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60,
                         seconds % 60, fractionalSeconds));
-                getClockLabel().repaint();
+                ClockLabel.this.repaint();
+                double speed = getSpeed(now);
+                if (Double.isNaN(speed))
+                {
+                    getSpeedLabel().setText("");
+                }
+                else
+                {
+                    getSpeedLabel().setText(String.format("% 5.2fx  ", speed));
+                }
+                getSpeedLabel().repaint();
             }
 
             /** {@inheritDoc} */
@@ -911,24 +992,43 @@ public class OTSControlPanel extends JPanel
         }
 
         /**
-         * @return clockLabel.
+         * @return speedLabel.
          */
-        protected JLabel getClockLabel()
+        protected JLabel getSpeedLabel()
         {
-            return this.clockLabel;
+            return this.speedLabel;
+        }
+
+        /**
+         * Returns the simulation speed.
+         * @param t double; simulation time
+         * @return simulation speed
+         */
+        protected double getSpeed(final double t)
+        {
+            double speed = (t - this.prevSimTime) / (0.001 * UPDATEINTERVAL);
+            this.prevSimTime = t;
+            return speed;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean isForeground()
+        {
+            return true;
         }
 
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
-            return "ClockPanel [clockLabel=" + this.clockLabel + ", time=" + getText() + "]";
+            return "ClockPanel";
         }
 
     }
 
     /** Entry field for time. */
-    class TimeEdit extends JFormattedTextField
+    public class TimeEdit extends JFormattedTextField implements AppearanceControl
     {
         /** */
         private static final long serialVersionUID = 20141212L;

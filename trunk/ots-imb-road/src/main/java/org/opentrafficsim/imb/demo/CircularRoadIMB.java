@@ -223,10 +223,10 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    protected final OTSModelInterface makeModel()
     {
         System.out.println("CircularRoadIMB.makeModel called");
-        this.model = new RoadSimulationModelIMB(getSavedUserModifiedProperties(), colorer,
+        this.model = new RoadSimulationModelIMB(getSavedUserModifiedProperties(), getColorer(),
                 new OTSNetwork("circular road simulation network"));
         return this.model;
     }

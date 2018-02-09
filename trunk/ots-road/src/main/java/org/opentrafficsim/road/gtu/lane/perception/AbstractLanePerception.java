@@ -109,7 +109,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
                 if (this.laneStructure == null)
                 {
                     // TODO move parameter obtaining to inside this if-statement
-                    this.laneStructure = new LaneStructure(lookAhead, down, up, lookAhead, upMerge);
+                    this.laneStructure = new LaneStructure(lookAhead, down, up, lookAhead, upMerge, getGtu().getSimulator());
                 }
                 DirectedLanePosition dlp;
                 try

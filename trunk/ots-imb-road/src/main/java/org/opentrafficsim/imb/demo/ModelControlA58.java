@@ -357,9 +357,9 @@ public class ModelControlA58 extends ModelStarter
 
         /** {@inheritDoc} */
         @Override
-        protected OTSModelInterface makeModel(GTUColorer colorer) throws OTSSimulationException
+        protected OTSModelInterface makeModel() throws OTSSimulationException
         {
-            ModelControlA58.this.model = new A58Model(this.imbConnection, colorer, new OTSNetwork("A58 network"));
+            ModelControlA58.this.model = new A58Model(this.imbConnection, getColorer(), new OTSNetwork("A58 network"));
             return ModelControlA58.this.model;
         }
 

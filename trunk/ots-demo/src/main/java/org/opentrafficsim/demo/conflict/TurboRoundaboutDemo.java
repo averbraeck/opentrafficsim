@@ -57,7 +57,7 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
+    protected final OTSModelInterface makeModel() throws OTSSimulationException
     {
         return new TurboRoundaboutModel();
     }
@@ -86,7 +86,7 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
     }
     
     @Override
-    protected GTUColorer getColorer()
+    public GTUColorer getColorer()
     {
         return this.colorer;
     }

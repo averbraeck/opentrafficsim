@@ -32,13 +32,10 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
 
     static
     {
-        COLORERS = new GTUColorer[4];
+        COLORERS = new GTUColorer[3];
         COLORERS[0] = new IDGTUColorer();
         COLORERS[1] = new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR));
         COLORERS[2] = new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2));
-        // TODO LaneChangeUrgeGTUColorer
-        // COLORERS[3] =
-        // new LaneChangeUrgeGTUColorer(new Length(10, LengthUnit.METER), new Length(1000, LengthUnit.METER));
     }
 
     /**

@@ -306,8 +306,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         }
         OperationalPlan newOperationalPlan = tactPlanner.generateOperationalPlan(now, fromLocation);
         this.operationalPlan.set(newOperationalPlan);
-        this.cachedSpeed = null;
-        this.cachedAcceleration = null;
+        this.cachedSpeedTime = Double.NaN;
+        this.cachedAccelerationTime = Double.NaN;
         this.odometer.set(currentOdometer);
         if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
                 && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)
@@ -481,27 +481,18 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @Override
     public final Speed getSpeed(final Time time)
     {
-        if (this.cachedSpeed == null || this.cachedSpeedTime != time.si)
+        if (this.cachedSpeedTime != time.si)
         {
             this.cachedSpeedTime = time.si;
-            if (this.operationalPlan.get(time) == null)
+            OperationalPlan plan = this.operationalPlan.get(time);
+            if (plan == null)
             {
                 this.cachedSpeed = Speed.ZERO;
             }
             else
             {
-                try
-                {
-                    this.cachedSpeed = this.operationalPlan.get(time).getSpeed(time);
-                }
-                catch (OperationalPlanException ope)
-                {
-                    // this should not happen at all...
-                    System.err.println("t = " + time);
-                    System.err.println("op.validity = " + this.operationalPlan.get(time).getEndTime());
-                    throw new RuntimeException("getSpeed() could not derive a valid speed for the current operationalPlan",
-                            ope);
-                }
+                this.cachedSpeed = Try.assign(() -> plan.getSpeed(time),
+                        "getSpeed() could not derive a valid speed for the current operationalPlan");
             }
         }
         return this.cachedSpeed;
@@ -518,25 +509,18 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @Override
     public final Acceleration getAcceleration(final Time time)
     {
-        if (this.cachedAcceleration == null || this.cachedAccelerationTime != time.si)
+        if (this.cachedAccelerationTime != time.si)
         {
             this.cachedAccelerationTime = time.si;
-            if (this.operationalPlan.get(time) == null)
+            OperationalPlan plan = this.operationalPlan.get(time);
+            if (plan == null)
             {
                 this.cachedAcceleration = Acceleration.ZERO;
             }
             else
             {
-                try
-                {
-                    this.cachedAcceleration = this.operationalPlan.get(time).getAcceleration(time);
-                }
-                catch (OperationalPlanException ope)
-                {
-                    // this should not happen at all...
-                    throw new RuntimeException(
-                            "getAcceleration() could not derive a valid acceleration for the current operationalPlan", ope);
-                }
+                this.cachedAcceleration = Try.assign(() -> plan.getAcceleration(time),
+                        "getAcceleration() could not derive a valid acceleration for the current operationalPlan");
             }
         }
         return this.cachedAcceleration;

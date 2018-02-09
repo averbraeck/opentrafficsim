@@ -19,6 +19,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -32,6 +33,9 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.perception.HistoryManager;
+import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
+import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
@@ -104,7 +108,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     // TODO allow for direction-dependent speed limit
     private Map<GTUType, Speed> speedLimitMap;
-    
+
     /** Cached speed limits; these are cleared when a speed limit is changed. */
     private final Map<GTUType, Speed> cachedSpeedLimits = new HashMap<>();
 
@@ -123,7 +127,13 @@ public class Lane extends CrossSectionElement implements Serializable
     private final SortedMap<Double, List<LaneBasedObject>> laneBasedObjects = new TreeMap<>();
 
     /** GTUs ordered by increasing longitudinal position; increasing in the direction of the center line. */
-    private final List<LaneBasedGTU> gtuList = new ArrayList<>();
+    private final HistoricalList<LaneBasedGTU> gtuList;
+    
+    /** Last returned past GTU list. */
+    private List<LaneBasedGTU> gtuListAtTime = null;
+    
+    /** Time of last returned GTU list. */
+    private Time gtuListTime = null;
 
     /**
      * Adjacent left lanes that some GTU types can change onto. Left is defined relative to the direction of the design line of
@@ -171,37 +181,37 @@ public class Lane extends CrossSectionElement implements Serializable
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
      * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_addition}
      */
-    public static final EventType GTU_ADD_EVENT = new EventType("GTU.ADD");
+    public static final EventType GTU_ADD_EVENT = new EventType("LANE.GTU.ADD");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
      * Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal, Length position}
      */
-    public static final EventType GTU_REMOVE_EVENT = new EventType("GTU.REMOVE");
+    public static final EventType GTU_REMOVE_EVENT = new EventType("LANE.GTU.REMOVE");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a Sensor to the lane. <br>
      * Payload: Object[] {String sensorId, Sensor sensor}
      */
-    public static final EventType SENSOR_ADD_EVENT = new EventType("SENSOR.ADD");
+    public static final EventType SENSOR_ADD_EVENT = new EventType("LANE.SENSOR.ADD");
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a Sensor from the lane. <br>
      * Payload: Object[] {String sensorId, Sensor sensor}
      */
-    public static final EventType SENSOR_REMOVE_EVENT = new EventType("SENSOR.REMOVE");
+    public static final EventType SENSOR_REMOVE_EVENT = new EventType("LANE.SENSOR.REMOVE");
 
     /**
      * The event type for pub/sub indicating the addition of a LaneBasedObject to the lane. <br>
      * Payload: Object[] {LaneBasedObject laneBasedObject}
      */
-    public static final EventType OBJECT_ADD_EVENT = new EventType("OBJECT.ADD");
+    public static final EventType OBJECT_ADD_EVENT = new EventType("LANE.OBJECT.ADD");
 
     /**
      * The event type for pub/sub indicating the removal of a LaneBasedObject from the lane. <br>
      * Payload: Object[] {LaneBasedObject laneBasedObject}
      */
-    public static final EventType OBJECT_REMOVE_EVENT = new EventType("OBJECT.REMOVE");
+    public static final EventType OBJECT_REMOVE_EVENT = new EventType("LANE.OBJECT.REMOVE");
 
     /**
      * Construct a new Lane.
@@ -230,6 +240,7 @@ public class Lane extends CrossSectionElement implements Serializable
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.overtakingConditions = overtakingConditions;
+        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((OTSDEVSSimulatorInterface) parentLink.getSimulator()));
     }
 
     /**
@@ -260,6 +271,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.CAR, speedLimit);
         this.overtakingConditions = overtakingConditions;
+        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((OTSDEVSSimulatorInterface) parentLink.getSimulator()));
     }
 
     /**
@@ -285,6 +297,7 @@ public class Lane extends CrossSectionElement implements Serializable
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.overtakingConditions = overtakingConditions;
+        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((OTSDEVSSimulatorInterface) parentLink.getSimulator()));
     }
 
     /**
@@ -311,6 +324,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.VEHICLE, speedLimit);
         this.overtakingConditions = overtakingConditions;
+        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((OTSDEVSSimulatorInterface) parentLink.getSimulator()));
     }
 
     /**
@@ -337,6 +351,7 @@ public class Lane extends CrossSectionElement implements Serializable
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.overtakingConditions = overtakingConditions;
+        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((OTSDEVSSimulatorInterface) parentLink.getSimulator()));
     }
 
     /**
@@ -364,6 +379,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.CAR, speedLimit);
         this.overtakingConditions = overtakingConditions;
+        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((OTSDEVSSimulatorInterface) parentLink.getSimulator()));
     }
 
     /**
@@ -382,7 +398,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.laneType = cse.laneType;
         this.speedLimitMap = new HashMap<>(cse.speedLimitMap);
         this.overtakingConditions = cse.overtakingConditions;
-
+        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((OTSDEVSSimulatorInterface) newParentLink.getSimulator()));
         if (animation)
         {
             OTSNetwork.cloneAnimation(cse, this, cse.getParentLink().getSimulator(), newSimulator);
@@ -1116,7 +1132,7 @@ public class Lane extends CrossSectionElement implements Serializable
         int[] out = new int[2];
         // line search only works if the position is within the original domain, first catch 4 outside situations
         double pos0 = positions.get(0);
-        double posEnd; 
+        double posEnd;
         if (position < pos0)
         {
             out[0] = -1;
@@ -1416,16 +1432,19 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             this.downLanes = new LinkedHashMap<>(1);
         }
-        if (!this.downLanes.containsKey(gtuType))
+        Map<GTUDirectionality, Map<Lane, GTUDirectionality>> dirMap = this.downLanes.get(gtuType);
+        if (dirMap == null)
         {
-            this.downLanes.put(gtuType, new HashMap<>());
+            dirMap = new HashMap<>();
+            this.downLanes.put(gtuType, dirMap);
         }
-        if (!this.downLanes.get(gtuType).containsKey(direction))
+        Map<Lane, GTUDirectionality> downMap = dirMap.get(direction);
+        if (downMap == null)
         {
-            Map<Lane, GTUDirectionality> down = direction.isPlus() ? nextLanes(gtuType) : prevLanes(gtuType);
-            down = new LinkedHashMap<>(down); // safe copy
+            downMap = direction.isPlus() ? nextLanes(gtuType) : prevLanes(gtuType);
+            downMap = new LinkedHashMap<>(downMap); // safe copy
             Node downNode = direction.isPlus() ? getParentLink().getEndNode() : getParentLink().getStartNode();
-            Iterator<Entry<Lane, GTUDirectionality>> iterator = down.entrySet().iterator();
+            Iterator<Entry<Lane, GTUDirectionality>> iterator = downMap.entrySet().iterator();
             while (iterator.hasNext())
             {
                 Entry<Lane, GTUDirectionality> entry = iterator.next();
@@ -1436,9 +1455,9 @@ public class Lane extends CrossSectionElement implements Serializable
                     iterator.remove();
                 }
             }
-            this.downLanes.get(gtuType).put(direction, down);
+            dirMap.put(direction, downMap);
         }
-        return this.downLanes.get(gtuType).get(direction);
+        return dirMap.get(direction);
     }
 
     /**
@@ -1677,8 +1696,24 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final ImmutableList<LaneBasedGTU> getGtuList()
     {
+        // TODO let HistoricalArrayList return an Immutable (WRAP) of itself
         return this.gtuList == null ? new ImmutableArrayList<>(new ArrayList<>())
-                : new ImmutableArrayList<>(this.gtuList, Immutable.WRAP);
+                : new ImmutableArrayList<>(this.gtuList, Immutable.COPY);
+    }
+    
+    /**
+     * Returns the list of GTU's at the specified time.
+     * @param time Time; time
+     * @return list of GTU's at the specified times
+     */
+    public final List<LaneBasedGTU> getGtuList(final Time time)
+    {
+        if (time.equals(this.gtuListTime))
+        {
+            return this.gtuListAtTime;
+        }
+        this.gtuListTime = time;
+        return this.gtuListAtTime = this.gtuList == null ? new ArrayList<>() : this.gtuList.get(time);
     }
 
     /**
@@ -1688,6 +1723,16 @@ public class Lane extends CrossSectionElement implements Serializable
     public final int numberOfGtus()
     {
         return this.gtuList.size();
+    }
+    
+    /**
+     * Returns the number of GTU's at specified time.
+     * @param time Time; time
+     * @return int; number of GTU's.
+     */
+    public final int numberOfGtus(final Time time)
+    {
+        return getGtuList(time).size();
     }
 
     /**
@@ -1699,6 +1744,17 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         return this.gtuList.indexOf(gtu);
     }
+    
+    /**
+     * Returns the index of the given GTU, or -1 if not present, at specified time.
+     * @param gtu LaneBasedGTU; gtu to get the index of
+     * @param time Time; time 
+     * @return int; index of the given GTU, or -1 if not present
+     */
+    public final int indexOfGtu(final LaneBasedGTU gtu, final Time time)
+    {
+        return getGtuList(time).indexOf(gtu);
+    }
 
     /**
      * Returns the index'th GTU.
@@ -1708,6 +1764,17 @@ public class Lane extends CrossSectionElement implements Serializable
     public final LaneBasedGTU getGtu(final int index)
     {
         return this.gtuList.get(index);
+    }
+    
+    /**
+     * Returns the index'th GTU at specified time.
+     * @param index int; index of the GTU
+     * @param time Time; time
+     * @return LaneBasedGTU; the index'th GTU
+     */
+    public final LaneBasedGTU getGtu(final int index, final Time time)
+    {
+        return getGtuList(time).get(index);
     }
 
     /** {@inheritDoc} */

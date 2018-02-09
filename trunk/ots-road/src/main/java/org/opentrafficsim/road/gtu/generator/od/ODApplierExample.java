@@ -37,10 +37,8 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
@@ -106,6 +104,9 @@ public class ODApplierExample extends AbstractWrappableAnimation
     /** */
     private static final long serialVersionUID = 20171211L;
 
+    /** Colorer. */
+    private GTUColorer colorer = new LmrsSwitchableColorer();
+
     /**
      * @param args arguments
      */
@@ -149,22 +150,21 @@ public class ODApplierExample extends AbstractWrappableAnimation
     @Override
     protected final void addAnimationToggles()
     {
-        AnimationToggles.setTextAnimationTogglesFull(this);
-        this.hideAnimationClass(OTSLink.class);
+        AnimationToggles.setIconAnimationTogglesStandard(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
+    protected OTSModelInterface makeModel() throws OTSSimulationException
     {
-        return new ODApplierExampleModel(colorer);
+        return new ODApplierExampleModel();
     }
 
     /** {@inheritDoc} */
     @Override
-    protected GTUColorer getColorer()
+    public GTUColorer getColorer()
     {
-        return new LmrsSwitchableColorer();
+        return this.colorer;
     }
 
     /**
@@ -181,18 +181,6 @@ public class ODApplierExample extends AbstractWrappableAnimation
 
         /** Simulator. */
         private OTSDEVSSimulatorInterface simulator;
-
-        /** GTU colorer. */
-        private final GTUColorer colorer;
-
-        /**
-         * Constructor.
-         * @param colorer GTUColorer; GTU colorer
-         */
-        ODApplierExampleModel(final GTUColorer colorer)
-        {
-            this.colorer = colorer;
-        }
 
         /** {@inheritDoc} */
         @Override
@@ -335,7 +323,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 markov.addState(GTUType.TRUCK, 0.4);
                 LaneBiases biases = new LaneBiases().addBias(GTUType.VEHICLE, LaneBias.bySpeed(130, 80)).addBias(GTUType.TRUCK,
                         LaneBias.TRUCK_RIGHT);
-                ODOptions odOptions = new ODOptions().set(ODOptions.GTU_COLORER, this.colorer)
+                ODOptions odOptions = new ODOptions().set(ODOptions.GTU_COLORER, getColorer())
                         .set(ODOptions.ROOM_CHECKER, new CFBARoomChecker())
                         .set(lane0, ODOptions.GTU_COLORER, new DefaultSwitchableGTUColorer()).set(ODOptions.MARKOV, markov)
                         .set(ODOptions.LANE_BIAS, biases).set(ODOptions.NO_LC_DIST, Length.createSI(100.0)).setReadOnly();

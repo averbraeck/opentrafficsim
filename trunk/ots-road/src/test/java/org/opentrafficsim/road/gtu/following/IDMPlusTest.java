@@ -267,10 +267,6 @@ public class IDMPlusTest implements UNITS
             strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(fam, leaderCar31), leaderCar31);
             leaderCar31.setParameters(parametersFAM);
-            if (integerLeaderSpeed == 10)
-            {
-                System.out.println("asd");
-            }
             leaderCar31.init(strategicalPlannerFAM, leaderPositions, leaderSpeed);
             leaderCar31.getTacticalPlanner().getPerception().perceive();
             leader = new HeadwayGTUSimple(leaderCar31.getId(), leaderCar31.getGTUType(),

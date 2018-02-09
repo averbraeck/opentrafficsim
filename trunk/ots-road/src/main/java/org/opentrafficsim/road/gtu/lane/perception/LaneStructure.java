@@ -12,15 +12,20 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.WeakHashMap;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.perception.Historical;
+import org.opentrafficsim.core.perception.HistoricalValue;
+import org.opentrafficsim.core.perception.HistoryManager;
+import org.opentrafficsim.core.perception.NullHistorical;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord.RecordLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -101,7 +106,7 @@ public class LaneStructure implements Serializable
     private static final long serialVersionUID = 20160400L;
 
     /** The lanes from which we observe the situation. */
-    private LaneStructureRecord root;
+    private final Historical<LaneStructureRecord> root;
 
     /** Look ahead distance. */
     private Length lookAhead;
@@ -146,7 +151,7 @@ public class LaneStructure implements Serializable
     @Deprecated
     public LaneStructure(final LaneStructureRecord rootLSR, final Length lookAhead)
     {
-        this.root = rootLSR;
+        this.root = new NullHistorical<>(rootLSR);
         this.lookAhead = lookAhead;
         this.down = null;
         this.up = null;
@@ -158,12 +163,15 @@ public class LaneStructure implements Serializable
      * Constructor.
      * @param lookAhead Length; distance over which visual objects are included
      * @param down Length; downstream distance over which the structure is made
-     * @param up Length; upstream distance over which the structure is made
+     * @param up Length; upstream distance over which the structure is made, should include a margin for reaction time
      * @param downSplit Length; downstream distance at splits (links not on route) included in the structure
      * @param upMerge Length; upstream distance at downstream merges (links not on route) included in the structure
+     * @param simulator OTSDEVSSimulatorInterface; simulator
      */
-    public LaneStructure(Length lookAhead, Length down, Length up, Length downSplit, Length upMerge)
+    public LaneStructure(final Length lookAhead, final Length down, final Length up, final Length downSplit,
+            final Length upMerge, final OTSDEVSSimulatorInterface simulator)
     {
+        this.root = new HistoricalValue<>(HistoryManager.get(simulator));
         this.lookAhead = lookAhead;
         this.down = down;
         this.up = up;
@@ -207,14 +215,15 @@ public class LaneStructure implements Serializable
             this.relativeLanes.clear();
 
             // build cross-section
-            this.root = constructRecord(lane, direction, null, RecordLink.CROSS, RelativeLane.CURRENT);
-            this.crossSectionRecords.put(RelativeLane.CURRENT, this.root);
+            LaneStructureRecord newRoot = constructRecord(lane, direction, null, RecordLink.CROSS, RelativeLane.CURRENT);
+            this.root.set(newRoot);
+            this.crossSectionRecords.put(RelativeLane.CURRENT, newRoot);
             Set<LaneStructureRecord> set = new LinkedHashSet<>();
-            set.add(this.root);
+            set.add(newRoot);
             for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
                     LateralDirectionality.RIGHT })
             {
-                LaneStructureRecord current = this.root;
+                LaneStructureRecord current = newRoot;
                 RelativeLane relativeLane = RelativeLane.CURRENT;
                 Set<Lane> adjacentLanes =
                         current.getLane().accessibleAdjacentLanes(latDirection, gtuType, current.getDirection());
@@ -254,7 +263,7 @@ public class LaneStructure implements Serializable
             this.downstreamEdge.addAll(set);
 
             // set the start distances so the upstream expand can work
-            this.root.updateStartDistance(fracPos, this);
+            newRoot.updateStartDistance(fracPos, this);
 
             // expand upstream edge
             expandUpstreamEdge(gtuType, fracPos);
@@ -262,10 +271,11 @@ public class LaneStructure implements Serializable
         else
         {
             // update LaneStructure
-            if (!lane.equals(this.root.getLane()))
+            LaneStructureRecord newRoot = this.root.get();
+            if (!lane.equals(newRoot.getLane()))
             {
                 // find the root, and possible lateral shift if changed lane
-                LaneStructureRecord newRoot = null;
+                newRoot = null;
                 RelativeLane lateralMove = null;
                 for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
                 {
@@ -283,7 +293,7 @@ public class LaneStructure implements Serializable
                         }
                     }
                 }
-                this.root = newRoot;
+                this.root.set(newRoot);
 
                 // update start distance sources
                 updateStartDistanceSources();
@@ -326,12 +336,12 @@ public class LaneStructure implements Serializable
             {
                 RelativeLane relativeLane = iterator.next();
                 LaneStructureRecord record = this.crossSectionRecords.get(relativeLane);
-                if (!record.getLane().getParentLink().equals(this.root.getLane().getParentLink()))
+                if (!record.getLane().getParentLink().equals(newRoot.getLane().getParentLink()))
                 {
                     iterator.remove();
                 }
             }
-            this.root.updateStartDistance(fracPos, this);
+            newRoot.updateStartDistance(fracPos, this);
 
             // update upstream edges
             retreatUpstreamEdge();
@@ -353,9 +363,10 @@ public class LaneStructure implements Serializable
     {
         // initial cross section
         Set<LaneStructureRecord> set = new HashSet<>();
-        set.add(this.root);
-        this.root.changeStartDistanceSource(null, RecordLink.CROSS);
-        LaneStructureRecord prev = this.root;
+        LaneStructureRecord rootRecord = this.root.get();
+        set.add(rootRecord);
+        rootRecord.changeStartDistanceSource(null, RecordLink.CROSS);
+        LaneStructureRecord prev = rootRecord;
         LaneStructureRecord next = prev.getLeft();
         while (next != null)
         {
@@ -364,7 +375,7 @@ public class LaneStructure implements Serializable
             prev = next;
             next = next.getLeft();
         }
-        prev = this.root;
+        prev = rootRecord;
         next = prev.getRight();
         while (next != null)
         {
@@ -948,7 +959,16 @@ public class LaneStructure implements Serializable
      */
     public final LaneStructureRecord getRootLSR()
     {
-        return this.root;
+        return this.root.get();
+    }
+
+    /**
+     * @param time Time; time to obtain the root at
+     * @return rootLSR
+     */
+    public final LaneStructureRecord getRootLSR(final Time time)
+    {
+        return this.root.get(time);
     }
 
     /**

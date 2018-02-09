@@ -55,7 +55,19 @@ public class ColorControlPanel extends JPanel implements ActionListener
         if (gtuColorer instanceof SwitchableGTUColorer)
         {
             this.switchableGTUColorer = (SwitchableGTUColorer) gtuColorer;
-            this.comboBoxGTUColor = new JComboBox<GTUColorer>();
+            class AppearanceControlComboBox<T> extends JComboBox<T> implements AppearanceControl
+            {
+                /** */
+                private static final long serialVersionUID = 1L;
+
+                /** {@inheritDoc} */
+                @Override
+                public boolean isFont()
+                {
+                    return true;
+                }
+            }
+            this.comboBoxGTUColor = new AppearanceControlComboBox<>();
             this.add(this.comboBoxGTUColor);
             this.comboBoxGTUColor.addActionListener(this);
 
@@ -110,7 +122,20 @@ public class ColorControlPanel extends JPanel implements ActionListener
         for (GTUColorer.LegendEntry legendEntry : this.gtuColorer.getLegend())
         {
             JPanel panel = new JPanel(new BorderLayout());
-            JLabel colorBox = new JLabel("     ");
+            class ColorBox extends JLabel implements AppearanceControl
+            {
+                /** */
+                private static final long serialVersionUID = 20180206L;
+
+                /**
+                 * Constructor.
+                 */
+                public ColorBox()
+                {
+                    super("     ");
+                }
+            }
+            ColorBox colorBox = new ColorBox();
             colorBox.setOpaque(true); // By default, the label is transparent
             colorBox.setBackground(legendEntry.getColor());
             Border border = LineBorder.createBlackLineBorder();
@@ -118,10 +143,14 @@ public class ColorControlPanel extends JPanel implements ActionListener
             panel.add(colorBox, BorderLayout.LINE_START);
             JLabel name = new JLabel(" " + legendEntry.getName().trim());
             panel.add(name, BorderLayout.CENTER);
+            name.setOpaque(true);
+            name.setForeground(getForeground());
+            name.setBackground(getBackground());
             panel.setToolTipText(legendEntry.getDescription());
             this.legendPanel.add(panel);
         }
-        this.legendPanel.validate();
+        this.legendPanel.revalidate();
+
         Container parentPanel = this.getParent();
 
         if (parentPanel != null)
