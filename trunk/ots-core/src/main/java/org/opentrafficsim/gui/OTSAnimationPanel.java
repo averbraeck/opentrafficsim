@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
@@ -27,6 +26,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.gtu.Try;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
+
 import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
@@ -36,14 +43,6 @@ import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
-
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.gtu.Try;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * Animation panel with various controls.
@@ -165,18 +164,16 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         // add info labels next to buttons
         JPanel infoTextPanel = new JPanel();
         buttonPanel.add(infoTextPanel);
-        this.coordinateField = new JLabel("Mouse: ");
-        FontMetrics fm = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).createGraphics().getFontMetrics();
-        int requiredWidth = fm.stringWidth("Mouse: (x=8,888,888.888; y=8,888,888,888.888)   ");
-        infoTextPanel.setMinimumSize(new Dimension(requiredWidth, 20));
-        infoTextPanel.setPreferredSize(new Dimension(requiredWidth, 20));
+        infoTextPanel.setMinimumSize(new Dimension(250, 20));
+        infoTextPanel.setPreferredSize(new Dimension(250, 20));
         infoTextPanel.setLayout(new BoxLayout(infoTextPanel, BoxLayout.Y_AXIS));
-        this.coordinateField.setMinimumSize(new Dimension(requiredWidth, 10));
-        this.coordinateField.setPreferredSize(new Dimension(requiredWidth, 10));
+        this.coordinateField = new JLabel("Mouse: ");
+        this.coordinateField.setMinimumSize(new Dimension(250, 10));
+        this.coordinateField.setPreferredSize(new Dimension(250, 10));
         infoTextPanel.add(this.coordinateField);
         this.gtuCountField = new JLabel("0 GTU's");
-        this.gtuCountField.setMinimumSize(new Dimension(requiredWidth, 10));
-        this.gtuCountField.setPreferredSize(new Dimension(requiredWidth, 10));
+        this.gtuCountField.setMinimumSize(new Dimension(250, 10));
+        this.gtuCountField.setPreferredSize(new Dimension(250, 10));
         infoTextPanel.add(this.gtuCountField);
         network.addListener(this, Network.GTU_ADD_EVENT);
         network.addListener(this, Network.GTU_REMOVE_EVENT);
@@ -507,9 +504,22 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     protected final void updateWorldCoordinate()
     {
         String worldPoint =
-                "(x=" + FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + "; y="
+                "(x=" + FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y="
                         + FORMATTER.format(this.animationPanel.getWorldCoordinate().getY()) + ")";
         this.coordinateField.setText("Mouse: " + worldPoint);
+        int requiredWidth =
+                this.coordinateField.getGraphics().getFontMetrics().stringWidth(this.coordinateField.getText());
+        if (this.coordinateField.getPreferredSize().width < requiredWidth)
+        {
+            Dimension requiredSize = new Dimension(requiredWidth, this.coordinateField.getPreferredSize().height);
+            this.coordinateField.setPreferredSize(requiredSize);
+            this.coordinateField.setMinimumSize(requiredSize);
+            Container parent = this.coordinateField.getParent();
+            parent.setPreferredSize(requiredSize);
+            parent.setMinimumSize(requiredSize);
+            System.out.println("Increased minimum width to " + requiredSize.width);
+            parent.revalidate();
+        }
         this.coordinateField.repaint();
     }
 
