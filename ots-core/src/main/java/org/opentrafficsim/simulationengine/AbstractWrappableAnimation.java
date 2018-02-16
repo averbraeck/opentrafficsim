@@ -8,14 +8,20 @@ import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 
 import javax.naming.NamingException;
 import javax.swing.ButtonGroup;
@@ -80,6 +86,9 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     /** The properties after (possible) editing by the user. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected List<Property<?>> savedUserModifiedProperties;
+
+    /** Properties for the frame appearance (not simulation related). */
+    protected Properties frameProperties;
 
     /** Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -158,18 +167,16 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
         this.savedUserModifiedProperties = userModifiedProperties;
         this.exitOnClose = eoc;
-
         this.savedStartTime = startTime;
         this.savedWarmupPeriod = warmupPeriod;
         this.savedRunLength = runLength;
-
         this.model = makeModel();
-
         if (null == this.model)
         {
-            return null; // Happens when the user cancels the file open dialog in the OpenStreetMap demo.
+            return null; // Happens when the user cancels a file open dialog
         }
 
+        // Animator
         final SimpleAnimator simulator =
                 null == this.replication ? buildSimpleAnimator(startTime, warmupPeriod, runLength, this.model)
                         : buildSimpleAnimator(startTime, warmupPeriod, runLength, this.model, this.replication);
@@ -183,9 +190,11 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             throw new SimRuntimeException(exception);
         }
 
+        // Case specific GUI elements
         addAnimationToggles();
         addTabs(simulator);
 
+        // Frame
         SimulatorFrame frame = new SimulatorFrame(shortName(), this.panel);
         if (rect != null)
         {
@@ -195,7 +204,52 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         {
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         }
+        frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE : WindowConstants.DISPOSE_ON_CLOSE);
 
+        ////////////////////////////////////////
+        ///// Look and Feel and Appearance /////
+        ////////////////////////////////////////
+
+        // Listener to write frame properties on frame close
+        String sep = System.getProperty("file.separator");
+        String propertiesFile = System.getProperty("user.home") + sep + "OTS" + sep + "properties.ini";
+        frame.addWindowListener(new WindowAdapter()
+        {
+            /** {@inheritDoce} */
+            @Override
+            public void windowClosing(final WindowEvent windowEvent)
+            {
+                try
+                {
+                    File f = new File(propertiesFile);
+                    f.getParentFile().mkdirs();
+                    FileWriter writer = new FileWriter(f);
+                    AbstractWrappableAnimation.this.frameProperties.store(writer, "OTS user settings");
+                }
+                catch (@SuppressWarnings("unused") IOException exception)
+                {
+                    System.err.println("Could not store properties at " + propertiesFile + ".");
+                }
+            }
+        });
+
+        // Set default frame properties and load properties from file (if any)
+        Properties defaults = new Properties();
+        defaults.setProperty("Appearance", "GRAY");
+        defaults.setProperty("LookAndFeel", "javax.swing.plaf.metal.MetalLookAndFeel");
+        this.frameProperties = new Properties(defaults);
+        try
+        {
+            FileReader reader = new FileReader(propertiesFile);
+            this.frameProperties.load(reader);
+        }
+        catch (@SuppressWarnings("unused") IOException ioe)
+        {
+            // ok, use defaults
+        }
+        this.appearance = Appearance.valueOf(this.frameProperties.getProperty("Appearance").toUpperCase());
+
+        // Menu class to only accept the font of an Appearance
         class AppearanceControlMenu extends JMenu implements AppearanceControl
         {
             /** */
@@ -214,7 +268,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             }
         }
 
-        // look-and-feel
+        // Look and feel menu
         JMenu laf = new AppearanceControlMenu("Look and feel");
         laf.addMouseListener(new SubMenuShower(laf));
         ButtonGroup lafGroup = new ButtonGroup();
@@ -226,20 +280,16 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
                 addLookAndFeel(frame, laf, "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel", "Windows classic"));
         lafGroup.add(addLookAndFeel(frame, laf, UIManager.getSystemLookAndFeelClassName(), "System default"));
 
-        // appearance
+        // Appearance menu
         JMenu app = new AppearanceControlMenu("Appearance");
         app.addMouseListener(new SubMenuShower(app));
         ButtonGroup appGroup = new ButtonGroup();
-        Field[] fields = Appearance.class.getDeclaredFields();
-        for (Field field : fields)
+        for (Appearance appearanceValue : Appearance.values())
         {
-            if (field.getType().equals(Appearance.class))
-            {
-                Try.execute(() -> appGroup.add(addAppearance(app, (Appearance) field.get(null))),
-                        "Could not add an apperance.");
-            }
+            appGroup.add(addAppearance(app, appearanceValue));
         }
-        // combine in to popup menu
+        
+        // PopupMenu class to only accept the font of an Appearance
         class AppearanceControlPopupMenu extends JPopupMenu implements AppearanceControl
         {
             /** */
@@ -252,14 +302,18 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
                 return true;
             }
         }
+        
+        // Popup menu to change the Look and Feel or Appearance
         JPopupMenu popMenu = new AppearanceControlPopupMenu();
         popMenu.add(laf);
         popMenu.add(app);
         this.getPanel().getOtsControlPanel().setComponentPopupMenu(popMenu);
 
+        // Set the Look and Feel and Appearance as by frame properties
         setAppearance(getAppearance()); // color elements that were just added
-
-        frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE : WindowConstants.DISPOSE_ON_CLOSE);
+        Try.execute(() -> UIManager.setLookAndFeel(this.frameProperties.getProperty("LookAndFeel")),
+                "Could not set look-and-feel %s", laf);
+        SwingUtilities.invokeLater(() -> SwingUtilities.updateComponentTreeUI(frame));
 
         return simulator;
     }
@@ -274,7 +328,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
      */
     private JCheckBoxMenuItem addLookAndFeel(final JFrame frame, final JMenu group, final String laf, final String name)
     {
-        boolean checked = UIManager.getLookAndFeel().getClass().getName().equals(laf);
+        boolean checked = this.frameProperties.getProperty("LookAndFeel").equals(laf);
         JCheckBoxMenuItem check = new StayOpenCheckBoxMenuItem(name, checked);
         check.addMouseListener(new MouseAdapter()
         {
@@ -284,6 +338,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             {
                 Try.execute(() -> UIManager.setLookAndFeel(laf), "Could not set look-and-feel %s", laf);
                 SwingUtilities.updateComponentTreeUI(frame);
+                AbstractWrappableAnimation.this.frameProperties.setProperty("LookAndFeel", laf);
             }
         });
         group.add(check);
@@ -319,6 +374,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     {
         this.appearance = appearance;
         setAppearance(this.panel.getParent(), appearance);
+        this.frameProperties.setProperty("Appearance", appearance.toString());
     }
 
     /**
@@ -668,7 +724,8 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 feb. 2018 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author$,
+     *          initial version 6 feb. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -703,7 +760,8 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 feb. 2018 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author$,
+     *          initial version 6 feb. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>

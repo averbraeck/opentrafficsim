@@ -13,43 +13,35 @@ import java.awt.Color;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Appearance
+public enum Appearance
 {
 
     /** MOTUS mimic. Grid not visible. */
-    public static final Appearance MOTUS =
-            new Appearance("Motus", new Color(236, 233, 216), Color.BLACK, Color.BLACK, "Verdana");
+    MOTUS("Motus", new Color(236, 233, 216), Color.BLACK, Color.BLACK, "Verdana"),
 
     /** Green. */
-    public static final Appearance FOSIM =
-            new Appearance("Fosim", new Color(240, 240, 240), Color.BLACK, new Color(0, 128, 0), "Verdana");
+    FOSIM("Fosim", new Color(240, 240, 240), Color.BLACK, new Color(0, 128, 0), "Verdana"),
 
     /** Dark. */
-    public static final Appearance DARK =
-            new Appearance("Dark", new Color(96, 96, 96), Color.WHITE, Color.DARK_GRAY, "Verdana");
+    DARK("Dark", new Color(96, 96, 96), Color.WHITE, Color.DARK_GRAY, "Verdana"),
 
     /** Gray. */
-    public static final Appearance GRAY =
-            new Appearance("Gray", Color.LIGHT_GRAY, Color.BLACK, new Color(96, 96, 96), "Verdana");
+    GRAY("Gray", Color.LIGHT_GRAY, Color.BLACK, new Color(96, 96, 96), "Verdana"),
 
     /** Bright. */
-    public static final Appearance BRIGHT = new Appearance("Bright", Color.LIGHT_GRAY, Color.BLACK, Color.WHITE, "Verdana");
+    BRIGHT("Bright", Color.LIGHT_GRAY, Color.BLACK, Color.WHITE, "Verdana"),
 
     /** Legacy, as the initial OTS had. */
-    public static final Appearance LEGACY =
-            new Appearance("Legacy", new Color(238, 238, 238), Color.BLACK, Color.WHITE, "Dialog");
+    LEGACY("Legacy", new Color(238, 238, 238), Color.BLACK, Color.WHITE, "Dialog"),
 
     /** Red. */
-    public static final Appearance RED = new Appearance("Red", new Color(208, 192, 192), Color.RED.darker().darker(),
-            new Color(208, 192, 192).darker(), "Verdana");
+    RED("Red", new Color(208, 192, 192), Color.RED.darker().darker(), new Color(208, 192, 192).darker(), "Verdana"),
 
     /** Green. */
-    public static final Appearance GREEN = new Appearance("Green", new Color(192, 208, 192), Color.GREEN.darker().darker(),
-            new Color(192, 208, 192).darker(), "Verdana");
+    GREEN("Green", new Color(192, 208, 192), Color.GREEN.darker().darker(), new Color(192, 208, 192).darker(), "Verdana"),
 
     /** Blue. */
-    public static final Appearance BLUE = new Appearance("Blue", new Color(192, 192, 208), Color.BLUE.darker().darker(),
-            new Color(192, 192, 208).darker(), "Verdana");
+    BLUE("Blue", new Color(192, 192, 208), Color.BLUE.darker().darker(), new Color(192, 192, 208).darker(), "Verdana");
 
     /** Name. */
     private final String name;
@@ -74,8 +66,7 @@ public class Appearance
      * @param backdrop Color; backdrop color (network panel)
      * @param font String; font name
      */
-    public Appearance(final String name, final Color background, final Color foreground, final Color backdrop,
-            final String font)
+    Appearance(final String name, final Color background, final Color foreground, final Color backdrop, final String font)
     {
         this.name = name;
         this.background = background;
