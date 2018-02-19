@@ -517,7 +517,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             Container parent = this.coordinateField.getParent();
             parent.setPreferredSize(requiredSize);
             parent.setMinimumSize(requiredSize);
-            System.out.println("Increased minimum width to " + requiredSize.width);
+            // System.out.println("Increased minimum width to " + requiredSize.width);
             parent.revalidate();
         }
         this.coordinateField.repaint();
