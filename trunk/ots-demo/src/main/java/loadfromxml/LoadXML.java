@@ -61,7 +61,7 @@ public class LoadXML extends AbstractWrappableAnimation
 
     /**
      * Load a network from an XML file; program entry point.
-     * @param args String[]; the command line arguments (currently not used)
+     * @param args String[]; the command line arguments; optional name of file to load
      * @throws IOException when the file could not be read
      * @throws PropertyException should never happen
      * @throws OTSSimulationException when an error occurs during simulation
@@ -71,42 +71,49 @@ public class LoadXML extends AbstractWrappableAnimation
     public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException,
             OTSSimulationException, PropertyException
     {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.addChoosableFileFilter(new FileFilter()
-        {
-
-            @Override
-            public boolean accept(final File f)
-            {
-                String name = f.getName();
-                int length = name.length();
-                if (length < 5)
-                {
-                    return false;
-                }
-                String type = name.substring(length - 4);
-                return type.equalsIgnoreCase(".xml");
-            }
-
-            @Override
-            public String getDescription()
-            {
-                return "XML files";
-            }
-        });
-        fileChooser.removeChoosableFileFilter(fileChooser.getAcceptAllFileFilter());
-        if (JFileChooser.APPROVE_OPTION != fileChooser.showOpenDialog(null))
-        {
-            System.out.println("No file chosen; exiting");
-            System.exit(0);
-        }
         LoadXML loadXML = new LoadXML();
-        loadXML.fileName = fileChooser.getSelectedFile().getAbsolutePath();
+        if (0 == args.length)
+        {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.addChoosableFileFilter(new FileFilter()
+            {
+
+                @Override
+                public boolean accept(final File f)
+                {
+                    String name = f.getName();
+                    int length = name.length();
+                    if (length < 5)
+                    {
+                        return false;
+                    }
+                    String type = name.substring(length - 4);
+                    return type.equalsIgnoreCase(".xml");
+                }
+
+                @Override
+                public String getDescription()
+                {
+                    return "XML files";
+                }
+            });
+            fileChooser.removeChoosableFileFilter(fileChooser.getAcceptAllFileFilter());
+            if (JFileChooser.APPROVE_OPTION != fileChooser.showOpenDialog(null))
+            {
+                System.out.println("No file chosen; exiting");
+                System.exit(0);
+            }
+            loadXML.fileName = fileChooser.getSelectedFile().getAbsolutePath();
+        }
+        else
+        {
+            loadXML.fileName = args[0];
+        }
         loadXML.xml = new String(Files.readAllBytes(Paths.get(loadXML.fileName)));
         try
         {
-            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, DurationUnit.SI), new ArrayList<Property<?>>(),
-                    null, true);
+            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, DurationUnit.SI),
+                    new ArrayList<Property<?>>(), null, true);
         }
         catch (SimRuntimeException sre)
         {
