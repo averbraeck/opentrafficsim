@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -26,14 +25,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.gtu.Try;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
-
 import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
@@ -43,6 +34,14 @@ import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
+
+import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.gtu.Try;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * Animation panel with various controls.
