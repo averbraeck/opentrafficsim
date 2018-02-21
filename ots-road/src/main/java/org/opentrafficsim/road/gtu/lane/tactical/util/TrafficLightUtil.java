@@ -1,10 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import nl.tudelft.simulation.language.Throw;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -18,6 +15,8 @@ import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Static methods regarding traffic lights for composition in tactical planners.
@@ -62,7 +61,7 @@ public final class TrafficLightUtil
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
     public static Acceleration respondToTrafficLights(final Parameters parameters,
-            final Set<HeadwayTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel, final Speed speed,
+            final Iterable<HeadwayTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel, final Speed speed,
             final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
         Throw.whenNull(headwayTrafficLights, "Traffic light set may not be null.");

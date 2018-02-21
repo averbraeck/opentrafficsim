@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -128,10 +129,10 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /** GTUs ordered by increasing longitudinal position; increasing in the direction of the center line. */
     private final HistoricalList<LaneBasedGTU> gtuList;
-    
+
     /** Last returned past GTU list. */
     private List<LaneBasedGTU> gtuListAtTime = null;
-    
+
     /** Time of last returned GTU list. */
     private Time gtuListTime = null;
 
@@ -140,14 +141,14 @@ public class Lane extends CrossSectionElement implements Serializable
      * the link (and the direction of the center line of the lane). In terms of offsets, 'left' lanes always have a more
      * positive offset than the current lane. Initially null so we can calculate and cache the first time the method is called.
      */
-    private Map<GTUType, Set<Lane>> leftNeighbors = null;
+    private Map<GTUType, Map<GTUDirectionality, Map<Boolean, Set<Lane>>>> leftNeighbors = null;
 
     /**
      * Adjacent right lanes that some GTU types can change onto. Right is defined relative to the direction of the design line
      * of the link (and the direction of the center line of the lane). In terms of offsets, 'right' lanes always have a more
      * negative offset than the current lane. Initially null so we can calculate and cache the first time the method is called.
      */
-    private Map<GTUType, Set<Lane>> rightNeighbors = null;
+    private Map<GTUType, Map<GTUDirectionality, Map<Boolean, Set<Lane>>>> rightNeighbors = null;
 
     /**
      * Next lane(s) following this lane that some GTU types can drive from or onto. Next is defined in the direction of the
@@ -415,48 +416,57 @@ public class Lane extends CrossSectionElement implements Serializable
      *            current lane, and 'right' lanes a more negative offset.
      * @param gtuType GTUType; the GTU type to check the accessibility for
      * @param drivingDirection GTUDirectionality; driving direction of the GTU
+     * @param legal boolean; whether to check legal possibility
      * @return Set&lt;Lane&gt;; the indicated set of neighboring Lanes
      */
     private Set<Lane> neighbors(final LateralDirectionality direction, final GTUType gtuType,
-            final GTUDirectionality drivingDirection)
+            final GTUDirectionality drivingDirection, final boolean legal)
     {
-        if (this.leftNeighbors == null || this.rightNeighbors == null)
+        Map<GTUType, Map<GTUDirectionality, Map<Boolean, Set<Lane>>>> map1 =
+                direction.isLeft() ? this.leftNeighbors : this.rightNeighbors;
+        if (map1 == null)
         {
-            this.leftNeighbors = new LinkedHashMap<>(1);
-            this.rightNeighbors = new LinkedHashMap<>(1);
+            map1 = new LinkedHashMap<>(1);
+            if (direction.isLeft())
+            {
+                this.leftNeighbors = map1;
+            }
+            else
+            {
+                this.rightNeighbors = map1;
+            }
         }
 
-        if (!this.leftNeighbors.containsKey(gtuType) || !this.rightNeighbors.containsKey(gtuType))
+        Map<GTUDirectionality, Map<Boolean, Set<Lane>>> map2 = map1.get(gtuType);
+        if (map2 == null)
         {
-            Set<Lane> leftSet = new LinkedHashSet<>(1);
-            Set<Lane> rightSet = new LinkedHashSet<>(1);
-            this.leftNeighbors.put(gtuType, leftSet);
-            this.rightNeighbors.put(gtuType, rightSet);
+            map2 = new LinkedHashMap<>(1);
+            map1.put(gtuType, map2);
+        }
+
+        Map<Boolean, Set<Lane>> map3 = map2.get(drivingDirection);
+        if (map3 == null)
+        {
+            map3 = new LinkedHashMap<>(1);
+            map2.put(drivingDirection, map3);
+        }
+
+        Set<Lane> lanes = map3.get(legal);
+        if (lanes == null)
+        {
+            lanes = new LinkedHashSet<>(1);
             for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
             {
                 if (cse instanceof Lane && !cse.equals(this))
                 {
                     Lane lane = (Lane) cse;
-                    if (laterallyAdjacentAndAccessible(lane, LateralDirectionality.LEFT, gtuType, drivingDirection))
+                    if (laterallyAdjacentAndAccessible(lane, direction, gtuType, drivingDirection, legal))
                     {
-                        leftSet.add(lane);
-                    }
-                    if (laterallyAdjacentAndAccessible(lane, LateralDirectionality.RIGHT, gtuType, drivingDirection))
-                    {
-                        rightSet.add(lane);
+                        lanes.add(lane);
                     }
                 }
             }
-        }
-
-        Set<Lane> lanes = new LinkedHashSet<>();
-        if (direction.equals(LateralDirectionality.LEFT))
-        {
-            lanes.addAll(this.leftNeighbors.get(gtuType));
-        }
-        else
-        {
-            lanes.addAll(this.rightNeighbors.get(gtuType));
+            map3.put(legal, lanes);
         }
         return lanes;
     }
@@ -474,10 +484,11 @@ public class Lane extends CrossSectionElement implements Serializable
      *            driving direction, which can vary for lanes that can be driven in two directions (e.g. at overtaking).
      * @param gtuType GTUType; the GTU type to check the accessibility for
      * @param drivingDirection GTUDirectionality; driving direction of the GTU
+     * @param legal boolean; whether to check legal possibility
      * @return boolean; true if the other lane is adjacent to this lane and accessible for the given GTU type; false otherwise
      */
     private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction,
-            final GTUType gtuType, final GTUDirectionality drivingDirection)
+            final GTUType gtuType, final GTUDirectionality drivingDirection, final boolean legal)
     {
         if (!lane.getLaneType().isCompatible(gtuType, drivingDirection))
         {
@@ -496,21 +507,24 @@ public class Lane extends CrossSectionElement implements Serializable
                                     .getSI())
             {
                 // look at stripes between the two lanes
-                for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
+                if (legal)
                 {
-                    if (cse instanceof Stripe)
+                    for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
                     {
-                        Stripe stripe = (Stripe) cse;
-                        // TODO take the cross section slices into account...
-                        if (Math.abs((getDesignLineOffsetAtBegin().getSI() + getBeginWidth().getSI() / 2.0)
-                                - stripe.getDesignLineOffsetAtBegin().getSI()) < ADJACENT_MARGIN.getSI()
-                                && Math.abs((getDesignLineOffsetAtEnd().getSI() + getEndWidth().getSI() / 2.0)
-                                        - stripe.getDesignLineOffsetAtEnd().getSI()) < ADJACENT_MARGIN.getSI())
+                        if (cse instanceof Stripe)
                         {
-                            if (!stripe.isPermeable(gtuType, LateralDirectionality.LEFT))
+                            Stripe stripe = (Stripe) cse;
+                            // TODO take the cross section slices into account...
+                            if (Math.abs((getDesignLineOffsetAtBegin().getSI() + getBeginWidth().getSI() / 2.0)
+                                    - stripe.getDesignLineOffsetAtBegin().getSI()) < ADJACENT_MARGIN.getSI()
+                                    && Math.abs((getDesignLineOffsetAtEnd().getSI() + getEndWidth().getSI() / 2.0)
+                                            - stripe.getDesignLineOffsetAtEnd().getSI()) < ADJACENT_MARGIN.getSI())
                             {
-                                // there is a stripe forbidding to cross to the adjacent lane
-                                return false;
+                                if (!stripe.isPermeable(gtuType, LateralDirectionality.LEFT))
+                                {
+                                    // there is a stripe forbidding to cross to the adjacent lane
+                                    return false;
+                                }
                             }
                         }
                     }
@@ -533,21 +547,24 @@ public class Lane extends CrossSectionElement implements Serializable
                                     .getSI())
             {
                 // look at stripes between the two lanes
-                for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
+                if (legal)
                 {
-                    if (cse instanceof Stripe)
+                    for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
                     {
-                        Stripe stripe = (Stripe) cse;
-                        // TODO take the cross section slices into account...
-                        if (Math.abs((getDesignLineOffsetAtBegin().getSI() - getBeginWidth().getSI() / 2.0)
-                                - stripe.getDesignLineOffsetAtBegin().getSI()) < ADJACENT_MARGIN.getSI()
-                                && Math.abs((getDesignLineOffsetAtEnd().getSI() - getEndWidth().getSI() / 2.0)
-                                        - stripe.getDesignLineOffsetAtEnd().getSI()) < ADJACENT_MARGIN.getSI())
+                        if (cse instanceof Stripe)
                         {
-                            if (!stripe.isPermeable(gtuType, LateralDirectionality.RIGHT))
+                            Stripe stripe = (Stripe) cse;
+                            // TODO take the cross section slices into account...
+                            if (Math.abs((getDesignLineOffsetAtBegin().getSI() - getBeginWidth().getSI() / 2.0)
+                                    - stripe.getDesignLineOffsetAtBegin().getSI()) < ADJACENT_MARGIN.getSI()
+                                    && Math.abs((getDesignLineOffsetAtEnd().getSI() - getEndWidth().getSI() / 2.0)
+                                            - stripe.getDesignLineOffsetAtEnd().getSI()) < ADJACENT_MARGIN.getSI())
                             {
-                                // there is a stripe forbidding to cross to the adjacent lane
-                                return false;
+                                if (!stripe.isPermeable(gtuType, LateralDirectionality.RIGHT))
+                                {
+                                    // there is a stripe forbidding to cross to the adjacent lane
+                                    return false;
+                                }
                             }
                         }
                     }
@@ -1441,8 +1458,7 @@ public class Lane extends CrossSectionElement implements Serializable
         Map<Lane, GTUDirectionality> downMap = dirMap.get(direction);
         if (downMap == null)
         {
-            downMap = direction.isPlus() ? nextLanes(gtuType) : prevLanes(gtuType);
-            downMap = new LinkedHashMap<>(downMap); // safe copy
+            downMap = new LinkedHashMap<>(direction.isPlus() ? nextLanes(gtuType) : prevLanes(gtuType)); // safe copy
             Node downNode = direction.isPlus() ? getParentLink().getEndNode() : getParentLink().getStartNode();
             Iterator<Entry<Lane, GTUDirectionality>> iterator = downMap.entrySet().iterator();
             while (iterator.hasNext())
@@ -1457,7 +1473,7 @@ public class Lane extends CrossSectionElement implements Serializable
             }
             dirMap.put(direction, downMap);
         }
-        return dirMap.get(direction);
+        return new LinkedHashMap<>(dirMap.get(direction));
     }
 
     /**
@@ -1472,16 +1488,18 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             this.upLanes = new LinkedHashMap<>(1);
         }
-        if (!this.upLanes.containsKey(gtuType))
+        Map<GTUDirectionality, Map<Lane, GTUDirectionality>> dirMap = this.upLanes.get(gtuType);
+        if (dirMap == null)
         {
-            this.upLanes.put(gtuType, new HashMap<>());
+            dirMap = new HashMap<>();
+            this.upLanes.put(gtuType, dirMap);
         }
-        if (!this.upLanes.get(gtuType).containsKey(direction))
+        Map<Lane, GTUDirectionality> upMap = dirMap.get(direction);
+        if (upMap == null)
         {
-            Map<Lane, GTUDirectionality> up = direction.isPlus() ? prevLanes(gtuType) : nextLanes(gtuType);
-            up = new LinkedHashMap<>(up); // safe copy
+            upMap = new LinkedHashMap<>(direction.isPlus() ? prevLanes(gtuType) : nextLanes(gtuType)); // safe copy
             Node upNode = direction.isPlus() ? getParentLink().getStartNode() : getParentLink().getEndNode();
-            Iterator<Entry<Lane, GTUDirectionality>> iterator = up.entrySet().iterator();
+            Iterator<Entry<Lane, GTUDirectionality>> iterator = upMap.entrySet().iterator();
             while (iterator.hasNext())
             {
                 Entry<Lane, GTUDirectionality> entry = iterator.next();
@@ -1492,9 +1510,29 @@ public class Lane extends CrossSectionElement implements Serializable
                     iterator.remove();
                 }
             }
-            this.upLanes.get(gtuType).put(direction, up);
+            dirMap.put(direction, upMap);
         }
-        return this.upLanes.get(gtuType).get(direction);
+        return new LinkedHashMap<>(upMap);
+    }
+
+    /**
+     * Determine the set of lanes to the left or to the right of this lane, which are accessible from this lane, or an empty set
+     * if no lane could be found. The method ignores all legal restrictions such as allowable directions and stripes.<br>
+     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
+     * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
+     * <b>Note:</b> LEFT and RIGHT are seen from the direction of the GTU, in its forward driving direction. <br>
+     * @param lateralDirection LEFT or RIGHT.
+     * @param gtuType the type of GTU for which to return the adjacent lanes.
+     * @param drivingDirection GTUDirectinality; the driving direction of the GTU on <code>this</code> Lane
+     * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
+     *         direction.
+     */
+    public final Set<Lane> accessibleAdjacentLanesPhysical(final LateralDirectionality lateralDirection, final GTUType gtuType,
+            final GTUDirectionality drivingDirection)
+    {
+        LateralDirectionality dir =
+                drivingDirection.equals(GTUDirectionality.DIR_PLUS) ? lateralDirection : lateralDirection.flip();
+        return neighbors(dir, gtuType, drivingDirection, false);
     }
 
     /**
@@ -1511,19 +1549,15 @@ public class Lane extends CrossSectionElement implements Serializable
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
      *         direction.
      */
-    public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection, final GTUType gtuType,
+    public final Set<Lane> accessibleAdjacentLanesLegal(final LateralDirectionality lateralDirection, final GTUType gtuType,
             final GTUDirectionality drivingDirection)
     {
         Set<Lane> candidates = new LinkedHashSet<>(1);
-        LateralDirectionality dir = drivingDirection.equals(GTUDirectionality.DIR_PLUS) ? lateralDirection
-                : lateralDirection.isLeft() ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
-        // this.getDirectionality(gtuType).isForwardOrBoth() ? lateralDirection : lateralDirection.isLeft()
-        // ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
-        for (Lane lane : neighbors(dir, gtuType, drivingDirection))
+        LateralDirectionality dir =
+                drivingDirection.equals(GTUDirectionality.DIR_PLUS) ? lateralDirection : lateralDirection.flip();
+        for (Lane lane : neighbors(dir, gtuType, drivingDirection, true))
         {
             if (lane.getLaneType().isCompatible(gtuType, drivingDirection))
-            // getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
-            // || lane.getDirectionality(gtuType).equals(this.getDirectionality(gtuType)))
             {
                 candidates.add(lane);
             }
@@ -1700,7 +1734,7 @@ public class Lane extends CrossSectionElement implements Serializable
         return this.gtuList == null ? new ImmutableArrayList<>(new ArrayList<>())
                 : new ImmutableArrayList<>(this.gtuList, Immutable.COPY);
     }
-    
+
     /**
      * Returns the list of GTU's at the specified time.
      * @param time Time; time
@@ -1724,7 +1758,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         return this.gtuList.size();
     }
-    
+
     /**
      * Returns the number of GTU's at specified time.
      * @param time Time; time
@@ -1742,18 +1776,37 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final int indexOfGtu(final LaneBasedGTU gtu)
     {
-        return this.gtuList.indexOf(gtu);
+        return Collections.binarySearch(this.gtuList, gtu, (gtu1, gtu2) -> {
+            try
+            {
+                return gtu1.position(this, gtu1.getReference()).compareTo(gtu2.position(this, gtu2.getReference()));
+            }
+            catch (GTUException exception)
+            {
+                throw new RuntimeException(exception);
+            }
+        });
     }
-    
+
     /**
      * Returns the index of the given GTU, or -1 if not present, at specified time.
      * @param gtu LaneBasedGTU; gtu to get the index of
-     * @param time Time; time 
+     * @param time Time; time
      * @return int; index of the given GTU, or -1 if not present
      */
     public final int indexOfGtu(final LaneBasedGTU gtu, final Time time)
     {
-        return getGtuList(time).indexOf(gtu);
+        return Collections.binarySearch(getGtuList(time), gtu, (gtu1, gtu2) -> {
+            try
+            {
+                return Double.compare(gtu1.fractionalPosition(this, gtu1.getReference(), time),
+                        gtu2.fractionalPosition(this, gtu2.getReference(), time));
+            }
+            catch (GTUException exception)
+            {
+                throw new RuntimeException(exception);
+            }
+        });
     }
 
     /**
@@ -1765,7 +1818,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         return this.gtuList.get(index);
     }
-    
+
     /**
      * Returns the index'th GTU at specified time.
      * @param index int; index of the GTU

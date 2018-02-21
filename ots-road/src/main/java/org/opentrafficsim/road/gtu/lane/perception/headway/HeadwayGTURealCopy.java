@@ -74,9 +74,8 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     HeadwayGTURealCopy(final String id, final GTUType gtuType, final Length distance, final Length length, final Speed speed,
-            final Acceleration acceleration, final CarFollowingModel carFollowingModel,
-            final Parameters parameters, final SpeedLimitInfo speedLimitInfo, final Route route,
-            final GTUStatus... gtuStatus) throws GTUException
+            final Acceleration acceleration, final CarFollowingModel carFollowingModel, final Parameters parameters,
+            final SpeedLimitInfo speedLimitInfo, final Route route, final GTUStatus... gtuStatus) throws GTUException
     {
         super(id, gtuType, distance, true, length, speed, acceleration, gtuStatus);
         this.carFollowingModel = carFollowingModel;
@@ -121,11 +120,10 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     }
 
     /**
-     * Creates speed limit prospect for given GTU.
-     * @param gtu gtu to the the speed limit prospect for
-     * @return speed limit prospect for given GTU
+     * Creates speed limit info for given GTU.
+     * @param gtu gtu to the the speed limit info for
+     * @return speed limit info for given GTU
      */
-    // TODO this is a simple fix
     private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU gtu)
     {
         SpeedLimitInfo sli = new SpeedLimitInfo();

@@ -1,9 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import java.util.SortedSet;
-
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
@@ -56,14 +55,14 @@ public interface IntersectionPerception extends LaneBasedPerceptionCategory
      * @param lane lane
      * @return set of traffic lights along the route
      */
-    SortedSet<HeadwayTrafficLight> getTrafficLights(RelativeLane lane);
+    Iterable<HeadwayTrafficLight> getTrafficLights(RelativeLane lane);
 
     /**
      * Returns a set of conflicts along the route. Conflicts are sorted by headway value.
      * @param lane lane
      * @return set of conflicts along the route
      */
-    SortedSet<HeadwayConflict> getConflicts(RelativeLane lane);
+    PerceptionIterable<HeadwayConflict> getConflicts(RelativeLane lane);
 
     /**
      * Returns whether there is a conflict alongside to the left.

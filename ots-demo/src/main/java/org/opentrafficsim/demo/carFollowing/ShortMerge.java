@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +132,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     static final Synchronization SYNCHRONIZATION = Synchronization.ACTIVE;
 
     /** Use additional incentives. */
-    static final boolean ADDITIONAL_INCENTIVES = true;
+    static final boolean ADDITIONAL_INCENTIVES = false;
 
     /** Simulation time. */
     public static final Time SIMTIME = Time.createSI(3600);
@@ -146,7 +145,7 @@ public class ShortMerge extends AbstractWrappableAnimation
 
     /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
-
+    
     /** {@inheritDoc} */
     @Override
     public final String shortName()
@@ -165,9 +164,9 @@ public class ShortMerge extends AbstractWrappableAnimation
     @Override
     protected final void addAnimationToggles()
     {
-        AnimationToggles.setTextAnimationTogglesFull(this);
-        this.toggleAnimationClass(OTSLink.class);
-        this.toggleAnimationClass(OTSNode.class);
+        AnimationToggles.setIconAnimationTogglesFull(this);
+        toggleAnimationClass(OTSLink.class);
+        toggleAnimationClass(OTSNode.class);
         showAnimationClass(SpeedSign.class);
     }
 
@@ -467,7 +466,7 @@ public class ShortMerge extends AbstractWrappableAnimation
                 final StreamInterface stream) throws SimRuntimeException, ProbabilityException, GTUException, ParameterException
         {
 
-            Set<DirectedLanePosition> initialLongitudinalPositions = new HashSet<>();
+            Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             // TODO DIR_MINUS
             initialLongitudinalPositions
                     .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));

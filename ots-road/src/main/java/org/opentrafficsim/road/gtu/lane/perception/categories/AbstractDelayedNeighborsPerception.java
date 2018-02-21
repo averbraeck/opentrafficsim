@@ -10,15 +10,16 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.TimeStampedObject;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
@@ -204,7 +205,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
      * @param currentSet current set
      * @return whether there is a gtu in the current set that is not present in the delayed set
      */
-    private boolean newFirstLeaderOrFollower(final Set<HeadwayGTU> delayedSet, final Set<HeadwayGTU> currentSet)
+    private boolean newFirstLeaderOrFollower(final Iterable<HeadwayGTU> delayedSet, final Set<HeadwayGTU> currentSet)
     {
         Set<String> set = new HashSet<>();
         for (HeadwayGTU gtu : delayedSet)
@@ -304,14 +305,14 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
     @Override
     public final void updateLeaders(final RelativeLane lane) throws ParameterException, GTUException, NetworkException
     {
-        setInfo(NeighborsInfoType.getSortedSetType(LEADERS), lane, this.direct.getTimeStampedLeaders(lane));
+        setInfo(NeighborsInfoType.getIterableType(LEADERS), lane, this.direct.getTimeStampedLeaders(lane));
     }
 
     /** {@inheritDoc} */
     @Override
     public final void updateFollowers(final RelativeLane lane) throws GTUException, NetworkException, ParameterException
     {
-        setInfo(NeighborsInfoType.getSortedSetType(FOLLOWERS), lane, this.direct.getTimeStampedFollowers(lane));
+        setInfo(NeighborsInfoType.getIterableType(FOLLOWERS), lane, this.direct.getTimeStampedFollowers(lane));
     }
 
     /**
@@ -362,6 +363,21 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
                 LANEINFOTYPES.put(id, new NeighborsInfoType<SortedSet<HeadwayGTU>>(id));
             }
             return (NeighborsInfoType<SortedSet<HeadwayGTU>>) LANEINFOTYPES.get(id);
+        }
+        
+        /**
+         * Returns a (cached) info type for a sorted set of GTU's.
+         * @param id id
+         * @return info type
+         */
+        @SuppressWarnings("unchecked")
+        public static NeighborsInfoType<PerceptionIterable<HeadwayGTU>> getIterableType(final String id)
+        {
+            if (!LANEINFOTYPES.containsKey(id))
+            {
+                LANEINFOTYPES.put(id, new NeighborsInfoType<SortedSet<HeadwayGTU>>(id));
+            }
+            return (NeighborsInfoType<PerceptionIterable<HeadwayGTU>>) LANEINFOTYPES.get(id);
         }
 
         /**

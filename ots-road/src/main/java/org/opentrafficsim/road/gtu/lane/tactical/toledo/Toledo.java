@@ -27,6 +27,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
@@ -332,7 +333,15 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         {
             constant = params.getParameter(ToledoLaneChangeParameters.C_FWD_TG);
             alpha = 0;
-            if (neighbors.getLeaders(lane).size() > 1)
+            PerceptionIterable<HeadwayGTU> itAble = neighbors.getLeaders(lane);
+            HeadwayGTU second = null;
+            if (!itAble.isEmpty())
+            {
+                Iterator<HeadwayGTU> it = itAble.iterator();
+                it.next();
+                second = it.next();
+            }
+            if (second != null)
             {
                 // two leaders
                 Iterator<HeadwayGTU> it = neighbors.getLeaders(lane).iterator();
@@ -395,7 +404,15 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             constant = params.getParameter(ToledoLaneChangeParameters.C_BCK_TG);
             alpha = params.getParameter(ToledoLaneChangeParameters.ALPHA_BCK);
             deltaFrontVehicle = 0;
-            if (neighbors.getFollowers(lane) != null && neighbors.getFollowers(lane).size() > 1)
+            PerceptionIterable<HeadwayGTU> itAble = neighbors.getFollowers(lane);
+            HeadwayGTU second = null;
+            if (!itAble.isEmpty())
+            {
+                Iterator<HeadwayGTU> it = itAble.iterator();
+                it.next();
+                second = it.next();
+            }
+            if (second != null)
             {
                 // two followers
                 Iterator<HeadwayGTU> it = neighbors.getFollowers(lane).iterator();
@@ -706,33 +723,22 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     {
         int nVehicles = 0;
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-        nVehicles += neighbors.getFollowers(lane) == null ? 0 : neighbors.getFollowers(lane).size();
-        nVehicles += neighbors.getLeaders(lane) == null ? 0 : neighbors.getLeaders(lane).size();
+        Length up = Length.ZERO;
+        Length down = Length.ZERO;
+        for (HeadwayGTU neighbor : neighbors.getFollowers(lane))
+        {
+            nVehicles++;
+            down = neighbor.getDistance();
+        }
+        for (HeadwayGTU neighbor : neighbors.getLeaders(lane))
+        {
+            nVehicles++;
+            up = neighbor.getDistance();
+        }
         if (nVehicles > 0)
         {
-            Length d1;
-            if (!neighbors.getFollowers(lane).isEmpty())
-            {
-                d1 = neighbors.getFollowers(lane).last().getDistance();
-                d1 = d1.plus(gtu.getLength().divideBy(2.0));
-                d1 = d1.plus(neighbors.getFollowers(lane).last().getLength().divideBy(2.0));
-            }
-            else
-            {
-                d1 = Length.ZERO;
-            }
-            Length d2;
-            if (!neighbors.getLeaders(lane).isEmpty())
-            {
-                d2 = neighbors.getLeaders(lane).last().getDistance();
-                d2 = d2.plus(gtu.getLength().divideBy(2.0));
-                d2 = d2.plus(neighbors.getLeaders(lane).last().getLength().divideBy(2.0));
-            }
-            else
-            {
-                d2 = Length.ZERO;
-            }
-            return new LinearDensity(nVehicles / d1.plus(d2).getInUnit(LengthUnit.KILOMETER), LinearDensityUnit.PER_KILOMETER);
+            return new LinearDensity(nVehicles / up.plus(down).getInUnit(LengthUnit.KILOMETER),
+                    LinearDensityUnit.PER_KILOMETER);
         }
         return LinearDensity.ZERO;
     }

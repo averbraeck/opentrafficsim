@@ -1,34 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.perception.AbstractPerception;
-import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
-import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * The perception module of a GTU based on lanes. It is responsible for perceiving (sensing) the environment of the GTU, which
@@ -81,9 +61,6 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
         super(gtu);
     }
 
-    // TODO remove old mode
-    private final static boolean NEWMODE = true;
-
     /** {@inheritDoc} */
     @Override
     public final LaneStructure getLaneStructure() throws ParameterException
@@ -91,502 +68,34 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
 
         if (this.laneStructure == null || this.updateTime.lt(getGtu().getSimulator().getSimulatorTime().getTime()))
         {
-
-            // downstream structure length
-            Length down = getGtu().getParameters().getParameter(PERCEPTION);
-            // upstream structure length
-            Length up = getGtu().getParameters().getParameter(LOOKBACK);
-            // structure length downstream of split on link not on route
-            Length lookAhead = getGtu().getParameters().getParameter(LOOKAHEAD);
-            // structure length upstream of merge on link not on route
-            Length upMerge = Length.max(up, lookAhead);
-            // negative values for upstream
-            up = up.neg();
-            upMerge = upMerge.neg();
-            if (NEWMODE)
+            if (this.laneStructure == null)
             {
-
-                if (this.laneStructure == null)
-                {
-                    // TODO move parameter obtaining to inside this if-statement
-                    this.laneStructure = new LaneStructure(lookAhead, down, up, lookAhead, upMerge, getGtu().getSimulator());
-                }
-                DirectedLanePosition dlp;
-                try
-                {
-                    dlp = getGtu().getReferencePosition();
-                    this.laneStructure.update(dlp, getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType());
-                }
-                catch (GTUException exception)
-                {
-                    throw new RuntimeException("Error while updating the lane map.", exception);
-                }
-
+                // downstream structure length
+                Length down = getGtu().getParameters().getParameter(PERCEPTION);
+                // upstream structure length
+                Length up = getGtu().getParameters().getParameter(LOOKBACK);
+                // structure length downstream of split on link not on route
+                Length lookAhead = getGtu().getParameters().getParameter(LOOKAHEAD);
+                // structure length upstream of merge on link not on route
+                Length upMerge = Length.max(up, lookAhead);
+                // negative values for upstream
+                up = up.neg();
+                upMerge = upMerge.neg();
+                this.laneStructure = new LaneStructure(lookAhead, down, up, lookAhead, upMerge, getGtu().getSimulator());
             }
-            else
+            DirectedLanePosition dlp;
+            try
             {
-
-                // OLD MODE
-
-                // Create Lane Structure
-                DirectedLanePosition dlp;
-                try
-                {
-                    dlp = getGtu().getReferencePosition();
-                }
-                catch (GTUException exception)
-                {
-                    // Should not happen, we get the lane from the GTU
-                    throw new RuntimeException("Could not get fraction on root lane.", exception);
-                }
-                Lane rootLane = dlp.getLane();
-                GTUDirectionality drivingDirection = dlp.getGtuDirection();
-                double fraction = dlp.getPosition().si / rootLane.getLength().si;
-                LaneStructureRecord rootLSR =
-                        new LaneStructureRecord(rootLane, drivingDirection, rootLane.getLength().multiplyBy(-fraction));
-                this.laneStructure = new LaneStructure(rootLSR, lookAhead);
-                this.laneStructure.addLaneStructureRecord(rootLSR, RelativeLane.CURRENT);
-                this.relativeLaneMap.clear();
-                this.relativeLaneMap.put(rootLSR, RelativeLane.CURRENT);
-                startBuild(rootLSR, fraction, getGtu().getGTUType(), drivingDirection, down, lookAhead, up, upMerge);
+                dlp = getGtu().getReferencePosition();
+                this.laneStructure.update(dlp, getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType());
             }
-            // TODO possibly optimize by using a 'singleton' lane structure source, per GTUType
+            catch (GTUException exception)
+            {
+                throw new RuntimeException("Error while updating the lane map.", exception);
+            }
             this.updateTime = getGtu().getSimulator().getSimulatorTime().getTime();
-
         }
-
         return this.laneStructure;
-    }
-
-    /**
-     * Local map where relative lanes are store per record, such that other records can be linked to the correct relative lane.
-     */
-    @Deprecated
-    private final Map<LaneStructureRecord, RelativeLane> relativeLaneMap = new HashMap<>();
-
-    /** Set of lanes that can be ignored as they are beyond build bounds. */
-    @Deprecated
-    private final Set<Lane> ignoreSet = new HashSet<>();
-
-    /**
-     * Starts the build from the current lane and creates an initial lateral set with correct start distances based on the
-     * fraction.
-     * 
-     * <pre>
-     *  ---------
-     * |  /|\    |
-     *  ---|-----
-     * |  /|\    |
-     *  ---|-----
-     * |   o     | rootLSR
-     *  ---|-----
-     * |  \|/    |
-     *  ---------
-     *  
-     * (---) fraction
-     * </pre>
-     * 
-     * @param rootLSR record where the GTU is currently
-     * @param fraction double; fractional position where the GTU is
-     * @param gtuType GTUType; type of the GTU
-     * @param drivingDirection GTUDirectionality; driving direction that the GTU has on the rootLSR
-     * @param down Length; maximum downstream distance to build structure
-     * @param downSplit Length; maximum downstream distance past split not following the route to build structure
-     * @param up Length; maximum upstream distance to build structure
-     * @param upMerge Length; maximum upstream distance upstream of downstream merges to build structure
-     */
-    @Deprecated
-    private void startBuild(final LaneStructureRecord rootLSR, final double fraction, final GTUType gtuType,
-            final GTUDirectionality drivingDirection, final Length down, final Length downSplit, final Length up,
-            final Length upMerge)
-    {
-        // Build initial lateral set
-        Set<LaneStructureRecord> recordSet = new LinkedHashSet<>();
-        recordSet.add(rootLSR);
-        for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                LateralDirectionality.RIGHT })
-        {
-            LaneStructureRecord current = rootLSR;
-            RelativeLane relativeLane = RelativeLane.CURRENT;
-            Set<Lane> adjacentLanes = current.getLane().accessibleAdjacentLanes(latDirection, gtuType, drivingDirection);
-            while (!adjacentLanes.isEmpty())
-            {
-                Throw.when(adjacentLanes.size() > 1, RuntimeException.class,
-                        "Multiple adjacent lanes encountered during construction of lane map.");
-                relativeLane = latDirection.isLeft() ? relativeLane.getLeft() : relativeLane.getRight();
-                Lane lane = adjacentLanes.iterator().next();
-                LaneStructureRecord adjacentRecord =
-                        constructRecord(lane, current.getDirection(), lane.getLength().multiplyBy(-fraction), relativeLane);
-                if (latDirection.isLeft())
-                {
-                    if (lane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType, drivingDirection)
-                            .contains(current.getLane()))
-                    {
-                        adjacentRecord.setRight(current);
-                    }
-                    current.setLeft(adjacentRecord);
-                }
-                else
-                {
-                    if (lane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType, drivingDirection)
-                            .contains(current.getLane()))
-                    {
-                        adjacentRecord.setLeft(current);
-                    }
-                    current.setRight(adjacentRecord);
-                }
-
-                recordSet.add(adjacentRecord);
-                current = adjacentRecord;
-                adjacentLanes = current.getLane().accessibleAdjacentLanes(latDirection, gtuType, drivingDirection);
-            }
-        }
-        try
-        {
-            for (LaneStructureRecord record : recordSet)
-            {
-                if (record.getStartDistance().plus(record.getLane().getLength()).ge(down))
-                {
-                    record.setCutOffEnd(down.minus(record.getStartDistance()));
-                }
-                if (record.getStartDistance().le(up))
-                {
-                    record.setCutOffStart(up.minus(record.getStartDistance()));
-                }
-            }
-            this.ignoreSet.clear();
-            buildDownstreamRecursive(recordSet, gtuType, down, up, downSplit, upMerge);
-            this.ignoreSet.clear();
-            buildUpstreamRecursive(recordSet, gtuType, down, up, upMerge);
-        }
-        catch (GTUException | NetworkException exception)
-        {
-            throw new RuntimeException("Exception while building lane map.", exception);
-        }
-    }
-
-    /**
-     * Extends the lane structure with the downstream lanes of the current set. Per downstream link, a new set results, which
-     * are extended laterally before performing the next downstream step. If the lateral extension finds new lanes, the
-     * structure is extended upstream from those lanes over a limited distance.
-     * 
-     * <pre>
-     *  --------- ---------
-     * |       --|-)     --|-?A       ?: possible next steps
-     *  --------- ---------
-     * |       --|-)     --|-?A
-     *  --------- =============       A, B: two separate downstream links
-     * |       --|-)         --|-?B
-     *  ----===== ------|------
-     *     | C?(-|--   \|/   --|-?B   C: extend upstream if merge
-     *      ----- -------------
-     * </pre>
-     * 
-     * @param recordSet current lateral set of records
-     * @param gtuType GTU type
-     * @param down maximum downstream distance to build structure
-     * @param up maximum upstream distance to build structure
-     * @param downSplit maximum downstream distance past split not following the route to build structure
-     * @param upMerge maximum upstream distance upstream of downstream merges to build structure
-     * @throws GTUException if an inconsistency in the lane map is encountered
-     * @throws NetworkException exception during movement over the network
-     */
-    @Deprecated
-    private void buildDownstreamRecursive(final Set<LaneStructureRecord> recordSet, final GTUType gtuType, final Length down,
-            final Length up, final Length downSplit, final Length upMerge) throws GTUException, NetworkException
-    {
-        // Loop lanes and put downstream lanes in sets per downstream link
-        Map<Link, Set<Lane>> laneSets = new LinkedHashMap<>();
-        Map<Link, TreeMap<RelativeLane, LaneStructureRecord>> recordSets = new HashMap<>();
-        Map<Link, Length> maxStart = new HashMap<>();
-        for (LaneStructureRecord laneRecord : recordSet)
-        {
-            if (!laneRecord.isCutOffEnd())
-            {
-                for (Lane nextLane : laneRecord.getLane().downstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).keySet())
-                {
-                    Link nextLink = nextLane.getParentLink();
-                    if (!laneSets.containsKey(nextLink))
-                    {
-                        laneSets.put(nextLink, new LinkedHashSet<>());
-                        recordSets.put(nextLink, new TreeMap<>());
-                        maxStart.put(nextLink, new Length(Double.MIN_VALUE, LengthUnit.SI));
-                    }
-                    laneSets.get(nextLink).add(nextLane);
-                    RelativeLane relativeLane = this.relativeLaneMap.get(laneRecord);
-                    Length start = laneRecord.getStartDistance().plus(laneRecord.getLane().getLength());
-                    maxStart.put(nextLink, Length.max(maxStart.get(nextLink), start));
-                    LaneStructureRecord nextRecord = constructRecord(nextLane,
-                            laneRecord.getLane().downstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).get(nextLane), start,
-                            relativeLane);
-                    if (start.plus(nextLane.getLength()).ge(down))
-                    {
-                        nextRecord.setCutOffEnd(down.minus(start));
-                    }
-                    recordSets.get(nextLink).put(relativeLane, nextRecord);
-                    laneRecord.addNext(nextRecord);
-                    nextRecord.addPrev(laneRecord);
-                }
-            }
-            else
-            {
-                for (Lane nextLane : laneRecord.getLane().downstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).keySet())
-                {
-                    this.ignoreSet.add(nextLane); // beyond 'down', do not add in lateral step
-                }
-            }
-        }
-        // loop links to connect the lanes laterally and continue the build
-        Link currentLink = recordSet.iterator().next().getLane().getParentLink();
-        GTUDirectionality direction = recordSet.iterator().next().getDirection();
-        Node nextNode = direction.isPlus() ? currentLink.getEndNode() : currentLink.getStartNode();
-        Route route = getGtu().getStrategicalPlanner().getRoute();
-        for (Link link : laneSets.keySet())
-        {
-            connectLaterally(recordSets.get(link), gtuType, GTUDirectionality.DIR_PLUS);
-            Set<LaneStructureRecord> set = new LinkedHashSet<>(recordSets.get(link).values()); // collection to set
-            // reduce remaining downstream length if not on route, to at most 'downSplit'
-            Length downLimit = down;
-            if (route != null && (!route.contains(nextNode) // if no route, do not limit
-                    || !((LaneBasedStrategicalRoutePlanner) getGtu().getStrategicalPlanner())
-                            .nextLinkDirection(nextNode, currentLink, gtuType).getLink().equals(link)))
-            {
-                // as each lane has a separate start distance, use the maximum value from maxStart
-                downLimit = Length.min(downLimit, maxStart.get(link).plus(downSplit));
-            }
-            else
-            {
-                set = extendLateral(set, gtuType, down, up, upMerge, true);
-            }
-            buildDownstreamRecursive(set, gtuType, downLimit, up, downSplit, upMerge);
-        }
-    }
-
-    /**
-     * Extends the lane structure with (multiple) left and right lanes of the current set. The extended lateral set is returned
-     * for the downstream or upstream build to continue.
-     * 
-     * <pre>
-     *  ---- ---------
-     * | ?(-|-- /|\   |
-     *  ---- ----|----   ?: extend upstream of merge if doMerge = true
-     * | ?(-|-- /|\   |
-     *  ---- ----|----  
-     *      |         | } 
-     *       ---------   } recordSet
-     *      |         | }
-     *       ----|---- 
-     *      |   \|/   |
-     *       ---------
-     * </pre>
-     * 
-     * @param recordSet current lateral set of records
-     * @param gtuType GTU type
-     * @param down maximum downstream distance to build structure
-     * @param up maximum upstream distance to build structure
-     * @param upMerge maximum upstream distance upstream of downstream merges to build structure
-     * @param downstreamBuild whether building downstream
-     * @return laterally extended set
-     * @throws GTUException if an inconsistency in the lane map is encountered
-     * @throws NetworkException exception during movement over the network
-     */
-    @Deprecated
-    private Set<LaneStructureRecord> extendLateral(final Set<LaneStructureRecord> recordSet, final GTUType gtuType,
-            final Length down, final Length up, final Length upMerge, final boolean downstreamBuild)
-            throws GTUException, NetworkException
-    {
-        Set<Lane> laneSet = new HashSet<>();
-        for (LaneStructureRecord laneStructureRecord : recordSet)
-        {
-            laneSet.add(laneStructureRecord.getLane());
-        }
-        for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                LateralDirectionality.RIGHT })
-        {
-            Set<LaneStructureRecord> expandSet = new LinkedHashSet<>();
-            Length startDistance = null;
-            Length endDistance = null;
-            for (LaneStructureRecord laneRecord : recordSet)
-            {
-                LaneStructureRecord current = laneRecord;
-                startDistance = current.getStartDistance();
-                endDistance = current.getStartDistance().plus(current.getLane().getLength());
-                RelativeLane relativeLane = this.relativeLaneMap.get(laneRecord);
-                Set<Lane> adjacentLanes =
-                        current.getLane().accessibleAdjacentLanes(latDirection, gtuType, current.getDirection());
-                while (!adjacentLanes.isEmpty())
-                {
-                    Throw.when(adjacentLanes.size() > 1, RuntimeException.class,
-                            "Multiple adjacent lanes encountered during construction of lane map.");
-                    Lane laneAdjacent = adjacentLanes.iterator().next();
-                    Length adjacentStart = downstreamBuild ? startDistance : endDistance.minus(laneAdjacent.getLength());
-                    // skip if lane is already in set, no effective length in structure, or in ignore list
-                    if (!laneSet.contains(laneAdjacent) && !adjacentStart.plus(laneAdjacent.getLength()).le(up)
-                            && !adjacentStart.ge(down) && !this.ignoreSet.contains(laneAdjacent))
-                    {
-                        laneSet.add(laneAdjacent);
-                        relativeLane = latDirection.isLeft() ? relativeLane.getLeft() : relativeLane.getRight();
-                        LaneStructureRecord recordAdjacent =
-                                constructRecord(laneAdjacent, laneRecord.getDirection(), adjacentStart, relativeLane);
-                        expandSet.add(recordAdjacent);
-                        if (latDirection.isLeft())
-                        {
-                            if (laneAdjacent
-                                    .accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType, current.getDirection())
-                                    .contains(current.getLane()))
-                            {
-                                recordAdjacent.setRight(current);
-                            }
-                            current.setLeft(recordAdjacent);
-                        }
-                        else
-                        {
-                            if (laneAdjacent
-                                    .accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType, current.getDirection())
-                                    .contains(current.getLane()))
-                            {
-                                recordAdjacent.setLeft(current);
-                            }
-                            current.setRight(recordAdjacent);
-                        }
-                        if (adjacentStart.plus(laneAdjacent.getLength()).ge(down))
-                        {
-                            recordAdjacent.setCutOffEnd(down.minus(adjacentStart));
-                        }
-                        if (adjacentStart.le(up))
-                        {
-                            recordAdjacent.setCutOffStart(up.minus(adjacentStart));
-                        }
-                        current = recordAdjacent;
-                        adjacentLanes =
-                                current.getLane().accessibleAdjacentLanes(latDirection, gtuType, current.getDirection());
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            if (downstreamBuild & !expandSet.isEmpty())
-            {
-                // limit search range and search upstream of merge
-                buildUpstreamRecursive(expandSet, gtuType, down, startDistance.plus(upMerge), upMerge);
-            }
-            recordSet.addAll(expandSet);
-        }
-        return recordSet;
-    }
-
-    /**
-     * Extends the lane structure with the upstream lanes of the current set. Per upstream link, a new set results, which are
-     * expanded laterally before performing the next upstream step. <br>
-     * @param recordSet current lateral set of records
-     * @param gtuType GTU type
-     * @param down maximum downstream distance to build structure
-     * @param up maximum upstream distance to build structure
-     * @param upMerge maximum upstream distance upstream of downstream merges to build structure
-     * @throws GTUException if an inconsistency in the lane map is encountered
-     * @throws NetworkException exception during movement over the network
-     */
-    @Deprecated
-    private void buildUpstreamRecursive(final Set<LaneStructureRecord> recordSet, final GTUType gtuType, final Length down,
-            final Length up, final Length upMerge) throws GTUException, NetworkException
-    {
-        // Loop lanes and put upstream lanes in sets per upstream link
-        Map<Link, Set<Lane>> laneSets = new HashMap<>();
-        Map<Link, TreeMap<RelativeLane, LaneStructureRecord>> recordSets = new HashMap<>();
-        Map<Link, Length> minStart = new HashMap<>();
-        for (LaneStructureRecord laneRecord : recordSet)
-        {
-            if (!laneRecord.isCutOffStart())
-            {
-                for (Lane prevLane : laneRecord.getLane().upstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).keySet())
-                {
-                    Link prevLink = prevLane.getParentLink();
-                    if (!laneSets.containsKey(prevLink))
-                    {
-                        laneSets.put(prevLink, new HashSet<>());
-                        recordSets.put(prevLink, new TreeMap<>());
-                        minStart.put(prevLink, new Length(Double.MAX_VALUE, LengthUnit.SI));
-                    }
-                    laneSets.get(prevLink).add(prevLane);
-                    RelativeLane relativeLane = this.relativeLaneMap.get(laneRecord);
-                    Length start = laneRecord.getStartDistance().minus(prevLane.getLength());
-                    minStart.put(prevLink, Length.min(minStart.get(prevLink), start));
-                    LaneStructureRecord prevRecord = constructRecord(prevLane,
-                            laneRecord.getLane().upstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).get(prevLane), start,
-                            relativeLane);
-                    if (start.le(up))
-                    {
-                        prevRecord.setCutOffStart(up.minus(start));
-                    }
-                    recordSets.get(prevLink).put(relativeLane, prevRecord);
-                    laneRecord.addPrev(prevRecord);
-                    prevRecord.addNext(laneRecord);
-                }
-            }
-            else
-            {
-                for (Lane prevLane : laneRecord.getLane().upstreamLanes(GTUDirectionality.DIR_PLUS, gtuType).keySet())
-                {
-                    this.ignoreSet.add(prevLane); // beyond 'up', do not add in lateral step
-                }
-            }
-        }
-        // loop links to connect the lanes laterally and continue the build
-        for (Link link : laneSets.keySet())
-        {
-            connectLaterally(recordSets.get(link), gtuType, GTUDirectionality.DIR_PLUS);
-            Set<LaneStructureRecord> set = new LinkedHashSet<>(recordSets.get(link).values()); // collection to set
-            buildUpstreamRecursive(set, gtuType, down, up, upMerge);
-        }
-    }
-
-    /**
-     * Creates a lane structure record and adds it to relevant maps.
-     * @param lane lane
-     * @param direction direction
-     * @param startDistance distance at start of record
-     * @param relativeLane relative lane
-     * @return created lane structure record
-     */
-    @Deprecated
-    private LaneStructureRecord constructRecord(final Lane lane, final GTUDirectionality direction, final Length startDistance,
-            final RelativeLane relativeLane)
-    {
-        LaneStructureRecord record = new LaneStructureRecord(lane, direction, startDistance);
-        this.laneStructure.addLaneStructureRecord(record, relativeLane);
-        this.relativeLaneMap.put(record, relativeLane);
-        return record;
-    }
-
-    /**
-     * Connects the lane structure records laterally if appropriate.
-     * @param map Map<RelativeLane, LaneStructureRecord>; map
-     * @param gtuType gtu type
-     * @param drivingDirection
-     */
-    @Deprecated
-    private void connectLaterally(final Map<RelativeLane, LaneStructureRecord> map, final GTUType gtuType,
-            final GTUDirectionality drivingDirection)
-    {
-        for (RelativeLane relativeLane : map.keySet())
-        {
-            if (map.containsKey(relativeLane.getRight()))
-            {
-                Lane thisLane = map.get(relativeLane).getLane();
-                Lane rightLane = map.get(relativeLane.getRight()).getLane();
-                if (thisLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType, drivingDirection)
-                        .contains(rightLane))
-                {
-                    map.get(relativeLane).setRight(map.get(relativeLane.getRight()));
-                }
-                if (rightLane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType, drivingDirection).contains(thisLane))
-                {
-                    map.get(relativeLane.getRight()).setLeft(map.get(relativeLane));
-                }
-            }
-        }
     }
 
 }

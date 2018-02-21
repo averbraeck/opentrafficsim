@@ -296,7 +296,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         for (Lane lane : lanesCopy.keySet())
         {
-            Set<Lane> laneSet = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType(), getDirection(lane));
+            Set<Lane> laneSet = lane.accessibleAdjacentLanesPhysical(laneChangeDirection, getGTUType(), getDirection(lane));
             if (laneSet.size() > 0)
             {
                 Lane adjacentLane = laneSet.iterator().next();
@@ -345,7 +345,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         int numRegistered = 0;
         for (Lane lane : lanesCopy.keySet())
         {
-            Set<Lane> laneSet = lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType(), getDirection(lane));
+            Set<Lane> laneSet = lane.accessibleAdjacentLanesLegal(laneChangeDirection, getGTUType(), getDirection(lane));
             if (laneSet.size() > 0)
             {
                 numRegistered++;
@@ -392,7 +392,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             for (Lane lane : lanesCopy.keySet())
             {
                 Iterator<Lane> iterator =
-                        lane.accessibleAdjacentLanes(laneChangeDirection, getGTUType(), getDirection(lane)).iterator();
+                        lane.accessibleAdjacentLanesLegal(laneChangeDirection, getGTUType(), getDirection(lane)).iterator();
                 if (iterator.hasNext() && lanesCopy.keySet().contains(iterator.next()))
                 {
                     lanesToBeRemoved.add(lane);
@@ -557,19 +557,20 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     public Length position(final Lane lane, final RelativePosition relativePosition, final Time when) throws GTUException
     {
-//        if (null == lane)
-//        {
-//            throw new GTUException("lane is null");
-//        }
+        // if (null == lane)
+        // {
+        // throw new GTUException("lane is null");
+        // }
 
         int cacheIndex = 0;
         if (CACHING)
         {
             cacheIndex = 17 * lane.hashCode() + relativePosition.hashCode();
-            if (when.si == this.cachePositionsTime && this.cachedPositions.containsKey(cacheIndex))
+            Length l;
+            if (when.si == this.cachePositionsTime && (l = this.cachedPositions.get(cacheIndex)) != null)
             {
                 CACHED_POSITION++;
-                return this.cachedPositions.get(cacheIndex);
+                return l;
             }
             if (when.si != this.cachePositionsTime)
             {
@@ -581,21 +582,21 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         synchronized (this.lock)
         {
-//            if (!this.lanesCurrentOperationalPlan.containsKey(lane))
-//            {
-//                throw new GTUException("position() : GTU " + toString() + " is not on lane " + lane);
-//            }
-//            if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
-//            {
-//                // DO NOT USE toString() here, as it will cause an endless loop...
-//                throw new GTUException(this + " does not have a fractional position on " + lane.toString());
-//            }
+            // if (!this.lanesCurrentOperationalPlan.containsKey(lane))
+            // {
+            // throw new GTUException("position() : GTU " + toString() + " is not on lane " + lane);
+            // }
+            // if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
+            // {
+            // // DO NOT USE toString() here, as it will cause an endless loop...
+            // throw new GTUException(this + " does not have a fractional position on " + lane.toString());
+            // }
             double longitudinalPosition = lane.positionSI(this.fractionalLinkPositions.get(lane.getParentLink()));
-//            if (getOperationalPlan() == null)
-//            {
-//                // no valid operational plan, e.g. during generation of a new plan
-//                return Length.createSI(longitudinalPosition + relativePosition.getDx().si);
-//            }
+            // if (getOperationalPlan() == null)
+            // {
+            // // no valid operational plan, e.g. during generation of a new plan
+            // return Length.createSI(longitudinalPosition + relativePosition.getDx().si);
+            // }
             double loc;
             try
             {

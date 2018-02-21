@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 /**
@@ -90,7 +91,7 @@ public final class LmrsData
      * @param adjLeaders leaders in adjacent lane
      * @return gtu from the set that is the current sync vehicle
      */
-    HeadwayGTU getSyncVehicle(final Set<HeadwayGTU> adjLeaders)
+    HeadwayGTU getSyncVehicle(final PerceptionIterable<HeadwayGTU> adjLeaders)
     {
         if (this.syncVehicle == null)
         {

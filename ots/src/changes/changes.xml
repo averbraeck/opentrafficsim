@@ -63,6 +63,9 @@
       <action issue="OTS-365" type="add">
         OTS-365. Historical Collections
       </action>
+      <action issue="OTS-366" type="add">
+        OTS-366. Iterable perception
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">

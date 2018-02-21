@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.SortedSet;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -12,6 +10,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
@@ -59,7 +58,8 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
         // change right to get out of the way
         if (rightLane && mandatoryDesire.getRight() >= 0.0)
         {
-            SortedSet<HeadwayGTU> followers = neighbors.getFollowers(RelativeLane.CURRENT);
+            PerceptionIterable<HeadwayGTU> followers =
+                    (PerceptionIterable<HeadwayGTU>) neighbors.getFollowers(RelativeLane.CURRENT);
             if (!followers.isEmpty())
             {
                 HeadwayGTU follower = followers.first();
@@ -82,7 +82,8 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
         // stay right to keep out of the way
         if (leftLane && mandatoryDesire.getLeft() <= 0.0)
         {
-            SortedSet<HeadwayGTU> followers = neighbors.getFollowers(RelativeLane.LEFT);
+            PerceptionIterable<HeadwayGTU> followers =
+                    (PerceptionIterable<HeadwayGTU>) neighbors.getFollowers(RelativeLane.LEFT);
             if (followers != null && !followers.isEmpty())
             {
                 HeadwayGTU follower = followers.first();

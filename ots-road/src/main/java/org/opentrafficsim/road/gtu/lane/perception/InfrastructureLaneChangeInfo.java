@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.gtu.RelativePosition;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -16,7 +17,6 @@ import nl.tudelft.simulation.language.Throw;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version May 2, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLaneChangeInfo>, Serializable
 {
 
@@ -26,29 +26,46 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
     /** Required number of lane changes. */
     private final int requiredNumberOfLaneChanges;
 
-    /** Remaining distance to perform required lane changes. */
-    private final Length remainingDistance;
+    /** Record who's end defines the remaining distances. */
+    private final LaneStructureRecord record;
 
-    /** Whether this reason to change lane is due to a dead-end. */
-    private final boolean deadEnd;
+    /** Available length after the start (reference on start). */
+    private final Length afterStartLength;
+
+    /** Whether the need to change lane comes from a dead-end. */
+    private boolean deadEnd;
+
+    /**
+     * Constructor for subclasses.
+     * @param requiredNumberOfLaneChanges required number of lane changes
+     * @param deadEnd whether the need to change lane comes from a dead-end
+     */
+    protected InfrastructureLaneChangeInfo(final int requiredNumberOfLaneChanges, final boolean deadEnd)
+    {
+        this.requiredNumberOfLaneChanges = requiredNumberOfLaneChanges;
+        this.record = null;
+        this.deadEnd = deadEnd;
+        this.afterStartLength = null;
+    }
 
     /**
      * Constructor.
      * @param requiredNumberOfLaneChanges required number of lane changes
-     * @param remainingDistance remaining distance to perform required lane changes
-     * @param deadEnd whether this reason to change lane is due to a dead-end
+     * @param record record who's end defines the remaining distance
+     * @param relativePosition critical relative position (i.e. nose when driving forward)
+     * @param deadEnd whether the need to change lane comes from a dead-end
      * @throws IllegalArgumentException if required number of lane changes or remaining distance is negative
      * @throws NullPointerException if remaining distance is null
      */
-    public InfrastructureLaneChangeInfo(final int requiredNumberOfLaneChanges, final Length remainingDistance,
-            final boolean deadEnd)
+    public InfrastructureLaneChangeInfo(final int requiredNumberOfLaneChanges, final LaneStructureRecord record,
+            final RelativePosition relativePosition, final boolean deadEnd)
     {
         Throw.when(requiredNumberOfLaneChanges < 0, IllegalArgumentException.class,
                 "Required number of lane changes may not be negative.");
-        Throw.whenNull(remainingDistance, "Remaining distance may not be null.");
-        Throw.when(remainingDistance.si < 0, IllegalArgumentException.class, "Remaining distance may not be negative.");
+        Throw.whenNull(record, "Record may not be null.");
         this.requiredNumberOfLaneChanges = requiredNumberOfLaneChanges;
-        this.remainingDistance = remainingDistance;
+        this.record = record;
+        this.afterStartLength = this.record.getLane().getLength().minus(relativePosition.getDx());
         this.deadEnd = deadEnd;
     }
 
@@ -63,9 +80,9 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
     /**
      * @return remainingDistance remaining distance to perform required lane changes.
      */
-    public final Length getRemainingDistance()
+    public Length getRemainingDistance()
     {
-        return this.remainingDistance;
+        return this.record.getStartDistance().plus(this.afterStartLength);
     }
 
     /**
@@ -76,20 +93,74 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
         return this.deadEnd;
     }
 
+    /**
+     * Sets whether this reason to change lane is due to a dead-end.
+     * @param deadEnd whether the need to change lane comes from a dead-end
+     */
+    public final void setDeadEnd(final boolean deadEnd)
+    {
+        this.deadEnd = deadEnd;
+    }
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()
     {
         return "InfrastructureLaneChangeInfo [requiredNumberOfLaneChanges=" + this.requiredNumberOfLaneChanges
-                + ", remainingDistance=" + this.remainingDistance + "]";
+                + ", remainingDistance=" + getRemainingDistance() + "]";
     }
 
     /** {@inheritDoc} */
     @Override
     public final int compareTo(final InfrastructureLaneChangeInfo infrastructureLaneChangeInfo)
     {
-        return this.remainingDistance.compareTo(infrastructureLaneChangeInfo.getRemainingDistance());
+        return this.getRemainingDistance().compareTo(infrastructureLaneChangeInfo.getRemainingDistance());
+    }
+
+    /**
+     * Returns an instance for the case the entire lane is inaccessible.
+     * @param deadEnd dead end
+     * @return instance for the case the entire lane is inaccessible
+     */
+    public static InfrastructureLaneChangeInfo fromInaccessibleLane(final boolean deadEnd)
+    {
+        return new InfrastructureLaneChangeInfoInaccessibleLane(deadEnd);
+    }
+
+    /**
+     * Extension which sets the distance to 0 always, used for fully inaccessible lanes regarding the route.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 feb. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private static class InfrastructureLaneChangeInfoInaccessibleLane extends InfrastructureLaneChangeInfo
+    {
+
+        /** */
+        private static final long serialVersionUID = 20180214L;
+
+        /**
+         * @param deadEnd whether the need to change lane comes from a dead-end
+         */
+        InfrastructureLaneChangeInfoInaccessibleLane(final boolean deadEnd)
+        {
+            super(1, deadEnd);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Length getRemainingDistance()
+        {
+            return Length.ZERO;
+        }
+
     }
 
 }

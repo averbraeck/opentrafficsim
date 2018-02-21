@@ -499,10 +499,10 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     {
                         // Lane drop; our lane disappears. This is a compulsory lane change; which is not controlled
                         // by the Route. Perform the forced lane change.
-                        if (currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtu.getGTUType(), drivingDirection)
+                        if (currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtu.getGTUType(), drivingDirection)
                                 .size() > 0)
                         {
-                            for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT,
+                            for (Lane adjacentLane : currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT,
                                     gtu.getGTUType(), drivingDirection))
                             {
                                 if (adjacentLane.nextLanes(gtu.getGTUType()).size() > 0)
@@ -514,7 +514,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                                 // first in the set
                             }
                         }
-                        for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT,
+                        for (Lane adjacentLane : currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT,
                                 gtu.getGTUType(), drivingDirection))
                         {
                             if (adjacentLane.nextLanes(gtu.getGTUType()).size() > 0)
@@ -658,11 +658,11 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         while (null == currentSuitability)
         {
             laneChangesUsed++;
-            if (currentLane.accessibleAdjacentLanes(direction, gtuType, drivingDirection).size() == 0)
+            if (currentLane.accessibleAdjacentLanesLegal(direction, gtuType, drivingDirection).size() == 0)
             {
                 return GETOFFTHISLANENOW;
             }
-            currentLane = currentLane.accessibleAdjacentLanes(direction, gtuType, drivingDirection).iterator().next();
+            currentLane = currentLane.accessibleAdjacentLanesLegal(direction, gtuType, drivingDirection).iterator().next();
             currentSuitability = suitabilities.get(currentLane);
         }
         double fraction = currentSuitability == NOLANECHANGENEEDED ? 0 : 0.5;

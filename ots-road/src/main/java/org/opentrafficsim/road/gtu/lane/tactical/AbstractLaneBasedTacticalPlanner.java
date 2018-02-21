@@ -433,7 +433,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 }
                 for (Lane wrongLane : wrongLanes)
                 {
-                    for (Lane adjLane : wrongLane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtu.getGTUType(),
+                    for (Lane adjLane : wrongLane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtu.getGTUType(),
                             referenceLaneDirectionality))
                     {
                         if (correctLanes.contains(adjLane))
@@ -441,7 +441,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                             return new NextSplitInfo(nextSplitNode, correctCurrentLanes, LateralDirectionality.LEFT);
                         }
                     }
-                    for (Lane adjLane : wrongLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtu.getGTUType(),
+                    for (Lane adjLane : wrongLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtu.getGTUType(),
                             referenceLaneDirectionality))
                     {
                         if (correctLanes.contains(adjLane))
@@ -785,7 +785,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             LateralDirectionality lat = laneChange.isChangingLeft() ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
             DirectedLanePosition dlp = gtu.getReferencePosition();
             Iterator<Lane> iterator =
-                    dlp.getLane().accessibleAdjacentLanes(lat, gtu.getGTUType(), dlp.getGtuDirection()).iterator();
+                    dlp.getLane().accessibleAdjacentLanesLegal(lat, gtu.getGTUType(), dlp.getGtuDirection()).iterator();
             Lane adjLane = iterator.hasNext() ? iterator.next() : null;
             if (adjLane != null && positions.containsKey(adjLane))
             {
@@ -797,7 +797,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 // reference lane is to lane, this should be accounted for
                 for (Lane lane : positions.keySet())
                 {
-                    if (lane.accessibleAdjacentLanes(lat, gtu.getGTUType(), dlp.getGtuDirection()).contains(dlp.getLane()))
+                    if (lane.accessibleAdjacentLanesLegal(lat, gtu.getGTUType(), dlp.getGtuDirection()).contains(dlp.getLane()))
                     {
                         lanes = buildLanePathInfo(gtu, forwardHeadway, lane, positions.get(lane), dlp.getGtuDirection())
                                 .getLanes();

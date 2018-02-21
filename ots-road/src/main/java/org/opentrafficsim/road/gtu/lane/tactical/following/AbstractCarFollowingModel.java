@@ -42,35 +42,25 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
+    public final Length desiredHeadway(final Parameters parameters, final Speed speed)
+            throws ParameterException
     {
         return this.desiredHeadwayModel.desiredHeadway(parameters, speed);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo)
+            throws ParameterException
     {
         return this.desiredSpeedModel.desiredSpeed(parameters, speedInfo);
     }
 
-    /**
-     * Forwards the calculation to a similar method with desired speed and desired (equilibrium) headway pre-calculated.
-     * Additionally, if the headway to the (first) leader is negative, <tt>Double.NEGATIVE_INFINITY</tt> is returned as an
-     * 'inappropriate' acceleration, since car-following models are then undefined. This may for example occur when checking a
-     * gap in an adjacent lane for lane changing. It is then up to the client to decide what to do. E.g. limit deceleration to
-     * an extent depending on the circumstances, or divert from a certain behavior.
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitInfo info regarding the desired speed for car-following
-     * @param leaders set of leader headways and speeds, ordered by headway (closest first)
-     * @return car-following acceleration
-     * @throws ParameterException if parameter exception occurs
-     * @throws NullPointerException if any input is null
-     */
+    /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
+            final SpeedLimitInfo speedLimitInfo, final SortedMap<Length, Speed> leaders)
+            throws ParameterException
     {
         Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");

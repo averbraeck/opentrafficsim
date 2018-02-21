@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -34,11 +35,11 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneStructureRecord implements Serializable
+public class LaneStructureRecord implements LaneRecord<LaneStructureRecord>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20160400L;
-    
+
     /** Cache of allows route information. */
     // TODO clear on network change, with an event listener?
     private static Map<Lane, Map<Route, Map<GTUType, Map<Boolean, Boolean>>>> allowsRouteCache = new HashMap<>();
@@ -52,8 +53,14 @@ public class LaneStructureRecord implements Serializable
     /** The left LSR or null if not available. Left and right are relative to the <b>driving</b> direction. */
     private LaneStructureRecord left;
 
+    /** Legal left lane change possibility. */
+    private boolean mayChangeLeft;
+
     /** The right LSR or null if not available. Left and right are relative to the <b>driving</b> direction. */
     private LaneStructureRecord right;
+
+    /** Legal right lane change possibility. */
+    private boolean mayChangeRight;
 
     /** Where this lane was cut-off resulting in no next lanes, if so. */
     private Length cutOffEnd = null;
@@ -77,7 +84,7 @@ public class LaneStructureRecord implements Serializable
     private List<LaneStructureRecord> prevList = new ArrayList<>();
 
     /** Record who's start start distance is used to calculate the start distance of this record. */
-    LaneStructureRecord source; // TODO make private after debuggin
+    private LaneStructureRecord source;
 
     /** Start distance link between records. */
     private RecordLink sourceLink;
@@ -118,6 +125,13 @@ public class LaneStructureRecord implements Serializable
 
         this.source = null;
         this.sourceLink = null;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Length getLength()
+    {
+        return getLane().getLength();
     }
 
     /**
@@ -185,17 +199,6 @@ public class LaneStructureRecord implements Serializable
     {
         return this.gtuDirectionality.isPlus() ? this.lane.getParentLink().getEndNode()
                 : this.lane.getParentLink().getStartNode();
-    }
-
-    /**
-     * Returns total distance towards the object at the given position. This method accounts for the GTU directionality.
-     * @param longitudinalPosition position on the design line
-     * @return total distance towards the object at the given position
-     */
-    public final Length getDistanceToPosition(final Length longitudinalPosition)
-    {
-        return this.startDistance.plus(
-                this.gtuDirectionality.isPlus() ? longitudinalPosition : this.lane.getLength().minus(longitudinalPosition));
     }
 
     /**
@@ -324,7 +327,7 @@ public class LaneStructureRecord implements Serializable
         }
         return allows;
     }
-    
+
     /**
      * Returns whether (the end of) this lane allows the route to be followed.
      * @param route Route; the route to follow
@@ -364,6 +367,7 @@ public class LaneStructureRecord implements Serializable
                 // move longitudinal
                 for (LaneStructureRecord laneRecord : currentSet)
                 {
+                    to = route.indexOf(laneRecord.getToNode());
                     for (LaneStructureRecord next : laneRecord.getNext())
                     {
                         if (next.getToNode().equals(route.destinationNode()))
@@ -386,7 +390,7 @@ public class LaneStructureRecord implements Serializable
             nextSet.addAll(currentSet);
             for (LaneStructureRecord laneRecord : currentSet)
             {
-                while (laneRecord.getLeft() != null && !nextSet.contains(laneRecord.getLeft()))
+                while (laneRecord.legalLeft() && !nextSet.contains(laneRecord.getLeft()))
                 {
                     nextSet.add(laneRecord.getLeft());
                     laneRecord = laneRecord.getLeft();
@@ -394,7 +398,7 @@ public class LaneStructureRecord implements Serializable
             }
             for (LaneStructureRecord laneRecord : currentSet)
             {
-                while (laneRecord.getRight() != null && !nextSet.contains(laneRecord.getRight()))
+                while (laneRecord.legalRight() && !nextSet.contains(laneRecord.getRight()))
                 {
                     nextSet.add(laneRecord.getRight());
                     laneRecord = laneRecord.getRight();
@@ -473,10 +477,31 @@ public class LaneStructureRecord implements Serializable
 
     /**
      * @param left set the left LSR or null if not available. Left and right are relative to the <b>driving</b> direction.
+     * @param gtuType GTU type
      */
-    public final void setLeft(final LaneStructureRecord left)
+    public final void setLeft(final LaneStructureRecord left, final GTUType gtuType)
     {
         this.left = left;
+        this.mayChangeLeft = getLane().accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, this.gtuDirectionality)
+                .contains(left.getLane());
+    }
+
+    /**
+     * Returns whether a left lane change is legal.
+     * @return whether a left lane change is legal
+     */
+    public final boolean legalLeft()
+    {
+        return this.mayChangeLeft;
+    }
+
+    /**
+     * Returns whether a left lane change is physically possible.
+     * @return whether a left lane change is physically possible
+     */
+    public final boolean physicalLeft()
+    {
+        return this.left != null;
     }
 
     /**
@@ -489,16 +514,36 @@ public class LaneStructureRecord implements Serializable
 
     /**
      * @param right set the right LSR or null if not available. Left and right are relative to the <b>driving</b> direction
+     * @param gtuType GTU type
      */
-    public final void setRight(final LaneStructureRecord right)
+    public final void setRight(final LaneStructureRecord right, final GTUType gtuType)
     {
         this.right = right;
+        this.mayChangeRight =
+                getLane().accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType, this.gtuDirectionality)
+                        .contains(right.getLane());
     }
 
     /**
-     * @return the next LSRs. The list is empty if no LSRs are available. Next is relative to the driving direction, not to the
-     *         design line direction.
+     * Returns whether a right lane change is legal.
+     * @return whether a right lane change is legal
      */
+    public final boolean legalRight()
+    {
+        return this.mayChangeRight;
+    }
+
+    /**
+     * Returns whether a right lane change is physically possible.
+     * @return whether a right lane change is physically possible
+     */
+    public final boolean physicalRight()
+    {
+        return this.right != null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final List<LaneStructureRecord> getNext()
     {
         return this.nextList;
@@ -523,10 +568,8 @@ public class LaneStructureRecord implements Serializable
         this.nextList.add(next);
     }
 
-    /**
-     * @return the previous LSRs. The list is empty if no LSRs are available. Previous is relative to the driving direction, not
-     *         to the design line direction.
-     */
+    /** {@inheritDoc} */
+    @Override
     public final List<LaneStructureRecord> getPrev()
     {
         return this.prevList;
@@ -636,36 +679,58 @@ public class LaneStructureRecord implements Serializable
         return this.cutOffEnd == null && this.nextList.isEmpty();
     }
 
-    /**
-     * @return the lane of the LSR
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Lane getLane()
     {
         return this.lane;
     }
 
-    /**
-     * @return the direction in which we process this lane
-     */
+    /** {@inheritDoc} */
+    @Override
     public final GTUDirectionality getDirection()
     {
         return this.gtuDirectionality;
     }
 
-    /**
-     * @return distance to start in the driving direction, from the reference position
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Length getStartDistance()
     {
         return this.startDistance;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         // left and right may cause stack overflow
-        return "LaneStructureRecord [lane=" + this.lane + ", direction=" + this.gtuDirectionality + "]";
+        String s;
+        if (this.source == null)
+        {
+            s = "o";
+        }
+        else if (this.source == this.left)
+        {
+            s = "^";
+        }
+        else if (this.source == this.right)
+        {
+            s = "v";
+        }
+        else if (this.prevList.contains(this.source))
+        {
+            s = "<";
+        }
+        else if (this.nextList.contains(this.source))
+        {
+            s = ">";
+        }
+        else
+        {
+            s = "?";
+        }
+        return "LaneStructureRecord [lane=" + this.lane + " (" + s + "), direction=" + this.gtuDirectionality + "]";
     }
 
     /**

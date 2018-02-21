@@ -521,7 +521,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         {
             Length pos = positions.get(lane);
             if (pos.si > 0.0 && pos.si < lane.getLength().si
-                    && lane.accessibleAdjacentLanes(direction, getGtu().getGTUType(), getGtu().getDirection(lane)).isEmpty())
+                    && lane.accessibleAdjacentLanesLegal(direction, getGtu().getGTUType(), getGtu().getDirection(lane)).isEmpty())
             {
                 return false;
             }

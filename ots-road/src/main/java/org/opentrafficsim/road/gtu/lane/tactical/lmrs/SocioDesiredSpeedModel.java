@@ -1,13 +1,12 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.SortedSet;
-
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTU.CacheKey;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -61,12 +60,12 @@ public class SocioDesiredSpeedModel implements DesiredSpeedModel
         if (desiredSpeed == null)
         {
             desiredSpeed = this.baseModel.desiredSpeed(parameters, speedInfo);
-            SortedSet<HeadwayGTU> followers;
+            PerceptionIterable<HeadwayGTU> followers;
             NeighborsPerception neighbors =
                     this.gtu.getTacticalPlanner().getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class);
             if (neighbors != null)
             {
-                followers = neighbors.getFollowers(RelativeLane.CURRENT);
+                followers = (PerceptionIterable<HeadwayGTU>) neighbors.getFollowers(RelativeLane.CURRENT);
                 if (!followers.isEmpty())
                 {
                     HeadwayGTU follower = followers.first();

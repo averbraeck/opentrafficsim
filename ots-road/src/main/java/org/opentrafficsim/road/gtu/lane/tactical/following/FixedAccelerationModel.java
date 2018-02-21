@@ -8,8 +8,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -158,8 +158,9 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil imple
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration followingAcceleration(final Parameters parameters,
-            final Speed speed, final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders) throws ParameterException
+    public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
+            final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders)
+            throws ParameterException
     {
         return null;
     }

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.SortedSet;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -12,6 +10,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
@@ -47,13 +46,13 @@ public class AccelerationConflicts implements AccelerationIncentive
             final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
-        
         EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
         Acceleration acceleration = ego.getAcceleration();
         Length length = ego.getLength();
-        SortedSet<HeadwayConflict> conflicts =
+        PerceptionIterable<HeadwayConflict> conflicts =
                 perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
-        SortedSet<HeadwayGTU> leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
+        PerceptionIterable<HeadwayGTU> leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
+        
         simplePlan.minimizeAcceleration(ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length,
                 speed, acceleration, speedLimitInfo, this.yieldPlans, gtu));
         if (this.yieldPlans.getIndicatorIntent().isLeft())

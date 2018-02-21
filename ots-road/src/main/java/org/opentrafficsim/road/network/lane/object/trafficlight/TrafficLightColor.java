@@ -26,6 +26,12 @@ public enum TrafficLightColor
     /** Traffic light is not working. */
     BLACK;
 
+    /** @return whether the light is red or yellow. */
+    public final boolean isRedOrYellow()
+    {
+        return this.equals(RED) | this.equals(YELLOW);
+    }
+    
     /** @return whether the light is red. */
     public final boolean isRed()
     {

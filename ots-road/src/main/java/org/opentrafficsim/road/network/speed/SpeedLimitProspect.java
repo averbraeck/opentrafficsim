@@ -2,7 +2,9 @@ package org.opentrafficsim.road.network.speed;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -24,7 +26,6 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 public class SpeedLimitProspect implements Serializable
 {
 
@@ -34,35 +35,98 @@ public class SpeedLimitProspect implements Serializable
     /** Spatial prospect of speed info. */
     private final SortedSet<SpeedLimitEntry<?>> prospect = new TreeSet<>();
 
+    /** Source objects for the speed info additions. */
+    private final Map<Object, SpeedLimitEntry<?>> addSources = new HashMap<>();
+
+    /** Source objects for the speed info removals. */
+    private final Map<Object, SpeedLimitEntry<?>> removeSources = new HashMap<>();
+
+    /** Last odometer value. */
+    private Length odometer;
+
+    /**
+     * Constructor.
+     * @param odometer Length; odometer value
+     */
+    public SpeedLimitProspect(final Length odometer)
+    {
+        this.odometer = odometer;
+    }
+
+    /**
+     * Updates the distance values.
+     * @param newOdometer Length; odometer value
+     */
+    public void update(final Length newOdometer)
+    {
+        Length dx = newOdometer.minus(this.odometer);
+        for (SpeedLimitEntry<?> entry : this.prospect)
+        {
+            entry.move(dx);
+        }
+    }
+
+    /**
+     * Returns whether the given source is already added in the prospect.
+     * @param source Object; source
+     * @return whether the given source is already added in the prospect
+     */
+    public final boolean containsAddSource(final Object source)
+    {
+        return this.addSources.containsKey(source);
+    }
+    
+    /**
+     * Returns whether the given source is already removed in the prospect.
+     * @param source Object; source
+     * @return whether the given source is already removed in the prospect
+     */
+    public final boolean containsRemoveSource(final Object source)
+    {
+        return this.removeSources.containsKey(source);
+    }
+    
+    /**
+     * Returns the odometer value at which the last update was performed.
+     * @return Length; odometer value at which the last update was performed
+     */
+    public final Length getOdometer()
+    {
+        return this.odometer;
+    }
+    
     /**
      * Sets the speed info of a speed limit type.
      * @param distance location to set info for a speed limit type
      * @param speedLimitType speed limit type to set the info for
      * @param speedInfo speed info to set
+     * @param source Object; source object
      * @param <T> class of speed info
      * @throws IllegalStateException if speed info for a specific speed limit type is set or removed twice at the same distance
      * @throws IllegalStateException if speed info for a specific speed limit type is set twice with negative distance
      * @throws NullPointerException if any input is null
      */
-    public final <T> void addSpeedInfo(final Length distance, final SpeedLimitType<T> speedLimitType, final T speedInfo)
+    public final <T> void addSpeedInfo(final Length distance, final SpeedLimitType<T> speedLimitType, final T speedInfo,
+            final Object source)
     {
         Throw.whenNull(distance, "Distance may not be null.");
         Throw.whenNull(speedLimitType, "Speed limit type may not be null.");
         Throw.whenNull(speedInfo, "Speed info may not be null.");
-        checkAndAdd(new SpeedLimitEntry<>(distance, speedLimitType, speedInfo));
+        checkAndAdd(new SpeedLimitEntry<>(distance, speedLimitType, speedInfo), source, false);
     }
 
     /**
      * Removes the speed info of a speed limit type.
      * @param distance distance to remove speed info of a speed limit type
      * @param speedLimitType speed limit type to remove speed info of
+     * @param source Object; source object
      * @throws IllegalStateException if speed info for a specific speed limit type is set or removed twice at the same distance
      * @throws IllegalArgumentException if the speed limit type is {@code MAX_VEHICLE_SPEED}
      * @throws IllegalArgumentException if the distance is negative
      * @throws NullPointerException if any input is null
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public final void removeSpeedInfo(final Length distance, final SpeedLimitType<?> speedLimitType)
+    public final void removeSpeedInfo(final Length distance, final SpeedLimitType<?> speedLimitType, final Object source)
     {
         Throw.whenNull(distance, "Distance may not be null.");
         Throw.when(distance.si < 0, IllegalArgumentException.class,
@@ -71,15 +135,17 @@ public class SpeedLimitProspect implements Serializable
         Throw.when(speedLimitType.equals(SpeedLimitTypes.MAX_VEHICLE_SPEED), IllegalArgumentException.class,
                 "May not remove the maximum vehicle speed.");
         // null value does not comply to being a T for SpeedLimitType<T> but is separately treated
-        checkAndAdd(new SpeedLimitEntry(distance, speedLimitType, null));
+        checkAndAdd(new SpeedLimitEntry(distance, speedLimitType, null), source, true);
     }
 
     /**
      * Checks the speed limit entry before adding to the prospect.
      * @param speedLimitEntry speed limit entry to add
+     * @param source Object; source object
+     * @param remove boolean; whether the source causes a removal of info
      * @throws IllegalStateException if the speed entry forms an undefined set with any existing entry
      */
-    private void checkAndAdd(final SpeedLimitEntry<?> speedLimitEntry)
+    private void checkAndAdd(final SpeedLimitEntry<?> speedLimitEntry, final Object source, final boolean remove)
     {
         for (SpeedLimitEntry<?> s : this.prospect)
         {
@@ -94,6 +160,24 @@ public class SpeedLimitProspect implements Serializable
                                 + "Either remove speed info, or overwrite with new speed info.",
                         s.getSpeedLimitType(), s.getDistance());
             }
+        }
+        if (remove)
+        {
+            SpeedLimitEntry<?> prev = this.removeSources.get(source);
+            if (prev != null)
+            {
+                this.prospect.remove(prev);
+            }
+            this.removeSources.put(source, speedLimitEntry);
+        }
+        else
+        {
+            SpeedLimitEntry<?> prev = this.addSources.get(source);
+            if (prev != null)
+            {
+                this.prospect.remove(prev);
+            }
+            this.addSources.put(source, speedLimitEntry);
         }
         this.prospect.add(speedLimitEntry);
     }
@@ -348,7 +432,7 @@ public class SpeedLimitProspect implements Serializable
         private static final long serialVersionUID = 20160501L;
 
         /** Location of the speed info. */
-        private final Length distance;
+        private Length distance;
 
         /** Speed limit type. */
         private final SpeedLimitType<T> speedLimitType;
@@ -394,6 +478,15 @@ public class SpeedLimitProspect implements Serializable
         public final T getSpeedInfo()
         {
             return this.speedInfo;
+        }
+
+        /**
+         * Move the record by a given distance.
+         * @param dist Length; distance to move
+         */
+        public final void move(final Length dist)
+        {
+            this.distance = this.distance.minus(dist);
         }
 
         /** {@inheritDoc} */

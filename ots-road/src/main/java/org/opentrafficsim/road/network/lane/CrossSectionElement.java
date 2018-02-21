@@ -19,6 +19,7 @@ import org.opentrafficsim.core.network.NetworkException;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -75,40 +76,28 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
     public CrossSectionElement(final CrossSectionLink parentLink, final String id,
             final List<CrossSectionSlice> crossSectionSlices) throws OTSGeometryException, NetworkException
     {
-        if (parentLink == null)
-        {
-            throw new NetworkException("Constructor of CrossSectionElement for id " + id + ", parentLink cannot be null");
-        }
-        if (id == null)
-        {
-            throw new NetworkException("Constructor of CrossSectionElement -- id cannot be null");
-        }
+        Throw.when(parentLink == null, NetworkException.class,
+                "Constructor of CrossSectionElement for id %s, parentLink cannot be null", id);
+        Throw.when(id == null, NetworkException.class, "Constructor of CrossSectionElement -- id cannot be null");
         for (CrossSectionElement cse : parentLink.getCrossSectionElementList())
         {
-            if (cse.getId().equals(id))
-            {
-                throw new NetworkException("Constructor of CrossSectionElement -- id " + id + " not unique within the Link");
-            }
+            Throw.when(cse.getId().equals(id), NetworkException.class,
+                    "Constructor of CrossSectionElement -- id %s not unique within the Link", id);
         }
         this.id = id;
         this.parentLink = parentLink;
 
         this.crossSectionSlices = new ArrayList<>(crossSectionSlices); // copy of list with immutable slices
-        if (this.crossSectionSlices.size() == 0)
-        {
-            throw new NetworkException("CrossSectionElement " + id + " is created with zero slices for " + parentLink);
-        }
-        if (this.crossSectionSlices.get(0).getRelativeLength().si != 0.0)
-        {
-            throw new NetworkException("CrossSectionElement " + id + " for " + parentLink
-                    + " has a first slice with relativeLength is not equal to 0.0");
-        }
-        if (this.crossSectionSlices.size() > 1 && this.crossSectionSlices.get(this.crossSectionSlices.size() - 1)
-                .getRelativeLength().ne(this.parentLink.getLength()))
-        {
-            throw new NetworkException("CrossSectionElement " + id + " for " + parentLink
-                    + " has a last slice with relativeLength is not equal to the length of the parent link");
-        }
+        Throw.when(this.crossSectionSlices.size() == 0, NetworkException.class,
+                "CrossSectionElement %s is created with zero slices for %s", id, parentLink);
+        Throw.when(this.crossSectionSlices.get(0).getRelativeLength().si != 0.0, NetworkException.class,
+                "CrossSectionElement %s for %s has a first slice with relativeLength is not equal to 0.0", id, parentLink);
+        Throw.when(
+                this.crossSectionSlices.size() > 1 && this.crossSectionSlices.get(this.crossSectionSlices.size() - 1)
+                        .getRelativeLength().ne(this.parentLink.getLength()),
+                NetworkException.class, "CrossSectionElement %s for %s has a last slice with relativeLength is not equal "
+                        + "to the length of the parent link",
+                id, parentLink);
 
         if (this.crossSectionSlices.size() <= 2)
         {
@@ -132,8 +121,6 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
 
         this.parentLink.addCrossSectionElement(this);
     }
-
-    // TODO use throwIf
 
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
@@ -175,7 +162,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
         this.centerLine = cse.centerLine;
         this.length = this.centerLine.getLength();
         this.contour = cse.contour;
-        this.crossSectionSlices = new ArrayList<CrossSectionSlice>(cse.crossSectionSlices);
+        this.crossSectionSlices = new ArrayList<>(cse.crossSectionSlices);
         newCrossSectionLink.addCrossSectionElement(this);
     }
 

@@ -47,7 +47,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     private static final long serialVersionUID = 20170324L;
 
     /** Stored speed limit info of the observed GTU. */
-    private final SpeedLimitInfo speedLimitInfo;
+    private SpeedLimitInfo speedLimitInfo;
 
     /** Wrapped GTU. */
     private final LaneBasedGTU gtu;
@@ -67,7 +67,6 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
         super(distance);
         this.gtu = gtu;
         this.facingSameDirection = facingSameDirection;
-        this.speedLimitInfo = getSpeedLimitInfo(gtu);
     }
 
     /**
@@ -85,7 +84,6 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
         super(overlapFront, overlap, overlapRear);
         this.gtu = gtu;
         this.facingSameDirection = facingSameDirection;
-        this.speedLimitInfo = getSpeedLimitInfo(gtu);
     }
 
     /**
@@ -93,7 +91,6 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
      * @param wrappedGtu gtu to the the speed limit prospect for
      * @return speed limit prospect for given GTU
      */
-    // TODO this is a simple fix
     private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU wrappedGtu)
     {
         SpeedLimitInfo sli = new SpeedLimitInfo();
@@ -128,6 +125,10 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     @Override
     public final SpeedLimitInfo getSpeedLimitInfo()
     {
+        if (this.speedLimitInfo == null)
+        {
+            this.speedLimitInfo = getSpeedLimitInfo(this.gtu);
+        }
         return this.speedLimitInfo;
     }
 

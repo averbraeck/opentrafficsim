@@ -19,10 +19,8 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -52,9 +50,6 @@ public class TJunctionDemo extends AbstractWrappableAnimation
     /** */
     private static final long serialVersionUID = 20161211L;
 
-    /** Colorer. */
-    private GTUColorer colorer = new DefaultSwitchableGTUColorer();
-
     /** {@inheritDoc} */
     @Override
     protected final OTSModelInterface makeModel() throws OTSSimulationException
@@ -81,13 +76,6 @@ public class TJunctionDemo extends AbstractWrappableAnimation
     public final String description()
     {
         return "T-junction demonstration";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public GTUColorer getColorer()
-    {
-        return this.colorer;
     }
 
     /**
