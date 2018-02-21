@@ -22,7 +22,9 @@ import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.SortedSetPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -75,10 +77,10 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
     private Time rearrangeTime;
 
     /** Set of followers per relative lane. */
-    private final Map<RelativeLane, SortedSet<HeadwayGTU>> followers = new HashMap<>();
+    private final Map<RelativeLane, PerceptionIterable<HeadwayGTU>> followers = new HashMap<>();
 
     /** Set of leaders per relative lane. */
-    private final Map<RelativeLane, SortedSet<HeadwayGTU>> leaders = new HashMap<>();
+    private final Map<RelativeLane, PerceptionIterable<HeadwayGTU>> leaders = new HashMap<>();
 
     /** Set of first followers per lane upstream of merge per lateral direction, i.e. in the left or right lane. */
     private final Map<LateralDirectionality, SortedSet<HeadwayGTU>> firstFollowers = new HashMap<>();
@@ -236,9 +238,9 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 }
 
                 // initiate sets
-                SortedSet<HeadwayGTU> followersSet = new TreeSet<>();
+                SortedSetPerceptionIterable<HeadwayGTU> followersSet = new SortedSetPerceptionIterable<>();
                 this.followers.put(lane, followersSet);
-                SortedSet<HeadwayGTU> leadersSet = new TreeSet<>();
+                SortedSetPerceptionIterable<HeadwayGTU> leadersSet = new SortedSetPerceptionIterable<>();
                 this.leaders.put(lane, leadersSet);
 
                 // followers
@@ -299,11 +301,11 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             {
                 if (!this.followers.containsKey(lane))
                 {
-                    this.followers.put(lane, new TreeSet<>());
+                    this.followers.put(lane, new SortedSetPerceptionIterable<>());
                 }
                 if (!this.leaders.containsKey(lane))
                 {
-                    this.leaders.put(lane, new TreeSet<>());
+                    this.leaders.put(lane, new SortedSetPerceptionIterable<>());
                 }
                 if (lane.isLeft() || lane.isRight())
                 {
@@ -445,7 +447,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public final SortedSet<HeadwayGTU> getLeaders(final RelativeLane lane)
+    public final PerceptionIterable<HeadwayGTU> getLeaders(final RelativeLane lane)
     {
         rearrangeNeighbors();
         return this.leaders.get(lane);
@@ -453,7 +455,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public final SortedSet<HeadwayGTU> getFollowers(final RelativeLane lane)
+    public final PerceptionIterable<HeadwayGTU> getFollowers(final RelativeLane lane)
     {
         rearrangeNeighbors();
         return this.followers.get(lane);

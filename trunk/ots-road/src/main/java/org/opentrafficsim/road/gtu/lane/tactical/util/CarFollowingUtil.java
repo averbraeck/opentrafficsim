@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
 
 import org.djunits.unit.AccelerationUnit;
@@ -9,8 +8,9 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -48,9 +48,9 @@ public final class CarFollowingUtil
      * @return acceleration for following the leader
      * @throws ParameterException if a parameter is not given or out of bounds
      */
-    public static Acceleration followLeaders(final CarFollowingModel carFollowingModel,
-            final Parameters parameters, final Speed speed, final SpeedLimitInfo speedLimitInfo,
-            final SortedSet<HeadwayGTU> leaders) throws ParameterException
+    public static Acceleration followLeaders(final CarFollowingModel carFollowingModel, final Parameters parameters,
+            final Speed speed, final SpeedLimitInfo speedLimitInfo, final PerceptionIterable<HeadwayGTU> leaders)
+            throws ParameterException
     {
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
         for (HeadwayGTU headwayGTU : leaders)
@@ -71,9 +71,9 @@ public final class CarFollowingUtil
      * @return acceleration for following the leader
      * @throws ParameterException if a parameter is not given or out of bounds
      */
-    public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel,
-            final Parameters parameters, final Speed speed, final SpeedLimitInfo speedLimitInfo,
-            final Length distance, final Speed leaderSpeed) throws ParameterException
+    public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel, final Parameters parameters,
+            final Speed speed, final SpeedLimitInfo speedLimitInfo, final Length distance, final Speed leaderSpeed)
+            throws ParameterException
     {
         SortedMap<Length, Speed> leaders = new TreeMap<>();
         leaders.put(distance, leaderSpeed);
@@ -90,9 +90,8 @@ public final class CarFollowingUtil
      * @return acceleration to stop over distance
      * @throws ParameterException if a parameter is not given or out of bounds
      */
-    public static Acceleration stop(final CarFollowingModel carFollowingModel,
-            final Parameters parameters, final Speed speed, final SpeedLimitInfo speedLimitInfo,
-            final Length distance) throws ParameterException
+    public static Acceleration stop(final CarFollowingModel carFollowingModel, final Parameters parameters, final Speed speed,
+            final SpeedLimitInfo speedLimitInfo, final Length distance) throws ParameterException
     {
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
         leaderMap.put(distance, Speed.ZERO);
@@ -109,9 +108,8 @@ public final class CarFollowingUtil
      * @return constant acceleration in order to stop in specified distance
      * @throws ParameterException on missing parameter
      */
-    public static Acceleration constantAccelerationStop(final CarFollowingModel carFollowingModel,
-            final Parameters parameters, final Speed speed, final Length distance)
-            throws ParameterException
+    public static Acceleration constantAccelerationStop(final CarFollowingModel carFollowingModel, final Parameters parameters,
+            final Speed speed, final Length distance) throws ParameterException
     {
         Length s0 = carFollowingModel.desiredHeadway(parameters, Speed.ZERO);
         return new Acceleration(-0.5 * speed.si * speed.si / (distance.si - s0.si), AccelerationUnit.SI);
@@ -126,9 +124,8 @@ public final class CarFollowingUtil
      * @return acceleration free acceleration
      * @throws ParameterException if a parameter is not given or out of bounds
      */
-    public static Acceleration freeAcceleration(final CarFollowingModel carFollowingModel,
-            final Parameters parameters, final Speed speed, final SpeedLimitInfo speedLimitInfo)
-            throws ParameterException
+    public static Acceleration freeAcceleration(final CarFollowingModel carFollowingModel, final Parameters parameters,
+            final Speed speed, final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
         SortedMap<Length, Speed> leaderMap = new TreeMap<>();
         return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaderMap);
@@ -189,9 +186,9 @@ public final class CarFollowingUtil
      * @throws NullPointerException if any input is null
      * @throws IllegalArgumentException if the distance or target speed is not at least 0
      */
-    public static Acceleration approachTargetSpeed(final CarFollowingModel carFollowingModel,
-            final Parameters parameters, final Speed speed, final SpeedLimitInfo speedLimitInfo,
-            final Length distance, final Speed targetSpeed) throws ParameterException
+    public static Acceleration approachTargetSpeed(final CarFollowingModel carFollowingModel, final Parameters parameters,
+            final Speed speed, final SpeedLimitInfo speedLimitInfo, final Length distance, final Speed targetSpeed)
+            throws ParameterException
     {
         Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");

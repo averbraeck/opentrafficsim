@@ -1,19 +1,18 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.SortedSet;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
@@ -48,7 +47,7 @@ public class AccelerationBusStop implements AccelerationIncentive
             final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
-        SortedSet<HeadwayBusStop> stops = perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
+        PerceptionIterable<HeadwayBusStop> stops = perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
         if (stops.isEmpty())
         {
             return;

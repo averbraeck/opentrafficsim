@@ -15,6 +15,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPer
 import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
 
 /**
+ * Perception factory with EgoPerception, InfrastructurePerception, NeighborsPerception and IntersectionPerception.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -24,10 +25,9 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 public class DefaultLMRSPerceptionFactory implements PerceptionFactory
 {
-
+    
     /** {@inheritDoc} */
     @Override
     public LanePerception generatePerception(final LaneBasedGTU gtu)

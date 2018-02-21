@@ -131,6 +131,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         Rectangle2D rectangle = new Rectangle2D.Double(-l2, -w2, length, width);
         graphics.draw(rectangle);
         graphics.fill(rectangle);
+
         // Draw a white disk at the front to indicate which side faces forward
         graphics.setColor(Color.WHITE);
         Ellipse2D.Double frontIndicator = new Ellipse2D.Double(l2 - w2 - w4, -w4, w2, w2);

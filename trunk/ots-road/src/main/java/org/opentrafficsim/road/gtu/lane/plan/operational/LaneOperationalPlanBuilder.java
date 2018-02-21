@@ -416,9 +416,9 @@ public final class LaneOperationalPlanBuilder
         List<Lane> toLanes = new ArrayList<>();
         for (Lane lane : fromLanes)
         {
-            if (!lane.accessibleAdjacentLanes(direction, gtu.getGTUType(), drivingDirection).isEmpty())
+            if (!lane.accessibleAdjacentLanesLegal(direction, gtu.getGTUType(), drivingDirection).isEmpty())
             {
-                toLanes.add(lane.accessibleAdjacentLanes(direction, gtu.getGTUType(), drivingDirection).iterator().next());
+                toLanes.add(lane.accessibleAdjacentLanesLegal(direction, gtu.getGTUType(), drivingDirection).iterator().next());
             }
             else
             {
@@ -559,7 +559,7 @@ public final class LaneOperationalPlanBuilder
                 throw new OperationalPlanException("Second lane of lane change could not be determined.", exception);
             }
             Set<Lane> accessibleLanes =
-                    dlp.getLane().accessibleAdjacentLanes(this.laneChangeDirectionality, gtu.getGTUType(),
+                    dlp.getLane().accessibleAdjacentLanesLegal(this.laneChangeDirectionality, gtu.getGTUType(),
                             dlp.getGtuDirection());
             if (!accessibleLanes.isEmpty() && map.containsKey(accessibleLanes.iterator().next()))
             {

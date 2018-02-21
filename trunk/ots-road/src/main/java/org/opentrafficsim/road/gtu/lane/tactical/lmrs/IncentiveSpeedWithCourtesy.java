@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.SortedSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -13,7 +14,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -23,12 +23,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerc
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
@@ -68,6 +64,15 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
     /** Anticipation speed difference parameter type. */
     protected static final ParameterTypeSpeed VGAIN = LmrsParameters.VGAIN;
 
+    /** Anticipated speed by vehicles in the left lane. */
+    private Map<RelativeLane, Double> antFromLeft = new HashMap<>();
+
+    /** Anticipated speed by vehicles in the lane. */
+    private Map<RelativeLane, Double> antInLane = new HashMap<>();
+
+    /** Anticipated speed by vehicles in the right lane. */
+    private Map<RelativeLane, Double> antFromRight = new HashMap<>();
+
     /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
@@ -75,13 +80,20 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
             throws ParameterException, OperationalPlanException
     {
 
+        this.antFromLeft.clear();
+        this.antInLane.clear();
+        this.antFromRight.clear();
+
         // zero if no lane change is possible
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+        EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
+        IntersectionPerception inter = perception.getPerceptionCategory(IntersectionPerception.class);
         double leftDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si;
         double rightDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si;
 
         // gather some info
-        Speed vCur = anticipationSpeed(RelativeLane.CURRENT, parameters, perception, carFollowingModel);
+        Speed vCur = anticipationSpeed(RelativeLane.CURRENT, parameters, carFollowingModel, neighbors, infra, ego, inter);
         Speed vGain = parameters.getParameter(VGAIN);
 
         // calculate aGain (default 1; lower as acceleration is higher than 0)
@@ -89,7 +101,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         /*
          * Instead of instantaneous car-following acceleration, use current acceleration; only then is the acceleration factor
          * consistent with possible lane change incentives pertaining to speed (which used to be only vehicles in the original
-         * LMRS, but can be any number of reason here. E.g. traffic lights, conflicts, etc.)
+         * LMRS, but can be any number of reasons here. E.g. traffic lights, conflicts, etc.)
          */
         Acceleration aCur = perception.getPerceptionCategory(EgoPerception.class).getAcceleration();
         if (aCur.si > 0)
@@ -106,7 +118,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         Dimensionless dLeft;
         if (leftDist > 0.0 && infra.getCrossSection().contains(RelativeLane.LEFT))
         {
-            Speed vLeft = anticipationSpeed(RelativeLane.LEFT, parameters, perception, carFollowingModel);
+            Speed vLeft = anticipationSpeed(RelativeLane.LEFT, parameters, carFollowingModel, neighbors, infra, ego, inter);
             dLeft = aGain.multiplyBy(vLeft.minus(vCur)).divideBy(vGain);
         }
         else
@@ -118,7 +130,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
         Dimensionless dRight;
         if (rightDist > 0.0 && infra.getCrossSection().contains(RelativeLane.RIGHT))
         {
-            Speed vRight = anticipationSpeed(RelativeLane.RIGHT, parameters, perception, carFollowingModel);
+            Speed vRight = anticipationSpeed(RelativeLane.RIGHT, parameters, carFollowingModel, neighbors, infra, ego, inter);
             dRight = aGain.multiplyBy(vRight.minus(vCur)).divideBy(vGain);
         }
         else
@@ -131,164 +143,116 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
     }
 
     /**
-     * Determine the anticipation speed on the given lane. This depends on leading vehicles, leading vehicles in adjacent lanes
-     * with their indicator to this lane, and conflicts.
-     * @param lane lane to anticipate the speed on
-     * @param params parameters
-     * @param perception perception
-     * @param cfm car-following model, used for the desired speed
-     * @return anticipation speed on lane
-     * @throws ParameterException if a parameter is not defined
-     * @throws OperationalPlanException perception exception
+     * Returns the anticipation speed in a lane. GTU's in adjacent lanes with their indicator towards the given lane are
+     * included in the evaluation.
+     * @param lane RelativeLane; lane to assess
+     * @param params Parameters; parameters
+     * @param cfm Parameters; car-following model
+     * @param neighbors NeighborsPerception; neighbors perception
+     * @param infra InfrastructurePerception; infrastructure perception
+     * @param ego EgoPerception; ego perception
+     * @param inter IntersectionPerception; intersection perception, may be {@code null}
+     * @return Speed; anticipation speed in lane
+     * @throws ParameterException on missing parameter
      */
-    private Speed anticipationSpeed(final RelativeLane lane, final Parameters params, final LanePerception perception,
-            final CarFollowingModel cfm) throws ParameterException, OperationalPlanException
+    private Speed anticipationSpeed(final RelativeLane lane, final Parameters params, final CarFollowingModel cfm,
+            final NeighborsPerception neighbors, final InfrastructurePerception infra, final EgoPerception ego,
+            final IntersectionPerception inter) throws ParameterException
     {
-
-        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
-        NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-        SpeedLimitInfo sli = infra.getSpeedLimitProspect(lane).getSpeedLimitInfo(Length.ZERO);
-        Speed anticipationSpeed = cfm.desiredSpeed(params, sli);
-        Speed desiredSpeed = new Speed(anticipationSpeed);
-        Length x0 = params.getParameter(LOOKAHEAD);
-
-        // leaders with right indicators on left lane of considered lane
+        if (!this.antInLane.containsKey(lane))
+        {
+            anticipateSpeedFromLane(lane, params, cfm, neighbors, infra, ego, inter);
+        }
+        double v = this.antInLane.get(lane);
         if (infra.getCrossSection().contains(lane.getLeft()))
         {
-            for (HeadwayGTU headwayGTU : neighbors.getLeaders(lane.getLeft()))
+            if (!this.antFromLeft.containsKey(lane))
             {
-                // leaders on the current lane with indicator to an adjacent lane are not considered
-                if (headwayGTU.isRightTurnIndicatorOn() && !lane.getLeft().equals(RelativeLane.CURRENT))
-                {
-                    anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayGTU);
-                }
+                anticipateSpeedFromLane(lane.getLeft(), params, cfm, neighbors, infra, ego, inter);
             }
+            double fromLeft = this.antFromLeft.get(lane);
+            v = v < fromLeft ? v : fromLeft;
         }
-
-        // leaders with left indicators on right lane of considered lane
         if (infra.getCrossSection().contains(lane.getRight()))
         {
-            for (HeadwayGTU headwayGTU : neighbors.getLeaders(lane.getRight()))
+            if (!this.antFromRight.containsKey(lane))
             {
-                // leaders on the current lane with indicator to an adjacent lane are not considered
-                if (headwayGTU.isLeftTurnIndicatorOn() && !lane.getRight().equals(RelativeLane.CURRENT))
+                anticipateSpeedFromLane(lane.getRight(), params, cfm, neighbors, infra, ego, inter);
+            }
+            double fromRight = this.antFromRight.get(lane);
+            v = v < fromRight ? v : fromRight;
+        }
+        return Speed.createSI(v);
+    }
+
+    /**
+     * Anticipate speed from the GTUs in one lane. This affects up to 3 lanes, all this information is stored.
+     * @param lane RelativeLane; lane to assess
+     * @param params Parameters; parameters
+     * @param cfm Parameters; car-following model
+     * @param neighbors NeighborsPerception; neighbors perception
+     * @param infra InfrastructurePerception; infrastructure perception
+     * @param ego EgoPerception; ego perception
+     * @param inter IntersectionPerception; intersection perception, may be {@code null}
+     * @throws ParameterException on missing parameter
+     */
+    private void anticipateSpeedFromLane(final RelativeLane lane, final Parameters params, final CarFollowingModel cfm,
+            final NeighborsPerception neighbors, final InfrastructurePerception infra, final EgoPerception ego,
+            final IntersectionPerception inter) throws ParameterException
+    {
+        SpeedLimitInfo sli = infra.getSpeedLimitProspect(lane).getSpeedLimitInfo(Length.ZERO);
+        double desiredSpeed = cfm.desiredSpeed(params, sli).si;
+        double x0 = params.getParameter(LOOKAHEAD).si;
+        double vLeft = desiredSpeed;
+        double vCur = desiredSpeed;
+        double vRight = desiredSpeed;
+        if (!lane.isCurrent() && lane.getNumLanes() < 2)
+        {
+            for (HeadwayGTU headwayGTU : neighbors.getLeaders(lane))
+            {
+                double single = anticipateSingle(desiredSpeed, x0, headwayGTU);
+                vCur = vCur < single ? vCur : single;
+                if (headwayGTU.isLeftTurnIndicatorOn())
                 {
-                    anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayGTU);
+                    vLeft = vLeft < single ? vLeft : single;
+                }
+                else if (headwayGTU.isRightTurnIndicatorOn())
+                {
+                    vRight = vRight < single ? vRight : single;
                 }
             }
         }
-
-        // leaders in the considered lane
-        for (HeadwayGTU headwayGTU : neighbors.getLeaders(lane))
+        else
         {
-            anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayGTU);
-        }
-
-        // conflicts in the considered lane
-        EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
-        if (perception.contains(IntersectionPerception.class))
-        {
-            for (HeadwayConflict headwayConflict : perception.getPerceptionCategory(IntersectionPerception.class)
-                    .getConflicts(lane))
+            // leaders on the current lane with indicator to an adjacent lane are not considered
+            for (HeadwayGTU headwayGTU : neighbors.getLeaders(lane))
             {
-                Length vehicleLength = ego.getLength();
-                Speed speed = ego.getSpeed();
-                SortedSet<HeadwayGTU> leaders = neighbors.getLeaders(lane);
-                if (!headwayConflict.getConflictType().isCrossing())
-                {
-                    // consider first downstream vehicle on split or merge (ignore others)
-                    SortedSet<HeadwayGTU> conflictVehicles = headwayConflict.getDownstreamConflictingGTUs();
-                    if (!conflictVehicles.isEmpty() && conflictVehicles.first().isParallel())
-                    {
-                        HeadwayGTU conflictingGtu = conflictVehicles.first();
-                        Length distance = headwayConflict.getDistance().plus(headwayConflict.getLength())
-                                .plus(conflictingGtu.getOverlapRear());
-                        HeadwayGTU leadingGtu;
-                        try
-                        {
-                            leadingGtu = new HeadwayGTUSimple(conflictingGtu.getId(), conflictingGtu.getGtuType(), distance,
-                                    conflictingGtu.getLength());
-                        }
-                        catch (GTUException exception)
-                        {
-                            throw new OperationalPlanException("Could not create HeadwayGTUSimple for GTU on split.",
-                                    exception);
-                        }
-                        anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, leadingGtu);
-                    }
-                }
-                switch (headwayConflict.getConflictPriority())
-                {
-                    case SPLIT:
-                    {
-                        // nothing
-                        break;
-                    }
-                    case PRIORITY:
-                    {
-                        if (ConflictUtil.stopForPriorityConflict(headwayConflict, leaders, speed, vehicleLength, params,
-                                new ConflictPlans()))
-                        {
-                            anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayConflict);
-                        }
-                        break;
-                    }
-                    case GIVE_WAY:
-                    {
-                        Acceleration acceleration = ego.getAcceleration();
-                        if (ConflictUtil.stopForGiveWayConflict(headwayConflict, leaders, speed, acceleration, vehicleLength,
-                                params, sli, cfm))
-                        {
-                            anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayConflict);
-                        }
-                        break;
-                    }
-                    case STOP:
-                    {
-                        Acceleration acceleration = ego.getAcceleration();
-                        if (ConflictUtil.stopForStopConflict(headwayConflict, leaders, speed, acceleration, vehicleLength,
-                                params, sli, cfm))
-                        {
-                            anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayConflict);
-                        }
-                        break;
-                    }
-                    case ALL_STOP:
-                    {
-                        if (ConflictUtil.stopForAllStopConflict(headwayConflict, new ConflictPlans()))
-                        {
-                            anticipationSpeed = anticipateSingle(anticipationSpeed, desiredSpeed, x0, headwayConflict);
-                        }
-                        break;
-                    }
-                    default:
-                        throw new RuntimeException(
-                                "Conflict priority " + headwayConflict.getConflictPriority() + " is unknown.");
-                }
+                double single = anticipateSingle(desiredSpeed, x0, headwayGTU);
+                vCur = vCur < single ? vCur : single;
             }
         }
-
-        return anticipationSpeed;
+        this.antFromLeft.put(lane.getRight(), vRight);
+        this.antInLane.put(lane, vCur);
+        this.antFromRight.put(lane.getLeft(), vLeft);
     }
 
     /**
      * Anticipate a single leader by possibly lowering the anticipation speed.
-     * @param anticipationSpeed anticipation speed
      * @param desiredSpeed desired speed on anticipated lane
      * @param x0 look-ahead distance
      * @param headway leader/object to anticipate
      * @return possibly lowered anticipation speed
      */
-    private Speed anticipateSingle(final Speed anticipationSpeed, final Speed desiredSpeed, final Length x0,
-            final Headway headway)
+    private double anticipateSingle(final double desiredSpeed, final double x0, final Headway headway)
     {
-        Speed speed = headway.getSpeed() == null ? Speed.ZERO : headway.getSpeed();
-        if (speed.gt(anticipationSpeed) || headway.getDistance().gt(x0))
+        Speed speed = headway.getSpeed();
+        double v = speed == null ? 0.0 : speed.si;
+        if (v > desiredSpeed || headway.getDistance().si > x0)
         {
-            return anticipationSpeed;
+            return desiredSpeed;
         }
-        Speed vSingle = Speed.interpolate(speed, desiredSpeed, headway.getDistance().si / x0.si);
-        return anticipationSpeed.lt(vSingle) ? anticipationSpeed : vSingle;
+        double f = headway.getDistance().si / x0;
+        return f * v + (1 - f) * desiredSpeed;
     }
 
     /** {@inheritDoc} */

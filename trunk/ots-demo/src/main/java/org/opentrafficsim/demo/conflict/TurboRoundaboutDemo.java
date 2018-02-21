@@ -19,10 +19,10 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -51,9 +51,6 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
 
     /** */
     private static final long serialVersionUID = 20161211L;
-    
-    /** GTU colorer. */
-    private GTUColorer colorer = new DefaultSwitchableGTUColorer();
 
     /** {@inheritDoc} */
     @Override
@@ -67,6 +64,8 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
     protected final void addAnimationToggles()
     {
         AnimationToggles.setIconAnimationTogglesFull(this);
+        hideAnimationClass(OTSLink.class);
+        hideAnimationClass(OTSNode.class);
         // addToggleAnimationButtonText("Block", LaneBlock.class, "Show/hide Blocks", false);
         // addToggleAnimationButtonText("BlockId", LaneBlockAnimation.Text.class, "Show/hide Block Ids", false);
     }
@@ -83,12 +82,6 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
     public final String description()
     {
         return "Turbo roundabout demonstration";
-    }
-    
-    @Override
-    public GTUColorer getColorer()
-    {
-        return this.colorer;
     }
 
     /**

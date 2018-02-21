@@ -45,6 +45,7 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
@@ -98,7 +99,7 @@ import nl.tudelft.simulation.language.io.URLResource;
  */
 public class BusStreetDemo extends AbstractWrappableAnimation
 {
-
+    
     /** */
     private static final long serialVersionUID = 20161211L;
 
@@ -113,8 +114,9 @@ public class BusStreetDemo extends AbstractWrappableAnimation
     @Override
     protected final void addAnimationToggles()
     {
-        AnimationToggles.setTextAnimationTogglesFull(this);
-        this.hideAnimationClass(OTSLink.class);
+        AnimationToggles.setIconAnimationTogglesFull(this);
+        hideAnimationClass(OTSLink.class);
+        hideAnimationClass(OTSNode.class);
     }
 
     /** {@inheritDoc} */
@@ -146,15 +148,11 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         /** Simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
-        /** Colorer for GTU's. */
-        private GTUColorer gtuColorer;
-
         /** {@inheritDoc} */
         @Override
         public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0)
                 throws SimRuntimeException, RemoteException
         {
-            this.gtuColorer = new DefaultSwitchableGTUColorer();
             this.simulator = (OTSDEVSSimulatorInterface) arg0;
             Map<String, StreamInterface> streams = new HashMap<>();
             streams.put("generation", new MersenneTwister(100L));
@@ -249,7 +247,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             LaneBasedGTUCharacteristicsGenerator characteristicsGenerator =
                     new CharacteristicsGenerator(this.simulator, new double[] { 0.9, 0.06, 0.04 }, this.network);
             RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
-            new LaneBasedGTUGenerator(id, headwayGenerator, this.gtuColorer, characteristicsGenerator,
+            new LaneBasedGTUGenerator(id, headwayGenerator, getColorer(), characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, this.simulator, roomChecker,
                     new IdGenerator(""));
         }

@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
@@ -17,7 +18,9 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.SortedSetPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
@@ -66,18 +69,10 @@ public enum Synchronization implements LmrsParameters
             {
                 Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
                 Acceleration bCrit = params.getParameter(ParameterTypes.BCRIT);
-                try
-                {
-                    remainingDist = remainingDist.minus(params.getParameter(ParameterTypes.S0))
-                            .minus(perception.getGtu().getFront().getDx());
-                }
-                catch (GTUException exception)
-                {
-                    throw new OperationalPlanException("Could not obtain GTU from perception.", exception);
-                }
+                remainingDist = remainingDist.minus(params.getParameter(ParameterTypes.S0));
                 // TODO replace this hack with something that properly accounts for overshoot
-                // this method also introduces very strong deceleration at low speeds, as the time step makes bMin go from 3.4 
-                // (ignored, so maybe 1.25 acceleration applied) to >10 
+                // this method also introduces very strong deceleration at low speeds, as the time step makes bMin go from 3.4
+                // (ignored, so maybe 1.25 acceleration applied) to >10
                 remainingDist = remainingDist.minus(Length.createSI(10));
                 if (remainingDist.le0())
                 {
@@ -175,7 +170,7 @@ public enum Synchronization implements LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
 
-            SortedSet<HeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+            PerceptionIterable<HeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
                     relativeLane), perception, RelativeLane.CURRENT);
             HeadwayGTU leader = null;
@@ -206,7 +201,7 @@ public enum Synchronization implements LmrsParameters
                 a = gentleUrgency(a, desire, params);
                 // dead end
                 a = Acceleration.min(a, NONE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData));
-                
+
             }
 
             return a;
@@ -259,7 +254,7 @@ public enum Synchronization implements LmrsParameters
             InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
             SortedSet<InfrastructureLaneChangeInfo> info = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);
             Length xMerge = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).minus(dx);
-            xMerge = xMerge.lt0() ? xMerge.neg() : Length.ZERO; // zero, or positive value where lane change is not possible
+            xMerge = xMerge.lt0() ? xMerge.neg() : Length.ZERO; // zero or positive value where lane change is not possible
             int nCur = 0;
             Length xCur = Length.POSITIVE_INFINITY;
             for (InfrastructureLaneChangeInfo lcInfo : info)
@@ -282,7 +277,7 @@ public enum Synchronization implements LmrsParameters
             // abandon the gap if the sync vehicle is no longer adjacent, in congestion within xMergeSync, or too far
             NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
             RelativeLane lane = new RelativeLane(lat, 1);
-            SortedSet<HeadwayGTU> leaders =
+            PerceptionIterable<HeadwayGTU> leaders =
                     removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getLeaders(lane), perception, lane),
                             perception, RelativeLane.CURRENT);
             HeadwayGTU syncVehicle = lmrsData.getSyncVehicle(leaders);
@@ -317,7 +312,7 @@ public enum Synchronization implements LmrsParameters
 
             // select upstream vehicle if we can safely follow that, or if we cannot stay ahead of it (infrastructure, in coop)
             HeadwayGTU up;
-            SortedSet<HeadwayGTU> followers =
+            PerceptionIterable<HeadwayGTU> followers =
                     removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getFollowers(lane), perception, lane),
                             perception, RelativeLane.CURRENT);
             HeadwayGTU follower = followers == null || followers.isEmpty() ? null
@@ -501,15 +496,30 @@ public enum Synchronization implements LmrsParameters
      * @return the input set, for chained use
      * @throws OperationalPlanException if the {@code IntersectionPerception} category is not present
      */
-    static SortedSet<HeadwayGTU> removeAllUpstreamOfConflicts(final SortedSet<HeadwayGTU> set, final LanePerception perception,
-            final RelativeLane relativeLane) throws OperationalPlanException
+    static PerceptionIterable<HeadwayGTU> removeAllUpstreamOfConflicts(final Iterable<HeadwayGTU> set,
+            final LanePerception perception, final RelativeLane relativeLane) throws OperationalPlanException
     {
+        if (true)
+        {
+            return (PerceptionIterable<HeadwayGTU>) set;
+        }
+        // TODO find a better solution for this inefficient hack... when to ignore a vehicle for synchronization?
+        SortedSetPerceptionIterable<HeadwayGTU> out = new SortedSetPerceptionIterable<>();
+        if (set == null)
+        {
+            return out;
+        }
         IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
         if (intersection == null)
         {
-            return set;
+            return out;
         }
-        Set<HeadwayConflict> conflicts = intersection.getConflicts(relativeLane);
+        Map<String, HeadwayGTU> map = new HashMap<>();
+        for (HeadwayGTU gtu : set)
+        {
+            map.put(gtu.getId(), gtu);
+        }
+        Iterable<HeadwayConflict> conflicts = intersection.getConflicts(relativeLane);
         if (conflicts != null)
         {
             for (HeadwayConflict conflict : conflicts)
@@ -518,19 +528,17 @@ public enum Synchronization implements LmrsParameters
                 {
                     for (HeadwayGTU conflictGtu : conflict.getUpstreamConflictingGTUs())
                     {
-                        for (HeadwayGTU gtu : set)
+                        if (map.containsKey(conflictGtu.getId()))
                         {
-                            if (conflictGtu.getId().equals(gtu.getId()))
-                            {
-                                set.remove(gtu);
-                                break;
-                            }
+                            map.remove(conflictGtu.getId());
                         }
                     }
                 }
             }
         }
-        return set;
+        out.addAll(map.values());
+        return out;
+
     }
 
     /**
@@ -569,7 +577,7 @@ public enum Synchronization implements LmrsParameters
      * @param ownLength own vehicle length
      * @return upstream gtu of the given gtu
      */
-    static HeadwayGTU getFollower(final HeadwayGTU gtu, final SortedSet<HeadwayGTU> leaders, final HeadwayGTU follower,
+    static HeadwayGTU getFollower(final HeadwayGTU gtu, final PerceptionIterable<HeadwayGTU> leaders, final HeadwayGTU follower,
             final Length ownLength)
     {
         HeadwayGTU last = null;

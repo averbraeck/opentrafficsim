@@ -2,18 +2,18 @@ package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.AbstractDoubleScalarRel;
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
-import org.opentrafficsim.base.parameters.ParameterType;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -111,7 +111,7 @@ public class ParameterFactoryByType implements ParameterFactory
     {
         if (!this.map.containsKey(gtuType))
         {
-            this.map.put(gtuType, new HashSet<>());
+            this.map.put(gtuType, new LinkedHashSet<>());
         }
     }
 

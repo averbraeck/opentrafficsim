@@ -166,7 +166,7 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
                 return directions.contains(lateralDirection);
             }
         }
-        return true;
+        return false;
     }
 
     /**

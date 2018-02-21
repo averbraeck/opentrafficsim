@@ -6,6 +6,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
@@ -144,7 +145,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
      * @param lane relative lateral lane
      * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
-    SortedSet<HeadwayGTU> getLeaders(RelativeLane lane);
+    PerceptionIterable<HeadwayGTU> getLeaders(RelativeLane lane);
 
     /**
      * Set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT. Follower are are
@@ -152,6 +153,6 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
      * @param lane relative lateral lane
      * @return set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT
      */
-    SortedSet<HeadwayGTU> getFollowers(RelativeLane lane);
+    PerceptionIterable<HeadwayGTU> getFollowers(RelativeLane lane);
 
 }

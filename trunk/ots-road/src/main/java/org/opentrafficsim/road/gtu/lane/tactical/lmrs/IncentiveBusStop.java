@@ -1,15 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.SortedSet;
-
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -38,7 +37,7 @@ public class IncentiveBusStop implements MandatoryIncentive
     {
 
         HeadwayBusStop firstStop = null;
-        SortedSet<HeadwayBusStop> stops = perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
+        PerceptionIterable<HeadwayBusStop> stops = perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
         Time now;
         try
         {

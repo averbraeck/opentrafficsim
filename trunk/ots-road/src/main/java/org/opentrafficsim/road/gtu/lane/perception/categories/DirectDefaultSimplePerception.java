@@ -158,7 +158,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         for (Lane lane : getGtu().positions(getGtu().getReference()).keySet())
         {
             Set<Lane> adjacentLanes = new HashSet<>(1);
-            adjacentLanes.addAll(lane.accessibleAdjacentLanes(LateralDirectionality.LEFT, getGtu().getGTUType(), getGtu()
+            adjacentLanes.addAll(lane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, getGtu().getGTUType(), getGtu()
                     .getDirection(lane)));
             accessibleAdjacentLanesMap.put(lane, adjacentLanes);
         }
@@ -174,7 +174,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         for (Lane lane : getGtu().positions(getGtu().getReference()).keySet())
         {
             Set<Lane> adjacentLanes = new HashSet<>(1);
-            adjacentLanes.addAll(lane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, getGtu().getGTUType(), getGtu()
+            adjacentLanes.addAll(lane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, getGtu().getGTUType(), getGtu()
                     .getDirection(lane)));
             accessibleAdjacentLanesMap.put(lane, adjacentLanes);
         }
@@ -1095,7 +1095,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         {
             LaneDirection ld = lpi.getLaneDirectionList().get(i);
             Set<Lane> accessibleLanes =
-                    ld.getLane().accessibleAdjacentLanes(direction, getGtu().getGTUType(),
+                    ld.getLane().accessibleAdjacentLanesLegal(direction, getGtu().getGTUType(),
                             lpi.getReferenceLaneDirection().getDirection());
             Lane adjLane = null;
             for (Lane lane : accessibleLanes)

@@ -18,7 +18,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  */
 public interface DesiredSpeedModel
 {
-    
+
     /**
      * Determines the desired speed.
      * @param parameters parameters
@@ -27,5 +27,5 @@ public interface DesiredSpeedModel
      * @return desired speed
      */
     Speed desiredSpeed(Parameters parameters, SpeedLimitInfo speedInfo) throws ParameterException;
-    
+
 }

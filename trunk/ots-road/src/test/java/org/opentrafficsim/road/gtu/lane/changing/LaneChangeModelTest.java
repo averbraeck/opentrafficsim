@@ -178,13 +178,13 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         // Let's see if adjacent lanes are accessible
         // lanes: | 0 : 1 : 2 | in case of three lanes
         assertEquals("Leftmost lane should not have accessible adjacent lanes on the LEFT side", 0,
-                lanes[0].accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType, GTUDirectionality.DIR_PLUS).size());
+                lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, GTUDirectionality.DIR_PLUS).size());
         assertEquals("Leftmost lane should have one accessible adjacent lane on the RIGHT side", 1,
-                lanes[0].accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType, GTUDirectionality.DIR_PLUS).size());
+                lanes[0].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType, GTUDirectionality.DIR_PLUS).size());
         assertEquals("Rightmost lane should have one accessible adjacent lane on the LEFT side", 1,
-                lanes[1].accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType, GTUDirectionality.DIR_PLUS).size());
+                lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, GTUDirectionality.DIR_PLUS).size());
         assertEquals("Rightmost lane should not have accessible adjacent lanes on the RIGHT side", 0,
-                lanes[1].accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType, GTUDirectionality.DIR_PLUS).size());
+                lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType, GTUDirectionality.DIR_PLUS).size());
 
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions

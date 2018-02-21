@@ -76,7 +76,7 @@ public class IncentiveCourtesy implements VoluntaryIncentive
         for (LateralDirectionality dir : new LateralDirectionality[] { LateralDirectionality.LEFT,
                 LateralDirectionality.RIGHT })
         {
-            Set<HeadwayGTU> leaders = neighbors.getLeaders(new RelativeLane(dir, 1));
+            Iterable<HeadwayGTU> leaders = neighbors.getLeaders(new RelativeLane(dir, 1));
             if (leaders != null)
             {
                 for (HeadwayGTU leader : leaders)
@@ -105,7 +105,7 @@ public class IncentiveCourtesy implements VoluntaryIncentive
                 }
             }
             // consider close followers on 2 lanes away
-            Set<HeadwayGTU> followers = neighbors.getFollowers(new RelativeLane(dir, 2));
+            Iterable<HeadwayGTU> followers = neighbors.getFollowers(new RelativeLane(dir, 2));
             if (followers != null)
             {
                 for (HeadwayGTU follower : followers)

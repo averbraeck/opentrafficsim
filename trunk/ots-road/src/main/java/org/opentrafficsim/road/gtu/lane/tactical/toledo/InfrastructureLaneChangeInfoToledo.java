@@ -2,9 +2,10 @@ package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
+import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -30,14 +31,14 @@ public class InfrastructureLaneChangeInfoToledo extends InfrastructureLaneChange
 
     /**
      * @param requiredNumberOfLaneChanges number of lane changes
-     * @param remainingDistance remaining distance
+     * @param record record
      * @param splitNumber number of the split along the road
      * @throws GTUException if the split number is below 1
      */
-    public InfrastructureLaneChangeInfoToledo(final int requiredNumberOfLaneChanges, final Length remainingDistance,
+    public InfrastructureLaneChangeInfoToledo(final int requiredNumberOfLaneChanges, final LaneStructureRecord record,
             final int splitNumber) throws GTUException
     {
-        super(requiredNumberOfLaneChanges, remainingDistance, splitNumber > 0);
+        super(requiredNumberOfLaneChanges, record, RelativePosition.REFERENCE_POSITION, splitNumber > 0);
         Throw.when(splitNumber <= 0, GTUException.class, "Split number should be at least 1.");
         this.splitNumber = splitNumber;
     }

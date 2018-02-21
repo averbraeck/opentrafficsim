@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -19,9 +18,12 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 import nl.tudelft.simulation.language.Throw;
@@ -46,11 +48,14 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
+    /** Look back parameter type. */
+    protected static final ParameterTypeLength LOOKBACK = ParameterTypes.LOOKBACK;
+
     /** Set of followers per relative lane. */
-    private final Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayGTU>>> followers = new HashMap<>();
+    private final Map<RelativeLane, TimeStampedObject<PerceptionIterable<HeadwayGTU>>> followers = new HashMap<>();
 
     /** Set of leaders per relative lane. */
-    private final Map<RelativeLane, TimeStampedObject<SortedSet<HeadwayGTU>>> leaders = new HashMap<>();
+    private final Map<RelativeLane, TimeStampedObject<PerceptionIterable<HeadwayGTU>>> leaders = new HashMap<>();
 
     /** Set of first followers per lane upstream of merge per lateral direction, i.e. in the left or right lane. */
     private final Map<LateralDirectionality, TimeStampedObject<SortedSet<HeadwayGTU>>> firstFollowers = new HashMap<>();
@@ -63,12 +68,6 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /** Headway GTU type that should be used. */
     private final HeadwayGtuType headwayGtuType;
-
-    /**
-     * Margin used for neighbor search in some cases to prevent possible deadlock. This does not affect calculated distances to
-     * neighbors, but only whether they are considered a leader or follower.
-     */
-    private static final Length MARGIN = new Length(0.000001, LengthUnit.SI);
 
     /**
      * @param perception perception
@@ -320,75 +319,14 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     public final void updateLeaders(final RelativeLane lane) throws ParameterException, GTUException, NetworkException
     {
         Throw.whenNull(lane, "Lane may not be null.");
-        SortedSet<HeadwayGTU> headwaySet = new TreeSet<>();
-        Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
-        Set<LaneStructureRecord> nextSet = new LinkedHashSet<>();
-        LaneStructureRecord initRecord = getPerception().getLaneStructure().getLaneLSR(lane);
-        currentSet.add(initRecord);
-        double lookahead = getGtu().getParameters().getParameter(ParameterTypes.LOOKAHEAD).si;
-        double ds = getGtu().getFront().getDx().si - getGtu().getReference().getDx().si;
-        // move downstream over branches
-        while (!currentSet.isEmpty())
-        {
-            for (LaneStructureRecord record : currentSet)
-            {
-                int first;
-                double loc = -record.getStartDistance().si + ds;
-                boolean plus = record.getDirection().isPlus();
-                if (lane.getLateralDirectionality().isLeft())
-                {
-                    loc = plus ? loc - MARGIN.si : loc + MARGIN.si;
-                }
-                else if (lane.getLateralDirectionality().isRight())
-                {
-                    loc = plus ? loc + MARGIN.si : loc - MARGIN.si;
-                }
-                LaneBasedGTU down = record.getLane().getGtuAhead(Length.createSI(loc), record.getDirection(),
-                        RelativePosition.FRONT, getTimestamp());
-                if (down == null)
-                {
-                    first = plus ? record.getLane().numberOfGtus() : -1; // none
-                }
-                else
-                {
-                    first = record.getLane().indexOfGtu(down); // from first downstream till last
-                }
-                // loop GTU's and create HeadwayGTU's
-                int di = plus ? 1 : -1;
-                for (int i = first; i < record.getLane().numberOfGtus() & i >= 0; i += di)
-                {
-                    LaneBasedGTU gtu = record.getLane().getGtu(i);
-                    double position = gtu.position(record.getLane(), gtu.getRear()).si;
-                    boolean rearOnUpstreamLane = plus ? position < 0.0 : position > record.getLane().getLength().si;
-                    if (rearOnUpstreamLane && !record.equals(initRecord))
-                    {
-                        // rear still on previous lane; it is found there
-                        continue;
-                    }
-                    double distance =
-                            record.getStartDistance().si + (plus ? position : record.getLane().getLength().si - position) - ds;
-                    // only within lookahead
-                    if (distance <= lookahead && !gtu.equals(getGtu()))
-                    {
-                        // TODO remove this fix to ignore on-ramp block
-                        if (!gtu.getId().equals("999999"))
-                        {
-                            headwaySet.add(this.headwayGtuType.createHeadwayGtu(gtu, Length.createSI(distance)));
-                        }
-                    }
-                }
-                // add next lanes
-                for (LaneStructureRecord next : record.getNext())
-                {
-                    nextSet.add(next);
-                }
-                // TODO break search, but how to guarantee that the rear of further GTU's is not within lookahead?
-            }
-            currentSet = nextSet;
-            nextSet = new LinkedHashSet<>();
-        }
-        this.leaders.put(lane, new TimeStampedObject<>(headwaySet, getTimestamp()));
-
+        LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
+        Length pos = record.getStartDistance().neg();
+        pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx()) : pos.minus(getGtu().getFront().getDx());
+        boolean ignoreIfUpstream = true;
+        PerceptionIterable<HeadwayGTU> it = new DownstreamNeighborsIterable<>(record, Length.max(Length.ZERO, pos),
+                getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), this.headwayGtuType, getGtu(), lane,
+                ignoreIfUpstream);
+        this.leaders.put(lane, new TimeStampedObject<>(it, getTimestamp()));
     }
 
     /** {@inheritDoc} */
@@ -396,65 +334,12 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     public final void updateFollowers(final RelativeLane lane) throws GTUException, NetworkException, ParameterException
     {
         Throw.whenNull(lane, "Lane may not be null.");
-        SortedSet<HeadwayGTU> headwaySet = new TreeSet<>();
-        Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
-        Set<LaneStructureRecord> prevSet = new LinkedHashSet<>();
-        LaneStructureRecord initRecord = getPerception().getLaneStructure().getLaneLSR(lane);
-        currentSet.add(initRecord);
-        double lookback = getGtu().getParameters().getParameter(ParameterTypes.LOOKBACK).si;
-        double dsFront = getGtu().getFront().getDx().si - getGtu().getReference().getDx().si;
-        double dsRear = getGtu().getRear().getDx().si - getGtu().getReference().getDx().si;
-        // move upstream over branches
-        while (!currentSet.isEmpty())
-        {
-            for (LaneStructureRecord record : currentSet)
-            {
-                int first;
-                double loc = -record.getStartDistance().si + dsFront;
-                boolean plus = record.getDirection().isPlus();
-                if (lane.getLateralDirectionality().isLeft())
-                {
-                    loc = record.getDirection().isPlus() ? loc + MARGIN.si : loc - MARGIN.si;
-                }
-                else if (lane.getLateralDirectionality().isRight())
-                {
-                    loc = record.getDirection().isPlus() ? loc - MARGIN.si : loc + MARGIN.si;
-                }
-                LaneBasedGTU up = record.getLane().getGtuBehind(Length.createSI(loc), record.getDirection(),
-                        RelativePosition.FRONT, getTimestamp());
-                if (up == null)
-                {
-                    first = plus ? -1 : record.getLane().numberOfGtus(); // none
-                }
-                else
-                {
-                    first = record.getLane().indexOfGtu(up); // from first upstream till last
-                }
-                // loop GTU's and create HeadwayGTU's
-                int di = plus ? -1 : 1;
-                for (int i = first; i < record.getLane().numberOfGtus() & i >= 0; i += di)
-                {
-                    LaneBasedGTU gtu = record.getLane().getGtu(i);
-                    double distance =
-                            -record.getStartDistance().si - gtu.position(record.getLane(), gtu.getFront()).si + dsRear;
-                    // only within lookback, and ignore self
-                    if (distance <= lookback && !gtu.getId().equals(getGtu().getId()))
-                    {
-                        headwaySet.add(this.headwayGtuType.createHeadwayGtu(gtu, Length.createSI(distance)));
-                    }
-                }
-                // add prev lanes
-                for (LaneStructureRecord prev : record.getPrev())
-                {
-                    prevSet.add(prev);
-                }
-                // TODO break search, but how to guarantee that the front of further GTU's is not within lookback?
-            }
-            currentSet = prevSet;
-            prevSet = new LinkedHashSet<>();
-        }
-        this.followers.put(lane, new TimeStampedObject<>(headwaySet, getTimestamp()));
-
+        LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
+        Length pos = record.getStartDistance().neg();
+        pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx()) : pos.minus(getGtu().getFront().getDx());
+        PerceptionIterable<HeadwayGTU> it = new UpstreamNeighborsIterable<>(record, Length.max(Length.ZERO, pos),
+                getGtu().getParameters().getParameter(LOOKBACK), getGtu().getRear(), this.headwayGtuType, getGtu(), lane);
+        this.followers.put(lane, new TimeStampedObject<>(it, getTimestamp()));
     }
 
     /** {@inheritDoc} */
@@ -486,14 +371,14 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /** {@inheritDoc} */
     @Override
-    public final SortedSet<HeadwayGTU> getLeaders(final RelativeLane lane)
+    public final PerceptionIterable<HeadwayGTU> getLeaders(final RelativeLane lane)
     {
         return getObjectOrNull(this.leaders.get(lane));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SortedSet<HeadwayGTU> getFollowers(final RelativeLane lane)
+    public final PerceptionIterable<HeadwayGTU> getFollowers(final RelativeLane lane)
     {
         return getObjectOrNull(this.followers.get(lane));
     }
@@ -574,7 +459,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * @param lane relative lateral lane
      * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
-    public final TimeStampedObject<SortedSet<HeadwayGTU>> getTimeStampedLeaders(final RelativeLane lane)
+    public final TimeStampedObject<PerceptionIterable<HeadwayGTU>> getTimeStampedLeaders(final RelativeLane lane)
     {
         return this.leaders.get(lane);
     }
@@ -585,7 +470,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * @param lane relative lateral lane
      * @return set of followers on a lane, including adjacent GTU's who's REAR is back of the own vehicle REAR
      */
-    public final TimeStampedObject<SortedSet<HeadwayGTU>> getTimeStampedFollowers(final RelativeLane lane)
+    public final TimeStampedObject<PerceptionIterable<HeadwayGTU>> getTimeStampedFollowers(final RelativeLane lane)
     {
         return this.followers.get(lane);
     }
@@ -616,7 +501,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     @Override
     public final String toString()
     {
-        return "DirectNeighborsPerception";
+        return "DirectNeighborsPesrception";
     }
 
 }

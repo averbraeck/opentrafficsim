@@ -19,11 +19,11 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTURealCopy;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public enum HeadwayGtuType
+public abstract class HeadwayGtuType
 {
 
     /** The GTU is wrapped, and info is taken directly from it. */
-    WRAP
+    public final static HeadwayGtuType WRAP = new HeadwayGtuType()
     {
         @Override
         public HeadwayGTU createHeadwayGtu(final LaneBasedGTU gtu, final Length distance) throws GTUException
@@ -37,10 +37,10 @@ public enum HeadwayGtuType
         {
             return new HeadwayGTUReal(gtu, overlapFront, overlap, overlapRear, true);
         }
-    },
+    };
 
     /** Info regarding the GTU is copied. */
-    COPY
+    public final static HeadwayGtuType COPY = new HeadwayGtuType()
     {
         @Override
         public HeadwayGTU createHeadwayGtu(final LaneBasedGTU gtu, final Length distance) throws GTUException

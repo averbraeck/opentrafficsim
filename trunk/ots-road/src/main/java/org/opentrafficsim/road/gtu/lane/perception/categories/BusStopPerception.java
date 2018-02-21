@@ -1,10 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import java.util.SortedSet;
-
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
 
 /**
@@ -32,7 +31,7 @@ public interface BusStopPerception extends LaneBasedPerceptionCategory
      * Returns the bus stops.
      * @return bus stops
      */
-    SortedSet<HeadwayBusStop> getBusStops();
+    PerceptionIterable<HeadwayBusStop> getBusStops();
 
     /** {@inheritDoc} */
     @Override
