@@ -9,6 +9,7 @@ import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
@@ -48,8 +49,8 @@ import nl.tudelft.simulation.language.Throw;
 public class ODOptions
 {
 
-    /** Read-only. */
-    boolean readOnly = false;
+    /** Value for option GTU_TYPE to use the shortest route if no route is given in the Categorization. */
+    public static final GTUCharacteristicsGeneratorOD SHORTEST_ROUTE = new ShortestRouteGTUCharacteristicsGeneratorOD();
 
     /** Headway randomization option. */
     public static final Option<HeadwayRandomization> HEADWAY_DIST =
@@ -163,8 +164,6 @@ public class ODOptions
      */
     public final <K> K get(final Option<K> option, final Lane lane, final Node node, final LinkType linkType)
     {
-        Throw.when(!this.readOnly, IllegalStateException.class, "Getting option from ODGenerationOptions that is not read-only."
-                + " Use ODGenerationOptions.setReadOnly() to set ODGenerationOptions to read-only.");
         Throw.whenNull(option, "Option may not be null.");
         K value = this.laneOptions.get(lane, option);
         if (value != null)
@@ -187,16 +186,6 @@ public class ODOptions
             return value;
         }
         return option.getDefaultValue();
-    }
-
-    /**
-     * Sets the options to read-only, after which no new options may be set, and the options may be used.
-     * @return this option set
-     */
-    public ODOptions setReadOnly()
-    {
-        this.readOnly = true;
-        return this;
     }
 
     /**
@@ -327,7 +316,6 @@ public class ODOptions
          */
         public <K> void set(final C category, final Option<K> option, final K value)
         {
-            Throw.when(ODOptions.this.readOnly, IllegalStateException.class, "Setting option on read-only options.");
             Map<Option<?>, Object> map = this.optionsSet.get(category);
             if (map == null)
             {
@@ -391,15 +379,8 @@ public class ODOptions
             {
                 gtuType = GTUType.CAR;
             }
-            GTUCharacteristics gtuCharacteristics;
-            try
-            {
-                gtuCharacteristics = GTUType.defaultCharacteristics(gtuType);
-            }
-            catch (GTUException exception)
-            {
-                throw new RuntimeException(exception);
-            }
+            GTUCharacteristics gtuCharacteristics = Try.assign(() -> GTUType.defaultCharacteristics(gtuType),
+                    "Exception while applying default GTU characteristics.");
             // strategical factory
             LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(
@@ -409,7 +390,80 @@ public class ODOptions
             return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, origin,
                     destination);
         }
+    }
 
+    /**
+     * Standard generator for {@code LaneBasedGTUCharacteristics} with shortest route.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 dec. 2017 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private static final class ShortestRouteGTUCharacteristicsGeneratorOD implements GTUCharacteristicsGeneratorOD
+    {
+
+        /** Shortest route cache. */
+        private Map<Node, Map<Node, Route>> shortestRouteCache = new HashMap<>();
+
+        /** Constructor. */
+        ShortestRouteGTUCharacteristicsGeneratorOD()
+        {
+            //
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
+                final StreamInterface randomStream) throws GTUException
+        {
+            Categorization categorization = category.getCategorization();
+            // GTU characteristics
+            GTUType gtuType;
+            if (categorization.entails(GTUType.class))
+            {
+                gtuType = category.get(GTUType.class);
+            }
+            else
+            {
+                gtuType = GTUType.CAR;
+            }
+            GTUCharacteristics gtuCharacteristics = Try.assign(() -> GTUType.defaultCharacteristics(gtuType),
+                    "Exception while applying default GTU characteristics.");
+            // strategical factory
+            LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
+                    new LaneBasedStrategicalRoutePlannerFactory(
+                            new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()));
+            // route
+            Route route;
+            if (categorization.entails(Route.class))
+            {
+                route = category.get(Route.class);
+            }
+            else
+            {
+                // get shortest route
+                Map<Node, Route> originCache = this.shortestRouteCache.get(origin);
+                if (originCache == null)
+                {
+                    originCache = new HashMap<>();
+                    this.shortestRouteCache.put(origin, originCache);
+                }
+                route = originCache.get(destination);
+                if (route == null)
+                {
+                    route = Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination),
+                            "Could not determine the shortest route from %s to %s.", origin, destination);
+                    originCache.put(destination, route);
+                }
+            }
+            return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, origin,
+                    destination);
+        }
     }
 
 }

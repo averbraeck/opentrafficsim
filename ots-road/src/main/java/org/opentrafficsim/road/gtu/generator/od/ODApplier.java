@@ -218,15 +218,14 @@ public final class ODApplier
                                 rootNode.addChild(destinationNode);
                             }
                         }
-                        DemandNode<Category, ?> categoryNode;
+                        DemandNode<Category, ?> categoryNode =
+                                new DemandNode<>(category, od.getODEntry(origin, destination, category));
                         if (markovian)
                         {
-                            categoryNode = new DemandNode<>(category, od.getODEntry(origin, destination, category));
                             destinationNode.addLeaf(categoryNode, category.get(GTUType.class));
                         }
                         else
                         {
-                            categoryNode = new DemandNode<>(category, od.getODEntry(origin, destination, category));
                             destinationNode.addChild(categoryNode);
                         }
                     }

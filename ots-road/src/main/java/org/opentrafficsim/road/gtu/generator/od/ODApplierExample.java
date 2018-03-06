@@ -293,7 +293,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 TimeVector timeVector = new TimeVector(new double[] { 5 * fT, 600 * fT, 610 * fT, 1800 * fT, 3000 * fT },
                         TimeUnit.BASE, StorageType.DENSE);
                 ODMatrix od =
-                        new ODMatrix("ODExample", origins, destinations, categorization, timeVector, Interpolation.LINEAR);
+                        new ODMatrix("ODExample", origins, destinations, categorization, timeVector, Interpolation.STEPWISE);
                 FrequencyVector demand = new FrequencyVector(
                         new double[] { 0 * DEMAND, 1000 * DEMAND, 3000 * DEMAND, 7000 * DEMAND, 0 * DEMAND },
                         FrequencyUnit.PER_HOUR, StorageType.DENSE);
@@ -326,7 +326,8 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 ODOptions odOptions = new ODOptions().set(ODOptions.GTU_COLORER, getColorer())
                         .set(ODOptions.ROOM_CHECKER, new CFBARoomChecker())
                         .set(lane0, ODOptions.GTU_COLORER, new DefaultSwitchableGTUColorer()).set(ODOptions.MARKOV, markov)
-                        .set(ODOptions.LANE_BIAS, biases).set(ODOptions.NO_LC_DIST, Length.createSI(100.0)).setReadOnly();
+                        .set(ODOptions.LANE_BIAS, biases).set(ODOptions.NO_LC_DIST, Length.createSI(100.0));
+                ODApplier.applyOD(this.network, od, this.simulator, new ODOptions());
                 Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
                 for (String str : generatedObjects.keySet())
                 {
