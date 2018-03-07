@@ -345,7 +345,7 @@ final class Links
         double endAngle = to.angle.getInUnit();
         if (linkTag.offsetEnd != null && linkTag.offsetEnd.si != 0.0)
         {
-            // shift the start point perpendicular to the node direction or read from tag
+            // shift the end point perpendicular to the node direction or read from tag
             double offset = linkTag.offsetEnd.si;
             endPoint = new OTSPoint3D(endPoint.x + offset * Math.cos(endAngle + Math.PI / 2.0),
                     endPoint.y + offset * Math.sin(endAngle + Math.PI / 2.0), endPoint.z);
