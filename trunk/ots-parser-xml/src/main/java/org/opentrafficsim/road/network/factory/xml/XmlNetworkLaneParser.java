@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +22,16 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
+import nl.tudelft.simulation.immutablecollections.ImmutableList;
 
 /**
  * <p>
@@ -105,6 +110,9 @@ public class XmlNetworkLaneParser implements Serializable
     /** The network to register the GTUs in. */
     @SuppressWarnings("visibilitymodifier")
     protected OTSNetwork network;
+    
+    /** All comments encountered in the XML file. */ 
+    List<String> xmlComments = new ArrayList<>();
 
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
@@ -170,7 +178,7 @@ public class XmlNetworkLaneParser implements Serializable
 
     /**
      * @param url the file with the network in the agreed xml-grammar.
-     * @param network OTSNetwork; the network
+     * @param otsNetwork OTSNetwork; the network
      * @return the network with Nodes, Links, and Lanes.
      * @throws NetworkException in case of parsing problems.
      * @throws SAXException in case of parsing problems.
@@ -182,16 +190,16 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final URL url, final OTSNetwork network)
+    public final OTSNetwork build(final URL url, final OTSNetwork otsNetwork)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
             OTSGeometryException, SimRuntimeException
     {
-        return build(url.openStream(), network);
+        return build(url.openStream(), otsNetwork);
     }
 
     /**
      * @param stream the input stream with the network in the agreed xml-grammar.
-     * @param network OTSNetwork; the network
+     * @param otsNetwork OTSNetwork; the network
      * @return the network with Nodes, Links, and Lanes.
      * @throws NetworkException in case of parsing problems.
      * @throws SAXException in case of parsing problems.
@@ -203,7 +211,7 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final InputStream stream, final OTSNetwork network)
+    public final OTSNetwork build(final InputStream stream, final OTSNetwork otsNetwork)
             throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
             OTSGeometryException, SimRuntimeException
     {
@@ -217,7 +225,8 @@ public class XmlNetworkLaneParser implements Serializable
         // throw new SAXException("XmlNetworkLaneParser.build: File " + url.getFile() + " is not properly formatted",
         // exception);
         // }
-        this.network = network;
+        this.network = otsNetwork;
+        this.xmlComments.clear();
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -225,6 +234,15 @@ public class XmlNetworkLaneParser implements Serializable
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(stream);
         NodeList networkNodeList = document.getDocumentElement().getChildNodes();
+        
+        for (int i = 0; i < networkNodeList.getLength(); i++)
+        {
+            Node node = networkNodeList.item(i);
+            if (node instanceof Comment)
+            {
+                this.xmlComments.add(node.getTextContent());
+            }
+        }
 
         if (!document.getDocumentElement().getNodeName().equals("NETWORK"))
             throw new SAXException("XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
@@ -295,6 +313,15 @@ public class XmlNetworkLaneParser implements Serializable
         return this.network;
     }
 
+    /**
+     * Obtain an immutable copy of the collected XML comments.
+     * @return List<String>; a list of the XML comments
+     */
+    public ImmutableList<String> getXMLComments()
+    {
+        return new ImmutableArrayList<>(this.xmlComments, Immutable.COPY);
+    }
+    
     /** {@inheritDoc} */
     @Override
     public String toString()
