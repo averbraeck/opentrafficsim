@@ -519,8 +519,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final void buildGraph(final GTUType gtuType)
     {
         // TODO take connections into account, and possibly do node expansion to build the graph
-        @SuppressWarnings("rawtypes")
-        Class<LinkEdge> linkEdgeClass = LinkEdge.class;
+        @SuppressWarnings({ "unchecked" })
+        Class<? extends LinkEdge<Link>> linkEdgeClass = (Class<? extends LinkEdge<Link>>) LinkEdge.class;
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleDirectedWeightedGraph<>(linkEdgeClass);
         for (Node node : this.nodeMap.values())
         {
