@@ -458,6 +458,13 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             return this.position;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "Placement [speed=" + this.speed + ", position=" + this.position + "]";
+        }
+
     }
 
     /** {@inheritDoc} */
