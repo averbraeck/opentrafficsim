@@ -4,11 +4,18 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -18,23 +25,57 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.immutablecollections.ImmutableList;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.StorageType;
+import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.FrequencyVector;
+import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.animation.LinkAnimation;
+import org.opentrafficsim.core.network.animation.NodeAnimation;
+import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
+import org.opentrafficsim.road.gtu.generator.od.ODApplier;
+import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
+import org.opentrafficsim.road.gtu.generator.od.ODOptions;
+import org.opentrafficsim.road.gtu.generator.od.ODOptions.ShortestRouteRandomGTUCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.strategical.od.Categorization;
+import org.opentrafficsim.road.gtu.strategical.od.Category;
+import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
+import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
+import org.opentrafficsim.road.network.factory.xml.GTUTag;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
@@ -64,8 +105,15 @@ public class AimsunControl extends AbstractWrappableAnimation
     /**
      * Program entry point.
      * @param args String[]; the command line arguments
+     * @throws OTSGeometryException
+     * @throws NetworkException
+     * @throws NamingException
+     * @throws ValueException
+     * @throws SimRuntimeException
+     * @throws ParameterException
      */
-    public static void main(final String[] args)
+    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException,
+            ValueException, ParameterException, SimRuntimeException
     {
         String ip = null;
         Integer port = null;
@@ -155,13 +203,239 @@ public class AimsunControl extends AbstractWrappableAnimation
     }
 
     /**
+     * Retrieve the OD info from the XML comments and apply it to the network.
+     * @throws NetworkException should never happen (of course)
+     * @throws OTSGeometryException might happen if a centroid is positioned on top of the entry exit point of a link
+     * @throws NamingException
+     * @throws RemoteException
+     * @throws ValueException
+     * @throws SimRuntimeException
+     * @throws ParameterException
+     */
+    @SuppressWarnings("synthetic-access")
+    private void fixOD() throws NetworkException, OTSGeometryException, RemoteException, NamingException, ValueException,
+            ParameterException, SimRuntimeException
+    {
+        // Reduce the list to only OD comments and strip the OD header and parse each into a key-value map.
+        Map<String, Map<String, String>> odInfo = new HashMap<String, Map<String, String>>();
+        for (String comment : this.model.getXMLComments())
+        {
+            if (comment.startsWith("OD "))
+            {
+                String odText = comment.substring(3);
+                odInfo.put(odText, parseODLine(odText));
+            }
+        }
+        System.out.println("There are " + odInfo.size() + " OD comments");
+        OTSNetwork network = this.model.getNetwork();
+        OTSSimulatorInterface simulator = (OTSSimulatorInterface) this.model.simulator;
+        // Find the GTUTypes
+        List<GTUType> gtuTypes = new ArrayList<>(this.model.gtuTypes);
+        for (GTUType gtuType: gtuTypes)
+        {
+            if (GTUType.VEHICLE.equals(gtuType))
+            {
+                gtuTypes.remove(gtuType);
+                break;
+            }
+        }
+        double startTime = Double.NaN;
+        // Extract the simulation start time
+        for (Map<String, String> map : odInfo.values())
+        {
+            String startTimeString = map.get("simulationStartTime");
+            if (null != startTimeString)
+            {
+                startTime = Double.parseDouble(startTimeString);
+            }
+        }
+        if (Double.isNaN(startTime))
+        {
+            throw new NetworkException("Cannot find start time XML comment");
+        }
+        // Construct the centroid nodes and the links between the centroid nodes and the generation and extraction nodes
+        Set<Node> origins = new HashSet<>();
+        Set<Node> destinations = new HashSet<>();
+        Set<String> startTimeStrings = new HashSet<>();
+        Map<String, String> durations = new HashMap<>();
+        for (Map<String, String> map : odInfo.values())
+        {
+            String od = map.get("od");
+            if (null == od)
+            {
+                continue;
+            }
+            String startTimeString = map.get("startTime");
+            if (null != startTimeString)
+            {
+                startTimeStrings.add(startTimeString);
+                String durationString = map.get("duration");
+                if (null == durationString)
+                {
+                    throw new NetworkException("No duration specified");
+                }
+                String old = durations.get(startTimeString);
+                if (null != old && (!durationString.equals(old)))
+                {
+                    throw new NetworkException("Duration for period starting at " + startTimeString + " changed from " + old
+                            + " to " + durationString);
+                }
+                else
+                {
+                    durations.put(startTimeString, durationString);
+                }
+            }
+            String centroidName = map.get("centroid");
+            String[] coordinates = map.get("centroidLocation").split(",");
+            OTSPoint3D centroidPoint =
+                    new OTSPoint3D(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]));
+            Node centroidNode = network.getNode(centroidName);
+            if (null == centroidNode)
+            {
+                centroidNode = new OTSNode(network, centroidName, centroidPoint);
+                new NodeAnimation(centroidNode, simulator);
+            }
+            String linkId = map.get("link");
+            Link link = network.getLink(linkId);
+            if (null == link)
+            {
+                throw new NetworkException("Cannot find link with id \"" + linkId + "\"");
+            }
+            Node from = null;
+            Node to = null;
+            if ("attracts".equals(od))
+            {
+                destinations.add(centroidNode);
+                from = link.getEndNode();
+                to = centroidNode;
+
+            }
+            else if ("generates".equals(od))
+            {
+                origins.add(centroidNode);
+                from = centroidNode;
+                to = link.getStartNode();
+            }
+            OTSLine3D designLine = new OTSLine3D(from.getPoint(), to.getPoint());
+            String linkName = String.format("connector_from_%s_to_%s", from.getId(), to.getId());
+            Link connectorLink = network.getLink(linkName);
+            if (null == connectorLink)
+            {
+                System.out.println("Constructing connector link " + linkName);
+                connectorLink =
+                        new CrossSectionLink(network, linkName, from, to, LinkType.CONNECTOR, designLine, simulator,
+                                LaneKeepingPolicy.KEEP_RIGHT);
+                new LinkAnimation(connectorLink, simulator, 0.5f);
+            }
+        }
+        if (startTimeStrings.size() != 1)
+        {
+            throw new NetworkException("Cannot handle multiple start times - yet");
+        }
+        String startTimeString = startTimeStrings.iterator().next();
+        double start = Double.parseDouble(startTimeString);
+        start = 0;
+        double duration = Double.parseDouble(durations.get(startTimeString));
+        TimeVector tv = new TimeVector(new double[] { start, start + duration }, TimeUnit.BASE, StorageType.DENSE);
+        // Categorization categorization = new Categorization("AimsunOTSExport", firstGTUType, otherGTUTypes);              
+        Categorization categorization = new Categorization("AimsunOTSExport", GTUType.class);
+        ODMatrix od =
+                new ODMatrix("ODExample", new ArrayList<>(origins), new ArrayList<>(destinations), categorization, tv,
+                        Interpolation.STEPWISE);
+        for (Map<String, String> map : odInfo.values())
+        {
+            String flow = map.get("flow");
+            if (null == flow)
+            {
+                continue;
+            }
+            String vehicleClassName = map.get("vehicleClass");
+            GTUType gtuType = null;
+            for (GTUType gt : gtuTypes)
+            {
+                if (gt.getId().equals(vehicleClassName))
+                {
+                    gtuType = gt;
+                }
+            }
+            if (null == gtuType)
+            {
+                throw new NetworkException("Can not find GTUType with name " + vehicleClassName);
+            }
+            Category category = new Category(categorization, gtuType);
+            Node from = network.getNode(map.get("origin"));
+            Node to = network.getNode(map.get("destination"));
+            FrequencyVector demand =
+                    new FrequencyVector(new double[] { Double.parseDouble(map.get("flow")), 0 }, FrequencyUnit.PER_HOUR,
+                            StorageType.DENSE);
+            od.putDemandVector(from, to, category, demand);
+            System.out.println("Adding demand from " + from.getId() + " to " + to.getId() + " category " + category + ": "
+                    + demand);
+        }
+        Set<TemplateGTUType> templates = new HashSet<>();
+        for (GTUType gtuType : gtuTypes)
+        {
+            GTUTag gtuTag = this.model.gtuTags.get(gtuType.getId());
+            templates.add(new TemplateGTUType(gtuType, gtuTag.lengthDist, gtuTag.widthDist, gtuTag.maxSpeedDist));
+        }
+        ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE, 
+                new ShortestRouteRandomGTUCharacteristicsGeneratorOD(templates));
+        // ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE, ODOptions.SHORTEST_ROUTE);
+        // ODApplier.applyOD(network, od, (OTSDEVSSimulatorInterface) simulator, new ODOptions());
+        Map<String, GeneratorObjects> generatedObjects =
+                ODApplier.applyOD(network, od, (OTSDEVSSimulatorInterface) simulator, odOptions);
+        for (String str : generatedObjects.keySet())
+        {
+            new GTUGeneratorAnimation(generatedObjects.get(str).getGenerator(), simulator);
+        }
+        od.print();
+    }
+
+    /**
+     * Parse a line that should look like a list of key=value pairs.
+     * @param line String; the line to parse
+     * @return Map&lt;String,String&gt;; the parsed line
+     */
+    private Map<String, String> parseODLine(final String line)
+    {
+        Map<String, String> result = new HashMap<>();
+        // For now we'll assume that names of centroids, links and nodes do not contain spaces.
+        for (String pair : line.split(" "))
+        {
+            String[] fields = pair.split("=");
+            // Concatenate elements 1..n
+            for (int index = fields.length; --index >= 2;)
+            {
+                fields[index - 1] += "=" + fields[index];
+            }
+            if (fields.length < 2)
+            {
+                throw new IndexOutOfBoundsException("can not find equals sign in \"" + pair + "\"");
+            }
+            if (fields[1].startsWith("\"") && fields[1].endsWith("\"") && fields[1].length() >= 2)
+            {
+                fields[1] = fields[1].substring(1, fields[1].length() - 1);
+            }
+            result.put(fields[0], fields[1]);
+        }
+        return result;
+    }
+
+    /**
      * Process incoming commands.
      * @param socket Socket; the communications channel to Aimsun
      * @throws IOException when communication with Aimsun fails
+     * @throws OTSGeometryException
+     * @throws NetworkException
+     * @throws NamingException
+     * @throws ValueException
+     * @throws SimRuntimeException
+     * @throws ParameterException
      */
-    private void commandLoop(final Socket socket) throws IOException
+    private void commandLoop(final Socket socket) throws IOException, NetworkException, OTSGeometryException,
+            NamingException, ValueException, ParameterException, SimRuntimeException
     {
-        System.out.println("Entering commandLoop - this is the newest version");
+        System.out.println("Entering command loop");
         InputStream inputStream = socket.getInputStream();
         OutputStream outputStream = socket.getOutputStream();
         while (true)
@@ -195,6 +469,10 @@ public class AimsunControl extends AbstractWrappableAnimation
                         System.out.println("Received CREATESIMULATION message");
                         AimsunControlProtoBuf.CreateSimulation createSimulation = message.getCreateSimulation();
                         this.networkXML = createSimulation.getNetworkXML();
+                        try (PrintWriter pw = new PrintWriter("d:/AimsunOtsNetwork.xml"))
+                        {
+                            pw.print(this.networkXML);
+                        }
                         Duration runDuration = new Duration(createSimulation.getRunTime(), DurationUnit.SECOND);
                         System.out.println("runDuration " + runDuration);
                         Duration warmupDuration = new Duration(createSimulation.getWarmUpTime(), DurationUnit.SECOND);
@@ -209,6 +487,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                         {
                             exception1.printStackTrace();
                         }
+                        fixOD();
                         break;
 
                     case SIMULATEUNTIL:
@@ -313,30 +592,23 @@ public class AimsunControl extends AbstractWrappableAnimation
         int offset = 0;
         while (true)
         {
-//            try
-//            {
-                int bytesRead = in.read(buffer, offset, buffer.length - offset);
-                if (-1 == bytesRead)
-                {
-                    break;
-                }
-                offset += bytesRead;
-                if (buffer.length == offset)
-                {
-                    System.out.println("Got all " + buffer.length + " requested bytes");
-                    break;
-                }
-                if (buffer.length < offset)
-                {
-                    System.out.println("Oops: Got more than " + buffer.length + " requested bytes");
-                    break;
-                }
-                System.out.print("Now got " + offset + " bytes; need to read " + (buffer.length - offset) + " more bytes ");
-//            }
-//            catch (Exception exception)
-//            {
-//                exception.printStackTrace();
-//            }
+            int bytesRead = in.read(buffer, offset, buffer.length - offset);
+            if (-1 == bytesRead)
+            {
+                break;
+            }
+            offset += bytesRead;
+            if (buffer.length == offset)
+            {
+                System.out.println("Got all " + buffer.length + " requested bytes");
+                break;
+            }
+            if (buffer.length < offset)
+            {
+                System.out.println("Oops: Got more than " + buffer.length + " requested bytes");
+                break;
+            }
+            System.out.print("Now got " + offset + " bytes; need to read " + (buffer.length - offset) + " more bytes ");
         }
         if (offset != buffer.length)
         {
@@ -360,7 +632,7 @@ public class AimsunControl extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer) throws OTSSimulationException
+    protected OTSModelInterface makeModel() throws OTSSimulationException
     {
         this.model = new AimsunModel();
         return this.model;
@@ -378,8 +650,17 @@ public class AimsunControl extends AbstractWrappableAnimation
         /** The network. */
         private OTSNetwork network;
 
+        /** The XML comments (used to patch up the OD information). */
+        private ImmutableList<String> xmlComments;
+        
+        /** The GTU types found by the XML parser. */
+        private Collection<GTUType> gtuTypes;
+
         /** The simulator. */
         private SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator;
+
+        /** The GTU tags. */
+        private Map<String,GTUTag> gtuTags;
 
         /** {@inheritDoc} */
         @Override
@@ -394,11 +675,23 @@ public class AimsunControl extends AbstractWrappableAnimation
                 @SuppressWarnings("synthetic-access")
                 String xml = AimsunControl.this.networkXML;
                 this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+                this.xmlComments = nlp.getXMLComments();
+                this.gtuTypes = nlp.gtuTypes.values();
+                this.gtuTags = nlp.gtuTags;
             }
             catch (Exception exception)
             {
                 exception.printStackTrace();
             }
+        }
+
+        /**
+         * Retrieve the XML comments.
+         * @return ImmutableList&lt;String&gt;; the XML comments
+         */
+        public ImmutableList<String> getXMLComments()
+        {
+            return this.xmlComments;
         }
 
         /** {@inheritDoc} */
@@ -412,7 +705,7 @@ public class AimsunControl extends AbstractWrappableAnimation
         @Override
         public void notify(final EventInterface event) throws RemoteException
         {
-            // WIP
+            // TODO: WIP
         }
 
         /** {@inheritDoc} */
@@ -422,6 +715,16 @@ public class AimsunControl extends AbstractWrappableAnimation
             return this.network;
         }
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected final void addAnimationToggles()
+    {
+        AnimationToggles.setTextAnimationTogglesFull(this);
+        this.toggleAnimationClass(OTSLink.class);
+        this.toggleAnimationClass(OTSNode.class);
+        showAnimationClass(SpeedSign.class);
     }
 
 }
