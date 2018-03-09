@@ -454,6 +454,13 @@ public class ODOptions
                     destination);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "ShortestRouteGTUCharacteristicsGeneratorOD [shortestRouteCache=" + this.shortestRouteCache + "]";
+        }
+
         /**
          * Returns the shortest route.
          * @param origin Node; origin
