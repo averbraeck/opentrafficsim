@@ -108,7 +108,7 @@ class GTUTag implements Serializable
 
             Node maxSpeed = attributes.getNamedItem("MAXSPEED");
             if (maxSpeed == null)
-                throw new SAXException("GTU: missing attribute LENGTH");
+                throw new SAXException("GTU: missing attribute MAXSPEED");
             gtuTag.maxSpeedDist = Distributions.parseSpeedDist(maxSpeed.getNodeValue());
 
             parser.gtuTags.put(gtuTag.name, gtuTag);
