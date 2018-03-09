@@ -128,7 +128,6 @@ public final class ODApplier
                 "Method ODApplier.applyOD() should be invoked at simulation time 0.");
 
         // TODO sinks? white extension links?
-
         final Categorization categorization = od.getCategorization();
         final boolean laneBased = categorization.entails(Lane.class);
         boolean markovian = od.getCategorization().entails(GTUType.class);
@@ -264,7 +263,7 @@ public final class ODApplier
                         Node connectedNode = link.getStartNode().equals(origin) ? link.getEndNode() : link.getStartNode();
                         for (Link connectedLink : connectedNode.getLinks())
                         {
-                            if (link instanceof CrossSectionLink)
+                            if (connectedLink instanceof CrossSectionLink)
                             {
                                 setDirectedLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
                             }

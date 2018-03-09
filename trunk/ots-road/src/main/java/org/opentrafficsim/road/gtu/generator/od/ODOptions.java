@@ -2,13 +2,14 @@ package org.opentrafficsim.road.gtu.generator.od;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -207,8 +208,8 @@ public class ODOptions
         /** Id. */
         private final String id;
 
-        /** Default value supplier. */
-        private final ConstantGenerator<K> defaultSupplier;
+        /** Default value. */
+        private final K defaultValue;
 
         /**
          * Constructor.
@@ -218,7 +219,7 @@ public class ODOptions
         Option(final String id, final K defaultValue)
         {
             this.id = id;
-            this.defaultSupplier = new ConstantGenerator<>(defaultValue);
+            this.defaultValue = defaultValue;
         }
 
         /**
@@ -227,7 +228,7 @@ public class ODOptions
          */
         public K getDefaultValue()
         {
-            return this.defaultSupplier.draw();
+            return this.defaultValue;
         }
 
         /** {@inheritDoc} */
@@ -404,11 +405,11 @@ public class ODOptions
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private static final class ShortestRouteGTUCharacteristicsGeneratorOD implements GTUCharacteristicsGeneratorOD
+    private static class ShortestRouteGTUCharacteristicsGeneratorOD implements GTUCharacteristicsGeneratorOD
     {
 
         /** Shortest route cache. */
-        private Map<Node, Map<Node, Route>> shortestRouteCache = new HashMap<>();
+        private Map<GTUType, Map<Node, Map<Node, Route>>> shortestRouteCache = new HashMap<>();
 
         /** Constructor. */
         ShortestRouteGTUCharacteristicsGeneratorOD()
@@ -447,19 +448,105 @@ public class ODOptions
             else
             {
                 // get shortest route
-                Map<Node, Route> originCache = this.shortestRouteCache.get(origin);
-                if (originCache == null)
-                {
-                    originCache = new HashMap<>();
-                    this.shortestRouteCache.put(origin, originCache);
-                }
-                route = originCache.get(destination);
-                if (route == null)
-                {
-                    route = Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination),
-                            "Could not determine the shortest route from %s to %s.", origin, destination);
-                    originCache.put(destination, route);
-                }
+                route = getShortestRoute(origin, destination, gtuType);
+            }
+            return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, origin,
+                    destination);
+        }
+
+        /**
+         * Returns the shortest route.
+         * @param origin Node; origin
+         * @param destination Node; destination
+         * @param gtuType GTUType; GTU type
+         * @return shortest route
+         */
+        protected Route getShortestRoute(final Node origin, final Node destination, final GTUType gtuType)
+        {
+            Map<Node, Map<Node, Route>> gtuTypeCache = this.shortestRouteCache.get(gtuType);
+            if (gtuTypeCache == null)
+            {
+                gtuTypeCache = new HashMap<>();
+                this.shortestRouteCache.put(gtuType, gtuTypeCache);
+            }
+            Map<Node, Route> originCache = gtuTypeCache.get(origin);
+            if (originCache == null)
+            {
+                originCache = new HashMap<>();
+                gtuTypeCache.put(origin, originCache);
+            }
+            Route route = originCache.get(destination);
+            if (route == null)
+            {
+                route = Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination),
+                        "Could not determine the shortest route from %s to %s.", origin, destination);
+                originCache.put(destination, route);
+            }
+            return route;
+        }
+    }
+
+    /**
+     * Generator of LaneBasedGTUCharacteristics with templates for vehicle properties.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 9 mrt. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static class ShortestRouteRandomGTUCharacteristicsGeneratorOD extends ShortestRouteGTUCharacteristicsGeneratorOD
+    {
+
+        /** Templates. */
+        private final Map<GTUType, TemplateGTUType> templates = new HashMap<>();
+
+        /**
+         * Constructor.
+         * @param templates Set&lt;TemplateGTUType&gt;; templates
+         */
+        public ShortestRouteRandomGTUCharacteristicsGeneratorOD(final Set<TemplateGTUType> templates)
+        {
+            for (TemplateGTUType template : templates)
+            {
+                this.templates.put(template.getGTUType(), template);
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
+                final StreamInterface randomStream) throws GTUException
+        {
+            Categorization categorization = category.getCategorization();
+            // GTU characteristics
+            GTUType gtuType;
+            if (categorization.entails(GTUType.class))
+            {
+                gtuType = category.get(GTUType.class);
+            }
+            else
+            {
+                gtuType = GTUType.CAR;
+            }
+            GTUCharacteristics gtuCharacteristics =
+                    Try.assign(() -> this.templates.get(gtuType).draw(), "Exception while drawing GTU characteristics.");
+            // strategical factory
+            LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
+                    new LaneBasedStrategicalRoutePlannerFactory(
+                            new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()));
+            // route
+            Route route;
+            if (categorization.entails(Route.class))
+            {
+                route = category.get(Route.class);
+            }
+            else
+            {
+                // get shortest route
+                route = getShortestRoute(origin, destination, gtuType);
             }
             return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, origin,
                     destination);

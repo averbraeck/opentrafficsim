@@ -28,6 +28,7 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -35,6 +36,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -44,7 +46,6 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.animation.LmrsSwitchableColorer;
 import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
@@ -52,6 +53,7 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
+import org.opentrafficsim.road.gtu.generator.od.ODOptions.ShortestRouteRandomGTUCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
@@ -324,10 +326,8 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 LaneBiases biases = new LaneBiases().addBias(GTUType.VEHICLE, LaneBias.bySpeed(130, 80)).addBias(GTUType.TRUCK,
                         LaneBias.TRUCK_RIGHT);
                 ODOptions odOptions = new ODOptions().set(ODOptions.GTU_COLORER, getColorer())
-                        .set(ODOptions.ROOM_CHECKER, new CFBARoomChecker())
-                        .set(lane0, ODOptions.GTU_COLORER, new DefaultSwitchableGTUColorer()).set(ODOptions.MARKOV, markov)
+                        .set(ODOptions.ROOM_CHECKER, new CFBARoomChecker()).set(ODOptions.MARKOV, markov)
                         .set(ODOptions.LANE_BIAS, biases).set(ODOptions.NO_LC_DIST, Length.createSI(100.0));
-                ODApplier.applyOD(this.network, od, this.simulator, new ODOptions());
                 Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
                 for (String str : generatedObjects.keySet())
                 {
