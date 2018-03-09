@@ -141,8 +141,10 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
         this.roomChecker = roomChecker;
         this.gtuColorer = gtuColorer;
         this.idGenerator = idGenerator;
-        simulator.scheduleEventRel(this.interarrivelTimeGenerator.draw(), this, this, "generateCharacteristics",
+        Duration duration;
+        simulator.scheduleEventRel(duration = this.interarrivelTimeGenerator.draw(), this, this, "generateCharacteristics",
                 new Object[] {});
+        System.out.println("duration of iat is " + duration);
     }
 
     /**

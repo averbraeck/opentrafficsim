@@ -230,7 +230,7 @@ public final class GeneratorPositions implements Locatable
      * @param gtuType GTUType; GTU type
      * @return speed limit for the given GTU type, prior to the GTU position being determined
      */
-    public Speed speedLimit(GTUType gtuType)
+    public Speed speedLimit(final GTUType gtuType)
     {
         Speed speedLimit = null;
         for (GeneratorLanePosition pos : this.allPositions)
@@ -335,6 +335,14 @@ public final class GeneratorPositions implements Locatable
         CrossSectionLink getLink()
         {
             return this.link;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "GeneratorLanePosition [laneNumber=" + this.laneNumber + ", position=" + this.position + ", link="
+                    + this.link + "]";
         }
 
     }
