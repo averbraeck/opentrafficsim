@@ -33,5 +33,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ots-aimsun-proto"/>
+	<classpathentry kind="src" path="/ots-parser-xml"/>
+	<classpathentry kind="src" path="/ots-road"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
