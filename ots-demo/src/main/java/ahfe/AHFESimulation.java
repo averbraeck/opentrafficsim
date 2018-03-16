@@ -596,7 +596,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
                 URL stream = URLResource.getResource("./Network.xml"); // Running Jar
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 this.network = new OTSNetwork("AHFE");
-                nlp.build(stream, this.network);
+                nlp.build(stream, this.network, true);
 
                 // Space-time regions for sampler
                 LinkData linkData = new LinkData((CrossSectionLink) this.network.getLink("LEFTIN"));

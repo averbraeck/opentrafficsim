@@ -109,7 +109,7 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
             {
                 URL url = URLResource.getResource("/conflict/TurboRoundabout.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator, getColorer());
-                this.network = nlp.build(url);
+                this.network = nlp.build(url, true);
 
                 // add conflicts
                 ConflictBuilder.buildConflicts(this.network, VEHICLE, this.simulator,

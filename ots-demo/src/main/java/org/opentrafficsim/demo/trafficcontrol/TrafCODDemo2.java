@@ -163,7 +163,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
             {
                 URL url = URLResource.getResource("/TrafCODDemo2/Network.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
-                this.network = nlp.build(url);
+                this.network = nlp.build(url, true);
                 String[] directions = { "E", "S", "W", "N" };
                 // Add the traffic lights and the detectors
                 Set<TrafficLight> trafficLights = new HashSet<>();

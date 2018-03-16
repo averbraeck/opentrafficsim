@@ -102,7 +102,7 @@ public class TestNetworkDemo extends AbstractWrappableAnimation
             {
                 URL url = URLResource.getResource("/conflict/Test-Network-14.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
-                this.network = nlp.build(url);
+                this.network = nlp.build(url, true);
 
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 // ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("L_D3b-D3a"),
