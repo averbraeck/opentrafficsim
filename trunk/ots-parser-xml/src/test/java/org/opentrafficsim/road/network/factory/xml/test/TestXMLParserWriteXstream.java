@@ -13,10 +13,12 @@ import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.DurationUnit;
+import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -154,7 +156,7 @@ public class TestXMLParserWriteXstream extends AbstractWrappableAnimation
 
             try
             {
-                this.network = nlp.build(url);
+                this.network = nlp.build(url, true);
                 System.out.println("parsing took : " + (System.currentTimeMillis() - millis) + " ms");
 
                 millis = System.currentTimeMillis();
@@ -165,7 +167,7 @@ public class TestXMLParserWriteXstream extends AbstractWrappableAnimation
                 System.out.println("writing took : " + (System.currentTimeMillis() - millis) + " ms");
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException exception)
+                    | OTSGeometryException | ValueException | ParameterException exception)
             {
                 exception.printStackTrace();
             }

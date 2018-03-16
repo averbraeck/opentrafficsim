@@ -15,6 +15,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -23,6 +24,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -176,7 +178,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
-                this.network = nlp.build(url);
+                this.network = nlp.build(url, true);
                 // ODMatrixTrips matrix = N201ODfactory.get(network);
                 // N201ODfactory.makeGeneratorsFromOD(network, matrix, this.simulator);
                 RoadSampler sampler = new RoadSampler(this.simulator, new Frequency(10.0, FrequencyUnit.SI));
@@ -185,7 +187,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
                 scheduleKpiEvent(30.0, this.simulator, query);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException exception)
+                    | OTSGeometryException | ValueException | ParameterException exception)
             {
                 exception.printStackTrace();
             }
