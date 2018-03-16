@@ -154,7 +154,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
             {
                 URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
-                this.network = nlp.build(url);
+                this.network = nlp.build(url, true);
 
                 Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "X")).getCrossSectionElement("FORWARD");
                 Lane laneWX = (Lane) ((CrossSectionLink) this.network.getLink("W", "X")).getCrossSectionElement("FORWARD");

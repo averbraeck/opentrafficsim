@@ -103,7 +103,7 @@ public class TJunctionDemo extends AbstractWrappableAnimation
             {
                 URL url = URLResource.getResource("/conflict/TJunction.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator, TJunctionDemo.this.getColorer());
-                this.network = nlp.build(url);
+                this.network = nlp.build(url, true);
 
                 // add conflicts
                 // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);

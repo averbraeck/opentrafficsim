@@ -188,7 +188,7 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
             {
                 URL url = URLResource.getResource("/conflictAndControl/TurboRoundaboutAndSignal.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
-                this.network = nlp.build(url);
+                this.network = nlp.build(url, true);
                 // add conflicts
                 ((CrossSectionLink) this.network.getLink("EBNA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("NBWA")).setPriority(Priority.PRIORITY);

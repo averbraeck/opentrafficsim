@@ -17,6 +17,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
+import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -29,6 +30,7 @@ import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -731,11 +733,11 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
 
             System.out.println("Building network from XML description\n" + xmlCode.toString());
-            nlp.build(new ByteArrayInputStream(xmlCode.toString().getBytes()), this.network);
+            nlp.build(new ByteArrayInputStream(xmlCode.toString().getBytes()), this.network, true);
             this.simulator.scheduleEventAbs(new Time(0.999, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
         }
         catch (NamingException | NetworkException | GTUException | OTSGeometryException | PropertyException
-                | ParserConfigurationException | SAXException | IOException exception1)
+                | ParserConfigurationException | SAXException | IOException | ValueException | ParameterException exception1)
         {
             exception1.printStackTrace();
         }
