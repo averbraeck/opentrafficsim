@@ -250,17 +250,17 @@ public class ShortMerge extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> sim)
+        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
                 throws SimRuntimeException, RemoteException
         {
-            ShortMerge.this.setSimulator((OTSDEVSSimulatorInterface) sim);
+            ShortMerge.this.setSimulator((OTSDEVSSimulatorInterface) theSimulator);
 
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) sim);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 this.network = new OTSNetwork("ShortMerge");
-                nlp.build(stream, this.network);
+                nlp.build(stream, this.network, true);
 
                 addGenerator();
 
