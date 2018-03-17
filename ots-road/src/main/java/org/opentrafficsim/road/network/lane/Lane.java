@@ -750,38 +750,49 @@ public class Lane extends CrossSectionElement implements Serializable
     public final void scheduleSensorTriggers(final LaneBasedGTU gtu, final double referenceStartSI,
             final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
-        GTUDirectionality drivingDirection = referenceMoveSI >= 0 ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
-        // System.out.println("Getting sensor map for " + gtu.getGTUType() + " driving in direction " + drivingDirection + ":");
-        for (List<SingleSensor> sensorList : getSensorMap(gtu.getGTUType(), drivingDirection).values())
+        GTUDirectionality drivingDirection;
+        double minPos;
+        double maxPos;
+        if (referenceMoveSI >= 0)
         {
-            // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString() + " SensorList contains "
-            // + (sensorList.size()) + " sensors:");
-            // for (Sensor sensor : sensorList)
-            // {
-            // System.out.println("\t" + sensor);
-            // }
-            for (SingleSensor sensor : sensorList)
+            drivingDirection = GTUDirectionality.DIR_PLUS;
+            minPos = referenceStartSI + gtu.getRear().getDx().si;
+            maxPos = referenceStartSI + gtu.getFront().getDx().si + referenceMoveSI;
+        }
+        else
+        {
+            drivingDirection = GTUDirectionality.DIR_MINUS;
+            minPos = referenceStartSI - gtu.getFront().getDx().si + referenceMoveSI;
+            maxPos = referenceStartSI - gtu.getRear().getDx().si;
+        }
+        Map<Double, List<SingleSensor>> map = this.sensors.subMap(minPos, maxPos);
+        for (double pos : map.keySet())
+        {
+            for (SingleSensor sensor : map.get(pos))
             {
-                for (RelativePosition relativePosition : gtu.getRelativePositions().values())
+                if (sensor.isCompatible(gtu.getGTUType(), drivingDirection))
                 {
-                    // System.out.println("GTU relative position " + relativePosition + " sensor relative position "
-                    // + sensor.getPositionType());
-                    if (sensor.getPositionType().equals(relativePosition.getType())
-                            && referenceStartSI + relativePosition.getDx().getSI() <= sensor.getLongitudinalPosition().si
-                            && referenceStartSI + referenceMoveSI
-                                    + relativePosition.getDx().getSI() > sensor.getLongitudinalPosition().si)
+                    double dx = gtu.getRelativePositions().get(sensor.getPositionType()).getDx().si;
+                    if (drivingDirection.isPlus())
                     {
-                        // the exact time of triggering is based on the distance between the current position of the
-                        // relative position on the GTU and the location of the sensor.
-                        // TODO make sure triggering is done right when driving in DIR_MINUS direction
-                        double d = sensor.getLongitudinalPosition().si - referenceStartSI - relativePosition.getDx().getSI();
+                        minPos = referenceStartSI + dx;
+                        maxPos = minPos + referenceMoveSI;
+                    }
+                    else
+                    {
+                        maxPos = referenceStartSI - dx;
+                        minPos = maxPos + referenceMoveSI;
+                    }
+                    if (minPos <= sensor.getLongitudinalPosition().si && maxPos > sensor.getLongitudinalPosition().si)
+                    {
+                        double d = drivingDirection.isPlus() ? sensor.getLongitudinalPosition().si - minPos
+                                : maxPos - sensor.getLongitudinalPosition().si;
                         if (d < 0)
                         {
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
                         }
-
                         OperationalPlan oPlan = gtu.getOperationalPlan();
-                        Time triggerTime = oPlan.timeAtDistance(new Length(d, LengthUnit.METER));
+                        Time triggerTime = oPlan.timeAtDistance(Length.createSI(d));
                         if (triggerTime.gt(oPlan.getEndTime()))
                         {
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
@@ -791,12 +802,7 @@ public class Lane extends CrossSectionElement implements Serializable
                                     + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
                             triggerTime =
                                     new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()), TimeUnit.BASE);
-                            // gtu.timeAtDistance(new Length(-d, METER));
-                            // System.exit(-1);
                         }
-                        // System.out.println("Scheduling a trigger for relativePosition " + relativePosition);
-                        // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
-                        // + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
                         SimEvent<OTSSimTimeDouble> event = new SimEvent<>(new OTSSimTimeDouble(triggerTime), this, sensor,
                                 "trigger", new Object[] { gtu });
                         gtu.getSimulator().scheduleEvent(event);
