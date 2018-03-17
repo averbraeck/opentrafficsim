@@ -35,7 +35,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
 
     /** Random headway generator. */
     private final HeadwayRandomization randomization;
-    
+
     /** First GTU. */
     private boolean first = true;
 
@@ -45,8 +45,8 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
      * @param stream StreamInterface; random stream to draw headway
      * @param randomization Randomization; random headway generator
      */
-    public ArrivalsHeadwayGenerator(final Arrivals arrivals, final OTSDEVSSimulatorInterface simulator, final StreamInterface stream,
-            final HeadwayRandomization randomization)
+    public ArrivalsHeadwayGenerator(final Arrivals arrivals, final OTSDEVSSimulatorInterface simulator,
+            final StreamInterface stream, final HeadwayRandomization randomization)
     {
         this.arrivals = arrivals;
         this.simulator = simulator;
@@ -113,32 +113,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         {
             // extrapolate to find 'integration = rem' in this slice giving demand slope, this may beyond the slice length
             double dt = t2.si - t1.si;
-            double t;
-            if (f1 == f2) // no slope
-            {
-                if (f1 > 0.0)
-                {
-                    t = rem / f1; // rem = t * f1, t = rem / f1
-                }
-                else
-                {
-                    t = Double.POSITIVE_INFINITY; // no demand in this slice
-                }
-            }
-            else
-            {
-                // reverse of trapezoidal rule: rem = t * (f1 + (f1 + t * slope)) / 2
-                double slope = (f2 - f1) / dt;
-                double sqrt = 2 * slope * rem + f1 * f1;
-                if (sqrt >= 0.0)
-                {
-                    t = (-f1 + Math.sqrt(sqrt)) / slope;
-                }
-                else
-                {
-                    t = Double.POSITIVE_INFINITY; // not sufficient demand in this slice, with negative slope
-                }
-            }
+            double t = 2.0 * rem / (f1 + f2);
             if (t > dt)
             {
                 // next slice
