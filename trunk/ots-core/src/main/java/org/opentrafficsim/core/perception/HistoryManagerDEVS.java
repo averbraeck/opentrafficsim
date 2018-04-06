@@ -1,10 +1,16 @@
 package org.opentrafficsim.core.perception;
 
+import java.rmi.RemoteException;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.Try;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
 
 /**
  * History manager that uses an {@code OTSDEVSSimulatorInterface}.
@@ -17,18 +23,18 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class HistoryManagerDEVS extends HistoryManager
+public class HistoryManagerDEVS extends HistoryManager implements EventListenerInterface
 {
 
     /** Simulator. */
     private final OTSDEVSSimulatorInterface simulator;
-    
+
     /** Time over which history is guaranteed. */
     private final Duration history;
-    
+
     /** Clean-up interval. */
     private final Duration cleanUpInterval;
-    
+
     /** Event input, can be the same as it's nothing. */
     private final Object[] none = new Object[0];
 
@@ -44,6 +50,8 @@ public class HistoryManagerDEVS extends HistoryManager
         this.history = history;
         this.cleanUpInterval = cleanUpInterval;
         cleanUpHistory(); // start clean-up event chain
+        Try.execute(() -> this.simulator.addListener(this, SimulatorInterface.END_OF_REPLICATION_EVENT),
+                "Unable to add listener.");
     }
 
     /** {@inheritDoc} */
@@ -74,9 +82,19 @@ public class HistoryManagerDEVS extends HistoryManager
 
     /** {@inheritDoc} */
     @Override
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        if (event.getType().equals(SimulatorInterface.END_OF_REPLICATION_EVENT))
+        {
+            endOfSimulation();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String toString()
     {
         return "HistoryManagerDEVS [history=" + this.history + ", cleanUpInterval=" + this.cleanUpInterval + "]";
     }
-    
+
 }

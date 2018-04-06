@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import java.util.SortedMap;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -15,6 +13,8 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -104,7 +104,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     protected Acceleration followingAcceleration(final Parameters parameters, final Speed speed, final Speed desiredSpeed,
-            final Length desiredHeadway, final SortedMap<Length, Speed> leaders) throws ParameterException
+            final Length desiredHeadway, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
     {
         Acceleration a = parameters.getParameter(A);
         Acceleration b0 = parameters.getParameter(B0);
@@ -113,7 +113,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
         // limit deceleration in free term (occurs if speed > desired speed)
         aFree = aFree > -b0.si ? aFree : -b0.si;
         // return free term if there are no leaders
-        if (leaders.isEmpty())
+        if (!leaders.iterator().hasNext())
         {
             return new Acceleration(aFree, AccelerationUnit.SI);
         }
@@ -133,7 +133,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * @throws ParameterException In case of parameter exception.
      */
     protected abstract Acceleration combineInteractionTerm(Acceleration aFree, Parameters parameters, Speed speed,
-            Speed desiredSpeed, Length desiredHeadway, SortedMap<Length, Speed> leaders) throws ParameterException;
+            Speed desiredSpeed, Length desiredHeadway, PerceptionIterable<? extends Headway> leaders) throws ParameterException;
 
     /**
      * Determines the dynamic desired headway, which is non-negative.

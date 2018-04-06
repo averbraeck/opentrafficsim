@@ -27,13 +27,13 @@ public class TrajectoryAcceptList
     private String gtuId;
 
     /** List of trajectory's. */
-    private final List<Trajectory> trajectoryList = new ArrayList<>();
+    private final List<Trajectory<?>> trajectoryList = new ArrayList<>();
 
     /** List of trajectory groups. */
     private final List<TrajectoryGroup> trajectoryGroupList = new ArrayList<>();
 
     /** Map of trajectory's and acceptance boolean. */
-    private final Map<Trajectory, Boolean> trajectoryMap = new HashMap<>();
+    private final Map<Trajectory<?>, Boolean> trajectoryMap = new HashMap<>();
 
     /**
      * Adds a {@code Trajectory} with the {@code TrajectoryGroup} it is from to the accept list.
@@ -43,7 +43,7 @@ public class TrajectoryAcceptList
      * @throws IllegalArgumentException if the {@code Trajectory} belongs to a different GTU than an earlier provided
      *             {@code Trajectory}
      */
-    public final void addTrajectory(final Trajectory trajectory, final TrajectoryGroup trajectoryGroup)
+    public final void addTrajectory(final Trajectory<?> trajectory, final TrajectoryGroup trajectoryGroup)
     {
         Throw.whenNull(trajectory, "Trajectory may not be null.");
         Throw.whenNull(trajectoryGroup, "Trajectory group may not be null.");
@@ -71,7 +71,7 @@ public class TrajectoryAcceptList
      * @return i'th {@code trajectory}
      * @throws IndexOutOfBoundsException if the index is out of range (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
-    public final Trajectory getTrajectory(final int i)
+    public final Trajectory<?> getTrajectory(final int i)
     {
         return this.trajectoryList.get(i);
     }
@@ -89,7 +89,7 @@ public class TrajectoryAcceptList
     /**
      * @return iterator over {@code trajectory}'s, does not allow removal
      */
-    public final Iterator<Trajectory> getTrajectoryIterator()
+    public final Iterator<Trajectory<?>> getTrajectoryIterator()
     {
         return new ImmutableIterator<>(this.trajectoryList.iterator());
     }
@@ -107,7 +107,7 @@ public class TrajectoryAcceptList
      * @param trajectory trajectory to accept
      * @throws IllegalArgumentException if the trajectory is not part of the trajectory accept list
      */
-    public final void acceptTrajectory(final Trajectory trajectory)
+    public final void acceptTrajectory(final Trajectory<?> trajectory)
     {
         acceptTrajectory(trajectory, true);
     }
@@ -117,7 +117,7 @@ public class TrajectoryAcceptList
      * @param trajectory trajectory to reject
      * @throws IllegalArgumentException if the trajectory is not part of the trajectory accept list
      */
-    public final void rejectTrajectory(final Trajectory trajectory)
+    public final void rejectTrajectory(final Trajectory<?> trajectory)
     {
         acceptTrajectory(trajectory, false);
     }
@@ -128,7 +128,7 @@ public class TrajectoryAcceptList
      * @param accept whether to accept the trajectory
      * @throws IllegalArgumentException if the trajectory is not part of the trajectory accept list
      */
-    public final void acceptTrajectory(final Trajectory trajectory, final boolean accept)
+    public final void acceptTrajectory(final Trajectory<?> trajectory, final boolean accept)
     {
         Throw.when(!this.trajectoryList.contains(trajectory), IllegalArgumentException.class,
                 "The trajectory is not part of the trajectory accept list.");
@@ -140,7 +140,7 @@ public class TrajectoryAcceptList
      */
     public final void acceptAll()
     {
-        for (Trajectory trajectory : this.trajectoryList)
+        for (Trajectory<?> trajectory : this.trajectoryList)
         {
             this.trajectoryMap.put(trajectory, true);
         }
@@ -151,7 +151,7 @@ public class TrajectoryAcceptList
      */
     public final void rejectAll()
     {
-        for (Trajectory trajectory : this.trajectoryList)
+        for (Trajectory<?> trajectory : this.trajectoryList)
         {
             this.trajectoryMap.put(trajectory, false);
         }
@@ -163,7 +163,7 @@ public class TrajectoryAcceptList
      * @return whether the given trajectory is accepted or not
      * @throws IllegalArgumentException if the trajectory is not part of the trajectory accept list
      */
-    public final boolean isAccepted(final Trajectory trajectory)
+    public final boolean isAccepted(final Trajectory<?> trajectory)
     {
         Boolean out = this.trajectoryMap.get(trajectory);
         Throw.when(out == null, IllegalArgumentException.class, "The trajectory is not part of the trajectory accept list.");

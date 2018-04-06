@@ -8,7 +8,14 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.HierarchicalType;
-import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.distributions.ConstantGenerator;
+import org.opentrafficsim.core.distributions.ProbabilityException;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+
+import nl.tudelft.simulation.jstats.distributions.DistNormal;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * A GTU type identifies the type of a GTU. <br>
@@ -95,47 +102,79 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
         SCHEDULED_BUS = new GTUType("SCHEDULED BUS", BUS);
     }
 
-    /** Default characteristics per GTU Type. */
-    private static final Map<GTUType, GTUCharacteristics> DEFAULT_CHARACTERISTICS = new HashMap<>();
-    static
-    {
-        // CAR and TRUCK from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-        // TRUCK and BUS are non-articulated
-        DEFAULT_CHARACTERISTICS.put(GTUType.CAR, new GTUCharacteristics(GTUType.CAR, Length.createSI(4.19),
-                Length.createSI(1.7), new Speed(180, SpeedUnit.KM_PER_HOUR)));
-        DEFAULT_CHARACTERISTICS.put(GTUType.TRUCK, new GTUCharacteristics(GTUType.TRUCK, Length.createSI(12.0),
-                Length.createSI(2.55), new Speed(85, SpeedUnit.KM_PER_HOUR)));
-        DEFAULT_CHARACTERISTICS.put(GTUType.BUS, new GTUCharacteristics(GTUType.CAR, Length.createSI(12.0),
-                Length.createSI(2.55), new Speed(90, SpeedUnit.KM_PER_HOUR)));
-        DEFAULT_CHARACTERISTICS.put(GTUType.VAN, new GTUCharacteristics(GTUType.CAR, Length.createSI(5.0), Length.createSI(2.4),
-                new Speed(180, SpeedUnit.KM_PER_HOUR)));
-        DEFAULT_CHARACTERISTICS.put(GTUType.EMERGENCY_VEHICLE, new GTUCharacteristics(GTUType.CAR, Length.createSI(5.0),
-                Length.createSI(2.55), new Speed(180, SpeedUnit.KM_PER_HOUR)));
-    }
-    
+    /** Templates for GTU characteristics. */
+    private static final Map<StreamInterface, Map<GTUType, TemplateGTUType>> TEMPLATES = new HashMap<>();
+
     /**
-     * Returns default characteristics for given GTUType. 
+     * Returns default characteristics for given GTUType.
      * @param gtuType GTUType GTU type
+     * @param randomStream stream for random numbers
      * @return default characteristics for given GTUType
      * @throws GTUException if there are no default characteristics for the GTU type
      */
-    public static GTUCharacteristics defaultCharacteristics(final GTUType gtuType) throws GTUException
+    public static GTUCharacteristics defaultCharacteristics(final GTUType gtuType, final StreamInterface randomStream)
+            throws GTUException
     {
-        GTUCharacteristics defaultCharacteristics = DEFAULT_CHARACTERISTICS.get(gtuType);
-        if (defaultCharacteristics == null)
+        Map<GTUType, TemplateGTUType> map = TEMPLATES.get(randomStream);
+        if (map == null)
         {
-            GTUType parent = gtuType.getParent();
-            if (parent != null)
+            map = new HashMap<>();
+            TEMPLATES.put(randomStream, map);
+        }
+        GTUType type = gtuType;
+        TemplateGTUType template = map.get(type);
+        while (template == null)
+        {
+            if (type.equals(GTUType.CAR))
             {
-                return defaultCharacteristics(parent);
+                // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
+                template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(4.19)),
+                        new ConstantGenerator<>(Length.createSI(1.7)),
+                        new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+            }
+            else if (type.equals(GTUType.TRUCK))
+            {
+                // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
+                template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(12.0)),
+                        new ConstantGenerator<>(Length.createSI(2.55)), new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(
+                                new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
+            }
+            else if (type.equals(GTUType.BUS))
+            {
+                template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(12.0)),
+                        new ConstantGenerator<>(Length.createSI(2.55)),
+                        new ConstantGenerator<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
+            }
+            else if (type.equals(GTUType.VAN))
+            {
+                template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(5.0)),
+                        new ConstantGenerator<>(Length.createSI(2.4)),
+                        new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+            }
+            else if (type.equals(GTUType.EMERGENCY_VEHICLE))
+            {
+                template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(5.0)),
+                        new ConstantGenerator<>(Length.createSI(2.55)),
+                        new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
             }
             else
             {
-                // due too recursion, we can't mention the gtu type in the message
-                throw new GTUException("GTUType is not of any types with default characteristics.");
+                type = type.getParent();
+                Throw.whenNull(type, "GTUType %s is not of any types with default characteristics.", gtuType);
+            }
+            if (template != null)
+            {
+                map.put(type, template);
             }
         }
-        return defaultCharacteristics;
+        try
+        {
+            return template.draw();
+        }
+        catch (ProbabilityException | ParameterException exception)
+        {
+            throw new GTUException("GTUType draw failed.", exception);
+        }
     }
 
     /**

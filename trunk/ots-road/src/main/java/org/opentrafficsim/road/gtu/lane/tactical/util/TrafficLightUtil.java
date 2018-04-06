@@ -1,8 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -12,6 +9,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -61,15 +59,15 @@ public final class TrafficLightUtil
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
     public static Acceleration respondToTrafficLights(final Parameters parameters,
-            final Iterable<HeadwayTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo) throws ParameterException
+            final Iterable<HeadwayTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel,
+            final Speed speed, final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
         Throw.whenNull(headwayTrafficLights, "Traffic light set may not be null.");
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         for (HeadwayTrafficLight headwayTrafficLight : headwayTrafficLights)
         {
-            Acceleration aLight = respondToTrafficLight(parameters, headwayTrafficLight, carFollowingModel,
-                    speed, speedLimitInfo);
+            Acceleration aLight =
+                    respondToTrafficLight(parameters, headwayTrafficLight, carFollowingModel, speed, speedLimitInfo);
             a = Acceleration.min(a, aLight);
         }
         return a;
@@ -92,9 +90,9 @@ public final class TrafficLightUtil
      * @throws NullPointerException if any input is null
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
-    public static Acceleration respondToTrafficLight(final Parameters parameters,
-            final HeadwayTrafficLight headwayTrafficLight, final CarFollowingModel carFollowingModel, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo) throws ParameterException
+    public static Acceleration respondToTrafficLight(final Parameters parameters, final HeadwayTrafficLight headwayTrafficLight,
+            final CarFollowingModel carFollowingModel, final Speed speed, final SpeedLimitInfo speedLimitInfo)
+            throws ParameterException
     {
         Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(headwayTrafficLight, "Traffic light may not be null.");
@@ -105,16 +103,15 @@ public final class TrafficLightUtil
         if (headwayTrafficLight.getTrafficLightColor().isRed() || headwayTrafficLight.getTrafficLightColor().isYellow())
         {
             // deceleration from car-following model
-            SortedMap<Length, Speed> leaders = new TreeMap<>();
-            leaders.put(headwayTrafficLight.getDistance(), Speed.ZERO);
-            Acceleration a = carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
+            Acceleration a = carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo,
+                    new PerceptionIterableSet<>(headwayTrafficLight));
             // compare to constant deceleration
             Length s0 = parameters.getParameter(ParameterTypes.S0);
             if (headwayTrafficLight.getDistance().gt(s0)) // constant acceleration not applicable if within s0
             {
                 // constant acceleration is -.5*v^2/s, where s = distance-s0 > 0
-                Acceleration aConstant = CarFollowingUtil.constantAccelerationStop(carFollowingModel, parameters,
-                        speed, headwayTrafficLight.getDistance());
+                Acceleration aConstant = CarFollowingUtil.constantAccelerationStop(carFollowingModel, parameters, speed,
+                        headwayTrafficLight.getDistance());
                 a = Acceleration.max(a, aConstant);
             }
             // return a if a > -b

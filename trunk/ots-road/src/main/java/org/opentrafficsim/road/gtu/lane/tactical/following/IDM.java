@@ -1,12 +1,12 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import java.util.SortedMap;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
  * Implementation of the IDM. See <a
@@ -21,7 +21,7 @@ import org.opentrafficsim.base.parameters.Parameters;
  */
 public class IDM extends AbstractIDM
 {
-    
+
     /**
      * Default constructor using default models for desired headway and desired speed.
      */
@@ -29,7 +29,7 @@ public class IDM extends AbstractIDM
     {
         super(HEADWAY, DESIRED_SPEED);
     }
-    
+
     /**
      * Constructor with modular models for desired headway and desired speed.
      * @param desiredHeadwayModel desired headway model
@@ -39,7 +39,7 @@ public class IDM extends AbstractIDM
     {
         super(desiredHeadwayModel, desiredSpeedModel);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String getName()
@@ -56,14 +56,14 @@ public class IDM extends AbstractIDM
 
     /** {@inheritDoc} */
     @Override
-    protected final Acceleration combineInteractionTerm(final Acceleration aFree,
-            final Parameters parameters, final Speed speed, final Speed desiredSpeed,
-            final Length desiredHeadway, final SortedMap<Length, Speed> leaders) throws ParameterException
+    protected final Acceleration combineInteractionTerm(final Acceleration aFree, final Parameters parameters,
+            final Speed speed, final Speed desiredSpeed, final Length desiredHeadway,
+            final PerceptionIterable<? extends Headway> leaders) throws ParameterException
     {
         Acceleration a = parameters.getParameter(A);
+        Headway leader = leaders.first();
         double sRatio =
-                dynamicDesiredHeadway(parameters, speed, desiredHeadway, leaders.get(leaders.firstKey())).si
-                        / leaders.firstKey().si;
+                dynamicDesiredHeadway(parameters, speed, desiredHeadway, leader.getSpeed()).si / leader.getDistance().si;
         double aInt = -a.si * sRatio * sRatio;
         return Acceleration.createSI(aFree.si + aInt);
     }

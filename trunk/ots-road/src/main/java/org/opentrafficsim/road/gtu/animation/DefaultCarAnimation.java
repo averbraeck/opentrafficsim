@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.animation;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
@@ -15,6 +16,7 @@ import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -120,48 +122,63 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             return;
         }
 
-        final double length = car.getLength().getSI();
-        final double l2 = length / 2;
-        final double width = car.getWidth().getSI();
-        final double w2 = width / 2;
-        final double w4 = width / 4;
-        graphics.setColor(this.gtuColorer.getColor(car));
-        BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
-        graphics.setStroke(new BasicStroke(0));
-        Rectangle2D rectangle = new Rectangle2D.Double(-l2, -w2, length, width);
-        graphics.draw(rectangle);
-        graphics.fill(rectangle);
-
-        // Draw a white disk at the front to indicate which side faces forward
-        graphics.setColor(Color.WHITE);
-        Ellipse2D.Double frontIndicator = new Ellipse2D.Double(l2 - w2 - w4, -w4, w2, w2);
-        graphics.draw(frontIndicator);
-        graphics.fill(frontIndicator);
-
-        // turn indicator lights
-        graphics.setColor(Color.YELLOW);
-        if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isLeftOrBoth())
+        double scale = Math.max(graphics.getTransform().getScaleX(), graphics.getTransform().getScaleY());
+        if (scale > 1)
         {
-            Rectangle2D.Double leftIndicator = new Rectangle2D.Double(l2 - w4, -w2, w4, w4);
-            graphics.fill(leftIndicator);
-        }
-        if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isRightOrBoth())
-        {
-            Rectangle2D.Double rightIndicator = new Rectangle2D.Double(l2 - w4, w2 - w4, w4, w4);
-            graphics.fill(rightIndicator);
-        }
+            final double length = car.getLength().getSI();
+            final double l2 = length / 2;
+            final double width = car.getWidth().getSI();
+            final double w2 = width / 2;
+            final double w4 = width / 4;
+            graphics.setColor(this.gtuColorer.getColor(car));
+            BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
+            graphics.setStroke(new BasicStroke(0));
+            Rectangle2D rectangle = new Rectangle2D.Double(-l2, -w2, length, width);
+            graphics.draw(rectangle);
+            graphics.fill(rectangle);
 
-        // braking lights
-        graphics.setColor(Color.RED);
-        if (car.getAcceleration().si < -0.5) // TODO this could be a property of a GTU
-        {
-            Rectangle2D.Double leftBrake = new Rectangle2D.Double(-l2, w2 - w4, w4, w4);
-            Rectangle2D.Double rightBrake = new Rectangle2D.Double(-l2, -w2, w4, w4);
+            // Draw a white disk at the front to indicate which side faces forward
+            graphics.setColor(Color.WHITE);
+            Ellipse2D.Double frontIndicator = new Ellipse2D.Double(l2 - w2 - w4, -w4, w2, w2);
+            graphics.draw(frontIndicator);
+            graphics.fill(frontIndicator);
+
+            // turn indicator lights
+            graphics.setColor(Color.YELLOW);
+            if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isLeftOrBoth())
+            {
+                Rectangle2D.Double leftIndicator = new Rectangle2D.Double(l2 - w4, -w2, w4, w4);
+                graphics.fill(leftIndicator);
+            }
+            if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isRightOrBoth())
+            {
+                Rectangle2D.Double rightIndicator = new Rectangle2D.Double(l2 - w4, w2 - w4, w4, w4);
+                graphics.fill(rightIndicator);
+            }
+
+            // braking lights
             graphics.setColor(Color.RED);
-            graphics.fill(leftBrake);
-            graphics.fill(rightBrake);
+            if (car.isBrakingLightsOn())
+            {
+                Rectangle2D.Double leftBrake = new Rectangle2D.Double(-l2, w2 - w4, w4, w4);
+                Rectangle2D.Double rightBrake = new Rectangle2D.Double(-l2, -w2, w4, w4);
+                graphics.setColor(Color.RED);
+                graphics.fill(leftBrake);
+                graphics.fill(rightBrake);
+            }
+            graphics.setStroke(saveStroke);
         }
-        graphics.setStroke(saveStroke);
+        else
+        {
+            // zoomed out, draw as marker with 7px diameter
+            graphics.setColor(this.gtuColorer.getColor(car));
+            double w = 7.0 / scale;
+            double x = -w / 2.0;
+            Shape shape = car.getGTUType().isOfType(GTUType.TRUCK) ? new Rectangle2D.Double(x, x, w, w)
+                    : new Ellipse2D.Double(x, x, w, w);
+            graphics.fill(shape);
+        }
+
     }
 
     /** {@inheritDoc} */

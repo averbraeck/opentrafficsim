@@ -2,12 +2,10 @@ package org.opentrafficsim.road.network.sampling;
 
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
-import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
-import org.opentrafficsim.kpi.interfaces.RouteDataInterface;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
+ * Gtu representation in road sampler.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -48,7 +46,7 @@ public class GtuData implements GtuDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final NodeDataInterface getOriginNodeData()
+    public final NodeData getOriginNodeData()
     {
         try
         {
@@ -62,7 +60,7 @@ public class GtuData implements GtuDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final NodeDataInterface getDestinationNodeData()
+    public final NodeData getDestinationNodeData()
     {
         try
         {
@@ -76,14 +74,14 @@ public class GtuData implements GtuDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final GtuTypeDataInterface getGtuTypeData()
+    public final GtuTypeData getGtuTypeData()
     {
         return new GtuTypeData(this.gtu.getGTUType());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final RouteDataInterface getRouteData()
+    public final RouteData getRouteData()
     {
         return new RouteData(this.gtu.getStrategicalPlanner().getRoute());
     }

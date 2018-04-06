@@ -27,7 +27,7 @@ public class GTUTypeColorer implements GTUColorer, Serializable
 
     /** */
     private static final long serialVersionUID = 20180117L;
-    
+
     /** The colors per GTU Type. */
     private final Map<GTUType, Color> map = new LinkedHashMap<>();
 
@@ -48,16 +48,10 @@ public class GTUTypeColorer implements GTUColorer, Serializable
         DEFAULTS[8] = Color.GRAY;
         DEFAULTS[9] = Color.WHITE;
     }
-
-    /**
-     * Returns a default instance with colors for common GTUTypes.
-     * @return GTUTypeColorer; default instance with colors for common GTUTypes
-     */
-    public final static GTUTypeColorer defaultInstance()
-    {
-        return new GTUTypeColorer().add(GTUType.CAR, Color.BLUE).add(GTUType.TRUCK, Color.RED).add(GTUType.VEHICLE, Color.GRAY)
-                .add(GTUType.PEDESTRIAN, Color.YELLOW).add(GTUType.BICYCLE, Color.GREEN);
-    }
+    
+    /** Default instance with colors for common GTUTypes. */
+    public static final GTUTypeColorer DEFAULT = new GTUTypeColorer().add(GTUType.CAR, Color.BLUE).add(GTUType.TRUCK, Color.RED)
+            .add(GTUType.VEHICLE, Color.GRAY).add(GTUType.PEDESTRIAN, Color.YELLOW).add(GTUType.BICYCLE, Color.GREEN);
 
     /**
      * Adds a GTU type to the list with color from a default list.
@@ -125,7 +119,5 @@ public class GTUTypeColorer implements GTUColorer, Serializable
     {
         return "GTU Type";
     }
-    
-    
 
 }

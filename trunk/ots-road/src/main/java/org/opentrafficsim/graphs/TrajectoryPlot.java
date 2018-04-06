@@ -137,16 +137,15 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
             final OTSDEVSSimulatorInterface simulator)
     {
         super(caption, path);
-        this.roadSampler =
-                null == sampleInterval ? new RoadSampler(simulator) : new RoadSampler(simulator,
-                        Frequency.createSI(1 / sampleInterval.si));
+        this.roadSampler = null == sampleInterval ? new RoadSampler(simulator)
+                : new RoadSampler(simulator, Frequency.createSI(1 / sampleInterval.si));
         this.lanes = new ArrayList<>();
         for (Lane lane : path)
         {
-            KpiLaneDirection kpiLaneDirection = new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS);
-            SpaceTimeRegion spaceTimeRegion =
-                    new SpaceTimeRegion(kpiLaneDirection, Length.ZERO, lane.getLength(), Time.ZERO,
-                            Time.createSI(Double.MAX_VALUE));
+            KpiLaneDirection kpiLaneDirection =
+                    new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS);
+            SpaceTimeRegion spaceTimeRegion = new SpaceTimeRegion(kpiLaneDirection, Length.ZERO, lane.getLength(),
+                    Time.ZERO, Time.createSI(Double.MAX_VALUE));
             this.roadSampler.registerSpaceTimeRegion(spaceTimeRegion);
             this.lanes.add(kpiLaneDirection);
         }
@@ -476,7 +475,8 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
          * @param lengthOffset double; the length from the beginning of the sampled path to the start of the lane to which the
          *            trajectory belongs
          */
-        TrajectoryAndLengthOffset(final org.opentrafficsim.kpi.sampling.Trajectory trajectory, final double lengthOffset)
+        TrajectoryAndLengthOffset(final org.opentrafficsim.kpi.sampling.Trajectory trajectory,
+                final double lengthOffset)
         {
             this.trajectory = trajectory;
             this.lengthOffset = lengthOffset;

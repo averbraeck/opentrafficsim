@@ -35,6 +35,7 @@ import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
@@ -110,7 +111,7 @@ public class AHFEAnimation extends AbstractWrappableAnimation
     private final double leftFraction;
 
     /** Sampler. */
-    Sampler sampler;
+    Sampler<GtuData> sampler;
 
     /**
      * @param replication replication

@@ -48,7 +48,10 @@ public class MarkovCorrelationTest
             try
             {
                 markov.addState("n" + n, corr[i]);
-                superState = "n" + n; // for following test
+                if (superState.equals(""))
+                {
+                    superState = "n" + n; // for following test
+                }
                 n++;
             }
             catch (IllegalArgumentException ex)
@@ -70,7 +73,7 @@ public class MarkovCorrelationTest
             testAddState(markov, superState, "n" + n, corr[i], String.format("Correlation of %.2f should fail.", corr[i]));
             n++;
         }
-        corr = new double[] { -0.99, -0.5, 0.0, 0.5, 0.99 };
+        corr = new double[] { 0.11, 0.5, 0.99 };
         for (int i = 0; i < corr.length; i++)
         {
             try
@@ -225,7 +228,12 @@ public class MarkovCorrelationTest
         markov = new MarkovCorrelation<>();
         states = new String[] { "Car", "SlowVehicle", "Bus", "Truck" };
         ss = new Double[] { .6 * nTot, .2 * nTot, .15 * nTot, .05 * nTot };
-        correlation = new double[] { 0.2, 0.4, 0.7, 0.0 };
+        correlation = new double[] { 0.2, 0.4, 0.7, 0.7 };
+        double[] correlation2 = new double[4];
+        for (int i = 1; i < states.length; i++)
+        {
+            correlation2[i] = (correlation[i] - correlation[1]) / (1 - correlation[1]);
+        }
         for (int i = 0; i < states.length; i++)
         {
             if (i <= 1)
@@ -278,7 +286,7 @@ public class MarkovCorrelationTest
                         {
                             p[j] = (1 - (ss[0] / nTot) * (1 - correlation[0]) * (1 - correlation[1])) // probability in root
                                     * ((ss[j] / nTot) / (1 - (ss[0] / nTot))) // base probability in sub matrix
-                                    * (1 - correlation[i]) * (1 - correlation[j]); // correlation factors in sub matrix
+                                    * (1 - correlation2[i]) * (1 - correlation2[j]); // correlation factors in sub matrix
                         }
                     }
                     pSum += p[j];

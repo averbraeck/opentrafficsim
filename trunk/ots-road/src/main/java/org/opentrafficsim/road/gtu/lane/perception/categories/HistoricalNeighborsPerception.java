@@ -15,7 +15,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
@@ -73,7 +73,6 @@ public class HistoricalNeighborsPerception extends AbstractPerceptionCategory<La
         this.nLeaders = nLeaders;
         this.headwayGtuType = headwayGtuType;
     }
-
 
     /** {@inheritDoc} */
     @Override
@@ -155,14 +154,14 @@ public class HistoricalNeighborsPerception extends AbstractPerceptionCategory<La
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionIterable<HeadwayGTU> getLeaders(RelativeLane lane)
+    public PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getLeaders(RelativeLane lane)
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionIterable<HeadwayGTU> getFollowers(RelativeLane lane)
+    public PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getFollowers(RelativeLane lane)
     {
         return null;
     }

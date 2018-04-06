@@ -33,6 +33,7 @@ import nl.tudelft.simulation.event.TimedEvent;
 import nl.tudelft.simulation.language.Throw;
 
 /**
+ * Implementation of kpi sampler for OTS.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -42,8 +43,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
-public class RoadSampler extends Sampler implements EventListenerInterface
+public class RoadSampler extends Sampler<GtuData> implements EventListenerInterface
 {
 
     /** Simulator. */
@@ -126,9 +126,9 @@ public class RoadSampler extends Sampler implements EventListenerInterface
     @Override
     public final void initRecording(final KpiLaneDirection kpiLaneDirection)
     {
-        ((LaneData) kpiLaneDirection.getLaneData()).getLane().addListener(this, Lane.GTU_ADD_EVENT, true);
-        ((LaneData) kpiLaneDirection.getLaneData()).getLane().addListener(this, Lane.GTU_REMOVE_EVENT, true);
         Lane lane = ((LaneData) kpiLaneDirection.getLaneData()).getLane();
+        lane.addListener(this, Lane.GTU_ADD_EVENT, true);
+        lane.addListener(this, Lane.GTU_REMOVE_EVENT, true);
         int count = 1;
         for (LaneBasedGTU gtu : lane.getGtuList())
         {
@@ -153,8 +153,9 @@ public class RoadSampler extends Sampler implements EventListenerInterface
     @Override
     public final void finalizeRecording(final KpiLaneDirection kpiLaneDirection)
     {
-        ((LaneData) kpiLaneDirection.getLaneData()).getLane().removeListener(this, Lane.GTU_ADD_EVENT);
-        ((LaneData) kpiLaneDirection.getLaneData()).getLane().removeListener(this, Lane.GTU_REMOVE_EVENT);
+        Lane lane = ((LaneData) kpiLaneDirection.getLaneData()).getLane();
+        lane.removeListener(this, Lane.GTU_ADD_EVENT);
+        lane.removeListener(this, Lane.GTU_REMOVE_EVENT);
         // Lane lane = ((LaneData) kpiLaneDirection.getLaneData()).getLane();
         // int count = 0;
         // List<LaneBasedGTU> currentGtus = new ArrayList<>();
@@ -306,7 +307,7 @@ public class RoadSampler extends Sampler implements EventListenerInterface
     }
 
     /**
-     * Schedules a sampling event for the given gtu on the given lane for the samlping interval from the current time.
+     * Schedules a sampling event for the given gtu on the given lane for the sampling interval from the current time.
      * @param gtu gtu to sample
      * @param laneDirection lane direction where the gtu is at
      */

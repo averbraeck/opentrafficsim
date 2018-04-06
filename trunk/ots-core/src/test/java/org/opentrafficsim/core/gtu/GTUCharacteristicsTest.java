@@ -7,21 +7,17 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -57,10 +53,10 @@ public class GTUCharacteristicsTest implements OTSModelInterface
         Length widthB = new Length(2.5, LengthUnit.METER);
         Speed maximumSpeedA = new Speed(180, SpeedUnit.KM_PER_HOUR);
         Speed maximumSpeedB = new Speed(130, SpeedUnit.KM_PER_HOUR);
-        GTUCharacteristics gtucA =
-                new GTUCharacteristics(gtuTypeA, lengthA, widthA, maximumSpeedA);
-        GTUCharacteristics gtucB =
-                new GTUCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB);
+        GTUCharacteristics gtucA = new GTUCharacteristics(gtuTypeA, lengthA, widthA, maximumSpeedA, Acceleration.createSI(3.0),
+                Acceleration.createSI(-8.0));
+        GTUCharacteristics gtucB = new GTUCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB, Acceleration.createSI(3.0),
+                Acceleration.createSI(-8.0));
         assertEquals("gtuTypeA", gtuTypeA, gtucA.getGTUType());
         assertEquals("gtuTypeB", gtuTypeB, gtucB.getGTUType());
         assertEquals("lengthA", lengthA, gtucA.getLength());

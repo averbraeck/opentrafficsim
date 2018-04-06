@@ -7,6 +7,10 @@ import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
@@ -20,34 +24,52 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <H> headway type
+ * @param <U> underlying headway type
  */
-public class MultiLanePerceptionIterable<H extends Headway> extends AbstractPerceptionReiterable<H>
+public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractPerceptionReiterable<H, U>
 {
 
     /** Set of iterators per lane. */
-    Map<RelativeLane, Iterator<H>> iterators = new HashMap<>();
-    
+    final Map<RelativeLane, Iterator<PrimaryIteratorEntry>> iterators = new HashMap<>();
+
+    /** Map of lane per object. */
+    final Map<U, RelativeLane> laneMap = new HashMap<>();
+
+    /** Map of iterable per lane. */
+    final Map<RelativeLane, AbstractPerceptionReiterable<H, U>> iterables = new HashMap<>();
+
+    /**
+     * Constructor.
+     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     */
+    public MultiLanePerceptionIterable(final LaneBasedGTU perceivingGtu)
+    {
+        super(perceivingGtu);
+    }
+
     /**
      * Adds an iterable for a lane.
      * @param lane Lane; lane
-     * @param iterable Iterable; iterable
+     * @param iterable AbstractPerceptionReiterable; iterable
      */
-    public void addIterable(final RelativeLane lane, final Iterable<H> iterable)
+    public void addIterable(final RelativeLane lane, final AbstractPerceptionReiterable<H, U> iterable)
     {
-        this.iterators.put(lane, iterable.iterator());
+        this.iterators.put(lane, iterable.getPrimaryIterator());
+        this.iterables.put(lane, iterable);
     }
-    
+
     /** {@inheritDoc} */
     @Override
-    protected Iterator<H> primaryIterator()
+    public Iterator<PrimaryIteratorEntry> primaryIterator()
     {
         return new MultiLaneIterator();
     }
-    
+
     /**
      * Iterator that returns the closest element from a set of lanes.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 21 feb. 2018 <br>
@@ -55,12 +77,12 @@ public class MultiLanePerceptionIterable<H extends Headway> extends AbstractPerc
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private class MultiLaneIterator implements Iterator<H>
+    private class MultiLaneIterator implements Iterator<PrimaryIteratorEntry>
     {
 
         /** Sorted elements per lane. */
-        SortedMap<H, RelativeLane> elements;
-        
+        SortedMap<PrimaryIteratorEntry, RelativeLane> elements;
+
         /** Constructor. */
         public MultiLaneIterator()
         {
@@ -77,21 +99,21 @@ public class MultiLanePerceptionIterable<H extends Headway> extends AbstractPerc
 
         /** {@inheritDoc} */
         @Override
-        public H next()
+        public PrimaryIteratorEntry next()
         {
             assureNext();
             if (this.elements.isEmpty())
             {
                 throw new NoSuchElementException();
             }
-            
+
             // get and remove next
-            H next = this.elements.firstKey();
+            PrimaryIteratorEntry next = this.elements.firstKey();
             RelativeLane lane = this.elements.get(next);
             this.elements.remove(next);
-            
+
             // prepare next
-            Iterator<H> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
+            Iterator<PrimaryIteratorEntry> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
             if (laneIterator != null)
             {
                 if (laneIterator.hasNext())
@@ -104,10 +126,11 @@ public class MultiLanePerceptionIterable<H extends Headway> extends AbstractPerc
                     MultiLanePerceptionIterable.this.iterators.remove(lane);
                 }
             }
-            
+
+            MultiLanePerceptionIterable.this.laneMap.put(next.object, lane);
             return next;
         }
-        
+
         /**
          * Starts the process.
          */
@@ -118,14 +141,22 @@ public class MultiLanePerceptionIterable<H extends Headway> extends AbstractPerc
                 this.elements = new TreeMap<>();
                 for (RelativeLane lane : MultiLanePerceptionIterable.this.iterators.keySet())
                 {
-                    Iterator<H> it = MultiLanePerceptionIterable.this.iterators.get(lane);
-                    if (it.hasNext())
+                    Iterator<PrimaryIteratorEntry> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
+                    if (laneIterator.hasNext())
                     {
-                        this.elements.put(it.next(), lane);
+                        this.elements.put(laneIterator.next(), lane);
                     }
                 }
             }
         }
-        
+
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public H perceive(final LaneBasedGTU perceivingGtu, final U object, final Length distance)
+            throws GTUException, ParameterException
+    {
+        return this.iterables.get(this.laneMap.get(object)).perceive(perceivingGtu, object, distance);
     }
 }

@@ -45,7 +45,8 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
             final Node origin, final Node destination)
     {
         super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getLength(), gtuCharacteristics.getWidth(),
-                gtuCharacteristics.getMaximumSpeed());
+                gtuCharacteristics.getMaximumSpeed(), gtuCharacteristics.getMaximumAcceleration(),
+                gtuCharacteristics.getMaximumDeceleration());
         this.strategicalPlannerFactory = laneBasedStrategicalPlannerFactory;
         this.route = route;
         this.origin = origin;

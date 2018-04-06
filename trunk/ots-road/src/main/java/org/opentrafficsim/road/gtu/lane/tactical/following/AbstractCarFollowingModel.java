@@ -1,13 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import java.util.SortedMap;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 import nl.tudelft.simulation.language.Throw;
@@ -42,32 +43,33 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Length desiredHeadway(final Parameters parameters, final Speed speed)
-            throws ParameterException
+    public final Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
     {
+        Throw.whenNull(parameters, "Parameters may not be null.");
+        Throw.whenNull(speed, "Speed may not be null.");
         return this.desiredHeadwayModel.desiredHeadway(parameters, speed);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo)
-            throws ParameterException
+    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
     {
+        Throw.whenNull(parameters, "Parameters may not be null.");
+        Throw.whenNull(speedInfo, "Speed limit info may not be null.");
         return this.desiredSpeedModel.desiredSpeed(parameters, speedInfo);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo, final SortedMap<Length, Speed> leaders)
-            throws ParameterException
+            final SpeedLimitInfo speedLimitInfo, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
     {
         Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
         Throw.whenNull(leaders, "Leaders may not be null.");
         // Catch negative headway
-        if (!leaders.isEmpty() && leaders.firstKey().si <= 0)
+        if (!leaders.isEmpty() && leaders.first().getDistance().si <= 0)
         {
             return new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
         }
@@ -87,7 +89,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      * @throws ParameterException if parameter exception occurs
      */
     protected abstract Acceleration followingAcceleration(Parameters parameters, Speed speed, Speed desiredSpeed,
-            Length desiredHeadway, SortedMap<Length, Speed> leaders) throws ParameterException;
+            Length desiredHeadway, PerceptionIterable<? extends Headway> leaders) throws ParameterException;
 
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
@@ -95,6 +97,20 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
     public String toString()
     {
         return getLongName();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void init(LaneBasedGTU gtu)
+    {
+        if (this.desiredHeadwayModel instanceof Initialisable)
+        {
+            ((Initialisable) this.desiredHeadwayModel).init(gtu);
+        }
+        if (this.desiredSpeedModel instanceof Initialisable)
+        {
+            ((Initialisable) this.desiredSpeedModel).init(gtu);
+        }
     }
 
 }

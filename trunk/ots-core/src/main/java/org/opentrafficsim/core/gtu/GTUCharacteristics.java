@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 
@@ -32,6 +33,12 @@ public class GTUCharacteristics implements Serializable
 
     /** Maximum speed of the GTU. */
     private final Speed maximumSpeed;
+    
+    /** Maximum acceleration. */
+    private final Acceleration maximumAcceleration;
+    
+    /** Maximum deceleration. */
+    private final Acceleration maximumDeceleration;
 
     /**
      * Construct a new set of GTUCharacteristics.
@@ -39,14 +46,18 @@ public class GTUCharacteristics implements Serializable
      * @param length Length; the length of the (non yet constructed) GTU
      * @param width Length; the width of the (non yet constructed) GTU
      * @param maximumSpeed Length; the maximum speed of the (non yet constructed) GTU
+     * @param maximumAcceleration Acceleration; maximum acceleration
+     * @param maximumDeceleration Acceleration; maximum deceleration
      */
     public GTUCharacteristics(final GTUType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed)
+            final Speed maximumSpeed, final Acceleration maximumAcceleration, final Acceleration maximumDeceleration)
     {
         this.gtuType = gtuType;
         this.length = length;
         this.width = width;
         this.maximumSpeed = maximumSpeed;
+        this.maximumAcceleration = maximumAcceleration;
+        this.maximumDeceleration = maximumDeceleration;
     }
 
     /**
@@ -84,13 +95,32 @@ public class GTUCharacteristics implements Serializable
     {
         return this.maximumSpeed;
     }
+    
+    /**
+     * Retrieve the maximum acceleration.
+     * @return Acceleration
+     */
+    public final Acceleration getMaximumAcceleration()
+    {
+        return this.maximumAcceleration;
+    }
+    
+    /**
+     * Retrieve the maximum deceleration.
+     * @return Acceleration
+     */
+    public final Acceleration getMaximumDeceleration()
+    {
+        return this.maximumDeceleration;
+    }
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    public String toString()
     {
         return "GTUCharacteristics [gtuType=" + this.gtuType + ", length=" + this.length + ", width=" + this.width
-                + ", maximumSpeed=" + this.maximumSpeed + "]";
+                + ", maximumSpeed=" + this.maximumSpeed + ", maximumAcceleration=" + this.maximumAcceleration
+                + ", maximumDeceleration=" + this.maximumDeceleration + "]";
     }
 
 }

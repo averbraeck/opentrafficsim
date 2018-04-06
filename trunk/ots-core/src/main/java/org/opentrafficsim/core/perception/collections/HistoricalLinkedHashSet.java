@@ -48,13 +48,17 @@ public class HistoricalLinkedHashSet<E> extends AbstractHistoricalCollection<E, 
     @Override
     public LinkedHashSet<E> get()
     {
-        return fill(new LinkedHashSet<>());
+        return getCollection();
     }
 
     /** {@inheritDoc} */
     @Override
     public LinkedHashSet<E> get(final Time time)
     {
+        if (isLastState(time))
+        {
+            return getCollection();
+        }
         return fill(time, new LinkedHashSet<>());
     }
     

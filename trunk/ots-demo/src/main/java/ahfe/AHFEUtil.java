@@ -40,6 +40,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
@@ -60,12 +61,12 @@ import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DelayedNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DelayedNeighborsPerception.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
@@ -73,14 +74,16 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.GapAcceptanceModels;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
@@ -159,8 +162,10 @@ public final class AHFEUtil
         IdGenerator idGenerator = new IdGenerator("");
 
         CarFollowingModelFactory<IDMPlus> idmPlusFactory = new IDMPlusFactory(streams.get("gtuClass"));
-        PerceptionFactory delayedPerceptionFactory =
-                new DelayedPerceptionFactory(Anticipation.valueOf(anticipationStrategy.toUpperCase()));
+        PerceptionFactory delayedPerceptionFactory = Try.assign(
+                () -> new DelayedPerceptionFactory(
+                        (Anticipation) Anticipation.class.getDeclaredField(anticipationStrategy.toUpperCase()).get(null)),
+                "Exception while obtaining anticipation value %s", anticipationStrategy);
         ParameterSet params = new ParameterSet();
         params.setDefaultParameter(AbstractIDM.DELTA);
         params.setParameter(ParameterTypes.TR, reactionTime);
@@ -178,7 +183,8 @@ public final class AHFEUtil
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
         Acceleration b = new Acceleration(2.09, AccelerationUnit.SI);
         GTUType gtuType = new GTUType("car", CAR);
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, streams.get("gtuClass"));
+        bcFactory.addParameter(gtuType, ParameterTypes.FSPEED,
+                new DistNormal(streams.get("gtuClass"), 123.7 / 120, 12.0 / 120));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         // bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev,
         // streams.get("gtuClass"));
@@ -216,10 +222,10 @@ public final class AHFEUtil
 
         LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
-        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar = new ContinuousDistDoubleScalar.Rel<>(
-                new DistUniform(streams.get("gtuClass"), 160, 200), SpeedUnit.KM_PER_HOUR);
-        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck = new ContinuousDistDoubleScalar.Rel<>(
-                new DistNormal(streams.get("gtuClass"), 80, 2.5), SpeedUnit.KM_PER_HOUR);
+        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar =
+                new ContinuousDistDoubleScalar.Rel<>(new DistUniform(streams.get("gtuClass"), 160, 200), SpeedUnit.KM_PER_HOUR);
+        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
+                new ContinuousDistDoubleScalar.Rel<>(new DistNormal(streams.get("gtuClass"), 80, 2.5), SpeedUnit.KM_PER_HOUR);
 
         LaneBasedTemplateGTUType carLeft =
                 new LaneBasedTemplateGTUType(new GTUType("car", CAR), new ConstantGenerator<>(Length.createSI(4.0)),
@@ -230,9 +236,9 @@ public final class AHFEUtil
         LaneBasedTemplateGTUType carRight =
                 new LaneBasedTemplateGTUType(new GTUType("car", CAR), new ConstantGenerator<>(Length.createSI(4.0)),
                         new ConstantGenerator<>(Length.createSI(2.0)), speedCar, strategicalFactory, fixedRouteGeneratorRight);
-        LaneBasedTemplateGTUType truckRight =
-                new LaneBasedTemplateGTUType(new GTUType("truck", TRUCK), new ConstantGenerator<>(Length.createSI(15.0)),
-                        new ConstantGenerator<>(Length.createSI(2.5)), speedTruck, strategicalFactory, fixedRouteGeneratorRight);
+        LaneBasedTemplateGTUType truckRight = new LaneBasedTemplateGTUType(new GTUType("truck", TRUCK),
+                new ConstantGenerator<>(Length.createSI(15.0)), new ConstantGenerator<>(Length.createSI(2.5)), speedTruck,
+                strategicalFactory, fixedRouteGeneratorRight);
 
         // GTUTypeGenerator gtuTypeGeneratorLeft = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
         // GTUTypeGenerator gtuTypeGeneratorRight = new GTUTypeGenerator(simulator, streams.get("gtuClass"));
@@ -414,7 +420,8 @@ public final class AHFEUtil
         public final LMRS create(final LaneBasedGTU gtu) throws GTUException
         {
             LMRS lmrs = new LMRS(this.carFollowingModelFactory.generateCarFollowingModel(), gtu,
-                    this.perceptionFactory.generatePerception(gtu), Synchronization.PASSIVE, GapAcceptanceModels.INFORMED);
+                    this.perceptionFactory.generatePerception(gtu), Synchronization.PASSIVE, Cooperation.PASSIVE,
+                    GapAcceptance.INFORMED, Tailgating.NONE);
             lmrs.addMandatoryIncentive(new IncentiveRoute());
             lmrs.addVoluntaryIncentive(new IncentiveSpeedWithCourtesy());
             if (gtu.getGTUType().getId().equals("car"))
@@ -468,7 +475,7 @@ public final class AHFEUtil
         @Override
         public LanePerception generatePerception(final LaneBasedGTU gtu)
         {
-            LanePerception perception = new CategorialLanePerception(gtu);
+            LanePerception perception = new CategoricalLanePerception(gtu);
             perception.addPerceptionCategory(new DirectEgoPerception(perception));
             // perception.addPerceptionCategory(new DirectDefaultSimplePerception(perception));
             perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));

@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.animation;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
@@ -119,9 +120,13 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
     {
         switch (this.type)
         {
-            case DASHED:// : - Draw a 3-9 dash pattern on the center line
-                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.2, 2.99,
+            case DASHED:// ¦ - Draw a 3-9 dash pattern on the center line
+                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.2, 3.0,
                         new double[] { 3, 9 });
+
+            case BLOCK:// : - Draw a 1-3 dash pattern on the center line
+                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.45, 1.0,
+                        new double[] { 1, 3 });
 
             case DOUBLE:// ||- Draw two solid lines
             {
@@ -142,16 +147,14 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
                 return result;
             }
 
-            case LEFTONLY: // |: - Draw left solid, right 3-9 dashed
+            case LEFTONLY: // |¦ - Draw left solid, right 3-9 dashed
             {
                 OTSLine3D centerLine = stripe.getCenterLine();
                 Geometry rightDesignLine = centerLine.offsetLine(-0.2).getLineString();
                 ArrayList<OTSPoint3D> result =
-                        makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 2.99, new double[] { 3, 9 });
-                Geometry leftDesignLine =
-                        centerLine.offsetLine(0.2).getLineString().buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT);
-                Coordinate[] leftCoordinates =
-                        leftDesignLine.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+                        makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 0.0, new double[] { 3, 9 });
+                Coordinate[] leftCoordinates = centerLine.offsetLine(0.2).getLineString()
+                        .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 for (int i = 0; i < leftCoordinates.length; i++)
                 {
                     result.add(new OTSPoint3D(leftCoordinates[i]));
@@ -160,16 +163,14 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
                 return result;
             }
 
-            case RIGHTONLY: // :| - Draw left 3-9 dashed, right solid
+            case RIGHTONLY: // ¦| - Draw left 3-9 dashed, right solid
             {
                 OTSLine3D centerLine = stripe.getCenterLine();
                 Geometry leftDesignLine = centerLine.offsetLine(0.2).getLineString();
                 ArrayList<OTSPoint3D> result =
-                        makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 2.99, new double[] { 3, 9 });
-                Geometry rightDesignLine =
-                        centerLine.offsetLine(-0.2).getLineString().buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT);
-                Coordinate[] rightCoordinates =
-                        rightDesignLine.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+                        makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 0.0, new double[] { 3, 9 });
+                Coordinate[] rightCoordinates = centerLine.offsetLine(-0.2).getLineString()
+                        .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 for (int i = 0; i < rightCoordinates.length; i++)
                 {
                     result.add(new OTSPoint3D(rightCoordinates[i]));
@@ -200,14 +201,27 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
     {
         super(source, simulator);
         this.type = type;
-        this.line = new OTSLine3D(makePoints(source, type));
+        ArrayList<OTSPoint3D> list = makePoints(source, type);
+        if (!list.isEmpty())
+        {
+            this.line = new OTSLine3D(list);
+        }
+        else
+        {
+            // no dash within length
+            this.line = null;
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, getSource().getLocation(), this.line, true);
+        if (this.line != null)
+        {
+            graphics.setStroke(new BasicStroke(2.0f));
+            PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, getSource().getLocation(), this.line, true);
+        }
     }
 
     /**
@@ -222,17 +236,20 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
         /** Single solid line. */
         SOLID,
 
-        /** Line |: allow to go to left, but not to right. */
+        /** Line |¦ allow to go to left, but not to right. */
         LEFTONLY,
 
-        /** Line :| allow to go to right, but not to left. */
+        /** Line ¦| allow to go to right, but not to left. */
         RIGHTONLY,
 
-        /** Dashes : allow to cross in both directions. */
+        /** Dashes ¦ allow to cross in both directions. */
         DASHED,
 
         /** Double solid line ||, don't cross. */
-        DOUBLE
+        DOUBLE,
+
+        /** Block : allow to cross in both directions. */
+        BLOCK
     }
 
     /** {@inheritDoc} */

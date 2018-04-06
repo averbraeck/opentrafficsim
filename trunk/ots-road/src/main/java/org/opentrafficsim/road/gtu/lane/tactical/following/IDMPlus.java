@@ -1,13 +1,13 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import java.util.SortedMap;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
  * Implementation of the IDM+. See Schakel, W.J., Knoop, V.L., and Van Arem, B. (2012),
@@ -62,12 +62,13 @@ public class IDMPlus extends AbstractIDM
     /** {@inheritDoc} */
     @Override
     protected final Acceleration combineInteractionTerm(final Acceleration aFree, final Parameters parameters,
-            final Speed speed, final Speed desiredSpeed, final Length desiredHeadway, final SortedMap<Length, Speed> leaders)
-            throws ParameterException
+            final Speed speed, final Speed desiredSpeed, final Length desiredHeadway,
+            final PerceptionIterable<? extends Headway> leaders) throws ParameterException
     {
         Acceleration a = parameters.getParameter(A);
-        double sRatio = dynamicDesiredHeadway(parameters, speed, desiredHeadway, leaders.get(leaders.firstKey())).si
-                / leaders.firstKey().si;
+        Headway leader = leaders.first();
+        double sRatio =
+                dynamicDesiredHeadway(parameters, speed, desiredHeadway, leader.getSpeed()).si / leader.getDistance().si;
         double aInt = a.si * (1 - sRatio * sRatio);
         return new Acceleration(aInt < aFree.si ? aInt : aFree.si, AccelerationUnit.SI);
     }

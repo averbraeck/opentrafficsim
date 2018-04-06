@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.generator.od;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
-import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayRandomization;
+import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
@@ -50,12 +51,9 @@ import nl.tudelft.simulation.language.Throw;
 public class ODOptions
 {
 
-    /** Value for option GTU_TYPE to use the shortest route if no route is given in the Categorization. */
-    public static final GTUCharacteristicsGeneratorOD SHORTEST_ROUTE = new ShortestRouteGTUCharacteristicsGeneratorOD();
-
     /** Headway randomization option. */
-    public static final Option<HeadwayRandomization> HEADWAY_DIST =
-            new Option<>("headway distribution", HeadwayRandomization.EXPONENTIAL);
+    public static final Option<HeadwayDistribution> HEADWAY_DIST =
+            new Option<>("headway distribution", HeadwayDistribution.EXPONENTIAL);
 
     /** ID generator option. */
     public static final Option<IdGenerator> GTU_ID = new Option<>("gtu id", new IdGenerator(""));
@@ -356,12 +354,92 @@ public class ODOptions
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private static final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteristicsGeneratorOD
+    public static final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteristicsGeneratorOD
     {
-        /** Constructor. */
-        DefaultGTUCharacteristicsGeneratorOD()
+        /** Templates. */
+        private final Map<GTUType, TemplateGTUType> templates = new HashMap<>();
+
+        /** Route supplier. */
+        private final RouteSupplier routeSupplier;
+
+        /** Supplies a strategical factory. */
+        private final StrategicalPlannerFactorySupplier factorySupplier;
+
+        /**
+         * Constructor using null-routes, default GTU characteristics and LMRS.
+         */
+        public DefaultGTUCharacteristicsGeneratorOD()
         {
-            //
+            this(RouteSupplier.NULL, new HashSet<>(), StrategicalPlannerFactorySupplier.LMRS);
+        }
+
+        /**
+         * Constructor using route supplier, default GTU characteristics and LMRS.
+         * @param routeSupplier RouteSupplier; route supplier
+         */
+        public DefaultGTUCharacteristicsGeneratorOD(final RouteSupplier routeSupplier)
+        {
+            this(routeSupplier, new HashSet<>(), StrategicalPlannerFactorySupplier.LMRS);
+        }
+
+        /**
+         * Constructor using route supplier, provided GTU templates and LMRS.
+         * @param routeSupplier RouteSupplier; route supplier
+         * @param templates Set&lt;TemplateGTUType&gt;; templates
+         */
+        public DefaultGTUCharacteristicsGeneratorOD(final RouteSupplier routeSupplier, final Set<TemplateGTUType> templates)
+        {
+            this(routeSupplier, templates, StrategicalPlannerFactorySupplier.LMRS);
+        }
+
+        /**
+         * Constructor using route supplier, default GTU characteristics and provided GTU templates and provided strategical
+         * planner factory supplier.
+         * @param routeSupplier RouteSupplier; route supplier
+         * @param factorySupplier StrategicalPlannerFactorySupplier; strategical factory supplier
+         */
+        public DefaultGTUCharacteristicsGeneratorOD(final RouteSupplier routeSupplier,
+                final StrategicalPlannerFactorySupplier factorySupplier)
+        {
+            this(routeSupplier, new HashSet<>(), factorySupplier);
+        }
+
+        /**
+         * Constructor using null-routes, provided GTU templates and LMRS.
+         * @param templates Set&lt;TemplateGTUType&gt;; templates
+         */
+        public DefaultGTUCharacteristicsGeneratorOD(final Set<TemplateGTUType> templates)
+        {
+            this(RouteSupplier.NULL, templates, StrategicalPlannerFactorySupplier.LMRS);
+        }
+
+        /**
+         * Constructor using null-routes, provided GTU templates and provided GTU templates and provided strategical planner
+         * factory supplier.
+         * @param templates Set&lt;TemplateGTUType&gt;; templates
+         * @param factorySupplier StrategicalPlannerFactorySupplier; strategical factory supplier
+         */
+        public DefaultGTUCharacteristicsGeneratorOD(final Set<TemplateGTUType> templates,
+                final StrategicalPlannerFactorySupplier factorySupplier)
+        {
+            this(RouteSupplier.NULL, templates, factorySupplier);
+        }
+
+        /**
+         * Constructor using route supplier, provided GTU templates and provided strategical planner factory supplier.
+         * @param routeSupplier RouteSupplier; route supplier
+         * @param templates Set&lt;TemplateGTUType&gt;; templates
+         * @param factorySupplier StrategicalPlannerFactorySupplier; strategical factory supplier
+         */
+        public DefaultGTUCharacteristicsGeneratorOD(final RouteSupplier routeSupplier, final Set<TemplateGTUType> templates,
+                final StrategicalPlannerFactorySupplier factorySupplier)
+        {
+            this.routeSupplier = routeSupplier;
+            for (TemplateGTUType template : templates)
+            {
+                this.templates.put(template.getGTUType(), template);
+            }
+            this.factorySupplier = factorySupplier;
         }
 
         /** {@inheritDoc} */
@@ -380,184 +458,141 @@ public class ODOptions
             {
                 gtuType = GTUType.CAR;
             }
-            GTUCharacteristics gtuCharacteristics = Try.assign(() -> GTUType.defaultCharacteristics(gtuType),
-                    "Exception while applying default GTU characteristics.");
+            GTUCharacteristics gtuCharacteristics;
+            if (this.templates.containsKey(gtuType))
+            {
+                gtuCharacteristics =
+                        Try.assign(() -> this.templates.get(gtuType).draw(), "Exception while drawing GTU characteristics.");
+            }
+            else
+            {
+                gtuCharacteristics = Try.assign(() -> GTUType.defaultCharacteristics(gtuType, randomStream),
+                        "Exception while applying default GTU characteristics.");
+            }
             // strategical factory
             LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(
-                            new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()));
+                    this.factorySupplier.getFactory(randomStream);
             // route
-            Route route = categorization.entails(Route.class) ? category.get(Route.class) : null;
+            Route route;
+            if (categorization.entails(Route.class))
+            {
+                route = category.get(Route.class);
+            }
+            else
+            {
+                // get route from supplier
+                route = this.routeSupplier.getRoute(origin, destination, gtuType);
+            }
             return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, origin,
                     destination);
         }
     }
 
     /**
-     * Standard generator for {@code LaneBasedGTUCharacteristics} with shortest route.
+     * Supplies a route within DefaultGTUCharacteristicsGeneratorOD.
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 dec. 2017 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 mrt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private static class ShortestRouteGTUCharacteristicsGeneratorOD implements GTUCharacteristicsGeneratorOD
+    public interface RouteSupplier
     {
-
-        /** Shortest route cache. */
-        private Map<GTUType, Map<Node, Map<Node, Route>>> shortestRouteCache = new HashMap<>();
-
-        /** Constructor. */
-        ShortestRouteGTUCharacteristicsGeneratorOD()
+        /** No route route supplier. */
+        public static RouteSupplier NULL = new RouteSupplier()
         {
-            //
-        }
+            @Override
+            public Route getRoute(final Node origin, final Node destination, final GTUType gtuType)
+            {
+                return null;
+            }
+        };
 
-        /** {@inheritDoc} */
-        @Override
-        public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
-                final StreamInterface randomStream) throws GTUException
+        /** Shortest route route supplier. */
+        public static RouteSupplier SHORTEST = new RouteSupplier()
         {
-            Categorization categorization = category.getCategorization();
-            // GTU characteristics
-            GTUType gtuType;
-            if (categorization.entails(GTUType.class))
-            {
-                gtuType = category.get(GTUType.class);
-            }
-            else
-            {
-                gtuType = GTUType.CAR;
-            }
-            GTUCharacteristics gtuCharacteristics = Try.assign(() -> GTUType.defaultCharacteristics(gtuType),
-                    "Exception while applying default GTU characteristics.");
-            // strategical factory
-            LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(
-                            new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()));
-            // route
-            Route route;
-            if (categorization.entails(Route.class))
-            {
-                route = category.get(Route.class);
-            }
-            else
-            {
-                // get shortest route
-                route = getShortestRoute(origin, destination, gtuType);
-            }
-            return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, origin,
-                    destination);
-        }
+            /** Shortest route cache. */
+            private Map<GTUType, Map<Node, Map<Node, Route>>> shortestRouteCache = new HashMap<>();
 
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
-        {
-            return "ShortestRouteGTUCharacteristicsGeneratorOD [shortestRouteCache=" + this.shortestRouteCache + "]";
-        }
+            @Override
+            public Route getRoute(final Node origin, final Node destination, final GTUType gtuType)
+            {
+                Map<Node, Map<Node, Route>> gtuTypeCache = this.shortestRouteCache.get(gtuType);
+                if (gtuTypeCache == null)
+                {
+                    gtuTypeCache = new HashMap<>();
+                    this.shortestRouteCache.put(gtuType, gtuTypeCache);
+                }
+                Map<Node, Route> originCache = gtuTypeCache.get(origin);
+                if (originCache == null)
+                {
+                    originCache = new HashMap<>();
+                    gtuTypeCache.put(origin, originCache);
+                }
+                Route route = originCache.get(destination);
+                if (route == null)
+                {
+                    route = Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination),
+                            "Could not determine the shortest route from %s to %s.", origin, destination);
+                    originCache.put(destination, route);
+                }
+                return route;
+            }
+            
+            /** {@inheritDoc} */
+            @Override
+            public String toString()
+            {
+                return "ShortestRouteGTUCharacteristicsGeneratorOD [shortestRouteCache=" + this.shortestRouteCache + "]";
+            }
+        };
 
         /**
-         * Returns the shortest route.
+         * Returns a route.
          * @param origin Node; origin
          * @param destination Node; destination
-         * @param gtuType GTUType; GTU type
-         * @return shortest route
+         * @param gtuType GTUType; gtu type
+         * @return Route; route
          */
-        protected Route getShortestRoute(final Node origin, final Node destination, final GTUType gtuType)
-        {
-            Map<Node, Map<Node, Route>> gtuTypeCache = this.shortestRouteCache.get(gtuType);
-            if (gtuTypeCache == null)
-            {
-                gtuTypeCache = new HashMap<>();
-                this.shortestRouteCache.put(gtuType, gtuTypeCache);
-            }
-            Map<Node, Route> originCache = gtuTypeCache.get(origin);
-            if (originCache == null)
-            {
-                originCache = new HashMap<>();
-                gtuTypeCache.put(origin, originCache);
-            }
-            Route route = originCache.get(destination);
-            if (route == null)
-            {
-                route = Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination),
-                        "Could not determine the shortest route from %s to %s.", origin, destination);
-                originCache.put(destination, route);
-            }
-            return route;
-        }
+        Route getRoute(Node origin, Node destination, GTUType gtuType);
     }
 
     /**
-     * Generator of LaneBasedGTUCharacteristics with templates for vehicle properties.
+     * Supplies a strategical planner factories within DefaultGTUCharacteristicsGeneratorOD.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 9 mrt. 2018 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 26 mrt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public static class ShortestRouteRandomGTUCharacteristicsGeneratorOD extends ShortestRouteGTUCharacteristicsGeneratorOD
+    public interface StrategicalPlannerFactorySupplier
     {
-
-        /** Templates. */
-        private final Map<GTUType, TemplateGTUType> templates = new HashMap<>();
+        /** Default LMRS model. */
+        public static StrategicalPlannerFactorySupplier LMRS = new StrategicalPlannerFactorySupplier()
+        {
+            @Override
+            public LaneBasedStrategicalPlannerFactory<?> getFactory(final StreamInterface randomStream) throws GTUException
+            {
+                return new LaneBasedStrategicalRoutePlannerFactory(
+                        new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()));
+            }
+        };
 
         /**
-         * Constructor.
-         * @param templates Set&lt;TemplateGTUType&gt;; templates
+         * Supplies a strategical factory.
+         * @param randomStream StreamInterface; random number stream
+         * @return LaneBasedStrategicalPlannerFactory; strategical factory
+         * @throws GTUException
          */
-        public ShortestRouteRandomGTUCharacteristicsGeneratorOD(final Set<TemplateGTUType> templates)
-        {
-            for (TemplateGTUType template : templates)
-            {
-                this.templates.put(template.getGTUType(), template);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
-                final StreamInterface randomStream) throws GTUException
-        {
-            Categorization categorization = category.getCategorization();
-            // GTU characteristics
-            GTUType gtuType;
-            if (categorization.entails(GTUType.class))
-            {
-                gtuType = category.get(GTUType.class);
-            }
-            else
-            {
-                gtuType = GTUType.CAR;
-            }
-            GTUCharacteristics gtuCharacteristics =
-                    Try.assign(() -> this.templates.get(gtuType).draw(), "Exception while drawing GTU characteristics.");
-            // strategical factory
-            LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(
-                            new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()));
-            // route
-            Route route;
-            if (categorization.entails(Route.class))
-            {
-                route = category.get(Route.class);
-            }
-            else
-            {
-                // get shortest route
-                route = getShortestRoute(origin, destination, gtuType);
-            }
-            return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, origin,
-                    destination);
-        }
+        LaneBasedStrategicalPlannerFactory<?> getFactory(StreamInterface randomStream) throws GTUException;
     }
 
 }

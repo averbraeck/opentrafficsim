@@ -50,9 +50,9 @@ import org.opentrafficsim.imb.demo.generators.RouteGeneratorProbability;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
+import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
-import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
@@ -64,6 +64,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -148,22 +149,27 @@ public class A58OdUtil
         Length perception = new Length(1.0, LengthUnit.KILOMETER);
         Acceleration b = new Acceleration(2.09, AccelerationUnit.SI);
         GTUType gtuType = new GTUType("car", CAR);
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, streams.get("gtuClass"));
+        bcFactory.addParameter(gtuType, ParameterTypes.FSPEED,
+                new DistNormal(streams.get("gtuClass"), 123.7 / 120, 12.0 / 120));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev, streams.get("gtuClass"));
+        bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, new ContinuousDistDoubleScalar.Rel<>(
+                new DistNormal(streams.get("gtuClass"), lookAhead.si, lookAheadStdev.si), LengthUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         gtuType = new GTUType("car_equipped", CAR);
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, streams.get("gtuClass"));
+        bcFactory.addParameter(gtuType, ParameterTypes.FSPEED,
+                new DistNormal(streams.get("gtuClass"), 123.7 / 120, 12.0 / 120));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, DurationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, DurationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(2.0, AccelerationUnit.SI));
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev, streams.get("gtuClass"));
+        bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, new ContinuousDistDoubleScalar.Rel<>(
+                new DistNormal(streams.get("gtuClass"), lookAhead.si, lookAheadStdev.si), LengthUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         gtuType = new GTUType("truck", TRUCK);
         bcFactory.addParameter(gtuType, ParameterTypes.A, new Acceleration(0.4, AccelerationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev, streams.get("gtuClass"));
+        bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, new ContinuousDistDoubleScalar.Rel<>(
+                new DistNormal(streams.get("gtuClass"), lookAhead.si, lookAheadStdev.si), LengthUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED, 2.0);
         gtuType = new GTUType("truck_equipped", TRUCK);
@@ -171,7 +177,8 @@ public class A58OdUtil
         bcFactory.addParameter(gtuType, ParameterTypes.B, b);
         bcFactory.addParameter(gtuType, ParameterTypes.T, new Duration(0.6, DurationUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.TMAX, new Duration(0.6, DurationUnit.SI));
-        bcFactory.addGaussianParameter(gtuType, ParameterTypes.LOOKAHEAD, lookAhead, lookAheadStdev, streams.get("gtuClass"));
+        bcFactory.addParameter(gtuType, ParameterTypes.LOOKAHEAD, new ContinuousDistDoubleScalar.Rel<>(
+                new DistNormal(streams.get("gtuClass"), lookAhead.si, lookAheadStdev.si), LengthUnit.SI));
         bcFactory.addParameter(gtuType, ParameterTypes.PERCEPTION, perception);
         bcFactory.addParameter(gtuType, ParameterTypes.FSPEED, 2.0);
 

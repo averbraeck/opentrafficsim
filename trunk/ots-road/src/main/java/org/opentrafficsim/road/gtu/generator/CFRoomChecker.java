@@ -38,8 +38,8 @@ public class CFRoomChecker implements RoomChecker
 
     /** {@inheritDoc} */
     @Override
-    public Placement canPlace(SortedSet<HeadwayGTU> leaders, LaneBasedGTUCharacteristics characteristics, final Duration since,
-            Set<DirectedLanePosition> initialPosition) throws NetworkException, GTUException
+    public Placement canPlace(final SortedSet<HeadwayGTU> leaders, final LaneBasedGTUCharacteristics characteristics,
+            final Duration since, final Set<DirectedLanePosition> initialPosition) throws NetworkException, GTUException
     {
         Speed speedLimit = null;
         for (DirectedLanePosition lane : initialPosition)
@@ -96,7 +96,7 @@ public class CFRoomChecker implements RoomChecker
         move = Length.min(move, since.multiplyBy(generationSpeed)); // max distance the GTU would have moved until now
         // move this distance
         Set<DirectedLanePosition> generationPosition;
-        if (move.eq0())
+        if (move.eq0() || initialPosition.size() != 1)
         {
             generationPosition = initialPosition;
         }
@@ -114,8 +114,8 @@ public class CFRoomChecker implements RoomChecker
                     Map<Lane, GTUDirectionality> down = lane.downstreamLanes(dir, characteristics.getGTUType());
                     if (down.size() != 1)
                     {
-                        // split or dead-end, move no further
-                        move = canMove;
+                        // split or dead-end, fall back to original position
+                        return new Placement(generationSpeed, initialPosition);
                     }
                     else
                     {

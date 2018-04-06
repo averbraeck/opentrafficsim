@@ -30,7 +30,7 @@ public class TotalTravelTime extends AbstractIndicator<Duration>
         Duration sum = Duration.ZERO;
         for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
-            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
+            for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {
                 sum = sum.plus(trajectory.getTotalDuration());
             }

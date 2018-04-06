@@ -4,14 +4,12 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.sampling.GtuData;
 
-import nl.tudelft.simulation.language.Throw;
-
 /**
+ * Reference speed for trajectories.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -21,7 +19,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ReferenceSpeed extends ExtendedDataTypeSpeed
+public class ReferenceSpeed extends ExtendedDataTypeSpeed<GtuData>
 {
 
     /**
@@ -34,18 +32,16 @@ public class ReferenceSpeed extends ExtendedDataTypeSpeed
 
     /** {@inheritDoc} */
     @Override
-    public final FloatSpeed getValue(final GtuDataInterface gtu)
+    public final FloatSpeed getValue(final GtuData gtu)
     {
-        Throw.when(!(gtu instanceof GtuData), IllegalArgumentException.class,
-                "Extended data type ReferenceSpeed can only be used with GtuData.");
-        LaneBasedGTU gtuObj = ((GtuData) gtu).getGtu();
+        LaneBasedGTU gtuObj = gtu.getGtu();
         try
         {
             double v1 = gtuObj.getReferencePosition().getLane().getSpeedLimit(gtuObj.getGTUType()).si;
             double v2 = gtuObj.getMaximumSpeed().si;
             return new FloatSpeed(v1 < v2 ? v1 : v2, SpeedUnit.SI);
         }
-        catch (GTUException exception)
+        catch (@SuppressWarnings("unused") GTUException exception)
         {
             // GTU was destroyed and is without a reference location
             return new FloatSpeed(Double.NaN, SpeedUnit.SI);

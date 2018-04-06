@@ -2,7 +2,9 @@ package org.opentrafficsim.road.gtu.lane;
 
 import java.util.Map;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
@@ -32,7 +34,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public interface LaneBasedGTU extends GTU
 {
-    
+
     /** {@inheritDoc} */
     @Override
     LaneBasedStrategicalPlanner getStrategicalPlanner();
@@ -217,6 +219,19 @@ public interface LaneBasedGTU extends GTU
      * @return whether a lane change is allowed
      */
     boolean laneChangeAllowed();
+
+    /**
+     * This method returns the current desired speed of the GTU. This value is required often, so implementations can cache it.
+     * @return Speed; current desired speed
+     */
+    Speed getDesiredSpeed();
+
+    /**
+     * This method returns the current car-following acceleration of the GTU. This value is required often, so implementations
+     * can cache it.
+     * @return Acceleration; current car-following acceleration
+     */
+    Acceleration getCarFollowingAcceleration();
 
     /**
      * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>

@@ -7,7 +7,9 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.AbstractPerception;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
@@ -49,16 +51,29 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
 
     /** Most recent update time of lane structure. */
     private Time updateTime = null;
+    
+    /** Mental module. */
+    private Mental mental;
 
     /**
-     * Create a new LanePerception module. Because the constructor is often called inside the constructor of a GTU, this
-     * constructor does not ask for the pointer to the GTU, as it is often impossible to provide at the time of construction.
-     * Use the setter of the GTU instead.
+     * Create a new LanePerception module without mental module.
      * @param gtu GTU
      */
     public AbstractLanePerception(final LaneBasedGTU gtu)
     {
         super(gtu);
+        this.mental = null;
+    }
+    
+    /**
+     * Create a new LanePerception module with mental module.
+     * @param gtu GTU
+     * @param mental Mental; mental module
+     */
+    public AbstractLanePerception(final LaneBasedGTU gtu, final Mental mental)
+    {
+        super(gtu);
+        this.mental = mental;
     }
 
     /** {@inheritDoc} */
@@ -96,6 +111,17 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
             this.updateTime = getGtu().getSimulator().getSimulatorTime().getTime();
         }
         return this.laneStructure;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void perceive() throws GTUException, NetworkException, ParameterException
+    {
+        if (this.mental != null)
+        {
+            this.mental.apply(this);
+        }
+        super.perceive();
     }
 
 }

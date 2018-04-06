@@ -13,6 +13,7 @@ import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -26,13 +27,24 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.Try;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.perception.HistoryManager;
+import org.opentrafficsim.core.perception.collections.HistoricalLinkedHashMap;
+import org.opentrafficsim.core.perception.collections.HistoricalMap;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
@@ -40,6 +52,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -82,7 +96,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * operational plan. Because the reference point of the GTU might not be on all the links the GTU is registered on, the
      * fractional longitudinal positions can be more than one, or less than zero.
      */
-    private Map<Link, Double> fractionalLinkPositions = new LinkedHashMap<>();
+    private HistoricalMap<Link, Double> fractionalLinkPositions;
 
     /**
      * The lanes the GTU is registered on. Each lane has to have its link registered in the fractionalLinkPositions as well to
@@ -90,10 +104,22 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * registered. This is a list to improve reproducibility: The 'oldest' lanes on which the vehicle is registered are at the
      * front of the list, the later ones more to the back.
      */
-    private final Map<Lane, GTUDirectionality> lanesCurrentOperationalPlan = new LinkedHashMap<>();
+    private final HistoricalMap<Lane, GTUDirectionality> lanesCurrentOperationalPlan;
 
     /** Pending triggers for each lane. */
     private Map<Lane, List<SimEvent<OTSSimTimeDouble>>> pendingTriggers = new HashMap<>();
+
+    /** Cached desired speed. */
+    private Speed cachedDesiredSpeed;
+
+    /** Time desired speed was cached. */
+    private Time desiredSpeedTime;
+
+    /** Cached car-following acceleration. */
+    private Acceleration cachedCarFollowingAcceleration;
+
+    /** Time car-following acceleration was cached. */
+    private Time carFollowingAccelerationTime;
 
     /** The object to lock to make the GTU thread safe. */
     private Object lock = new Object();
@@ -104,7 +130,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** Caching on or off. */
     // TODO: should be indicated with a Parameter
-    public static boolean CACHING = true;
+    public static boolean CACHING = false;
 
     /** cached position count. */
     // TODO: can be removed after testing period
@@ -126,6 +152,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             final OTSNetwork network) throws GTUException
     {
         super(id, gtuType, simulator, network);
+        this.fractionalLinkPositions = new HistoricalLinkedHashMap<>(HistoryManager.get(simulator));
+        this.lanesCurrentOperationalPlan = new HistoricalLinkedHashMap<>(HistoryManager.get(simulator));
     }
 
     /**
@@ -170,10 +198,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         // initiate the actual move
         super.init(strategicalPlanner, initialLocation, initialSpeed);
 
-        Lane referenceLane = getReferencePosition().getLane();
+        this.referencePositionTime = -1; // remove cache, it may be invalid as the above init results in a lane change
+        DirectedLanePosition referencePosition = getReferencePosition();
         fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
-                new Object[] { getId(), initialLocation, getLength(), getWidth(), getBaseColor(), referenceLane,
-                        position(referenceLane, getReference()), this.lanesCurrentOperationalPlan.get(referenceLane),
+                new Object[] { getId(), initialLocation, getLength(), getWidth(), getBaseColor(), referencePosition.getLane(),
+                        position(referencePosition.getLane(), getReference()), referencePosition.getGtuDirection(),
                         getGTUType() },
                 getSimulator().getSimulatorTime());
     }
@@ -319,7 +348,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
 
         // update the positions on the lanes we are registered on
-        this.fractionalLinkPositions = newLinkPositionsLC;
+        this.fractionalLinkPositions.clear();
+        this.fractionalLinkPositions.putAll(newLinkPositionsLC);
 
         for (Lane lane : lanesToBeRemoved)
         {
@@ -445,7 +475,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         super.move(fromLocation);
 
         // update the positions on the lanes we are registered on
-        this.fractionalLinkPositions = newLinkPositions;
+        this.fractionalLinkPositions.clear();
+        this.fractionalLinkPositions.putAll(newLinkPositions);
 
         DirectedLanePosition dlp = getReferencePosition();
         fireTimedEvent(
@@ -591,7 +622,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             // // DO NOT USE toString() here, as it will cause an endless loop...
             // throw new GTUException(this + " does not have a fractional position on " + lane.toString());
             // }
-            double longitudinalPosition = lane.positionSI(this.fractionalLinkPositions.get(lane.getParentLink()));
+            double longitudinalPosition = lane.positionSI(this.fractionalLinkPositions.get(when).get(lane.getParentLink()));
             // if (getOperationalPlan() == null)
             // {
             // // no valid operational plan, e.g. during generation of a new plan
@@ -600,7 +631,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             double loc;
             try
             {
-                if (this.lanesCurrentOperationalPlan.get(lane).isPlus())
+                if (this.lanesCurrentOperationalPlan.get(when).get(lane).isPlus())
                 {
                     loc = longitudinalPosition + getOperationalPlan().getTraveledDistanceSI(when) + relativePosition.getDx().si;
                 }
@@ -616,8 +647,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             catch (Exception e)
             {
                 System.err.println(toString());
-                System.err.println(this.lanesCurrentOperationalPlan);
-                System.err.println(this.fractionalLinkPositions);
+                System.err.println(this.lanesCurrentOperationalPlan.get(when));
+                System.err.println(this.fractionalLinkPositions.get(when));
                 throw new GTUException(e);
             }
             if (Double.isNaN(loc))
@@ -1078,6 +1109,54 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public final LaneBasedTacticalPlanner getTacticalPlanner()
     {
         return (LaneBasedTacticalPlanner) super.getTacticalPlanner();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Speed getDesiredSpeed()
+    {
+        Time simTime = getSimulator().getSimulatorTime().getTime();
+        if (this.desiredSpeedTime == null || this.desiredSpeedTime.si < simTime.si)
+        {
+            InfrastructurePerception infra =
+                    getTacticalPlanner().getPerception().getPerceptionCategoryOrNull(InfrastructurePerception.class);
+            Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
+            SpeedLimitInfo speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+            this.cachedDesiredSpeed =
+                    Try.assign(() -> getTacticalPlanner().getCarFollowingModel().desiredSpeed(getParameters(), speedInfo),
+                            "Parameter exception while obtaining the desired speed.");
+            this.desiredSpeedTime = simTime;
+        }
+        return this.cachedDesiredSpeed;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Acceleration getCarFollowingAcceleration()
+    {
+        Time simTime = getSimulator().getSimulatorTime().getTime();
+        if (this.carFollowingAccelerationTime == null || this.carFollowingAccelerationTime.si < simTime.si)
+        {
+            LanePerception perception = getTacticalPlanner().getPerception();
+            // speed
+            EgoPerception ego = perception.getPerceptionCategoryOrNull(EgoPerception.class); 
+            Throw.whenNull(ego, "EgoPerception is required to determine the speed.");
+            Speed speed = ego.getSpeed();
+            // speed limit info
+            InfrastructurePerception infra = perception.getPerceptionCategoryOrNull(InfrastructurePerception.class);
+            Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
+            SpeedLimitInfo speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+            // leaders
+            NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
+            Throw.whenNull(neighbors, "NeighborsPerception is required to determine the car-following acceleration.");
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+            // obtain
+            this.cachedCarFollowingAcceleration =
+                    Try.assign(() -> getTacticalPlanner().getCarFollowingModel().followingAcceleration(getParameters(), speed,
+                            speedInfo, leaders), "Parameter exception while obtaining the desired speed.");
+            this.carFollowingAccelerationTime = simTime;
+        }
+        return this.cachedCarFollowingAcceleration;
     }
 
     /** {@inheritDoc} */

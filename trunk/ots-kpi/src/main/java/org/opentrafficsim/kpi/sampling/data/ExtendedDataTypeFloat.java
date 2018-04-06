@@ -6,11 +6,13 @@ import org.djunits.unit.Unit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vfloat.scalar.AbstractFloatScalar;
 import org.djunits.value.vfloat.vector.AbstractFloatVector;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 
 import nl.tudelft.simulation.language.Throw;
 
 /**
+ * Class to facilitate JUNITS types in extended data.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -22,9 +24,10 @@ import nl.tudelft.simulation.language.Throw;
  * @param <U> unit
  * @param <T> type in vector
  * @param <O> vector type
+ * @param <G> gtu data type
  */
 public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>,
-        O extends AbstractFloatVector<U, O>> extends ExtendedDataType<T, O, float[]>
+        O extends AbstractFloatVector<U, O>, G extends GtuDataInterface> extends ExtendedDataType<T, O, float[], G>
 {
     /**
      * Constructor setting the id.

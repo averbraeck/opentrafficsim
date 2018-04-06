@@ -13,7 +13,6 @@ import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -21,9 +20,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.GtuData;
 
-import nl.tudelft.simulation.language.Throw;
-
 /**
+ * Time-to-collision for trajectories.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -33,7 +31,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TimeToCollision extends ExtendedDataTypeDuration
+public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
 {
 
     /**
@@ -46,11 +44,9 @@ public class TimeToCollision extends ExtendedDataTypeDuration
 
     /** {@inheritDoc} */
     @Override
-    public final FloatDuration getValue(final GtuDataInterface gtu)
+    public final FloatDuration getValue(final GtuData gtu)
     {
-        Throw.when(!(gtu instanceof GtuData), IllegalArgumentException.class,
-                "Extended data type ReferenceSpeed can only be used with GtuData.");
-        LaneBasedGTU gtuObj = ((GtuData) gtu).getGtu();
+        LaneBasedGTU gtuObj = gtu.getGtu();
         try
         {
             DirectedLanePosition ref = gtuObj.getReferencePosition();
@@ -97,7 +93,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration
             }
             return new FloatDuration(Float.NaN, DurationUnit.SI);
         }
-        catch (GTUException exception)
+        catch (@SuppressWarnings("unused") GTUException exception)
         {
             // GTU was destroyed and is without a reference location
             return new FloatDuration(Float.NaN, DurationUnit.SI);

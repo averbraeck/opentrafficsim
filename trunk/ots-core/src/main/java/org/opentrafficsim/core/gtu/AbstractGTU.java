@@ -1,9 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
@@ -12,7 +9,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -117,9 +113,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /** aligned schedule count. */
     // TODO: can be removed after testing period
     public static int ALIGN_COUNT = 0;
-
-    /** Cache. */
-    private final Map<CacheKey<?>, TimeStampedObject<?>> cache = new HashMap<>();
 
     /** Cached speed time. */
     private double cachedSpeedTime = Double.NaN;
@@ -648,47 +641,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     public final PerceivableContext getPerceivableContext()
     {
         return this.perceivableContext;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("unchecked")
-    public final <K> K getCachedValue(final CacheKey<K> key)
-    {
-        TimeStampedObject<?> tso = this.cache.get(key);
-        if (tso != null)
-        {
-            if (tso.getTimestamp().eq(this.getSimulator().getSimulatorTime().getTime()))
-            {
-                return ((TimeStampedObject<K>) tso).getObject(); // cacheValue() assures type correctness
-            }
-            this.cache.remove(key); // removes old value
-        }
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final <K> void cacheValue(final CacheKey<K> key, final K value)
-    {
-        Throw.whenNull(key, "Caching key may not be null.");
-        Throw.whenNull(value, "Caching value may not be null.");
-        this.cache.put(key, new TimeStampedObject<>(value, this.getSimulator().getSimulatorTime().getTime()));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final <K> K getOrCalculateValue(final CacheKey<K> key, final Supplier<? extends K> calculator)
-    {
-        K value = getCachedValue(key);
-        if (value == null)
-        {
-            // no cache, or old cache
-            value = calculator.get();
-            // cache it
-            cacheValue(key, value);
-        }
-        return value;
     }
 
     /** {@inheritDoc} */

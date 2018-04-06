@@ -1,9 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.animation.DesireBased;
+import org.opentrafficsim.road.gtu.animation.Synchronizable;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 /**
@@ -17,14 +22,20 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public final class LmrsData
+public final class LmrsData implements DesireBased, Synchronizable
 {
 
     /** Form of synchronization. */
     private final Synchronization synchronization;
 
+    /** Form of cooperation. */
+    private final Cooperation cooperation;
+
     /** Form of gap-acceptance. */
     private final GapAcceptance gapAcceptance;
+
+    /** Form of tail gating. */
+    private final Tailgating tailGating;
 
     /** Most recent leaders. */
     private final Set<String> leaders = new HashSet<>();
@@ -32,17 +43,28 @@ public final class LmrsData
     /** Current leaders. */
     private final Set<String> tempLeaders = new HashSet<>();
 
+    /** Latest desire value for visualization. */
+    final Map<Class<? extends Incentive>, Desire> desireMap = new HashMap<>();
+
+    /** Synchronization state. */
+    State synchronizationState;
+
     /** Vehicle that is being synchronized to. */
     private String syncVehicle;
 
     /**
      * @param synchronization synchronization
+     * @param cooperation cooperation
      * @param gapAcceptance gap-acceptance
+     * @param tailGating tail gating
      */
-    public LmrsData(final Synchronization synchronization, final GapAcceptance gapAcceptance)
+    public LmrsData(final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,
+            final Tailgating tailGating)
     {
         this.synchronization = synchronization;
+        this.cooperation = cooperation;
         this.gapAcceptance = gapAcceptance;
+        this.tailGating = tailGating;
     }
 
     /**
@@ -91,7 +113,7 @@ public final class LmrsData
      * @param adjLeaders leaders in adjacent lane
      * @return gtu from the set that is the current sync vehicle
      */
-    HeadwayGTU getSyncVehicle(final PerceptionIterable<HeadwayGTU> adjLeaders)
+    HeadwayGTU getSyncVehicle(final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> adjLeaders)
     {
         if (this.syncVehicle == null)
         {
@@ -117,12 +139,44 @@ public final class LmrsData
     }
 
     /**
+     * Returns the cooperation.
+     * @return cooperation
+     */
+    Cooperation getCooperation()
+    {
+        return this.cooperation;
+    }
+
+    /**
      * Return the gap-acceptance.
      * @return gap-acceptance
      */
     GapAcceptance getGapAcceptance()
     {
         return this.gapAcceptance;
+    }
+    
+    /**
+     * Return the tail gating.
+     * @return gap-acceptance
+     */
+    Tailgating getTailGating()
+    {
+        return this.tailGating;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Desire getLatestDesire(Class<? extends Incentive> incentiveClass)
+    {
+        return this.desireMap.get(incentiveClass);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public State getSynchronizationState()
+    {
+        return this.synchronizationState;
     }
 
     /** {@inheritDoc} */

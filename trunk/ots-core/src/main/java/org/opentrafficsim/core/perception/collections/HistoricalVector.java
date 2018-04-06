@@ -51,13 +51,17 @@ public class HistoricalVector<E> extends AbstractHistoricalList<E, Vector<E>>
     @Override
     public Vector<E> get()
     {
-        return fill(new Vector<>());
+        return getCollection();
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector<E> get(final Time time)
     {
+        if (isLastState(time))
+        {
+            return getCollection();
+        }
         return fill(time, new Vector<>());
     }
     

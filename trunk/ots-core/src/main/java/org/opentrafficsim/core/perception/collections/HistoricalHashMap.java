@@ -48,13 +48,17 @@ public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, HashMap
     @Override
     public HashMap<K, V> get()
     {
-        return fill(new HashMap<>());
+        return getMap();
     }
 
     /** {@inheritDoc} */
     @Override
     public HashMap<K, V> get(final Time time)
     {
+        if (isLastState(time))
+        {
+            return getMap();
+        }
         return fill(time, new HashMap<>());
     }
     

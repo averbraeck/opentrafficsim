@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -20,7 +20,8 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <R> record type
  */
-public class UpstreamNeighborsIterable<R extends LaneRecord<R>> extends AbstractPerceptionIterable<HeadwayGTU, R, Integer>
+public class UpstreamNeighborsIterable<R extends LaneRecord<R>>
+        extends AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, R, Integer>
 {
 
     /** Margin in case of a left lane. */
@@ -32,9 +33,6 @@ public class UpstreamNeighborsIterable<R extends LaneRecord<R>> extends Abstract
     /** Headway GTU type that should be used. */
     private final HeadwayGtuType headwayGtuType;
 
-    /** GTU. */
-    private final GTU gtu;
-
     /**
      * Margin used for neighbor search in some cases to prevent possible deadlock. This does not affect calculated distances to
      * neighbors, but only whether they are considered a leader or follower.
@@ -43,21 +41,20 @@ public class UpstreamNeighborsIterable<R extends LaneRecord<R>> extends Abstract
 
     /**
      * Constructor.
+     * @param perceivingGtu LaneBasedGTU; perceiving GTU
      * @param root R; root record
      * @param initialPosition Length; position on the root record
      * @param maxDistance Length; maximum distance to search
-     * @param relativePosition RelativePosition; position to which distance are calculated by subclasses 
+     * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
      * @param headwayGtuType HeadwayGtuType; type of HeadwayGTU to return
-     * @param gtu GTU; the GTU, may be {@code null}
      * @param lane RelativeLane; relative lane (used for a left/right distinction to prevent dead-locks)
      */
-    public UpstreamNeighborsIterable(final R root, final Length initialPosition, final Length maxDistance,
-            final RelativePosition relativePosition, final HeadwayGtuType headwayGtuType, final GTU gtu,
+    public UpstreamNeighborsIterable(final LaneBasedGTU perceivingGtu, final R root, final Length initialPosition,
+            final Length maxDistance, final RelativePosition relativePosition, final HeadwayGtuType headwayGtuType,
             final RelativeLane lane)
     {
-        super(root, initialPosition, false, maxDistance, relativePosition, null);
+        super(perceivingGtu, root, initialPosition, false, maxDistance, relativePosition, null);
         this.headwayGtuType = headwayGtuType;
-        this.gtu = gtu;
         this.margin = lane.getLateralDirectionality().isLeft() ? LEFT : RIGHT;
     }
 
@@ -105,9 +102,22 @@ public class UpstreamNeighborsIterable<R extends LaneRecord<R>> extends Abstract
             next = record.getLane().getGtu(n);
             pos = next.position(record.getLane(), next.getFront());
         }
-        Length distance = record.getDistanceToPosition(pos).neg().plus(getDx());
-        pos = plus ? pos.minus(next.getLength()) : pos.plus(next.getLength());
-        return new Entry(this.headwayGtuType.createHeadwayGtu(next, distance), n, pos);
+        return new Entry(next, n, pos);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Length getDistance(final LaneBasedGTU object, final R record, final Length position)
+    {
+        return record.getDistanceToPosition(position).neg().plus(getDx());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public HeadwayGTU perceive(final LaneBasedGTU perceivingGtu, final LaneBasedGTU object, final Length distance)
+            throws GTUException, ParameterException
+    {
+        return this.headwayGtuType.createHeadwayGtu(perceivingGtu, object, distance.neg(), false);
     }
 
 }

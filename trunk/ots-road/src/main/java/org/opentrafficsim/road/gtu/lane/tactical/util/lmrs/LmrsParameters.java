@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import nl.tudelft.simulation.language.Throw;
-
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -10,7 +8,10 @@ import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
+ * Interface with LMRS parameters.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -56,11 +57,9 @@ public interface LmrsParameters
         public void check(final Double value, final Parameters params) throws ParameterException
         {
             Double dFree = params.getParameterOrNull(DFREE);
-            Throw.when(dFree != null && value <= dFree, ParameterException.class,
-                    "Value of dSync is below or equal to dFree.");
+            Throw.when(dFree != null && value <= dFree, ParameterException.class, "Value of dSync is below or equal to dFree.");
             Double dCoop = params.getParameterOrNull(DCOOP);
-            Throw.when(dCoop != null && value >= dCoop, ParameterException.class,
-                    "Value of dSync is above or equal to dCoop.");
+            Throw.when(dCoop != null && value >= dCoop, ParameterException.class, "Value of dSync is above or equal to dCoop.");
         }
     };
 
@@ -99,7 +98,8 @@ public interface LmrsParameters
     /** Courtesy parameter. */
     ParameterTypeDouble COURTESY = new ParameterTypeDouble("Courtesy", "Courtesy level for courtesy lane changes.", 1.0);
 
-    /** Socio-courtesy parameter. */
-    ParameterTypeDouble SOCIO = new ParameterTypeDouble("Socio-courtesy", "Courtesy level for social lane changes.", 1.0);
+    /** Socio-speed sensitivity parameter. */
+    ParameterTypeDouble SOCIO = new ParameterTypeDouble("Socio-speed sensitivity", "Sensitivity level for speed of others.",
+            1.0, ConstraintInterface.UNITINTERVAL);
 
 }

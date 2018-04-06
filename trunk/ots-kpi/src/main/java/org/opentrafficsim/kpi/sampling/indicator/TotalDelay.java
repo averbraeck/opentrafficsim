@@ -46,7 +46,7 @@ public class TotalDelay extends AbstractIndicator<Duration>
         for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
             // TODO: use data points and limit speed per interval
-            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
+            for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {
                 sumTime = sumTime.plus(trajectory.getTotalDuration());
                 sumDist = sumDist.plus(trajectory.getTotalLength());

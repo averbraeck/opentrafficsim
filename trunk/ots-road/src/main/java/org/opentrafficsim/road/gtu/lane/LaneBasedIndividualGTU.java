@@ -10,9 +10,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
@@ -110,9 +108,6 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
                         .add(new RelativePosition(dx2.multiplyBy(i), dy2.multiplyBy(j), Length.ZERO, RelativePosition.CONTOUR));
             }
         }
-
-        setMaximumAcceleration(new Acceleration(1.8, AccelerationUnit.METER_PER_SECOND_2));
-        setMaximumDeceleration(new Acceleration(-3.5, AccelerationUnit.METER_PER_SECOND_2));
     }
 
     /**

@@ -22,7 +22,6 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -705,6 +704,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             // TODO this code was made to replace getLanePathInfo(), which is expensive as it concatenates OTSLine3D's
             // this is now only done once at makePath() inside buildAccelerationPlan(). getLanePathInfo() should be removed /
             // remade
+            
             DirectedLanePosition ref = gtu.getReferencePosition();
             Length startPosition = ref.getPosition();
             lanes = new ArrayList<>();
@@ -729,7 +729,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             {
                 length += (ref.getLane().getLength().si - startPosition.si);
             }
-            while (laneDir != null && length > 0)
+            while (laneDir != null && length >= 0)
             {
                 lanes.add(laneDir.getLane());
                 length -= laneDir.getLane().getLength().si;

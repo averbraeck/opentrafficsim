@@ -36,8 +36,9 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <G> gtu data type
  */
-public abstract class Sampler
+public abstract class Sampler<G extends GtuDataInterface>
 {
 
     /** Map with all sampling data. */
@@ -47,10 +48,10 @@ public abstract class Sampler
     private final Map<KpiLaneDirection, Time> endTimes = new LinkedHashMap<>();
 
     /** Registration of current trajectories of each GTU per lane. */
-    private final Map<String, Map<KpiLaneDirection, Trajectory>> trajectoryPerGtu = new LinkedHashMap<>();
+    private final Map<String, Map<KpiLaneDirection, Trajectory<G>>> trajectoryPerGtu = new LinkedHashMap<>();
 
     /** Registration of included extended data types. */
-    private final Set<ExtendedDataType<?, ?, ?>> extendedDataTypes = new LinkedHashSet<>();
+    private final Set<ExtendedDataType<?, ?, ?, G>> extendedDataTypes = new LinkedHashSet<>();
 
     /** Set of registered meta data types. */
     private Set<MetaDataType<?>> registeredMetaDataTypes = new LinkedHashSet<>();
@@ -121,7 +122,7 @@ public abstract class Sampler
      * Registers extended data type that will be stored with the trajectories.
      * @param extendedDataType extended data type to register
      */
-    public final void registerExtendedDataType(final ExtendedDataType<?, ?, ?> extendedDataType)
+    public final void registerExtendedDataType(final ExtendedDataType<?, ?, ?, G> extendedDataType)
     {
         Throw.whenNull(extendedDataType, "ExtendedDataType may not be null.");
         this.extendedDataTypes.add(extendedDataType);
@@ -132,7 +133,7 @@ public abstract class Sampler
      * @param extendedDataType extended data type
      * @return whether this sampler has the given extended data type registered to it
      */
-    public boolean contains(final ExtendedDataType<?, ?, ?> extendedDataType)
+    public boolean contains(final ExtendedDataType<?, ?, ?, ?> extendedDataType)
     {
         return this.extendedDataTypes.contains(extendedDataType);
     }
@@ -188,7 +189,7 @@ public abstract class Sampler
      * @param gtu gtu
      */
     public final void processGtuAddEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
-            final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
+            final Acceleration acceleration, final Time time, final G gtu)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         Throw.whenNull(position, "Position may not be null.");
@@ -202,10 +203,10 @@ public abstract class Sampler
             return;
         }
         String gtuId = gtu.getId();
-        Trajectory trajectory = new Trajectory(gtu, makeMetaData(gtu), this.extendedDataTypes, kpiLaneDirection);
+        Trajectory<G> trajectory = new Trajectory<>(gtu, makeMetaData(gtu), this.extendedDataTypes, kpiLaneDirection);
         if (!this.trajectoryPerGtu.containsKey(gtuId))
         {
-            Map<KpiLaneDirection, Trajectory> map = new LinkedHashMap<>();
+            Map<KpiLaneDirection, Trajectory<G>> map = new LinkedHashMap<>();
             this.trajectoryPerGtu.put(gtuId, map);
         }
         this.trajectoryPerGtu.get(gtuId).put(kpiLaneDirection, trajectory);
@@ -224,7 +225,7 @@ public abstract class Sampler
      * @param gtu gtu
      */
     public final void processGtuMoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
-            final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
+            final Acceleration acceleration, final Time time, final G gtu)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         Throw.whenNull(position, "Position may not be null.");
@@ -249,7 +250,7 @@ public abstract class Sampler
      * @param gtu gtu
      */
     public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
-            final Acceleration acceleration, final Time time, final GtuDataInterface gtu)
+            final Acceleration acceleration, final Time time, final G gtu)
     {
         processGtuMoveEvent(kpiLaneDirection, position, speed, acceleration, time, gtu);
         processGtuRemoveEvent(kpiLaneDirection, gtu);
@@ -260,7 +261,7 @@ public abstract class Sampler
      * @param kpiLaneDirection lane direction the gtu is at
      * @param gtu gtu
      */
-    public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final GtuDataInterface gtu)
+    public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final G gtu)
     {
         Throw.whenNull(kpiLaneDirection, "KpiLaneDirection may not be null.");
         Throw.whenNull(gtu, "GtuDataInterface may not be null.");
@@ -281,7 +282,7 @@ public abstract class Sampler
      * @return meta data for the given gtu
      */
     @SuppressWarnings("unchecked")
-    private <T> MetaData makeMetaData(final GtuDataInterface gtu)
+    private <T> MetaData makeMetaData(final G gtu)
     {
         MetaData metaData = new MetaData();
         for (MetaDataType<?> metaDataType : this.registeredMetaDataTypes)
@@ -367,7 +368,7 @@ public abstract class Sampler
             List<MetaDataType<?>> allMetaDataTypes = new ArrayList<>();
             for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
             {
-                for (Trajectory trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
+                for (Trajectory<?> trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
                 {
                     for (MetaDataType<?> metaDataType : trajectory.getMetaDataTypes())
                     {
@@ -379,12 +380,12 @@ public abstract class Sampler
                 }
             }
             // gather all extended data types for the header line
-            List<ExtendedDataType<?, ?, ?>> allExtendedDataTypes = new ArrayList<>();
+            List<ExtendedDataType<?, ?, ?, ?>> allExtendedDataTypes = new ArrayList<>();
             for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
             {
-                for (Trajectory trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
+                for (Trajectory<?> trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
                 {
-                    for (ExtendedDataType<?, ?, ?> extendedDataType : trajectory.getExtendedDataTypes())
+                    for (ExtendedDataType<?, ?, ?, ?> extendedDataType : trajectory.getExtendedDataTypes())
                     {
                         if (!allExtendedDataTypes.contains(extendedDataType))
                         {
@@ -401,7 +402,7 @@ public abstract class Sampler
                 str.append(",");
                 str.append(metaDataType.getId());
             }
-            for (ExtendedDataType<?, ?, ?> extendedDataType : allExtendedDataTypes)
+            for (ExtendedDataType<?, ?, ?, ?> extendedDataType : allExtendedDataTypes)
             {
                 str.append(",");
                 str.append(extendedDataType.getId());
@@ -410,15 +411,15 @@ public abstract class Sampler
             bw.newLine();
             for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
             {
-                for (Trajectory trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
+                for (Trajectory<?> trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
                 {
                     counter++;
                     float[] t = trajectory.getT();
                     float[] x = trajectory.getX();
                     float[] v = trajectory.getV();
                     float[] a = trajectory.getA();
-                    Map<ExtendedDataType<?, ?, ?>, Object> extendedData = new HashMap<>();
-                    for (ExtendedDataType<?, ?, ?> extendedDataType : allExtendedDataTypes)
+                    Map<ExtendedDataType<?, ?, ?, ?>, Object> extendedData = new HashMap<>();
+                    for (ExtendedDataType<?, ?, ?, ?> extendedDataType : allExtendedDataTypes)
                     {
                         if (trajectory.contains(extendedDataType))
                         {
@@ -469,7 +470,7 @@ public abstract class Sampler
                                 str.append(metaDataType.formatValue(format, castValue(trajectory.getMetaData(metaDataType))));
                             }
                         }
-                        for (ExtendedDataType<?, ?, ?> extendedDataType : allExtendedDataTypes)
+                        for (ExtendedDataType<?, ?, ?, ?> extendedDataType : allExtendedDataTypes)
                         {
                             str.append(",");
                             if (trajectory.contains(extendedDataType))
@@ -545,11 +546,11 @@ public abstract class Sampler
      * @throws SamplingException when the found index is out of bounds
      */
     @SuppressWarnings("unchecked")
-    private <T, O, S> T castValue(final Map<ExtendedDataType<?, ?, ?>, Object> extendedData,
-            final ExtendedDataType<?, ?, ?> extendedDataType, final int i) throws SamplingException
+    private <T, O, S> T castValue(final Map<ExtendedDataType<?, ?, ?, ?>, Object> extendedData,
+            final ExtendedDataType<?, ?, ?, ?> extendedDataType, final int i) throws SamplingException
     {
         // is only called on value directly taken from an ExtendedDataType within range of trajectory
-        ExtendedDataType<T, O, S> edt = (ExtendedDataType<T, O, S>) extendedDataType;
+        ExtendedDataType<T, O, S, ?> edt = (ExtendedDataType<T, O, S, ?>) extendedDataType;
         return edt.getOutputValue((O) extendedData.get(edt), i);
     }
 
@@ -583,7 +584,7 @@ public abstract class Sampler
         {
             return false;
         }
-        Sampler other = (Sampler) obj;
+        Sampler<?> other = (Sampler<?>) obj;
         if (this.endTimes == null)
         {
             if (other.endTimes != null)
@@ -641,11 +642,12 @@ public abstract class Sampler
         }
         return true;
     }
-    
+
     /**
      * Defines the compression method for stored data.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 mei 2017 <br>
@@ -657,13 +659,13 @@ public abstract class Sampler
     {
         /** No compression. */
         NONE,
-        
+
         /** Duplicate info per trajectory is only stored at the first sample, and empty for other samples. */
         OMIT_DUMPLICATE_INFO,
-        
+
         /** Zip compression. */
         ZIP,
-        
+
     }
 
 }

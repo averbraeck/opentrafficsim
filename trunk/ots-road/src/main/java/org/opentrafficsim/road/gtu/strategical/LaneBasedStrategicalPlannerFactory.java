@@ -44,7 +44,7 @@ public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategic
      *         generator will use some other speed
      * @throws GTUException on parameter exception or network exception
      */
-    default Speed peekDesiredSpeed(GTUType gtuType, Speed speedLimit, Speed maxGtuSpeed) throws GTUException
+    default Speed peekDesiredSpeed(final GTUType gtuType, final Speed speedLimit, final Speed maxGtuSpeed) throws GTUException
     {
         return null;
     }
@@ -58,7 +58,7 @@ public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategic
      *         the GTU generator only generate GTU's at fixed locations
      * @throws GTUException on parameter exception or network exception
      */
-    default Length peekDesiredHeadway(GTUType gtuType, Speed speed) throws GTUException
+    default Length peekDesiredHeadway(final GTUType gtuType, final Speed speed) throws GTUException
     {
         return null;
     }

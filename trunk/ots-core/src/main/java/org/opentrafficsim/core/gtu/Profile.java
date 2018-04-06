@@ -27,6 +27,12 @@ public class Profile
 
     /** Map containing most recent part id's as line numbers. */
     private static final Map<String, String> lines = new HashMap<>();
+    
+    /** Minimum print interval [ms]; during this time after a print, prints are suppressed. */
+    public static long printInterval = 1000;
+    
+    /** Time of last print. */
+    private static long lastPrint = 0;
 
     /** Private constructor. */
     private Profile()
@@ -199,7 +205,12 @@ public class Profile
      */
     public static void print()
     {
-        System.out.print(statistics());
+        long t = System.currentTimeMillis();
+        if (t - lastPrint > printInterval)
+        {
+            lastPrint = t;
+            System.out.print(statistics());
+        }
     }
 
     /**

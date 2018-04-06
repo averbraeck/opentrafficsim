@@ -30,7 +30,7 @@ import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -40,6 +40,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -125,10 +126,10 @@ public final class ConflictUtil
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Acceleration approachConflicts(final Parameters parameters,
-            final PerceptionIterable<HeadwayConflict> conflicts, final PerceptionIterable<HeadwayGTU> leaders,
-            final CarFollowingModel carFollowingModel, final Length vehicleLength, final Speed speed,
-            final Acceleration acceleration, final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans,
-            final LaneBasedGTU gtu) throws GTUException, ParameterException
+            final PerceptionCollectable<HeadwayConflict, Conflict> conflicts,
+            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final CarFollowingModel carFollowingModel,
+            final Length vehicleLength, final Speed speed, final Acceleration acceleration, final SpeedLimitInfo speedLimitInfo,
+            final ConflictPlans conflictPlans, final LaneBasedGTU gtu) throws GTUException, ParameterException
     {
 
         conflictPlans.cleanPlans();
@@ -334,7 +335,8 @@ public final class ConflictUtil
         // follow leader
         SortedMap<Length, Speed> leaders = new TreeMap<>();
         leaders.put(virtualHeadway, c.getSpeed());
-        Acceleration a = carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
+        Acceleration a = CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, speed, speedLimitInfo,
+                virtualHeadway, c.getSpeed());
         // if conflicting GTU is partially upstream of the conflict and at (near) stand-still, stop for the conflict rather than
         // following the tail of the conflicting GTU
         if (conflict.isMerge() && virtualHeadway.lt(conflict.getDistance()))
@@ -461,9 +463,9 @@ public final class ConflictUtil
      * @return whether to stop for this conflict
      * @throws ParameterException if parameter B is not defined
      */
-    public static boolean stopForPriorityConflict(final HeadwayConflict conflict, final PerceptionIterable<HeadwayGTU> leaders,
-            final Speed speed, final Length vehicleLength, final Parameters parameters, final ConflictPlans yieldPlans)
-            throws ParameterException
+    public static boolean stopForPriorityConflict(final HeadwayConflict conflict,
+            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Speed speed, final Length vehicleLength,
+            final Parameters parameters, final ConflictPlans yieldPlans) throws ParameterException
     {
 
         if (leaders.isEmpty() || conflict.getUpstreamConflictingGTUs().isEmpty())
@@ -512,9 +514,10 @@ public final class ConflictUtil
      * @throws ParameterException if a parameter is not defined
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static boolean stopForGiveWayConflict(final HeadwayConflict conflict, final PerceptionIterable<HeadwayGTU> leaders,
-            final Speed speed, final Acceleration acceleration, final Length vehicleLength, final Parameters parameters,
-            final SpeedLimitInfo speedLimitInfo, final CarFollowingModel carFollowingModel) throws ParameterException
+    public static boolean stopForGiveWayConflict(final HeadwayConflict conflict,
+            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Speed speed, final Acceleration acceleration,
+            final Length vehicleLength, final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
+            final CarFollowingModel carFollowingModel) throws ParameterException
     {
 
         // TODO conflicting vehicle on crossing conflict, but will leave sooner then we enter, so no problem?
@@ -584,7 +587,7 @@ public final class ConflictUtil
             {
                 HeadwayGTUSimple conflictGtu = new HeadwayGTUSimple("virtual " + UUID.randomUUID().toString(), GTUType.CAR,
                         conflict.getConflictingVisibility(), new Length(4.0, LengthUnit.SI),
-                        conflict.getConflictingSpeedLimit(), Acceleration.ZERO);
+                        conflict.getConflictingSpeedLimit(), Acceleration.ZERO, Speed.ZERO);
                 conflictingVehicles.add(conflictGtu);
             }
             catch (GTUException exception)
@@ -691,9 +694,10 @@ public final class ConflictUtil
      * @throws ParameterException if a parameter is not defined
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static boolean stopForStopConflict(final HeadwayConflict conflict, final PerceptionIterable<HeadwayGTU> leaders,
-            final Speed speed, final Acceleration acceleration, final Length vehicleLength, final Parameters parameters,
-            final SpeedLimitInfo speedLimitInfo, final CarFollowingModel carFollowingModel) throws ParameterException
+    public static boolean stopForStopConflict(final HeadwayConflict conflict,
+            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Speed speed, final Acceleration acceleration,
+            final Length vehicleLength, final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
+            final CarFollowingModel carFollowingModel) throws ParameterException
     {
         return stopForGiveWayConflict(conflict, leaders, speed, acceleration, vehicleLength, parameters, speedLimitInfo,
                 carFollowingModel);

@@ -31,7 +31,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
@@ -122,7 +122,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     public LaneBasedGTUFollowingDirectedChangeTacticalPlanner(final GTUFollowingModelOld carFollowingModel,
             final LaneBasedGTU gtu)
     {
-        super(carFollowingModel, gtu, new CategorialLanePerception(gtu));
+        super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
         getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
         setNoLaneChange(new Duration(0.25, DurationUnit.SECOND));
     }

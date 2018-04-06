@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -52,10 +52,12 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     protected static final ParameterTypeLength LOOKBACK = ParameterTypes.LOOKBACK;
 
     /** Set of followers per relative lane. */
-    private final Map<RelativeLane, TimeStampedObject<PerceptionIterable<HeadwayGTU>>> followers = new HashMap<>();
+    private final Map<RelativeLane, TimeStampedObject<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>>> followers =
+            new HashMap<>();
 
     /** Set of leaders per relative lane. */
-    private final Map<RelativeLane, TimeStampedObject<PerceptionIterable<HeadwayGTU>>> leaders = new HashMap<>();
+    private final Map<RelativeLane, TimeStampedObject<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>>> leaders =
+            new HashMap<>();
 
     /** Set of first followers per lane upstream of merge per lateral direction, i.e. in the left or right lane. */
     private final Map<LateralDirectionality, TimeStampedObject<SortedSet<HeadwayGTU>>> firstFollowers = new HashMap<>();
@@ -192,8 +194,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                 if (down != null)
                 {
                     // GTU found, add to set
-                    headwaySet.add(this.headwayGtuType.createHeadwayGtu(down,
-                            record.getStartDistance().plus(down.position(record.getLane(), down.getRear())).minus(dxHeadway)));
+                    headwaySet.add(this.headwayGtuType.createHeadwayGtu(getGtu(), down,
+                            record.getStartDistance().plus(down.position(record.getLane(), down.getRear())).minus(dxHeadway),
+                            true));
                 }
                 else
                 {
@@ -273,8 +276,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                 if (up != null)
                 {
                     // GTU found, add to set
-                    headwaySet.add(this.headwayGtuType.createHeadwayGtu(up, record.getStartDistance().neg()
-                            .minus(up.position(record.getLane(), up.getFront())).plus(dxHeadway)));
+                    headwaySet.add(this.headwayGtuType.createHeadwayGtu(getGtu(), up,
+                            record.getStartDistance().neg().minus(up.position(record.getLane(), up.getFront())).plus(dxHeadway),
+                            false));
                 }
                 else
                 {
@@ -323,9 +327,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         Length pos = record.getStartDistance().neg();
         pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx()) : pos.minus(getGtu().getFront().getDx());
         boolean ignoreIfUpstream = true;
-        PerceptionIterable<HeadwayGTU> it = new DownstreamNeighborsIterable<>(record, Length.max(Length.ZERO, pos),
-                getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), this.headwayGtuType, getGtu(), lane,
-                ignoreIfUpstream);
+        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> it = new DownstreamNeighborsIterable<>(getGtu(), record,
+                Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
+                this.headwayGtuType, getGtu(), lane, ignoreIfUpstream);
         this.leaders.put(lane, new TimeStampedObject<>(it, getTimestamp()));
     }
 
@@ -337,8 +341,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
         Length pos = record.getStartDistance().neg();
         pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx()) : pos.minus(getGtu().getFront().getDx());
-        PerceptionIterable<HeadwayGTU> it = new UpstreamNeighborsIterable<>(record, Length.max(Length.ZERO, pos),
-                getGtu().getParameters().getParameter(LOOKBACK), getGtu().getRear(), this.headwayGtuType, getGtu(), lane);
+        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> it =
+                new UpstreamNeighborsIterable<>(getGtu(), record, Length.max(Length.ZERO, pos),
+                        getGtu().getParameters().getParameter(LOOKBACK), getGtu().getRear(), this.headwayGtuType, lane);
         this.followers.put(lane, new TimeStampedObject<>(it, getTimestamp()));
     }
 
@@ -371,14 +376,14 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /** {@inheritDoc} */
     @Override
-    public final PerceptionIterable<HeadwayGTU> getLeaders(final RelativeLane lane)
+    public final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getLeaders(final RelativeLane lane)
     {
         return getObjectOrNull(this.leaders.get(lane));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final PerceptionIterable<HeadwayGTU> getFollowers(final RelativeLane lane)
+    public final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getFollowers(final RelativeLane lane)
     {
         return getObjectOrNull(this.followers.get(lane));
     }
@@ -459,7 +464,8 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * @param lane relative lateral lane
      * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
-    public final TimeStampedObject<PerceptionIterable<HeadwayGTU>> getTimeStampedLeaders(final RelativeLane lane)
+    public final TimeStampedObject<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> getTimeStampedLeaders(
+            final RelativeLane lane)
     {
         return this.leaders.get(lane);
     }
@@ -470,7 +476,8 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * @param lane relative lateral lane
      * @return set of followers on a lane, including adjacent GTU's who's REAR is back of the own vehicle REAR
      */
-    public final TimeStampedObject<PerceptionIterable<HeadwayGTU>> getTimeStampedFollowers(final RelativeLane lane)
+    public final TimeStampedObject<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> getTimeStampedFollowers(
+            final RelativeLane lane)
     {
         return this.followers.get(lane);
     }

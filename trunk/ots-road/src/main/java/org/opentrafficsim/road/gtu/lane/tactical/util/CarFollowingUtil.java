@@ -1,8 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -10,7 +7,12 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
+import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadway;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -44,28 +46,6 @@ public final class CarFollowingUtil
      * @param parameters parameters
      * @param speed current speed
      * @param speedLimitInfo speed limit info
-     * @param leaders leaders
-     * @return acceleration for following the leader
-     * @throws ParameterException if a parameter is not given or out of bounds
-     */
-    public static Acceleration followLeaders(final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo, final PerceptionIterable<HeadwayGTU> leaders)
-            throws ParameterException
-    {
-        SortedMap<Length, Speed> leaderMap = new TreeMap<>();
-        for (HeadwayGTU headwayGTU : leaders)
-        {
-            leaderMap.put(headwayGTU.getDistance(), headwayGTU.getSpeed());
-        }
-        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaderMap);
-    }
-
-    /**
-     * Follow a set of headway GTUs.
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitInfo speed limit info
      * @param distance distance
      * @param leaderSpeed speed of the leader
      * @return acceleration for following the leader
@@ -75,9 +55,23 @@ public final class CarFollowingUtil
             final Speed speed, final SpeedLimitInfo speedLimitInfo, final Length distance, final Speed leaderSpeed)
             throws ParameterException
     {
-        SortedMap<Length, Speed> leaders = new TreeMap<>();
-        leaders.put(distance, leaderSpeed);
-        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, createLeader(distance, leaderSpeed));
+    }
+
+    /**
+     * Follow a set of headway GTUs.
+     * @param carFollowingModel car-following model
+     * @param parameters parameters
+     * @param speed current speed
+     * @param speedLimitInfo speed limit info
+     * @param leader leader
+     * @return acceleration for following the leader
+     * @throws ParameterException if a parameter is not given or out of bounds
+     */
+    public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel, final Parameters parameters,
+            final Speed speed, final SpeedLimitInfo speedLimitInfo, final HeadwayGTU leader) throws ParameterException
+    {
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, new PerceptionIterableSet<>(leader));
     }
 
     /**
@@ -93,9 +87,7 @@ public final class CarFollowingUtil
     public static Acceleration stop(final CarFollowingModel carFollowingModel, final Parameters parameters, final Speed speed,
             final SpeedLimitInfo speedLimitInfo, final Length distance) throws ParameterException
     {
-        SortedMap<Length, Speed> leaderMap = new TreeMap<>();
-        leaderMap.put(distance, Speed.ZERO);
-        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaderMap);
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, createLeader(distance, Speed.ZERO));
     }
 
     /**
@@ -127,8 +119,8 @@ public final class CarFollowingUtil
     public static Acceleration freeAcceleration(final CarFollowingModel carFollowingModel, final Parameters parameters,
             final Speed speed, final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
-        SortedMap<Length, Speed> leaderMap = new TreeMap<>();
-        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaderMap);
+        PerceptionIterableSet<Headway> leaders = new PerceptionIterableSet<>();
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
     }
 
     /**
@@ -210,9 +202,90 @@ public final class CarFollowingUtil
         // set distance in line with equilibrium headway at virtual speed
         Length virtualDistance = distance.plus(carFollowingModel.desiredHeadway(parameters, virtualSpeed));
         // calculate acceleration towards virtual vehicle with car-following model
-        SortedMap<Length, Speed> leaders = new TreeMap<>();
-        leaders.put(virtualDistance, virtualSpeed);
-        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo,
+                createLeader(virtualDistance, virtualSpeed));
+    }
+
+    /**
+     * Create a single leader set.
+     * @param headway Length; distance to the leader
+     * @param speed Speed; leader speed
+     * @return Set; set with a single leader
+     */
+    private final static PerceptionIterable<Headway> createLeader(final Length headway, final Speed speed)
+    {
+        PerceptionIterable<Headway> leaders =
+                Try.assign(() -> new PerceptionIterableSet<>(new CarFollowingHeadway(headway, speed)),
+                        "Exception during headway creation.");
+        return leaders;
+    }
+
+    /**
+     * Simple headway implementation for minimum car-following information.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 26 feb. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static class CarFollowingHeadway extends AbstractHeadway
+    {
+        /** */
+        private static final long serialVersionUID = 20180226L;
+
+        /** Speed of the leader. */
+        private final Speed speed;
+
+        /**
+         * Constructor.
+         * @param headway Length; distance to the leader
+         * @param speed Speed; leader speed
+         * @throws GTUException on exception
+         */
+        public CarFollowingHeadway(final Length headway, final Speed speed) throws GTUException
+        {
+            super(headway);
+            this.speed = speed;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getId()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Length getLength()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Speed getSpeed()
+        {
+            return this.speed;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public ObjectType getObjectType()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Acceleration getAcceleration()
+        {
+            return null;
+        }
     }
 
 }

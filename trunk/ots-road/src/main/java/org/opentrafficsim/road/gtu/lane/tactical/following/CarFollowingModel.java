@@ -1,13 +1,13 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import java.util.SortedMap;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -28,7 +28,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedModel
+public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedModel, Initialisable
 {
 
     /** Parameter type for car-following model. */
@@ -50,7 +50,7 @@ public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedMode
      * @return car-following acceleration
      */
     Acceleration followingAcceleration(Parameters parameters, Speed speed, SpeedLimitInfo speedLimitInfo,
-            SortedMap<Length, Speed> leaders) throws ParameterException;
+            PerceptionIterable<? extends Headway> leaders) throws ParameterException;
 
     /**
      * Return the name of the car-following model.
@@ -63,5 +63,12 @@ public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedMode
      * @return complete name of the car-following model
      */
     String getLongName();
-
+    
+    /** {@inheritDoc} */
+    @Override
+    default void init(LaneBasedGTU gtu)
+    {
+        //
+    }
+    
 }

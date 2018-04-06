@@ -24,7 +24,7 @@ public interface HistoricalCollection<E> extends Collection<E>
 {
 
     /**
-     * Returns the current collection.
+     * Returns the current collection. This is not intended to be modified, and may be an unmodifiable.
      * @return Collection; current collection
      */
     Collection<E> get();

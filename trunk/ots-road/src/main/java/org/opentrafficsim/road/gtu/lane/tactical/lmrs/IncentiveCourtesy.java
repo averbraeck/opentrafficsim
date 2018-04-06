@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.Set;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -19,6 +17,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerc
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
@@ -44,21 +43,21 @@ public class IncentiveCourtesy implements VoluntaryIncentive
 
     /** Comfortable deceleration parameter type. */
     protected static final ParameterTypeAcceleration B = ParameterTypes.B;
-    
-    /** Socio-courtesy parameter. */
+
+    /** Socio-speed sensitivity parameter. */
     protected static final ParameterTypeDouble SOCIO = LmrsParameters.SOCIO;
-    
+
     /** Current left lane change desire. */
     protected static final ParameterTypeDouble DLEFT = LmrsParameters.DLEFT;
 
     /** Current right lane change desire. */
     protected static final ParameterTypeDouble DRIGHT = LmrsParameters.DRIGHT;
-    
+
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final Parameters parameters,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
-            final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
+    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
+            throws ParameterException, OperationalPlanException
     {
 
         double dLeftYes = 0;
@@ -85,8 +84,9 @@ public class IncentiveCourtesy implements VoluntaryIncentive
                     double desire = dir.isLeft() ? params.getParameter(DRIGHT) : params.getParameter(DLEFT);
                     if (desire > 0)
                     {
-                        Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,
-                                params, sli, carFollowingModel);
+                        // TODO factor -a/b as influence factor is heavy in calculation, consider v<vEgo & 1-s/x0
+                        Acceleration a =
+                                CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, ownSpeed, sli, leader);
                         if (a.lt0())
                         {
                             double d = desire * Math.min(-a.si / b.si, 1.0);

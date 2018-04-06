@@ -5,6 +5,7 @@ import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vfloat.scalar.FloatLength;
 import org.djunits.value.vfloat.vector.FloatLengthVector;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 
 /**
  * Extended data type for length values.
@@ -16,8 +17,10 @@ import org.djunits.value.vfloat.vector.FloatLengthVector;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeLength extends ExtendedDataTypeFloat<LengthUnit, FloatLength, FloatLengthVector>
+public abstract class ExtendedDataTypeLength<G extends GtuDataInterface>
+        extends ExtendedDataTypeFloat<LengthUnit, FloatLength, FloatLengthVector, G>
 {
 
     /**

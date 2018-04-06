@@ -48,13 +48,17 @@ public class HistoricalArrayList<E> extends AbstractHistoricalList<E, ArrayList<
     @Override
     public ArrayList<E> get()
     {
-        return fill(new ArrayList<>());
+        return getCollection();
     }
 
     /** {@inheritDoc} */
     @Override
     public ArrayList<E> get(final Time time)
     {
+        if (isLastState(time))
+        {
+            return getCollection();
+        }
         return fill(time, new ArrayList<>());
     }
 

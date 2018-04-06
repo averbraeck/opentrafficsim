@@ -3,6 +3,7 @@ package org.opentrafficsim.kpi.sampling.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 
 import nl.tudelft.simulation.language.Throw;
@@ -18,8 +19,9 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> type of value
+ * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeList<T> extends ExtendedDataType<T, List<T>, List<T>>
+public abstract class ExtendedDataTypeList<T, G extends GtuDataInterface> extends ExtendedDataType<T, List<T>, List<T>, G>
 {
 
     /**

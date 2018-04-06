@@ -13,14 +13,16 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructure.Entry;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -61,10 +63,11 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
     private static final Length MARGIN = Length.createSI(0.001);
 
     /** Set of traffic lights. */
-    private Map<RelativeLane, TimeStampedObject<PerceptionIterable<HeadwayTrafficLight>>> trafficLights = new HashMap<>();
+    private Map<RelativeLane, TimeStampedObject<PerceptionCollectable<HeadwayTrafficLight, TrafficLight>>> trafficLights =
+            new HashMap<>();
 
     /** Set of conflicts. */
-    private Map<RelativeLane, TimeStampedObject<PerceptionIterable<HeadwayConflict>>> conflicts = new HashMap<>();
+    private Map<RelativeLane, TimeStampedObject<PerceptionCollectable<HeadwayConflict, Conflict>>> conflicts = new HashMap<>();
 
     /** Conflicts alongside left. */
     private TimeStampedObject<Boolean> alongsideConflictLeft;
@@ -97,17 +100,24 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
             Length pos = record.getStartDistance().neg();
             pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
                     : pos.minus(getGtu().getFront().getDx());
-            PerceptionIterable<HeadwayTrafficLight> it =
-                    new LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight, LaneStructureRecord>(TrafficLight.class,
-                            record, Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD),
-                            getGtu().getFront(), route)
+            PerceptionCollectable<HeadwayTrafficLight, TrafficLight> it =
+                    new LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight, LaneStructureRecord>(getGtu(),
+                            TrafficLight.class, record, Length.max(Length.ZERO, pos),
+                            getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), route)
                     {
                         /** {@inheritDoc} */
                         @Override
-                        protected HeadwayTrafficLight createHeadway(final TrafficLight trafficLight, final Length distance)
-                                throws ParameterException, GTUException
+                        public HeadwayTrafficLight perceive(final LaneBasedGTU perceivingGtu, final TrafficLight trafficLight,
+                                final Length distance)
                         {
-                            return new HeadwayTrafficLight(trafficLight, distance);
+                            try
+                            {
+                                return new HeadwayTrafficLight(trafficLight, distance);
+                            }
+                            catch (GTUException exception)
+                            {
+                                throw new RuntimeException(exception);
+                            }
                         }
                     };
             this.trafficLights.put(lane, new TimeStampedObject<>(it, getTimestamp()));
@@ -144,15 +154,15 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                     pos = record.getDirection().isPlus() ? Length.min(pos, cPos) : Length.max(pos, cPos);
                 }
             }
-            PerceptionIterable<HeadwayConflict> it =
-                    new LaneBasedObjectIterable<HeadwayConflict, Conflict, LaneStructureRecord>(Conflict.class, record,
-                            Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
-                            route)
+            PerceptionCollectable<HeadwayConflict, Conflict> it =
+                    new LaneBasedObjectIterable<HeadwayConflict, Conflict, LaneStructureRecord>(getGtu(), Conflict.class,
+                            record, Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD),
+                            getGtu().getFront(), route)
                     {
                         /** {@inheritDoc} */
                         @Override
-                        protected HeadwayConflict createHeadway(final Conflict conflict, final Length distance)
-                                throws ParameterException, GTUException
+                        public HeadwayConflict perceive(final LaneBasedGTU perceivingGtu, final Conflict conflict,
+                                final Length distance)
                         {
                             Conflict otherConflict = conflict.getOtherConflict();
                             ConflictType conflictType = conflict.getConflictType();
@@ -164,7 +174,8 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                             CrossSectionLink conflictingLink = otherConflict.getLane().getParentLink();
 
                             // TODO get from link combination (needs to be a map property on the links)
-                            Length lookAhead = getGtu().getParameters().getParameter(LOOKAHEAD);
+                            Length lookAhead = Try.assign(() -> getGtu().getParameters().getParameter(LOOKAHEAD),
+                                    "Parameter not present.");
                             Length conflictingVisibility = lookAhead;
                             Speed conflictingSpeedLimit;
                             try
@@ -175,23 +186,34 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                             {
                                 throw new RuntimeException("GTU type not available on conflicting lane.", exception);
                             }
-                            // TODO stop lines (current models happen not to use this, but should be possible)
-                            HeadwayStopLine stopLine = new HeadwayStopLine("stopLineId", Length.ZERO);
-                            HeadwayStopLine conflictingStopLine = new HeadwayStopLine("conflictingStopLineId", Length.ZERO);
 
                             LongitudinalDirectionality otherDir = otherConflict.getDirection();
                             Throw.when(otherDir.isBoth(), UnsupportedOperationException.class,
                                     "Conflicts on lanes with direction BOTH are not supported.");
                             // TODO limit 'conflictingVisibility' to first upstream traffic light, so GTU's behind it are
                             // ignored
-                            PerceptionIterable<HeadwayGTU> upstreamConflictingGTUs = otherConflict
-                                    .getUpstreamGtus(DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
-                            PerceptionIterable<HeadwayGTU> downstreamConflictingGTUs = otherConflict
-                                    .getDownstreamGtus(DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
-                            HeadwayConflict headwayConflict = new HeadwayConflict(conflictType, conflictPriority,
-                                    conflictRuleType, id, distance, length, conflictingLength, upstreamConflictingGTUs,
-                                    downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit, conflictingLink,
-                                    stopLine, conflictingStopLine);
+
+                            HeadwayConflict headwayConflict;
+                            try
+                            {
+                                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs =
+                                        otherConflict.getUpstreamGtus(getGtu(),
+                                                DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
+                                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs =
+                                        otherConflict.getDownstreamGtus(getGtu(),
+                                                DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
+                                // TODO stop lines (current models happen not to use this, but should be possible)
+                                HeadwayStopLine stopLine = new HeadwayStopLine("stopLineId", Length.ZERO);
+                                HeadwayStopLine conflictingStopLine = new HeadwayStopLine("conflictingStopLineId", Length.ZERO);
+                                headwayConflict = new HeadwayConflict(conflictType, conflictPriority, conflictRuleType, id,
+                                        distance, length, conflictingLength, upstreamConflictingGTUs, downstreamConflictingGTUs,
+                                        conflictingVisibility, conflictingSpeedLimit, conflictingLink, stopLine,
+                                        conflictingStopLine);
+                            }
+                            catch (GTUException exception)
+                            {
+                                throw new RuntimeException("Could not create headway objects.", exception);
+                            }
                             // TODO
                             // if (trafficLightDistance != null && trafficLightDistance.le(lookAhead))
                             // {
@@ -237,7 +259,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
 
     /** {@inheritDoc} */
     @Override
-    public final PerceptionIterable<HeadwayConflict> getConflicts(final RelativeLane lane)
+    public final PerceptionCollectable<HeadwayConflict, Conflict> getConflicts(final RelativeLane lane)
     {
         return getObjectOrNull(this.conflicts.get(lane));
     }
@@ -261,7 +283,8 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
      * @param lane lane
      * @return set of traffic lights along the route
      */
-    public final TimeStampedObject<PerceptionIterable<HeadwayTrafficLight>> getTimeStampedTrafficLights(final RelativeLane lane)
+    public final TimeStampedObject<PerceptionCollectable<HeadwayTrafficLight, TrafficLight>> getTimeStampedTrafficLights(
+            final RelativeLane lane)
     {
         return this.trafficLights.get(lane);
     }
@@ -271,7 +294,8 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
      * @param lane lane
      * @return set of traffic lights along the route
      */
-    public final TimeStampedObject<PerceptionIterable<HeadwayConflict>> getTimeStampedConflicts(final RelativeLane lane)
+    public final TimeStampedObject<PerceptionCollectable<HeadwayConflict, Conflict>> getTimeStampedConflicts(
+            final RelativeLane lane)
     {
         return this.conflicts.get(lane);
     }

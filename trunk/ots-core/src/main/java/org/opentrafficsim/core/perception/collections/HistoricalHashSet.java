@@ -48,13 +48,17 @@ public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, HashSe
     @Override
     public HashSet<E> get()
     {
-        return fill(new HashSet<>());
+        return getCollection();
     }
 
     /** {@inheritDoc} */
     @Override
     public HashSet<E> get(final Time time)
     {
+        if (isLastState(time))
+        {
+            return getCollection();
+        }
         return fill(time, new HashSet<>());
     }
     

@@ -1093,7 +1093,7 @@ public class LaneStructure implements Serializable
 
     /**
      * Returns the first record on the given lane. This is often a record in the current cross section, but it may be one
-     * downstream for a lane that start further downstream.
+     * downstream for a lane that starts further downstream.
      * @param lane RelativeLane; lane
      * @return first record on the given lane, or {@code null} if no such record
      */
@@ -1122,6 +1122,27 @@ public class LaneStructure implements Serializable
         return record;
     }
 
+    /**
+     * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
+     * relative position, or as far as the lane map goes.
+     * @param clazz class of objects to find
+     * @param gtu gtu
+     * @param pos relative position to start search from
+     * @param <T> type of objects to find
+     * @return Sorted set of objects of requested type per lane
+     * @throws GTUException if lane is not in current set
+     */
+    public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjects(
+            final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GTUException
+    {
+        Map<RelativeLane, SortedSet<Entry<T>>> out = new HashMap<>();
+        for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
+        {
+            out.put(relativeLane, getDownstreamObjects(relativeLane, clazz, gtu, pos));
+        }
+        return out;
+    }
+    
     /**
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
      * downstream from the relative position, or as far as the lane map goes.
@@ -1270,7 +1291,7 @@ public class LaneStructure implements Serializable
      * @param pos relative position to start search from
      * @param <T> type of objects to find
      * @param route the route
-     * @return Sorted set of objects of requested type
+     * @return Sorted set of objects of requested type per lane
      * @throws GTUException if lane is not in current set
      */
     public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(

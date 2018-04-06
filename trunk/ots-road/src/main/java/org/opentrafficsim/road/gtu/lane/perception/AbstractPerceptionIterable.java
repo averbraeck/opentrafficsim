@@ -15,6 +15,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
@@ -28,11 +29,12 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <H> headway type
+ * @param <U> underlying object type
  * @param <R> record type
  * @param <C> counter type
  */
-public abstract class AbstractPerceptionIterable<H extends Headway, R extends LaneRecord<R>, C>
-        extends AbstractPerceptionReiterable<H>
+public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends LaneRecord<R>, C>
+        extends AbstractPerceptionReiterable<H, U>
 {
 
     /** Root record. */
@@ -55,6 +57,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
 
     /**
      * Constructor.
+     * @param perceivingGtu LaneBasedGTU; perceiving GTU
      * @param root R; root record
      * @param initialPosition Length; initial position
      * @param downstream boolean; search downstream (or upstream)
@@ -62,9 +65,10 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
      * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
      * @param route Route; route of the GTU, may be {@code null}
      */
-    public AbstractPerceptionIterable(final R root, final Length initialPosition, final boolean downstream,
-            final Length maxDistance, final RelativePosition relativePosition, final Route route)
+    public AbstractPerceptionIterable(final LaneBasedGTU perceivingGtu, final R root, final Length initialPosition,
+            final boolean downstream, final Length maxDistance, final RelativePosition relativePosition, final Route route)
     {
+        super(perceivingGtu);
         this.root = root;
         this.initialPosition = initialPosition;
         this.downstream = downstream;
@@ -75,7 +79,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
 
     /** {@inheritDoc} */
     @Override
-    protected Iterator<H> primaryIterator()
+    public Iterator<PrimaryIteratorEntry> primaryIterator()
     {
         return new PrimaryIterator();
     }
@@ -90,6 +94,16 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
      * @throws GTUException on any exception in the process
      */
     protected abstract Entry getNext(R record, Length position, C counter) throws GTUException;
+
+    /**
+     * Returns the distance to the object. The position fed in to this method is directly taken from an {@code Entry} returned
+     * by {@code getNext}. The two methods need to be consistent with each other.
+     * @param object U; underlying object
+     * @param record R; record representing the lane and direction
+     * @param position Length; position of the object on the lane
+     * @return Length; distance to the object
+     */
+    protected abstract Length getDistance(U object, R record, Length position);
 
     /**
      * Returns the longitudinal length of the relevant relative position such that distances to this points can be calculated.
@@ -114,20 +128,26 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private class PrimaryIterator implements Iterator<H>
+    private class PrimaryIterator implements Iterator<PrimaryIteratorEntry>
     {
 
         /** Map containing the objects found per branch. */
-        SortedMap<H, R> map;
+        SortedMap<PrimaryIteratorEntry, R> map;
 
         /** Position on the lane of each object. */
-        Map<H, Length> positions = new HashMap<>();
+        Map<U, Length> positions = new HashMap<>();
 
         /** Sets of remaining objects at the same location. */
-        Map<R, Queue<H>> queues = new HashMap<>();
+        Map<R, Queue<PrimaryIteratorEntry>> queues = new HashMap<>();
 
         /** Counter objects per lane. */
         Map<R, C> counters = new HashMap<>();
+
+        /** Record regarding a postponed call to {@code getNext()}. */
+        private R postponedRecord = null;
+
+        /** Position regarding a postponed call to {@code getNext()}. */
+        private Length postponedPosition = null;
 
         /** Constructor. */
         public PrimaryIterator()
@@ -139,51 +159,65 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
         @Override
         public boolean hasNext()
         {
-            // start the process
-            if (this.map == null)
-            {
-                this.map = new TreeMap<>();
-                prepareNext(AbstractPerceptionIterable.this.root, AbstractPerceptionIterable.this.initialPosition);
-            }
+            // (re)start the process
+            startProcess();
+
             // check next value
             return !this.map.isEmpty();
         }
 
         /** {@inheritDoc} */
         @Override
-        public H next()
+        public PrimaryIteratorEntry next()
         {
-            // start the process
-            if (this.map == null)
-            {
-                this.map = new TreeMap<>();
-                prepareNext(AbstractPerceptionIterable.this.root, AbstractPerceptionIterable.this.initialPosition);
-            }
+            // (re)start the process
+            startProcess();
 
             // get and remove next
-            H next = this.map.firstKey();
-            R record = this.map.get(next);
+            PrimaryIteratorEntry nextEntry = this.map.firstKey();
+            U next = nextEntry.object;
+            R record = this.map.get(nextEntry);
             Length position = this.positions.get(next);
-            this.map.remove(next);
-            this.positions.remove(next);
+            this.map.remove(nextEntry);
 
             // see if we can obtain the next from a queue
-            Queue<H> queue = this.queues.get(next);
+            Queue<PrimaryIteratorEntry> queue = this.queues.get(next);
             if (queue != null)
             {
-                H nextNext = queue.poll();
+                PrimaryIteratorEntry nextNext = queue.poll();
                 this.map.put(nextNext, record); // next object is made available in the map
-                this.positions.put(nextNext, position);
+                this.positions.put(nextNext.object, position);
                 if (queue.isEmpty())
                 {
                     this.queues.remove(record);
                 }
-                return next;
+                return new PrimaryIteratorEntry(nextNext.object, getDistance(nextNext.object, record, position));
             }
 
-            // prepare the next object
-            prepareNext(record, position);
-            return next;
+            // prepare for next
+            this.postponedRecord = record;
+            this.postponedPosition = position;
+            return new PrimaryIteratorEntry(next, getDistance(next, record, position));
+        }
+
+        /**
+         * Starts or restarts the process.
+         */
+        private void startProcess()
+        {
+            if (this.postponedRecord != null)
+            {
+                // restart the process; perform prepareNext() that was postponed
+                prepareNext(this.postponedRecord, this.postponedPosition);
+                this.postponedRecord = null;
+                this.postponedPosition = null;
+            }
+            else if (this.map == null)
+            {
+                // start the process
+                this.map = new TreeMap<>();
+                prepareNext(AbstractPerceptionIterable.this.root, AbstractPerceptionIterable.this.initialPosition);
+            }
         }
 
         /**
@@ -215,7 +249,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
                     }
                     else
                     {
-                        for (R nextRecord : AbstractPerceptionIterable.this.downstream ? record.getNext() : record.getPrev())
+                        for (R nextRecord : record.getPrev())
                         {
                             if (isOnRoute(nextRecord))
                             {
@@ -230,18 +264,23 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
                 this.counters.put(record, next.counter);
                 if (next.isSet())
                 {
-                    Iterator<H> it = next.set.iterator();
-                    H nextNext = iterator().next();
-                    if (nextNext.getDistance().si <= AbstractPerceptionIterable.this.maxDistance)
+                    Iterator<U> it = next.set.iterator();
+                    U nextNext = it.next();
+                    Length distance = getDistance(nextNext, record, next.position);
+                    if (distance == null // null means the object overlaps and is close
+                            || distance.si <= AbstractPerceptionIterable.this.maxDistance)
                     {
-                        this.map.put(nextNext, record); // next object is made available in the map
+                        // next object is made available in the map
+                        this.map.put(new PrimaryIteratorEntry(nextNext, distance), record);
                         this.positions.put(nextNext, next.position);
                         if (next.set.size() > 1)
                         {
-                            Queue<H> queue = new LinkedList<>(); // remaining at this location are made available in a queue
+                            // remaining at this location are made available in a queue
+                            Queue<PrimaryIteratorEntry> queue = new LinkedList<>();
                             while (it.hasNext())
                             {
-                                queue.add(it.next());
+                                nextNext = it.next();
+                                queue.add(new PrimaryIteratorEntry(nextNext, getDistance(nextNext, record, next.position)));
                             }
                             this.queues.put(record, queue);
                         }
@@ -249,11 +288,13 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
                 }
                 else
                 {
-                    if (next.value.getDistance() == null
-                            || next.value.getDistance().si <= AbstractPerceptionIterable.this.maxDistance)
+                    Length distance = getDistance(next.object, record, next.position);
+                    if (distance == null // null means the object overlaps and is close
+                            || distance.si <= AbstractPerceptionIterable.this.maxDistance)
                     {
-                        this.map.put(next.value, record); // next object is made available in the map
-                        this.positions.put(next.value, next.position);
+                        // next object is made available in the map
+                        this.map.put(new PrimaryIteratorEntry(next.object, distance), record);
+                        this.positions.put(next.object, next.position);
                     }
                 }
             }
@@ -305,10 +346,10 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
     {
 
         /** Set. */
-        final Set<H> set;
+        final Set<U> set;
 
-        /** Value. */
-        final H value;
+        /** Object. */
+        final U object;
 
         /** Counter. */
         final C counter;
@@ -318,28 +359,28 @@ public abstract class AbstractPerceptionIterable<H extends Headway, R extends La
 
         /**
          * Constructor.
-         * @param value T; value
+         * @param object U; object
          * @param counter C; counter, may be {@code null}
          * @param position Length; position
          */
-        public Entry(final H value, final C counter, final Length position)
+        public Entry(final U object, final C counter, final Length position)
         {
             this.set = null;
-            this.value = value;
+            this.object = object;
             this.counter = counter;
             this.position = position;
         }
 
         /**
          * Constructor.
-         * @param set Set&lt;T&gt;; set
+         * @param set Set&lt;U&gt;; set
          * @param counter C; counter, may be {@code null}
          * @param position Length; position
          */
-        public Entry(final Set<H> set, final C counter, final Length position)
+        public Entry(final Set<U> set, final C counter, final Length position)
         {
             this.set = set;
-            this.value = null;
+            this.object = null;
             this.counter = counter;
             this.position = position;
         }

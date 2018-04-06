@@ -7,12 +7,10 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 /**
  * Container for a reference to information about a (lane based) GTU and a headway. The Headway can store information about GTUs
@@ -58,7 +56,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     private final Route route;
 
     /**
-     * Private constructor for copies.
+     * Protected constructor for moved copies or subclasses.
      * @param id id
      * @param gtuType GTU type
      * @param distance distance
@@ -69,15 +67,48 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
      * @param parameters parameters
      * @param speedLimitInfo speed limit info
      * @param route route
+     * @param desiredSpeed desired speed
      * @param gtuStatus gtu status
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     HeadwayGTURealCopy(final String id, final GTUType gtuType, final Length distance, final Length length, final Speed speed,
             final Acceleration acceleration, final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final SpeedLimitInfo speedLimitInfo, final Route route, final GTUStatus... gtuStatus) throws GTUException
+            final SpeedLimitInfo speedLimitInfo, final Route route, final Speed desiredSpeed, final GTUStatus... gtuStatus)
+            throws GTUException
     {
-        super(id, gtuType, distance, true, length, speed, acceleration, gtuStatus);
+        super(id, gtuType, distance, true, length, speed, acceleration, desiredSpeed, gtuStatus);
+        this.carFollowingModel = carFollowingModel;
+        this.parameters = parameters;
+        this.speedLimitInfo = speedLimitInfo;
+        this.route = route;
+    }
+
+    /**
+     * Protected constructor for moved copies or subclasses.
+     * @param id id
+     * @param gtuType GTU type
+     * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
+     * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
+     * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
+     * @param length length
+     * @param speed speed
+     * @param acceleration acceleration
+     * @param carFollowingModel car-following model
+     * @param parameters parameters
+     * @param speedLimitInfo speed limit info
+     * @param route route
+     * @param desiredSpeed desired speed
+     * @param gtuStatus gtu status
+     * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    HeadwayGTURealCopy(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
+            final Length overlapRear, final Length length, final Speed speed, final Acceleration acceleration,
+            final CarFollowingModel carFollowingModel, final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
+            final Route route, final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GTUException
+    {
+        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, speed, acceleration, desiredSpeed, gtuStatus);
         this.carFollowingModel = carFollowingModel;
         this.parameters = parameters;
         this.speedLimitInfo = speedLimitInfo;
@@ -88,12 +119,12 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
      * @param gtu the observed GTU, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
-    public HeadwayGTURealCopy(final LaneBasedGTU gtu, final Length distance, final GTUStatus... gtuStatus) throws GTUException
+    public HeadwayGTURealCopy(final LaneBasedGTU gtu, final Length distance) throws GTUException
     {
-        super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getSpeed(), gtu.getAcceleration(), gtuStatus);
+        super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getSpeed(), gtu.getAcceleration(),
+                gtu.getDesiredSpeed(), getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime().getTime()));
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.parameters = new ParameterSet(gtu.getParameters());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
@@ -112,31 +143,12 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
             throws GTUException
     {
         super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getSpeed(),
-                gtu.getAcceleration());
+                gtu.getAcceleration(), gtu.getDesiredSpeed(),
+                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime().getTime()));
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.parameters = new ParameterSet(gtu.getParameters());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
         this.route = gtu.getStrategicalPlanner().getRoute();
-    }
-
-    /**
-     * Creates speed limit info for given GTU.
-     * @param gtu gtu to the the speed limit info for
-     * @return speed limit info for given GTU
-     */
-    private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU gtu)
-    {
-        SpeedLimitInfo sli = new SpeedLimitInfo();
-        sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, gtu.getMaximumSpeed());
-        try
-        {
-            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, gtu.getReferencePosition().getLane().getSpeedLimit(gtu.getGTUType()));
-        }
-        catch (NetworkException | GTUException exception)
-        {
-            throw new RuntimeException("Could not obtain speed limit from lane for perception.", exception);
-        }
-        return sli;
     }
 
     /** {@inheritDoc} */
@@ -174,7 +186,8 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
         try
         {
             return new HeadwayGTURealCopy(getId(), getGtuType(), headway, getLength(), speed, acceleration,
-                    getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getGtuStatus());
+                    getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getDesiredSpeed(),
+                    getGtuStatus());
         }
         catch (GTUException exception)
         {

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTU;
@@ -12,6 +13,7 @@ import org.opentrafficsim.core.gtu.animation.ColorInterpolator;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 
 /**
+ * Color on a scale from Tmin to Tmax parameters, or two given limits.
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -27,8 +29,14 @@ public class DesiredHeadwayColorer implements GTUColorer, Serializable
     /** */
     private static final long serialVersionUID = 20170420L;
 
+    /** Minimum value on input scale. */
+    public final Duration tMin;
+
+    /** Maximum value on input scale. */
+    public final Duration tMax;
+
     /** The legend. */
-    private static final List<LegendEntry> LEGEND;
+    private final List<LegendEntry> legend;
 
     /** Low color. */
     private static final Color LOW = Color.RED;
@@ -42,13 +50,35 @@ public class DesiredHeadwayColorer implements GTUColorer, Serializable
     /** Unknown color. */
     protected static final Color UNKNOWN = Color.WHITE;
 
-    static
+    /**
+     * Constructor using Tmin and Tmax parameters.
+     */
+    public DesiredHeadwayColorer()
     {
-        LEGEND = new ArrayList<>(4);
-        LEGEND.add(new LegendEntry(LOW, "Tmin", "Tmin"));
-        LEGEND.add(new LegendEntry(MIDDLE, "Mean", "Mean"));
-        LEGEND.add(new LegendEntry(HIGH, "Tmax", "Tmax"));
-        LEGEND.add(new LegendEntry(UNKNOWN, "Unknown", "Unknown"));
+        this.legend = new ArrayList<>(4);
+        this.legend.add(new LegendEntry(LOW, "Tmin", "Tmin"));
+        this.legend.add(new LegendEntry(MIDDLE, "Mean", "Mean"));
+        this.legend.add(new LegendEntry(HIGH, "Tmax", "Tmax"));
+        this.legend.add(new LegendEntry(UNKNOWN, "Unknown", "Unknown"));
+        this.tMin = null;
+        this.tMax = null;
+    }
+
+    /**
+     * Constructor using input Tmin and Tmax.
+     * @param tMin Duration; minimum headway
+     * @param tMax Duration; maximum headway
+     */
+    public DesiredHeadwayColorer(final Duration tMin, final Duration tMax)
+    {
+        String format = "%.2fs";
+        this.legend = new ArrayList<>(4);
+        this.legend.add(new LegendEntry(LOW, String.format(format, tMin.si), "Tmin"));
+        this.legend.add(new LegendEntry(MIDDLE, String.format(format, (tMin.si + tMax.si) / 2.0), "Mean"));
+        this.legend.add(new LegendEntry(HIGH, String.format(format, tMax.si), "Tmax"));
+        this.legend.add(new LegendEntry(UNKNOWN, "Unknown", "Unknown"));
+        this.tMin = tMin;
+        this.tMax = tMax;
     }
 
     /** {@inheritDoc} */
@@ -56,34 +86,44 @@ public class DesiredHeadwayColorer implements GTUColorer, Serializable
     public final Color getColor(final GTU gtu)
     {
         Parameters params = gtu.getParameters();
-        Double tMin = params.getParameterOrNull(ParameterTypes.TMIN).si;
-        Double tMax = params.getParameterOrNull(ParameterTypes.TMAX).si;
+        Double minT;
+        Double maxT;
+        if (this.tMin == null)
+        {
+            minT = params.getParameterOrNull(ParameterTypes.TMIN).si;
+            maxT = params.getParameterOrNull(ParameterTypes.TMAX).si;
+        }
+        else
+        {
+            minT = this.tMin.si;
+            maxT = this.tMax.si;
+        }
         Double t = params.getParameterOrNull(ParameterTypes.T).si;
-        if (tMin == null || tMax == null || t == null)
+        if (minT == null || maxT == null || t == null)
         {
             return UNKNOWN;
         }
-        if (t <= tMin)
+        if (t <= minT)
         {
             return LOW;
         }
-        if (t >= tMax)
+        if (t >= maxT)
         {
             return HIGH;
         }
-        double tMean = (tMin + tMax) / 2.0;
+        double tMean = (minT + maxT) / 2.0;
         if (t < tMean)
         {
-            return ColorInterpolator.interpolateColor(LOW, MIDDLE, (t - tMin) / (tMean - tMin));
+            return ColorInterpolator.interpolateColor(LOW, MIDDLE, (t - minT) / (tMean - minT));
         }
-        return ColorInterpolator.interpolateColor(MIDDLE, HIGH, (t - tMean) / (tMax - tMean));
+        return ColorInterpolator.interpolateColor(MIDDLE, HIGH, (t - tMean) / (maxT - tMean));
     }
 
     /** {@inheritDoc} */
     @Override
     public final List<LegendEntry> getLegend()
     {
-        return LEGEND;
+        return this.legend;
     }
 
     /** {@inheritDoc} */

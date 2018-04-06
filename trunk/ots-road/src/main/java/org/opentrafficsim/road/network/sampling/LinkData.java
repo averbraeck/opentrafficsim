@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
+ * Link representation in road sampler.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -43,9 +43,9 @@ public class LinkData implements LinkDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final List<LaneDataInterface> getLaneDatas()
+    public final List<LaneData> getLaneDatas()
     {
-        List<LaneDataInterface> lanes = new ArrayList<>();
+        List<LaneData> lanes = new ArrayList<>();
         for (Lane lane : this.link.getLanes())
         {
             lanes.add(new LaneData(lane));

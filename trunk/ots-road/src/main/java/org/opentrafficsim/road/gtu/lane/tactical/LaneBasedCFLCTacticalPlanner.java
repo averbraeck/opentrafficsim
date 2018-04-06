@@ -33,7 +33,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
@@ -102,7 +102,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     public LaneBasedCFLCTacticalPlanner(final GTUFollowingModelOld carFollowingModel, final LaneChangeModel laneChangeModel,
             final LaneBasedGTU gtu)
     {
-        super(carFollowingModel, gtu, new CategorialLanePerception(gtu));
+        super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
         this.laneChangeModel = laneChangeModel;
         getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
     }

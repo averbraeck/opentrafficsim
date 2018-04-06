@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
-import java.util.SortedMap;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -16,10 +14,11 @@ import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractCarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredHeadwayModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredSpeedModel;
-import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -36,52 +35,52 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
 {
 
     /** */
-    public static final ParameterTypeSpeed CDS = new ParameterTypeSpeed("C_DS", "Constant in desired speed.", new Speed(17.636,
-            SpeedUnit.SI), ConstraintInterface.POSITIVE);
+    public static final ParameterTypeSpeed CDS = new ParameterTypeSpeed("C_DS", "Constant in desired speed.",
+            new Speed(17.636, SpeedUnit.SI), ConstraintInterface.POSITIVE);
 
     /** */
     public static final ParameterTypeSpeed BETADS = new ParameterTypeSpeed("BETA_DS", "Reduction of desired speed for trucks.",
             new Speed(-1.458, SpeedUnit.SI), ConstraintInterface.NEGATIVE);
 
     /** */
-    public static final ParameterTypeSpeed ALPHADS = new ParameterTypeSpeed("ALPHA_DS",
-            "Factor on error term of desired speed.", new Speed(-0.105, SpeedUnit.SI));
+    public static final ParameterTypeSpeed ALPHADS =
+            new ParameterTypeSpeed("ALPHA_DS", "Factor on error term of desired speed.", new Speed(-0.105, SpeedUnit.SI));
 
     /** */
-    public static final ParameterTypeDuration HSTAR = new ParameterTypeDuration("h*", "Desired time headway.", new Duration(
-            2.579, DurationUnit.SI));
+    public static final ParameterTypeDuration HSTAR =
+            new ParameterTypeDuration("h*", "Desired time headway.", new Duration(2.579, DurationUnit.SI));
 
     /** */
-    public static final ParameterTypeDouble LAMBDAFF = new ParameterTypeDouble("Lambda_ff",
-            "Free flow acceleration sensitivity.", 0.0881, ConstraintInterface.POSITIVE);
+    public static final ParameterTypeDouble LAMBDAFF =
+            new ParameterTypeDouble("Lambda_ff", "Free flow acceleration sensitivity.", 0.0881, ConstraintInterface.POSITIVE);
 
     /** */
-    public static final ParameterTypeDouble SIGMAFF = new ParameterTypeDouble("Sigma_ff",
-            "Free flow acceleration standard deviation.", Math.exp(0.169));
+    public static final ParameterTypeDouble SIGMAFF =
+            new ParameterTypeDouble("Sigma_ff", "Free flow acceleration standard deviation.", Math.exp(0.169));
 
     /** */
     public static final ParameterTypeDouble CCFACC = new ParameterTypeDouble("C_CF_ACC",
             "Constant for car following acceleration.", 0.0355, ConstraintInterface.POSITIVE);
 
     /** */
-    public static final ParameterTypeDouble BETAACC = new ParameterTypeDouble("BETA_ACC", "Power on speed for acceleration.",
-            0.291, ConstraintInterface.POSITIVE);
+    public static final ParameterTypeDouble BETAACC =
+            new ParameterTypeDouble("BETA_ACC", "Power on speed for acceleration.", 0.291, ConstraintInterface.POSITIVE);
 
     /** */
     public static final ParameterTypeDouble GAMMAACC = new ParameterTypeDouble("GAMMA_ACC",
             "Power on distance headway for acceleration.", -0.166, ConstraintInterface.NEGATIVE);
 
     /** */
-    public static final ParameterTypeDouble RHOACC = new ParameterTypeDouble("RHO_ACC", "Power on density for acceleration.",
-            0.550, ConstraintInterface.POSITIVE);
+    public static final ParameterTypeDouble RHOACC =
+            new ParameterTypeDouble("RHO_ACC", "Power on density for acceleration.", 0.550, ConstraintInterface.POSITIVE);
 
     /** */
     public static final ParameterTypeDouble LAMBDAACC = new ParameterTypeDouble("LAMBDA_ACC",
             "Power on speed difference for acceleration.", 0.520, ConstraintInterface.POSITIVE);
 
     /** */
-    public static final ParameterTypeDouble SIGMAACC = new ParameterTypeDouble("Sigma_acc",
-            "Car-following acceleration standard deviation.", Math.exp(0.126));
+    public static final ParameterTypeDouble SIGMAACC =
+            new ParameterTypeDouble("Sigma_acc", "Car-following acceleration standard deviation.", Math.exp(0.126));
 
     /** */
     public static final ParameterTypeDouble CCFDEC = new ParameterTypeDouble("C_CF_DEC",
@@ -92,16 +91,16 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
             "Power on distance headway for deceleration.", -0.565, ConstraintInterface.NEGATIVE);
 
     /** */
-    public static final ParameterTypeDouble RHODEC = new ParameterTypeDouble("RHO_DEC", "Power on density for deceleration.",
-            0.143, ConstraintInterface.POSITIVE);
+    public static final ParameterTypeDouble RHODEC =
+            new ParameterTypeDouble("RHO_DEC", "Power on density for deceleration.", 0.143, ConstraintInterface.POSITIVE);
 
     /** */
     public static final ParameterTypeDouble LAMBDADEC = new ParameterTypeDouble("LAMBDA_DEC",
             "Power on speed difference for deceleration.", 0.834, ConstraintInterface.POSITIVE);
 
     /** */
-    public static final ParameterTypeDouble SIGMADEC = new ParameterTypeDouble("Sigma_DEC",
-            "Car-following deceleration standard deviation.", Math.exp(0.156));
+    public static final ParameterTypeDouble SIGMADEC =
+            new ParameterTypeDouble("Sigma_DEC", "Car-following deceleration standard deviation.", Math.exp(0.156));
 
     /** Toledo desired headway model. */
     private static final DesiredHeadwayModel HEADWAY = new DesiredHeadwayModel()
@@ -112,21 +111,18 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
             return parameters.getParameter(HSTAR).multiplyBy(speed);
         }
     };
-    
+
     /** Toledo desired speed model. */
     private static final DesiredSpeedModel DESIRED_SPEED = new DesiredSpeedModel()
     {
         @Override
         public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
         {
-            return parameters
-                    .getParameter(CDS)
-                    .plus(parameters.getParameter(BETADS))
-                    .plus(parameters.getParameter(ALPHADS).multiplyBy(
-                            parameters.getParameter(ToledoLaneChangeParameters.ERROR_TERM)));
+            return parameters.getParameter(CDS).plus(parameters.getParameter(BETADS)).plus(parameters.getParameter(ALPHADS)
+                    .multiplyBy(parameters.getParameter(ToledoLaneChangeParameters.ERROR_TERM)));
         }
-    };   
-    
+    };
+
     /**
      * Constructor using Toledo models for desired headway ans speed.
      */
@@ -137,18 +133,18 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    protected final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final Speed desiredSpeed, final Length desiredHeadway, final SortedMap<Length, Speed> leaders)
-            throws ParameterException
+    protected final Acceleration followingAcceleration(final Parameters parameters, final Speed speed, final Speed desiredSpeed,
+            final Length desiredHeadway, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
     {
-        if (leaders.isEmpty() || leaders.firstKey().gt(desiredHeadway))
+        if (leaders.isEmpty() || leaders.first().getDistance().gt(desiredHeadway))
         {
             // free
             double eff = Toledo.RANDOM.nextGaussian() * parameters.getParameter(SIGMAFF) * parameters.getParameter(SIGMAFF);
-            return new Acceleration(parameters.getParameter(LAMBDAFF) * (desiredSpeed.si - speed.si) + eff, AccelerationUnit.SI);
+            return new Acceleration(parameters.getParameter(LAMBDAFF) * (desiredSpeed.si - speed.si) + eff,
+                    AccelerationUnit.SI);
         }
         // TODO speed difference with reaction time
-        if (leaders.get(leaders.firstKey()).ge(speed))
+        if (leaders.first().getSpeed().ge(speed))
         {
             // accelerate
             double eCfAcc =
@@ -157,9 +153,9 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
             return new Acceleration(
                 parameters.getParameter(CCFACC) 
                     * Math.pow(speed.si, parameters.getParameter(BETAACC))
-                    * Math.pow(leaders.firstKey().si, parameters.getParameter(GAMMAACC))
+                    * Math.pow(leaders.first().getDistance().si, parameters.getParameter(GAMMAACC))
                     * Math.pow(getDensity(leaders), parameters.getParameter(RHOACC))
-                    * Math.pow(leaders.get(leaders.firstKey()).si - speed.si, parameters.getParameter(LAMBDAACC))
+                    * Math.pow(leaders.first().getSpeed().si - speed.si, parameters.getParameter(LAMBDAACC))
                     + eCfAcc,
                 AccelerationUnit.SI);
             // {@formatter:on}
@@ -169,9 +165,9 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
         // {@formatter:off}
         return new Acceleration(
             parameters.getParameter(CCFDEC) 
-                * Math.pow(leaders.firstKey().si, parameters.getParameter(GAMMADEC))
+                * Math.pow(leaders.first().getDistance().si, parameters.getParameter(GAMMADEC))
                 * Math.pow(getDensity(leaders), parameters.getParameter(RHODEC))
-                * Math.pow(speed.si - leaders.get(leaders.firstKey()).si, parameters.getParameter(LAMBDADEC))
+                * Math.pow(speed.si - leaders.first().getSpeed().si, parameters.getParameter(LAMBDADEC))
                 + eCfDec,
             AccelerationUnit.SI);
         // {@formatter:on}
@@ -196,13 +192,20 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
      * @param leaders leading vehicles
      * @return density based on the leaders in veh/km
      */
-    private double getDensity(final SortedMap<Length, Speed> leaders)
+    private double getDensity(final PerceptionIterable<? extends Headway> leaders)
     {
         if (leaders.isEmpty())
         {
             return 0;
         }
-        return leaders.lastKey().getInUnit(LengthUnit.KILOMETER) / leaders.size();
+        Headway last = null;
+        int n = 0;
+        for (Headway next : leaders)
+        {
+            n++;
+            last = next;
+        }
+        return last.getDistance().getInUnit(LengthUnit.KILOMETER) / n;
     }
 
 }

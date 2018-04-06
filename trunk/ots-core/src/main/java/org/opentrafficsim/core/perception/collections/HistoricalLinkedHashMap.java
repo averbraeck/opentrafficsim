@@ -48,13 +48,17 @@ public class HistoricalLinkedHashMap<K, V> extends AbstractHistoricalMap<K, V, L
     @Override
     public LinkedHashMap<K, V> get()
     {
-        return fill(new LinkedHashMap<>());
+        return getMap();
     }
 
     /** {@inheritDoc} */
     @Override
     public LinkedHashMap<K, V> get(final Time time)
     {
+        if (isLastState(time))
+        {
+            return getMap();
+        }
         return fill(time, new LinkedHashMap<>());
     }
     

@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
 import java.io.Serializable;
-import java.util.SortedMap;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
@@ -13,6 +12,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -191,16 +192,14 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
 
     /** {@inheritDoc} */
     @Override
-    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo)
-            throws ParameterException
+    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
     {
         throw new UnsupportedOperationException("Old car-following model does not support desired speed.");
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length desiredHeadway(final Parameters parameters, final Speed speed)
-            throws ParameterException
+    public final Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
     {
         throw new UnsupportedOperationException("Old car-following model does not support desired headway.");
     }
@@ -208,8 +207,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
     /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final SpeedLimitInfo speedInfo, final SortedMap<Length, Speed> leaders)
-            throws ParameterException
+            final SpeedLimitInfo speedInfo, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
     {
         Length headway;
         Speed leaderSpeed;
@@ -220,8 +218,9 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
         }
         else
         {
-            headway = leaders.firstKey();
-            leaderSpeed = leaders.get(headway);
+            Headway leader = leaders.first();
+            headway = leader.getDistance();
+            leaderSpeed = leader.getSpeed();
         }
         return this.computeAcceleration(speed, speedInfo.getSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED), leaderSpeed, headway,
                 speedInfo.getSpeedInfo(SpeedLimitTypes.FIXED_SIGN));

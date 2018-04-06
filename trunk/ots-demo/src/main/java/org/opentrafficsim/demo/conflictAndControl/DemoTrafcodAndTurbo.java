@@ -300,7 +300,6 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
             }
         }
 
-        @SuppressWarnings("synthetic-access")
         @Override
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
         {

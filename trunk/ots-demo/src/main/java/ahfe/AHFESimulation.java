@@ -18,7 +18,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.AbstractProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -32,6 +32,7 @@ import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
@@ -107,7 +108,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
     private final double leftFraction;
 
     /** Sampler. */
-    Sampler sampler;
+    Sampler<GtuData> sampler;
 
     /**
      * @param replication replication
@@ -440,7 +441,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
                     System.out.println("Setting up replication " + finalReplication);
                     model.setNextReplication(finalReplication);
                     // 1 hour simulation run for testing
-                    model.buildSimulator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), new ArrayList<AbstractProperty<?>>());
+                    model.buildSimulator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), new ArrayList<Property<?>>());
                     if (finalAutoRun)
                     {
                         int lastReportedTime = -60;
@@ -592,7 +593,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
             AHFESimulation.this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
-                //InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml"); // Running from eclipse
+                // InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml"); // Running from eclipse
                 URL stream = URLResource.getResource("./Network.xml"); // Running Jar
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 this.network = new OTSNetwork("AHFE");

@@ -5,7 +5,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -28,30 +28,30 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
     private final Arrivals arrivals;
 
     /** Simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** Random stream to draw headway. */
     private final StreamInterface stream;
 
     /** Random headway generator. */
-    private final HeadwayRandomization randomization;
-    
+    private final HeadwayDistribution distribution;
+
     /** First GTU. */
     private boolean first = true;
 
     /**
      * @param arrivals Arrivals; arrivals
-     * @param simulator OTSDEVSSimulatorInterface; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param stream StreamInterface; random stream to draw headway
-     * @param randomization Randomization; random headway generator
+     * @param distribution HeadwayDistribution; random headway distribution
      */
-    public ArrivalsHeadwayGenerator(final Arrivals arrivals, final OTSDEVSSimulatorInterface simulator, final StreamInterface stream,
-            final HeadwayRandomization randomization)
+    public ArrivalsHeadwayGenerator(final Arrivals arrivals, final OTSSimulatorInterface simulator,
+            final StreamInterface stream, final HeadwayDistribution distribution)
     {
         this.arrivals = arrivals;
         this.simulator = simulator;
         this.stream = stream;
-        this.randomization = randomization;
+        this.distribution = distribution;
     }
 
     /**
@@ -64,9 +64,9 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
      * additional vehicle to arrive. The headway {@code h} that results correlates directly to the mean demand between
      * {@code t0} and {@code t1}.<br>
      * <br>
-     * The value of {@code r} always has a mean of 1, but may vary between specific vehicle arrivals depending on randomization.
-     * When assuming constant headways for any given demand level, {@code r} always equals 1. For exponentially distributed
-     * headways {@code r} may range anywhere between 0 and infinity.<br>
+     * The value of {@code r} always has a mean of 1, but may vary between specific vehicle arrivals depending on the headway
+     * distribution. When assuming constant headways for any given demand level, {@code r} always equals 1. For exponentially
+     * distributed headways {@code r} may range anywhere between 0 and infinity.<br>
      * <br>
      * This usage of {@code r} guarantees that no vehicles arrive during periods with 0 demand. For example:
      * <ul>
@@ -101,7 +101,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         }
         double f2 = this.arrivals.getFrequency(t2, false).si;
         // next vehicle's random factor
-        double rem = this.randomization.draw(this.stream);
+        double rem = this.distribution.draw(this.stream);
         if (this.first)
         {
             // first headway may be partially in the past, take a random factor
@@ -158,11 +158,11 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
                 return Duration.createSI(t1.si + t - now.si);
             }
         }
-        throw new RuntimeException("Exception while determining headway from DemandNode.");
+        throw new RuntimeException("Exception while determining headway from Arrivals.");
     }
 
     /**
-     * Headway randomization.
+     * Headway distribution.
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -173,11 +173,11 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public interface HeadwayRandomization
+    public interface HeadwayDistribution
     {
 
         /** Constant headway. */
-        HeadwayRandomization CONSTANT = new HeadwayRandomization()
+        HeadwayDistribution CONSTANT = new HeadwayDistribution()
         {
             @Override
             public double draw(final StreamInterface randomStream)
@@ -193,7 +193,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         };
 
         /** Exponential headway distribution. */
-        HeadwayRandomization EXPONENTIAL = new HeadwayRandomization()
+        HeadwayDistribution EXPONENTIAL = new HeadwayDistribution()
         {
             @Override
             public double draw(final StreamInterface randomStream)
@@ -209,7 +209,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         };
 
         /** Uniform headway distribution. */
-        HeadwayRandomization UNIFORM = new HeadwayRandomization()
+        HeadwayDistribution UNIFORM = new HeadwayDistribution()
         {
             @Override
             public double draw(final StreamInterface randomStream)
@@ -225,7 +225,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         };
 
         /** Triangular headway distribution. */
-        HeadwayRandomization TRIANGULAR = new HeadwayRandomization()
+        HeadwayDistribution TRIANGULAR = new HeadwayDistribution()
         {
             @Override
             public double draw(final StreamInterface randomStream)
@@ -246,7 +246,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         };
 
         /** Triangular (left side, mean 2/3) and exponential (right side, mean 4/3) headway distribution. */
-        HeadwayRandomization TRI_EXP = new HeadwayRandomization()
+        HeadwayDistribution TRI_EXP = new HeadwayDistribution()
         {
             @Override
             public double draw(final StreamInterface randomStream)
@@ -268,7 +268,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         };
 
         /** Log-normal headway distribution (variance = 1.0). */
-        HeadwayRandomization LOGNORMAL = new HeadwayRandomization()
+        HeadwayDistribution LOGNORMAL = new HeadwayDistribution()
         {
             /** Mu. */
             private final double mu = Math.log(1.0 / Math.sqrt(2.0));
