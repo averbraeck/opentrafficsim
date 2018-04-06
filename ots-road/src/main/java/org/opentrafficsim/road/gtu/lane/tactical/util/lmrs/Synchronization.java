@@ -16,9 +16,10 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.SortedSetPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
@@ -31,7 +32,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
- * Different forms of synchronization, which includes cooperation.
+ * Different forms of synchronization.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -41,15 +42,14 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public enum Synchronization implements LmrsParameters
+public interface Synchronization extends LmrsParameters
 {
 
     /** Synchronization that only includes stopping for a dead-end. */
-    NONE
+    public static Synchronization DEADEND = new Synchronization()
     {
-
         @Override
-        Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
+        public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
@@ -94,83 +94,24 @@ public enum Synchronization implements LmrsParameters
                     }
                 }
             }
-
             return a;
         }
 
-        @Override
-        Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
-                throws ParameterException, OperationalPlanException
-        {
-            return Acceleration.POSITIVE_INFINITY;
-        }
-
-    },
-
-    /** Synchronization that only includes stopping for a dead-end and simple cooperation. */
-    COOPERATION
-    {
-
-        @Override
-        Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
-                throws ParameterException, OperationalPlanException
-        {
-            // stop for dead-end
-            return NONE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData);
-        }
-
-        @Override
-        Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
-                throws ParameterException, OperationalPlanException
-        {
-            if ((lat.isLeft() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
-                    || (lat.isRight() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT)))
-            {
-                return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
-            }
-            Acceleration b = params.getParameter(ParameterTypes.B);
-            Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
-            double dCoop = params.getParameter(DCOOP);
-            Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-            RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGTU leader : removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
-                    relativeLane), perception, RelativeLane.CURRENT))
-            {
-                Parameters params2 = leader.getParameters();
-                double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
-                if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
-                {
-                    Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
-                            desire, params, sli, cfm);
-                    a = Acceleration.min(a, aSingle);
-                }
-            }
-
-            return Acceleration.max(a, b.neg());
-        }
-
-    },
+    };
 
     /** Synchronization where current leaders are taken. */
-    PASSIVE
+    public static Synchronization PASSIVE = new Synchronization()
     {
-
         @Override
-        Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
+        public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
-
             Acceleration a = Acceleration.POSITIVE_INFINITY;
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
 
-            PerceptionIterable<HeadwayGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
                     relativeLane), perception, RelativeLane.CURRENT);
             HeadwayGTU leader = null;
@@ -200,30 +141,40 @@ public enum Synchronization implements LmrsParameters
                 a = Acceleration.min(a, aSingle);
                 a = gentleUrgency(a, desire, params);
                 // dead end
-                a = Acceleration.min(a, NONE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData));
+                a = Acceleration.min(a, DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData));
 
             }
-
             return a;
-
         }
 
+    };
+
+    /** Synchronization where current leaders are taken. Synchronization is disabled for d_sync&lt;d&lt;d_coop at low speeds. */
+    public static Synchronization PASSIVE_MOVING = new Synchronization()
+    {
         @Override
-        Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
+        public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
+                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
-            return COOPERATION.cooperate(perception, params, sli, cfm, lat, ownDesire);
-        }
 
-    },
+            Acceleration a = Acceleration.POSITIVE_INFINITY;
+            double dCoop = params.getParameter(DCOOP);
+            Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
+            if (desire < dCoop && ownSpeed.si < params.getParameter(ParameterTypes.LOOKAHEAD).si
+                    / params.getParameter(ParameterTypes.T0).si)
+            {
+                return a;
+            }
+            return PASSIVE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData);
+        }
+    };
 
     /** Synchronization where a suitable leader is actively targeted, in relation to infrastructure. */
-    ACTIVE
+    public static Synchronization ACTIVE = new Synchronization()
     {
-
         @Override
-        Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
+        public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
@@ -277,7 +228,7 @@ public enum Synchronization implements LmrsParameters
             // abandon the gap if the sync vehicle is no longer adjacent, in congestion within xMergeSync, or too far
             NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
             RelativeLane lane = new RelativeLane(lat, 1);
-            PerceptionIterable<HeadwayGTU> leaders =
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
                     removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getLeaders(lane), perception, lane),
                             perception, RelativeLane.CURRENT);
             HeadwayGTU syncVehicle = lmrsData.getSyncVehicle(leaders);
@@ -312,7 +263,7 @@ public enum Synchronization implements LmrsParameters
 
             // select upstream vehicle if we can safely follow that, or if we cannot stay ahead of it (infrastructure, in coop)
             HeadwayGTU up;
-            PerceptionIterable<HeadwayGTU> followers =
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> followers =
                     removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getFollowers(lane), perception, lane),
                             perception, RelativeLane.CURRENT);
             HeadwayGTU follower = followers == null || followers.isEmpty() ? null
@@ -379,7 +330,7 @@ public enum Synchronization implements LmrsParameters
                         a = gentleUrgency(acc, desire, params);
                     }
                 }
-                else if (!LmrsUtil.acceptLaneChange(perception, params, sli, cfm, desire, ownSpeed, lat,
+                else if (!LmrsUtil.acceptLaneChange(perception, params, sli, cfm, desire, ownSpeed, Acceleration.ZERO, lat,
                         lmrsData.getGapAcceptance()))
                 {
                     a = stopForEnd(xCur, xMerge, params, ownSpeed, cfm, sli);
@@ -419,42 +370,8 @@ public enum Synchronization implements LmrsParameters
                     }
                 }
             }
-
             return a;
         }
-
-        @Override
-        Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
-                throws ParameterException, OperationalPlanException
-        {
-
-            if ((lat.isLeft() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
-                    || (lat.isRight() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT)))
-            {
-                return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
-            }
-            Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
-            double dCoop = params.getParameter(DCOOP);
-            Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-            RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGTU leader : removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
-                    relativeLane), perception, RelativeLane.CURRENT))
-            {
-                Parameters params2 = leader.getParameters();
-                double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
-                if (desire >= dCoop && leader.getDistance().gt0())
-                {
-                    Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
-                            desire, params, sli, cfm);
-                    a = Acceleration.min(a, gentleUrgency(aSingle, desire, params));
-                }
-            }
-            return a;
-        }
-
     };
 
     /**
@@ -470,23 +387,8 @@ public enum Synchronization implements LmrsParameters
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    abstract Acceleration synchronize(LanePerception perception, Parameters params, SpeedLimitInfo sli, CarFollowingModel cfm,
+    Acceleration synchronize(LanePerception perception, Parameters params, SpeedLimitInfo sli, CarFollowingModel cfm,
             double desire, LateralDirectionality lat, LmrsData lmrsData) throws ParameterException, OperationalPlanException;
-
-    /**
-     * Determine acceleration for cooperation.
-     * @param perception perception
-     * @param params parameters
-     * @param sli speed limit info
-     * @param cfm car-following model
-     * @param lat lateral direction for cooperation
-     * @param ownDesire own lane change desire
-     * @return acceleration for synchronization
-     * @throws ParameterException if a parameter is not defined
-     * @throws OperationalPlanException perception exception
-     */
-    abstract Acceleration cooperate(LanePerception perception, Parameters params, SpeedLimitInfo sli, CarFollowingModel cfm,
-            LateralDirectionality lat, Desire ownDesire) throws ParameterException, OperationalPlanException;
 
     /**
      * Removes all GTUs from the set, that are found upstream on the conflicting lane of a conflict in the current lane.
@@ -496,15 +398,16 @@ public enum Synchronization implements LmrsParameters
      * @return the input set, for chained use
      * @throws OperationalPlanException if the {@code IntersectionPerception} category is not present
      */
-    static PerceptionIterable<HeadwayGTU> removeAllUpstreamOfConflicts(final Iterable<HeadwayGTU> set,
-            final LanePerception perception, final RelativeLane relativeLane) throws OperationalPlanException
+    static PerceptionCollectable<HeadwayGTU, LaneBasedGTU> removeAllUpstreamOfConflicts(
+            final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> set, final LanePerception perception,
+            final RelativeLane relativeLane) throws OperationalPlanException
     {
         if (true)
         {
-            return (PerceptionIterable<HeadwayGTU>) set;
+            return set;
         }
         // TODO find a better solution for this inefficient hack... when to ignore a vehicle for synchronization?
-        SortedSetPerceptionIterable<HeadwayGTU> out = new SortedSetPerceptionIterable<>();
+        SortedSetPerceptionIterable<HeadwayGTU, LaneBasedGTU> out = new SortedSetPerceptionIterable<>();
         if (set == null)
         {
             return out;
@@ -577,8 +480,8 @@ public enum Synchronization implements LmrsParameters
      * @param ownLength own vehicle length
      * @return upstream gtu of the given gtu
      */
-    static HeadwayGTU getFollower(final HeadwayGTU gtu, final PerceptionIterable<HeadwayGTU> leaders, final HeadwayGTU follower,
-            final Length ownLength)
+    static HeadwayGTU getFollower(final HeadwayGTU gtu, final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders,
+            final HeadwayGTU follower, final Length ownLength)
     {
         HeadwayGTU last = null;
         for (HeadwayGTU leader : leaders)

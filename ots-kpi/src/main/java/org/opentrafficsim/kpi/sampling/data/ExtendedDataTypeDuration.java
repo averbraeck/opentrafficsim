@@ -5,6 +5,7 @@ import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.djunits.value.vfloat.vector.FloatDurationVector;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 
 /**
  * Extended data type for duration values.
@@ -16,8 +17,10 @@ import org.djunits.value.vfloat.vector.FloatDurationVector;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeDuration extends ExtendedDataTypeFloat<DurationUnit, FloatDuration, FloatDurationVector>
+public abstract class ExtendedDataTypeDuration<G extends GtuDataInterface>
+        extends ExtendedDataTypeFloat<DurationUnit, FloatDuration, FloatDurationVector, G>
 {
 
     /**

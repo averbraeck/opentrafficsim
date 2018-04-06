@@ -65,7 +65,7 @@ public interface LaneRecord<R extends LaneRecord<R>>
      */
     default Length getDistanceToPosition(final Length position)
     {
-        return getStartDistance().plus(getDirection().isPlus() ? position : getLength().minus(position));
+        return Length.createSI(getStartDistance().si + (getDirection().isPlus() ? position.si : getLength().si - position.si));
     }
 
 }

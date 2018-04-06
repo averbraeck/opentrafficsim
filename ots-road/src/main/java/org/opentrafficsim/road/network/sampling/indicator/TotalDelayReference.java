@@ -19,6 +19,7 @@ import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
 import nl.tudelft.simulation.language.Throw;
 
 /**
+ * Delay based on reference speed.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -28,7 +29,6 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 public class TotalDelayReference extends AbstractIndicator<Duration>
 {
 
@@ -46,7 +46,7 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
         {
             try
             {
-                for (Trajectory trajectory : trajectoryGroup.getTrajectories())
+                for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
                 {
                     Duration sumTime;
                     Duration sumRefTime;

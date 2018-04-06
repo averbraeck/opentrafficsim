@@ -157,7 +157,7 @@ public interface Network extends Identifiable
      * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
      *         Network that are of the type objectType, or any sub type thereof
      */
-    ImmutableMap<String, ObjectInterface> getObjectMap(Class<ObjectInterface> objectType);
+    <T extends ObjectInterface> ImmutableMap<String, T> getObjectMap(Class<T> objectType);
 
     /**
      * Add an ObjectInterface implementing object to the Network.

@@ -10,7 +10,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
@@ -20,6 +20,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -49,10 +50,11 @@ public class AccelerationConflicts implements AccelerationIncentive
         EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
         Acceleration acceleration = ego.getAcceleration();
         Length length = ego.getLength();
-        PerceptionIterable<HeadwayConflict> conflicts =
+        PerceptionCollectable<HeadwayConflict, Conflict> conflicts =
                 perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
-        PerceptionIterable<HeadwayGTU> leaders = perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
-        
+        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
+                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
+
         simplePlan.minimizeAcceleration(ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length,
                 speed, acceleration, speedLimitInfo, this.yieldPlans, gtu));
         if (this.yieldPlans.getIndicatorIntent().isLeft())

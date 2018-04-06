@@ -63,7 +63,7 @@ import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
@@ -772,7 +772,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
              */
             GTUFollowingTacticalPlannerNoPerceive(final GTUFollowingModelOld carFollowingModel, final LaneBasedGTU gtu)
             {
-                super(carFollowingModel, gtu, new CategorialLanePerception(gtu));
+                super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
             }
 
             /** {@inheritDoc} */

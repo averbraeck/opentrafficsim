@@ -71,18 +71,19 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.GapAcceptanceModels;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
@@ -95,6 +96,7 @@ import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -120,7 +122,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     static final double TRUCK_FRACTION = 0.15;
 
     /** Left traffic fraction. */
-    static final double LEFT_FRACTION = 0.6;
+    static final double LEFT_FRACTION = 0.0;
 
     /** Main demand. */
     static final Frequency MAIN_DEMAND = new Frequency(1000, FrequencyUnit.PER_HOUR);
@@ -129,10 +131,13 @@ public class ShortMerge extends AbstractWrappableAnimation
     static final Frequency RAMP_DEMAND = new Frequency(200, FrequencyUnit.PER_HOUR);
 
     /** Synchronization. */
-    static final Synchronization SYNCHRONIZATION = Synchronization.ACTIVE;
+    static final Synchronization SYNCHRONIZATION = Synchronization.PASSIVE_MOVING;
+
+    /** Cooperation. */
+    static final Cooperation COOPERATION = Cooperation.PASSIVE_MOVING;
 
     /** Use additional incentives. */
-    static final boolean ADDITIONAL_INCENTIVES = false;
+    static final boolean ADDITIONAL_INCENTIVES = true;
 
     /** Simulation time. */
     public static final Time SIMTIME = Time.createSI(3600);
@@ -145,7 +150,7 @@ public class ShortMerge extends AbstractWrappableAnimation
 
     /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
-    
+
     /** {@inheritDoc} */
     @Override
     public final String shortName()
@@ -318,7 +323,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             mandatoryIncentives.add(new IncentiveRoute());
             if (ADDITIONAL_INCENTIVES)
             {
-                mandatoryIncentives.add(new IncentiveGetInLane());
+                // mandatoryIncentives.add(new IncentiveGetInLane());
             }
             voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
             voluntaryIncentives.add(new IncentiveKeep());
@@ -330,9 +335,9 @@ public class ShortMerge extends AbstractWrappableAnimation
             accelerationIncentives.add(new AccelerationSpeedLimitTransition());
             accelerationIncentives.add(new AccelerationTrafficLights());
             accelerationIncentives.add(new AccelerationConflicts());
-            LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory =
-                    new LMRSFactory(idmPlusFactory, new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION,
-                            GapAcceptanceModels.INFORMED, mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
+            LaneBasedTacticalPlannerFactory<LMRS> tacticalFactory = new LMRSFactory(idmPlusFactory,
+                    new DefaultLMRSPerceptionFactory(), SYNCHRONIZATION, COOPERATION, GapAcceptance.INFORMED, Tailgating.NONE,
+                    mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
 
             GTUType car = new GTUType("car", CAR);
             GTUType truck = new GTUType("truck", TRUCK);
@@ -360,10 +365,11 @@ public class ShortMerge extends AbstractWrappableAnimation
             CrossSectionLink linkF = (CrossSectionLink) this.network.getLink("FF2");
 
             ParameterFactoryByType bcFactory = new ParameterFactoryByType();
-            bcFactory.addGaussianParameter(car, ParameterTypes.FSPEED, 123.7 / 120, 12.0 / 120, stream);
-            bcFactory.addGaussianParameter(car, LmrsParameters.SOCIO, 0.5, 0.1, stream);
+            bcFactory.addParameter(car, ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120, 12.0 / 120));
+            bcFactory.addParameter(car, LmrsParameters.SOCIO, new DistNormal(stream, 0.5, 0.1));
             bcFactory.addParameter(truck, ParameterTypes.A, new Acceleration(0.8, AccelerationUnit.SI));
-            bcFactory.addGaussianParameter(truck, LmrsParameters.SOCIO, 0.5, 0.1, stream);
+            bcFactory.addParameter(truck, LmrsParameters.SOCIO, new DistNormal(stream, 0.5, 0.1));
+            bcFactory.addParameter(Tailgating.RHO, Tailgating.RHO.getDefaultValue());
 
             Generator<Duration> headwaysA1 = new HeadwayGenerator(MAIN_DEMAND);
             Generator<Duration> headwaysA2 = new HeadwayGenerator(MAIN_DEMAND);
@@ -422,8 +428,8 @@ public class ShortMerge extends AbstractWrappableAnimation
                 makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuType2ndLaneA, headwaysA2, color,
                         roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             }
-            makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, color,
-                    roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
+            makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, color, roomChecker,
+                    bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
 
             new SpeedSign("sign1", getLane(linkA, "FORWARD1"), LongitudinalDirectionality.DIR_PLUS, Length.createSI(10),
                     (OTSSimulatorInterface) this.getSimulator(), new Speed(130.0, SpeedUnit.KM_PER_HOUR));

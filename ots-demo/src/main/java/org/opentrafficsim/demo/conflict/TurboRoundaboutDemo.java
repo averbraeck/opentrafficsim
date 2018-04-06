@@ -98,7 +98,7 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
 
         /** Simulator. */
         private OTSDEVSSimulatorInterface simulator;
-        
+
         /** {@inheritDoc} */
         @Override
         public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0)

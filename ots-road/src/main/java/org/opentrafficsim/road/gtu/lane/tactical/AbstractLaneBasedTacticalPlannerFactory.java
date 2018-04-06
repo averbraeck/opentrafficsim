@@ -6,6 +6,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -64,11 +65,13 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
 
     /**
      * Returns the next car following model.
+     * @param gtu LaneBasedGTU; gtu
      * @return CarFollowingModel; next car following model
      */
-    protected final CarFollowingModel nextCarFollowingModel()
+    protected final CarFollowingModel nextCarFollowingModel(final LaneBasedGTU gtu)
     {
         CarFollowingModel model = peekCarFollowingModel();
+        model.init(gtu);
         this.peekedCarFollowingModel = null; // peek will create a new one
         return model;
     }

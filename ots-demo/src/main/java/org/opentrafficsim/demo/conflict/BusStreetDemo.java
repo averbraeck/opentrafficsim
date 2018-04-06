@@ -39,7 +39,6 @@ import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
@@ -48,7 +47,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
@@ -62,13 +60,15 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.GapAcceptanceModels;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRS;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
@@ -99,7 +99,7 @@ import nl.tudelft.simulation.language.io.URLResource;
  */
 public class BusStreetDemo extends AbstractWrappableAnimation
 {
-    
+
     /** */
     private static final long serialVersionUID = 20161211L;
 
@@ -514,7 +514,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     throw new RuntimeException("Reaching default of switch case.");
             }
 
-            GTUCharacteristics gtuCharacteristics = new GTUCharacteristics(gtuType, length, width, maximumSpeed);
+            GTUCharacteristics gtuCharacteristics = new GTUCharacteristics(gtuType, length, width, maximumSpeed,
+                    Acceleration.createSI(3.0), Acceleration.createSI(-8.0));
 
             return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route, null, null);
         }
@@ -557,8 +558,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         public final LMRS create(final LaneBasedGTU gtu) throws GTUException
         {
             DefaultLMRSPerceptionFactory pFac = new DefaultLMRSPerceptionFactory();
-            LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE,
-                    GapAcceptanceModels.INFORMED);
+            LMRS lmrs = new LMRS(new IDMPlus(), gtu, pFac.generatePerception(gtu), Synchronization.PASSIVE, Cooperation.PASSIVE,
+                    GapAcceptance.INFORMED, Tailgating.NONE);
             lmrs.setDefaultIncentives();
             if (gtu.getGTUType().isOfType(GTUType.SCHEDULED_BUS))
             {

@@ -42,9 +42,10 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <G> gtu data type
  */
 // TODO some trajectories have the first time stamp twice, with possibly different values for acceleration (and TTC)
-public final class Trajectory
+public final class Trajectory<G extends GtuDataInterface>
 {
 
     /** Default array capacity. */
@@ -75,7 +76,7 @@ public final class Trajectory
     private final MetaData metaData;
 
     /** Map of array data types and their values. */
-    private final Map<ExtendedDataType<?, ?, ?>, Object> extendedData = new HashMap<>();
+    private final Map<ExtendedDataType<?, ?, ?, G>, Object> extendedData = new HashMap<>();
 
     /** Direction of travel. */
     private final KpiLaneDirection kpiLaneDirection;
@@ -86,7 +87,7 @@ public final class Trajectory
      * @param extendedData types of extended data
      * @param kpiLaneDirection direction of travel
      */
-    public Trajectory(final GtuDataInterface gtu, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?>> extendedData,
+    public Trajectory(final GtuDataInterface gtu, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?, G>> extendedData,
             final KpiLaneDirection kpiLaneDirection)
     {
         this(gtu == null ? null : gtu.getId(), metaData, extendedData, kpiLaneDirection);
@@ -99,7 +100,7 @@ public final class Trajectory
      * @param extendedData types of extended data
      * @param kpiLaneDirection direction of travel
      */
-    private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?>> extendedData,
+    private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?, G>> extendedData,
             final KpiLaneDirection kpiLaneDirection)
     {
         Throw.whenNull(gtuId, "GTU may not be null.");
@@ -108,7 +109,7 @@ public final class Trajectory
         Throw.whenNull(kpiLaneDirection, "Lane direction may not be null.");
         this.gtuId = gtuId;
         this.metaData = new MetaData(metaData);
-        for (ExtendedDataType<?, ?, ?> dataType : extendedData)
+        for (ExtendedDataType<?, ?, ?, G> dataType : extendedData)
         {
             this.extendedData.put(dataType, dataType.initializeStorage());
         }
@@ -137,8 +138,7 @@ public final class Trajectory
      * @param time time
      * @param gtu gtu to add extended data for
      */
-    public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time,
-            final GtuDataInterface gtu)
+    public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time, final G gtu)
     {
         Throw.whenNull(position, "Position may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
@@ -157,7 +157,7 @@ public final class Trajectory
         this.v[this.size] = (float) speed.si;
         this.a[this.size] = (float) acceleration.si;
         this.t[this.size] = (float) time.si;
-        for (ExtendedDataType<?, ?, ?> extendedDataType : this.extendedData.keySet())
+        for (ExtendedDataType<?, ?, ?, G> extendedDataType : this.extendedData.keySet())
         {
             appendValue(extendedDataType, gtu);
         }
@@ -169,7 +169,7 @@ public final class Trajectory
      * @param gtu gtu
      */
     @SuppressWarnings("unchecked")
-    private <T, S> void appendValue(final ExtendedDataType<T, ?, S> extendedDataType, final GtuDataInterface gtu)
+    private <T, S> void appendValue(final ExtendedDataType<T, ?, S, G> extendedDataType, final G gtu)
     {
         S in = (S) this.extendedData.get(extendedDataType);
         S out = extendedDataType.setValue(in, this.size, extendedDataType.getValue(gtu));
@@ -286,7 +286,8 @@ public final class Trajectory
      * @throws SamplingException if the index is out of bounds
      */
     @SuppressWarnings("unchecked")
-    public <T, S> T getExtendedData(final ExtendedDataType<T, ?, S> extendedDataType, final int index) throws SamplingException
+    public <T, S> T getExtendedData(final ExtendedDataType<T, ?, S, ?> extendedDataType, final int index)
+            throws SamplingException
     {
         checkSample(index);
         return extendedDataType.getStorageValue((S) this.extendedData.get(extendedDataType), index);
@@ -429,7 +430,7 @@ public final class Trajectory
      * @param extendedDataType extended data type
      * @return whether the trajectory contains the extended data of give type
      */
-    public boolean contains(final ExtendedDataType<?, ?, ?> extendedDataType)
+    public boolean contains(final ExtendedDataType<?, ?, ?, ?> extendedDataType)
     {
         return this.extendedData.containsKey(extendedDataType);
     }
@@ -442,7 +443,7 @@ public final class Trajectory
      * @throws SamplingException if the extended data type is not in the trajectory
      */
     @SuppressWarnings("unchecked")
-    public <O, S> O getExtendedData(final ExtendedDataType<?, O, S> extendedDataType) throws SamplingException
+    public <O, S> O getExtendedData(final ExtendedDataType<?, O, S, ?> extendedDataType) throws SamplingException
     {
         Throw.when(!this.extendedData.containsKey(extendedDataType), SamplingException.class,
                 "Extended data type %s is not in the trajectory.", extendedDataType);
@@ -453,7 +454,7 @@ public final class Trajectory
      * Returns the included extended data types.
      * @return included extended data types
      */
-    public Set<ExtendedDataType<?, ?, ?>> getExtendedDataTypes()
+    public Set<ExtendedDataType<?, ?, ?, G>> getExtendedDataTypes()
     {
         return this.extendedData.keySet();
     }
@@ -467,7 +468,7 @@ public final class Trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minLength is smaller than maxLength
      */
-    public Trajectory subSet(final Length startPosition, final Length endPosition)
+    public Trajectory<G> subSet(final Length startPosition, final Length endPosition)
     {
         Throw.whenNull(startPosition, "Start position may not be null");
         Throw.whenNull(endPosition, "End position may not be null");
@@ -487,7 +488,7 @@ public final class Trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minTime is smaller than maxTime
      */
-    public Trajectory subSet(final Time startTime, final Time endTime)
+    public Trajectory<G> subSet(final Time startTime, final Time endTime)
     {
         Throw.whenNull(startTime, "Start time may not be null");
         Throw.whenNull(endTime, "End time may not be null");
@@ -506,7 +507,7 @@ public final class Trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minLength/Time is smaller than maxLength/Time
      */
-    public Trajectory subSet(final Length startPosition, final Length endPosition, final Time startTime, final Time endTime)
+    public Trajectory<G> subSet(final Length startPosition, final Length endPosition, final Time startTime, final Time endTime)
     {
         // could use this.subSet(minLength, maxLength).subSet(minTime, maxTime), but that copies twice
         Throw.whenNull(startPosition, "Start position may not be null");
@@ -605,9 +606,9 @@ public final class Trajectory
      * @return subset of the trajectory
      */
     @SuppressWarnings("unchecked")
-    private <T, S> Trajectory subSet(final Boundaries bounds)
+    private <T, S> Trajectory<G> subSet(final Boundaries bounds)
     {
-        Trajectory out = new Trajectory(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
+        Trajectory<G> out = new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
         if (bounds.from < bounds.to) // otherwise empty, no data in the subset
         {
             int nBefore = bounds.fFrom < 1.0 ? 1 : 0;
@@ -636,10 +637,10 @@ public final class Trajectory
                 out.t[n - 1] = (float) (this.t[bounds.to] * (1 - bounds.fTo) + this.t[bounds.to + 1] * bounds.fTo);
             }
             out.size = n;
-            for (ExtendedDataType<?, ?, ?> extendedDataType : this.extendedData.keySet())
+            for (ExtendedDataType<?, ?, ?, G> extendedDataType : this.extendedData.keySet())
             {
                 int j = 0;
-                ExtendedDataType<T, ?, S> edt = (ExtendedDataType<T, ?, S>) extendedDataType;
+                ExtendedDataType<T, ?, S, G> edt = (ExtendedDataType<T, ?, S, G>) extendedDataType;
                 S fromList = (S) this.extendedData.get(extendedDataType);
                 S toList = edt.initializeStorage();
                 try
@@ -647,7 +648,7 @@ public final class Trajectory
                     if (nBefore == 1)
                     {
                         edt.setValue(toList, j,
-                                ((ExtendedDataType<T, ?, ?>) extendedDataType).interpolate(
+                                ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
                                         edt.getStorageValue(fromList, bounds.from),
                                         edt.getStorageValue(fromList, bounds.from + 1), bounds.fFrom));
                         j++;
@@ -660,7 +661,7 @@ public final class Trajectory
                     if (nAfter == 1)
                     {
                         edt.setValue(toList, j,
-                                ((ExtendedDataType<T, ?, ?>) extendedDataType).interpolate(
+                                ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
                                         edt.getStorageValue(fromList, bounds.to), edt.getStorageValue(fromList, bounds.to + 1),
                                         bounds.fTo));
                     }
@@ -707,7 +708,7 @@ public final class Trajectory
         {
             return false;
         }
-        Trajectory other = (Trajectory) obj;
+        Trajectory<?> other = (Trajectory<?>) obj;
         if (this.size != other.size)
         {
             return false;

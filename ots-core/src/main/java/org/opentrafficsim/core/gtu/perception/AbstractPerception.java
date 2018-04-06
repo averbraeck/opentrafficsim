@@ -30,6 +30,10 @@ public abstract class AbstractPerception<G extends GTU> implements Perception<G>
     private final Map<Class<? extends PerceptionCategory<?, ?>>, PerceptionCategory<?, ?>> perceptionCategories =
             new LinkedHashMap<>();
 
+    /** Cache, avoiding loop and isAssignableFrom. */
+    private final Map<Class<? extends PerceptionCategory<?, ?>>, PerceptionCategory<?, ?>> cachedCategories =
+            new LinkedHashMap<>();
+
     /** GTU. */
     private G gtu;
 
@@ -57,17 +61,23 @@ public abstract class AbstractPerception<G extends GTU> implements Perception<G>
     {
         // guarantees correct combination of class and perception category
         this.perceptionCategories.put((Class<T>) perceptionCategory.getClass(), perceptionCategory);
+        this.cachedCategories.clear();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final <T extends PerceptionCategory<?, ?>> boolean contains(final Class<T> clazz)
+    public final <T extends PerceptionCategory<?, ?>> boolean contains(final Class<T> category)
     {
-        for (Class<?> category : this.perceptionCategories.keySet())
+        if (this.cachedCategories.containsKey(category))
         {
-            if (clazz.isAssignableFrom(category))
+            return true;
+        }
+        for (Class<?> clazz : this.perceptionCategories.keySet())
+        {
+            if (category.isAssignableFrom(clazz))
             {
                 // isAssignableFrom takes care of implementation of the category
+                this.cachedCategories.put(category, this.perceptionCategories.get(clazz));
                 return true;
             }
         }
@@ -92,13 +102,20 @@ public abstract class AbstractPerception<G extends GTU> implements Perception<G>
     @SuppressWarnings("unchecked")
     public final <T extends PerceptionCategory<?, ?>> T getPerceptionCategoryOrNull(final Class<T> category)
     {
+        T implementation = (T) this.cachedCategories.get(category);
+        if (implementation != null)
+        {
+            return implementation;
+        }
         for (Class<?> clazz : this.perceptionCategories.keySet())
         {
             if (category.isAssignableFrom(clazz))
             {
                 // addPerceptionCategory guarantees correct combination of class and perception category
                 // isAssignableFrom takes care of implementation of the category
-                return (T) this.perceptionCategories.get(clazz);
+                implementation = (T) this.perceptionCategories.get(clazz);
+                this.cachedCategories.put(category, implementation);
+                return implementation;
             }
         }
         return null;
@@ -115,6 +132,7 @@ public abstract class AbstractPerception<G extends GTU> implements Perception<G>
                 // addPerceptionCategory guarantees correct combination of class and perception category
                 // isAssignableFrom takes care of implementation of the category
                 this.perceptionCategories.remove(perceptionCategory.getClass());
+                this.cachedCategories.clear();
                 return;
             }
         }

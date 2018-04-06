@@ -52,13 +52,17 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
     @Override
     public LinkedList<E> get()
     {
-        return fill(new LinkedList<>());
+        return getCollection();
     }
 
     /** {@inheritDoc} */
     @Override
     public LinkedList<E> get(final Time time)
     {
+        if (isLastState(time))
+        {
+            return getCollection();
+        }
         return fill(time, new LinkedList<>());
     }
     

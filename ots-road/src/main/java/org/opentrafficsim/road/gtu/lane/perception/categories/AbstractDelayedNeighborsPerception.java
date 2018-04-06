@@ -18,8 +18,9 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
@@ -35,8 +36,8 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayedPerceptionCategory implements
-        NeighborsPerception
+public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayedPerceptionCategory
+        implements NeighborsPerception
 {
 
     /** */
@@ -177,24 +178,22 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
             this.direct.updateFirstFollowers(LateralDirectionality.LEFT);
             this.direct.updateFirstLeaders(LateralDirectionality.LEFT);
             this.direct.updateGtuAlongside(LateralDirectionality.LEFT);
-            this.gtuAlongsideLeftOverride =
-                    newFirstLeaderOrFollower(getFollowers(RelativeLane.LEFT),
-                            this.direct.getFirstFollowers(LateralDirectionality.LEFT))
-                            || newFirstLeaderOrFollower(getLeaders(RelativeLane.LEFT),
-                                    this.direct.getFirstLeaders(LateralDirectionality.LEFT))
-                            || this.direct.isGtuAlongside(LateralDirectionality.LEFT);
+            this.gtuAlongsideLeftOverride = newFirstLeaderOrFollower(getFollowers(RelativeLane.LEFT),
+                    this.direct.getFirstFollowers(LateralDirectionality.LEFT))
+                    || newFirstLeaderOrFollower(getLeaders(RelativeLane.LEFT),
+                            this.direct.getFirstLeaders(LateralDirectionality.LEFT))
+                    || this.direct.isGtuAlongside(LateralDirectionality.LEFT);
         }
         if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
         {
             this.direct.updateFirstFollowers(LateralDirectionality.RIGHT);
             this.direct.updateFirstLeaders(LateralDirectionality.RIGHT);
             this.direct.updateGtuAlongside(LateralDirectionality.RIGHT);
-            this.gtuAlongsideRightOverride =
-                    newFirstLeaderOrFollower(getFollowers(RelativeLane.RIGHT),
-                            this.direct.getFirstFollowers(LateralDirectionality.RIGHT))
-                            || newFirstLeaderOrFollower(getLeaders(RelativeLane.RIGHT),
-                                    this.direct.getFirstLeaders(LateralDirectionality.RIGHT))
-                            || this.direct.isGtuAlongside(LateralDirectionality.RIGHT);
+            this.gtuAlongsideRightOverride = newFirstLeaderOrFollower(getFollowers(RelativeLane.RIGHT),
+                    this.direct.getFirstFollowers(LateralDirectionality.RIGHT))
+                    || newFirstLeaderOrFollower(getLeaders(RelativeLane.RIGHT),
+                            this.direct.getFirstLeaders(LateralDirectionality.RIGHT))
+                    || this.direct.isGtuAlongside(LateralDirectionality.RIGHT);
         }
 
     }
@@ -205,7 +204,8 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
      * @param currentSet current set
      * @return whether there is a gtu in the current set that is not present in the delayed set
      */
-    private boolean newFirstLeaderOrFollower(final Iterable<HeadwayGTU> delayedSet, final Set<HeadwayGTU> currentSet)
+    private boolean newFirstLeaderOrFollower(final Iterable<? extends HeadwayGTU> delayedSet,
+            final Set<? extends HeadwayGTU> currentSet)
     {
         Set<String> set = new HashSet<>();
         for (HeadwayGTU gtu : delayedSet)
@@ -277,8 +277,8 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /** {@inheritDoc} */
     @Override
-    public final void updateFirstLeaders(final LateralDirectionality lat) throws ParameterException, GTUException,
-            NetworkException
+    public final void updateFirstLeaders(final LateralDirectionality lat)
+            throws ParameterException, GTUException, NetworkException
     {
         setInfo(NeighborsInfoType.getSortedSetType(FIRSTLEADERS), new RelativeLane(lat, 1),
                 this.direct.getTimeStampedFirstLeaders(lat));
@@ -286,8 +286,8 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /** {@inheritDoc} */
     @Override
-    public final void updateFirstFollowers(final LateralDirectionality lat) throws GTUException, ParameterException,
-            NetworkException
+    public final void updateFirstFollowers(final LateralDirectionality lat)
+            throws GTUException, ParameterException, NetworkException
     {
         setInfo(NeighborsInfoType.getSortedSetType(FIRSTFOLLOWERS), new RelativeLane(lat, 1),
                 this.direct.getTimeStampedFirstFollowers(lat));
@@ -364,20 +364,20 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
             }
             return (NeighborsInfoType<SortedSet<HeadwayGTU>>) LANEINFOTYPES.get(id);
         }
-        
+
         /**
          * Returns a (cached) info type for a sorted set of GTU's.
          * @param id id
          * @return info type
          */
         @SuppressWarnings("unchecked")
-        public static NeighborsInfoType<PerceptionIterable<HeadwayGTU>> getIterableType(final String id)
+        public static NeighborsInfoType<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> getIterableType(final String id)
         {
             if (!LANEINFOTYPES.containsKey(id))
             {
                 LANEINFOTYPES.put(id, new NeighborsInfoType<SortedSet<HeadwayGTU>>(id));
             }
-            return (NeighborsInfoType<PerceptionIterable<HeadwayGTU>>) LANEINFOTYPES.get(id);
+            return (NeighborsInfoType<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>>) LANEINFOTYPES.get(id);
         }
 
         /**

@@ -110,5 +110,12 @@ public interface HeadwayGTU extends Headway
      * @return route of gtu
      */
     Route getRoute();
+    
+    
+    /**
+     * Returns the perceived desired speed of the neighbor.
+     * @return Speed; perceived desired speed of the neighbor
+     */
+    Speed getDesiredSpeed();
 
 }

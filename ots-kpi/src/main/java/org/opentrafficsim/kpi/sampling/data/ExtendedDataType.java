@@ -26,8 +26,9 @@ import nl.tudelft.simulation.language.Throw;
  * @param <T> type of value
  * @param <O> output type
  * @param <S> storage type
+ * @param <G> gtu data type
  */
-public abstract class ExtendedDataType<T, O, S> implements Identifiable
+public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> implements Identifiable
 {
 
     /** Id. */
@@ -56,7 +57,7 @@ public abstract class ExtendedDataType<T, O, S> implements Identifiable
      * @param gtu gtu
      * @return current value of the gtu
      */
-    public abstract T getValue(final GtuDataInterface gtu);
+    public abstract T getValue(final G gtu);
 
     /**
      * Returns an updated list/array/vector of the storage type, including a new value at given index.
@@ -185,7 +186,7 @@ public abstract class ExtendedDataType<T, O, S> implements Identifiable
         {
             return false;
         }
-        ExtendedDataType<?, ?, ?> other = (ExtendedDataType<?, ?, ?>) obj;
+        ExtendedDataType<?, ?, ?, ?> other = (ExtendedDataType<?, ?, ?, ?>) obj;
         if (this.id == null)
         {
             if (other.id != null)

@@ -46,11 +46,11 @@ public interface Perception<G extends GTU> extends Serializable
 
     /**
      * Returns whether the given perception category is present.
-     * @param clazz perception category class
+     * @param category perception category class
      * @param <T> perception category
      * @return whether the given perception category is present
      */
-    <T extends PerceptionCategory<?, ?>> boolean contains(Class<T> clazz);
+    <T extends PerceptionCategory<?, ?>> boolean contains(Class<T> category);
 
     /**
      * Returns the given perception category.

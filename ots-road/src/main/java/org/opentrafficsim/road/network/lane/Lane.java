@@ -1115,26 +1115,27 @@ public class Lane extends CrossSectionElement implements Serializable
     public final LaneBasedGTU getGtuAhead(final Length position, final GTUDirectionality direction,
             final RelativePosition.TYPE relativePosition, final Time when) throws GTUException
     {
-        if (this.gtuList.isEmpty())
+        List<LaneBasedGTU> list = this.gtuList.get(when);
+        if (list.isEmpty())
         {
             return null;
         }
         int[] search = lineSearch((int index) -> {
-            LaneBasedGTU gtu = this.gtuList.get(index);
+            LaneBasedGTU gtu = list.get(index);
             return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
-        }, this.gtuList.size(), position.si);
+        }, list.size(), position.si);
         if (direction.equals(GTUDirectionality.DIR_PLUS))
         {
-            if (search[1] < this.gtuList.size())
+            if (search[1] < list.size())
             {
-                return this.gtuList.get(search[1]);
+                return list.get(search[1]);
             }
         }
         else
         {
             if (search[0] >= 0)
             {
-                return this.gtuList.get(search[0]);
+                return list.get(search[0]);
             }
         }
         return null;

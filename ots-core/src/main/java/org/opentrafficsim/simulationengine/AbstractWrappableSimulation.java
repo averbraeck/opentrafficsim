@@ -5,13 +5,14 @@ import java.util.ArrayList;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.AbstractProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * <p>
@@ -77,7 +78,7 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public SimpleSimulator buildSimulator(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final ArrayList<AbstractProperty<?>> userModifiedProperties)
+            final ArrayList<Property<?>> userModifiedProperties)
             throws SimRuntimeException, NamingException, OTSSimulationException, PropertyException
     {
         OTSModelInterface model = makeModel();

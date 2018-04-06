@@ -121,6 +121,16 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
     {
         return this.events.isEmpty() ? null : this.events.get(this.events.size() - 1);
     }
+    
+    /**
+     * Returns whether the state at the given time is equal to the state at the current time.
+     * @param time Time; time
+     * @return boolean; whether the state at the given time is equal to the state at the current time
+     */
+    protected final boolean isLastState(final Time time)
+    {
+        return this.events.isEmpty() ? true : this.events.get(this.events.size() - 1).getTime() <= time.si;
+    }
 
     /**
      * Removes the given event.

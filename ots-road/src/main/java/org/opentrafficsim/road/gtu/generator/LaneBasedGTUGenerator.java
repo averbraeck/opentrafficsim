@@ -13,9 +13,7 @@ import java.util.TreeSet;
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -141,10 +139,11 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
         this.roomChecker = roomChecker;
         this.gtuColorer = gtuColorer;
         this.idGenerator = idGenerator;
-        Duration duration;
-        simulator.scheduleEventRel(duration = this.interarrivelTimeGenerator.draw(), this, this, "generateCharacteristics",
-                new Object[] {});
-        System.out.println("duration of iat is " + duration);
+        Duration headway = this.interarrivelTimeGenerator.draw();
+        if (headway != null) // otherwise no demand at all
+        {
+            simulator.scheduleEventRel(headway, this, this, "generateCharacteristics", new Object[] {});
+        }
     }
 
     /**
@@ -262,15 +261,19 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             LaneBasedIndividualGTU gtu =
                     new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), characteristics.getLength(),
                             characteristics.getWidth(), characteristics.getMaximumSpeed(), this.simulator, this.network);
-            gtu.setMaximumAcceleration(new Acceleration(3.0, AccelerationUnit.METER_PER_SECOND_2));
-            gtu.setMaximumDeceleration(new Acceleration(-8.0, AccelerationUnit.METER_PER_SECOND_2));
+            gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
+            gtu.setMaximumDeceleration(characteristics.getMaximumDeceleration());
+            gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
             gtu.initWithAnimation(
                     characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
                             characteristics.getOrigin(), characteristics.getDestination()),
                     placement.getPosition(), placement.getSpeed(), DefaultCarAnimation.class, this.gtuColorer);
-            gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
+            if (queue.size() > 0)
+            {
+                this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { position });
+            }
         }
-        if (queue.size() > 0)
+        else if (queue.size() > 0)
         {
             this.simulator.scheduleEventRel(this.reTryInterval, this, this, "tryToPlaceGTU", new Object[] { position });
         }

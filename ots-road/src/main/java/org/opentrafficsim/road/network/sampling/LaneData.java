@@ -2,10 +2,10 @@ package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
-import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
+ * Lane representation in road sampler.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -46,7 +46,7 @@ public class LaneData implements LaneDataInterface
 
     /** {@inheritDoc} */
     @Override
-    public final LinkDataInterface getLinkData()
+    public final LinkData getLinkData()
     {
         return new LinkData(this.lane.getParentLink());
     }

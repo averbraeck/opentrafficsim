@@ -4,13 +4,14 @@ import java.util.ArrayList;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.AbstractProperty;
+import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.network.NetworkException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Requirements for demonstration that can be shown in the SuperDemo.
@@ -41,7 +42,7 @@ public interface WrappableSimulation
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     SimpleSimulatorInterface buildSimulator(Time startTime, Duration warmupPeriod, Duration runLength,
-            ArrayList<AbstractProperty<?>> properties)
+            ArrayList<Property<?>> properties)
             throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException;
 
     /**

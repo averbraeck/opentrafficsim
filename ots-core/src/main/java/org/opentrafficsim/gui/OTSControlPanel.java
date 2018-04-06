@@ -235,7 +235,7 @@ public class OTSControlPanel extends JPanel
             return null;
         }
     }
-    
+
     /**
      * Attempt to load and return an icon, which will be made gray-scale.
      * @param iconPath String; the path that is used to load the icon
@@ -895,8 +895,8 @@ public class OTSControlPanel extends JPanel
                     bestError = logError;
                 }
             }
-            System.out.println("setSpeedfactor: factor is " + factor + ", best slider value is " + bestStep
-                    + " current value is " + this.slider.getValue());
+            // System.out.println("setSpeedfactor: factor is " + factor + ", best slider value is " + bestStep
+            // + " current value is " + this.slider.getValue());
             if (this.slider.getValue() != bestStep && factor < 1.0E6)
             {
                 this.slider.setValue(bestStep);

@@ -48,13 +48,17 @@ public class HistoricalPriorityQueue<E> extends AbstractHistoricalQueue<E, Prior
     @Override
     public PriorityQueue<E> get()
     {
-        return fill(new PriorityQueue<E>());
+        return getCollection();
     }
 
     /** {@inheritDoc} */
     @Override
     public PriorityQueue<E> get(final Time time)
     {
+        if (isLastState(time))
+        {
+            return getCollection();
+        }
         return fill(time, new PriorityQueue<E>());
     }
 

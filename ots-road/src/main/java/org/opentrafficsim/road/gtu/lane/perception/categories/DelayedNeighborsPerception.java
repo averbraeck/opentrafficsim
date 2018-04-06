@@ -21,10 +21,12 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.SortedSetPerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.categories.Anticipation.NeighborTriplet;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -77,10 +79,10 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
     private Time rearrangeTime;
 
     /** Set of followers per relative lane. */
-    private final Map<RelativeLane, PerceptionIterable<HeadwayGTU>> followers = new HashMap<>();
+    private final Map<RelativeLane, PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> followers = new HashMap<>();
 
     /** Set of leaders per relative lane. */
-    private final Map<RelativeLane, PerceptionIterable<HeadwayGTU>> leaders = new HashMap<>();
+    private final Map<RelativeLane, PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> leaders = new HashMap<>();
 
     /** Set of first followers per lane upstream of merge per lateral direction, i.e. in the left or right lane. */
     private final Map<LateralDirectionality, SortedSet<HeadwayGTU>> firstFollowers = new HashMap<>();
@@ -238,9 +240,9 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 }
 
                 // initiate sets
-                SortedSetPerceptionIterable<HeadwayGTU> followersSet = new SortedSetPerceptionIterable<>();
+                SortedSetPerceptionIterable<HeadwayGTU, LaneBasedGTU> followersSet = new SortedSetPerceptionIterable<>();
                 this.followers.put(lane, followersSet);
-                SortedSetPerceptionIterable<HeadwayGTU> leadersSet = new SortedSetPerceptionIterable<>();
+                SortedSetPerceptionIterable<HeadwayGTU, LaneBasedGTU> leadersSet = new SortedSetPerceptionIterable<>();
                 this.leaders.put(lane, leadersSet);
 
                 // followers
@@ -447,7 +449,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public final PerceptionIterable<HeadwayGTU> getLeaders(final RelativeLane lane)
+    public final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getLeaders(final RelativeLane lane)
     {
         rearrangeNeighbors();
         return this.leaders.get(lane);
@@ -455,7 +457,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /** {@inheritDoc} */
     @Override
-    public final PerceptionIterable<HeadwayGTU> getFollowers(final RelativeLane lane)
+    public final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getFollowers(final RelativeLane lane)
     {
         rearrangeNeighbors();
         return this.followers.get(lane);
@@ -519,175 +521,6 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
         public final String toString()
         {
             return "ErrorValue [time=" + this.time + ", error=" + this.error + "]";
-        }
-
-    }
-
-    /**
-     * Form of anticipation.
-     * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 feb. 2017 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    public enum Anticipation
-    {
-
-        /** Assume no anticipation. */
-        NONE
-        {
-            @Override
-            public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
-                    final Length traveledDistance)
-            {
-                return neighborTriplet;
-            }
-
-            @Override
-            public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
-            {
-                return Length.ZERO;
-            }
-        },
-
-        /** Assume constant speed. */
-        CONSTANT_SPEED
-        {
-            @Override
-            public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
-                    final Length traveledDistance)
-            {
-                return new NeighborTriplet(neighborTriplet.getHeadway().plus(neighborTriplet.getSpeed().multiplyBy(duration))
-                        .minus(traveledDistance), neighborTriplet.getSpeed(), neighborTriplet.getAcceleration());
-            }
-
-            @Override
-            public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
-            {
-                return speed.multiplyBy(duration);
-            }
-        },
-
-        /** Assume constant acceleration. */
-        CONSTANT_ACCELERATION
-        {
-            @Override
-            public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
-                    final Length traveledDistance)
-            {
-                if (neighborTriplet.getSpeed().si < -neighborTriplet.getAcceleration().si * duration.si)
-                {
-                    // to stand still
-                    double t = neighborTriplet.getSpeed().si / -neighborTriplet.getAcceleration().si;
-                    double dx = neighborTriplet.getSpeed().si * t + .5 * neighborTriplet.getAcceleration().si * t * t;
-                    return new NeighborTriplet(Length.createSI(neighborTriplet.getHeadway().si + dx - traveledDistance.si),
-                            Speed.ZERO, Acceleration.ZERO);
-                }
-                double dx = neighborTriplet.getSpeed().si * duration.si
-                        + .5 * neighborTriplet.getAcceleration().si * duration.si * duration.si;
-                double dv = neighborTriplet.getAcceleration().si * duration.si;
-                return new NeighborTriplet(Length.createSI(neighborTriplet.getHeadway().si + dx - traveledDistance.si),
-                        Speed.createSI(neighborTriplet.getSpeed().si + dv), neighborTriplet.getAcceleration());
-            }
-
-            @Override
-            public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
-            {
-                return speed.multiplyBy(duration);
-            }
-        };
-
-        /**
-         * Anticipate movement.
-         * @param neighborTriplet headway, speed and acceleration
-         * @param duration duration
-         * @param traveledDistance distance the subject vehicle traveled during the anticipation time
-         * @return anticipated info
-         */
-        public abstract NeighborTriplet anticipate(NeighborTriplet neighborTriplet, Duration duration, Length traveledDistance);
-
-        /**
-         * Anticipate own movement.
-         * @param speed current speed
-         * @param acceleration current acceleration
-         * @param duration anticipation time
-         * @return anticipated distance traveled
-         */
-        public abstract Length egoAnticipation(Speed speed, Acceleration acceleration, Duration duration);
-
-    }
-
-    /**
-     * Results from anticipation.
-     * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 feb. 2017 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    private static class NeighborTriplet
-    {
-
-        /** Headway. */
-        private final Length headway;
-
-        /** Speed. */
-        private final Speed speed;
-
-        /** Acceleration. */
-        private final Acceleration acceleration;
-
-        /**
-         * @param headway headway
-         * @param speed speed
-         * @param acceleration acceleration
-         */
-        NeighborTriplet(final Length headway, final Speed speed, final Acceleration acceleration)
-        {
-            this.headway = headway;
-            this.speed = speed;
-            this.acceleration = acceleration;
-        }
-
-        /**
-         * @return headway.
-         */
-        public Length getHeadway()
-        {
-            return this.headway;
-        }
-
-        /**
-         * @return speed.
-         */
-        public Speed getSpeed()
-        {
-            return this.speed;
-        }
-
-        /**
-         * @return acceleration.
-         */
-        public Acceleration getAcceleration()
-        {
-            return this.acceleration;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final String toString()
-        {
-            return "NeighborTriplet [headway=" + this.headway + ", speed=" + this.speed + ", acceleration=" + this.acceleration
-                    + "]";
         }
 
     }

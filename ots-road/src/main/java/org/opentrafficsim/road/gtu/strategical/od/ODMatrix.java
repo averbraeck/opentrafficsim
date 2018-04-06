@@ -24,6 +24,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -65,7 +66,7 @@ public class ODMatrix implements Serializable, Identifiable
     private final Interpolation globalInterpolation;
 
     /** Demand data per origin and destination, and possibly further categorization. */
-    private final Map<Node, Map<Node, Map<Category, ODEntry>>> demandData = new HashMap<>();
+    private final Map<Node, Map<Node, Map<Category, DemandPattern>>> demandData = new HashMap<>();
 
     /**
      * Constructs an OD matrix.
@@ -96,7 +97,7 @@ public class ODMatrix implements Serializable, Identifiable
         // build empty OD
         for (Node origin : origins)
         {
-            Map<Node, Map<Category, ODEntry>> map = new HashMap<>();
+            Map<Node, Map<Category, DemandPattern>> map = new HashMap<>();
             for (Node destination : destinations)
             {
                 map.put(destination, new LinkedHashMap<>());
@@ -241,8 +242,8 @@ public class ODMatrix implements Serializable, Identifiable
                 throw new IllegalArgumentException("Route in OD has no nodes.", exception);
             }
         }
-        ODEntry odEntry = new ODEntry(demand, timeVector, interpolation);
-        this.demandData.get(origin).get(destination).put(category, odEntry);
+        DemandPattern demandPattern = new DemandPattern(demand, timeVector, interpolation);
+        this.demandData.get(origin).get(destination).put(category, demandPattern);
     }
 
     /**
@@ -340,12 +341,12 @@ public class ODMatrix implements Serializable, Identifiable
      */
     public final FrequencyVector getDemandVector(final Node origin, final Node destination, final Category category)
     {
-        ODEntry odEntry = getODEntry(origin, destination, category);
-        if (odEntry == null)
+        DemandPattern demandPattern = getDemandPattern(origin, destination, category);
+        if (demandPattern == null)
         {
             return null;
         }
-        return odEntry.getDemandVector();
+        return demandPattern.getDemandVector();
     }
 
     /**
@@ -359,12 +360,12 @@ public class ODMatrix implements Serializable, Identifiable
      */
     public final TimeVector getTimeVector(final Node origin, final Node destination, final Category category)
     {
-        ODEntry odEntry = getODEntry(origin, destination, category);
-        if (odEntry == null)
+        DemandPattern demandPattern = getDemandPattern(origin, destination, category);
+        if (demandPattern == null)
         {
             return null;
         }
-        return odEntry.getTimeVector();
+        return demandPattern.getTimeVector();
     }
 
     /**
@@ -378,12 +379,12 @@ public class ODMatrix implements Serializable, Identifiable
      */
     public final Interpolation getInterpolation(final Node origin, final Node destination, final Category category)
     {
-        ODEntry odEntry = getODEntry(origin, destination, category);
-        if (odEntry == null)
+        DemandPattern demandPattern = getDemandPattern(origin, destination, category);
+        if (demandPattern == null)
         {
             return null;
         }
-        return odEntry.getInterpolation();
+        return demandPattern.getInterpolation();
     }
 
     /**
@@ -403,12 +404,12 @@ public class ODMatrix implements Serializable, Identifiable
             final boolean sliceStart)
     {
         Throw.whenNull(time, "Time may not be null.");
-        ODEntry odEntry = getODEntry(origin, destination, category);
-        if (odEntry == null)
+        DemandPattern demandPattern = getDemandPattern(origin, destination, category);
+        if (demandPattern == null)
         {
             return new Frequency(0.0, FrequencyUnit.PER_HOUR); // Frequency.ZERO gives "Hz" which is not nice for flow
         }
-        return odEntry.getDemand(time, sliceStart);
+        return demandPattern.getFrequency(time, sliceStart);
     }
 
     /**
@@ -420,7 +421,7 @@ public class ODMatrix implements Serializable, Identifiable
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    public ODEntry getODEntry(final Node origin, final Node destination, final Category category)
+    public DemandPattern getDemandPattern(final Node origin, final Node destination, final Category category)
     {
         Throw.whenNull(origin, "Origin may not be null.");
         Throw.whenNull(destination, "Destination may not be null.");
@@ -445,7 +446,7 @@ public class ODMatrix implements Serializable, Identifiable
      */
     public final boolean contains(final Node origin, final Node destination, final Category category)
     {
-        return getODEntry(origin, destination, category) != null;
+        return getDemandPattern(origin, destination, category) != null;
     }
 
     /**
@@ -757,10 +758,10 @@ public class ODMatrix implements Serializable, Identifiable
         String format = "%-" + originLength + "s -> %-" + destinLength + "s | ";
         for (Node origin : this.origins)
         {
-            Map<Node, Map<Category, ODEntry>> destinationMap = this.demandData.get(origin);
+            Map<Node, Map<Category, DemandPattern>> destinationMap = this.demandData.get(origin);
             for (Node destination : this.destinations)
             {
-                Map<Category, ODEntry> categoryMap = destinationMap.get(destination);
+                Map<Category, DemandPattern> categoryMap = destinationMap.get(destination);
                 if (categoryMap.isEmpty())
                 {
                     System.out.println(String.format(format, origin.getId(), destination.getId()) + "-no data-");
@@ -975,161 +976,6 @@ public class ODMatrix implements Serializable, Identifiable
         System.out.println("For OD       that does not exist; q = " + odMatrix.getDemand(c, a, category, Time.ZERO, true));
         category = new Category(categorization, 0.0, ac2, "does not exist");
         System.out.println("For category that does not exist; q = " + odMatrix.getDemand(a, c, category, Time.ZERO, true));
-
-    }
-
-    /**
-     * An ODEntry contains a demand vector, a time vector and interpolation method that may differ from the global time vector
-     * or interpolation method.
-     * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 16, 2016 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    public class ODEntry
-    {
-
-        /** Demand vector. */
-        private final FrequencyVector demandVector;
-
-        /** Time vector, may be null. */
-        private final TimeVector timeVector;
-
-        /** Interpolation, may be null. */
-        private final Interpolation interpolation;
-
-        /**
-         * @param demandVector demand vector
-         * @param timeVector time vector
-         * @param interpolation interpolation
-         */
-        ODEntry(final FrequencyVector demandVector, final TimeVector timeVector, final Interpolation interpolation)
-        {
-            this.demandVector = demandVector;
-            this.timeVector = timeVector;
-            this.interpolation = interpolation;
-        }
-
-        /**
-         * Returns the demand at given time. If given time is before the first time slice or after the last time slice, 0 demand
-         * is returned.
-         * @param time Time; time of demand requested
-         * @param sliceStart boolean; whether the time is at the start of an arbitrary time slice
-         * @return demand at given time
-         */
-        public final Frequency getDemand(final Time time, final boolean sliceStart)
-        {
-            return this.interpolation.interpolateVector(time, this.demandVector, this.timeVector, sliceStart);
-        }
-
-        /**
-         * @return demandVector
-         */
-        public final FrequencyVector getDemandVector()
-        {
-            return this.demandVector;
-        }
-
-        /**
-         * @return timeVector
-         */
-        public final TimeVector getTimeVector()
-        {
-            return this.timeVector;
-        }
-
-        /**
-         * @return interpolation
-         */
-        public final Interpolation getInterpolation()
-        {
-            return this.interpolation;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final int hashCode()
-        {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + getOuterType().hashCode();
-            result = prime * result + ((this.demandVector == null) ? 0 : this.demandVector.hashCode());
-            result = prime * result + ((this.interpolation == null) ? 0 : this.interpolation.hashCode());
-            result = prime * result + ((this.timeVector == null) ? 0 : this.timeVector.hashCode());
-            return result;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final boolean equals(final Object obj)
-        {
-            if (this == obj)
-            {
-                return true;
-            }
-            if (obj == null)
-            {
-                return false;
-            }
-            if (getClass() != obj.getClass())
-            {
-                return false;
-            }
-            ODEntry other = (ODEntry) obj;
-            if (!getOuterType().equals(other.getOuterType()))
-            {
-                return false;
-            }
-            if (this.demandVector == null)
-            {
-                if (other.demandVector != null)
-                {
-                    return false;
-                }
-            }
-            else if (!this.demandVector.equals(other.demandVector))
-            {
-                return false;
-            }
-            if (this.interpolation != other.interpolation)
-            {
-                return false;
-            }
-            if (this.timeVector == null)
-            {
-                if (other.timeVector != null)
-                {
-                    return false;
-                }
-            }
-            else if (!this.timeVector.equals(other.timeVector))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        /**
-         * Accessor for hashcode and equals.
-         * @return encompassing OD matrix
-         */
-        private ODMatrix getOuterType()
-        {
-            return ODMatrix.this;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
-        {
-            return "ODEntry [demandVector=" + this.demandVector + ", timeVector=" + this.timeVector + ", interpolation="
-                    + this.interpolation + "]";
-        }
 
     }
 

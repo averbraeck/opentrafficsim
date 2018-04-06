@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.perception;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -31,7 +30,7 @@ public abstract class HistoryManager
     // HACK ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // TODO remove this hack and obtain manager from somewhere else, OTSReplication?
     /** Centrally stored manager. */
-    private static Map<Replication<Time, Duration, OTSSimTimeDouble>, HistoryManagerDEVS> MANAGERS = new HashMap<>();
+    private static Map<Replication<Time, Duration, OTSSimTimeDouble>, HistoryManagerDEVS> MANAGERS = new WeakHashMap<>();
 
     /**
      * Get central manager.
@@ -58,6 +57,15 @@ public abstract class HistoryManager
     {
         MANAGERS.put(simulator.getReplication(), manager);
     }
+    
+    /**
+     * Clear central manager. If this is not done in batch simulations, this forms a memory leak. 
+     * @param simulator
+     */
+    public static void clear(final OTSDEVSSimulatorInterface simulator)
+    {
+        MANAGERS.remove(simulator.getReplication());
+    }
     // END OF HACK /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Set of all {@code Historical}s. */
@@ -69,7 +77,7 @@ public abstract class HistoryManager
      * Registers a historical.
      * @param historical Historical; historical to register.
      */
-    public void registerHistorical(HistoricalElement historical)
+    public void registerHistorical(final HistoricalElement historical)
     {
         if (historical != null)
         {
@@ -110,6 +118,18 @@ public abstract class HistoryManager
          * @param history Duration; history time to keep
          */
         void cleanUpHistory(Duration history);
+    }
+    
+    /**
+     * Method that clears the entire memory at simulation end.
+     */
+    protected final void endOfSimulation()
+    {
+        for (HistoricalElement historical : this.historicals)
+        {
+            historical.cleanUpHistory(Duration.ZERO);
+        }
+        this.historicals.clear();
     }
 
 }

@@ -21,9 +21,10 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.animation.Synchronizable.State;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
@@ -93,7 +94,6 @@ public final class LmrsUtil implements LmrsParameters
      * @param perception perception
      * @param mandatoryIncentives set of mandatory lane change incentives
      * @param voluntaryIncentives set of voluntary lane change incentives
-     * @param desireMap map where calculated desires are stored in
      * @return simple operational plan
      * @throws GTUException gtu exception
      * @throws NetworkException network exception
@@ -104,51 +104,54 @@ public final class LmrsUtil implements LmrsParameters
     public static SimpleOperationalPlan determinePlan(final LaneBasedGTU gtu, final Time startTime,
             final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LmrsData lmrsData,
             final LanePerception perception, final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,
-            final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives,
-            final Map<Class<? extends Incentive>, Desire> desireMap)
+            final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
-        
+
         // obtain objects to get info
         SpeedLimitProspect slp =
                 perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         Parameters params = gtu.getParameters();
-
-        // regular car-following
         Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-        PerceptionIterable<HeadwayGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+
+        // regular car-following
+        lmrsData.getTailGating().tailgate(perception, params);
         if (!leaders.isEmpty() && lmrsData.isNewLeader(leaders.first()))
         {
             initHeadwayRelaxation(params, leaders.first());
         }
-        Acceleration a = CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli, leaders);
+        Acceleration a = gtu.getCarFollowingAcceleration();
 
         // during a lane change, both leaders are followed
         LateralDirectionality initiatedLaneChange;
         TurnIndicatorIntent turnIndicatorStatus = TurnIndicatorIntent.NONE;
-        IntersectionPerception intersection = perception.getPerceptionCategory(IntersectionPerception.class);
+        IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
         if (laneChange.isChangingLane())
         {
             RelativeLane secondLane = laneChange.getSecondLane(gtu);
             initiatedLaneChange = LateralDirectionality.NONE;
-            PerceptionIterable<HeadwayGTU> secondLeaders = neighbors.getLeaders(secondLane);
-            Acceleration aSecond = CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli, secondLeaders);
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> secondLeaders = neighbors.getLeaders(secondLane);
+            Acceleration aSecond = carFollowingModel.followingAcceleration(params, speed, sli, secondLeaders);
             if (!secondLeaders.isEmpty() && lmrsData.isNewLeader(secondLeaders.first()))
             {
                 initHeadwayRelaxation(params, secondLeaders.first());
             }
             a = Acceleration.min(a, aSecond);
-            a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
-                    secondLane.getLateralDirectionality(), intersection));
+            if (intersection != null)
+            {
+                a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
+                        secondLane.getLateralDirectionality(), intersection));
+            }
         }
         else
         {
 
             // determine lane change desire based on incentives
             Desire desire = getLaneChangeDesire(params, perception, carFollowingModel, mandatoryIncentives, voluntaryIncentives,
-                    desireMap);
+                    lmrsData.desireMap);
 
             // lane change decision
             double dFree = params.getParameter(DFREE);
@@ -156,7 +159,7 @@ public final class LmrsUtil implements LmrsParameters
             turnIndicatorStatus = TurnIndicatorIntent.NONE;
             if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dFree)
             {
-                if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getLeft(), speed,
+                if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getLeft(), speed, a,
                         LateralDirectionality.LEFT, lmrsData.getGapAcceptance()))
                 {
                     // change left
@@ -171,16 +174,19 @@ public final class LmrsUtil implements LmrsParameters
                         // step
                         lmrsData.isNewLeader(leaders.first());
                     }
-                    a = Acceleration.min(a, CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli,
+                    a = Acceleration.min(a, carFollowingModel.followingAcceleration(params, speed, sli,
                             neighbors.getLeaders(RelativeLane.LEFT)));
-                    a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
-                            LateralDirectionality.LEFT, intersection));
+                    if (intersection != null)
+                    {
+                        a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
+                                LateralDirectionality.LEFT, intersection));
+                    }
                     laneChange.setLaneChangeDuration(gtu.getParameters().getParameter(LCDUR));
                 }
             }
             else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree)
             {
-                if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getRight(), speed,
+                if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getRight(), speed, a,
                         LateralDirectionality.RIGHT, lmrsData.getGapAcceptance()))
                 {
                     // change right
@@ -195,10 +201,13 @@ public final class LmrsUtil implements LmrsParameters
                         // step
                         lmrsData.isNewLeader(leaders.first());
                     }
-                    a = Acceleration.min(a, CarFollowingUtil.followLeaders(carFollowingModel, params, speed, sli,
+                    a = Acceleration.min(a, carFollowingModel.followingAcceleration(params, speed, sli,
                             neighbors.getLeaders(RelativeLane.RIGHT)));
-                    a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
-                            LateralDirectionality.RIGHT, intersection));
+                    if (intersection != null)
+                    {
+                        a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
+                                LateralDirectionality.RIGHT, intersection));
+                    }
                     laneChange.setLaneChangeDuration(gtu.getParameters().getParameter(LCDUR));
                 }
             }
@@ -207,32 +216,46 @@ public final class LmrsUtil implements LmrsParameters
             Acceleration aSync;
             if (initiatedLaneChange.equals(LateralDirectionality.NONE))
             {
-                
+
                 // synchronize
                 double dSync = params.getParameter(DSYNC);
                 if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dSync)
                 {
+                    State state;
+                    if (desire.getLeft() >= params.getParameter(DCOOP))
+                    {
+                        // switch on left indicator
+                        turnIndicatorStatus = TurnIndicatorIntent.LEFT;
+                        state = State.INDICATING;
+                    }
+                    else
+                    {
+                        state = State.SYNCHRONIZING;
+                    }
                     aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel,
                             desire.getLeft(), LateralDirectionality.LEFT, lmrsData);
-                    a = Acceleration.min(a, aSync);
+                    a = applyAcceleration(a, aSync, lmrsData, state);
                 }
                 else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dSync)
                 {
+                    State state;
+                    if (desire.getRight() >= params.getParameter(DCOOP))
+                    {
+                        // switch on right indicator
+                        turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
+                        state = State.INDICATING;
+                    }
+                    else
+                    {
+                        state = State.SYNCHRONIZING;
+                    }
                     aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel,
                             desire.getRight(), LateralDirectionality.RIGHT, lmrsData);
-                    a = Acceleration.min(a, aSync);
+                    a = applyAcceleration(a, aSync, lmrsData, state);
                 }
-                // use indicators to indicate lane change need
-                double dCoop = params.getParameter(DCOOP);
-                if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dCoop)
+                else
                 {
-                    // switch on left indicator
-                    turnIndicatorStatus = TurnIndicatorIntent.LEFT;
-                }
-                else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dCoop)
-                {
-                    // switch on right indicator
-                    turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
+                    lmrsData.synchronizationState = State.NONE;
                 }
                 params.setParameter(DLEFT, desire.getLeft());
                 params.setParameter(DRIGHT, desire.getRight());
@@ -241,15 +264,16 @@ public final class LmrsUtil implements LmrsParameters
             {
                 params.setParameter(DLEFT, 0.0);
                 params.setParameter(DRIGHT, 0.0);
+                lmrsData.synchronizationState = State.NONE;
             }
 
             // cooperate
-            aSync = lmrsData.getSynchronization().cooperate(perception, params, sli, carFollowingModel,
-                    LateralDirectionality.LEFT, desire);
-            a = Acceleration.min(a, aSync);
-            aSync = lmrsData.getSynchronization().cooperate(perception, params, sli, carFollowingModel,
-                    LateralDirectionality.RIGHT, desire);
-            a = Acceleration.min(a, aSync);
+            aSync = lmrsData.getCooperation().cooperate(perception, params, sli, carFollowingModel, LateralDirectionality.LEFT,
+                    desire);
+            a = applyAcceleration(a, aSync, lmrsData, State.COOPERATING);
+            aSync = lmrsData.getCooperation().cooperate(perception, params, sli, carFollowingModel, LateralDirectionality.RIGHT,
+                    desire);
+            a = applyAcceleration(a, aSync, lmrsData, State.COOPERATING);
 
             // relaxation
             exponentialHeadwayRelaxation(params);
@@ -268,6 +292,25 @@ public final class LmrsUtil implements LmrsParameters
         }
         return simplePlan;
 
+    }
+
+    /**
+     * Minimizes the acceleration and sets the synchronization state if applicable.
+     * @param a Acceleration; previous acceleration
+     * @param aNew Acceleration; new acceleration
+     * @param lmrsData LmrsData; lmrs data
+     * @param state State; synchronization state
+     * @return Acceleration; minimized acceleration
+     */
+    private static Acceleration applyAcceleration(final Acceleration a, final Acceleration aNew, final LmrsData lmrsData,
+            final State state)
+    {
+        if (a.si < aNew.si)
+        {
+            return a;
+        }
+        lmrsData.synchronizationState = state;
+        return aNew;
     }
 
     /**
@@ -388,6 +431,7 @@ public final class LmrsUtil implements LmrsParameters
      * @param cfm car-following model
      * @param desire level of lane change desire
      * @param ownSpeed own speed
+     * @param ownAcceleration current car-following acceleration
      * @param lat lateral direction for synchronization
      * @param gapAcceptance gap-acceptance model
      * @return whether a gap is acceptable
@@ -395,8 +439,9 @@ public final class LmrsUtil implements LmrsParameters
      * @throws OperationalPlanException perception exception
      */
     static boolean acceptLaneChange(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-            final CarFollowingModel cfm, final double desire, final Speed ownSpeed, final LateralDirectionality lat,
-            final GapAcceptance gapAcceptance) throws ParameterException, OperationalPlanException
+            final CarFollowingModel cfm, final double desire, final Speed ownSpeed, final Acceleration ownAcceleration,
+            final LateralDirectionality lat, final GapAcceptance gapAcceptance)
+            throws ParameterException, OperationalPlanException
     {
 
         // beyond start distance
@@ -430,7 +475,7 @@ public final class LmrsUtil implements LmrsParameters
         }
 
         // safe regarding neighbors?
-        return gapAcceptance.acceptGap(perception, params, sli, cfm, desire, ownSpeed, lat);
+        return gapAcceptance.acceptGap(perception, params, sli, cfm, desire, ownSpeed, ownAcceleration, lat);
     }
 
     /**
@@ -452,20 +497,24 @@ public final class LmrsUtil implements LmrsParameters
         if (intersection != null)
         {
             RelativeLane lane = lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT;
-            Iterator<HeadwayConflict> conflicts = intersection.getConflicts(lane).iterator();
-            if (conflicts.hasNext())
+            Iterable<HeadwayConflict> iterable = intersection.getConflicts(lane);
+            if (iterable != null)
             {
-                a = Acceleration.min(a, CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli,
-                        conflicts.next().getDistance(), Speed.ZERO));
-            }
-            Iterator<HeadwayTrafficLight> trafficLights = intersection.getTrafficLights(lane).iterator();
-            if (trafficLights.hasNext())
-            {
-                HeadwayTrafficLight trafficLight = trafficLights.next();
-                if (trafficLight.getTrafficLightColor().isRedOrYellow())
+                Iterator<HeadwayConflict> conflicts = iterable.iterator();
+                if (conflicts.hasNext())
                 {
                     a = Acceleration.min(a, CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli,
-                            trafficLight.getDistance(), Speed.ZERO));
+                            conflicts.next().getDistance(), Speed.ZERO));
+                }
+                Iterator<HeadwayTrafficLight> trafficLights = intersection.getTrafficLights(lane).iterator();
+                if (trafficLights.hasNext())
+                {
+                    HeadwayTrafficLight trafficLight = trafficLights.next();
+                    if (trafficLight.getTrafficLightColor().isRedOrYellow())
+                    {
+                        a = Acceleration.min(a, CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli,
+                                trafficLight.getDistance(), Speed.ZERO));
+                    }
                 }
             }
         }
@@ -497,7 +546,7 @@ public final class LmrsUtil implements LmrsParameters
     }
 
     /**
-     * Determine acceleration from car-following.
+     * Determine acceleration from car-following with desire-adjusted headway.
      * @param distance distance from follower to leader
      * @param followerSpeed speed of follower
      * @param leaderSpeed speed of leader

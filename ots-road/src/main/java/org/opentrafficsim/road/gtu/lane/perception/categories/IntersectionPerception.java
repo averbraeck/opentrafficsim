@@ -2,10 +2,11 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
 /**
  * <p>
@@ -62,7 +63,7 @@ public interface IntersectionPerception extends LaneBasedPerceptionCategory
      * @param lane lane
      * @return set of conflicts along the route
      */
-    PerceptionIterable<HeadwayConflict> getConflicts(RelativeLane lane);
+    PerceptionCollectable<HeadwayConflict, Conflict> getConflicts(RelativeLane lane);
 
     /**
      * Returns whether there is a conflict alongside to the left.

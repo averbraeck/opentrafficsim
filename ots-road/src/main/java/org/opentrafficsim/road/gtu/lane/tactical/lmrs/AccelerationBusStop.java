@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
@@ -20,6 +20,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -47,7 +48,8 @@ public class AccelerationBusStop implements AccelerationIncentive
             final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
-        PerceptionIterable<HeadwayBusStop> stops = perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
+        PerceptionCollectable<HeadwayBusStop, BusStop> stops =
+                perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
         if (stops.isEmpty())
         {
             return;

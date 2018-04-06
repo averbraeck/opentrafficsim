@@ -36,7 +36,7 @@ public class TrajectoryGroup
     private final KpiLaneDirection laneDirection;
 
     /** Trajectories. */
-    private final List<Trajectory> trajectories = new ArrayList<>();
+    private final List<Trajectory<?>> trajectories = new ArrayList<>();
 
     /**
      * Constructor without length specification. The complete lane will be used.
@@ -76,7 +76,7 @@ public class TrajectoryGroup
      * Add trajectory.
      * @param trajectory trajectory to add
      */
-    public final synchronized void addTrajectory(final Trajectory trajectory)
+    public final synchronized void addTrajectory(final Trajectory<?> trajectory)
     {
         this.trajectories.add(trajectory);
     }
@@ -103,7 +103,7 @@ public class TrajectoryGroup
      * @param trajectory trajectory
      * @return whether this {@code TrajectoryGroup} holds the given trajectory.
      */
-    public final boolean contains(final Trajectory trajectory)
+    public final boolean contains(final Trajectory<?> trajectory)
     {
         return this.trajectories.contains(trajectory);
     }
@@ -121,7 +121,7 @@ public class TrajectoryGroup
      * Returns a list of trajectories.
      * @return list of trajectories
      */
-    public final List<Trajectory> getTrajectories()
+    public final List<Trajectory<?>> getTrajectories()
     {
         return new ArrayList<>(this.trajectories);
     }
@@ -137,7 +137,7 @@ public class TrajectoryGroup
         Length minLenght = Length.max(x0, this.startPosition);
         Length maxLenght = Length.min(x1, this.endPosition);
         TrajectoryGroup out = new TrajectoryGroup(this.startTime, minLenght, maxLenght, this.laneDirection);
-        for (Trajectory trajectory : this.trajectories)
+        for (Trajectory<?> trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(x0, x1));
         }
@@ -153,7 +153,7 @@ public class TrajectoryGroup
     public final synchronized TrajectoryGroup getTrajectoryGroup(final Time t0, final Time t1)
     {
         TrajectoryGroup out = new TrajectoryGroup(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
-        for (Trajectory trajectory : this.trajectories)
+        for (Trajectory<?> trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(t0, t1));
         }
@@ -171,7 +171,7 @@ public class TrajectoryGroup
     public final synchronized TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1, final Time t0, final Time t1)
     {
         TrajectoryGroup out = new TrajectoryGroup(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
-        for (Trajectory trajectory : this.trajectories)
+        for (Trajectory<?> trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(x0, x1, t0, t1));
         }

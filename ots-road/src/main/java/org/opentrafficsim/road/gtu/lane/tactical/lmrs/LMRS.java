@@ -1,8 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -16,6 +14,8 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.animation.DesireBased;
+import org.opentrafficsim.road.gtu.animation.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -25,6 +25,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
@@ -32,6 +33,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsData;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -52,7 +54,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class LMRS extends AbstractLaneBasedTacticalPlanner
+public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBased, Synchronizable
 {
 
     /** Parameter type for mandatory lane change incentives. */
@@ -83,9 +85,6 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
     /** Set of voluntary lane change incentives. */
     private final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
 
-    /** Latest desire value for visualization. */
-    private final Map<Class<? extends Incentive>, Desire> desireMap = new HashMap<>();
-
     /** Set of acceleration incentives. */
     private final LinkedHashSet<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
 
@@ -95,13 +94,16 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
      * @param gtu GTU
      * @param lanePerception perception
      * @param synchronization type of synchronization
+     * @param cooperation type of cooperation
      * @param gapAcceptance gap-acceptance
+     * @param tailGating tail gating
      */
     public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu, final LanePerception lanePerception,
-            final Synchronization synchronization, final GapAcceptance gapAcceptance)
+            final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,
+            final Tailgating tailGating)
     {
         super(carFollowingModel, gtu, lanePerception);
-        this.lmrsData = new LmrsData(synchronization, gapAcceptance);
+        this.lmrsData = new LmrsData(synchronization, cooperation, gapAcceptance, tailGating);
     }
 
     /**
@@ -172,7 +174,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
         // LMRS
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
-                this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives, this.desireMap);
+                this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
 
         // Lower acceleration from additional sources
         Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -206,14 +208,18 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner
 
     }
 
-    /**
-     * Returns the desire of the given incentive.
-     * @param incentiveClass class of incentive
-     * @return desire of the given incentive
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Desire getLatestDesire(final Class<? extends Incentive> incentiveClass)
     {
-        return this.desireMap.get(incentiveClass);
+        return this.lmrsData.getLatestDesire(incentiveClass);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public State getSynchronizationState()
+    {
+        return this.lmrsData.getSynchronizationState();
     }
 
     /** {@inheritDoc} */

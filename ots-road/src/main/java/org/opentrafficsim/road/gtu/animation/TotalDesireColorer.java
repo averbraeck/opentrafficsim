@@ -3,7 +3,6 @@ package org.opentrafficsim.road.gtu.animation;
 import java.awt.Color;
 
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 

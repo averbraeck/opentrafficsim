@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DEMAND xmlns="http://www.opentrafficsim.org/ots" xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../../../../../../ots-parser-xml/src/main/resources/ots-demand.xsd" xmlns:xi="http://www.w3.org/2001/XInclude" NAME="RandstadMaandagOchtend"
-  GLOBALINTERPOLATION="STEPWISE">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../../../../../../ots-parser-xml/src/main/resources/ots-demand.xsd"
+  xmlns:xi="http://www.w3.org/2001/XInclude" NAME="RandstadMaandagOchtend" GLOBALINTERPOLATION="STEPWISE">
 
   <LEVEL TIME="300s">300veh/h</LEVEL>
 

@@ -3,8 +3,9 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
+import org.opentrafficsim.road.network.lane.object.BusStop;
 
 /**
  * Bus stop perception category.
@@ -31,7 +32,7 @@ public interface BusStopPerception extends LaneBasedPerceptionCategory
      * Returns the bus stops.
      * @return bus stops
      */
-    PerceptionIterable<HeadwayBusStop> getBusStops();
+    PerceptionCollectable<HeadwayBusStop, BusStop> getBusStops();
 
     /** {@inheritDoc} */
     @Override

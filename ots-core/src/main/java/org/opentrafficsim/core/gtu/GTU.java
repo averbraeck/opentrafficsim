@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu;
 
 import java.awt.Color;
 import java.io.Serializable;
-import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -182,6 +181,41 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * @return Color; the base color of the GTU (not the state-based color)
      */
     Color getBaseColor();
+    
+    /**
+     * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
+     * by:<br>
+     * <br>
+     * c0 * g(v) + c1 + c3*v^2<br>
+     * <br>
+     * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
+     * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
+     * @return boolean; whether the braking lights are on
+     */
+    default boolean isBrakingLightsOn()
+    {
+        double v = getSpeed().si;
+        double a = getAcceleration().si;
+        return a < (v < 6.944 ? 0.0 : -0.2) - 0.15 * v - 0.00025 * v * v;
+    }
+    
+    /**
+     * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
+     * by:<br>
+     * <br>
+     * c0 * g(v) + c1 + c3*v^2<br>
+     * <br>
+     * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
+     * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
+     * @param when Time; time
+     * @return boolean; whether the braking lights are on
+     */
+    default boolean isBrakingLightsOn(final Time when)
+    {
+        double v = getSpeed(when).si;
+        double a = getAcceleration(when).si;
+        return a < (v < 6.944 ? 0.0 : -0.2) - 0.15 * v - 0.00025 * v * v;
+    }
 
     /**
      * The event type for pub/sub indicating the initialization of a new GTU. <br>
@@ -201,51 +235,5 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * Payload: [String id, DirectedPoint lastPosition, Length odometer]
      */
     EventType DESTROY_EVENT = new EventType("GTU.DESTROY");
-
-    /**
-     * Returns a value from cache if it was cached at the current simulation time. It returns {@code null} otherwise.
-     * @param key CacheKey<T>; identifier of what is calculated
-     * @return value from cache if it was cached at the current simulation time or {@code null} otherwise
-     * @param <K> type of value
-     */
-    <K> K getCachedValue(CacheKey<K> key);
-
-    /**
-     * Caches a value at the current time. It may be retrieved later without recalculation. {@code null} values are not
-     * accepted.
-     * @param key CacheKey<T>; identifier of what is calculated
-     * @param value T; calculated value
-     * @param <K> type of value
-     * @throws NullPointerException when an input is {@code null}
-     */
-    <K> void cacheValue(CacheKey<K> key, K value);
-
-    /**
-     * Returns a value from cache, or calculates it if it is not present. {@code null} values are not accepted.
-     * @param key CacheKey<T>; identifier of what is calculated
-     * @param calculator Supplier<T>; calculates the value if it isn't cached yet
-     * @return T; value from cache, or calculated if it is not present
-     * @param <K> type of value
-     */
-    <K> K getOrCalculateValue(CacheKey<K> key, Supplier<? extends K> calculator);
-
-    /**
-     * Empty key class for caching. The reason {@code Object} isn't used is that here a generic type {@code T} can be defined.
-     * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$,
-     *          initial version 28 nov. 2017 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     * @param <T> value type linked to the key
-     */
-    final class CacheKey<T>
-    {
-        //
-    }
 
 }

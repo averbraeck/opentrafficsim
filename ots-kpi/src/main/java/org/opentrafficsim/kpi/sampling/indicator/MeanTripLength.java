@@ -33,7 +33,7 @@ public class MeanTripLength extends AbstractIndicator<Length>
         Set<String> gtuIds = new HashSet<>();
         for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
-            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
+            for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {
                 sum = sum.plus(trajectory.getTotalLength());
                 gtuIds.add(trajectory.getGtuId());

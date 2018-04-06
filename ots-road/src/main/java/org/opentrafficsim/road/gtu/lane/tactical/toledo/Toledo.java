@@ -24,10 +24,10 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.CategorialLanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
@@ -37,7 +37,6 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -89,7 +88,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
      */
     public Toledo(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
     {
-        super(carFollowingModel, gtu, new CategorialLanePerception(gtu));
+        super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
         getPerception().addPerceptionCategory(new ToledoPerception(getPerception()));
         getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), HeadwayGtuType.WRAP));
     }
@@ -165,7 +164,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
                         || (!neighbors.getLeaders(RelativeLane.CURRENT).isEmpty() && neighbors.getLeaders(RelativeLane.CURRENT)
                                 .first().getDistance().lt(getCarFollowingModel().desiredHeadway(params, getGtu().getSpeed()))))
                 {
-                    acceleration = CarFollowingUtil.followLeaders(getCarFollowingModel(), params, getGtu().getSpeed(), sli,
+                    acceleration = getCarFollowingModel().followingAcceleration(params, getGtu().getSpeed(), sli,
                             neighbors.getLeaders(RelativeLane.CURRENT));
                 }
                 else
@@ -245,13 +244,13 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         if (initiatedLaneChange.isLeft())
         {
             // changing left
-            acceleration = CarFollowingUtil.followLeaders(getCarFollowingModel(), params, getGtu().getSpeed(), sli,
+            getCarFollowingModel().followingAcceleration(params, getGtu().getSpeed(), sli,
                     neighbors.getLeaders(RelativeLane.LEFT));
         }
         else if (initiatedLaneChange.isRight())
         {
             // changing right
-            acceleration = CarFollowingUtil.followLeaders(getCarFollowingModel(), params, getGtu().getSpeed(), sli,
+            getCarFollowingModel().followingAcceleration(params, getGtu().getSpeed(), sli,
                     neighbors.getLeaders(RelativeLane.RIGHT));
         }
 
@@ -333,7 +332,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         {
             constant = params.getParameter(ToledoLaneChangeParameters.C_FWD_TG);
             alpha = 0;
-            PerceptionIterable<HeadwayGTU> itAble = neighbors.getLeaders(lane);
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> itAble = neighbors.getLeaders(lane);
             HeadwayGTU second = null;
             if (!itAble.isEmpty())
             {
@@ -404,7 +403,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             constant = params.getParameter(ToledoLaneChangeParameters.C_BCK_TG);
             alpha = params.getParameter(ToledoLaneChangeParameters.ALPHA_BCK);
             deltaFrontVehicle = 0;
-            PerceptionIterable<HeadwayGTU> itAble = neighbors.getFollowers(lane);
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> itAble = neighbors.getFollowers(lane);
             HeadwayGTU second = null;
             if (!itAble.isEmpty())
             {

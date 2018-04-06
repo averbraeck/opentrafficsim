@@ -260,16 +260,17 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
-    public final ImmutableMap<String, ObjectInterface> getObjectMap(final Class<ObjectInterface> objectType)
+    public final <T extends ObjectInterface>ImmutableMap<String, T> getObjectMap(final Class<T> objectType)
     {
-        Map<String, ObjectInterface> result = new HashMap<>();
+        Map<String, T> result = new HashMap<>();
         for (String key : this.objectMap.keySet())
         {
             ObjectInterface o = this.objectMap.get(key);
             if (objectType.isInstance(o))
             {
-                result.put(key, o);
+                result.put(key, (T) o);
             }
         }
         return new ImmutableHashMap<>(result, Immutable.WRAP);

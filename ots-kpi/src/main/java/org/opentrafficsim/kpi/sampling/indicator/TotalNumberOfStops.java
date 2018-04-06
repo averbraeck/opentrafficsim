@@ -31,7 +31,7 @@ public class TotalNumberOfStops extends AbstractIndicator<Dimensionless>
         int sum = 0;
         for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
-            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
+            for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {
                 float[] v = trajectory.getV();
                 for (int i = 1; i < v.length; i++)

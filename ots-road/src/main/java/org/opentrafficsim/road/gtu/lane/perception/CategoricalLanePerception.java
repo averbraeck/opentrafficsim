@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
 
 /**
  * Standard perception completely based on connected perception categories.
@@ -13,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class CategorialLanePerception extends AbstractLanePerception
+public class CategoricalLanePerception extends AbstractLanePerception
 {
 
     /** */
@@ -22,9 +23,18 @@ public class CategorialLanePerception extends AbstractLanePerception
     /**
      * @param gtu GTU
      */
-    public CategorialLanePerception(final LaneBasedGTU gtu)
+    public CategoricalLanePerception(final LaneBasedGTU gtu)
     {
         super(gtu);
+    }
+    
+    /**
+     * @param gtu GTU
+     * @param mental Mental
+     */
+    public CategoricalLanePerception(final LaneBasedGTU gtu, final Mental mental)
+    {
+        super(gtu, mental);
     }
 
     /** {@inheritDoc} */

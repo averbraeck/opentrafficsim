@@ -1,8 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -13,6 +10,11 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil.CarFollowingHeadway;
 
 /**
  * <p>
@@ -31,8 +33,9 @@ public class ToledoCFTester
     /**
      * @param args arguments for the run (should be empty at the moment)
      * @throws ParameterException when Toledo parameters cannot be found
+     * @throws GTUException
      */
-    public static void main(final String[] args) throws ParameterException
+    public static void main(final String[] args) throws ParameterException, GTUException
     {
 
         ParameterSet params = new ParameterSet();
@@ -47,12 +50,11 @@ public class ToledoCFTester
         Length x = Length.ZERO;
         Length leader = new Length(300, LengthUnit.METER);
 
-        SortedMap<Length, Speed> leaders = new TreeMap<>();
         while (x.eq0() || speed.gt0())
         {
             Length s = leader.minus(x);
-            leaders.clear();
-            leaders.put(s, Speed.ZERO);
+            PerceptionIterable<Headway> leaders =
+                    new PerceptionIterableSet<>(new CarFollowingHeadway(s, Speed.ZERO));
             Length desiredHeadway = cf.desiredHeadway(params, speed);
             Acceleration a = cf.followingAcceleration(params, speed, desiredSpeed, desiredHeadway, leaders);
             System.out.println("t=" + t + ", v=" + speed + ", s=" + s + ", a=" + a);

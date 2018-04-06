@@ -43,7 +43,7 @@ public final class Query implements Identifiable
     private final String id;
 
     /** Sampling. */
-    private final Sampler sampler;
+    private final Sampler<?> sampler;
 
     /** Description. */
     private final String description;
@@ -67,7 +67,7 @@ public final class Query implements Identifiable
      * @param metaDataSet meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampler, final String id, final String description, final MetaDataSet metaDataSet)
+    public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet)
     {
         this(sampler, description, metaDataSet, null, null);
     }
@@ -80,7 +80,7 @@ public final class Query implements Identifiable
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampler, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet,
             final Duration interval)
     {
         this(sampler, id, description, metaDataSet, null, interval);
@@ -94,7 +94,7 @@ public final class Query implements Identifiable
      * @param updateFrequency update frequency
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampler, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency)
     {
         this(sampler, id, description, metaDataSet, updateFrequency, null);
@@ -109,7 +109,7 @@ public final class Query implements Identifiable
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampler, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
         Throw.whenNull(sampler, "Sampling may not be null.");
@@ -130,7 +130,7 @@ public final class Query implements Identifiable
      * @param metaDataSet meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampler, final String description, final MetaDataSet metaDataSet)
+    public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet)
     {
         this(sampler, null, description, metaDataSet, null, null);
     }
@@ -142,7 +142,7 @@ public final class Query implements Identifiable
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampler, final String description, final MetaDataSet metaDataSet, final Duration interval)
+    public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet, final Duration interval)
     {
         this(sampler, null, description, metaDataSet, null, interval);
     }
@@ -154,7 +154,7 @@ public final class Query implements Identifiable
      * @param updateFrequency update frequency
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampler, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency)
     {
         this(sampler, null, description, metaDataSet, updateFrequency, null);
@@ -168,7 +168,7 @@ public final class Query implements Identifiable
      * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler sampler, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
         this(sampler, null, description, metaDataSet, updateFrequency, interval);
@@ -336,7 +336,7 @@ public final class Query implements Identifiable
                 trajectoryGroup = this.sampler.getTrajectoryGroup(spaceTimeRegion.getLaneDirection())
                         .getTrajectoryGroup(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
             }
-            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
+            for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {
                 if (!trajectoryAcceptLists.containsKey(trajectory.getGtuId()))
                 {
@@ -369,7 +369,7 @@ public final class Query implements Identifiable
                 // combine acceptance/rejection of meta data type so far
                 for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)
                 {
-                    Trajectory trajectory = trajectoryAcceptListCopy.getTrajectory(i);
+                    Trajectory<?> trajectory = trajectoryAcceptListCopy.getTrajectory(i);
                     trajectoryAcceptListCombined.acceptTrajectory(trajectory,
                             trajectoryAcceptListCombined.isAccepted(trajectory)
                                     && trajectoryAcceptListCopy.isAccepted(trajectory));
@@ -381,7 +381,7 @@ public final class Query implements Identifiable
         for (TrajectoryGroup full : trajectoryGroupList)
         {
             TrajectoryGroup filtered = new TrajectoryGroup(full.getStartTime(), full.getLaneDirection());
-            for (Trajectory trajectory : full.getTrajectories())
+            for (Trajectory<?> trajectory : full.getTrajectories())
             {
                 String gtuId = trajectory.getGtuId();
                 if (trajectoryAcceptLists.get(gtuId).isAccepted(trajectory))
@@ -397,7 +397,7 @@ public final class Query implements Identifiable
     /**
      * @return sampling.
      */
-    public Sampler getSampler()
+    public Sampler<?> getSampler()
     {
         return this.sampler;
     }

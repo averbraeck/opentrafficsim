@@ -30,7 +30,7 @@ public class TotalTravelDistance extends AbstractIndicator<Length>
         Length sum = Length.ZERO;
         for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
         {
-            for (Trajectory trajectory : trajectoryGroup.getTrajectories())
+            for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {
                 sum = sum.plus(trajectory.getTotalLength());
             }

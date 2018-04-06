@@ -48,13 +48,17 @@ public class HistoricalTreeMap<K, V> extends AbstractHistoricalNavigableMap<K, V
     @Override
     public TreeMap<K, V> get()
     {
-        return fill(new TreeMap<>());
+        return getMap();
     }
 
     /** {@inheritDoc} */
     @Override
     public TreeMap<K, V> get(final Time time)
     {
+        if (isLastState(time))
+        {
+            return getMap();
+        }
         return fill(time, new TreeMap<>());
     }
     

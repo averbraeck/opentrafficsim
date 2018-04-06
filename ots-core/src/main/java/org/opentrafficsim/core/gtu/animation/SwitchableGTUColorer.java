@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.opentrafficsim.core.gtu.GTU;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * GTU colorer that uses a coloring method that can be switched by the user of the program.
  * <p>
@@ -25,11 +27,19 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     private static final long serialVersionUID = 20150000L;
 
     /** The currently active GTUColorer. */
-    private GTUColorer activeColorer;
+    GTUColorer activeColorer;
 
     /** The list of included colorers. */
-    private List<GTUColorer> colorers = new ArrayList<>();
+    List<GTUColorer> colorers = new ArrayList<>();
 
+    /**
+     * Empty constructor for the builder.
+     */
+    SwitchableGTUColorer()
+    {
+        //
+    }
+    
     /**
      * Construct a new Switchable GTUColorer based on a list of colorers.
      * @param activeIndex the index of the initially active colorer in the list (0-based).
@@ -82,5 +92,71 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     {
         return this.colorers;
     }
+    
+    /**
+     * Returns a builder for SwitchableGTUColorer.
+     * @return Builder; builder for SwitchableGTUColorer
+     */
+    public final static Builder builder()
+    {
+        return new Builder();
+    }
 
+    /**
+     * Builder for SwitchableGTUColorer. 
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 2 mrt. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public final static class Builder
+    {
+        /** The list of included colorers. */
+        private List<GTUColorer> preColorers = new ArrayList<>();
+        
+        /** The currently active GTUColorer. */
+        private GTUColorer preActiveColorer;
+
+        /**
+         * Adds a colorer.
+         * @param colorer GTUColorer; colorer
+         * @return Builder; this builder for method chaining 
+         */
+        public Builder addColorer(final GTUColorer colorer)
+        {
+            this.preColorers.add(colorer);
+            return this;
+        }
+        
+        /**
+         * Adds a colorer, make it selected.
+         * @param colorer GTUColorer; colorer
+         * @return Builder; this builder for method chaining 
+         */
+        public Builder addActiveColorer(final GTUColorer colorer)
+        {
+            this.preColorers.add(colorer);
+            this.preActiveColorer = colorer;
+            return this;
+        }
+        
+        /**
+         * Builds the colorer.
+         * @return SwitchableGTUColorer; colorer
+         */
+        public GTUColorer build()
+        {
+            Throw.whenNull(this.preActiveColorer, "No active colorer was defined.");
+            SwitchableGTUColorer colorer = new SwitchableGTUColorer();
+            colorer.colorers = this.preColorers;
+            colorer.activeColorer = this.preActiveColorer;
+            return colorer;
+        }
+        
+    }
+    
 }

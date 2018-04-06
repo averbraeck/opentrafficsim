@@ -41,9 +41,10 @@ import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions.ShortestRouteRandomGTUCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.od.ODOptions;
+import org.opentrafficsim.road.gtu.generator.od.ODOptions.DefaultGTUCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.od.ODOptions.RouteSupplier;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
@@ -184,8 +185,9 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final URL url, boolean interpretXMLComments) throws NetworkException, ParserConfigurationException, SAXException,
-            IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException, ValueException, ParameterException
+    public final OTSNetwork build(final URL url, boolean interpretXMLComments)
+            throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
+            OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
         return build(url, new OTSNetwork(url.toString()), interpretXMLComments);
     }
@@ -207,9 +209,9 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final InputStream stream, boolean interpretXMLComments) throws NetworkException,
-            ParserConfigurationException, SAXException, IOException, NamingException, GTUException, OTSGeometryException,
-            SimRuntimeException, ValueException, ParameterException
+    public final OTSNetwork build(final InputStream stream, boolean interpretXMLComments)
+            throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
+            OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
         return build(stream, new OTSNetwork(stream.toString()), interpretXMLComments);
     }
@@ -232,9 +234,9 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws ValueException ...
      */
     @SuppressWarnings("checkstyle:needbraces")
-    public final OTSNetwork build(final URL url, final OTSNetwork otsNetwork, boolean interpretXMLComments) throws NetworkException,
-            ParserConfigurationException, SAXException, IOException, NamingException, GTUException, OTSGeometryException,
-            SimRuntimeException, ValueException, ParameterException
+    public final OTSNetwork build(final URL url, final OTSNetwork otsNetwork, boolean interpretXMLComments)
+            throws NetworkException, ParserConfigurationException, SAXException, IOException, NamingException, GTUException,
+            OTSGeometryException, SimRuntimeException, ValueException, ParameterException
     {
         return build(url.openStream(), otsNetwork, interpretXMLComments);
     }
@@ -360,11 +362,11 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws SimRuntimeException
      * @throws ParameterException
      */
-    private void fixOD(final OTSNetwork otsNetwork) throws NetworkException, OTSGeometryException, RemoteException, NamingException, ValueException,
-            ParameterException, SimRuntimeException
+    private void fixOD(final OTSNetwork otsNetwork) throws NetworkException, OTSGeometryException, RemoteException,
+            NamingException, ValueException, ParameterException, SimRuntimeException
     {
         // Reduce the list to only OD comments and strip the OD header and parse each into a key-value map.
-        Map<String, Map<String, String>> odInfo = new HashMap<String, Map<String, String>>();
+        Map<String, Map<String, String>> odInfo = new HashMap<>();
         for (String comment : getXMLComments())
         {
             if (comment.startsWith("OD "))
@@ -376,7 +378,7 @@ public class XmlNetworkLaneParser implements Serializable
         System.out.println("There are " + odInfo.size() + " OD comments");
         // Find the GTUTypes
         List<GTUType> odGTUTypes = new ArrayList<>(this.gtuTypes.values());
-        for (GTUType gtuType: odGTUTypes)
+        for (GTUType gtuType : odGTUTypes)
         {
             if (GTUType.VEHICLE.equals(gtuType))
             {
@@ -432,8 +434,7 @@ public class XmlNetworkLaneParser implements Serializable
             }
             String centroidName = map.get("centroid");
             String[] coordinates = map.get("centroidLocation").split(",");
-            OTSPoint3D centroidPoint =
-                    new OTSPoint3D(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]));
+            OTSPoint3D centroidPoint = new OTSPoint3D(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]));
             org.opentrafficsim.core.network.Node centroidNode = otsNetwork.getNode(centroidName);
             if (null == centroidNode)
             {
@@ -467,9 +468,8 @@ public class XmlNetworkLaneParser implements Serializable
             if (null == connectorLink)
             {
                 System.out.println("Constructing connector link " + linkName);
-                connectorLink =
-                        new CrossSectionLink(otsNetwork, linkName, from, to, LinkType.CONNECTOR, designLine, this.simulator,
-                                LaneKeepingPolicy.KEEP_RIGHT);
+                connectorLink = new CrossSectionLink(otsNetwork, linkName, from, to, LinkType.CONNECTOR, designLine,
+                        this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
                 new LinkAnimation(connectorLink, this.simulator, 0.5f);
             }
         }
@@ -482,11 +482,10 @@ public class XmlNetworkLaneParser implements Serializable
         start = 0;
         double duration = Double.parseDouble(durations.get(startTimeString));
         TimeVector tv = new TimeVector(new double[] { start, start + duration }, TimeUnit.BASE, StorageType.DENSE);
-        // Categorization categorization = new Categorization("AimsunOTSExport", firstGTUType, otherGTUTypes);              
+        // Categorization categorization = new Categorization("AimsunOTSExport", firstGTUType, otherGTUTypes);
         Categorization categorization = new Categorization("AimsunOTSExport", GTUType.class);
-        ODMatrix od =
-                new ODMatrix("ODExample", new ArrayList<>(origins), new ArrayList<>(destinations), categorization, tv,
-                        Interpolation.STEPWISE);
+        ODMatrix od = new ODMatrix("ODExample", new ArrayList<>(origins), new ArrayList<>(destinations), categorization, tv,
+                Interpolation.STEPWISE);
         for (Map<String, String> map : odInfo.values())
         {
             String flow = map.get("flow");
@@ -510,12 +509,11 @@ public class XmlNetworkLaneParser implements Serializable
             Category category = new Category(categorization, gtuType);
             org.opentrafficsim.core.network.Node from = otsNetwork.getNode(map.get("origin"));
             org.opentrafficsim.core.network.Node to = otsNetwork.getNode(map.get("destination"));
-            FrequencyVector demand =
-                    new FrequencyVector(new double[] { Double.parseDouble(map.get("flow")), 0 }, FrequencyUnit.PER_HOUR,
-                            StorageType.DENSE);
+            FrequencyVector demand = new FrequencyVector(new double[] { Double.parseDouble(map.get("flow")), 0 },
+                    FrequencyUnit.PER_HOUR, StorageType.DENSE);
             od.putDemandVector(from, to, category, demand);
-            System.out.println("Adding demand from " + from.getId() + " to " + to.getId() + " category " + category + ": "
-                    + demand);
+            System.out.println(
+                    "Adding demand from " + from.getId() + " to " + to.getId() + " category " + category + ": " + demand);
         }
         Set<TemplateGTUType> templates = new HashSet<>();
         for (GTUType gtuType : odGTUTypes)
@@ -523,10 +521,9 @@ public class XmlNetworkLaneParser implements Serializable
             GTUTag gtuTag = this.gtuTags.get(gtuType.getId());
             templates.add(new TemplateGTUType(gtuType, gtuTag.lengthDist, gtuTag.widthDist, gtuTag.maxSpeedDist));
         }
-        ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE, 
-                new ShortestRouteRandomGTUCharacteristicsGeneratorOD(templates));
-        Map<String, GeneratorObjects> generatedObjects =
-                ODApplier.applyOD(otsNetwork, od, this.simulator, odOptions);
+        ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE,
+                new DefaultGTUCharacteristicsGeneratorOD(RouteSupplier.SHORTEST, templates));
+        Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(otsNetwork, od, this.simulator, odOptions);
         for (String str : generatedObjects.keySet())
         {
             new GTUGeneratorAnimation(generatedObjects.get(str).getGenerator(), this.simulator);

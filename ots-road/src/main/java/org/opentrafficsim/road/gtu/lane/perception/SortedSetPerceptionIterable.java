@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.util.TreeSet;
+import java.util.function.Supplier;
 
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
@@ -16,11 +17,21 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <H> headway type
+ * @param <U> underlying object type
  */
-public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> implements PerceptionIterable<H>
+@Deprecated
+public class SortedSetPerceptionIterable<H extends Headway, U> extends TreeSet<H> implements PerceptionCollectable<H, U>
 {
 
     /** */
     private static final long serialVersionUID = 20180219L;
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super U, I> accumulator,
+            final PerceptionFinalizer<C, I> finalizer)
+    {
+        throw new UnsupportedOperationException();
+    }
+
 }

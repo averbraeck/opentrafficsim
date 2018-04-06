@@ -153,6 +153,7 @@ public class MarkovCorrelation<S, I extends Number>
      * the set. For example, after state A, both states A and B can occur with some correlation, while state C is not correlated
      * to states A and B. The same correlation is applied when the previous state was B, as it is also part of the same group.
      * <br>
+     * <br>
      * To explain sub-groups, suppose we have the following 3-state matrix in which the super state <i>s_2</i> is located (this
      * can be the root matrix, or any sub-matrix). In this matrix, state <i>s_2</i> is replaced by a matrix <i>S_2</i>.
      * 
@@ -164,8 +165,8 @@ public class MarkovCorrelation<S, I extends Number>
      * </pre>
      * 
      * From the level of this matrix, nothing changes. Whenever the prior state was any of those inside <i>S_2</i>, row 2 is
-     * applied to determine the next state. If this state is matrix <i>S_2</i>, it is further specified by <i>S_2</i>. Matrix
-     * <i>S_2</i> itself will be:
+     * applied to determine the next state. If the next state is matrix <i>S_2</i>, the state is further specified by
+     * <i>S_2</i>. Matrix <i>S_2</i> itself will be:
      * 
      * <pre>
      *       s_2   s_4
@@ -179,19 +180,18 @@ public class MarkovCorrelation<S, I extends Number>
      * ignored.<br>
      * <br>
      * Correlation of <i>s_2</i> is applied to the whole group, and all other states of the group can be seen as sub-types of
-     * the group's super state. If the super state is only a virtual layer that should not in itself be a valid state of the
-     * system, it can simply be excluded from obtaining a new state using {@code getState()}.<br>
+     * the group's super state. Correlations as considered inside the group (<i>c'_2</i> and <i>c'_4</i>) are mapped from the
+     * range <i>c_2</i> to 1. So, <i>c'_2</i> = 0, meaning that within the group there is no further correlation for the super
+     * state. Sub states, who are required to have an equal or larger correlation than the super state of the group, map
+     * linearly between <i>c_2</i> and 1.<br>
      * <br>
-     * Effective correlations of states that are part of a group are difficult to determine. Overall these correlations are less
-     * sensitive, as the maximum value is bounded by the correlation of the group. For instance if <i>p_22</i> equals 0.8, the
-     * <i>maximum</i> effective <i>p</i> value for each state inside <i>S_2</i> is 0.8. Rewriting equation <i>p_max</i> &#61
-     * <i>p</i> + (1 - <i>p</i>) * <i>c_max</i>, where <i>p</i> is the steady-state proportion of e.g. 0.2, we get <i>c_max</i>
-     * &#61 0.325. So even if we use <i>c</i> &#61 1 inside the group, the maximum overall correlation is much smaller than
-     * might be expected. Grouping states thus typically reduces the correlation for each individual state.
+     * If the super state is only a virtual layer that should not in itself be a valid state of the system, it can simply be
+     * excluded from obtaining a new state using {@code getState()}.<br>
+     * <br>
      * @param superState S; state of group
      * @param state S; state to add
      * @param correlation double; correlation
-     * @throws IllegalArgumentException if correlation is not within the range (-1 ... 1), the state is already defined, or
+     * @throws IllegalArgumentException if correlation is not within the range (0 ... 1), the state is already defined, or
      *             superState is not yet a state
      * @throws NullPointerException if an input is null
      */
@@ -200,12 +200,12 @@ public class MarkovCorrelation<S, I extends Number>
         Throw.whenNull(superState, "Super-state may not be null.");
         Throw.whenNull(state, "State may not be null.");
         Throw.when(this.leaves.containsKey(state), IllegalArgumentException.class, "State %s already defined.", state);
-        Throw.when(correlation <= -1.0 || correlation >= 1.0, IllegalArgumentException.class,
+        Throw.when(correlation < 0.0 || correlation >= 1.0, IllegalArgumentException.class,
                 "Correlation at root level need to be in the range (-1 ... 1).");
         if (!this.superMatrices.containsKey(superState))
         {
             // branch the super state in to a matrix
-            MarkovNode<S, I> superOriginal = this.leaves.get(superState);
+            FixedState<S, I> superOriginal = this.leaves.get(superState);
             // remove original from it's matrix
             TransitionMatrix<S, I> superMatrix = this.containingMatrices.get(superState);
             Throw.when(superMatrix == null, IllegalArgumentException.class, "No state has been defined for super-state %s.",
@@ -214,14 +214,18 @@ public class MarkovCorrelation<S, I extends Number>
             // replace with matrix
             TransitionMatrix<S, I> matrix = new TransitionMatrix<>(superState, superOriginal.getCorrelation());
             superMatrix.addNode(superState, matrix);
+            this.superMatrices.put(superState, matrix);
             // add original node to that matrix
+            superOriginal.correlation = 0.0;
             matrix.addNode(superState, superOriginal);
             this.containingMatrices.put(superState, matrix);
-            this.superMatrices.put(superState, matrix);
         }
         // add node
-        FixedState<S, I> node = new FixedState<>(state, correlation);
         TransitionMatrix<S, I> superMatrix = this.superMatrices.get(superState);
+        Throw.when(correlation < superMatrix.getCorrelation(), IllegalArgumentException.class,
+                "Sub states in a group can not have a lower correlation than the super state of the group.");
+        FixedState<S, I> node =
+                new FixedState<>(state, (correlation - superMatrix.getCorrelation()) / (1.0 - superMatrix.getCorrelation()));
         superMatrix.addNode(state, node);
         this.containingMatrices.put(state, superMatrix);
         this.leaves.put(state, node);
@@ -303,7 +307,7 @@ public class MarkovCorrelation<S, I extends Number>
         private final S state;
 
         /** Correlation. */
-        private final double correlation;
+        double correlation;
 
         /**
          * Constructor.
