@@ -91,25 +91,28 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
     }
 
     /**
-     * Returns the most recent event from <i>before</i> {@code time}, or the oldest if no such event.
+     * Returns the most recent event from <i>before</i> or on {@code time}, or the oldest if no such event.
      * @param time Time; past time at which to obtain event
      * @return E; most recent event from <i>before</i> {@code time}
      */
     protected final E getEvent(final Time time)
     {
         E prev = null;
-        for (E event : this.events)
+        for (int i = this.events.size() - 1; i >= 0; i--)
         {
-            if (event.getTime() > time.si)
+            E event = this.events.get(i);
+            if (event.getTime() <= time.si)
             {
+                prev = event;
                 break;
             }
-            prev = event;
         }
+
         if (prev == null && !this.events.isEmpty())
         {
             return this.events.get(0);
         }
+
         return prev;
     }
 
@@ -121,7 +124,7 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
     {
         return this.events.isEmpty() ? null : this.events.get(this.events.size() - 1);
     }
-    
+
     /**
      * Returns whether the state at the given time is equal to the state at the current time.
      * @param time Time; time

@@ -28,7 +28,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
  */
 public class DefaultLMRSPerceptionFactory implements PerceptionFactory
 {
-    
+
     /** {@inheritDoc} */
     @Override
     public LanePerception generatePerception(final LaneBasedGTU gtu)
@@ -44,18 +44,10 @@ public class DefaultLMRSPerceptionFactory implements PerceptionFactory
 
     /** {@inheritDoc} */
     @Override
-    public Parameters getParameters()
+    public Parameters getParameters() throws ParameterException
     {
-        try
-        {
-            return new ParameterSet().setDefaultParameter(ParameterTypes.LOOKAHEAD)
-                    .setDefaultParameter(ParameterTypes.LOOKBACKOLD).setDefaultParameter(ParameterTypes.PERCEPTION)
-                    .setDefaultParameter(ParameterTypes.LOOKBACK);
-        }
-        catch (ParameterException pe)
-        {
-            throw new RuntimeException(pe);
-        }
+        return new ParameterSet().setDefaultParameter(ParameterTypes.LOOKAHEAD).setDefaultParameter(ParameterTypes.LOOKBACKOLD)
+                .setDefaultParameter(ParameterTypes.PERCEPTION).setDefaultParameter(ParameterTypes.LOOKBACK);
     }
 
 }

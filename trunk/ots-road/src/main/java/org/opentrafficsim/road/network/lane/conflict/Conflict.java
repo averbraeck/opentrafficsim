@@ -713,7 +713,8 @@ public final class Conflict extends AbstractLaneBasedObject
         protected HeadwayGTU perceive(final LaneBasedGTU perceivingGtu, final LaneBasedGTU object, final Length distance)
                 throws GTUException, ParameterException
         {
-            return this.headwayGtuType.createHeadwayGtu(perceivingGtu, object, distance, this.downstream);
+            Length dist = this.downstream ? distance : distance.neg();
+            return this.headwayGtuType.createHeadwayGtu(perceivingGtu, object, dist, this.downstream);
         }
     }
 

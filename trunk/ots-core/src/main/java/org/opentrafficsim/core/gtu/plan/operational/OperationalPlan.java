@@ -3,6 +3,7 @@ package org.opentrafficsim.core.gtu.plan.operational;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.djunits.unit.AccelerationUnit;
@@ -19,6 +20,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.math.Solver;
 
 import nl.tudelft.simulation.language.Throw;
@@ -99,6 +101,7 @@ public class OperationalPlan implements Serializable
     public OperationalPlan(final GTU gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
             final List<Segment> operationalPlanSegmentList) throws OperationalPlanException
     {
+
         this.waitPlan = false;
         this.gtu = gtu;
         this.startTime = startTime;
@@ -136,11 +139,11 @@ public class OperationalPlan implements Serializable
         this.totalLength = new Length(distanceSI, LengthUnit.SI);
         this.endSpeed = v0;
 
-        double pathDistanceDeviation = Math.abs(this.totalLength.si - this.path.getLengthSI()) / this.totalLength.si;
-        if (pathDistanceDeviation < -0.01 || pathDistanceDeviation > 0.01)
-        {
-            System.err.println("path length and driven distance deviate more than 1% for operationalPlan: " + this);
-        }
+        // double pathDistanceDeviation = Math.abs(this.totalLength.si - this.path.getLengthSI()) / this.totalLength.si;
+        // if (pathDistanceDeviation < -0.01 || pathDistanceDeviation > 0.01)
+        // {
+        // System.err.println("path length and driven distance deviate more than 1% for operationalPlan: " + this);
+        // }
     }
 
     /**
@@ -393,8 +396,10 @@ public class OperationalPlan implements Serializable
     {
         double remainingDistanceSI = distance.si;
         double timeAtStartOfSegment = this.startTime.si;
-        for (Segment segment : this.operationalPlanSegmentList)
+        Iterator<Segment> it = this.operationalPlanSegmentList.iterator();
+        while (it.hasNext() && remainingDistanceSI >= 0.0)
         {
+            Segment segment = it.next();
             double distanceOfSegment = segment.distanceSI();
             if (distanceOfSegment > remainingDistanceSI)
             {
@@ -495,6 +500,20 @@ public class OperationalPlan implements Serializable
     }
 
     /**
+     * Calculate the location after the given duration since the start of the plan.
+     * @param time the relative time to look for a location
+     * @param pos relative position 
+     * @return the location after the given duration since the start of the plan.
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
+     */
+    public final DirectedPoint getLocation(final Time time, final RelativePosition pos)
+            throws OperationalPlanException
+    {
+        double distanceSI = getTraveledDistanceSI(time) + pos.getDx().si;
+        return this.path.getLocationExtendedSI(distanceSI);
+    }
+
+    /**
      * Calculate the distance traveled as part of this plan after the given duration since the start of the plan. This method
      * returns the traveled distance as a double in SI units.
      * @param duration the relative time to calculate the traveled distance
@@ -504,9 +523,6 @@ public class OperationalPlan implements Serializable
     public final double getTraveledDistanceSI(final Duration duration) throws OperationalPlanException
     {
         return getTraveledDistanceSI(this.startTime.plus(duration));
-        // Time absTime = duration.plus(this.startTime);
-        // SegmentProgress sp = getSegmentProgress(absTime);
-        // return sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(absTime.minus(sp.getSegmentStartTime()).si);
     }
 
     /**
@@ -539,6 +555,54 @@ public class OperationalPlan implements Serializable
         }
         SegmentProgress sp = getSegmentProgress(time);
         return sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si);
+    }
+
+    /**
+     * Calculates when the GTU will be at the given point. The point does not need to be at the traveled path, as the point is
+     * projected to the path at 90 degrees. The point may for instance be the end of a lane, which is crossed by a GTU possibly
+     * during a lane change.
+     * @param point DirectedPoint; point with angle, which will be projected to the path at 90 degrees
+     * @param upstream boolean; true if the point is upstream of the path
+     * @return Time; time at point
+     */
+    public final Time timeAtPoint(final DirectedPoint point, final boolean upstream)
+    {
+        OTSPoint3D p1 = new OTSPoint3D(point);
+        // point at 90 degrees
+        OTSPoint3D p2 = new OTSPoint3D(point.x - Math.sin(point.getRotZ()), point.y + Math.cos(point.getRotZ()), point.z);
+        double traveledDistanceAlongPath = 0.0;
+        try
+        {
+            if (upstream)
+            {
+                OTSPoint3D p = OTSPoint3D.intersectionOfLines(this.path.get(0), this.path.get(1), p1, p2);
+                double dist = traveledDistanceAlongPath - this.path.get(0).distance(p).si;
+                dist = dist >= 0.0 ? dist : 0.0; // negative in case of a gap
+                return timeAtDistance(Length.createSI(dist));
+            }
+            for (int i = 0; i < this.path.size() - 1; i++)
+            {
+                OTSPoint3D p = OTSPoint3D.intersectionOfLines(this.path.get(i), this.path.get(i + 1), p1, p2);
+                boolean onSegment = (this.path.get(i).x - p.x) * (this.path.get(i + 1).x - p.x) <= 1e-6
+                        && (this.path.get(i).y - p.y) * (this.path.get(i + 1).y - p.y) <= 1e-6;
+                if (p != null // on segment, or last segment
+                        && (i == this.path.size() - 2 || onSegment))
+                {
+                    // point is on the line
+                    traveledDistanceAlongPath += this.path.get(i).distance(p).si;
+                    return timeAtDistance(Length.createSI(traveledDistanceAlongPath));
+                }
+                else
+                {
+                    traveledDistanceAlongPath += this.path.get(i).distance(this.path.get(i + 1)).si;
+                }
+            }
+        }
+        catch (OTSGeometryException exception)
+        {
+            throw new RuntimeException("Index out of bounds on projection of point to path of operational plan", exception);
+        }
+        return null;
     }
 
     /**

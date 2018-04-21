@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -150,7 +151,14 @@ public final class LaneOperationalPlanBuilder
         {
             path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lanes.get(i).getCenterLine());
         }
-        return path.extract(0.0, distance.si);
+        try
+        {
+            return path.extract(0.0, distance.si);
+        }
+        catch (OTSGeometryException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -318,22 +326,19 @@ public final class LaneOperationalPlanBuilder
             return new LaneBasedOperationalPlan(gtu, lanes.get(0).getCenterLine().getLocation(firstLanePosition), startTime,
                     timeStep, lanes.get(0));
         }
-        Length distance;
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();
-        if (startSpeed.plus(acceleration.multiplyBy(timeStep)).lt0())
+        Duration brakingTime = brakingTime(acceleration, startSpeed, timeStep);
+        Length distance =
+                Length.createSI(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si);
+        if (brakingTime.si < timeStep.si)
         {
             // will reach stand-still within time step
-            Duration brakingTime = startSpeed.divideBy(acceleration.neg());
             segmentList.add(new OperationalPlan.AccelerationSegment(brakingTime, acceleration));
             segmentList.add(new OperationalPlan.SpeedSegment(timeStep.minus(brakingTime)));
-            distance = new Length(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si,
-                    LengthUnit.SI);
         }
         else
         {
             segmentList.add(new OperationalPlan.AccelerationSegment(timeStep, acceleration));
-            distance =
-                    new Length(startSpeed.si * timeStep.si + .5 * acceleration.si * timeStep.si * timeStep.si, LengthUnit.SI);
         }
         if (distance.le(MINIMUM_CREDIBLE_PATH_LENGTH))
         {
@@ -343,7 +348,7 @@ public final class LaneOperationalPlanBuilder
         OTSLine3D path;
         try
         {
-            path = makePath(lanes, firstLanePosition, distance);
+            path = makePath(lanes, firstLanePosition, distance.plus(Length.createSI(Lane.MARGIN.si * (lanes.size() - 1))));
         }
         catch (Exception e)
         {
@@ -372,19 +377,21 @@ public final class LaneOperationalPlanBuilder
      *             first lane
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static LaneBasedOperationalPlan buildAccelerationLaneChangePlan(final LaneBasedGTU gtu, final List<Lane> fromLanes,
+    public static LaneBasedOperationalPlan buildAccelerationLaneChangePlan(final LaneBasedGTU gtu, List<Lane> fromLanes,
             final LateralDirectionality laneChangeDirectionality, final DirectedPoint startPosition, final Time startTime,
             final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final LaneChange laneChange)
             throws OperationalPlanException, OTSGeometryException
     {
         // on first call during lane change, use laneChangeDirectionality as laneChange.getDirection() is probably NONE
         LateralDirectionality direction = laneChange.isChangingLane() ? laneChange.getDirection() : laneChangeDirectionality;
+        Duration brakingTime = brakingTime(acceleration, startSpeed, timeStep);
         Length fromLaneDistance =
-                new Length(startSpeed.si * timeStep.si + .5 * acceleration.si * timeStep.si * timeStep.si, LengthUnit.SI);
+                Length.createSI(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si);
         // TODO also for other driving directions, additional arguments in projectFractional?
         double firstFractionalPosition = fromLanes.get(0).getCenterLine().projectFractional(
                 fromLanes.get(0).getParentLink().getStartNode().getDirection(),
-                fromLanes.get(0).getParentLink().getEndNode().getDirection(), startPosition.x, startPosition.y);
+                fromLanes.get(0).getParentLink().getEndNode().getDirection(), startPosition.x, startPosition.y,
+                FractionalFallback.ORTHOGONAL);
         Length fromLaneFirstPosition = fromLanes.get(0).position(firstFractionalPosition);
         Length cumulDistance = fromLanes.get(0).getLength().minus(fromLaneFirstPosition);
         int lastLaneIndex = 0;
@@ -413,35 +420,30 @@ public final class LaneOperationalPlanBuilder
             }
             else
             {
-                new Exception().printStackTrace();
-                System.exit(-1);
+                fromLanes = fromLanes.subList(0, fromLanes.indexOf(lane));
+                break;
             }
         }
 
-        Length toLaneFirstPosition = toLanes.get(0).position(firstFractionalPosition);
+        // Length toLaneFirstPosition = toLanes.get(0).position(firstFractionalPosition);
         Length fromLaneLastPosition = fromLanes.get(lastLaneIndex).position(lastFractionalPosition);
         Length toLaneLastPosition = toLanes.get(lastLaneIndex).position(lastFractionalPosition);
 
-        DirectedPoint fromFirst = fromLanes.get(0).getCenterLine().getLocation(fromLaneFirstPosition);
-        DirectedPoint toFirst = toLanes.get(0).getCenterLine().getLocation(toLaneFirstPosition);
+        // DirectedPoint fromFirst = fromLanes.get(0).getCenterLine().getLocation(fromLaneFirstPosition);
+        // DirectedPoint toFirst = toLanes.get(0).getCenterLine().getLocation(toLaneFirstPosition);
         DirectedPoint fromLast = fromLanes.get(lastLaneIndex).getCenterLine().getLocation(fromLaneLastPosition);
         DirectedPoint toLast = toLanes.get(lastLaneIndex).getCenterLine().getLocation(toLaneLastPosition);
 
+        OTSPoint3D firstPoint = new OTSPoint3D(startPosition);
         double lastFraction = laneChange.updateAndGetFraction(timeStep, direction, gtu);
         OTSPoint3D lastPoint = new OTSPoint3D(fromLast.x * (1 - lastFraction) + toLast.x * lastFraction,
                 fromLast.y * (1 - lastFraction) + toLast.y * lastFraction,
                 fromLast.z * (1 - lastFraction) + toLast.z * lastFraction);
-        OTSPoint3D firstPoint = new OTSPoint3D(startPosition);
         OTSLine3D path = new OTSLine3D(firstPoint, lastPoint);
 
-        double t = timeStep.si;
-        // why was this used?
-        // Acceleration a = new Acceleration((2.0 * (path.getLength().si - startSpeed.si * t)) / (t * t), AccelerationUnit.SI);
-        Speed endSpeed = startSpeed.plus(acceleration.multiplyBy(timeStep));
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();
-        if (endSpeed.lt0())
+        if (brakingTime.si < timeStep.si)
         {
-            Duration brakingTime = startSpeed.divideBy(acceleration.neg());
             if (brakingTime.si > 0.0)
             {
                 segmentList.add(new OperationalPlan.AccelerationSegment(brakingTime, acceleration));
@@ -454,6 +456,27 @@ public final class LaneOperationalPlanBuilder
         }
         return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, fromLanes, toLanes, lastLaneIndex,
                 lastFractionalPosition);
+    }
+
+    /**
+     * Returns the effective braking time, which stops if stand-still is reached.
+     * @param acceleration Acceleration; acceleration
+     * @param startSpeed Speed; start speed
+     * @param time Duration; intended time step
+     * @return Duration; effective braking time
+     */
+    public static Duration brakingTime(final Acceleration acceleration, final Speed startSpeed, final Duration time)
+    {
+        if (acceleration.ge0())
+        {
+            return time;
+        }
+        double t = startSpeed.si / -acceleration.si;
+        if (t >= time.si)
+        {
+            return time;
+        }
+        return Duration.createSI(t);
     }
 
     /**

@@ -36,6 +36,8 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
@@ -107,13 +109,14 @@ public final class LmrsUtil implements LmrsParameters
             final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
-
+        
         // obtain objects to get info
         SpeedLimitProspect slp =
                 perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         Parameters params = gtu.getParameters();
-        Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
+        EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
+        Speed speed = ego.getSpeed();
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
 
@@ -142,8 +145,13 @@ public final class LmrsUtil implements LmrsParameters
             a = Acceleration.min(a, aSecond);
             if (intersection != null)
             {
-                a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
-                        secondLane.getLateralDirectionality(), intersection));
+                // TODO should this be here? It seems an acceleration task that should respond during a lane change
+                ConflictPlans conflictPlan = new ConflictPlans(); // TODO acquire conflict plans
+                a = Acceleration.min(a,
+                        ConflictUtil.approachConflicts(params, intersection.getConflicts(secondLane), secondLeaders,
+                                carFollowingModel, ego.getLength(), speed, ego.getAcceleration(), sli, conflictPlan, gtu));
+//                a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
+//                        secondLane.getLateralDirectionality(), intersection));
             }
         }
         else
@@ -181,7 +189,7 @@ public final class LmrsUtil implements LmrsParameters
                         a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
                                 LateralDirectionality.LEFT, intersection));
                     }
-                    laneChange.setLaneChangeDuration(gtu.getParameters().getParameter(LCDUR));
+                    laneChange.setLaneChangeDuration(Duration.createSI(0.8));// gtu.getParameters().getParameter(LCDUR));
                 }
             }
             else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree)
@@ -208,7 +216,7 @@ public final class LmrsUtil implements LmrsParameters
                         a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
                                 LateralDirectionality.RIGHT, intersection));
                     }
-                    laneChange.setLaneChangeDuration(gtu.getParameters().getParameter(LCDUR));
+                    laneChange.setLaneChangeDuration(Duration.createSI(0.8));// gtu.getParameters().getParameter(LCDUR));
                 }
             }
 

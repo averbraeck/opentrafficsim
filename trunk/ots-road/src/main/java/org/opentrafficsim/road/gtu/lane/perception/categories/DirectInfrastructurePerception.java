@@ -99,7 +99,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         this.speedLimitProspect.keySet().retainAll(cs);
         // only if required
         LaneStructureRecord newRoot = getPerception().getLaneStructure().getRootLSR();
-        if (this.root == null || (!newRoot.equals(this.root) && !this.root.getNext().contains(newRoot))
+        if (this.root == null || !newRoot.equals(this.root)
                 || !Objects.equals(this.route, getPerception().getGtu().getStrategicalPlanner().getRoute())
                 || this.cutOff.stream().filter((record) -> !record.isCutOffEnd()).count() > 0)
         {

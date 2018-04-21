@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Intermediate;
@@ -35,8 +36,10 @@ public class TaskCarFollowing implements Task
     public double demand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
             throws ParameterException
     {
-        return perception.getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT)
-                .collect(new TaskCarFollowingCollector(gtu, parameters));
+        NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
+                "NeighborsPerception not available.");
+        Try.execute(() -> neighbors.updateLeaders(RelativeLane.CURRENT), "Exception while updating leaders.");
+        return neighbors.getLeaders(RelativeLane.CURRENT).collect(new TaskCarFollowingCollector(gtu, parameters));
     }
 
     /**
@@ -51,7 +54,7 @@ public class TaskCarFollowing implements Task
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private class TaskCarFollowingCollector implements PerceptionCollector<Double, LaneBasedGTU, Double>
+    public static class TaskCarFollowingCollector implements PerceptionCollector<Double, LaneBasedGTU, Double>
     {
 
         /** GTU. */
@@ -80,7 +83,7 @@ public class TaskCarFollowing implements Task
                 @Override
                 public Double get()
                 {
-                    return null;
+                    return 0.0; // if no leader
                 }
             };
         }

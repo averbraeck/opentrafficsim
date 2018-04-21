@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.generator.od;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -12,6 +13,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.naming.NamingException;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -31,6 +34,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
@@ -322,6 +326,7 @@ public final class ODApplier
                 RoomChecker roomChecker = odOptions.get(ODOptions.ROOM_CHECKER, lane, o, linkType);
                 IdGenerator idGenerator = odOptions.get(ODOptions.GTU_ID, lane, o, linkType);
                 LaneBiases biases = odOptions.get(ODOptions.LANE_BIAS, lane, o, linkType);
+                boolean animation = odOptions.get(ODOptions.ANIMATION, lane, o, linkType);
                 // and finally, the generator
                 try
                 {
@@ -330,6 +335,10 @@ public final class ODApplier
                             simulator, roomChecker, idGenerator);
                     generator.setNoLaneChangeDistance(odOptions.get(ODOptions.NO_LC_DIST, lane, o, linkType));
                     output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
+                    if (animation)
+                    {
+                        new GTUGeneratorAnimation(generator, simulator);
+                    }
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -339,6 +348,11 @@ public final class ODApplier
                 catch (ProbabilityException exception)
                 {
                     // should not happen, as we define probabilities in the headwayGenerator
+                    throw new RuntimeException(exception);
+                }
+                catch (NamingException | RemoteException exception)
+                {
+                    // should not happen
                     throw new RuntimeException(exception);
                 }
             }

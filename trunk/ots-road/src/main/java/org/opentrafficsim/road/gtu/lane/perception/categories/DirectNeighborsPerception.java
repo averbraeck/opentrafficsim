@@ -1,11 +1,16 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -15,6 +20,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -115,7 +121,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             throws ParameterException, GTUException, NetworkException
     {
         checkLateralDirectionality(lat);
-        SortedSet<HeadwayGTU> headwaySet = getFirstDownstreamGTUs(lat, RelativePosition.FRONT, RelativePosition.REAR);
+        SortedSet<HeadwayGTU> headwaySet =
+                new SortedNeighborsSet(getFirstDownstreamGTUs(lat, RelativePosition.FRONT, RelativePosition.REAR),
+                        this.headwayGtuType, getGtu(), true);
         this.firstLeaders.put(lat, new TimeStampedObject<>(headwaySet, getTimestamp()));
     }
 
@@ -125,7 +133,8 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
             throws GTUException, ParameterException, NetworkException
     {
         checkLateralDirectionality(lat);
-        SortedSet<HeadwayGTU> headwaySet = getFirstUpstreamGTUs(lat, RelativePosition.REAR, RelativePosition.FRONT);
+        SortedSet<HeadwayGTU> headwaySet = new SortedNeighborsSet(
+                getFirstUpstreamGTUs(lat, RelativePosition.REAR, RelativePosition.FRONT), this.headwayGtuType, getGtu(), false);
         this.firstFollowers.put(lat, new TimeStampedObject<>(headwaySet, getTimestamp()));
     }
 
@@ -136,7 +145,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
         checkLateralDirectionality(lat);
         // check if any GTU is downstream of the rear, within the vehicle length
-        SortedSet<HeadwayGTU> headwaySet = getFirstDownstreamGTUs(lat, RelativePosition.REAR, RelativePosition.FRONT);
+        SortedSet<DistanceGTU> headwaySet = getFirstDownstreamGTUs(lat, RelativePosition.REAR, RelativePosition.FRONT);
         if (!headwaySet.isEmpty() && headwaySet.first().getDistance().le0())
         {
             this.gtuAlongside.put(lat, new TimeStampedObject<>(true, getTimestamp()));
@@ -164,11 +173,11 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if a parameter was not present or out of bounds
      */
-    private SortedSet<HeadwayGTU> getFirstDownstreamGTUs(final LateralDirectionality lat,
+    private SortedSet<DistanceGTU> getFirstDownstreamGTUs(final LateralDirectionality lat,
             final RelativePosition.TYPE egoRelativePosition, final RelativePosition.TYPE otherRelativePosition)
             throws GTUException, ParameterException
     {
-        SortedSet<HeadwayGTU> headwaySet = new TreeSet<>();
+        SortedSet<DistanceGTU> headwaySet = new TreeSet<>();
         Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
         Set<LaneStructureRecord> nextSet = new LinkedHashSet<>();
         LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1));
@@ -194,9 +203,11 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                 if (down != null)
                 {
                     // GTU found, add to set
-                    headwaySet.add(this.headwayGtuType.createHeadwayGtu(getGtu(), down,
-                            record.getStartDistance().plus(down.position(record.getLane(), down.getRear())).minus(dxHeadway),
-                            true));
+                    // headwaySet.add(this.headwayGtuType.createHeadwayGtu(getGtu(), down,
+                    // record.getStartDistance().plus(down.position(record.getLane(), down.getRear())).minus(dxHeadway),
+                    // true));
+                    headwaySet.add(new DistanceGTU(down,
+                            record.getStartDistance().plus(down.position(record.getLane(), down.getRear())).minus(dxHeadway)));
                 }
                 else
                 {
@@ -246,11 +257,11 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if a parameter was not present or out of bounds
      */
-    private SortedSet<HeadwayGTU> getFirstUpstreamGTUs(final LateralDirectionality lat,
+    private SortedSet<DistanceGTU> getFirstUpstreamGTUs(final LateralDirectionality lat,
             final RelativePosition.TYPE egoRelativePosition, final RelativePosition.TYPE otherRelativePosition)
             throws GTUException, ParameterException
     {
-        SortedSet<HeadwayGTU> headwaySet = new TreeSet<>();
+        SortedSet<DistanceGTU> headwaySet = new TreeSet<>();
         Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
         Set<LaneStructureRecord> prevSet = new LinkedHashSet<>();
         LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1));
@@ -276,9 +287,11 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                 if (up != null)
                 {
                     // GTU found, add to set
-                    headwaySet.add(this.headwayGtuType.createHeadwayGtu(getGtu(), up,
-                            record.getStartDistance().neg().minus(up.position(record.getLane(), up.getFront())).plus(dxHeadway),
-                            false));
+                    // headwaySet.add(this.headwayGtuType.createHeadwayGtu(getGtu(), up,
+                    // record.getStartDistance().neg().minus(up.position(record.getLane(), up.getFront())).plus(dxHeadway),
+                    // false));
+                    headwaySet.add(new DistanceGTU(up, record.getStartDistance().neg()
+                            .minus(up.position(record.getLane(), up.getFront())).plus(dxHeadway)));
                 }
                 else
                 {
@@ -509,6 +522,308 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     public final String toString()
     {
         return "DirectNeighborsPesrception";
+    }
+
+    /**
+     * GTU at a distance, as preliminary info towards perceiving it. For instance, as a set from a search algorithm.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 22 apr. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private class DistanceGTU implements Comparable<DistanceGTU>
+    {
+
+        /** GTU. */
+        private LaneBasedGTU gtu;
+
+        /** Distance. */
+        private Length distance;
+
+        /**
+         * Constructor.
+         * @param gtu LaneBasedGTU; GTU
+         * @param distance Length; distance
+         */
+        public DistanceGTU(final LaneBasedGTU gtu, final Length distance)
+        {
+            this.gtu = gtu;
+            this.distance = distance;
+        }
+
+        /**
+         * Returns the GTU.
+         * @return LaneBasedGTU; GTU
+         */
+        public LaneBasedGTU getGTU()
+        {
+            return this.gtu;
+        }
+
+        /**
+         * Returns the distance.
+         * @return Length; distance
+         */
+        public Length getDistance()
+        {
+            return this.distance;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int compareTo(final DistanceGTU o)
+        {
+            return this.distance.compareTo(o.distance);
+        }
+    }
+
+    /**
+     * Translation from a set of {@code DistanceGTU}'s, to a sorted set of {@code HeadwayGTU}'s. This bridges the gap between a
+     * raw network search, and the perceived result.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 22 apr. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private static class SortedNeighborsSet implements SortedSet<HeadwayGTU>
+    {
+
+        /** Base set of GTU's at distance. */
+        final SortedSet<DistanceGTU> base;
+
+        /** Headway type for perceived GTU's. */
+        final HeadwayGtuType headwayGtuType;
+
+        /** Perceiving GTU. */
+        final LaneBasedGTU perceivingGtu;
+
+        /** Whether the GTU's are downstream. */
+        final boolean downstream;
+
+        /** Contains all GTU's preceived so far, to prevent re-perception. */
+        final SortedMap<String, HeadwayGTU> all = new TreeMap<>();
+
+        /**
+         * Constructor.
+         * @param base SortedSet; base set of GTU's at distance
+         * @param headwayGtuType HeadwayGtuType; headway type for perceived GTU's
+         * @param perceivingGtu LaneBasedGTU; perceiving GTU
+         * @param downstream boolean; whether the GTU's are downstream
+         */
+        public SortedNeighborsSet(final SortedSet<DistanceGTU> base, final HeadwayGtuType headwayGtuType,
+                final LaneBasedGTU perceivingGtu, final boolean downstream)
+        {
+            this.base = base;
+            this.headwayGtuType = headwayGtuType;
+            this.perceivingGtu = perceivingGtu;
+            this.downstream = downstream;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int size()
+        {
+            return this.base.size();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean isEmpty()
+        {
+            return this.base.isEmpty();
+        }
+
+        /**
+         * Make sure all GTU are available in perceived for. Helper method.
+         */
+        private void getAll()
+        {
+            for (@SuppressWarnings("unused") HeadwayGTU gtu : this)
+            {
+                // the iterator will create them all
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean contains(final Object o)
+        {
+            getAll();
+            return this.all.containsValue(o);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Iterator<HeadwayGTU> iterator()
+        {
+            return new Iterator<HeadwayGTU>()
+            {
+                Iterator<DistanceGTU> it = SortedNeighborsSet.this.base.iterator();
+
+                @Override
+                public boolean hasNext()
+                {
+                    return this.it.hasNext();
+                }
+
+                @Override
+                public HeadwayGTU next()
+                {
+                    DistanceGTU next = this.it.next();
+                    if (next == null)
+                    {
+                        throw new ConcurrentModificationException();
+                    }
+                    HeadwayGTU out = SortedNeighborsSet.this.all.get(next.getGTU().getId());
+                    if (out == null)
+                    {
+                        out = Try.assign(() -> SortedNeighborsSet.this.headwayGtuType.createHeadwayGtu(
+                                SortedNeighborsSet.this.perceivingGtu, next.getGTU(), next.getDistance(),
+                                SortedNeighborsSet.this.downstream), "Exception while perceiving a neighbor.");
+                        SortedNeighborsSet.this.all.put(next.getGTU().getId(), out);
+                    }
+                    return out;
+                }
+            };
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Object[] toArray()
+        {
+            getAll();
+            return this.all.values().toArray();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public <T> T[] toArray(final T[] a)
+        {
+            getAll();
+            return this.all.values().toArray(a);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean add(final HeadwayGTU e)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean remove(final Object o)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean containsAll(final Collection<?> c)
+        {
+            getAll();
+            return this.all.values().containsAll(c);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean addAll(final Collection<? extends HeadwayGTU> c)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean retainAll(final Collection<?> c)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean removeAll(final Collection<?> c)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void clear()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Comparator<? super HeadwayGTU> comparator()
+        {
+            return null;
+        }
+
+        /**
+         * Helper method for sub-lists to find distance-GTU from the perceived GTU.
+         * @param element HeadwayGTU; perceived GTU
+         * @return DistanceGTU; pertaining to given GTU
+         */
+        private DistanceGTU getGTU(final HeadwayGTU element)
+        {
+            for (DistanceGTU distanceGtu : this.base)
+            {
+                if (distanceGtu.getGTU().getId().equals(element.getId()))
+                {
+                    return distanceGtu;
+                }
+            }
+            throw new IllegalArgumentException("GTU used to obtain a subset is not in the set.");
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SortedSet<HeadwayGTU> subSet(final HeadwayGTU fromElement, final HeadwayGTU toElement)
+        {
+            return new SortedNeighborsSet(this.base.subSet(getGTU(fromElement), getGTU(toElement)), this.headwayGtuType,
+                    this.perceivingGtu, this.downstream);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SortedSet<HeadwayGTU> headSet(final HeadwayGTU toElement)
+        {
+            return new SortedNeighborsSet(this.base.headSet(getGTU(toElement)), this.headwayGtuType, this.perceivingGtu,
+                    this.downstream);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SortedSet<HeadwayGTU> tailSet(final HeadwayGTU fromElement)
+        {
+            return new SortedNeighborsSet(this.base.tailSet(getGTU(fromElement)), this.headwayGtuType, this.perceivingGtu,
+                    this.downstream);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public HeadwayGTU first()
+        {
+            return iterator().next();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public HeadwayGTU last()
+        {
+            getAll();
+            return this.all.get(this.all.lastKey());
+        }
+
     }
 
 }

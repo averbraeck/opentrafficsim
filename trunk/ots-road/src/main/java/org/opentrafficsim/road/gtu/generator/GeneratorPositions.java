@@ -20,9 +20,12 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.BySpeed;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.ByValue;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -234,12 +237,13 @@ public final class GeneratorPositions implements Locatable
      *            number should match with {@code GeneratorLanePosition.getLaneNumber()}, where 1 is the right-most lane.
      *            Missing lanes are assumed to have no queue.
      * @param desiredSpeed Speed; desired speed, possibly used to determine the biased road position
+     * @param route Route; route, may be {@code null}
      * @return GeneratorLanePosition; new position to generate a GTU
      */
     public GeneratorLanePosition draw(final GTUType gtuType, final Map<CrossSectionLink, Map<Integer, Integer>> unplaced,
-            final Speed desiredSpeed)
+            final Speed desiredSpeed, final Route route)
     {
-        return this.position.draw(gtuType, this.stream, this.biases, unplaced, desiredSpeed);
+        return this.position.draw(gtuType, this.stream, this.biases, unplaced, desiredSpeed, route);
     }
 
     /** {@inheritDoc} */
@@ -375,6 +379,15 @@ public final class GeneratorPositions implements Locatable
         CrossSectionLink getLink()
         {
             return this.link;
+        }
+        
+        /**
+         * Returns the direction of travel.
+         * @return GTUDirectionality; direction of travel
+         */
+        GTUDirectionality getDirection()
+        {
+            return this.position.iterator().next().getGtuDirection();
         }
 
         /** {@inheritDoc} */
@@ -529,6 +542,15 @@ public final class GeneratorPositions implements Locatable
             }
             return this.positions.get(this.positions.size() - 1);
         }
+        
+        /**
+         * Returns the direction of travel.
+         * @return GTUDirectionality; direction of travel
+         */
+        GTUDirectionality getDirection()
+        {
+            return this.positions.get(0).getDirection();
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -576,17 +598,32 @@ public final class GeneratorPositions implements Locatable
          *            number should match with {@code GeneratorLanePosition.getLaneNumber()}, where 1 is the right-most lane.
          *            Missing lanes are assumed to have no queue.
          * @param desiredSpeed Speed; desired speed, possibly used to determine the biased road position
+         * @param route Route; route, may be {@code null}
          * @return GeneratorLanePosition; draws a LinkPosition using number of accessible lanes for the GTUType as weight, and a
          *         GeneratorLanePosition from that
          */
         GeneratorLanePosition draw(final GTUType gtuType, final StreamInterface stream, final LaneBiases biases,
-                final Map<CrossSectionLink, Map<Integer, Integer>> unplaced, final Speed desiredSpeed)
+                final Map<CrossSectionLink, Map<Integer, Integer>> unplaced, final Speed desiredSpeed, final Route route)
         {
             double[] cumulWeights = new double[this.positions.size()];
             double totalWeight = 0.0;
             for (int i = 0; i < this.positions.size(); i++)
             {
-                totalWeight += this.positions.get(i).getWeight(gtuType);
+                Link link = this.positions.get(i).getLink();
+                GTUDirectionality direction = this.positions.get(i).getDirection();
+                if (route != null)
+                {
+                    int from = route.indexOf(direction.isPlus() ? link.getStartNode() : link.getEndNode());
+                    int to = route.indexOf(direction.isPlus() ? link.getEndNode() : link.getStartNode());
+                    if (from > -1 && to > -1 && to - from == 1)
+                    {
+                        totalWeight += this.positions.get(i).getWeight(gtuType); // else, no weight
+                    }
+                }
+                else
+                {
+                    totalWeight += this.positions.get(i).getWeight(gtuType); // no route, consider all locations
+                }
                 cumulWeights[i] = totalWeight;
             }
             double r = totalWeight * stream.nextDouble();

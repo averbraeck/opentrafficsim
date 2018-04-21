@@ -28,8 +28,12 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.xml.sax.SAXException;
@@ -148,6 +152,16 @@ public class LoadXML extends AbstractWrappableAnimation
         this.model = new XMLModel();
         return this.model;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void addAnimationToggles()
+    {
+        AnimationToggles.setIconAnimationTogglesFull(this);
+        toggleAnimationClass(OTSLink.class);
+        toggleAnimationClass(OTSNode.class);
+        showAnimationClass(SpeedSign.class);;
+    }
 
     /**
      * The network.
@@ -171,7 +185,7 @@ public class LoadXML extends AbstractWrappableAnimation
                 throws SimRuntimeException, RemoteException
         {
             this.simulator = theSimulator;
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator, getColorer());
             try
             {
                 this.network = nlp.build(new ByteArrayInputStream(LoadXML.this.xml.getBytes(StandardCharsets.UTF_8)), true);

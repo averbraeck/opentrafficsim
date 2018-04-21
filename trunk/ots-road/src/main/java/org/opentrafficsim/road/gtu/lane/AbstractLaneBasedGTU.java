@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -12,6 +13,7 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -22,6 +24,9 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -29,6 +34,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -45,6 +52,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerce
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
@@ -53,10 +61,11 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -106,8 +115,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      */
     private final HistoricalMap<Lane, GTUDirectionality> lanesCurrentOperationalPlan;
 
-    /** Pending triggers for each lane. */
-    private Map<Lane, List<SimEvent<OTSSimTimeDouble>>> pendingTriggers = new HashMap<>();
+    /** Pending leave triggers for each lane. */
+    private Map<Lane, List<SimEvent<OTSSimTimeDouble>>> pendingLeaveTriggers = new HashMap<>();
+
+    /** Pending enter triggers for each lane. */
+    private Map<Lane, List<SimEventInterface<OTSSimTimeDouble>>> pendingEnterTriggers = new HashMap<>();
 
     /** Cached desired speed. */
     private Speed cachedDesiredSpeed;
@@ -130,7 +142,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** Caching on or off. */
     // TODO: should be indicated with a Parameter
-    public static boolean CACHING = false;
+    public static boolean CACHING = true;
 
     /** cached position count. */
     // TODO: can be removed after testing period
@@ -182,29 +194,54 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
         DirectedPoint initialLocation = lastPoint;
 
+        // Give the GTU a 1 micrometer long operational plan, or a stand-still plan, so the first move and events will work
+        Time now = getSimulator().getSimulatorTime().getTime();
+        try
+        {
+            if (initialSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
+            {
+                this.operationalPlan
+                        .set(new OperationalPlan(this, initialLocation, now, new Duration(1E-6, DurationUnit.SECOND)));
+            }
+            else
+            {
+                OTSPoint3D p2 = new OTSPoint3D(initialLocation.x + 1E-6 * Math.cos(initialLocation.getRotZ()),
+                        initialLocation.y + 1E-6 * Math.sin(initialLocation.getRotZ()), initialLocation.z);
+                OTSLine3D path = new OTSLine3D(new OTSPoint3D(initialLocation), p2);
+                this.operationalPlan.set(OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed));
+            }
+        }
+        catch (OperationalPlanException e)
+        {
+            throw new RuntimeException("Initial operational plan could not be created.", e);
+        }
+
         // register the GTU on the lanes
         for (DirectedLanePosition directedLanePosition : initialLongitudinalPositions)
         {
             Lane lane = directedLanePosition.getLane();
-            enterLane(lane, directedLanePosition.getPosition(), directedLanePosition.getGtuDirection());
+            addLaneToGtu(lane, directedLanePosition.getPosition(), directedLanePosition.getGtuDirection()); // enter lane part 1
         }
 
-        // TODO The above enterLane creates an event with speed = 0.0, while the below init creates a move event with speed at
-        // the same time.
-        // TODO The above enterLane creates link/lane messages for GTU's that other software might not be aware of, as no
-        // new/init message it given at that point. Problem: init event needs a referenceLane which is determined if the GTU
-        // is on the network, i.e. after the enterLane.
+        // init event
+        DirectedLanePosition referencePosition = getReferencePosition();
+        fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
+                new Object[] { getId(), initialLocation, getLength(), getWidth(), getBaseColor(), referencePosition.getLane(),
+                        referencePosition.getPosition(), referencePosition.getGtuDirection(), getGTUType() },
+                getSimulator().getSimulatorTime());
+
+        // register the GTU on the lanes
+        for (DirectedLanePosition directedLanePosition : initialLongitudinalPositions)
+        {
+            Lane lane = directedLanePosition.getLane();
+            lane.addGTU(this, directedLanePosition.getPosition()); // enter lane part 2
+        }
 
         // initiate the actual move
         super.init(strategicalPlanner, initialLocation, initialSpeed);
 
-        this.referencePositionTime = -1; // remove cache, it may be invalid as the above init results in a lane change
-        DirectedLanePosition referencePosition = getReferencePosition();
-        fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
-                new Object[] { getId(), initialLocation, getLength(), getWidth(), getBaseColor(), referencePosition.getLane(),
-                        position(referencePosition.getLane(), getReference()), referencePosition.getGtuDirection(),
-                        getGTUType() },
-                getSimulator().getSimulatorTime());
+        this.referencePositionTime = Double.NaN; // remove cache, it may be invalid as the above init results in a lane change
+
     }
 
     /**
@@ -226,6 +263,20 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             throw new GTUException("enterLane - one of the arguments is null");
         }
+        addLaneToGtu(lane, position, gtuDirection);
+        addGtuToLane(lane, position);
+    }
+
+    /**
+     * Registers the lane at the GTU.
+     * @param lane the lane to add to the list of lanes on which the GTU is registered.
+     * @param gtuDirection the direction of the GTU on the lane (which can be bidirectional). If the GTU has a positive speed,
+     *            it is moving in this direction.
+     * @param position the position on the lane.
+     * @throws GTUException when positioning the GTU on the lane causes a problem
+     */
+    private void addLaneToGtu(final Lane lane, final Length position, final GTUDirectionality gtuDirection) throws GTUException
+    {
         if (this.lanesCurrentOperationalPlan.containsKey(lane))
         {
             System.err.println(this + " is already registered on lane: " + lane + " at fractional position "
@@ -233,7 +284,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     + " length of lane is " + lane.getLength());
             return;
         }
-
         // if the GTU is already registered on a lane of the same link, do not change its fractional position, as
         // this might lead to a "jump".
         if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
@@ -241,6 +291,34 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             this.fractionalLinkPositions.put(lane.getParentLink(), lane.fraction(position));
         }
         this.lanesCurrentOperationalPlan.put(lane, gtuDirection);
+    }
+
+    /**
+     * Part of 'enterLane' which register the lane at the GTU so the GTU can report it's position on the lane.
+     * @param lane Lane; lane
+     * @param position Length; position
+     * @throws GTUException on exception
+     */
+    protected void addGtuToLane(final Lane lane, final Length position) throws GTUException
+    {
+        List<SimEventInterface<OTSSimTimeDouble>> pending = this.pendingEnterTriggers.get(lane);
+        if (null != pending)
+        {
+            for (SimEventInterface<OTSSimTimeDouble> event : pending)
+            {
+                if (event.getAbsoluteExecutionTime().get().ge(getSimulator().getSimulatorTime().get()))
+                {
+                    boolean result = getSimulator().cancelEvent(event);
+                    if (!result && event.getAbsoluteExecutionTime().get().ne(getSimulator().getSimulatorTime().get()))
+                    {
+                        System.err.println("addLaneToGtu, trying to remove event: NOTHING REMOVED -- result=" + result
+                                + ", simTime=" + getSimulator().getSimulatorTime().get() + ", eventTime="
+                                + event.getAbsoluteExecutionTime().get());
+                    }
+                }
+            }
+            this.pendingEnterTriggers.remove(lane);
+        }
         lane.addGTU(this, position);
     }
 
@@ -263,7 +341,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     {
         Length position = position(lane, getReference());
         this.lanesCurrentOperationalPlan.remove(lane);
-        List<SimEvent<OTSSimTimeDouble>> pending = this.pendingTriggers.get(lane);
+        List<SimEvent<OTSSimTimeDouble>> pending = this.pendingLeaveTriggers.get(lane);
         if (null != pending)
         {
             for (SimEvent<OTSSimTimeDouble> event : pending)
@@ -279,9 +357,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     }
                 }
             }
-            this.pendingTriggers.remove(lane);
+            this.pendingLeaveTriggers.remove(lane);
         }
-        // check of there are any lanes for this link left. If not, remove the link.
+        // check if there are any lanes for this link left. If not, remove the link.
         boolean found = false;
         for (Lane l : this.lanesCurrentOperationalPlan.keySet())
         {
@@ -355,6 +433,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             leaveLane(lane);
         }
+
+        this.referencePositionTime = Double.NaN;
 
     }
 
@@ -438,6 +518,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             // should not happen, lane was obtained from GTU
             throw new RuntimeException("fractionalPosition on lane not possible", exception);
         }
+        this.referencePositionTime = Double.NaN;
     }
 
     /** {@inheritDoc} */
@@ -464,7 +545,20 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             return; // Done; do not re-schedule execution of this move method.
         }
 
-        // store the new positions, and sample statistics
+        // remove enter events
+        for (Lane lane : this.pendingEnterTriggers.keySet())
+        {
+            List<SimEventInterface<OTSSimTimeDouble>> events = this.pendingEnterTriggers.get(lane);
+            for (SimEventInterface<OTSSimTimeDouble> event : events)
+            {
+                // also unregister from lane
+                this.lanesCurrentOperationalPlan.remove(lane);
+                getSimulator().cancelEvent(event);
+            }
+        }
+        this.pendingEnterTriggers.clear();
+
+        // store the new positions
         Map<Link, Double> newLinkPositions = new LinkedHashMap<>();
         for (Lane lane : this.lanesCurrentOperationalPlan.keySet())
         {
@@ -588,11 +682,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     public Length position(final Lane lane, final RelativePosition relativePosition, final Time when) throws GTUException
     {
-        // if (null == lane)
-        // {
-        // throw new GTUException("lane is null");
-        // }
-
         int cacheIndex = 0;
         if (CACHING)
         {
@@ -613,31 +702,63 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         synchronized (this.lock)
         {
-            // if (!this.lanesCurrentOperationalPlan.containsKey(lane))
-            // {
-            // throw new GTUException("position() : GTU " + toString() + " is not on lane " + lane);
-            // }
-            // if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
-            // {
-            // // DO NOT USE toString() here, as it will cause an endless loop...
-            // throw new GTUException(this + " does not have a fractional position on " + lane.toString());
-            // }
             double longitudinalPosition = lane.positionSI(this.fractionalLinkPositions.get(when).get(lane.getParentLink()));
-            // if (getOperationalPlan() == null)
-            // {
-            // // no valid operational plan, e.g. during generation of a new plan
-            // return Length.createSI(longitudinalPosition + relativePosition.getDx().si);
-            // }
             double loc;
             try
             {
-                if (this.lanesCurrentOperationalPlan.get(when).get(lane).isPlus())
+                OperationalPlan plan = getOperationalPlan(when);
+                if (!(plan instanceof LaneBasedOperationalPlan) || !((LaneBasedOperationalPlan) plan).isDeviative())
                 {
-                    loc = longitudinalPosition + getOperationalPlan().getTraveledDistanceSI(when) + relativePosition.getDx().si;
+                    if (this.lanesCurrentOperationalPlan.get(when).get(lane).isPlus())
+                    {
+                        loc = longitudinalPosition + plan.getTraveledDistanceSI(when) + relativePosition.getDx().si;
+                    }
+                    else
+                    {
+                        loc = longitudinalPosition - plan.getTraveledDistanceSI(when) - relativePosition.getDx().si;
+                    }
                 }
                 else
                 {
-                    loc = longitudinalPosition - getOperationalPlan().getTraveledDistanceSI(when) - relativePosition.getDx().si;
+                    // deviative LaneBasedOperationalPlan, i.e. the GTU is not on a center line
+                    DirectedPoint p = plan.getLocation(when, relativePosition);
+                    double f = lane.getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.NaN);
+                    if (!Double.isNaN(f))
+                    {
+                        loc = f * lane.getLength().si;
+                    }
+                    else
+                    {
+                        // the point does not project fractionally to this lane, it has to be up- or downstream of the lane
+
+                        // simple heuristic to decide if we first look upstream or downstream
+                        boolean upstream = this.fractionalLinkPositions.get(lane.getParentLink()) < 0.0 ? true : false;
+
+                        // use loop up to 2 times (for loop creates 'loc not initialized' warning)
+                        int i = 0;
+                        while (true)
+                        {
+                            double distance = getDistanceAtOtherLane(lane, when, upstream, 0.0, p);
+                            if (!Double.isNaN(distance))
+                            {
+                                loc = upstream ? -distance : distance + lane.getLength().si;
+                                break;
+                            }
+                            else if (i == 1)
+                            {
+                                // Lane change ended while moving to next link. The source lanes are left and for a leave-lane
+                                // event the position is required. This may depend on upstream or downstream lanes as the
+                                // reference position is projected to that lane. But if we already left that lane, we can't use
+                                // it. We thus use ENDPOINT fallback instead.
+                                loc = lane.getLength().si * lane.getCenterLine().projectFractional(null, null, p.x, p.y,
+                                        FractionalFallback.ENDPOINT);
+                                break;
+                            }
+                            // try other direction
+                            i++;
+                            upstream = !upstream;
+                        }
+                    }
                 }
             }
             catch (NullPointerException e)
@@ -662,6 +783,39 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
             return length;
         }
+    }
+
+    /**
+     * In case of a deviative operational plan (not on the center lines), positions are projected fractionally to the center
+     * lines. For points upstream or downstream of a lane, fractional projection is not valid. In such cases we need to project
+     * the position to an upstream or downstream lane instead, and adjust length along the center lines.
+     * @param lane Lane; lane to determine the position on
+     * @param when Time; time
+     * @param upstream boolean; whether to check upstream (or downstream)
+     * @param distance double; cumulative distance in recursive search, starts at 0.0
+     * @param point DirectedPoint; absolute point of GTU to be projected to center line
+     * @return Length; position on lane being &lt;0 or &gt;{@code lane.getLength()}
+     */
+    private double getDistanceAtOtherLane(final Lane lane, final Time when, final boolean upstream, final double distance,
+            final DirectedPoint point)
+    {
+        Set<Lane> nextLanes = new HashSet<>(upstream == this.lanesCurrentOperationalPlan.get(lane).isPlus()
+                ? lane.prevLanes(getGTUType()).keySet() : lane.nextLanes(getGTUType()).keySet()); // safe copy
+        nextLanes.retainAll(this.lanesCurrentOperationalPlan.keySet()); // as we delete here
+        if (nextLanes.size() == 0)
+        {
+            return Double.NaN; // point must be in the other direction
+        }
+        Throw.when(nextLanes.size() > 1, IllegalStateException.class,
+                "A position (%s) of GTU % is not on any of the current registered lanes.", point, this.getId());
+        Lane nextLane = nextLanes.iterator().next();
+        double f = nextLane.getCenterLine().projectFractional(null, null, point.x, point.y, FractionalFallback.NaN);
+        if (Double.isNaN(f))
+        {
+            getDistanceAtOtherLane(nextLane, when, upstream, distance + nextLane.getLength().si, point);
+        }
+        return distance
+                + (upstream == this.lanesCurrentOperationalPlan.get(nextLane).isPlus() ? 1.0 - f : f) * nextLane.getLength().si;
     }
 
     /** Time of reference position cache. */
@@ -706,170 +860,145 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     protected void scheduleEnterLeaveTriggers() throws NetworkException, SimRuntimeException, GTUException
     {
-        /*
-         * Move the vehicle into any new lanes with the front, and schedule entrance during this time step and calculate the
-         * current position based on the fractional position, because THE POSITION METHOD DOES NOT WORK FOR THIS. IT CALCULATES
-         * THE POSITION BASED ON THE NEWLY CALCULATED ACCELERATION AND SPEED AND CAN THEREFORE MAKE AN ERROR.
-         */
-        double moveSI = getOperationalPlan().getTotalLength().si;
+        DirectedLanePosition ref = getReferencePosition();
+        double endPosition = position(ref.getLane(), getReference(), getOperationalPlan().getEndTime()).si;
+        double moveSI = endPosition - ref.getPosition().si; // getOperationalPlan().getTotalLength().si;
+
         Map<Lane, GTUDirectionality> lanesCopy = new LinkedHashMap<>(this.lanesCurrentOperationalPlan);
-        for (Lane lane : lanesCopy.keySet()) // use a copy because this.lanes can change
+        Iterator<Lane> it = lanesCopy.keySet().iterator();
+        Lane enteredLane = null;
+        while (it.hasNext() || enteredLane != null) // use a copy because this.lanesCurrentOperationalPlan can change
         {
+            // next lane from 'lanesCopy', or asses the lane we just entered as it may be very short and also passed fully
+            Lane lane;
+            double sign;
+            if (enteredLane == null)
+            {
+                lane = it.next();
+                sign = lanesCopy.get(lane).isPlus() ? 1.0 : -1.0;
+            }
+            else
+            {
+                lane = enteredLane;
+                sign = this.lanesCurrentOperationalPlan.get(lane).isPlus() ? 1.0 : -1.0;
+            }
+            enteredLane = null;
+
             // schedule triggers on this lane
             double referenceStartSI = this.fractionalLinkPositions.get(lane.getParentLink()) * lane.getLength().getSI();
-            double sign = lanesCopy.get(lane).equals(GTUDirectionality.DIR_PLUS) ? 1.0 : -1.0;
-            if (lanesCopy.get(lane).equals(GTUDirectionality.DIR_PLUS))
+            if (sign > 0.0)
             {
                 lane.scheduleSensorTriggers(this, referenceStartSI, moveSI);
             }
             else
             {
-                // TODO extra argument for DIR_MINUS driving direction?
                 lane.scheduleSensorTriggers(this, referenceStartSI - moveSI, moveSI);
             }
 
-            // determine when our FRONT will pass the end of this registered lane in case of driving DIR_PLUS or
-            // the start of this registered lane when driving DIR_MINUS.
-            // if the time is earlier than the end of the timestep: schedule the enterLane method.
-            double frontPosSI = referenceStartSI + sign * getFront().getDx().getSI();
-            double nextFrontPosSI = frontPosSI + sign * moveSI;
-
-            // LANE WE COME FROM IS IN PLUS DIRECTION
-            if (lanesCopy.get(lane).equals(GTUDirectionality.DIR_PLUS))
+            // check if we exceed the lane with the front during this operational plan
+            double nextFrontPosSI = referenceStartSI + sign * (moveSI + getFront().getDx().si);
+            Lane nextLane = null;
+            GTUDirectionality direction = null;
+            Length refPosAtLastTimestep = null;
+            DirectedPoint end = null;
+            if (sign > 0.0 && referenceStartSI + getFront().getDx().si <= lane.getLength().si
+                    && nextFrontPosSI > lane.getLength().si)
             {
-                while (frontPosSI <= lane.getLength().si && nextFrontPosSI > lane.getLength().si)
+                nextLane = determineNextLane(lane);
+                direction = lane.nextLanes(getGTUType()).get(nextLane);
+                end = lane.getCenterLine().getLocationExtendedSI(lane.getLength().si - getFront().getDx().si);
+                if (direction.isPlus())
                 {
-                    // TODO PK: this goes very wrong for networks with short lanes with alternating GTUDireationality
-                    Lane nextLane = determineNextLane(lane);
-                    GTUDirectionality direction = lane.nextLanes(getGTUType()).get(nextLane);
-                    /*
-                     * We have to register the position at the previous timestep to keep calculations consistent. And we have to
-                     * correct for the position of the reference point. The idea is that we register the vehicle 'before' the
-                     * entrance of the new lane at the time of the last timestep, so for a DIR_PLUS on a negative position, and
-                     * for a DIR_MINUS on a position beyond the length of the next lane.
-                     */
-                    if (direction.equals(GTUDirectionality.DIR_PLUS))
-                    {
-                        Length refPosAtLastTimestep =
-                                new Length(-(lane.getLength().si - frontPosSI) - getFront().getDx().si, LengthUnit.SI);
-                        enterLane(nextLane, refPosAtLastTimestep, direction);
-                        // schedule any sensor triggers on this lane for the remainder time
-                        nextLane.scheduleSensorTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
-                    }
-                    else if (direction.equals(GTUDirectionality.DIR_MINUS))
-                    {
-                        Length refPosAtLastTimestep =
-                                new Length(nextLane.getLength().si + (lane.getLength().si - frontPosSI) + getFront().getDx().si,
-                                        LengthUnit.SI);
-                        enterLane(nextLane, refPosAtLastTimestep, direction);
-                        // schedule any sensor triggers on this lane for the remainder time
-                        // TODO extra argument for DIR_MINUS driving direction?
-                        nextLane.scheduleSensorTriggers(this, refPosAtLastTimestep.getSI() - moveSI, moveSI);
-                    }
-                    else
-                    {
-                        throw new NetworkException("scheduleTriggers DIR_PLUS for GTU " + toString() + ", nextLane " + nextLane
-                                + ", direction not DIR_PLUS or DIR_MINUS");
-                    }
-
-                    // TODO this does not account for the GTUDirectionality
-                    // next lane
-                    frontPosSI -= lane.getLength().si;
-                    nextFrontPosSI -= lane.getLength().si;
-                    lane = nextLane;
+                    // o----L1-r->o----L2--->o
+                    refPosAtLastTimestep = Length.createSI(referenceStartSI - lane.getLength().si);
+                }
+                else
+                {
+                    // o----L1-r->o<---L2----o
+                    refPosAtLastTimestep = Length.createSI(nextLane.getLength().si - referenceStartSI + lane.getLength().si);
                 }
             }
-
-            // LANE WE COME FROM IS IN MINUS DIRECTION
-            else if (lanesCopy.get(lane).equals(GTUDirectionality.DIR_MINUS))
+            else if (sign < 0.0 && referenceStartSI - getFront().getDx().si >= 0.0 && nextFrontPosSI < 0.0)
             {
-                if (frontPosSI >= 0.0 && nextFrontPosSI < 0.0)
+                nextLane = determinePrevLane(lane);
+                direction = lane.prevLanes(getGTUType()).get(nextLane);
+                end = lane.getCenterLine().getLocationExtendedSI(getFront().getDx().si);
+                end.setRotZ(end.getRotZ() + Math.PI); // probably doesn't matter, as intersection with a 90 degree angle is made
+                if (direction.isPlus())
                 {
-                    Lane prevLane = determinePrevLane(lane);
-                    GTUDirectionality direction = lane.prevLanes(getGTUType()).get(prevLane);
-                    /*
-                     * We have to register the position at the previous timestep to keep calculations consistent. And we have to
-                     * correct for the position of the reference point. The idea is that we register the vehicle 'before' the
-                     * entrance of the new lane at the time of the last timestep, so for a DIR_MINUS on a negative position, and
-                     * for a DIR_PLUS on a position beyond the length of the next lane.
-                     */
-                    if (direction.equals(GTUDirectionality.DIR_MINUS))
-                    {
-                        // TODO do this at the right time, scheduled with triggers. 4x
-                        Length refPosAtLastTimestep =
-                                new Length(prevLane.getLength().si + frontPosSI + getFront().getDx().si, LengthUnit.SI);
-                        enterLane(prevLane, refPosAtLastTimestep, direction);
-                        // schedule any sensor triggers on this lane for the remainder time
-                        prevLane.scheduleSensorTriggers(this, refPosAtLastTimestep.getSI() - moveSI, moveSI);
-                    }
-                    else if (direction.equals(GTUDirectionality.DIR_PLUS))
-                    {
-                        Length refPosAtLastTimestep = new Length(-frontPosSI - getFront().getDx().si, LengthUnit.SI);
-                        enterLane(prevLane, refPosAtLastTimestep, direction);
-                        // schedule any sensor triggers on this lane for the remainder time
-                        // TODO extra argument for DIR_MINUS driving direction?
-                        prevLane.scheduleSensorTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
-                    }
-                    else
-                    {
-                        throw new NetworkException("scheduleTriggers DIR_MINUS for GTU " + toString() + ", prevLane " + prevLane
-                                + ", direction not DIR_PLUS or DIR_MINUS");
-                    }
+                    // o<---L1-r--o----L2--->o
+                    refPosAtLastTimestep = Length.createSI(-referenceStartSI);
+                }
+                else
+                {
+                    // o<---L1-r--o<---L2----o
+                    refPosAtLastTimestep = Length.createSI(nextLane.getLength().si + referenceStartSI);
                 }
             }
-
-            else
+            if (end != null)
             {
-                throw new NetworkException(
-                        "scheduleTriggers for GTU " + toString() + ", lane " + lane + ", direction not DIR_PLUS or DIR_MINUS");
+                Time t = getOperationalPlan().timeAtPoint(end, false);
+                if (!Double.isNaN(t.si))
+                {
+                    addLaneToGtu(nextLane, refPosAtLastTimestep, direction);
+                    enteredLane = nextLane;
+                    SimEventInterface<OTSSimTimeDouble> event = getSimulator().scheduleEventAbs(t, this, this, "addGtuToLane",
+                            new Object[] { nextLane, refPosAtLastTimestep }); // pos at plan start
+                    addEnterTrigger(nextLane, event);
+                    // schedule any sensor triggers on this lane for the remainder time
+                    nextLane.scheduleSensorTriggers(this, refPosAtLastTimestep.si, direction.isPlus() ? moveSI : -moveSI);
+                }
             }
         }
 
         // move the vehicle out of any lanes with the BACK, and schedule exit during this time step
         for (Lane lane : this.lanesCurrentOperationalPlan.keySet())
         {
-            // Determine when our REAR will pass the end of this registered lane.
-            // TODO look if more lanes are exited in one timestep, and continue the algorithm with the remainder of the time...
             double referenceStartSI = this.fractionalLinkPositions.get(lane.getParentLink()) * lane.getLength().getSI();
-            double sign = this.lanesCurrentOperationalPlan.get(lane).equals(GTUDirectionality.DIR_PLUS) ? 1.0 : -1.0;
-            double rearPosSI = referenceStartSI + sign * getRear().getDx().getSI();
-
+            Time exitTime = null;
+            // heuristic to perform accurate timeAtPoint check: reference position beyond lane
             if (this.lanesCurrentOperationalPlan.get(lane).equals(GTUDirectionality.DIR_PLUS))
             {
-                if (rearPosSI <= lane.getLength().si && rearPosSI + moveSI > lane.getLength().si)
+                if (referenceStartSI + getRear().getDx().si + moveSI > lane.getLength().si)
                 {
-                    double distanceToLeave = lane.getLength().si - rearPosSI;
-                    Time exitTime = getOperationalPlan().timeAtDistance(new Length(distanceToLeave, LengthUnit.SI));
-                    SimEvent<OTSSimTimeDouble> event = new SimEvent<>(new OTSSimTimeDouble(exitTime), this, this, "leaveLane",
-                            new Object[] { lane, new Boolean(false) });
-                    getSimulator().scheduleEvent(event);
-                    addTrigger(lane, event);
-                    // XXXXXXXXXXXXXXXXXX Minus one ULP is not safe if you want to add the current time
-                    // XXXXXXXXXXXXXXXXXX Should compute the time time at which the rear of the GTU exits the lane???
-                    // getSimulator().scheduleEventRel(new Duration(timestep - Math.ulp(timestep), TimeUnit.SI), this, this,
-                    // "leaveLane", new Object[] { lane, new Boolean(true) }); // TODO should be false?
+                    try
+                    {
+                        exitTime = getOperationalPlan().timeAtPoint(lane.getCenterLine().getLocationFraction(1.0),
+                                this.fractionalLinkPositions.get(lane.getParentLink()) > 1.0);
+                    }
+                    catch (OTSGeometryException exception)
+                    {
+                        throw new RuntimeException(exception);
+                    }
                 }
             }
             else
             {
-                if (rearPosSI >= 0.0 && rearPosSI - moveSI < 0.0)
+                if (referenceStartSI - getRear().getDx().si - moveSI < 0.0)
                 {
-                    double distanceToLeave = rearPosSI;
-                    Time exitTime = getOperationalPlan().timeAtDistance(new Length(distanceToLeave, LengthUnit.SI));
-                    SimEvent<OTSSimTimeDouble> event = new SimEvent<>(new OTSSimTimeDouble(exitTime), this, this, "leaveLane",
-                            new Object[] { lane, new Boolean(false) });
-                    getSimulator().scheduleEvent(event);
-                    addTrigger(lane, event);
-
-                    // getSimulator().scheduleEventRel(new Duration(timestep - Math.ulp(timestep), TimeUnit.SI), this, this,
-                    // "leaveLane", new Object[] { lane, new Boolean(true) }); // XXX: should be false?
+                    try
+                    {
+                        exitTime = getOperationalPlan().timeAtPoint(lane.getCenterLine().getLocationFraction(0.0),
+                                this.fractionalLinkPositions.get(lane.getParentLink()) < 0.0);
+                    }
+                    catch (OTSGeometryException exception)
+                    {
+                        throw new RuntimeException(exception);
+                    }
                 }
+            }
+            if (exitTime != null && !Double.isNaN(exitTime.si))
+            {
+                SimEvent<OTSSimTimeDouble> event = new SimEvent<>(new OTSSimTimeDouble(exitTime), this, this, "leaveLane",
+                        new Object[] { lane, new Boolean(false) });
+                getSimulator().scheduleEvent(event);
+                addTrigger(lane, event);
             }
         }
     }
 
     /**
-     * XXX: direction dependent... <br>
+     * Get the next lane.
      * @param lane the lane to find the successor for
      * @return the next lane for this GTU
      * @throws NetworkException when no next lane exists or the route branches into multiple next lanes
@@ -879,32 +1008,25 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     protected Lane determineNextLane(final Lane lane) throws NetworkException, GTUException
     {
         Lane nextLane = null;
-        if (lane.nextLanes(getGTUType()).size() == 0)
-        {
-            throw new NetworkException(this + " - lane " + lane + " does not have a successor");
-        }
-        if (lane.nextLanes(getGTUType()).size() == 1)
+        Map<Lane, GTUDirectionality> nextLanes = lane.nextLanes(getGTUType());
+        Throw.when(nextLanes.size() == 0, NetworkException.class, "%s - lane %s does not have a successor", this, lane);
+        if (nextLanes.size() == 1)
         {
             nextLane = lane.nextLanes(getGTUType()).keySet().iterator().next();
+            Throw.when(this.lanesCurrentOperationalPlan.containsKey(nextLane), NetworkException.class,
+                    "%s - lane %s is already registered to the GTU", this, lane);
         }
         else
         {
-            if (!(getStrategicalPlanner() instanceof LaneBasedStrategicalRoutePlanner))
-            {
-                throw new GTUException(this + " reaches branch but has no route navigator ");
-            }
-            Node nextNode = ((LaneBasedStrategicalRoutePlanner) getStrategicalPlanner()).nextNode(lane.getParentLink(),
-                    GTUDirectionality.DIR_PLUS, getGTUType());
-            if (null == nextNode)
-            {
-                throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
-            }
+            Node nextNode = getStrategicalPlanner().nextNode(lane.getParentLink(), GTUDirectionality.DIR_PLUS, getGTUType());
+            Throw.when(nextNode == null, GTUException.class, "%s reaches branch and the route returns null as nextNodeToVisit",
+                    this);
             int continuingLaneCount = 0;
-            for (Lane candidateLane : lane.nextLanes(getGTUType()).keySet())
+            for (Lane candidateLane : nextLanes.keySet())
             {
                 if (null != this.lanesCurrentOperationalPlan.get(candidateLane))
                 {
-                    continue; // Already on this lane
+                    return null; // Already on this lane
                 }
                 // XXX Hack - this should be done more considerate -- fails at loops...
                 if (nextNode == candidateLane.getParentLink().getEndNode()
@@ -917,7 +1039,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (continuingLaneCount == 0)
             {
                 throw new NetworkException(this + " reached branch and the route specifies a nextNodeToVisit (" + nextNode
-                        + ") that is not a next node " + "at this branch at (" + lane.getParentLink().getEndNode() + ")");
+                        + ") that is not a next node at this branch at (" + lane.getParentLink().getEndNode() + ")");
             }
             if (continuingLaneCount > 1)
             {
@@ -930,7 +1052,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     }
 
     /**
-     * XXX: direction dependent... <br>
+     * Get the previous lane, that is next for the GTU.
      * @param lane the lane to find the predecessor for
      * @return the next lane for this GTU
      * @throws NetworkException when no next lane exists or the route branches into multiple next lanes
@@ -940,11 +1062,12 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     protected Lane determinePrevLane(final Lane lane) throws NetworkException, GTUException
     {
         Lane prevLane = null;
-        if (lane.prevLanes(getGTUType()).size() == 0)
+        Map<Lane, GTUDirectionality> prevLanes = lane.prevLanes(getGTUType());
+        if (prevLanes.size() == 0)
         {
-            throw new NetworkException(this + " - lane " + lane + " does not have a predecessor");
+            return null; // throw new NetworkException(this + " - lane " + lane + " does not have a predecessor");
         }
-        if (lane.prevLanes(getGTUType()).size() == 1)
+        if (prevLanes.size() == 1)
         {
             prevLane = lane.prevLanes(getGTUType()).keySet().iterator().next();
         }
@@ -961,11 +1084,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
             }
             int continuingLaneCount = 0;
-            for (Lane candidateLane : lane.prevLanes(getGTUType()).keySet())
+            for (Lane candidateLane : prevLanes.keySet())
             {
                 if (null != this.lanesCurrentOperationalPlan.get(candidateLane))
                 {
-                    continue; // Already on this lane
+                    return null; // Already on this lane
                 }
                 // XXX Hack - this should be done more considerate -- fails at loops...
                 if (prevNode == candidateLane.getParentLink().getEndNode()
@@ -978,7 +1101,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (continuingLaneCount == 0)
             {
                 throw new NetworkException(this + " reached branch and the route specifies a nextNodeToVisit (" + prevNode
-                        + ") that is not a next node " + "at this branch at (" + lane.getParentLink().getStartNode() + ")");
+                        + ") that is not a next node at this branch at (" + lane.getParentLink().getStartNode() + ")");
             }
             if (continuingLaneCount > 1)
             {
@@ -1029,13 +1152,29 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public final void addTrigger(final Lane lane, final SimEvent<OTSSimTimeDouble> event)
     {
-        List<SimEvent<OTSSimTimeDouble>> list = this.pendingTriggers.get(lane);
+        List<SimEvent<OTSSimTimeDouble>> list = this.pendingLeaveTriggers.get(lane);
         if (null == list)
         {
             list = new ArrayList<>();
         }
         list.add(event);
-        this.pendingTriggers.put(lane, list);
+        this.pendingLeaveTriggers.put(lane, list);
+    }
+
+    /**
+     * Add enter trigger.
+     * @param lane Lane; lane
+     * @param event SimEvent; event
+     */
+    private final void addEnterTrigger(final Lane lane, final SimEventInterface<OTSSimTimeDouble> event)
+    {
+        List<SimEventInterface<OTSSimTimeDouble>> list = this.pendingEnterTriggers.get(lane);
+        if (null == list)
+        {
+            list = new ArrayList<>();
+        }
+        list.add(event);
+        this.pendingEnterTriggers.put(lane, list);
     }
 
     /** {@inheritDoc} */
@@ -1120,8 +1259,17 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             InfrastructurePerception infra =
                     getTacticalPlanner().getPerception().getPerceptionCategoryOrNull(InfrastructurePerception.class);
-            Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
-            SpeedLimitInfo speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+            SpeedLimitInfo speedInfo;
+            if (infra == null)
+            {
+                speedInfo = new SpeedLimitInfo();
+                speedInfo.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, getMaximumSpeed());
+            }
+            else
+            {
+                // Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
+                speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+            }
             this.cachedDesiredSpeed =
                     Try.assign(() -> getTacticalPlanner().getCarFollowingModel().desiredSpeed(getParameters(), speedInfo),
                             "Parameter exception while obtaining the desired speed.");
@@ -1139,7 +1287,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             LanePerception perception = getTacticalPlanner().getPerception();
             // speed
-            EgoPerception ego = perception.getPerceptionCategoryOrNull(EgoPerception.class); 
+            EgoPerception ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
             Throw.whenNull(ego, "EgoPerception is required to determine the speed.");
             Speed speed = ego.getSpeed();
             // speed limit info

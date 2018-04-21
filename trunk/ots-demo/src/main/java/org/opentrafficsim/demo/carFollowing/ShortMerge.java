@@ -265,7 +265,7 @@ public class ShortMerge extends AbstractWrappableAnimation
                 InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
                 this.network = new OTSNetwork("ShortMerge");
-                nlp.build(stream, this.network, true);
+                nlp.build(stream, this.network, false);
 
                 addGenerator();
 
@@ -475,7 +475,7 @@ public class ShortMerge extends AbstractWrappableAnimation
             Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             // TODO DIR_MINUS
             initialLongitudinalPositions
-                    .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
+                    .add(new DirectedLanePosition(lane, new Length(5.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
             LaneBasedTemplateGTUTypeDistribution characteristicsGenerator =
                     new LaneBasedTemplateGTUTypeDistribution(distribution);
             new LaneBasedGTUGenerator(id, headwayGenerator, gtuColorer, characteristicsGenerator,
