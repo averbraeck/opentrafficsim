@@ -18,6 +18,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
+import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
 import org.opentrafficsim.core.network.NetworkException;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -852,25 +853,28 @@ public class OTSLine3DTest
         OTSLine3D line = new OTSLine3D(new OTSPoint3D(0, 0), new OTSPoint3D(1, 1), new OTSPoint3D(2, 0), new OTSPoint3D(3, 1),
                 new OTSPoint3D(4, 0));
         double fraction;
-        fraction = line.projectFractional(zeroDir, zeroDir, 1.5, -5.0);
+        fraction = line.projectFractional(zeroDir, zeroDir, 1.5, -5.0, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new OTSPoint3D(1.5, .5, 0), Math.atan2(-1, 1));
-        fraction = line.projectFractional(zeroDir, zeroDir, 1.5, 5.0);
+        fraction = line.projectFractional(zeroDir, zeroDir, 1.5, 5.0, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new OTSPoint3D(1.5, .5, 0), Math.atan2(-1, 1));
-        fraction = line.projectFractional(zeroDir, zeroDir, 2.5, -5.0);
+        fraction = line.projectFractional(zeroDir, zeroDir, 2.5, -5.0, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new OTSPoint3D(2.5, .5, 0), Math.atan2(1, 1));
-        fraction = line.projectFractional(zeroDir, zeroDir, 2.5, 5.0);
+        fraction = line.projectFractional(zeroDir, zeroDir, 2.5, 5.0, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new OTSPoint3D(2.5, .5, 0), Math.atan2(1, 1));
         // test correct projection with parallel helper lines on line ---
         line = new OTSLine3D(new OTSPoint3D(0, 0), new OTSPoint3D(2, 2), new OTSPoint3D(4, 4), new OTSPoint3D(6, 6));
-        fraction = line.projectFractional(zeroDir, zeroDir, 2, 4);
+        fraction = line.projectFractional(zeroDir, zeroDir, 2, 4, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new OTSPoint3D(3, 3, 0), Math.atan2(1, 1));
-        fraction = line.projectFractional(zeroDir, zeroDir, 4, 2);
+        fraction = line.projectFractional(zeroDir, zeroDir, 4, 2, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new OTSPoint3D(3, 3, 0), Math.atan2(1, 1));
         // test correct projection without parallel helper lines on just some line
         line = new OTSLine3D(new OTSPoint3D(-2, -2), new OTSPoint3D(2, -2), new OTSPoint3D(2, 2), new OTSPoint3D(-2, 2));
         for (double f = 0; f < 0; f += .1)
         {
-            fraction = line.projectFractional(zeroDir, zeroDir, 1, -1 + f * 2); // from y = -1 to 1, projecting to 3rd segment
+            fraction = line.projectFractional(zeroDir, zeroDir, 1, -1 + f * 2, FractionalFallback.ORTHOGONAL); // from y = -1 to
+                                                                                                               // 1, projecting
+                                                                                                               // to 3rd
+            // segment
             checkGetLocation(line, fraction, new OTSPoint3D(2, -2 + f * 4, 0), Math.atan2(1, 0)); // from y = -2 to 2
         }
         // test projection on barely parallel lines outside of bend
@@ -882,10 +886,14 @@ public class OTSLine3DTest
                     new OTSPoint3D(6, 6 - e[i]), new OTSPoint3D(8, 8 - e[i]));
             for (int j = 0; j < d.length; j++)
             {
-                fraction = line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j]); // on outside of slight bend
+                fraction = line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j], FractionalFallback.ORTHOGONAL); // on
+                                                                                                                        // outside
+                                                                                                                        // of
+                                                                                                                        // slight
+                                                                                                                        // bend
                 if (Math.abs(fraction - 0.5) > 0.001)
                 {
-                    line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j]);
+                    line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j], FractionalFallback.ORTHOGONAL);
                 }
                 if (e[i] >= 1e-6)
                 {
@@ -916,7 +924,7 @@ public class OTSLine3DTest
                 {
                     for (double y : new double[] { 0, 1e-3, 1e-6, 1e-9, 1e-12 })
                     {
-                        double f = line.projectFractional(start, end, x, y);
+                        double f = line.projectFractional(start, end, x, y, FractionalFallback.ORTHOGONAL);
                         assertTrue("Fractional projection on circle is not between 0.0 and 1.0.", f >= 0.0 && f <= 1.0);
                     }
                 }
@@ -941,14 +949,14 @@ public class OTSLine3DTest
             {
                 for (double y = -1; y <= 2; y += 0.1)
                 {
-                    double f = line.projectFractional(zeroDir, zeroDir, x, y);
+                    double f = line.projectFractional(zeroDir, zeroDir, x, y, FractionalFallback.ORTHOGONAL);
                     assertTrue("Fractional projection on circle is not between 0.0 and 1.0.", f >= 0.0 && f <= 1.0);
                 }
             }
         }
         // 2-point line
         line = new OTSLine3D(new OTSPoint3D(0, 0), new OTSPoint3D(1, 1));
-        fraction = line.projectFractional(zeroDir, zeroDir, .5, 1);
+        fraction = line.projectFractional(zeroDir, zeroDir, .5, 1, FractionalFallback.ORTHOGONAL);
         assertTrue("Projection on line with single segment is not correct.", Math.abs(fraction - 0.5) < 0.001);
         // square test (THIS TEST IS NOT YET SUCCESSFUL, THE POINTS ARE PROJECTED ORTHOGONALLY TO BEFORE END!!!)
         // {@formatter:off}

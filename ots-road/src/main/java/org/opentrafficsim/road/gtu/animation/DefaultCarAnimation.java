@@ -122,24 +122,26 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             return;
         }
 
-        double scale = Math.max(graphics.getTransform().getScaleX(), graphics.getTransform().getScaleY());
+        double scale =graphics.getTransform().getDeterminant();// Math.sqrt(Math.pow(graphics.getTransform()..getScaleX(), 2)
+                // Math.pow(graphics.getTransform().getScaleY(), 2));
         if (scale > 1)
         {
-            final double length = car.getLength().getSI();
-            final double l2 = length / 2;
-            final double width = car.getWidth().getSI();
+            final double length = car.getLength().si;
+            final double lFront = car.getFront().getDx().si;
+            final double lRear = car.getRear().getDx().si;
+            final double width = car.getWidth().si;
             final double w2 = width / 2;
             final double w4 = width / 4;
             graphics.setColor(this.gtuColorer.getColor(car));
             BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
             graphics.setStroke(new BasicStroke(0));
-            Rectangle2D rectangle = new Rectangle2D.Double(-l2, -w2, length, width);
+            Rectangle2D rectangle = new Rectangle2D.Double(lRear, -w2, length, width);
             graphics.draw(rectangle);
             graphics.fill(rectangle);
 
             // Draw a white disk at the front to indicate which side faces forward
             graphics.setColor(Color.WHITE);
-            Ellipse2D.Double frontIndicator = new Ellipse2D.Double(l2 - w2 - w4, -w4, w2, w2);
+            Ellipse2D.Double frontIndicator = new Ellipse2D.Double(lFront - w2 - w4, -w4, w2, w2);
             graphics.draw(frontIndicator);
             graphics.fill(frontIndicator);
 
@@ -147,12 +149,12 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             graphics.setColor(Color.YELLOW);
             if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isLeftOrBoth())
             {
-                Rectangle2D.Double leftIndicator = new Rectangle2D.Double(l2 - w4, -w2, w4, w4);
+                Rectangle2D.Double leftIndicator = new Rectangle2D.Double(lFront - w4, -w2, w4, w4);
                 graphics.fill(leftIndicator);
             }
             if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isRightOrBoth())
             {
-                Rectangle2D.Double rightIndicator = new Rectangle2D.Double(l2 - w4, w2 - w4, w4, w4);
+                Rectangle2D.Double rightIndicator = new Rectangle2D.Double(lFront - w4, w2 - w4, w4, w4);
                 graphics.fill(rightIndicator);
             }
 
@@ -160,8 +162,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             graphics.setColor(Color.RED);
             if (car.isBrakingLightsOn())
             {
-                Rectangle2D.Double leftBrake = new Rectangle2D.Double(-l2, w2 - w4, w4, w4);
-                Rectangle2D.Double rightBrake = new Rectangle2D.Double(-l2, -w2, w4, w4);
+                Rectangle2D.Double leftBrake = new Rectangle2D.Double(lRear, w2 - w4, w4, w4);
+                Rectangle2D.Double rightBrake = new Rectangle2D.Double(lRear, -w2, w4, w4);
                 graphics.setColor(Color.RED);
                 graphics.fill(leftBrake);
                 graphics.fill(rightBrake);
@@ -172,7 +174,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         {
             // zoomed out, draw as marker with 7px diameter
             graphics.setColor(this.gtuColorer.getColor(car));
-            double w = 7.0 / scale;
+            double w = 7.0 / Math.sqrt(scale);
             double x = -w / 2.0;
             Shape shape = car.getGTUType().isOfType(GTUType.TRUCK) ? new Rectangle2D.Double(x, x, w, w)
                     : new Ellipse2D.Double(x, x, w, w);

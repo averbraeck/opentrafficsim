@@ -45,7 +45,7 @@ public class Route implements Serializable, Identifiable
      */
     public Route(final String id)
     {
-        this.nodes = new ArrayList<Node>();
+        this.nodes = new ArrayList<>();
         this.id = id;
     }
 

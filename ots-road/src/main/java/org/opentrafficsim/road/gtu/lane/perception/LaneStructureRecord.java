@@ -2,18 +2,19 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.NestedCache;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -42,7 +43,8 @@ public class LaneStructureRecord implements LaneRecord<LaneStructureRecord>, Ser
 
     /** Cache of allows route information. */
     // TODO clear on network change, with an event listener?
-    private static Map<Lane, Map<Route, Map<GTUType, Map<Boolean, Boolean>>>> allowsRouteCache = new HashMap<>();
+    private static NestedCache<Boolean> allowsRouteCache =
+            new NestedCache<>(Lane.class, Route.class, GTUType.class, Boolean.class);
 
     /** The lane of the LSR. */
     private final Lane lane;
@@ -126,7 +128,7 @@ public class LaneStructureRecord implements LaneRecord<LaneStructureRecord>, Ser
         this.source = null;
         this.sourceLink = null;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Length getLength()
@@ -301,31 +303,8 @@ public class LaneStructureRecord implements LaneRecord<LaneStructureRecord>, Ser
      */
     private boolean allowsRoute(final Route route, final GTUType gtuType, final boolean end) throws NetworkException
     {
-        Map<Route, Map<GTUType, Map<Boolean, Boolean>>> map1 = allowsRouteCache.get(this.lane);
-        if (map1 == null)
-        {
-            map1 = new HashMap<>();
-            allowsRouteCache.put(this.lane, map1);
-        }
-        Map<GTUType, Map<Boolean, Boolean>> map2 = map1.get(route);
-        if (map2 == null)
-        {
-            map2 = new HashMap<>();
-            map1.put(route, map2);
-        }
-        Map<Boolean, Boolean> map3 = map2.get(gtuType);
-        if (map3 == null)
-        {
-            map3 = new HashMap<>();
-            map2.put(gtuType, map3);
-        }
-        Boolean allows = map3.get(end);
-        if (allows == null)
-        {
-            allows = allowsRoute0(route, gtuType, end);
-            map3.put(end, allows);
-        }
-        return allows;
+        return allowsRouteCache.getValue(() -> Try.assign(() -> allowsRoute0(route, gtuType, end), "no destination"), this.lane,
+                route, gtuType, end);
     }
 
     /**
@@ -346,8 +325,8 @@ public class LaneStructureRecord implements LaneRecord<LaneStructureRecord>, Ser
         }
 
         // start with simple check
-        int from = route.indexOf(this.getFromNode());
-        int to = route.indexOf(this.getToNode());
+        int from = route.indexOf(getFromNode());
+        int to = route.indexOf(getToNode());
         if (from == -1 || to == -1 || from != to - 1)
         {
             return leadsToRoute(route, gtuType, null);
@@ -368,6 +347,23 @@ public class LaneStructureRecord implements LaneRecord<LaneStructureRecord>, Ser
                 for (LaneStructureRecord laneRecord : currentSet)
                 {
                     to = route.indexOf(laneRecord.getToNode());
+                    if (to == route.getNodes().size() - 2)
+                    {
+                        // check connector
+                        for (Link link : laneRecord.getToNode().nextLinks(gtuType, laneRecord.getLane().getParentLink()))
+                        {
+                            if (link.getLinkType().isConnector())
+                            {
+                                if ((link.getStartNode().equals(laneRecord.getToNode())
+                                        && link.getEndNode().equals(route.destinationNode()))
+                                        || (link.getEndNode().equals(laneRecord.getToNode())
+                                                && link.getStartNode().equals(route.destinationNode())))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
                     for (LaneStructureRecord next : laneRecord.getNext())
                     {
                         if (next.getToNode().equals(route.destinationNode()))

@@ -18,7 +18,6 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 
 /**
@@ -80,16 +79,15 @@ public class IncentiveStayRight implements VoluntaryIncentive
             record = record.getRight();
             curUrgency = rightUrgency;
         }
-        double dCoop = parameters.getParameter(LmrsParameters.DCOOP);
         if (lane.getLateralDirectionality().isRight() && lane.getNumLanes() > 1)
         {
             // must change right
-            return new Desire(root.legalLeft() ? -dCoop : 0.0, dCoop);
+            return new Desire(root.legalLeft() ? -1.0 : 0.0, 1.0);
         }
         if (lane.isRight())
         {
             // must not change left
-            return new Desire(root.legalLeft() ? -dCoop : 0.0, 0.0);
+            return new Desire(root.legalLeft() ? -1.0 : 0.0, 0.0);
         }
         return new Desire(0.0, 0.0);
     }

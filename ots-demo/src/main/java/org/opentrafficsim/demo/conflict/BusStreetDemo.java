@@ -161,7 +161,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             {
                 URL url = URLResource.getResource("/conflict/BusStreet.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
-                this.network = nlp.build(url, true);
+                this.network = nlp.build(url, false);
                 ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 

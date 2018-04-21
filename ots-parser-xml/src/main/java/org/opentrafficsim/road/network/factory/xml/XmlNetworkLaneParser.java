@@ -44,11 +44,11 @@ import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions.DefaultGTUCharacteristicsGeneratorOD;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions.RouteSupplier;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
+import org.opentrafficsim.road.gtu.strategical.route.RouteSupplier;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -522,7 +522,11 @@ public class XmlNetworkLaneParser implements Serializable
             templates.add(new TemplateGTUType(gtuType, gtuTag.lengthDist, gtuTag.widthDist, gtuTag.maxSpeedDist));
         }
         ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE,
-                new DefaultGTUCharacteristicsGeneratorOD(RouteSupplier.SHORTEST, templates));
+                new DefaultGTUCharacteristicsGeneratorOD(RouteSupplier.NULL, templates));
+        if (GTUColorerTag.defaultColorer != null)
+        {
+            odOptions.set(ODOptions.GTU_COLORER, GTUColorerTag.defaultColorer);
+        }
         Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(otsNetwork, od, this.simulator, odOptions);
         for (String str : generatedObjects.keySet())
         {

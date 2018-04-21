@@ -209,7 +209,7 @@ public class LaneStructure implements Serializable
         Length position = pos.getPosition();
         double fracPos = direction.isPlus() ? position.si / lane.getLength().si : 1.0 - position.si / lane.getLength().si;
 
-        if (this.previousRoute != route || this.root == null)
+        if (this.previousRoute != route || this.root.get() == null)
         {
             // create new LaneStructure
             this.previousRoute = route;
@@ -368,6 +368,7 @@ public class LaneStructure implements Serializable
      */
     private void updateStartDistanceSources()
     {
+        
         // initial cross section
         Set<LaneStructureRecord> set = new HashSet<>();
         LaneStructureRecord rootRecord = this.root.get();
@@ -483,6 +484,10 @@ public class LaneStructure implements Serializable
     private void expandUpstreamEdge(final GTUType gtuType, final double fractionalPosition) throws GTUException
     {
         this.ignoreSet.clear();
+        for (LaneStructureRecord record : this.upstreamEdge)
+        {
+            this.ignoreSet.add(record.getLane());
+        }
         Set<LaneStructureRecord> nextSet = new LinkedHashSet<>();
         boolean expand = true;
         while (expand)
@@ -516,6 +521,7 @@ public class LaneStructure implements Serializable
                             RelativeLane relativeLane = this.relativeLanes.get(prev);
                             LaneStructureRecord next =
                                     constructRecord(prevLane, nexts.get(prevLane), prev, RecordLink.UP, relativeLane);
+                            this.ignoreSet.add(prevLane);
                             next.updateStartDistance(fractionalPosition, this);
                             connectLaterally(next, gtuType);
                             next.addNext(prev);
@@ -739,6 +745,10 @@ public class LaneStructure implements Serializable
             throws GTUException
     {
         this.ignoreSet.clear();
+        for (LaneStructureRecord record : this.downstreamEdge)
+        {
+            this.ignoreSet.add(record.getLane());
+        }
         Set<LaneStructureRecord> nextSet = new LinkedHashSet<>();
         Set<LaneStructureRecord> splitSet = new LinkedHashSet<>();
         boolean expand = true;
@@ -771,13 +781,14 @@ public class LaneStructure implements Serializable
                         RelativeLane relativeLane = this.relativeLanes.get(record);
                         GTUDirectionality dir = nexts.get(nextLane);
                         LaneStructureRecord next = constructRecord(nextLane, dir, record, RecordLink.DOWN, relativeLane);
+                        this.ignoreSet.add(nextLane);
                         next.updateStartDistance(fractionalPosition, this);
                         record.addNext(next);
                         next.addPrev(record);
                         connectLaterally(next, gtuType);
                         // check route
-                        int from = route.indexOf(next.getFromNode());
-                        int to = route.indexOf(next.getToNode());
+                        int from = route == null ? 0 : route.indexOf(next.getFromNode());
+                        int to = route == null ? 1 : route.indexOf(next.getToNode());
                         if (to < 0 || to - from != 1)
                         {
                             // not on our route, add some distance and stop
@@ -854,7 +865,7 @@ public class LaneStructure implements Serializable
                         next.updateStartDistance(fractionalPosition, this);
                         next.addPrev(prev);
                         prev.addNext(next);
-                        connectLaterally(next, gtuType); // TODO this messes up something
+                        connectLaterally(next, gtuType);
                         Length downHere = prevs.get(prev);
                         if (next.getStartDistance().si > downHere.si)
                         {
@@ -902,8 +913,10 @@ public class LaneStructure implements Serializable
                             dir.isPlus() ? nextLane.getParentLink().getStartNode() : nextLane.getParentLink().getEndNode();
                     Node toNode =
                             dir.isPlus() ? nextLane.getParentLink().getEndNode() : nextLane.getParentLink().getStartNode();
-                    int from = route.indexOf(fromNode);
-                    int to = route.indexOf(toNode);
+                    int from = route == null ? 0 : route.indexOf(fromNode);
+                    int to = route == null ? 1 : route.indexOf(toNode);
+                    // TODO we now assume everything is on the route, but merges could be ok without route
+                    // so, without a route we should be able to recognize which upstream 'nextLane' is on the other link
                     if (from == -1 || to == -1 || to - from != 1)
                     {
                         anyAdded = true;

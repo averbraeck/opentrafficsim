@@ -123,7 +123,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
     /** Number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected long numberGTUs = 0;
-    
+
     /** Bounds for animation. */
     private final Bounds bounds;
 
@@ -340,7 +340,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
-                        otherGTU.getLength(), otherGTU.getSpeed(), null);
+                        otherGTU.getLength(), otherGTU.getSpeed(), otherGTU.getAcceleration(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
         }
@@ -400,7 +400,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
-                        otherGTU.getLength(), otherGTU.getSpeed(), null);
+                        otherGTU.getLength(), otherGTU.getSpeed(), otherGTU.getAcceleration(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
         }

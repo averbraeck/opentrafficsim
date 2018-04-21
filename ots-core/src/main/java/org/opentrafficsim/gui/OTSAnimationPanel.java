@@ -174,6 +174,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         this.gtuCountField.setMinimumSize(new Dimension(250, 10));
         this.gtuCountField.setPreferredSize(new Dimension(250, 10));
         infoTextPanel.add(this.gtuCountField);
+        this.gtuCount = network.getGTUs().size();
+        setGtuCountText();
         network.addListener(this, Network.GTU_ADD_EVENT);
         network.addListener(this, Network.GTU_REMOVE_EVENT);
 
@@ -663,13 +665,21 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         if (event.getType().equals(Network.GTU_ADD_EVENT))
         {
             this.gtuCount++;
-            this.gtuCountField.setText(this.gtuCount + " GTU's");
+            setGtuCountText();
         }
         else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
         {
             this.gtuCount--;
-            this.gtuCountField.setText(this.gtuCount + " GTU's");
+            setGtuCountText();
         }
+    }
+    
+    /**
+     * Updates the text of the GTU counter.
+     */
+    private void setGtuCountText()
+    {
+        this.gtuCountField.setText(this.gtuCount + " GTU's");
     }
 
     /**

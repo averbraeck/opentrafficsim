@@ -187,7 +187,8 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             // position draw
             Speed desiredSpeed = characteristics.getStrategicalPlannerFactory().peekDesiredSpeed(gtuType,
                     this.generatorPositions.speedLimit(gtuType), characteristics.getMaximumSpeed());
-            GeneratorLanePosition lanePosition = this.generatorPositions.draw(gtuType, unplaced, desiredSpeed);
+            GeneratorLanePosition lanePosition =
+                    this.generatorPositions.draw(gtuType, unplaced, desiredSpeed, characteristics.getRoute());
             // add template in the right map location
             if (!this.unplacedTemplates.containsKey(lanePosition.getLink()))
             {

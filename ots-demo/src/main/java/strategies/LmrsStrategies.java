@@ -228,7 +228,7 @@ public class LmrsStrategies implements EventListenerInterface
     {
 
         // default properties
-        boolean autorun = true;
+        boolean autorun = false;
 
         // parse args
         for (String arg : args)

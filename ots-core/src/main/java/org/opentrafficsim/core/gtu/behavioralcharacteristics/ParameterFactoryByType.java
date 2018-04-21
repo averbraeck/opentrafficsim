@@ -170,7 +170,7 @@ public class ParameterFactoryByType implements ParameterFactory
                     }
                     else
                     {
-                    val = correlation.correlate(parameters.getParameter((ParameterType<C>) param), val);
+                        val = correlation.correlate(parameters.getParameter((ParameterType<C>) param), val);
                     }
                 }
             }

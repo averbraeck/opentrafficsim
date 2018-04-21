@@ -185,6 +185,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
             LaneBasedGTU gtu = (LaneBasedGTU) content[1];
             if (!this.gtusOfInterest.contains(gtu))
             {
+                //System.out.println("Adding " + gtu.getId() + " to lane " + event.getSource());
                 this.gtusOfInterest.add(gtu);
                 gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
             }
@@ -193,6 +194,12 @@ public abstract class ContourPlot extends AbstractOTSPlot
         {
             Object[] content = (Object[]) event.getContent();
             LaneBasedGTU gtu = (LaneBasedGTU) content[1];
+//            if (getPath().contains(event.getSource()))
+//            {
+//                //System.out.println("Removing " + gtu.getId() + " from lane " + event.getSource());
+//                this.gtusOfInterest.remove(gtu);
+//                gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+//            }
             Lane lane = null;
             try
             {
@@ -213,6 +220,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
             Object[] content = (Object[]) event.getContent();
             Lane lane = (Lane) content[6];
             LaneBasedGTU gtu = (LaneBasedGTU) event.getSource();
+            //System.out.println("Moving GTU " + gtu.getId());
             addData(gtu, lane);
         }
     }

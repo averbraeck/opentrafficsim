@@ -66,6 +66,12 @@
       <action issue="OTS-366" type="add">
         OTS-366. Iterable perception
       </action>
+      <action issue="OTS-373" type="fix">
+        OTS-373. GTU initialization; events and operational plan
+      </action>
+      <action issue="OTS-374" type="update">
+        OTS-374. Gradual lane changes and exact lane and sensor events
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">

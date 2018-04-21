@@ -13,12 +13,8 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -89,7 +85,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     private final Historical<TacticalPlanner<?, ?>> tacticalPlanner;
 
     /** The current operational plan, which provides a short-term movement over time. */
-    private final Historical<OperationalPlan> operationalPlan;
+    protected final Historical<OperationalPlan> operationalPlan;
 
     /** The next move event as scheduled on the simulator, can be used for interrupting the current move. */
     private SimEvent<OTSSimTimeDouble> nextMoveEvent;
@@ -197,28 +193,13 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.tacticalPlanner.set(strategicalPlanner.getTacticalPlanner());
         Time now = this.simulator.getSimulatorTime().getTime();
 
-        // Give the GTU a 1 micrometer long operational plan, or a stand-still plan, so the first move will work
-        DirectedPoint p = initialLocation;
+        fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth(), getBaseColor() }, now);
+
         try
         {
-            if (initialSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
-            {
-                this.operationalPlan.set(new OperationalPlan(this, p, now, new Duration(1E-6, DurationUnit.SECOND)));
-            }
-            else
-            {
-                OTSPoint3D p2 = new OTSPoint3D(p.x + 1E-6 * Math.cos(p.getRotZ()), p.y + 1E-6 * Math.sin(p.getRotZ()), p.z);
-                OTSLine3D path = new OTSLine3D(new OTSPoint3D(p), p2);
-                this.operationalPlan.set(OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed));
-            }
-
-            fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth(), getBaseColor() },
-                    now);
-
-            // and do the real move
             move(initialLocation);
         }
-        catch (OperationalPlanException | OTSGeometryException | NetworkException | ParameterException exception)
+        catch (OperationalPlanException | NetworkException | ParameterException exception)
         {
             throw new GTUException("Failed to create OperationalPlan for GTU " + this.id, exception);
         }
@@ -449,13 +430,13 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @Override
     public final Length getOdometer(final Time time)
     {
-        if (this.operationalPlan.get(time) == null)
+        if (getOperationalPlan(time) == null)
         {
             return this.odometer.get(time);
         }
         try
         {
-            return this.odometer.get(time).plus(this.operationalPlan.get(time).getTraveledDistance(time));
+            return this.odometer.get(time).plus(getOperationalPlan(time).getTraveledDistance(time));
         }
         catch (@SuppressWarnings("unused") OperationalPlanException ope)
         {
@@ -477,10 +458,18 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         if (this.cachedSpeedTime != time.si)
         {
             this.cachedSpeedTime = time.si;
-            OperationalPlan plan = this.operationalPlan.get(time);
+            OperationalPlan plan = getOperationalPlan(time);
             if (plan == null)
             {
                 this.cachedSpeed = Speed.ZERO;
+            }
+            else if (time.si < plan.getStartTime().si)
+            {
+                this.cachedSpeed = plan.getStartSpeed();
+            }
+            else if (time.si > plan.getEndTime().si)
+            {
+                throw new IllegalStateException("Requesting speed value beyond plan.");
             }
             else
             {
@@ -505,10 +494,19 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         if (this.cachedAccelerationTime != time.si)
         {
             this.cachedAccelerationTime = time.si;
-            OperationalPlan plan = this.operationalPlan.get(time);
+            OperationalPlan plan = getOperationalPlan(time);
             if (plan == null)
             {
                 this.cachedAcceleration = Acceleration.ZERO;
+            }
+            else if (time.si < plan.getStartTime().si)
+            {
+                this.cachedAcceleration =
+                        Try.assign(() -> plan.getAcceleration(plan.getStartTime()), "Exception obtaining acceleration.");
+            }
+            else if (time.si > plan.getEndTime().si)
+            {
+                throw new IllegalStateException("Requesting acceleration value beyond plan.");
             }
             else
             {

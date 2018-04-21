@@ -10,7 +10,6 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
@@ -89,11 +88,11 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
 
         // sensor positions.
-        Length dx2 = new Length(getLength().getSI() / 2.0, LengthUnit.METER);
-        Length dy2 = new Length(getWidth().getSI() / 2.0, LengthUnit.METER);
-        this.frontPos = new RelativePosition(dx2, Length.ZERO, Length.ZERO, RelativePosition.FRONT);
+        Length front = getLength().multiplyBy(0.5);
+        Length dy2 = getWidth().multiplyBy(0.5);
+        this.frontPos = new RelativePosition(front, Length.ZERO, Length.ZERO, RelativePosition.FRONT);
         this.relativePositions.put(RelativePosition.FRONT, this.frontPos);
-        this.rearPos = new RelativePosition(dx2.neg(), Length.ZERO, Length.ZERO, RelativePosition.REAR);
+        this.rearPos = new RelativePosition(front.minus(getLength()), Length.ZERO, Length.ZERO, RelativePosition.REAR);
         this.relativePositions.put(RelativePosition.REAR, this.rearPos);
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
         this.relativePositions.put(RelativePosition.CENTER,
@@ -102,10 +101,10 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         // Contour positions. For now, a rectangle with the four corners.
         for (int i = -1; i <= 1; i += 2)
         {
+            Length x = i < 0 ? front.minus(getLength()) : front;
             for (int j = -1; j <= 1; j += 2)
             {
-                this.contourPoints
-                        .add(new RelativePosition(dx2.multiplyBy(i), dy2.multiplyBy(j), Length.ZERO, RelativePosition.CONTOUR));
+                this.contourPoints.add(new RelativePosition(x, dy2.multiplyBy(j), Length.ZERO, RelativePosition.CONTOUR));
             }
         }
     }

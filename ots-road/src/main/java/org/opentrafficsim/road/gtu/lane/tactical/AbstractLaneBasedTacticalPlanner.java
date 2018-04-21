@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.OTSClassUtil;
@@ -42,6 +43,8 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * A lane-based tactical planner generates an operational plan for the lane-based GTU. It can ask the strategic planner for
  * assistance on the route to take when the network splits. This abstract class contains a number of helper methods that make it
@@ -60,6 +63,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 
     /** Tactical planner parameter. */
     public static final ParameterTypeClass<LaneBasedTacticalPlanner> TACTICAL_PLANNER;
+
+    /** Use instant lane changes. */
+    public static boolean INSTANT_LANE_CHANGES = true;
 
     static
     {
@@ -692,130 +698,18 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             final Parameters params, final SimpleOperationalPlan simplePlan, final LaneChange laneChange)
             throws ParameterException, GTUException, NetworkException, OperationalPlanException
     {
-        Length forwardHeadway = params.getParameter(LOOKAHEAD);
         List<Lane> lanes = null;
-        // START TEMP INSTANT CHANGE
-        if (simplePlan.isLaneChange())
+        if (INSTANT_LANE_CHANGES)
         {
-            gtu.changeLaneInstantaneously(simplePlan.getLaneChangeDirection());
-        }
-        if (true)
-        {
-            // TODO this code was made to replace getLanePathInfo(), which is expensive as it concatenates OTSLine3D's
-            // this is now only done once at makePath() inside buildAccelerationPlan(). getLanePathInfo() should be removed /
-            // remade
-            
+            if (simplePlan.isLaneChange())
+            {
+                gtu.changeLaneInstantaneously(simplePlan.getLaneChangeDirection());
+            }
             DirectedLanePosition ref = gtu.getReferencePosition();
-            Length startPosition = ref.getPosition();
-            lanes = new ArrayList<>();
-            LaneDirection laneDir = ref.getLaneDirection();
-            double v = gtu.getSpeed().si;
-            double a = simplePlan.getAcceleration().si;
-            double t;
-            if (a >= 0.0)
-            {
-                t = simplePlan.getDuration().si;
-            }
-            else
-            {
-                t = Math.min(simplePlan.getDuration().si, v / -a);
-            }
-            double length = v * t + .5 * a * t * t;
-            if (laneDir.getDirection().isPlus())
-            {
-                length += startPosition.si;
-            }
-            else
-            {
-                length += (ref.getLane().getLength().si - startPosition.si);
-            }
-            while (laneDir != null && length >= 0)
-            {
-                lanes.add(laneDir.getLane());
-                length -= laneDir.getLane().getLength().si;
-                Map<Lane, GTUDirectionality> next = laneDir.getLane().downstreamLanes(laneDir.getDirection(), gtu.getGTUType());
-                if (next.isEmpty())
-                {
-                    laneDir = null;
-                }
-                else if (next.size() == 1)
-                {
-                    Lane lane = next.keySet().iterator().next();
-                    GTUDirectionality dir = next.get(lane);
-                    laneDir = new LaneDirection(lane, dir);
-                }
-                else
-                {
-                    // ask strategical planner
-                    LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(laneDir.getLane().getParentLink(),
-                            laneDir.getDirection(), gtu.getGTUType());
-                    for (Lane lane : next.keySet())
-                    {
-                        GTUDirectionality dir = next.get(lane);
-                        if (lane.getParentLink().equals(ld.getLink()) && dir.equals(ld.getDirection()))
-                        {
-                            laneDir = new LaneDirection(lane, dir);
-                            break;
-                        }
-                    }
-                }
-            }
+            lanes = getLaneList(gtu, simplePlan, ref.getLane(), ref.getPosition(), ref.getGtuDirection());
             try
             {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, startPosition, startTime, gtu.getSpeed(),
-                        simplePlan.getAcceleration(), params.getParameter(DT));
-            }
-            catch (OTSGeometryException exception)
-            {
-                throw new OperationalPlanException(exception);
-            }
-        }
-        // END TEMP INSTANT CHANGE
-        if (!laneChange.isChangingLane())
-        {
-            lanes = buildLanePathInfo(gtu, forwardHeadway).getLanes();
-        }
-        else
-        {
-            // during a lane change take the lanes on the from lane
-            // look in the opposite lateral direction relative to the reference lane, if that lane exists and the gtu is
-            // registered on it, the reference lane is the to lane, while the found adjacent lane is the required from lane
-            // TODO this is wrong, the other direction may not be allowed, i.e. is not accessible
-            Map<Lane, Length> positions = gtu.positions(gtu.getReference());
-            LateralDirectionality lat = laneChange.isChangingLeft() ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
-            DirectedLanePosition dlp = gtu.getReferencePosition();
-            Iterator<Lane> iterator =
-                    dlp.getLane().accessibleAdjacentLanesLegal(lat, gtu.getGTUType(), dlp.getGtuDirection()).iterator();
-            Lane adjLane = iterator.hasNext() ? iterator.next() : null;
-            if (adjLane != null && positions.containsKey(adjLane))
-            {
-                // reference lane is from lane, this is ok
-                lanes = buildLanePathInfo(gtu, forwardHeadway).getLanes();
-            }
-            else
-            {
-                // reference lane is to lane, this should be accounted for
-                for (Lane lane : positions.keySet())
-                {
-                    if (lane.accessibleAdjacentLanesLegal(lat, gtu.getGTUType(), dlp.getGtuDirection()).contains(dlp.getLane()))
-                    {
-                        lanes = buildLanePathInfo(gtu, forwardHeadway, lane, positions.get(lane), dlp.getGtuDirection())
-                                .getLanes();
-                    }
-                }
-            }
-            if (lanes == null)
-            {
-                throw new RuntimeException("From lane could not be determined during lane change.");
-            }
-        }
-        if ((!simplePlan.isLaneChange() && !laneChange.isChangingLane())
-                || (gtu.getSpeed().si == 0.0 && simplePlan.getAcceleration().si <= 0.0))
-        {
-            Length firstLanePosition = gtu.getReferencePosition().getPosition();
-            try
-            {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, firstLanePosition, startTime,
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, ref.getPosition(), startTime,
                         gtu.getSpeed(), simplePlan.getAcceleration(), params.getParameter(DT));
             }
             catch (OTSGeometryException exception)
@@ -824,8 +718,50 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             }
         }
 
+        // gradual lane change
+        DirectedLanePosition ref = gtu.getReferencePosition();
+        if (!laneChange.isChangingLane())
+        {
+            lanes = getLaneList(gtu, simplePlan, ref.getLane(), ref.getPosition(), ref.getGtuDirection());
+        }
+        else
+        {
+            // during a lane change take the lanes on the from lane
+            // look in the opposite lateral direction relative to the reference lane, if that lane exists and the gtu is
+            // registered on it, the reference lane is the to lane, while the found adjacent lane is the required from lane
+            Map<Lane, Length> positions = gtu.positions(gtu.getReference());
+            LateralDirectionality lat = laneChange.getDirection();
+            Iterator<Lane> iterator =
+                    ref.getLane().accessibleAdjacentLanesPhysical(lat, gtu.getGTUType(), ref.getGtuDirection()).iterator();
+            Lane adjLane = iterator.hasNext() ? iterator.next() : null;
+            if (adjLane != null && positions.containsKey(adjLane))
+            {
+                // reference lane is from lane, this is ok
+                lanes = getLaneList(gtu, simplePlan, ref.getLane(), ref.getPosition(), ref.getGtuDirection());
+            }
+            else
+            {
+                // reference lane is to lane, this should be accounted for
+                for (Lane lane : positions.keySet())
+                {
+                    if (lane.accessibleAdjacentLanesPhysical(lat, gtu.getGTUType(), ref.getGtuDirection())
+                            .contains(ref.getLane()))
+                    {
+                        lanes = getLaneList(gtu, simplePlan, lane, gtu.position(lane, gtu.getReference()),
+                                ref.getGtuDirection()); // direction should be the same
+                    }
+                }
+            }
+            Throw.when(lanes == null, RuntimeException.class, "From lane could not be determined during lane change.");
+        }
         try
         {
+            if ((!simplePlan.isLaneChange() && !laneChange.isChangingLane())
+                    || (gtu.getSpeed().si == 0.0 && simplePlan.getAcceleration().si <= 0.0))
+            {
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, lanes, ref.getPosition(), startTime,
+                        gtu.getSpeed(), simplePlan.getAcceleration(), params.getParameter(DT));
+            }
             return LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtu, lanes, simplePlan.getLaneChangeDirection(),
                     gtu.getLocation(), startTime, gtu.getSpeed(), simplePlan.getAcceleration(), params.getParameter(DT),
                     laneChange);
@@ -834,5 +770,69 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         {
             throw new OperationalPlanException(exception);
         }
+    }
+
+    // getLaneList() was made to replace getLanePathInfo(), which is expensive as it concatenates OTSLine3D's
+    // this is now only done once at makePath() inside buildAccelerationPlan(). TODO getLanePathInfo() should be removed...
+
+    /**
+     * Returns a list of lanes to provide a path. The length of the simple plan is contained on these lanes.
+     * @param gtu LaneBasedGTU; gtu
+     * @param simplePlan SimpleOperationalPlan; plan
+     * @param lane Lane; lane to start at
+     * @param startPosition Length; position to start at
+     * @param direction GTUDirectionality; direction to build list of lanes
+     * @return List; list of lanes to provide a path.
+     * @throws NetworkException if the route is not correct
+     */
+    private static final List<Lane> getLaneList(final LaneBasedGTU gtu, final SimpleOperationalPlan simplePlan, final Lane lane,
+            final Length startPosition, final GTUDirectionality direction) throws NetworkException
+    {
+        List<Lane> lanes = new ArrayList<>();
+        LaneDirection laneDir = new LaneDirection(lane, direction);
+        Duration t =
+                LaneOperationalPlanBuilder.brakingTime(simplePlan.getAcceleration(), gtu.getSpeed(), simplePlan.getDuration());
+        double length = gtu.getSpeed().si * t.si + .5 * simplePlan.getAcceleration().si * t.si * t.si;
+        if (laneDir.getDirection().isPlus())
+        {
+            length += startPosition.si;
+        }
+        else
+        {
+            length += (lane.getLength().si - startPosition.si);
+        }
+        while (laneDir != null && length >= 0)
+        {
+            lanes.add(laneDir.getLane());
+            length -= laneDir.getLane().getLength().si;
+            length += length >= 0 ? 0.0 : Lane.MARGIN.si; // every new lane may create an additional gap
+            Map<Lane, GTUDirectionality> next = laneDir.getLane().downstreamLanes(laneDir.getDirection(), gtu.getGTUType());
+            if (next.isEmpty())
+            {
+                laneDir = null;
+            }
+            else if (next.size() == 1)
+            {
+                Lane l = next.keySet().iterator().next();
+                GTUDirectionality dir = next.get(l);
+                laneDir = new LaneDirection(l, dir);
+            }
+            else
+            {
+                // ask strategical planner
+                LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(laneDir.getLane().getParentLink(),
+                        laneDir.getDirection(), gtu.getGTUType());
+                for (Lane l : next.keySet())
+                {
+                    GTUDirectionality dir = next.get(l);
+                    if (l.getParentLink().equals(ld.getLink()) && dir.equals(ld.getDirection()))
+                    {
+                        laneDir = new LaneDirection(l, dir);
+                        break;
+                    }
+                }
+            }
+        }
+        return lanes;
     }
 }

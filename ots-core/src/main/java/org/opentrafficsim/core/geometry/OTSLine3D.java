@@ -12,6 +12,7 @@ import java.util.List;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
@@ -182,7 +183,7 @@ public class OTSLine3D implements Locatable, Serializable
                 if (null == list)
                 {
                     // Found something to filter; copy this up to (and including) prevPoint
-                    list = new ArrayList<OTSPoint3D>();
+                    list = new ArrayList<>();
                     for (int i = 0; i < index; i++)
                     {
                         list.add(this.points[i]);
@@ -305,7 +306,7 @@ public class OTSLine3D implements Locatable, Serializable
         double firstLength = startGeometry.getLength();
         LengthIndexedLine second = new LengthIndexedLine(endGeometry);
         double secondLength = endGeometry.getLength();
-        ArrayList<Coordinate> out = new ArrayList<Coordinate>();
+        ArrayList<Coordinate> out = new ArrayList<>();
         Coordinate[] firstCoordinates = startGeometry.getCoordinates();
         Coordinate[] secondCoordinates = endGeometry.getCoordinates();
         int firstIndex = 0;
@@ -366,7 +367,7 @@ public class OTSLine3D implements Locatable, Serializable
             // System.out.println();
         }
 
-        ArrayList<Coordinate> out = new ArrayList<Coordinate>();
+        ArrayList<Coordinate> out = new ArrayList<>();
         Coordinate prevCoordinate = null;
         final double tooClose = 0.05; // 5 cm
         for (int i = 0; i < offsets.length - 1; i++)
@@ -642,7 +643,7 @@ public class OTSLine3D implements Locatable, Serializable
         {
             return new OTSLine3D(pointList);
         }
-        catch (OTSGeometryException exception)
+        catch (@SuppressWarnings("unused") OTSGeometryException exception)
         {
             System.err.println("interval " + start + ".." + end + " too short");
             throw new OTSGeometryException("interval " + start + ".." + end + "too short");
@@ -925,7 +926,7 @@ public class OTSLine3D implements Locatable, Serializable
             {
                 return getLocationSI(positionSI);
             }
-            catch (OTSGeometryException exception)
+            catch (@SuppressWarnings("unused") OTSGeometryException exception)
             {
                 // cannot happen
             }
@@ -1042,8 +1043,8 @@ public class OTSLine3D implements Locatable, Serializable
                 return mid;
             }
         }
-        throw new OTSGeometryException("Could not find position " + pos + " on line with length indexes: "
-                + Arrays.toString(this.lengthIndexedLine));
+        throw new OTSGeometryException(
+                "Could not find position " + pos + " on line with length indexes: " + Arrays.toString(this.lengthIndexedLine));
     }
 
     /**
@@ -1274,14 +1275,17 @@ public class OTSLine3D implements Locatable, Serializable
      * <li>Fractional projection is possible only to segments that aren't the nearest segment(s).</li>
      * <li>Fractional projection is possible for no segment.</li>
      * </ol>
-     * In the latter two cases the projection is undefined and a orthogonal projection is returned.
+     * In the latter two cases the projection is undefined and a orthogonal projection is returned if
+     * {@code orthoFallback = true}, or {@code NaN} if {@code orthoFallback = false}.
      * @param start direction in first point
      * @param end direction in last point
      * @param x x-coordinate of point to project
      * @param y y-coordinate of point to project
+     * @param fallback fallback method for when fractional projection fails
      * @return fractional position along this line of the fractional projection on that line of a point
      */
-    public final double projectFractional(final Direction start, final Direction end, final double x, final double y)
+    public final double projectFractional(final Direction start, final Direction end, final double x, final double y,
+            final FractionalFallback fallback)
     {
 
         // prepare
@@ -1368,11 +1372,75 @@ public class OTSLine3D implements Locatable, Serializable
              * inside an area where numerical difficulties arise (i.e. far away outside of very slight bend which is considered
              * parallel).
              */
-            return projectOrthogonal(x, y);
+            return fallback.getFraction(this, x, y);
         }
         double segLen = this.lengthIndexedLine[minSegment + 1] - this.lengthIndexedLine[minSegment];
         return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) / getLengthSI();
 
+    }
+
+    /**
+     * Fallback method for when fractional projection fails as the point is beyond the line or from numerical limitations.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 18 apr. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public enum FractionalFallback
+    {
+        /** Orthogonal projection. */
+        ORTHOGONAL
+        {
+            @Override
+            double getFraction(final OTSLine3D line, final double x, final double y)
+            {
+                return line.projectOrthogonal(x, y);
+            }
+        },
+
+        /** Distance to nearest end point. */
+        ENDPOINT
+        {
+            @Override
+            double getFraction(final OTSLine3D line, final double x, final double y)
+            {
+                OTSPoint3D point = new OTSPoint3D(x, y);
+                double dStart = point.distanceSI(line.getFirst());
+                double dEnd = point.distanceSI(line.getLast());
+                if (dStart < dEnd)
+                {
+                    return -dStart / line.getLengthSI();
+                }
+                else
+                {
+                    return (dEnd + line.getLengthSI()) / line.getLengthSI();
+                }
+            }
+        },
+
+        /** NaN value. */
+        NaN
+        {
+            @Override
+            double getFraction(final OTSLine3D line, final double x, final double y)
+            {
+                return Double.NaN;
+            }
+        };
+
+        /**
+         * Returns fraction for when fractional projection fails as the point is beyond the line or from numerical limitations.
+         * @param line OTSLine3D; line
+         * @param x double; x coordinate of point
+         * @param y double; y coordinate of point
+         * @return double; fraction for when fractional projection fails
+         */
+        abstract double getFraction(OTSLine3D line, double x, double y);
     }
 
     /**
@@ -1452,9 +1520,11 @@ public class OTSLine3D implements Locatable, Serializable
         }
 
         // use directions at start and end to get unit offset points to the left at a distance of 1
-        double ang = start.si + Math.PI / 2;
+        double ang = (start == null ? Math.atan2(this.points[1].y - this.points[0].y, this.points[1].x - this.points[0].x)
+                : start.getInUnit(DirectionUnit.EAST_RADIAN)) + Math.PI / 2; // start.si + Math.PI / 2;
         OTSPoint3D p1 = new OTSPoint3D(this.points[0].x + Math.cos(ang), this.points[0].y + Math.sin(ang));
-        ang = end.si + Math.PI / 2;
+        ang = (end == null ? Math.atan2(this.points[n].y - this.points[n - 1].y, this.points[n].x - this.points[n - 1].x)
+                : end.getInUnit(DirectionUnit.EAST_RADIAN)) + Math.PI / 2; // end.si + Math.PI / 2;
         OTSPoint3D p2 = new OTSPoint3D(this.points[n].x + Math.cos(ang), this.points[n].y + Math.sin(ang));
 
         // calculate first and last center (i.e. intersection of unit offset segments), which depend on inputs 'start' and 'end'
