@@ -108,8 +108,8 @@ public class SensorTest implements UNITS
 
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(fas, null);
-        LaneBasedIndividualGTU car =
-                new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed, simulator, (OTSNetwork) network);
+        LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(carID, gtuType, carLength, carWidth, maximumSpeed,
+                carLength.multiplyBy(0.5), simulator, (OTSNetwork) network);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGTUFollowingTacticalPlanner(fas, car), car);
         car.setParameters(parameters);

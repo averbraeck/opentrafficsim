@@ -157,14 +157,12 @@ public interface Synchronization extends LmrsParameters
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
                 throws ParameterException, OperationalPlanException
         {
-
-            Acceleration a = Acceleration.POSITIVE_INFINITY;
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             if (desire < dCoop && ownSpeed.si < params.getParameter(ParameterTypes.LOOKAHEAD).si
                     / params.getParameter(ParameterTypes.T0).si)
             {
-                return a;
+                return Acceleration.POSITIVE_INFINITY;
             }
             return PASSIVE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData);
         }
@@ -601,8 +599,8 @@ public interface Synchronization extends LmrsParameters
      * @param dCoop cooperation threshold
      * @return required buffer space to perform a lane change and further lane changes
      */
-    static Length requiredBufferSpace(final Speed speed, final int nCur, final Length x0, final Duration t0, final Duration lc,
-            final double dCoop)
+    public static Length requiredBufferSpace(final Speed speed, final int nCur, final Length x0, final Duration t0,
+            final Duration lc, final double dCoop)
     {
         Length xCrit = speed.multiplyBy(t0);
         xCrit = Length.max(xCrit, x0);

@@ -214,6 +214,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
             carBuilder.setGtuType(getGtuType());
             Length carLength = getLengthDist().draw();
             carBuilder.setLength(carLength);
+            carBuilder.setFront(carLength.multiplyBy(0.75));
             carBuilder.setWidth(getWidthDist().draw());
             carBuilder.setMaximumSpeed(getMaximumSpeedDist().draw());
             carBuilder.setInitialSpeed(getInitialSpeedDist().draw());

@@ -884,7 +884,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
             // LaneChangeModel lcm = new FixedLaneChangeModel(null);
             Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(1, METER),
-                    lane.getWidth(1), Speed.ZERO, this.simulator, this.network);
+                    lane.getWidth(1), Speed.ZERO, Length.createSI(0.5), this.simulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
             block.setParameters(parameters);

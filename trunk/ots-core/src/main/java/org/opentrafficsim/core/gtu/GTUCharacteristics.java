@@ -33,12 +33,15 @@ public class GTUCharacteristics implements Serializable
 
     /** Maximum speed of the GTU. */
     private final Speed maximumSpeed;
-    
+
     /** Maximum acceleration. */
     private final Acceleration maximumAcceleration;
-    
+
     /** Maximum deceleration. */
     private final Acceleration maximumDeceleration;
+
+    /** Front position relative to the reference position. */
+    private final Length front;
 
     /**
      * Construct a new set of GTUCharacteristics.
@@ -48,9 +51,10 @@ public class GTUCharacteristics implements Serializable
      * @param maximumSpeed Length; the maximum speed of the (non yet constructed) GTU
      * @param maximumAcceleration Acceleration; maximum acceleration
      * @param maximumDeceleration Acceleration; maximum deceleration
+     * @param front Length; front position relative to the reference position
      */
-    public GTUCharacteristics(final GTUType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final Acceleration maximumAcceleration, final Acceleration maximumDeceleration)
+    public GTUCharacteristics(final GTUType gtuType, final Length length, final Length width, final Speed maximumSpeed,
+            final Acceleration maximumAcceleration, final Acceleration maximumDeceleration, final Length front)
     {
         this.gtuType = gtuType;
         this.length = length;
@@ -58,11 +62,12 @@ public class GTUCharacteristics implements Serializable
         this.maximumSpeed = maximumSpeed;
         this.maximumAcceleration = maximumAcceleration;
         this.maximumDeceleration = maximumDeceleration;
+        this.front = front;
     }
 
     /**
      * Retrieve the GTU type.
-     * @return GTUType.
+     * @return GTUType
      */
     public final GTUType getGTUType()
     {
@@ -80,7 +85,7 @@ public class GTUCharacteristics implements Serializable
 
     /**
      * Retrieve the width.
-     * @return Width.Rel
+     * @return Length
      */
     public final Length getWidth()
     {
@@ -95,7 +100,7 @@ public class GTUCharacteristics implements Serializable
     {
         return this.maximumSpeed;
     }
-    
+
     /**
      * Retrieve the maximum acceleration.
      * @return Acceleration
@@ -104,7 +109,7 @@ public class GTUCharacteristics implements Serializable
     {
         return this.maximumAcceleration;
     }
-    
+
     /**
      * Retrieve the maximum deceleration.
      * @return Acceleration
@@ -114,13 +119,22 @@ public class GTUCharacteristics implements Serializable
         return this.maximumDeceleration;
     }
 
+    /**
+     * Retrieve the front position relative to the reference position.
+     * @return Length
+     */
+    public final Length getFront()
+    {
+        return this.front;
+    }
+
     /** {@inheritDoc} */
     @Override
     public String toString()
     {
         return "GTUCharacteristics [gtuType=" + this.gtuType + ", length=" + this.length + ", width=" + this.width
                 + ", maximumSpeed=" + this.maximumSpeed + ", maximumAcceleration=" + this.maximumAcceleration
-                + ", maximumDeceleration=" + this.maximumDeceleration + "]";
+                + ", maximumDeceleration=" + this.maximumDeceleration + ", front=" + this.front + "]";
     }
 
 }

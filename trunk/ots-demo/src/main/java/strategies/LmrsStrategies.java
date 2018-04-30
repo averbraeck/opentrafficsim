@@ -492,7 +492,8 @@ public class LmrsStrategies implements EventListenerInterface
                     {
                         gtuCharacteristics = new GTUCharacteristics(GTUType.TRUCK, gtuCharacteristics.getLength(),
                                 gtuCharacteristics.getWidth(), LmrsStrategies.this.vTruck.draw(),
-                                gtuCharacteristics.getMaximumAcceleration(), gtuCharacteristics.getMaximumDeceleration());
+                                gtuCharacteristics.getMaximumAcceleration(), gtuCharacteristics.getMaximumDeceleration(),
+                                gtuCharacteristics.getFront());
                     }
                     return new LaneBasedGTUCharacteristics(gtuCharacteristics, LmrsStrategies.this.factories.get(gtuType), null,
                             origin, destination);

@@ -557,7 +557,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                 initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
                 Parameters parameters = DefaultsFactory.getDefaultParameters();
                 this.block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
-                        Speed.ZERO, this.simulator, this.network);
+                        Speed.ZERO, Length.createSI(2.0), this.simulator, this.network);
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(new IDMOld(), this.block), this.block);
                 this.block.setParameters(parameters);
@@ -600,7 +600,8 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                 }
                 Parameters parameters = DefaultsFactory.getDefaultParameters();
                 LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
-                        new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
+                        new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator,
+                        this.network);
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
                 gtu.setParameters(parameters);

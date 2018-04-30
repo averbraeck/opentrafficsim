@@ -259,9 +259,9 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
                 queue.remove();
             }
             String gtuId = this.idGenerator.nextId();
-            LaneBasedIndividualGTU gtu =
-                    new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), characteristics.getLength(),
-                            characteristics.getWidth(), characteristics.getMaximumSpeed(), this.simulator, this.network);
+            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(),
+                    characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(),
+                    characteristics.getFront(), this.simulator, this.network);
             gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
             gtu.setMaximumDeceleration(characteristics.getMaximumDeceleration());
             gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);

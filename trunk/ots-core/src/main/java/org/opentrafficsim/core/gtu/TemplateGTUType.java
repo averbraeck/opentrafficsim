@@ -108,8 +108,9 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
         Acceleration deceleration = this.maxDeceleration.draw();
         Throw.when(acceleration.si <= 0, IllegalArgumentException.class, "Acceleration should be above 0.");
         Throw.when(deceleration.si >= 0, IllegalArgumentException.class, "Deceleration should be below 0.");
-        return new GTUCharacteristics(this.gtuType, this.lengthGenerator.draw(), this.widthGenerator.draw(),
-                this.maximumSpeedGenerator.draw(), acceleration, deceleration);
+        Length length = this.lengthGenerator.draw();
+        return new GTUCharacteristics(this.gtuType, length, this.widthGenerator.draw(), this.maximumSpeedGenerator.draw(),
+                acceleration, deceleration, length.multiplyBy(0.75));
     }
 
     /**

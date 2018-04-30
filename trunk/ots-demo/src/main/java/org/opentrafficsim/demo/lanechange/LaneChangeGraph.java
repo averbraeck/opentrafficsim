@@ -297,15 +297,14 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
         Parameters parameters = new ParameterSet();
         LaneBasedIndividualGTU referenceCar = new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER),
-                new Length(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator, this.network);
+                new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.createSI(2.0), simpleSimulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, laneChangeModel, referenceCar), referenceCar);
         referenceCar.setParameters(parameters);
         referenceCar.init(strategicalPlanner, initialLongitudinalPositions, referenceSpeed);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
-        sameLaneGTUs.add(
-                new HeadwayGTUSimple(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO, referenceCar.getLength(),
-                        referenceCar.getSpeed(), referenceCar.getAcceleration(), null));
+        sameLaneGTUs.add(new HeadwayGTUSimple(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO,
+                referenceCar.getLength(), referenceCar.getSpeed(), referenceCar.getAcceleration(), null));
         // TODO play with the speed limit
         // TODO play with the preferredLaneRouteIncentive
         LaneMovementStep lowResult = computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, low, lanes[1],
@@ -375,7 +374,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         Parameters parameters = new ParameterSet();
         LaneBasedIndividualGTU otherCar =
                 new LaneBasedIndividualGTU("otherCar", referenceCar.getGTUType(), new Length(4, METER), new Length(2, METER),
-                        new Speed(150, KM_PER_HOUR), referenceCar.getSimulator(), this.network);
+                        new Speed(150, KM_PER_HOUR), Length.createSI(2.0), referenceCar.getSimulator(), this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, laneChangeModel, otherCar), otherCar);
         otherCar.setParameters(parameters);

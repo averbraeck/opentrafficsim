@@ -515,7 +515,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             }
 
             GTUCharacteristics gtuCharacteristics = new GTUCharacteristics(gtuType, length, width, maximumSpeed,
-                    Acceleration.createSI(3.0), Acceleration.createSI(-8.0));
+                    Acceleration.createSI(3.0), Acceleration.createSI(-8.0), length.multiplyBy(0.5));
 
             return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route, null, null);
         }

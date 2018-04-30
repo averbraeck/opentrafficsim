@@ -375,7 +375,7 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
             GTUType gtuType = CAR;
             Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", gtuType, new Length(1, LengthUnit.METER),
-                    lane.getWidth(1), Speed.ZERO, theSimulator, this.network);
+                    lane.getWidth(1), Speed.ZERO, Length.createSI(0.5), theSimulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(carFollowingModelCars, block), block);
             block.setParameters(parameters);

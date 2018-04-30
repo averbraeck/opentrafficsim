@@ -519,7 +519,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                     try
                     {
                         LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(String.valueOf(i), carType, carLength,
-                                widthDist.draw(), maxSpeedDist.draw(), this.simulator, this.network);
+                                widthDist.draw(), maxSpeedDist.draw(), carLength.multiplyBy(0.5), this.simulator, this.network);
                         car.init(strategicalPlannerFactory.create(car, cr, null, null), lanepositionSet, Speed.ZERO);
                         this.rtiCars.add(car);
 

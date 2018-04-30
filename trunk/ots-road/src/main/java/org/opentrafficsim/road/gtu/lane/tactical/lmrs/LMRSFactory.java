@@ -53,7 +53,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
 
     /** Type of gap-acceptance. */
     private final GapAcceptance gapAcceptance;
-    
+
     /** Type of tail gating. */
     private final Tailgating tailGating;
 
@@ -124,15 +124,9 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
         parameters.setDefaultParameters(TrafficLightUtil.class);
         getCarFollowingParameters().setAllIn(parameters);
         this.perceptionFactory.getParameters().setAllIn(parameters);
-        try
-        {
-            parameters.setDefaultParameter(ParameterTypes.VCONG);
-            parameters.setDefaultParameter(ParameterTypes.T0);
-        }
-        catch (ParameterException exception)
-        {
-            throw new RuntimeException(exception);
-        }
+        parameters.setDefaultParameter(ParameterTypes.VCONG);
+        parameters.setDefaultParameter(ParameterTypes.T0);
+        parameters.setDefaultParameter(ParameterTypes.LCDUR);
         return parameters;
     }
 

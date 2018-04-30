@@ -17,7 +17,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -206,7 +206,7 @@ public interface LaneBasedGTU extends GTU
      * @param lane Lane; the lane on which the event occurs
      * @param event SimeEvent&lt;OTSSimTimeDouble&gt; the event
      */
-    void addTrigger(Lane lane, SimEvent<OTSSimTimeDouble> event);
+    void addTrigger(Lane lane, SimEventInterface<OTSSimTimeDouble> event);
 
     /**
      * Set distance over which the GTU should not change lane after being created.

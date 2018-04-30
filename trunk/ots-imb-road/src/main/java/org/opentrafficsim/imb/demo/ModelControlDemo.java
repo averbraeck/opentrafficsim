@@ -745,10 +745,12 @@ public class ModelControlDemo extends ModelStarter
                             else if ("LMRS".equals(tacticalPlannerName))
                             {
                                 // provide default parameters with the car-following model
-                                this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                        new LMRSFactory(new IDMPlusFactory(this.randomGenerator), new DefaultLMRSPerceptionFactory()));
-                                this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                                        new LMRSFactory(new IDMPlusFactory(this.randomGenerator), new DefaultLMRSPerceptionFactory()));
+                                this.strategicalPlannerGeneratorCars =
+                                        new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(
+                                                new IDMPlusFactory(this.randomGenerator), new DefaultLMRSPerceptionFactory()));
+                                this.strategicalPlannerGeneratorTrucks =
+                                        new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(
+                                                new IDMPlusFactory(this.randomGenerator), new DefaultLMRSPerceptionFactory()));
                             }
                             else if ("Toledo".equals(tacticalPlannerName))
                             {
@@ -929,8 +931,9 @@ public class ModelControlDemo extends ModelStarter
             // GTU itself
             boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
             Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
-            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength,
-                    new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
+            LaneBasedIndividualGTU gtu =
+                    new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER),
+                            new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
 
             // strategical planner
             LaneBasedStrategicalPlanner strategicalPlanner;

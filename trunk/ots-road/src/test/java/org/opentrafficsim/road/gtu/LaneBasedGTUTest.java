@@ -133,7 +133,8 @@ public class LaneBasedGTUTest implements UNITS
         Parameters parameters = DefaultTestParameters.create();
 
         LaneBasedIndividualGTU truck =
-                new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed, simulator, this.network);
+                new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed,
+                        truckLength.multiplyBy(0.5), simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
         truck.setParameters(parameters);
@@ -209,8 +210,8 @@ public class LaneBasedGTUTest implements UNITS
                         buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 parameters = DefaultTestParameters.create();
 
-                LaneBasedIndividualGTU car =
-                        new LaneBasedIndividualGTU("Car", carType, carLength, carWidth, maximumSpeed, simulator, this.network);
+                LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("Car", carType, carLength, carWidth, maximumSpeed,
+                        carLength.multiplyBy(0.5), simulator, this.network);
                 strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
                 car.setParameters(parameters);
@@ -403,7 +404,7 @@ public class LaneBasedGTUTest implements UNITS
             Parameters parameters = DefaultTestParameters.create();
 
             LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType,
-                    new Length(4, METER), new Length(1.8, METER), maximumSpeed, simulator, this.network);
+                    new Length(4, METER), new Length(1.8, METER), maximumSpeed, Length.createSI(2.0), simulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(new LaneBasedCFLCTacticalPlanner(fam, laneChangeModel, car), car);
             car.setParameters(parameters);

@@ -419,7 +419,8 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                 initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
                 Length vehicleLength = new Length(4, METER);
                 LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
-                        new Length(1.8, METER), this.speedDistribution.draw(), this.simulator, this.network);
+                        new Length(1.8, METER), this.speedDistribution.draw(), vehicleLength.multiplyBy(0.5), this.simulator,
+                        this.network);
                 Route route = null;
                 LaneBasedStrategicalPlanner strategicalPlanner = this.strategicalPlannerFactory.create(gtu, route, null, null);
                 gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
