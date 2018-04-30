@@ -252,8 +252,8 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 Length gtuLength = new Length(17, LengthUnit.METER);
                 Length gtuWidth = new Length(2, LengthUnit.METER);
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);
-                LaneBasedGTU gtu =
-                        new LaneBasedIndividualGTU("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed, simulator, network);
+                LaneBasedGTU gtu = new LaneBasedIndividualGTU("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed,
+                        gtuLength.multiplyBy(0.5), simulator, network);
                 Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(pos, LengthUnit.METER);
                 DirectedLanePosition gtuPosition = findLaneAndPosition(lanes, initialPosition);

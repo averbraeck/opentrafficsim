@@ -149,8 +149,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
                 new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(1000, SECOND));
         // Construct a car
         Parameters parameters = DefaultTestParameters.create();
-        LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU("1", gtuType, length, width, maxSpeed, this.simulator, this.network);
+        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("1", gtuType, length, width, maxSpeed, length.multiplyBy(0.5),
+                this.simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.setParameters(parameters);
@@ -239,8 +239,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         // Check that harmonic mean speed is computed
         speed = new Speed(10, KM_PER_HOUR);
         parameters = DefaultTestParameters.create();
-        LaneBasedIndividualGTU gtuX =
-                new LaneBasedIndividualGTU("1234", gtuType, length, width, maxSpeed, this.simulator, this.network);
+        LaneBasedIndividualGTU gtuX = new LaneBasedIndividualGTU("1234", gtuType, length, width, maxSpeed,
+                length.multiplyBy(0.5), this.simulator, this.network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtuX), gtuX);
         gtuX.init(strategicalPlanner, initialLongitudinalPositions, speed);

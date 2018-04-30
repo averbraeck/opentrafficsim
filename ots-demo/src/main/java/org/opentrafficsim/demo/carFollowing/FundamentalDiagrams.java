@@ -285,10 +285,9 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 OTSNode to = new OTSNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
                 OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
                 LaneType laneType = LaneType.TWO_WAY_LANE;
-                this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit,
-                        this.simulator);
-                CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null,
-                        simulator);
+                this.lane =
+                        LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
+                CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null, simulator);
                 // No overtaking, single lane
                 Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                         this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
@@ -396,7 +395,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 // new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
 
                 this.block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
-                        Speed.ZERO, this.simulator, this.network);
+                        Speed.ZERO, Length.createSI(2.0), this.simulator, this.network);
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, this.block), this.block);
                 this.block.setParameters(parameters);
@@ -442,7 +441,8 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 // new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
 
                 LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength,
-                        new Length(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, this.network);
+                        new Length(1.8, METER), new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator,
+                        this.network);
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
                 gtu.setParameters(parameters);

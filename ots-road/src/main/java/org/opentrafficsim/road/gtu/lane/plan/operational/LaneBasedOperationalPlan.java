@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.plan.operational;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -10,7 +9,6 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -32,63 +30,26 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     /** */
     private static final long serialVersionUID = 20160120L;
 
-    /** The list of lanes that are part of this plan; these will be deregistered in case of lane change. */
-    private final List<Lane> referenceLaneList;
-
-    /** The list of new lanes to which the GTU is driving, parallel to the referenceLaneList. */
-    private final List<Lane> secondLaneList;
-
-    /** . */
-    private final int lastLaneIndex;
-
-    /** . */
-    private final double lastFractionalPosition;
+    /** Deviative; meaning not along lane center lines. */
+    private final boolean deviative;
 
     /**
-     * Construct an operational plan without a lane change.
+     * Construct an operational plan with or without a lane change.
      * @param gtu the GTU for debugging purposes
      * @param path the path to follow from a certain time till a certain time. The path should have <i>at least</i> the length
      * @param startTime the absolute start time when we start executing the path
      * @param startSpeed the GTU speed when we start executing the path
      * @param operationalPlanSegmentList the segments that make up the path with an acceleration, constant speed or deceleration
      *            profile
-     * @param referenceLaneList the list of lanes that are part of this plan
-     * @throws OperationalPlanException when the path is too short for the operation
-     */
-    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
-            final List<Segment> operationalPlanSegmentList, final List<Lane> referenceLaneList) throws OperationalPlanException
-    {
-        super(gtu, path, startTime, startSpeed, operationalPlanSegmentList);
-        this.referenceLaneList = referenceLaneList;
-        this.secondLaneList = null;
-        this.lastLaneIndex = 0;
-        this.lastFractionalPosition = 0;
-    }
-
-    /**
-     * Construct an operational plan with a lane change.
-     * @param gtu the GTU for debugging purposes
-     * @param path the path to follow from a certain time till a certain time. The path should have <i>at least</i> the length
-     * @param startTime the absolute start time when we start executing the path
-     * @param startSpeed the GTU speed when we start executing the path
-     * @param operationalPlanSegmentList the segments that make up the path with an acceleration, constant speed or deceleration
-     *            profile
-     * @param fromLaneList the list of lanes that the gtu comes from
-     * @param toLaneList the list of lanes that the gtu goes towards
-     * @param lastLaneIndex index in lane arrays of last position in plan
-     * @param lastFractionalPosition fractional position of last postition in plan
+     * @param deviative whether the path is not along lane center lines
      * @throws OperationalPlanException when the path is too short for the operation
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
-            final List<Segment> operationalPlanSegmentList, final List<Lane> fromLaneList, final List<Lane> toLaneList,
-            final int lastLaneIndex, final double lastFractionalPosition) throws OperationalPlanException
+            final List<Segment> operationalPlanSegmentList, final boolean deviative) throws OperationalPlanException
     {
         super(gtu, path, startTime, startSpeed, operationalPlanSegmentList);
-        this.referenceLaneList = fromLaneList;
-        this.secondLaneList = toLaneList;
-        this.lastLaneIndex = lastLaneIndex;
-        this.lastFractionalPosition = lastFractionalPosition;
+        this.deviative = deviative;
     }
 
     /**
@@ -97,18 +58,14 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @param waitPoint the point at which the GTU will wait
      * @param startTime the current time or a time in the future when the plan should start
      * @param duration the waiting time
-     * @param referenceLane the reference lane where the halting takes place
+     * @param deviative whether the path is not along lane center lines
      * @throws OperationalPlanException when construction of a waiting path fails
      */
     public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final DirectedPoint waitPoint, final Time startTime,
-            final Duration duration, final Lane referenceLane) throws OperationalPlanException
+            final Duration duration, final boolean deviative) throws OperationalPlanException
     {
         super(gtu, waitPoint, startTime, duration);
-        this.referenceLaneList = new ArrayList<>();
-        this.referenceLaneList.add(referenceLane);
-        this.secondLaneList = null;
-        this.lastLaneIndex = 0;
-        this.lastFractionalPosition = 0;
+        this.deviative = deviative;
     }
 
     /**
@@ -117,54 +74,13 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      */
     public final boolean isDeviative()
     {
-        return this.secondLaneList != null;
-    }
-
-    /**
-     * @return referenceLane
-     */
-    public final Lane getReferenceLane()
-    {
-        return this.referenceLaneList.get(0);
-    }
-
-    /**
-     * @return referenceLaneList
-     */
-    public final List<Lane> getReferenceLaneList()
-    {
-        return this.referenceLaneList;
-    }
-
-    /**
-     * @return secondLaneList
-     */
-    public final List<Lane> getSecondLaneList()
-    {
-        return this.secondLaneList;
-    }
-
-    /**
-     * @return lastLaneIndex.
-     */
-    public final int getLastLaneIndex()
-    {
-        return this.lastLaneIndex;
-    }
-
-    /**
-     * @return lastFractionalPosition.
-     */
-    public final double getLastFractionalPosition()
-    {
-        return this.lastFractionalPosition;
+        return this.deviative;
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "LaneBasedOperationalPlan [referenceLaneList=" + this.referenceLaneList + ", secondLaneList="
-                + this.secondLaneList + "]";
+        return "LaneBasedOperationalPlan [deviative=" + this.deviative + "]";
     }
 }

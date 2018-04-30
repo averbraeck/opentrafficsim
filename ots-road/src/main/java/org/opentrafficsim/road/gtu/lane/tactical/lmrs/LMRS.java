@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeClassList;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ClassCollectionConstraint;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -21,7 +22,8 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DelayedNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -164,6 +166,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
+        
         // obtain objects to get info
         getPerception().perceive();
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
@@ -188,10 +191,11 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
             }
         }
 
-        // adjust lane based data in perception
-        // TODO make this automatic within the perception itself, e.g. by a lane change event from the tactical planner
         if (simplePlan.isLaneChange())
         {
+            this.laneChange.setDesiredLaneChangeDuration(getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
+            // adjust lane based data in perception
+            // TODO make this automatic within the perception itself, e.g. by a lane change event from the tactical planner
             if (getPerception().contains(DelayedNeighborsPerception.class))
             {
                 getPerception().getPerceptionCategory(DelayedNeighborsPerception.class)
@@ -203,7 +207,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
         simplePlan.setTurnIndicator(getGtu());
 
         // create plan
-        return buildPlanFromSimplePlan(getGtu(), startTime, params, simplePlan, this.laneChange);
+        return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), startTime, simplePlan, this.laneChange);
 
     }
 

@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 
 import org.djunits.unit.AccelerationUnit;
@@ -33,11 +32,10 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPer
 import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
@@ -260,15 +258,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         }
 
         // operational plan
-        Length forwardHeadway = params.getParameter(LOOKAHEAD);
-        List<Lane> lanes = buildLanePathInfo(getGtu(), forwardHeadway).getLanes();
         if (initiatedLaneChange.isNone())
         {
-            Length firstLanePosition = getGtu().getReferencePosition().getPosition();
             try
             {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(getGtu(), lanes, firstLanePosition, startTime,
-                        getGtu().getSpeed(), acceleration, params.getParameter(ToledoLaneChangeParameters.DT));
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(getGtu(), startTime, getGtu().getSpeed(), acceleration,
+                        params.getParameter(ToledoLaneChangeParameters.DT));
             }
             catch (OTSGeometryException exception)
             {
@@ -278,8 +273,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
         try
         {
-            OperationalPlan plan = LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(getGtu(), lanes,
-                    initiatedLaneChange, getGtu().getLocation(), startTime, getGtu().getSpeed(), acceleration,
+            OperationalPlan plan = LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(getGtu(), initiatedLaneChange,
+                    getGtu().getLocation(), startTime, getGtu().getSpeed(), acceleration,
                     params.getParameter(ToledoLaneChangeParameters.DT), this.laneChange);
             return plan;
         }

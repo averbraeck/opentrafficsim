@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -23,6 +24,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.animation.Synchronizable.State;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -32,7 +34,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerceptio
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder.LaneChange;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
@@ -53,9 +55,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  */
 public final class LmrsUtil implements LmrsParameters
 {
-
-    /** Regular lane change duration. */
-    public static final ParameterTypeDuration LCDUR = ParameterTypes.LCDUR;
 
     /** Fixed model time step. */
     public static final ParameterTypeDuration DT = ParameterTypes.DT;
@@ -109,10 +108,10 @@ public final class LmrsUtil implements LmrsParameters
             final LinkedHashSet<VoluntaryIncentive> voluntaryIncentives)
             throws GTUException, NetworkException, ParameterException, OperationalPlanException
     {
-        
+
         // obtain objects to get info
-        SpeedLimitProspect slp =
-                perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT);
+        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        SpeedLimitProspect slp = infra.getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         Parameters params = gtu.getParameters();
         EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
@@ -150,8 +149,8 @@ public final class LmrsUtil implements LmrsParameters
                 a = Acceleration.min(a,
                         ConflictUtil.approachConflicts(params, intersection.getConflicts(secondLane), secondLeaders,
                                 carFollowingModel, ego.getLength(), speed, ego.getAcceleration(), sli, conflictPlan, gtu));
-//                a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
-//                        secondLane.getLateralDirectionality(), intersection));
+                // a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
+                // secondLane.getLateralDirectionality(), intersection));
             }
         }
         else
@@ -189,7 +188,6 @@ public final class LmrsUtil implements LmrsParameters
                         a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
                                 LateralDirectionality.LEFT, intersection));
                     }
-                    laneChange.setLaneChangeDuration(Duration.createSI(0.8));// gtu.getParameters().getParameter(LCDUR));
                 }
             }
             else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree)
@@ -216,7 +214,32 @@ public final class LmrsUtil implements LmrsParameters
                         a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
                                 LateralDirectionality.RIGHT, intersection));
                     }
-                    laneChange.setLaneChangeDuration(Duration.createSI(0.8));// gtu.getParameters().getParameter(LCDUR));
+                }
+            }
+            if (!initiatedLaneChange.isNone())
+            {
+                SortedSet<InfrastructureLaneChangeInfo> set = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);
+                if (!set.isEmpty())
+                {
+                    Length boundary = null;
+                    for (InfrastructureLaneChangeInfo info : set)
+                    {
+                        int n = info.getRequiredNumberOfLaneChanges();
+                        if (n > 1)
+                        {
+                            Length thisBoundary = info.getRemainingDistance()
+                                    .minus(Synchronization.requiredBufferSpace(speed, info.getRequiredNumberOfLaneChanges(),
+                                            params.getParameter(ParameterTypes.LOOKAHEAD),
+                                            params.getParameter(ParameterTypes.T0), params.getParameter(ParameterTypes.LCDUR),
+                                            params.getParameter(DCOOP)));
+                            if (thisBoundary.le0())
+                            {
+                                thisBoundary = info.getRemainingDistance().divideBy(info.getRequiredNumberOfLaneChanges());
+                            }
+                            boundary = boundary == null || thisBoundary.si < boundary.si ? thisBoundary : boundary;
+                        }
+                    }
+                    laneChange.setBoundary(boundary);
                 }
             }
 

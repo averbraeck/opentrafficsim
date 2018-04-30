@@ -156,7 +156,8 @@ public class CarTest implements UNITS
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         Parameters parameters = DefaultTestParameters.create();
-        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(id, gtuType, length, width, maxSpeed, simulator, network);
+        LaneBasedIndividualGTU gtu =
+                new LaneBasedIndividualGTU(id, gtuType, length, width, maxSpeed, length.multiplyBy(0.5), simulator, network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.setParameters(parameters);

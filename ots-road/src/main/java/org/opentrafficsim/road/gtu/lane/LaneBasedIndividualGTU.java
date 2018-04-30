@@ -75,6 +75,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @param length Length; the maximum length of the GTU (parallel with driving direction)
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
+     * @param front Length; front distance relative to the reference position
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param network the network that the GTU is initially registered in
      * @throws NamingException if an error occurs when adding the animation handler
@@ -82,13 +83,12 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
+            final Speed maximumSpeed, final Length front, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
             throws NamingException, GTUException
     {
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
 
         // sensor positions.
-        Length front = getLength().multiplyBy(0.5);
         Length dy2 = getWidth().multiplyBy(0.5);
         this.frontPos = new RelativePosition(front, Length.ZERO, Length.ZERO, RelativePosition.FRONT);
         this.relativePositions.put(RelativePosition.FRONT, this.frontPos);
@@ -270,6 +270,9 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         /** The maximum speed of the GTU (in the driving direction). */
         private Speed maximumSpeed = null;
 
+        /** The distance of the front relative to the reference position. */
+        private Length front = null;
+
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator = null;
 
@@ -360,6 +363,16 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         public final LaneBasedIndividualCarBuilder setSimulator(final OTSDEVSSimulatorInterface simulator)
         {
             this.simulator = simulator;
+            return this;
+        }
+        
+        /**
+         * @param front distance of the front relative to the reference point
+         * @return the class itself for chaining the setters
+         */
+        public final LaneBasedIndividualCarBuilder setFront(final Length front)
+        {
+            this.front = front;
             return this;
         }
 
@@ -497,13 +510,13 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         {
             if (null == this.id || null == this.gtuType || null == this.initialLongitudinalPositions
                     || null == this.initialSpeed || null == this.length || null == this.width || null == this.maximumSpeed
-                    || null == this.simulator || null == this.network)
+                    || null == this.front || null == this.simulator || null == this.network)
             {
                 // TODO Should throw a more specific Exception type
                 throw new GTUException("factory settings incomplete");
             }
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(this.id, this.gtuType, this.length, this.width,
-                    this.maximumSpeed, this.simulator, this.network);
+                    this.maximumSpeed, this.front, this.simulator, this.network);
             gtu.initWithAnimation(laneBasedStrategicalPlannerFactory.create(gtu, route, origin, destination),
                     this.initialLongitudinalPositions, this.initialSpeed, this.animationClass, this.gtuColorer);
             return gtu;

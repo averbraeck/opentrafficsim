@@ -580,7 +580,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                 Parameters parameters = DefaultsFactory.getDefaultParameters();
 
                 this.block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(4, METER), new Length(1.8, METER),
-                        new Speed(0.0, KM_PER_HOUR), this.simulator, this.network);
+                        new Speed(0.0, KM_PER_HOUR), Length.createSI(2.0), this.simulator, this.network);
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new GTUFollowingTacticalPlannerNoPerceive(this.carFollowingModelCars, this.block), this.block);
                 this.block.setParameters(parameters);
@@ -731,7 +731,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                     throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
                     ParameterException
             {
-                super(id, gtuType, length, width, maximumSpeed, simulator, network);
+                super(id, gtuType, length, width, maximumSpeed, length.multiplyBy(0.5), simulator, network);
                 perceive();
             }
 

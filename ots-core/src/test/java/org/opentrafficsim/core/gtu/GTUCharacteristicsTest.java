@@ -54,9 +54,9 @@ public class GTUCharacteristicsTest implements OTSModelInterface
         Speed maximumSpeedA = new Speed(180, SpeedUnit.KM_PER_HOUR);
         Speed maximumSpeedB = new Speed(130, SpeedUnit.KM_PER_HOUR);
         GTUCharacteristics gtucA = new GTUCharacteristics(gtuTypeA, lengthA, widthA, maximumSpeedA, Acceleration.createSI(3.0),
-                Acceleration.createSI(-8.0));
+                Acceleration.createSI(-8.0), lengthA.multiplyBy(0.5));
         GTUCharacteristics gtucB = new GTUCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB, Acceleration.createSI(3.0),
-                Acceleration.createSI(-8.0));
+                Acceleration.createSI(-8.0), lengthB.multiplyBy(0.5));
         assertEquals("gtuTypeA", gtuTypeA, gtucA.getGTUType());
         assertEquals("gtuTypeB", gtuTypeB, gtucB.getGTUType());
         assertEquals("lengthA", lengthA, gtucA.getLength());

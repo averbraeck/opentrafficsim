@@ -122,7 +122,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     static final double TRUCK_FRACTION = 0.15;
 
     /** Left traffic fraction. */
-    static final double LEFT_FRACTION = 0.0;
+    static final double LEFT_FRACTION = 0.3;
 
     /** Main demand. */
     static final Frequency MAIN_DEMAND = new Frequency(1000, FrequencyUnit.PER_HOUR);

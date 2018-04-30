@@ -80,7 +80,7 @@ public final class Bezier
     public static OTSLine3D cubic(final int numPoints, final DirectedPoint start, final DirectedPoint end)
             throws OTSGeometryException
     {
-        return cubic(numPoints, start, end, .5);
+        return cubic(numPoints, start, end, 1.0);
     }
 
     /**

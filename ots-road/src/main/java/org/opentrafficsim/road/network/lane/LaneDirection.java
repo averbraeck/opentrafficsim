@@ -1,8 +1,19 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.LinkDirection;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -50,6 +61,127 @@ public class LaneDirection implements Serializable
     public final GTUDirectionality getDirection()
     {
         return this.direction;
+    }
+
+    /**
+     * Returns the covered distance driven to the given fractional position.
+     * @param fraction double; fractional position
+     * @return Length; covered distance driven to the given fractional position
+     */
+    public final Length coveredDistance(double fraction)
+    {
+        if (this.direction.isPlus())
+        {
+            return getLane().getLength().multiplyBy(fraction);
+        }
+        return getLane().getLength().multiplyBy(1.0 - fraction);
+    }
+
+    /**
+     * Returns the remaining distance to be driven from the given fractional position.
+     * @param fraction double; fractional position
+     * @return Length; remaining distance to be driven from the given fractional position
+     */
+    public final Length remainingDistance(double fraction)
+    {
+        if (this.direction.isPlus())
+        {
+            return getLane().getLength().multiplyBy(1.0 - fraction);
+        }
+        return getLane().getLength().multiplyBy(fraction);
+    }
+
+    /**
+     * Returns the fraction along the design line for having covered the given distance.
+     * @param distance Length; covered distance
+     * @return double; fraction along the design line for having covered the given distance
+     */
+    public final double fractionAtCoveredDistance(final Length distance)
+    {
+        double f = this.lane.fraction(distance);
+        if (this.getDirection().isMinus())
+        {
+            f = 1.0 - f;
+        }
+        return f;
+    }
+
+    /**
+     * Returns the next lane and direction.
+     * @param gtu LaneBasedGTU; gtu
+     * @return LaneDirection; next lane and direction, {@code null} if none
+     */
+    public final LaneDirection getNextLaneDirection(final LaneBasedGTU gtu)
+    {
+        Map<Lane, GTUDirectionality> next = this.lane.downstreamLanes(this.direction, gtu.getGTUType());
+        if (next.isEmpty())
+        {
+            return null;
+        }
+        // ask strategical planner
+        LinkDirection ld;
+        try
+        {
+            ld = gtu.getStrategicalPlanner().nextLinkDirection(this.lane.getParentLink(), this.direction, gtu.getGTUType());
+        }
+        catch (NetworkException exception)
+        {
+            throw new RuntimeException("Strategical planner experiences exception on network.", exception);
+        }
+        LaneDirection out = null;
+        int count = 0;
+        for (Lane l : next.keySet())
+        {
+            GTUDirectionality dir = next.get(l);
+            if (l.getParentLink().equals(ld.getLink()) && dir.equals(ld.getDirection()))
+            {
+                out = new LaneDirection(l, dir);
+                count++;
+            }
+        }
+        Throw.when(count > 1, RuntimeException.class, "Multiple candidate downtream lanes.");
+        return out;
+    }
+
+    /**
+     * Returns the length of the lane.
+     * @return Length; length of the lane
+     */
+    public Length getLength()
+    {
+        return this.lane.getLength();
+    }
+
+    /**
+     * Returns a directed point at the given fraction, in the direction of travel (not center line).
+     * @param fraction double; fractional position
+     * @return directed point at the given fraction, in the direction of travel
+     * @throws OTSGeometryException in case the fractional position is not correct
+     */
+    public DirectedPoint getLocationFraction(final double fraction) throws OTSGeometryException
+    {
+        DirectedPoint p = this.lane.getCenterLine().getLocationFraction(fraction);
+        if (this.direction.isMinus())
+        {
+            p.setRotZ(p.getRotZ() + Math.PI);
+        }
+        return p;
+    }
+
+    /**
+     * Returns the adjacent lane and direction.
+     * @param gtu LaneBasedGTU; gtu
+     * @param laneChangeDirection LateralDirectionality; lane change direction
+     * @return LaneDirection; adjacent lane and direction, {@code null} if none
+     */
+    public final LaneDirection getAdjacentLaneDirection(final LateralDirectionality laneChangeDirection, final LaneBasedGTU gtu)
+    {
+        Set<Lane> adjLanes = this.lane.accessibleAdjacentLanesLegal(laneChangeDirection, gtu.getGTUType(), this.direction);
+        if (!adjLanes.isEmpty())
+        {
+            return new LaneDirection(adjLanes.iterator().next(), this.direction);
+        }
+        return null;
     }
 
     /** {@inheritDoc} */

@@ -35,11 +35,11 @@ public class RTICars extends LaneBasedIndividualGTU
      * @throws NamingException when animation cannot be registered
      * @throws OperationalPlanException when plan retrieval fails
      */
-    public RTICars(final String valueOf, final GTUType carType, final Length carLength, final Length width, final Speed maxSpeed,
-            final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
+    public RTICars(final String valueOf, final GTUType carType, final Length carLength, final Length width,
+            final Speed maxSpeed, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
             throws NamingException, GTUException, OperationalPlanException
     {
-        super(valueOf, carType, carLength, width, maxSpeed, simulator, network);
+        super(valueOf, carType, carLength, width, maxSpeed, carLength.multiplyBy(0.5), simulator, network);
         this.current = this.getOperationalPlan().getLocation(simulator.getSimulatorTime().getTime());
     }
 
