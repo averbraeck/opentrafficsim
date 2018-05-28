@@ -75,6 +75,8 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskCarFollowing;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskLaneChanging;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskLaneChanging.LateralConsideration;
+import org.opentrafficsim.road.gtu.lane.perception.mental.TaskRoadSideDistraction;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
@@ -101,6 +103,8 @@ import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.object.Distraction;
+import org.opentrafficsim.road.network.lane.object.Distraction.TrapezoidProfile;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
@@ -139,12 +143,12 @@ public class DistractionScript extends AbstractSimulationScript
      */
     public static void main(final String[] args)
     {
-        Long start = System.currentTimeMillis();
+        //Long start = System.currentTimeMillis();
         DistractionScript script = new DistractionScript(args);
         // script.setProperty("autorun", true);
         script.start();
-        Long end = System.currentTimeMillis();
-        System.out.println("That took " + (end - start) / 1000 + "s.");
+        //Long end = System.currentTimeMillis();
+        //System.out.println("That took " + (end - start) / 1000 + "s.");
     }
 
     /**
@@ -159,7 +163,7 @@ public class DistractionScript extends AbstractSimulationScript
                 .addColorer(
                         new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
                 .addColorer(new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)))
-                .addColorer(new SynchronizationColorer()).addColorer(new DesiredHeadwayColorer())
+                .addColorer(new SynchronizationColorer()).addColorer(new DesiredHeadwayColorer(Duration.createSI(0.56), Duration.createSI(2.4)))
                 .addColorer(new TotalDesireColorer()).addColorer(new IncentiveColorer(IncentiveRoute.class))
                 .addColorer(new IncentiveColorer(IncentiveSpeedWithCourtesy.class))
                 .addColorer(new IncentiveColorer(IncentiveSpeed.class)).addColorer(new IncentiveColorer(IncentiveKeep.class))
@@ -196,6 +200,7 @@ public class DistractionScript extends AbstractSimulationScript
     protected OTSNetwork setupSimulation(final OTSDEVSSimulatorInterface sim) throws Exception
     {
         AbstractGTU.ALIGNED = false;
+        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
 
         // Network
         InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
@@ -210,6 +215,8 @@ public class DistractionScript extends AbstractSimulationScript
         {
             exception.printStackTrace();
         }
+        new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0), Length.createSI(1000), sim,
+                new TrapezoidProfile(0.2, Length.createSI(-400), Length.createSI(200), Length.createSI(400)));
 
         // OD
         List<Node> origins = new ArrayList<>();
@@ -322,6 +329,7 @@ public class DistractionScript extends AbstractSimulationScript
                     Set<Task> tasks = new LinkedHashSet<>();
                     tasks.add(new TaskCarFollowing());
                     tasks.add(new TaskLaneChanging(LateralConsideration.DESIRE));
+                    tasks.add(new TaskRoadSideDistraction());
                     Set<BehavioralAdaptation> adaptations = new LinkedHashSet<>();
                     adaptations.add(new AdaptationSituationalAwareness());
                     adaptations.add(new AdaptationHeadway());

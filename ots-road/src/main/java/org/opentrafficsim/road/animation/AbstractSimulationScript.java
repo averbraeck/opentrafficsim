@@ -47,25 +47,25 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 {
 
     /** Name. */
-    final String name;
+    private final String name;
 
     /** Description. */
-    final String description;
+    private final String description;
 
     /** The simulator. */
-    OTSDEVSSimulatorInterface simulator;
+    private OTSDEVSSimulatorInterface simulator;
 
     /** The network. */
-    OTSNetwork network;
+    private OTSNetwork network;
 
     /** Properties as String value, e.g. from command line. */
     private final Map<String, String> props = new HashMap<>();
 
     /** GTU colorer. */
-    GTUColorer gtuColorer = new DefaultSwitchableGTUColorer();
+    private GTUColorer gtuColorer = new DefaultSwitchableGTUColorer();
 
     /**
-     * Constructor;
+     * Constructor.
      * @param name String; name
      * @param description String; description
      * @param properties String[]; properties as name-value pairs
@@ -221,7 +221,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public final void notify(EventInterface event) throws RemoteException
+    public final void notify(final EventInterface event) throws RemoteException
     {
         if (event.getType().equals(SimulatorInterface.END_OF_REPLICATION_EVENT))
         {
@@ -232,7 +232,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
     }
 
-    // Overriddable methods
+    // Overridable methods
 
     /**
      * Sets the animation toggles. May be overridden.
@@ -297,12 +297,13 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public class ScriptSimulation extends AbstractWrappableSimulation
+    class ScriptSimulation extends AbstractWrappableSimulation
     {
         /** */
         private static final long serialVersionUID = 20180409L;
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public String shortName()
         {
@@ -310,6 +311,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public String description()
         {
@@ -336,12 +338,13 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public class ScriptAnimation extends AbstractWrappableAnimation
+    class ScriptAnimation extends AbstractWrappableAnimation
     {
         /** */
         private static final long serialVersionUID = 20180409L;
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public String shortName()
         {
@@ -349,6 +352,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public String description()
         {
@@ -377,6 +381,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public final GTUColorer getColorer()
         {
@@ -404,13 +409,14 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         /**
          * 
          */
-        public ScriptModel()
+        ScriptModel()
         {
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> sim)
+        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> sim)
                 throws SimRuntimeException, RemoteException
         {
             AbstractSimulationScript.this.simulator = (OTSDEVSSimulatorInterface) sim;
@@ -426,6 +432,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
         {
@@ -433,6 +440,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public OTSNetwork getNetwork()
         {

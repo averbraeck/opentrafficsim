@@ -217,7 +217,7 @@
 		</module>
 		<module name="LeftCurly">
 			<property name="option" value="nl" />
-			<property name="maxLineLength" value="128" />
+			<!-- >property name="maxLineLength" value="128" / -->
 			<property name="severity" value="warning" />
 		</module>
 		<module name="NeedBraces">

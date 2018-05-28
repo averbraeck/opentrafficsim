@@ -1,10 +1,10 @@
 package strategies;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +28,10 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djunits.value.vfloat.scalar.FloatDuration;
+import org.djunits.value.vfloat.scalar.FloatLength;
+import org.djunits.value.vfloat.scalar.FloatSpeed;
+import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -39,6 +43,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -50,7 +55,9 @@ import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
@@ -60,7 +67,16 @@ import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
+import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
+import org.opentrafficsim.kpi.sampling.Sampler;
+import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeLength;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeNumber;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
 import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.animation.DesireBased;
 import org.opentrafficsim.road.gtu.animation.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.animation.DesiredSpeedColorer;
 import org.opentrafficsim.road.gtu.animation.FixedColor;
@@ -81,6 +97,7 @@ import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
@@ -88,6 +105,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTraffi
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -102,6 +121,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.SocioDesiredSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
@@ -117,6 +137,7 @@ import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation.TYPE;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
@@ -128,6 +149,9 @@ import org.opentrafficsim.road.network.lane.object.sensor.Detector;
 import org.opentrafficsim.road.network.lane.object.sensor.Detector.CompressionMethod;
 import org.opentrafficsim.road.network.lane.object.sensor.Detector.DetectorMeasurement;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.sampling.GtuData;
+import org.opentrafficsim.road.network.sampling.LaneData;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -136,9 +160,12 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
+import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Simulations regarding LMRS lane change strategies. This entails the base LMRS with:
@@ -146,7 +173,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * <li>Distributed Tmax</li>
  * <li>Distributed vGain</li>
  * <li>Distributed socio-speed sensitivity parameter (LmrsParameters.SOCIO)</li>
- * <li>Altered gap-acceptance: use own Tmax (GapAcceptance.EGO_HEADWAY)</li>
+ * <li>Altered gap-acceptance: use own Tmax (GapAcceptance.EGO_HEADWAY) [not required if Tmin/max not distributed]</li>
  * <li>Altered desired speed: increase during overtaking (SocioDesiredSpeed)</li>
  * <li>Lane change incentive to get out of the way (IncentiveSocioSpeed)</li>
  * </ul>
@@ -162,52 +189,71 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class LmrsStrategies implements EventListenerInterface
 {
 
-    // TODO find Tmax for which capacity is about the same as the base LMRS, also regard saturation flow
-
     /** Simulation time. */
-    private final static Time simTime = Time.createSI(3600);
+    static final Time SIMTIME = Time.createSI(3900);
 
     /** Truck fraction. */
-    private final static double fTruck = 0.10;
+    private double fTruck;
 
     /** Synchronization. */
-    final static Synchronization synchronization = Synchronization.PASSIVE;
+    static final Synchronization SYNCHRONIZATION = Synchronization.PASSIVE;
 
     /** Cooperation. */
-    final static Cooperation cooperation = Cooperation.PASSIVE;
+    static final Cooperation COOPERATION = Cooperation.PASSIVE;
 
     /** Gap-acceptance. */
-    final static GapAcceptance gapAcceptance = GapAcceptance.INFORMED;
+    static final GapAcceptance GAPACCEPTANCE = GapAcceptance.INFORMED;
 
     /** Use base LMRS. */
-    static boolean baseLMRS = false;
+    private boolean baseLMRS;
+
+    /** Form of tailgating. */
+    private Tailgating tailgating;
 
     /** Seed. */
-    long seed = 6L;
+    private long seed;
 
     /** Sigma. */
-    double sigma = 0.6; // 0.4
+    private double sigma;
 
-    /** vGain [km/h]. */
-    double vGain = 30; // 69.7;
+    /** vGain [km/h] (after log-normal shift). */
+    private double vGain;
+
+    /** Maximum headway [s]. */
+    private double tMax;
+
+    /** Maximum flow [veh/h]. */
+    private double qMax;
 
     /** Suffix for file name. */
-    private String suffix = "";
+    private String suffix;
 
-    /** Distributed maximum speed for trucks. */
-    ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> vTruck;
+    /** Folder to save files. */
+    private String folder;
 
     /** Strategical planner factories per GTU type. */
-    final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> factories = new HashMap<>();
+    private final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> factories = new HashMap<>();
 
     /** The simulator. */
-    OTSDEVSSimulatorInterface simulator;
+    private OTSDEVSSimulatorInterface simulator;
 
     /** The network. */
-    OTSNetwork network;
+    private OTSNetwork network;
+
+    /** Autorun. */
+    private boolean autorun;
+
+    /** List of lane changes. */
+    private List<String> laneChanges = new ArrayList<>();
+
+    /** Sample data or not. */
+    private boolean sampling;
+
+    /** Sampler when sampling. */
+    private Sampler<GtuData> sampler;
 
     /** GTU colorer. */
-    final GTUColorer colorer = SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
+    private final GTUColorer colorer = SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
             .addColorer(GTUTypeColorer.DEFAULT).addColorer(new IDGTUColorer())
             .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
             .addColorer(new DesiredSpeedColorer(new Speed(80, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
@@ -224,11 +270,33 @@ public class LmrsStrategies implements EventListenerInterface
      * Main method with command line arguments.
      * @param args String[] command line arguments
      */
-    public static void main(String[] args)
+    @SuppressWarnings("unchecked")
+    public static void main(final String[] args)
     {
+
+        LaneChange.MIN_LC_LENGTH_FACTOR = 1.0;
+        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
 
         // default properties
         boolean autorun = false;
+        String suffix = "";
+        long seed = 1L;
+        double sigma = 0.25;
+        double vGain = 3.3789;
+        // 25km/h -> 3.3789
+        // 35km/h -> 3.7153
+        // 50km/h -> 4.072
+        // 70km/h -> 4.4085
+        // base: 69.6km/h
+        boolean baseLMRS = false;
+        double tMax = 1.6;
+        double fTruck = 0.1;
+        double qMax = 5500;
+        String folder = null;
+        boolean sampling = false;
+        Tailgating tailgating = Tailgating.PRESSURE;
+
+        boolean vGainSet = false;
 
         // parse args
         for (String arg : args)
@@ -241,96 +309,128 @@ public class LmrsStrategies implements EventListenerInterface
                 String value = arg.substring(equalsPos + 1);
                 if ("autorun".equalsIgnoreCase(key))
                 {
-                    if ("true".equalsIgnoreCase(value))
+                    autorun = Boolean.parseBoolean(value);
+                }
+                else if ("suffix".equalsIgnoreCase(key))
+                {
+                    suffix = value;
+                }
+                else if ("seed".equalsIgnoreCase(key))
+                {
+                    seed = Long.parseLong(value);
+                }
+                else if ("sigma".equalsIgnoreCase(key))
+                {
+                    sigma = Double.parseDouble(value);
+                }
+                else if ("vgain".equalsIgnoreCase(key))
+                {
+                    vGain = Double.parseDouble(value);
+                    vGainSet = true;
+                }
+                else if ("baselmrs".equalsIgnoreCase(key))
+                {
+                    baseLMRS = Boolean.parseBoolean(value);
+                    if (baseLMRS && !vGainSet)
                     {
-                        autorun = true;
-                    }
-                    else if ("false".equalsIgnoreCase(value))
-                    {
-                        autorun = false;
-                    }
-                    else
-                    {
-                        System.err.println("bad autorun value " + value + " (ignored)");
+                        vGain = Try.assign(() -> LmrsParameters.VGAIN.getDefaultValue().getInUnit(SpeedUnit.KM_PER_HOUR), "");
                     }
                 }
+                else if ("tmax".equalsIgnoreCase(key))
+                {
+                    tMax = Double.parseDouble(value);
+                }
+                else if ("ftruck".equalsIgnoreCase(key))
+                {
+                    fTruck = Double.parseDouble(value);
+                }
+                else if ("qmax".equalsIgnoreCase(key))
+                {
+                    qMax = Double.parseDouble(value);
+                }
+                else if ("folder".equalsIgnoreCase(key))
+                {
+                    folder = value;
+                }
+                else if ("sampling".equalsIgnoreCase(key))
+                {
+                    sampling = Boolean.parseBoolean(value);
+                }
+                else if ("tailgating".equalsIgnoreCase(key))
+                {
+                    // overrule for sensitivity analysis
+                    tailgating = value.equalsIgnoreCase("none") ? Tailgating.NONE
+                            : (value.equalsIgnoreCase("pressure") ? Tailgating.PRESSURE : Tailgating.RHO_ONLY);
+                }
+                else
+                {
+                    throw new RuntimeException("Key " + key + " not supported.");
+                }
             }
+        }
+        Throw.whenNull(folder, "Provide a folder to save files using a command line argument named 'folder'.");
+
+        // setup arguments
+        LmrsStrategies lmrsStrategies = new LmrsStrategies();
+        lmrsStrategies.autorun = autorun;
+        lmrsStrategies.suffix = suffix;
+        lmrsStrategies.seed = seed;
+        lmrsStrategies.sigma = sigma;
+        lmrsStrategies.vGain = vGain;
+        lmrsStrategies.baseLMRS = baseLMRS;
+        lmrsStrategies.tailgating = tailgating;
+        lmrsStrategies.tMax = tMax;
+        lmrsStrategies.fTruck = fTruck;
+        lmrsStrategies.qMax = qMax;
+        lmrsStrategies.folder = folder;
+        lmrsStrategies.sampling = sampling;
+        if (baseLMRS)
+        {
+            lmrsStrategies.incentives =
+                    new Class[] { IncentiveRoute.class, IncentiveSpeedWithCourtesy.class, IncentiveKeep.class };
+        }
+        else
+        {
+            lmrsStrategies.incentives = new Class[] { IncentiveRoute.class, IncentiveSpeedWithCourtesy.class,
+                    IncentiveKeep.class, IncentiveSocioSpeed.class };
         }
 
         // run
         if (autorun)
         {
-            double[] sigmaArray = new double[] { .6 };// { .2, .4, .6, .8 };
-            double[] vGainArray = new double[] { 30 };// { 15, 30, 45, 60 };
-            int seeds = 1;// 10;
-            int n = 1;
-            int nDone = 0;
-            int nTot = sigmaArray.length * vGainArray.length * seeds;
-            LocalDateTime start = LocalDateTime.now();
-            for (double sigmaLoop : sigmaArray)
+            LmrsStrategiesSimulation lmrsStrategiesSimulation = lmrsStrategies.new LmrsStrategiesSimulation();
+            try
             {
-                for (double vGainLoop : vGainArray)
+                // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
+                OTSDEVSSimulatorInterface sim = lmrsStrategiesSimulation.buildSimulator(Time.ZERO, Duration.ZERO,
+                        Duration.createSI(SIMTIME.si + 1e-9), new ArrayList<Property<?>>());
+                double tReport = 60.0;
+                Time t = sim.getSimulatorTime().getTime();
+                while (t.le(SIMTIME))
                 {
-                    // for (long seedLoop = 1; seedLoop <= seeds; seedLoop++)
-                    // {
-                    int seedLoop = 6;
-                    LmrsStrategies lmrsStrategies = new LmrsStrategies();
-                    lmrsStrategies.sigma = sigmaLoop;
-                    lmrsStrategies.vGain = vGainLoop;
-                    lmrsStrategies.seed = seedLoop;
-                    lmrsStrategies.suffix = String.format("_%.2f_%.2f_%02d", sigmaLoop, vGainLoop, seedLoop);
-                    LocalDateTime now = LocalDateTime.now();
-                    if (n > nDone)
+                    sim.step();
+                    t = sim.getSimulatorTime().getTime();
+                    if (t.si >= tReport)
                     {
-                        System.out.println("[" + now.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "] Running simulation "
-                                + n + " of " + nTot + " with suffix " + lmrsStrategies.suffix);
+                        System.out.println("Simulation time is " + t);
+                        tReport += 60.0;
                     }
-                    if (n > nDone + 1)
-                    {
-                        long tRemain = (nTot - n - nDone - 1)
-                                * (now.toEpochSecond(ZoneOffset.UTC) - start.toEpochSecond(ZoneOffset.UTC)) / (n - nDone - 1);
-                        LocalDateTime eft = now.plusSeconds(tRemain);
-                        System.out.println("           Estimated finish time: "
-                                + eft.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                    }
-                    if (n > nDone)
-                    {
-                        LmrsStrategiesSimulation lmrsStrategiesSimulation = lmrsStrategies.new LmrsStrategiesSimulation();
-                        try
-                        {
-                            OTSDEVSSimulatorInterface sim = lmrsStrategiesSimulation.buildSimulator(Time.ZERO, Duration.ZERO,
-                                    Duration.createSI(simTime.si), new ArrayList<Property<?>>());
-                            double tReport = 60.0;
-                            Time t = sim.getSimulatorTime().getTime();
-                            while (t.lt(simTime))
-                            {
-                                sim.step();
-                                t = sim.getSimulatorTime().getTime();
-                                if (t.si >= tReport)
-                                {
-                                    System.out.println("Simulation time is " + t);
-                                    tReport += 60.0;
-                                }
-                            }
-                            sim.stop(); // end of simulation event
-                            HistoryManager.clear(sim);
-                        }
-                        catch (Exception exception)
-                        {
-                            exception.printStackTrace();
-                        }
-                    }
-                    n++;
                 }
-                // }
+                sim.stop(); // end of simulation event
+                HistoryManager.clear(sim);
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
+                System.exit(-1);
             }
         }
         else
         {
-            LmrsStrategiesAnimation lmrsStrategiesAnimation = new LmrsStrategies().new LmrsStrategiesAnimation();
+            LmrsStrategiesAnimation lmrsStrategiesAnimation = lmrsStrategies.new LmrsStrategiesAnimation();
             try
             {
-                lmrsStrategiesAnimation.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(simTime.si),
+                lmrsStrategiesAnimation.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si),
                         new ArrayList<Property<?>>(), null, true);
             }
             catch (Exception exception)
@@ -421,6 +521,7 @@ public class LmrsStrategies implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public GTUColorer getColorer()
         {
@@ -459,8 +560,9 @@ public class LmrsStrategies implements EventListenerInterface
         private static final long serialVersionUID = 20180303L;
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> simul)
+        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simul)
                 throws SimRuntimeException, RemoteException
         {
             OTSDEVSSimulatorInterface sim = (OTSDEVSSimulatorInterface) simul;
@@ -468,17 +570,31 @@ public class LmrsStrategies implements EventListenerInterface
             OTSNetwork net = new OTSNetwork("LMRS strategies");
             LmrsStrategies.this.simulator.addListener(LmrsStrategies.this, SimulatorInterface.END_OF_REPLICATION_EVENT);
             LmrsStrategies.this.network = net;
+            net.addListener(LmrsStrategies.this, Network.GTU_ADD_EVENT);
+            net.addListener(LmrsStrategies.this, Network.GTU_REMOVE_EVENT);
             Map<String, StreamInterface> streams = new HashMap<>();
             StreamInterface stream = new MersenneTwister(LmrsStrategies.this.seed);
             streams.put("generation", stream);
             sim.getReplication().setStreams(streams);
 
             // Vehicle-driver classes
-            LmrsStrategies.this.vTruck =
-                    new ContinuousDistDoubleScalar.Rel<>(new DistNormal(stream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR);
             // characteristics generator using the input available in this context
+            /** Characteristics generator. */
             class LmrsStrategyCharacteristicsGenerator implements GTUCharacteristicsGeneratorOD
             {
+
+                /** Distributed maximum speed for trucks. */
+                private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> vTruck;
+
+                /**
+                 * Constructor.
+                 * @param strm StreamInterface;
+                 */
+                LmrsStrategyCharacteristicsGenerator(final StreamInterface strm)
+                {
+                    this.vTruck = new ContinuousDistDoubleScalar.Rel<>(new DistNormal(strm, 85.0, 2.5), SpeedUnit.KM_PER_HOUR);
+                }
+
                 /** {@inheritDoc} */
                 @Override
                 public LaneBasedGTUCharacteristics draw(final Node origin, final Node destination, final Category category,
@@ -491,15 +607,15 @@ public class LmrsStrategies implements EventListenerInterface
                     if (gtuType.equals(GTUType.TRUCK))
                     {
                         gtuCharacteristics = new GTUCharacteristics(GTUType.TRUCK, gtuCharacteristics.getLength(),
-                                gtuCharacteristics.getWidth(), LmrsStrategies.this.vTruck.draw(),
-                                gtuCharacteristics.getMaximumAcceleration(), gtuCharacteristics.getMaximumDeceleration(),
-                                gtuCharacteristics.getFront());
+                                gtuCharacteristics.getWidth(), this.vTruck.draw(), gtuCharacteristics.getMaximumAcceleration(),
+                                gtuCharacteristics.getMaximumDeceleration(), gtuCharacteristics.getFront());
                     }
                     return new LaneBasedGTUCharacteristics(gtuCharacteristics, LmrsStrategies.this.factories.get(gtuType), null,
-                            origin, destination);
+                            origin, destination, VehicleModel.NONE);
                 }
             }
-            // perception factory with ego, infra and neighbors only
+            // perception factory with ego, infra, neighbors and traffic only
+            /** Perception factory. */
             class LmrsStrategiesPerceptionFactory implements PerceptionFactory
             {
                 /** {@inheritDoc} */
@@ -525,6 +641,7 @@ public class LmrsStrategies implements EventListenerInterface
             }
             PerceptionFactory perceptionFactory = new LmrsStrategiesPerceptionFactory();
             // IDM factory with socio desired speed
+            /** IDM factory with socio speed. */
             class SocioIDMFactory implements CarFollowingModelFactory<IDMPlus>
             {
                 /** {@inheritDoc} */
@@ -545,36 +662,29 @@ public class LmrsStrategies implements EventListenerInterface
             }
             // random parameters
             ParameterFactoryByType parameterFactory = new ParameterFactoryByType();
-            if (!baseLMRS)
+            parameterFactory.addParameter(Tailgating.RHO, 0.0);
+            if (!LmrsStrategies.this.baseLMRS)
             {
-                parameterFactory.addParameter(Tailgating.RHO, 0.0);
-                // 0.15 -> -1.6471
-                // 0.25 -> -1.1363
-                // 0.35 -> -0.79982
-                // 0.50 -> -0.44315
-                parameterFactory.addParameter(GTUType.CAR, LmrsParameters.SOCIO, LmrsStrategies.this.sigma);
-                // new DistLogNormal(stream, -0.79982, 0.5));
+                parameterFactory.addParameter(GTUType.CAR, LmrsParameters.SOCIO,
+                        new DistTriangular(stream, 0.0, LmrsStrategies.this.sigma, 1.0));
                 parameterFactory.addCorrelation(GTUType.CAR, null, LmrsParameters.SOCIO,
                         (first, then) -> then <= 1.0 ? then : 1.0);
-                parameterFactory.addParameter(GTUType.TRUCK, LmrsParameters.SOCIO, 1.0); // WATCH IT
-                parameterFactory.addParameter(GTUType.CAR, LmrsParameters.VGAIN,
-                        // 25km/h -> 3.3789
-                        // 35km/h -> 3.7153
-                        // 70km/h -> 4.4085
-                        Speed.createSI(LmrsStrategies.this.vGain / 3.6));
-                // new ContinuousDistDoubleScalar.Rel<>(new DistLogNormal(stream, 3.7153, 0.4), SpeedUnit.KM_PER_HOUR));
-                parameterFactory.addParameter(ParameterTypes.TMAX, Duration.createSI(1.5)); // WATCH IT
+                parameterFactory.addParameter(GTUType.TRUCK, LmrsParameters.SOCIO, 1.0);
+                parameterFactory.addParameter(GTUType.CAR, LmrsParameters.VGAIN, new ContinuousDistDoubleScalar.Rel<>(
+                        new DistLogNormal(stream, LmrsStrategies.this.vGain, 0.4), SpeedUnit.KM_PER_HOUR));
+                parameterFactory.addParameter(GTUType.TRUCK, LmrsParameters.VGAIN, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
+                parameterFactory.addParameter(ParameterTypes.TMAX, Duration.createSI(LmrsStrategies.this.tMax));
             }
-            // parameterFactory.addParameter(ParameterTypes.TMAX,
-            // new ContinuousDistDoubleScalar.Rel<>(new DistLogNormal(stream, 0.25, 0.5), DurationUnit.SECOND));
-            // parameterFactory.addCorrelation(ParameterTypes.TMIN, ParameterTypes.TMAX,
-            // (first, then) -> Duration.max(first.plus(Duration.createSI(0.000000001)), then));
+            else
+            {
+                // overrule for sensitivity analysis
+                parameterFactory.addParameter(GTUType.CAR, LmrsParameters.VGAIN,
+                        new Speed(LmrsStrategies.this.vGain, SpeedUnit.KM_PER_HOUR));
+            }
             parameterFactory.addParameter(GTUType.CAR, ParameterTypes.FSPEED,
                     new DistNormal(stream, 123.7 / 120.0, 12.0 / 120.0));
             parameterFactory.addParameter(GTUType.TRUCK, ParameterTypes.A, Acceleration.createSI(0.4));
             parameterFactory.addParameter(GTUType.TRUCK, ParameterTypes.FSPEED, 1.0);
-
-            // parameterFactory.addParameter(ParameterTypes.TMIN, Duration.createSI(0.8));
 
             try
             {
@@ -588,7 +698,7 @@ public class LmrsStrategies implements EventListenerInterface
                     mandatoryIncentives.add(new IncentiveRoute());
                     voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
                     voluntaryIncentives.add(new IncentiveKeep());
-                    if (!baseLMRS)
+                    if (!LmrsStrategies.this.baseLMRS)
                     {
                         voluntaryIncentives.add(new IncentiveSocioSpeed());
                     }
@@ -599,14 +709,15 @@ public class LmrsStrategies implements EventListenerInterface
                     }
                     // car-following factory
                     CarFollowingModelFactory<?> cfFactory = // trucks don't change their desired speed
-                            gtuType.equals(GTUType.CAR) && !baseLMRS ? new SocioIDMFactory() : new IDMPlusFactory(stream);
+                            gtuType.equals(GTUType.CAR) && !LmrsStrategies.this.baseLMRS ? new SocioIDMFactory()
+                                    : new IDMPlusFactory(stream);
                     // tailgating
-                    Tailgating tailgating = baseLMRS ? Tailgating.NONE : Tailgating.PRESSURE; // WATCH IT
+                    Tailgating tlgt = LmrsStrategies.this.baseLMRS ? Tailgating.NONE : LmrsStrategies.this.tailgating;
                     // strategical and tactical factory
                     LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
                             new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LMRSFactory(cfFactory, perceptionFactory, synchronization, cooperation, gapAcceptance,
-                                            tailgating, mandatoryIncentives, voluntaryIncentives, accelerationIncentives),
+                                    new LMRSFactory(cfFactory, perceptionFactory, SYNCHRONIZATION, COOPERATION, GAPACCEPTANCE,
+                                            tlgt, mandatoryIncentives, voluntaryIncentives, accelerationIncentives),
                                     parameterFactory);
                     LmrsStrategies.this.factories.put(gtuType, laneBasedStrategicalPlannerFactory);
                 }
@@ -614,7 +725,7 @@ public class LmrsStrategies implements EventListenerInterface
                 // Network
                 OTSPoint3D pointA = new OTSPoint3D(0, 0, 0);
                 OTSPoint3D pointB = new OTSPoint3D(4000, 0, 0);
-                OTSPoint3D pointC = new OTSPoint3D(6400, 0, 0);
+                OTSPoint3D pointC = new OTSPoint3D(7400, 0, 0);
                 OTSNode nodeA = new OTSNode(net, "A", pointA);
                 OTSNode nodeB = new OTSNode(net, "B", pointB);
                 OTSNode nodeC = new OTSNode(net, "C", pointC);
@@ -667,7 +778,7 @@ public class LmrsStrategies implements EventListenerInterface
                         new Lane[] { laneAB1, laneBC1 } };
                 Duration aggregationPeriod = Duration.createSI(60.0);
                 DetectorMeasurement<?, ?>[] measurements = new DetectorMeasurement[] { Detector.MEAN_SPEED, Detector.PASSAGES,
-                        new Detector.PlatoonSizes(Duration.createSI(3.0)) };
+                        new VGainMeasurement(), new SigmaMeasurement(), new VDesMeasurement(), new VDes0Measurement() };
                 String[] prefix = { "A", "B", "C" };
                 for (int i = 0; i < grid.length; i++)
                 {
@@ -692,15 +803,19 @@ public class LmrsStrategies implements EventListenerInterface
                 origins.add(nodeA);
                 List<Node> destinations = new ArrayList<>();
                 destinations.add(nodeC);
-                TimeVector timeVector = new TimeVector(new double[] { 0.0, 2400.0, 3600.0 }, TimeUnit.BASE, StorageType.DENSE);
+                TimeVector timeVector =
+                        new TimeVector(new double[] { 0.0, 300.0, 2700.0, SIMTIME.si }, TimeUnit.BASE, StorageType.DENSE);
                 ODMatrix od = new ODMatrix("LMRS strategies", origins, destinations, categorization, timeVector,
                         Interpolation.LINEAR);
+                double q = LmrsStrategies.this.qMax;
                 FrequencyVector demand =
-                        new FrequencyVector(new double[] { 1000.0, 5000.0, 1000.0 }, FrequencyUnit.PER_HOUR, StorageType.DENSE);
+                        new FrequencyVector(new double[] { q * .6, q * .6, q, 0.0 }, FrequencyUnit.PER_HOUR, StorageType.DENSE);
                 Category category = new Category(categorization, GTUType.CAR);
-                od.putDemandVector(nodeA, nodeC, category, demand, timeVector, Interpolation.LINEAR, 1.0 - fTruck);
+                od.putDemandVector(nodeA, nodeC, category, demand, timeVector, Interpolation.LINEAR,
+                        1.0 - LmrsStrategies.this.fTruck);
                 category = new Category(categorization, GTUType.TRUCK);
-                od.putDemandVector(nodeA, nodeC, category, demand, timeVector, Interpolation.LINEAR, fTruck);
+                od.putDemandVector(nodeA, nodeC, category, demand, timeVector, Interpolation.LINEAR,
+                        LmrsStrategies.this.fTruck);
                 // options
                 MarkovCorrelation<GTUType, Frequency> markov = new MarkovCorrelation<>();
                 markov.addState(GTUType.TRUCK, 0.4);
@@ -709,12 +824,77 @@ public class LmrsStrategies implements EventListenerInterface
                 ODOptions odOptions =
                         new ODOptions().set(ODOptions.GTU_COLORER, LmrsStrategies.this.colorer).set(ODOptions.MARKOV, markov)
                                 .set(ODOptions.LANE_BIAS, biases).set(ODOptions.NO_LC_DIST, Length.createSI(100.0))
-                                .set(ODOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator())
+                                .set(ODOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator(stream))
                                 .set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
                 Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(net, od, sim, odOptions);
                 for (String str : generatedObjects.keySet())
                 {
                     new GTUGeneratorAnimation(generatedObjects.get(str).getGenerator(), sim);
+                }
+
+                // Sampler
+                if (LmrsStrategies.this.sampling)
+                {
+                    LmrsStrategies.this.sampler = new RoadSampler(LmrsStrategies.this.simulator);
+                    addLaneToSampler(laneAB1);
+                    addLaneToSampler(laneAB2);
+                    addLaneToSampler(laneAB3);
+                    addLaneToSampler(laneBC1);
+                    addLaneToSampler(laneBC2);
+                    LmrsStrategies.this.sampler.registerExtendedDataType(new ExtendedDataTypeLength<GtuData>("Length")
+                    {
+                        @Override
+                        public FloatLength getValue(final GtuData gtu)
+                        {
+                            return FloatLength.createSI((float) gtu.getGtu().getLength().si);
+                        }
+                    });
+                    LmrsStrategies.this.sampler.registerExtendedDataType(new ExtendedDataTypeNumber<GtuData>("Rho")
+                    {
+                        @Override
+                        public Float getValue(final GtuData gtu)
+                        {
+                            try
+                            {
+                                return gtu.getGtu().getParameters().getParameter(Tailgating.RHO).floatValue();
+                            }
+                            catch (ParameterException exception)
+                            {
+                                throw new RuntimeException("Could not obtain rho for trajectory.", exception);
+                            }
+                        }
+                    });
+                    LmrsStrategies.this.sampler.registerExtendedDataType(new ExtendedDataTypeSpeed<GtuData>("V0")
+                    {
+                        @Override
+                        public FloatSpeed getValue(final GtuData gtu)
+                        {
+                            try
+                            {
+                                return FloatSpeed.createSI(gtu.getGtu().getDesiredSpeed().floatValue());
+                            }
+                            catch (@SuppressWarnings("unused") NullPointerException ex)
+                            {
+                                return FloatSpeed.NaN;
+                            }
+                        }
+                    });
+                    LmrsStrategies.this.sampler.registerExtendedDataType(new ExtendedDataTypeDuration<GtuData>("T")
+                    {
+                        @Override
+                        public FloatDuration getValue(final GtuData gtu)
+                        {
+                            try
+                            {
+                                return FloatDuration
+                                        .createSI(gtu.getGtu().getParameters().getParameter(ParameterTypes.T).floatValue());
+                            }
+                            catch (ParameterException exception)
+                            {
+                                throw new RuntimeException("Could not obtain T for trajectory.", exception);
+                            }
+                        }
+                    });
                 }
             }
             catch (NetworkException | OTSGeometryException | NamingException | ValueException | ParameterException
@@ -722,10 +902,22 @@ public class LmrsStrategies implements EventListenerInterface
             {
                 exception.printStackTrace();
             }
+        }
 
+        /**
+         * Adds a lane to the sampler.
+         * @param lane Lane; lane
+         */
+        @SuppressWarnings("synthetic-access")
+        private void addLaneToSampler(final Lane lane)
+        {
+            LmrsStrategies.this.sampler.registerSpaceTimeRegion(
+                    new SpaceTimeRegion(new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS), Length.ZERO,
+                            lane.getLength(), Time.createSI(300), SIMTIME));
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
         {
@@ -733,6 +925,7 @@ public class LmrsStrategies implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public OTSNetwork getNetwork()
         {
@@ -741,18 +934,390 @@ public class LmrsStrategies implements EventListenerInterface
 
     }
 
+    /** Incentives. */
+    private Class<? extends Incentive>[] incentives;
+
     /** {@inheritDoc} */
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(SimulatorInterface.END_OF_REPLICATION_EVENT))
+        if (event.getType().equals(LaneBasedGTU.LANE_CHANGE_EVENT))
         {
-            Detector.writeToFile(this.network, "D:/TU Delft/Post-doc/Projects/LMRS-strategies/pre-tests/detsAggrData"
-                    + LmrsStrategies.this.suffix + ".txt", true, "%.3f", CompressionMethod.NONE);
-            Detector.writeToFile(this.network, "D:/TU Delft/Post-doc/Projects/LMRS-strategies/pre-tests/detsMesoData"
-                    + LmrsStrategies.this.suffix + ".txt", false, "%.3f", CompressionMethod.NONE);
+            Object[] payload = (Object[]) event.getContent();
+            GTU gtu = this.network.getGTU((String) payload[0]);
+            LateralDirectionality dir = (LateralDirectionality) payload[1];
+            DirectedLanePosition from = (DirectedLanePosition) payload[2];
+            DesireBased desire = (DesireBased) gtu.getTacticalPlanner();
+            Double dMax = Double.NEGATIVE_INFINITY;
+            String cause = "Unknown";
+            for (Class<? extends Incentive> incentive : this.incentives)
+            {
+                double d = desire.getLatestDesire(incentive).get(dir);
+                if (d > dMax)
+                {
+                    cause = incentive.getSimpleName();
+                    dMax = d;
+                }
+            }
+            this.laneChanges.add(String.format("%.3f,%s,%.3f,%s,%s", this.simulator.getSimulatorTime().get().si,
+                    from.getLane().getFullId(), from.getPosition().si, dir, cause));
+        }
+        else if (event.getType().equals(Network.GTU_ADD_EVENT))
+        {
+            this.network.getGTU((String) event.getContent()).addListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
+        }
+        else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
+        {
+            this.network.getGTU((String) event.getContent()).removeListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
+        }
+        else if (event.getType().equals(SimulatorInterface.END_OF_REPLICATION_EVENT))
+        {
+            CompressionMethod compression = this.autorun ? CompressionMethod.ZIP : CompressionMethod.NONE;
+            // write detector data
+            Detector.writeToFile(this.network, this.folder + "detsAggrData" + LmrsStrategies.this.suffix + ".txt", true, "%.3f",
+                    compression);
+            Detector.writeToFile(this.network, this.folder + "detsMesoData" + LmrsStrategies.this.suffix + ".txt", false,
+                    "%.3f", compression);
+            // write lane change data
+            this.laneChanges.add(0, "t[s],lane,x[m],dir,cause");
+            BufferedWriter bw = CompressedFileWriter.create(this.folder + "laneChanges" + LmrsStrategies.this.suffix + ".txt",
+                    this.autorun);
+            try
+            {
+                for (String str : this.laneChanges)
+                {
+                    bw.write(str);
+                    bw.newLine();
+                }
+            }
+            catch (IOException exception)
+            {
+                throw new RuntimeException("Could not write to file.", exception);
+            }
+            finally
+            {
+                try
+                {
+                    if (bw != null)
+                    {
+                        bw.close();
+                    }
+                }
+                catch (IOException ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+            // write sampler data
+            if (LmrsStrategies.this.sampling)
+            {
+                LmrsStrategies.this.sampler.writeToFile(this.folder + "sampled" + LmrsStrategies.this.suffix + ".txt");
+            }
             // solve bug that event is fired twice
             LmrsStrategies.this.simulator.removeListener(LmrsStrategies.this, SimulatorInterface.END_OF_REPLICATION_EVENT);
+            // beep
+            if (!this.autorun)
+            {
+                Toolkit.getDefaultToolkit().beep();
+            }
+            else
+            {
+                System.exit(0);
+            }
+        }
+    }
+
+    /**
+     * Class to store sigma value.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 mei 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    class SigmaMeasurement implements DetectorMeasurement<List<Double>, List<Double>>
+    {
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> identity()
+        {
+            return new ArrayList<>();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        {
+            Double sig = gtu.getParameters().getParameterOrNull(LmrsParameters.SOCIO);
+            if (sig == null)
+            {
+                cumulative.add(Double.NaN);
+            }
+            else
+            {
+                cumulative.add(sig);
+            }
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        {
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean isPeriodic()
+        {
+            return false;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> aggregate(final List<Double> cumulative, final int count, final Duration aggregation)
+        {
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getName()
+        {
+            return "sigma";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String stringValue(final List<Double> aggregate, final String format)
+        {
+            return Detector.printListDouble(aggregate, format);
+        }
+    }
+
+    /**
+     * Class to store vGain value.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 mei 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    class VGainMeasurement implements DetectorMeasurement<List<Double>, List<Double>>
+    {
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> identity()
+        {
+            return new ArrayList<>();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        {
+            Speed vGn = gtu.getParameters().getParameterOrNull(LmrsParameters.VGAIN);
+            if (vGn == null)
+            {
+                cumulative.add(Double.NaN);
+            }
+            else
+            {
+                cumulative.add(vGn.si);
+            }
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        {
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean isPeriodic()
+        {
+            return false;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> aggregate(final List<Double> cumulative, final int count, final Duration aggregation)
+        {
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getName()
+        {
+            return "vGain";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String stringValue(final List<Double> aggregate, final String format)
+        {
+            return Detector.printListDouble(aggregate, format);
+        }
+    }
+
+    /**
+     * Class to store vDes value.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 mei 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    class VDesMeasurement implements DetectorMeasurement<List<Double>, List<Double>>
+    {
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> identity()
+        {
+            return new ArrayList<>();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        {
+            Speed vDes = gtu.getDesiredSpeed();
+            if (vDes == null)
+            {
+                cumulative.add(Double.NaN);
+            }
+            else
+            {
+                cumulative.add(vDes.si);
+            }
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        {
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean isPeriodic()
+        {
+            return false;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> aggregate(final List<Double> cumulative, final int count, final Duration aggregation)
+        {
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getName()
+        {
+            return "vDes";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String stringValue(final List<Double> aggregate, final String format)
+        {
+            return Detector.printListDouble(aggregate, format);
+        }
+    }
+
+    /**
+     * Class to store vDes value.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 mei 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    class VDes0Measurement implements DetectorMeasurement<List<Double>, List<Double>>
+    {
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> identity()
+        {
+            return new ArrayList<>();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        {
+            double vDes0;
+            try
+            {
+                vDes0 = Math.min(gtu.getMaximumSpeed().si, gtu.getParameters().getParameter(ParameterTypes.FSPEED)
+                        * loopDetector.getLane().getSpeedLimit(gtu.getGTUType()).si);
+            }
+            catch (ParameterException | NetworkException exception)
+            {
+                throw new RuntimeException(exception);
+            }
+            cumulative.add(vDes0);
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> accumulateExit(final List<Double> cumulative, final LaneBasedGTU gtu, final Detector loopDetector)
+        {
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean isPeriodic()
+        {
+            return false;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<Double> aggregate(final List<Double> cumulative, final int count, final Duration aggregation)
+        {
+            return cumulative;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getName()
+        {
+            return "vDes0";
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String stringValue(final List<Double> aggregate, final String format)
+        {
+            return Detector.printListDouble(aggregate, format);
         }
     }
 

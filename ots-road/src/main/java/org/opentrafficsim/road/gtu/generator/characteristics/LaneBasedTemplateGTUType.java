@@ -8,6 +8,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.route.RouteGenerator;
+import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 
 import nl.tudelft.simulation.language.Throw;
@@ -72,7 +73,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     public final LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
         return new LaneBasedGTUCharacteristics(super.draw(), this.strategicalPlannerFactory, this.routeGenerator.draw(), null,
-                null);
+                null, VehicleModel.MINMAX);
     }
 
     /** {@inheritDoc} */

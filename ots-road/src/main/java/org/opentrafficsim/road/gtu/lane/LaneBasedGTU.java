@@ -232,6 +232,15 @@ public interface LaneBasedGTU extends GTU
      * @return Acceleration; current car-following acceleration
      */
     Acceleration getCarFollowingAcceleration();
+    
+    /**
+     * Returns the vehicle model.
+     * @return VehicleModel; vehicle model
+     */
+    default VehicleModel getVehicleModel()
+    {
+        return VehicleModel.MINMAX;
+    }
 
     /**
      * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>
@@ -281,5 +290,11 @@ public interface LaneBasedGTU extends GTU
      * Payload: [String gtuId, Lane lane]
      */
     EventType LANE_EXIT_EVENT = new EventType("LANE.EXIT");
+
+    /**
+     * The event type for pub/sub indicating that the GTU change lane. <br>
+     * Payload: [String gtuId, LateralDirectionality direction, DirectedLanePosition from]
+     */
+    EventType LANE_CHANGE_EVENT = new EventType("LANE.CHANGE");
 
 }

@@ -262,7 +262,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
-    public final <T extends ObjectInterface>ImmutableMap<String, T> getObjectMap(final Class<T> objectType)
+    public final <T extends ObjectInterface> ImmutableMap<String, T> getObjectMap(final Class<T> objectType)
     {
         Map<String, T> result = new HashMap<>();
         for (String key : this.objectMap.keySet())
@@ -479,6 +479,24 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         return false;
     }
 
+    /**
+     * Returns the route with given id or {@code null} if no such route is available.
+     * @param routeId String; route id
+     * @return route with given id or {@code null} if no such route is available
+     */
+    public final Route getRoute(final String routeId)
+    {
+        for (GTUType gtuType : this.routeMap.keySet())
+        {
+            Route route = this.routeMap.get(gtuType).get(routeId);
+            if (route != null)
+            {
+                return route;
+            }
+        }
+        return null;
+    }
+    
     /** {@inheritDoc} */
     @Override
     public final Route getRoute(final GTUType gtuType, final String routeId)

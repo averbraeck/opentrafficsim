@@ -63,7 +63,10 @@ public class LaneChange implements Serializable
     private LateralDirectionality laneChangeDirectionality = null;
 
     /** Instance to invoke static method through scheduled event on. */
-    private final static LaneOperationalPlanBuilder builder = new LaneOperationalPlanBuilder();
+    private static final LaneOperationalPlanBuilder BUILDER = new LaneOperationalPlanBuilder();
+    
+    /** Minimum distance required to perform a lane change as factor on vehicle length. */
+    public static double MIN_LC_LENGTH_FACTOR = 2.0;
 
     /**
      * Sets the desired lane change duration. Should be set by a tactical planner.
@@ -83,6 +86,15 @@ public class LaneChange implements Serializable
     public void setBoundary(final Length boundary)
     {
         this.boundary = boundary;
+    }
+    
+    /**
+     * Returns the fraction of the lane change performed.
+     * @return double; fraction of lane change performed
+     */
+    public double getFraction()
+    {
+        return this.fraction;
     }
 
     /**
@@ -196,7 +208,7 @@ public class LaneChange implements Serializable
          * Actual path distance is different.
          */
         Speed meanSpeed = planDistance.divideBy(timeStep);
-        double minDistance = gtu.getLength().si; // simple bare minimum
+        double minDistance = gtu.getLength().si * MIN_LC_LENGTH_FACTOR; // simple bare minimum
         double minDuration = minDistance / meanSpeed.si;
         double laneChangeDuration = Math.max(this.desiredLaneChangeDuration.si, minDuration);
         if (this.boundary != null)
@@ -268,7 +280,7 @@ public class LaneChange implements Serializable
             try
             {
                 // TODO get rid of cast to AbstractLaneBasedGTU
-                gtu.getSimulator().scheduleEventNow(gtu, builder, "scheduleLaneChangeFinalization", new Object[] {
+                gtu.getSimulator().scheduleEventNow(gtu, BUILDER, "scheduleLaneChangeFinalization", new Object[] {
                         (AbstractLaneBasedGTU) gtu, Length.min(planDistance, path.getLength()), laneChangeDirection });
             }
             catch (SimRuntimeException exception)

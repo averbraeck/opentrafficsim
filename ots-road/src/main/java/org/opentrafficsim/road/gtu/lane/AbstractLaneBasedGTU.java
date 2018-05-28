@@ -151,6 +151,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /** cached position count. */
     // TODO: can be removed after testing period
     public static int NON_CACHED_POSITION = 0;
+    
+    /** Vehicle model. */
+    private VehicleModel vehicleModel = VehicleModel.MINMAX;
 
     /**
      * Construct a Lane Based GTU.
@@ -277,10 +280,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      */
     private void addLaneToGtu(final Lane lane, final Length position, final GTUDirectionality gtuDirection) throws GTUException
     {
-        if (this.getId().equals("111"))
-        {
-            System.out.println(getSimulator().getSimulatorTime().get() + "GTU 111 includes lane " + lane.getFullId());
-        }
         if (this.lanesCurrentOperationalPlan.containsKey(lane))
         {
             System.err.println(this + " is already registered on lane: " + lane + " at fractional position "
@@ -343,32 +342,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     public void leaveLane(final Lane lane, final boolean beingDestroyed) throws GTUException
     {
-        if (this.getId().equals("111"))
-        {
-            System.out.println(getSimulator().getSimulatorTime().get() + "GTU 111 leaves lane " + lane.getFullId());
-        }
         Length position = position(lane, getReference());
         this.lanesCurrentOperationalPlan.remove(lane);
         removePendingEvents(lane, this.pendingLeaveTriggers);
         removePendingEvents(lane, this.pendingEnterTriggers);
-        // List<SimEvent<OTSSimTimeDouble>> pending = this.pendingLeaveTriggers.get(lane);
-        // if (null != pending)
-        // {
-        // for (SimEvent<OTSSimTimeDouble> event : pending)
-        // {
-        // if (event.getAbsoluteExecutionTime().get().ge(getSimulator().getSimulatorTime().get()))
-        // {
-        // boolean result = getSimulator().cancelEvent(event);
-        // if (!result && event.getAbsoluteExecutionTime().get().ne(getSimulator().getSimulatorTime().get()))
-        // {
-        // System.err.println("leaveLane, trying to remove event: NOTHING REMOVED -- result=" + result
-        // + ", simTime=" + getSimulator().getSimulatorTime().get() + ", eventTime="
-        // + event.getAbsoluteExecutionTime().get());
-        // }
-        // }
-        // }
-        // this.pendingLeaveTriggers.remove(lane);
-        // }
         // check if there are any lanes for this link left. If not, remove the link.
         boolean found = false;
         for (Lane l : this.lanesCurrentOperationalPlan.keySet())
@@ -422,6 +399,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public void changeLaneInstantaneously(final LateralDirectionality laneChangeDirection) throws GTUException
     {
 
+        // from info
+        DirectedLanePosition from = getReferencePosition();
+
         // keep a copy of the lanes and directions (!)
         Map<Lane, GTUDirectionality> lanesCopy = new LinkedHashMap<>(this.lanesCurrentOperationalPlan);
         Set<Lane> lanesToBeRemoved = new LinkedHashSet<>();
@@ -473,6 +453,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         this.referencePositionTime = Double.NaN;
 
+        // fire event
+        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection, from },
+                getSimulator().getSimulatorTime());
+
     }
 
     /**
@@ -514,6 +498,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     {
         Map<Lane, GTUDirectionality> lanesCopy = new LinkedHashMap<>(this.lanesCurrentOperationalPlan);
         Set<Lane> lanesToBeRemoved = new LinkedHashSet<>();
+        Lane fromLane = null;
+        Length fromPosition = null;
+        GTUDirectionality fromDirection = null;
         try
         {
             // find lanes to leave as they have an adjacent lane the GTU is also on in the lane change direction
@@ -549,6 +536,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
             for (Lane lane : lanesToBeRemoved)
             {
+                double fractionalPosition = this.fractionalLinkPositions.get(lane.getParentLink());
+                if (0.0 <= fractionalPosition && fractionalPosition <= 1.0)
+                {
+                    fromLane = lane;
+                    fromPosition = lane.getLength().multiplyBy(fractionalPosition);
+                    fromDirection = getDirection(lane);
+                }
                 leaveLane(lane);
             }
         }
@@ -558,6 +552,18 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             throw new RuntimeException("fractionalPosition on lane not possible", exception);
         }
         this.referencePositionTime = Double.NaN;
+        Throw.when(fromLane == null, RuntimeException.class, "No from lane for lane change event.");
+        DirectedLanePosition from;
+        try
+        {
+            from = new DirectedLanePosition(fromLane, fromPosition, fromDirection);
+        }
+        catch (GTUException exception)
+        {
+            throw new RuntimeException(exception);
+        }
+        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection, from },
+                getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
@@ -1267,6 +1273,22 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
         list.add(event);
         this.pendingEnterTriggers.put(lane, list);
+    }
+    
+    /**
+     * Sets a vehicle model.
+     * @param vehicleModel VehicleModel; vehicle model
+     */
+    public void setVehicleModel(final VehicleModel vehicleModel)
+    {
+        this.vehicleModel = vehicleModel;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public VehicleModel getVehicleModel()
+    {
+        return this.vehicleModel;
     }
 
     /** {@inheritDoc} */

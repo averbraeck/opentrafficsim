@@ -30,41 +30,41 @@ public abstract class HistoryManager
     // HACK ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // TODO remove this hack and obtain manager from somewhere else, OTSReplication?
     /** Centrally stored manager. */
-    private static Map<Replication<Time, Duration, OTSSimTimeDouble>, HistoryManagerDEVS> MANAGERS = new WeakHashMap<>();
+    private static Map<Replication<Time, Duration, OTSSimTimeDouble>, HistoryManagerDEVS> managers = new WeakHashMap<>();
 
     /**
      * Get central manager.
-     * @param simulator
+     * @param simulator OTSDEVSSimulatorInterface; simulator
      * @return HistoryManagerDEVS; central manager
      */
     public static HistoryManagerDEVS get(final OTSDEVSSimulatorInterface simulator)
     {
-        HistoryManagerDEVS manager = MANAGERS.get(simulator.getReplication());
+        HistoryManagerDEVS manager = managers.get(simulator.getReplication());
         if (manager == null)
         {
             manager = new HistoryManagerDEVS(simulator, Duration.createSI(0.0), Duration.createSI(10.0));
-            MANAGERS.put(simulator.getReplication(), manager);
+            managers.put(simulator.getReplication(), manager);
         }
         return manager;
     }
     
     /**
      * Set central manager.
-     * @param manager
-     * @param simulator
+     * @param manager HistoryManagerDEVS; manager
+     * @param simulator OTSDEVSSimulatorInterface; simulator
      */
     public static void set(final HistoryManagerDEVS manager, final OTSDEVSSimulatorInterface simulator)
     {
-        MANAGERS.put(simulator.getReplication(), manager);
+        managers.put(simulator.getReplication(), manager);
     }
     
     /**
      * Clear central manager. If this is not done in batch simulations, this forms a memory leak. 
-     * @param simulator
+     * @param simulator OTSDEVSSimulatorInterface; simulator
      */
     public static void clear(final OTSDEVSSimulatorInterface simulator)
     {
-        MANAGERS.remove(simulator.getReplication());
+        managers.remove(simulator.getReplication());
     }
     // END OF HACK /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

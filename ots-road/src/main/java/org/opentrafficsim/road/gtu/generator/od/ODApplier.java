@@ -365,7 +365,7 @@ public final class ODApplier
      * @param node Node; origin node
      * @return common ancestor {@code LinkType} of all links connected to the node, moving through connectors
      */
-    private final static LinkType getLinkTypeFromNode(final Node node)
+    private static LinkType getLinkTypeFromNode(final Node node)
     {
         return getLinkTypeFromNode0(node, false);
     }
@@ -376,7 +376,7 @@ public final class ODApplier
      * @param ignoreConnectors boolean; ignore connectors
      * @return common ancestor {@code LinkType} of all links connected to the node, moving through connectors
      */
-    private final static LinkType getLinkTypeFromNode0(final Node node, final boolean ignoreConnectors)
+    private static LinkType getLinkTypeFromNode0(final Node node, final boolean ignoreConnectors)
     {
         LinkType linkType = null;
         for (Link link : node.getLinks())

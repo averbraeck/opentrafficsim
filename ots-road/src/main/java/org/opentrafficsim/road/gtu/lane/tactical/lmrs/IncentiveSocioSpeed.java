@@ -18,7 +18,6 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
@@ -67,7 +66,8 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
         double dLeft = 0;
         double dRight = 0;
         Speed vCong = parameters.getParameter(VCONG);
-        if (perception.getPerceptionCategory(TrafficPerception.class).getSpeed(RelativeLane.CURRENT).gt(vCong))
+        Speed ownSpeed = perception.getPerceptionCategoryOrNull(EgoPerception.class).getSpeed();
+        if (ownSpeed.gt(vCong))
         {
             double sigma = parameters.getParameter(SOCIO);
             NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
@@ -97,7 +97,6 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
                 {
                     double rho;
                     PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.LEFT);
-                    Speed vCur = perception.getPerceptionCategoryOrNull(TrafficPerception.class).getSpeed(RelativeLane.CURRENT);
                     if (leaders != null && !leaders.isEmpty())
                     {
                         HeadwayGTU leader = leaders.first();
@@ -105,7 +104,8 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
                                 "Could not obtain GTU from perception.");
                         Speed vGain = parameters.getParameter(VGAIN);
                         Length x0 = parameters.getParameter(LOOKAHEAD);
-                        rho = Tailgating.socialPressure(vCur, vCong, vDes, leader.getSpeed(), vGain, leader.getDistance(), x0);
+                        rho = Tailgating.socialPressure(ownSpeed, vCong, vDes, leader.getSpeed(), vGain, leader.getDistance(),
+                                x0);
                     }
                     else
                     {
@@ -114,9 +114,8 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
                     HeadwayGTU follower = followers.first();
                     Speed vGainFollower = follower.getParameters().getParameter(VGAIN);
                     Length x0Follower = follower.getParameters().getParameter(LOOKAHEAD);
-                    Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-                    double rhoFollower = Tailgating.socialPressure(vCur, vCong, follower.getDesiredSpeed(), ownSpeed,
-                            vGainFollower, follower.getDistance(), x0Follower);
+                    double rhoFollower = Tailgating.socialPressure(follower.getSpeed(), vCong, follower.getDesiredSpeed(),
+                            ownSpeed, vGainFollower, follower.getDistance(), x0Follower);
                     if (rhoFollower * sigma > rho)
                     {
                         dLeft = -rhoFollower * sigma;
@@ -133,5 +132,5 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
     {
         return "IncentiveSocioSpeed";
     }
-
+    
 }
