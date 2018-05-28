@@ -25,6 +25,7 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
+import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
@@ -245,7 +246,7 @@ public class ODOptions
 
         /** {@inheritDoc} */
         @Override
-        public boolean equals(Object obj)
+        public boolean equals(final Object obj)
         {
             if (this == obj)
             {
@@ -305,7 +306,7 @@ public class ODOptions
         /**
          * Constructor.
          */
-        public OptionSet()
+        OptionSet()
         {
             //
         }
@@ -333,6 +334,7 @@ public class ODOptions
          * @param category C; category
          * @param option Option&lt;K&gt;; option
          * @return option value for the category
+         * @param <K> value type
          */
         @SuppressWarnings("unchecked")
         public <K> K get(final C category, final Option<K> option)
@@ -496,7 +498,7 @@ public class ODOptions
                 route = this.routeSupplier.getRoute(origin, destination, gtuType);
             }
             return new LaneBasedGTUCharacteristics(gtuCharacteristics, laneBasedStrategicalPlannerFactory, route, origin,
-                    destination);
+                    destination, VehicleModel.MINMAX);
         }
     }
 
@@ -515,7 +517,7 @@ public class ODOptions
     public interface StrategicalPlannerFactorySupplierOD
     {
         /** Default LMRS model. */
-        public static StrategicalPlannerFactorySupplierOD LMRS = new StrategicalPlannerFactorySupplierOD()
+        StrategicalPlannerFactorySupplierOD LMRS = new StrategicalPlannerFactorySupplierOD()
         {
             @Override
             public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,

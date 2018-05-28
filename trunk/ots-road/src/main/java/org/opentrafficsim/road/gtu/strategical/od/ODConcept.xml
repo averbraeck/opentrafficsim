@@ -1,83 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<DEMAND xmlns="http://www.opentrafficsim.org/ots" xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<OD xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../../../../../../ots-parser-xml/src/main/resources/ots-demand.xsd"
-  xmlns:xi="http://www.w3.org/2001/XInclude" NAME="RandstadMaandagOchtend" GLOBALINTERPOLATION="STEPWISE">
+  NAME="NAME" GLOBALINTERPOLATION="STEPWISE" GLOBALFACTOR="1.0">
+  <!-- NAME: any name for the OD [optional] -->
+  <!-- GLOBALINTERPOLATION: either "STEPWISE" or "LINEAR" (default) [optional] -->
+  <!-- GLOBALFACTOR: factor on all demand, positive value or positive percentage [optional] -->
 
-  <LEVEL TIME="300s">300veh/h</LEVEL>
-
-  <!-- TODO: Origin demand + split fractions. -->
-  <!-- TODO: Centroid, divide demand over connectors. -->
-
-  <!-- All fields required -->
-  <!-- TYPE either "DEMAND" or "TRIPS", use ODMatrix or ODMatrixTrips respectively -->
-  <!-- GLOBALINTERPOLATION either "STEPWISE" or "LINEAR" -->
-
-  <!-- Fractions for categories are optional. They can be overridden for specific OD combinations. -->
-  <!-- Fraction as value >= 0.0 and <= 1.0. -->
-  <CATEGORY NAME="CAR" FRACTION="85%" GTUTYPE="CAR" ROUTE="AB" />
-  <CATEGORY NAME="TRUCK" FRACTION="15.0%" GTUTYPE="TRUCK" />
-
-  <!-- Optional (just use empty TimeVector in constructor of ODMatrix if not specified) -->
+  <!-- GLOBALTIME: optional, if given at least 2 TIME values -->
   <GLOBALTIME>
     <!-- At least 2 -->
-    <!-- With a set of time units -->
     <TIME VALUE="0s" />
-    <TIME VALUE="900s" />
     <TIME VALUE="1h" />
   </GLOBALTIME>
 
-  <!-- ================================================ -->
-  <!-- ==================== DEMAND ==================== -->
-  <!-- ================================================ -->
+  <!-- CATEGORY: required to separate demand among GTU types, routes or lanes [optional] -->
+  <!-- NAME: used to refer to the category in DEMAND tag [required] -->
+  <!-- GTUTYPE: id of GTU type as defined with network or in code [optional*] -->
+  <!-- ROUTE: id of route [optional*] -->
+  <!-- LANE: full id (linkid.laneid) of lane [optional*] -->
+  <!-- * at least one of these three needs to be given, all categories need the same specified -->
+  <!-- FACTOR: factor of demand for category, e.g. to use 10% trucks overall [optional] -->
+  <CATEGORY NAME="CAR" GTUTYPE="CAR" ROUTE="AB" FACTOR="85%" />
 
-  <!-- Nodes required, should be part of ODMatrix -->
-  <!-- CATEGORY should be defined in XML (but what if that is by a factory...?) -->
-  <!-- CATEGORY optional, as it can also be determined by fractions per category. If no categorization is defined, use Category.UNCATEGORIZED -->
+  <!-- DEMAND: defines demand for one option in the OD -->
+  <!-- ORIGIN: id of origin node [required] -->
+  <!-- DESTINATION: id of destination node [required] -->
+  <!-- CATEGORY: required when using categories [optional] -->
+  <!-- INTERPOLATION: interpolation, if different from global [optional] -->
+  <!-- FACTOR: factor applied to this demand, positive value or positive percentage [optional] -->
+  <!-- LEVEL: demand level may be omitted if a category is specified, and another DEMAND tag without category for the same ORIGIN 
+    and DESTINATION defines demand. This can be useful to e.g. define one demand pattern, and spread this over categories using factors. 
+    [optional] -->
+  <!-- TIME: if not given the global time will be used [optional] -->
+  <!-- VALUE: either a frequency in veh/[time unit], or positive value or positive percentage. The latter can only be used if absolute 
+    frequencies are defined in another DEMAND tag between the same ORIGIN and DESTINATION. All LEVEL tags in one sequence need to be 
+    either intensity, or a factor. [required] -->
+  <DEMAND ORIGIN="A" DESTINATION="B" CATEGORY="CAR" INTERPOLATION="LINEAR" FACTOR="1.15">
+    <LEVEL TIME="0s" VALUE="1800veh/h" />
+    <LEVEL TIME="2h" VALUE="1500veh/h" />
+  </DEMAND>
 
-  <!-- Demand is defined either in flow, or in trips -->
-  <!-- One can deviate from global time/interpolation, or not -->
-  <!-- This gives 4 combinations of required (or forbidden) input, of which examples are below -->
+  <!-- Example using factors. -->
 
-  <!-- Demand in "veh/h", "veh/s", adhere to global time and interpolation -->
-  <DEMAND ORIGIN="A" DESTINATION="B" CATEGORY="CAR">
-    <!-- Specifying TIME forbidden if no INTERPOLATION is specified -->
-    <LEVEL VALUE="0.5veh/s" />
+  <!-- Main demand pattern between A and C; will not result in demand itself. -->
+  <!-- All factors are applied, so we can also add a 1.15 here. -->
+  <DEMAND ORIGIN="A" DESTINATION="C" INTERPOLATION="LINEAR" FACTOR="1.15">
+    <LEVEL VALUE="500veh/h" />
     <LEVEL VALUE="1500veh/h" />
-    <LEVEL VALUE="0veh/h" />
-    <!-- Same length as GLOBALTIME -->
   </DEMAND>
+  <!-- 85% to cars (factor in CATEGORY) -->
+  <DEMAND ORIGIN="A" DESTINATION="C" CATEGORY="CAR" />
+  <!-- Trucks with variable factor, additional to the CATEGORY factor -->
+  <DEMAND ORIGIN="A" DESTINATION="C" CATEGORY="TRUCK">
+    <LEVEL VALUE="0.1" />
+    <LEVEL VALUE="0.15" />
+  </DEMAND>
+  <!-- Busses with a constant, but additional, factor to the CATEGORY factor of busses -->
+  <DEMAND ORIGIN="A" DESTINATION="C" CATEGORY="BUS" FACTOR="150%" />
 
-  <!-- Demand in "veh/h", "veh/s", overrule global time and interpolation -->
-  <!-- INTERPOLATION either "STEPWISE" or "LINEAR" -->
-  <DEMAND ORIGIN="A" DESTINATION="E" CATEGORY="CAR" INTERPOLATION="LINEAR">
-    <!-- LEVELs should be in "veh/h", "veh/s" -->
-    <!-- DEMAND may also be used if ODMATRIX.TYPE="TRIPS" -->
-    <!-- ODMatrix.putDemandVector() has two versions (one with time and interpolation, and one without) -->
-    <!-- TIME required if INTERPOLATION is specified -->
-    <LEVEL TIME="0s" VALUE="0.5veh/s" />
-    <LEVEL TIME="3600s" VALUE="1500veh/h" />
-  </DEMAND>
-
-  <!-- We can also define demand per OD combination, but not specific to any category. This is done as above, but without specifying 
-    a categorization. Then, if there is a categorization, percentages need to be defined. -->
-  <!-- Overall demand for an OD combination can be defined by not specifying a categorization, even if a categorization is defined. 
-    This can also be defined in number of trips. -->
-  <!-- Specify (overrule) 20% truck from A to B, independent of time. -->
-  <DEMAND ORIGIN="A" DESTINATION="B" CATEGORY="TRUCK" FRACTION="20%" />
-  <!-- Specify (overrule) % truck from A to B, dependent on time, adhering to global time vector. -->
-  <DEMAND ORIGIN="A" DESTINATION="B" CATEGORY="TRUCK">
-    <LEVEL VALUE="0.20" />
-    <LEVEL VALUE="0.10" />
-    <!-- One less value than the global time vector, 3 time instances makes 2 periods -->
-  </DEMAND>
-  <!-- Specify (overrule) % truck from A to B, dependent on time, with own time vector. -->
-  <DEMAND ORIGIN="A" DESTINATION="B" CATEGORY="TRUCK">
-    <LEVEL TIME="0s" VALUE="0.20" />
-    <LEVEL TIME="1200s" VALUE="0.10" />
-    <LEVEL TIME="1h" VALUE="0.0" />
-    <!-- A final time of the last period is always required, the value is not important -->
-  </DEMAND>
-
+  <!-- Note: using factors and dynamic factors is fully flexible, which provides no guarantees as to a certain percentage of all 
+    traffic being e.g. cars, whether factors add up to 1.0, etc. -->
   <!-- It is not required to specify all Origin/Destination/Category combinations, what is not specified is assumed 0 by ODMatrix -->
 
-</DEMAND>
+</OD>

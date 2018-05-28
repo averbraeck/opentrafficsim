@@ -4,12 +4,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import nl.tudelft.simulation.language.Throw;
 
 /**
- * Utility class to cache data based on a variable (between cache instances) number of keys of any type.
+ * Utility class to cache data based on a variable (between cache instances) number of keys of any type. This replaces nested
+ * {@code Map}s.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -81,6 +83,41 @@ public class NestedCache<T>
         }
         // return from sub-NestedCache with 1 less key
         return ((NestedCache<T>) sub).getValue(supplier, keys.subList(1, keys.size()));
+    }
+    
+    /**
+     * Return set of key objects on this level.
+     * @return Set; set of key objects on this level
+     */
+    public Set<Object> getKeys()
+    {
+        return this.map.keySet();
+    }
+    
+    /**
+     * Return branch for key.
+     * @param key Object; key
+     * @return NestedCache; branch for key
+     * @throws IllegalStateException; if this is not a branch level
+     */
+    @SuppressWarnings("unchecked")
+    public NestedCache<T> getChild(final Object key)
+    {
+        Throw.when(this.types.length < 2, IllegalStateException.class, "Children can only be obtained on branch levels.");
+        return (NestedCache<T>) this.map.get(key);
+    }
+    
+    /**
+     * Return value for key.
+     * @param key Object; key
+     * @return T; value for key
+     * @throws IllegalStateException; if this is not a leaf level
+     */
+    @SuppressWarnings("unchecked")
+    public T getValue(final Object key)
+    {
+        Throw.when(this.types.length != 1, IllegalStateException.class, "Values can only be obtained on leaf levels.");
+        return (T) this.map.get(key);
     }
 
 }

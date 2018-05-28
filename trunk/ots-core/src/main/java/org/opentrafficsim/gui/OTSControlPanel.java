@@ -52,6 +52,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.simulationengine.Resource;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -63,7 +64,6 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * Peter's improved simulation control panel.
@@ -138,6 +138,7 @@ public class OTSControlPanel extends JPanel
         this.timeWarpPanel = new TimeWarpPanel(0.1, 1000, 1, 3, simulator);
         buttonPanel.add(this.timeWarpPanel);
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", "Reset the simulation", false));
+        /** Label with appearance control. */
         class AppearanceControlLabel extends JLabel implements AppearanceControl
         {
             /** */
@@ -188,15 +189,16 @@ public class OTSControlPanel extends JPanel
     private JButton makeButton(final String name, final String iconPath, final String actionCommand, final String toolTipText,
             final boolean enabled)
     {
+        /** Button with appearance control. */
         class AppearanceControlButton extends JButton implements AppearanceControl
         {
             /** */
             private static final long serialVersionUID = 20180206L;
 
             /**
-             * @param loadIcon
+             * @param loadIcon icon
              */
-            public AppearanceControlButton(final Icon loadIcon)
+            AppearanceControlButton(final Icon loadIcon)
             {
                 super(loadIcon);
             }
@@ -227,9 +229,9 @@ public class OTSControlPanel extends JPanel
     {
         try
         {
-            return new ImageIcon(URLResource.getResource(iconPath));
+            return new ImageIcon(ImageIO.read(Resource.getResourceAsStream(iconPath)));
         }
-        catch (@SuppressWarnings("unused") NullPointerException npe)
+        catch (@SuppressWarnings("unused") NullPointerException | IOException npe)
         {
             System.err.println("Could not load icon from path " + iconPath);
             return null;
@@ -245,7 +247,7 @@ public class OTSControlPanel extends JPanel
     {
         try
         {
-            return new ImageIcon(GrayFilter.createDisabledImage(ImageIO.read(URLResource.getResource(iconPath))));
+            return new ImageIcon(GrayFilter.createDisabledImage(ImageIO.read(Resource.getResourceAsStream(iconPath))));
         }
         catch (@SuppressWarnings("unused") NullPointerException | IOException e)
         {

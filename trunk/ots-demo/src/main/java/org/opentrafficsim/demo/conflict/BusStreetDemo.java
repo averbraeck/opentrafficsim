@@ -54,6 +54,7 @@ import org.opentrafficsim.road.gtu.generator.TTCRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectBusStopPerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
@@ -517,7 +518,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             GTUCharacteristics gtuCharacteristics = new GTUCharacteristics(gtuType, length, width, maximumSpeed,
                     Acceleration.createSI(3.0), Acceleration.createSI(-8.0), length.multiplyBy(0.5));
 
-            return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route, null, null);
+            return new LaneBasedGTUCharacteristics(gtuCharacteristics, this.plannerFactory, route, null, null,
+                    VehicleModel.MINMAX);
         }
 
     }

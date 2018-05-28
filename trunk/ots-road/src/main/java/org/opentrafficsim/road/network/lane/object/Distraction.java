@@ -35,7 +35,7 @@ public class Distraction extends AbstractLaneBasedObject
      * @param longitudinalPosition Length; longitudinal position
      * @param simulator OTSSimulatorInterface; simulator
      * @param profile DistractionProfile; distraction profile
-     * @throws NetworkException
+     * @throws NetworkException on network exception
      */
     public Distraction(final String id, final Lane lane, final Length longitudinalPosition,
             final OTSSimulatorInterface simulator, final DistractionProfile profile) throws NetworkException
@@ -83,11 +83,11 @@ public class Distraction extends AbstractLaneBasedObject
          * @param distance Distance to distraction; negative when approaching
          * @return Double; level of distraction (task-demand), or {@code null} if the distraction is no longer important
          */
-        public Double getDistraction(Length distance);
+        Double getDistraction(Length distance);
     }
 
     /**
-     * Distraction profile with trapezoid shape. The constant part of from the location of the distraction downstream.
+     * Distraction profile with trapezoid shape. The constant part is from the location of the distraction downstream.
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -98,7 +98,7 @@ public class Distraction extends AbstractLaneBasedObject
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public class TrapezoidProfile implements DistractionProfile
+    public static class TrapezoidProfile implements DistractionProfile
     {
         /** Maximum distraction. */
         private final double maxDistraction;

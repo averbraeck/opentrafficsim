@@ -2,10 +2,7 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import java.awt.Color;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -14,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
@@ -24,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -59,13 +55,13 @@ public class Detector extends AbstractSensor
     private static final long serialVersionUID = 20180312L;
 
     /** Trigger event. Payload: [LaneBasedGTU gtu]. */
-    public final static EventType DUAL_LOOP_DETECTOR_TRIGGERED = new EventType("DUAL_LOOP_DETECTOR.TRIGGER");
+    public static final EventType DETECTOR_TRIGGERED = new EventType("DUAL_LOOP_DETECTOR.TRIGGER");
 
-    /** Aggregation event. Payload: [Frequency flow, Speed timeMeanSpeed, Speed harmonicMeanSpeed]/ */
-    public final static EventType DUAL_LOOP_DETECTOR_AGGREGATE = new EventType("DUAL_LOOP_DETECTOR.AGGREGATE");
+    /** Aggregation event. Payload: [Frequency flow, other attached measurements]/ */
+    public static final EventType DETECTOR_AGGREGATE = new EventType("DUAL_LOOP_DETECTOR.AGGREGATE");
 
     /** Vehicles only compatibility. */
-    static Compatible compatible = new Compatible()
+    private static Compatible compatible = new Compatible()
     {
         /** {@inheritDoc} */
         @Override
@@ -76,7 +72,7 @@ public class Detector extends AbstractSensor
     };
 
     /** Mean speed measurement. */
-    public static DetectorMeasurement<Double, Speed> MEAN_SPEED = new DetectorMeasurement<Double, Speed>()
+    public static final DetectorMeasurement<Double, Speed> MEAN_SPEED = new DetectorMeasurement<Double, Speed>()
     {
         @Override
         public Double identity()
@@ -128,7 +124,7 @@ public class Detector extends AbstractSensor
     };
 
     /** Harmonic mean speed measurement. */
-    public static DetectorMeasurement<Double, Speed> HARMONIC_MEAN_SPEED = new DetectorMeasurement<Double, Speed>()
+    public static final DetectorMeasurement<Double, Speed> HARMONIC_MEAN_SPEED = new DetectorMeasurement<Double, Speed>()
     {
         @Override
         public Double identity()
@@ -180,7 +176,7 @@ public class Detector extends AbstractSensor
     };
 
     /** Occupancy measurement. */
-    public static DetectorMeasurement<Double, Double> OCCUPANCY = new DetectorMeasurement<Double, Double>()
+    public static final DetectorMeasurement<Double, Double> OCCUPANCY = new DetectorMeasurement<Double, Double>()
     {
         @Override
         public Double identity()
@@ -232,7 +228,7 @@ public class Detector extends AbstractSensor
     };
 
     /** Passages measurement. */
-    public static DetectorMeasurement<List<Double>, List<Double>> PASSAGES =
+    public static final DetectorMeasurement<List<Double>, List<Double>> PASSAGES =
             new DetectorMeasurement<List<Double>, List<Double>>()
             {
                 @Override
@@ -299,6 +295,9 @@ public class Detector extends AbstractSensor
     /** Detector length. */
     private final Length length;
 
+    /** Period number. */
+    private int period = 1;
+
     /** Count in current period. */
     private int periodCount = 0;
 
@@ -306,7 +305,7 @@ public class Detector extends AbstractSensor
     private int overallCount = 0;
 
     /** Cumulative measurements. */
-    public final Map<DetectorMeasurement<?, ?>, Object> cumulDataMap = new LinkedHashMap<>();
+    private final Map<DetectorMeasurement<?, ?>, Object> cumulDataMap = new LinkedHashMap<>();
 
     /**
      * Constructor for regular Dutch dual-loop detectors measuring flow and mean speed aggregated over 60s.
@@ -314,7 +313,7 @@ public class Detector extends AbstractSensor
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
      * @param simulator OTSDEVSSimulatorInterface; simulator
-     * @throws NetworkException
+     * @throws NetworkException on network exception
      */
     public Detector(final String id, final Lane lane, final Length longitudinalPosition,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException
@@ -332,7 +331,7 @@ public class Detector extends AbstractSensor
      * @param simulator OTSDEVSSimulatorInterface; simulator
      * @param aggregation Duration; aggregation period
      * @param measurements DetectorMeasurement...; measurements to obtain
-     * @throws NetworkException
+     * @throws NetworkException on network exception
      */
     public Detector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
             final OTSDEVSSimulatorInterface simulator, final Duration aggregation,
@@ -342,7 +341,7 @@ public class Detector extends AbstractSensor
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
         this.aggregation = aggregation;
-        Try.execute(() -> simulator.scheduleEventRel(aggregation, this, this, "aggregate", null), "");
+        Try.execute(() -> simulator.scheduleEventAbs(Time.createSI(aggregation.si), this, this, "aggregate", null), "");
         for (DetectorMeasurement<?, ?> measurement : measurements)
         {
             this.cumulDataMap.put(measurement, measurement.identity());
@@ -355,18 +354,29 @@ public class Detector extends AbstractSensor
         Try.execute(() -> new SensorAnimation(this, longitudinalPosition, simulator, Color.BLUE), "Unable to create animation");
 
         // rear detector
+        /** Abstract sensor. */
         class RearDetector extends AbstractSensor
         {
             /** */
             private static final long serialVersionUID = 20180315L;
 
-            public RearDetector(final String idRear, final Lane laneRear, final Length longitudinalPositionRear,
+            /**
+             * Constructor.
+             * @param idRear String; id
+             * @param laneRear Lane; lane
+             * @param longitudinalPositionRear Length; position
+             * @param simulatorRear OTSDEVSSimulatorInterface; simulator
+             * @throws NetworkException on network exception
+             */
+            @SuppressWarnings("synthetic-access")
+            RearDetector(final String idRear, final Lane laneRear, final Length longitudinalPositionRear,
                     final OTSDEVSSimulatorInterface simulatorRear) throws NetworkException
             {
                 super(idRear, laneRear, longitudinalPositionRear, RelativePosition.REAR, simulatorRear, compatible);
             }
 
             /** {@inheritDoc} */
+            @SuppressWarnings("synthetic-access")
             @Override
             protected void triggerResponse(final LaneBasedGTU gtu)
             {
@@ -378,8 +388,8 @@ public class Detector extends AbstractSensor
 
             /** {@inheritDoc} */
             @Override
-            public AbstractSensor clone(CrossSectionElement newCSE, OTSSimulatorInterface newSimulator, boolean animation)
-                    throws NetworkException
+            public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+                    final boolean animation) throws NetworkException
             {
                 return null; // Detector constructor creates new clone
             }
@@ -409,10 +419,9 @@ public class Detector extends AbstractSensor
         {
             accumulate(measurement, gtu, true);
         }
-        if (this.listeners.containsKey(DUAL_LOOP_DETECTOR_TRIGGERED))
+        if (this.listeners.containsKey(DETECTOR_TRIGGERED))
         {
-            this.fireTimedEvent(DUAL_LOOP_DETECTOR_TRIGGERED, new Object[] { gtu },
-                    getSimulator().getSimulatorTime().getTime());
+            this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] { gtu }, getSimulator().getSimulatorTime().getTime());
         }
     }
 
@@ -421,6 +430,7 @@ public class Detector extends AbstractSensor
      * @param measurement DetectorMeasurement; measurement to accumulate
      * @param gtu LaneBasedGTU; gtu
      * @param front boolean; triggered by front entering (or rear leaving when false)
+     * @param <C> accumulated type
      */
     @SuppressWarnings("unchecked")
     <C> void accumulate(final DetectorMeasurement<C, ?> measurement, final LaneBasedGTU gtu, final boolean front)
@@ -439,7 +449,7 @@ public class Detector extends AbstractSensor
      * Aggregation.
      */
     @SuppressWarnings("unused")
-    private final void aggregate()
+    private void aggregate()
     {
         Frequency frequency = Frequency.createSI(this.periodCount / this.aggregation.si);
         this.count.add(frequency);
@@ -449,7 +459,7 @@ public class Detector extends AbstractSensor
             this.cumulDataMap.put(measurement, measurement.identity());
         }
         this.periodCount = 0;
-        if (this.listeners.containsKey(DUAL_LOOP_DETECTOR_AGGREGATE))
+        if (this.listeners.containsKey(DETECTOR_AGGREGATE))
         {
             Object[] data = new Object[this.dataMap.size() + 1];
             data[0] = frequency;
@@ -460,9 +470,12 @@ public class Detector extends AbstractSensor
                 data[i] = list.get(list.size() - 1);
                 i++;
             }
-            this.fireTimedEvent(DUAL_LOOP_DETECTOR_AGGREGATE, data, getSimulator().getSimulatorTime().getTime());
+            this.fireTimedEvent(DETECTOR_AGGREGATE, data, getSimulator().getSimulatorTime().getTime());
         }
-        Try.execute(() -> getSimulator().scheduleEventRel(this.aggregation, this, this, "aggregate", null), "");
+        this.period++;
+        double t = this.aggregation.si * this.period;
+        Time time = Time.createSI(t);
+        Try.execute(() -> getSimulator().scheduleEventAbs(time, this, this, "aggregate", null), "");
     }
 
     /**
@@ -470,6 +483,8 @@ public class Detector extends AbstractSensor
      * @param measurement DetectorMeasurement; measurement to aggregate
      * @param cnt int; number of GTUs
      * @param agg Duration; aggregation period
+     * @param <C> accumulated type
+     * @param <A> aggregated type
      */
     @SuppressWarnings("unchecked")
     private <C, A> void aggregate(final DetectorMeasurement<C, A> measurement, final int cnt, final Duration agg)
@@ -483,6 +498,8 @@ public class Detector extends AbstractSensor
      * @param cnt int; number of GTUs
      * @param agg Duration; aggregation period
      * @return A; aggregated value of the measurement
+     * @param <C> accumulated type
+     * @param <A> aggregated type
      */
     @SuppressWarnings("unchecked")
     private <C, A> A getAggregateValue(final DetectorMeasurement<C, A> measurement, final int cnt, final Duration agg)
@@ -522,7 +539,7 @@ public class Detector extends AbstractSensor
      * @param file String; file
      * @param periodic boolean; periodic data
      */
-    public final static void writeToFile(final OTSNetwork network, final String file, final boolean periodic)
+    public static final void writeToFile(final OTSNetwork network, final String file, final boolean periodic)
     {
         writeToFile(network, file, periodic, "%.3f", CompressionMethod.ZIP);
     }
@@ -534,39 +551,15 @@ public class Detector extends AbstractSensor
      * @param periodic boolean; periodic data
      * @param format String; number format, as used in {@code String.format()}
      * @param compression how to compress the data
+     * @param <C> accumulated type
      */
     @SuppressWarnings("unchecked")
-    public final static <C> void writeToFile(final OTSNetwork network, String file, final boolean periodic, final String format,
-            final CompressionMethod compression)
+    public static final <C> void writeToFile(final OTSNetwork network, final String file, final boolean periodic,
+            final String format, final CompressionMethod compression)
     {
-        String name = null;
-        if (compression.equals(CompressionMethod.ZIP))
-        {
-            File f = new File(file);
-            name = f.getName();
-            if (!file.endsWith(".zip"))
-            {
-                file += ".zip";
-            }
-        }
-        FileOutputStream fos = null;
-        ZipOutputStream zos = null;
-        OutputStreamWriter osw = null;
-        BufferedWriter bw = null;
+        BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP));
         try
         {
-            fos = new FileOutputStream(file);
-            if (compression.equals(CompressionMethod.ZIP))
-            {
-                zos = new ZipOutputStream(fos);
-                zos.putNextEntry(new ZipEntry(name));
-                osw = new OutputStreamWriter(zos);
-            }
-            else
-            {
-                osw = new OutputStreamWriter(fos);
-            }
-            bw = new BufferedWriter(osw);
             // gather all DetectorMeasurements and Detectors (sorted)
             Set<DetectorMeasurement<?, ?>> measurements = new LinkedHashSet<>();
             Set<Detector> detectors = new TreeSet<>(new Comparator<Detector>()
@@ -660,18 +653,6 @@ public class Detector extends AbstractSensor
                 {
                     bw.close();
                 }
-                if (osw != null)
-                {
-                    osw.close();
-                }
-                if (zos != null)
-                {
-                    zos.close();
-                }
-                if (fos != null)
-                {
-                    fos.close();
-                }
             }
             catch (IOException ex)
             {
@@ -685,7 +666,7 @@ public class Detector extends AbstractSensor
      * @param string String; string of number
      * @return String; string without trailing zeros
      */
-    public final static String removeTrailingZeros(final String string)
+    public static final String removeTrailingZeros(final String string)
     {
         return string.replaceFirst("\\.0*$|(\\.\\d*?)0+$", "$1");
     }
@@ -696,7 +677,7 @@ public class Detector extends AbstractSensor
      * @param format String; format string
      * @return formatted string of doubles
      */
-    public final static String printListDouble(final List<Double> list, final String format)
+    public static final String printListDouble(final List<Double> list, final String format)
     {
         StringBuilder str = new StringBuilder("[");
         String sep = "";
@@ -791,7 +772,7 @@ public class Detector extends AbstractSensor
          * Returns the value name.
          * @return String; value name
          */
-        public String getName();
+        String getName();
 
         /**
          * Returns a string representation of the aggregate result.
@@ -799,13 +780,14 @@ public class Detector extends AbstractSensor
          * @param format String; format string
          * @return String; string representation of the aggregate result
          */
-        public String stringValue(A aggregate, String format);
+        String stringValue(A aggregate, String format);
     }
 
     /**
      * Measurement of platoon sizes based on time between previous GTU exit and GTU entry.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 mrt. 2018 <br>
@@ -815,7 +797,7 @@ public class Detector extends AbstractSensor
      */
     public static class PlatoonSizes implements DetectorMeasurement<PlatoonMeasurement, List<Integer>>
     {
-        
+
         /** Maximum time between two vehicles that are considered to be in the same platoon. */
         private final Duration threshold;
 
@@ -836,6 +818,7 @@ public class Detector extends AbstractSensor
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public PlatoonMeasurement accumulateEntry(final PlatoonMeasurement cumulative, final LaneBasedGTU gtu,
                 final Detector loopDetector)
@@ -859,6 +842,7 @@ public class Detector extends AbstractSensor
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public PlatoonMeasurement accumulateExit(final PlatoonMeasurement cumulative, final LaneBasedGTU gtu,
                 final Detector loopDetector)
@@ -882,6 +866,7 @@ public class Detector extends AbstractSensor
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public List<Integer> aggregate(final PlatoonMeasurement cumulative, final int count, final Duration aggregation)
         {
@@ -919,7 +904,8 @@ public class Detector extends AbstractSensor
     /**
      * Cumulative information for platoon size measurement.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 mrt. 2018 <br>
@@ -930,16 +916,16 @@ public class Detector extends AbstractSensor
     static class PlatoonMeasurement
     {
         /** GTU's counted so far in the current platoon. */
-        int count = 0;
+        private int count = 0;
 
         /** Time the last GTU exited the detector. */
-        Time lastExitTime = Time.createSI(Double.NEGATIVE_INFINITY);
+        private Time lastExitTime = Time.createSI(Double.NEGATIVE_INFINITY);
 
         /** Stored sizes of earlier platoons. */
-        List<Integer> platoons = new ArrayList<>();
-        
+        private List<Integer> platoons = new ArrayList<>();
+
         /** GTU's currently on the detector, some may have left by a lane change. */
-        List<LaneBasedGTU> enteredGTUs = new ArrayList<>();
+        private List<LaneBasedGTU> enteredGTUs = new ArrayList<>();
     }
 
 }

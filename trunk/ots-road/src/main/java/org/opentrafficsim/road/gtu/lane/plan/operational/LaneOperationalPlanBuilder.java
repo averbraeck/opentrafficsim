@@ -49,9 +49,9 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class LaneOperationalPlanBuilder
+public final class LaneOperationalPlanBuilder // class package private for scheduling static method on an instance
 {
-
+    
     /** Use instant lane changes. */
     public static boolean INSTANT_LANE_CHANGES = false;
 
@@ -67,7 +67,7 @@ public final class LaneOperationalPlanBuilder
      */
     private static final Length MINIMUM_CREDIBLE_PATH_LENGTH = new Length(0.001, LengthUnit.METER);
 
-    /** Private constructor. */
+    /** Constructor. */
     LaneOperationalPlanBuilder()
     {
         // class should not be instantiated
@@ -266,10 +266,10 @@ public final class LaneOperationalPlanBuilder
             return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, false);
         }
 
-        Duration brakingTime = brakingTime(acceleration, startSpeed, timeStep);
-        Length distance =
-                Length.createSI(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si);
-        List<Segment> segmentList = createAccelerationSegments(startSpeed, acceleration, brakingTime, timeStep);
+        Acceleration acc = gtuCapabilities(acceleration, gtu);
+        Duration brakingTime = brakingTime(acc, startSpeed, timeStep);
+        Length distance = Length.createSI(startSpeed.si * brakingTime.si + .5 * acc.si * brakingTime.si * brakingTime.si);
+        List<Segment> segmentList = createAccelerationSegments(startSpeed, acc, brakingTime, timeStep);
         if (distance.le(MINIMUM_CREDIBLE_PATH_LENGTH))
         {
             return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, false);
@@ -341,10 +341,10 @@ public final class LaneOperationalPlanBuilder
         // on successive calls, use laneChange.getDirection() as laneChangeDirectionality is NONE (i.e. no LC initiated)
         LateralDirectionality direction = laneChange.isChangingLane() ? laneChange.getDirection() : laneChangeDirectionality;
 
-        Duration brakingTime = brakingTime(acceleration, startSpeed, timeStep);
-        Length planDistance =
-                Length.createSI(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si);
-        List<Segment> segmentList = createAccelerationSegments(startSpeed, acceleration, brakingTime, timeStep);
+        Acceleration acc = gtu.getVehicleModel().boundAcceleration(acceleration, gtu);
+        Duration brakingTime = brakingTime(acc, startSpeed, timeStep);
+        Length planDistance = Length.createSI(startSpeed.si * brakingTime.si + .5 * acc.si * brakingTime.si * brakingTime.si);
+        List<Segment> segmentList = createAccelerationSegments(startSpeed, acc, brakingTime, timeStep);
 
         try
         {
@@ -384,6 +384,19 @@ public final class LaneOperationalPlanBuilder
         {
             throw new RuntimeException("Error during creation of lane change plan.", exception);
         }
+    }
+
+    /**
+     * Makes the acceleration adhere to GTU capabilities.
+     * @param acceleration Acceleration; desired acceleration
+     * @param gtu GTU; gtu
+     * @return Acceleration; possible acceleration
+     */
+    private static Acceleration gtuCapabilities(final Acceleration acceleration, final LaneBasedGTU gtu)
+    {
+        return acceleration;// .gt(gtu.getMaximumDeceleration())
+        // ? (acceleration.lt(gtu.getMaximumAcceleration()) ? acceleration : gtu.getMaximumAcceleration())
+        // : gtu.getMaximumDeceleration();
     }
 
     /**

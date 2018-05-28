@@ -18,11 +18,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
 
@@ -266,21 +263,28 @@ public class ODMatrix implements Serializable, Identifiable
             final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation, final double fraction)
     {
         Throw.whenNull(demand, "Demand data may not be null.");
-        double[] in = demand.getValuesInUnit();
-        double[] scaled = new double[in.length];
-        for (int i = 0; i < in.length; i++)
-        {
-            scaled[i] = in[i] * fraction;
-        }
         FrequencyVector demandScaled;
-        try
+        if (fraction == 1.0)
         {
-            demandScaled = new FrequencyVector(scaled, demand.getUnit(), demand.getStorageType());
+            demandScaled = demand;
         }
-        catch (ValueException exception)
+        else
         {
-            // cannot happen, we use an existing vector
-            throw new RuntimeException("An object was null.", exception);
+            double[] in = demand.getValuesInUnit();
+            double[] scaled = new double[in.length];
+            for (int i = 0; i < in.length; i++)
+            {
+                scaled[i] = in[i] * fraction;
+            }
+            try
+            {
+                demandScaled = new FrequencyVector(scaled, demand.getUnit(), demand.getStorageType());
+            }
+            catch (ValueException exception)
+            {
+                // cannot happen, we use an existing vector
+                throw new RuntimeException("An object was null.", exception);
+            }
         }
         putDemandVector(origin, destination, category, demandScaled, timeVector, interpolation);
     }
@@ -736,7 +740,7 @@ public class ODMatrix implements Serializable, Identifiable
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "ODMatrix [" + this.origins.size() + " origins, " + this.destinations.size() + " destinations, "
+        return "ODMatrix [" + this.id + ", " + this.origins.size() + " origins, " + this.destinations.size() + " destinations, "
                 + this.categorization + " ]";
     }
 
@@ -770,7 +774,24 @@ public class ODMatrix implements Serializable, Identifiable
                 {
                     for (Category category : categoryMap.keySet())
                     {
-                        System.out.println(String.format(format, origin.getId(), destination.getId()) + category + " | "
+                        StringBuilder catStr = new StringBuilder("[");
+                        String sep = "";
+                        for (int i = 0; i < category.getCategorization().size(); i++)
+                        {
+                            catStr.append(sep);
+                            Object obj = category.get(i);
+                            if (obj instanceof Route)
+                            {
+                                catStr.append("Route: " + ((Route) obj).getId());
+                            }
+                            else
+                            {
+                                catStr.append(obj);
+                            }
+                            sep = ", ";
+                        }
+                        catStr.append("]");
+                        System.out.println(String.format(format, origin.getId(), destination.getId()) + catStr + " | "
                                 + categoryMap.get(category).getDemandVector());
                     }
                 }
@@ -882,101 +903,6 @@ public class ODMatrix implements Serializable, Identifiable
             return false;
         }
         return true;
-    }
-
-    // TODO remove this method as soon as there is a JUNIT test
-    public static void main(final String[] args) throws ValueException, NetworkException
-    {
-
-        int aa = 10;
-        System.out.println(aa);
-        aa = aa + (aa >> 1);
-        System.out.println(aa);
-        aa = aa + (aa >> 1);
-        System.out.println(aa);
-        aa = aa + (aa >> 1);
-        System.out.println(aa);
-        aa = aa + (aa >> 1);
-        System.out.println(aa);
-
-        OTSNetwork net = new OTSNetwork("test");
-        OTSPoint3D point = new OTSPoint3D(0, 0, 0);
-        Node a = new OTSNode(net, "A", point);
-        Node b = new OTSNode(net, "Barendrecht", point);
-        Node c = new OTSNode(net, "C", point);
-        Node d = new OTSNode(net, "Delft", point);
-        Node e = new OTSNode(net, "E", point);
-        List<Node> origins = new ArrayList<>();
-        origins.add(a);
-        origins.add(b);
-        origins.add(c);
-        List<Node> destinations = new ArrayList<>();
-        destinations.add(a);
-        destinations.add(c);
-        destinations.add(d);
-        Categorization categorization = new Categorization("test", Route.class, String.class);
-        Route ac1 = new Route("AC1");
-        Route ac2 = new Route("AC2");
-        Route ad1 = new Route("AD1");
-        Route bc1 = new Route("BC1");
-        Route bc2 = new Route("BC2");
-        Route bd1 = new Route("BD1");
-
-        TimeVector timeVector = new TimeVector(new double[] { 0, 1200, 3600 }, TimeUnit.BASE_SECOND, StorageType.DENSE);
-        ODMatrix odMatrix = new ODMatrix("TestOD", origins, destinations, categorization, timeVector, Interpolation.LINEAR);
-
-        Category category = new Category(categorization, 0.0, ac1, "car");
-        odMatrix.putDemandVector(a, c, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, ac2, "car");
-        odMatrix.putDemandVector(a, c, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, ad1, "car");
-        odMatrix.putDemandVector(a, d, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, ac1, "car");
-        odMatrix.putDemandVector(a, c, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, ac2, "truck");
-        odMatrix.putDemandVector(a, c, category,
-                new FrequencyVector(new double[] { 100, 200, 500 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, ad1, "truck");
-        odMatrix.putDemandVector(a, d, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, bc1, "truck");
-        odMatrix.putDemandVector(b, c, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, bc2, "truck");
-        odMatrix.putDemandVector(b, c, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, bd1, "car");
-        odMatrix.putDemandVector(b, d, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, bc1, "car");
-        odMatrix.putDemandVector(b, c, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, bc2, "car");
-        odMatrix.putDemandVector(b, c, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-        category = new Category(categorization, 0.0, bd1, "truck");
-        odMatrix.putDemandVector(b, d, category,
-                new FrequencyVector(new double[] { 100, 200, 300 }, FrequencyUnit.PER_HOUR, StorageType.DENSE));
-
-        odMatrix.print();
-        System.out.println(odMatrix);
-
-        category = new Category(categorization, 0.0, ac2, "truck");
-        for (double t = -100; t <= 3700; t += 100)
-        {
-            Time time = new Time(t, TimeUnit.BASE_SECOND);
-            System.out.println("@ t = " + time + ", q = " + odMatrix.getDemand(a, c, category, time, false) + " (slice end)");
-            System.out.println("@ t = " + time + ", q = " + odMatrix.getDemand(a, c, category, time, true) + " (slice start)");
-        }
-
-        System.out.println("For OD       that does not exist; q = " + odMatrix.getDemand(c, a, category, Time.ZERO, true));
-        category = new Category(categorization, 0.0, ac2, "does not exist");
-        System.out.println("For category that does not exist; q = " + odMatrix.getDemand(a, c, category, Time.ZERO, true));
-
     }
 
 }

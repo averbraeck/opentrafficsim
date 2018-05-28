@@ -1,10 +1,7 @@
 package org.opentrafficsim.kpi.sampling;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -12,13 +9,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.MetaData;
@@ -333,37 +329,12 @@ public abstract class Sampler<G extends GtuDataInterface>
      */
     // TODO This returns all data, regardless of registered space-time regions. We need a query to have space-time regions.
     // TODO Zip enum: bzip2, remove "omit repeated value", but add as compression option
-    public final void writeToFile(String file, final String format, final CompressionMethod compression)
+    public final void writeToFile(final String file, final String format, final CompressionMethod compression)
     {
-        String name = null;
-        if (compression.equals(CompressionMethod.ZIP))
-        {
-            File f = new File(file);
-            name = f.getName();
-            if (!file.endsWith(".zip"))
-            {
-                file += ".zip";
-            }
-        }
         int counter = 0;
-        FileOutputStream fos = null;
-        ZipOutputStream zos = null;
-        OutputStreamWriter osw = null;
-        BufferedWriter bw = null;
+        BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP));
         try
         {
-            fos = new FileOutputStream(file);
-            if (compression.equals(CompressionMethod.ZIP))
-            {
-                zos = new ZipOutputStream(fos);
-                zos.putNextEntry(new ZipEntry(name));
-                osw = new OutputStreamWriter(zos);
-            }
-            else
-            {
-                osw = new OutputStreamWriter(fos);
-            }
-            bw = new BufferedWriter(osw);
             // gather all meta data types for the header line
             List<MetaDataType<?>> allMetaDataTypes = new ArrayList<>();
             for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
@@ -505,18 +476,6 @@ public abstract class Sampler<G extends GtuDataInterface>
                 if (bw != null)
                 {
                     bw.close();
-                }
-                if (osw != null)
-                {
-                    osw.close();
-                }
-                if (zos != null)
-                {
-                    zos.close();
-                }
-                if (fos != null)
-                {
-                    fos.close();
                 }
             }
             catch (IOException ex)

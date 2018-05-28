@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.generator.characteristics;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 
 /**
@@ -31,6 +32,9 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
 
     /** Destination. */
     private final Node destination;
+    
+    /** Vehicle model. */
+    private final VehicleModel vehicleModel;
 
     /**
      * Construct a new set of lane based GTU characteristics.
@@ -39,10 +43,11 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
      * @param route route
      * @param origin origin
      * @param destination destination
+     * @param vehicleModel vehicle model
      */
     public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics,
             final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route,
-            final Node origin, final Node destination)
+            final Node origin, final Node destination, final VehicleModel vehicleModel)
     {
         super(gtuCharacteristics.getGTUType(), gtuCharacteristics.getLength(), gtuCharacteristics.getWidth(),
                 gtuCharacteristics.getMaximumSpeed(), gtuCharacteristics.getMaximumAcceleration(),
@@ -51,6 +56,7 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
         this.route = route;
         this.origin = origin;
         this.destination = destination;
+        this.vehicleModel = vehicleModel;
     }
 
     /**
@@ -83,6 +89,15 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     public Node getDestination()
     {
         return this.destination;
+    }
+    
+    /**
+     * Returns the vehicle model.
+     * @return VehicleModel; vehicle model
+     */
+    public VehicleModel getVehicleModel()
+    {
+        return this.vehicleModel;
     }
 
 }

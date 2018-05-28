@@ -264,6 +264,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
                     characteristics.getFront(), this.simulator, this.network);
             gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
             gtu.setMaximumDeceleration(characteristics.getMaximumDeceleration());
+            gtu.setVehicleModel(characteristics.getVehicleModel());
             gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
             gtu.initWithAnimation(
                     characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
@@ -427,7 +428,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
          * @param speed Speed; speed
          * @param position Set&lt;DirectedLanePosition&gt;; position
          */
-        public Placement(final Speed speed, Set<DirectedLanePosition> position)
+        public Placement(final Speed speed, final Set<DirectedLanePosition> position)
         {
             Throw.whenNull(speed, "Speed may not be null. Use Placement.NO if the GTU cannot be placed.");
             Throw.whenNull(position, "Position may not be null. Use Placement.NO if the GTU cannot be placed.");

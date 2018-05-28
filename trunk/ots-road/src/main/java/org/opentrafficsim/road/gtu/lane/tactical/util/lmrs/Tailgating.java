@@ -32,11 +32,11 @@ public interface Tailgating
 {
 
     /** Social pressure applied to the leader. */
-    static final ParameterTypeDouble RHO =
+    ParameterTypeDouble RHO =
             new ParameterTypeDouble("rho", "Social pressure", 0.0, ConstraintInterface.UNITINTERVAL);
 
     /** No tailgating. */
-    public static final Tailgating NONE = new Tailgating()
+    Tailgating NONE = new Tailgating()
     {
         /** {@inheritDoc} */
         @Override
@@ -46,8 +46,39 @@ public interface Tailgating
         }
     };
 
+    /** No tailgating, but social pressure exists. */
+    Tailgating RHO_ONLY = new Tailgating()
+    {
+        /** {@inheritDoc} */
+        @Override
+        public void tailgate(final LanePerception perception, final Parameters parameters)
+        {
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
+                    perception.getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
+            if (leaders == null || leaders.isEmpty())
+            {
+                return;
+            }
+            try
+            {
+                Speed speed = perception.getPerceptionCategoryOrNull(EgoPerception.class).getSpeed();
+                Speed vCong = parameters.getParameter(ParameterTypes.VCONG);
+                Length x0 = parameters.getParameter(ParameterTypes.LOOKAHEAD);
+                Speed vGain = parameters.getParameter(LmrsParameters.VGAIN);
+                HeadwayGTU leader = leaders.first();
+                Speed desiredSpeed = Try.assign(() -> perception.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
+                double rho = socialPressure(speed, vCong, desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
+                parameters.setParameter(RHO, rho);
+            }
+            catch (ParameterException exception)
+            {
+                throw new RuntimeException("Could not obtain or set parameter value.", exception);
+            }
+        }
+    };
+
     /** Tailgating based on speed pressure. */
-    public static final Tailgating PRESSURE = new Tailgating()
+    Tailgating PRESSURE = new Tailgating()
     {
         /** {@inheritDoc} */
         @Override
@@ -72,8 +103,7 @@ public interface Tailgating
                 Speed desiredSpeed = Try.assign(() -> perception.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
                 double rho = socialPressure(speed, vCong, desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
                 parameters.setParameter(RHO, rho);
-                double f = Math.exp(-rho);
-                double tNew = (1.0 - f) * tMin.si + f * tMax.si;
+                double tNew = rho * tMin.si + (1.0 - rho) * tMax.si;
                 if (tNew < t.si)
                 {
                     parameters.setParameter(ParameterTypes.T, Duration.createSI(tNew));
@@ -97,20 +127,15 @@ public interface Tailgating
      * @param x0 Length; anticipation distance
      * @return normalized social pressure
      */
-    public static double socialPressure(final Speed speed, final Speed vCong, final Speed desiredSpeed, final Speed leaderSpeed,
+    static double socialPressure(final Speed speed, final Speed vCong, final Speed desiredSpeed, final Speed leaderSpeed,
             final Speed vGain, final Length headway, final Length x0)
     {
-        if (speed.si < vCong.si)
-        {
-            return 0.0;
-        }
         double dv = desiredSpeed.si - leaderSpeed.si;
         if (dv < 0)
         {
             return 0.0;
         }
-        double rho = (dv / vGain.si) * (1.0 - (headway.si / x0.si));
-        return rho < 1.0 ? rho : 1.0;
+        return 1.0 - Math.exp(-(dv / vGain.si) * (1.0 - (headway.si / x0.si)));
     }
 
     /**

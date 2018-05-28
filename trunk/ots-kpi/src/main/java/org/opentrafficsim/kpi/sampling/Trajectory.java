@@ -1,7 +1,7 @@
 package org.opentrafficsim.kpi.sampling;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,7 +76,7 @@ public final class Trajectory<G extends GtuDataInterface>
     private final MetaData metaData;
 
     /** Map of array data types and their values. */
-    private final Map<ExtendedDataType<?, ?, ?, G>, Object> extendedData = new HashMap<>();
+    private final Map<ExtendedDataType<?, ?, ?, G>, Object> extendedData = new LinkedHashMap<>();
 
     /** Direction of travel. */
     private final KpiLaneDirection kpiLaneDirection;
