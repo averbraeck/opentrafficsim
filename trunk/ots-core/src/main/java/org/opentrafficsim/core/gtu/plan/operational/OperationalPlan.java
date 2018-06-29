@@ -583,6 +583,11 @@ public class OperationalPlan implements Serializable
             for (int i = 0; i < this.path.size() - 1; i++)
             {
                 OTSPoint3D p = OTSPoint3D.intersectionOfLines(this.path.get(i), this.path.get(i + 1), p1, p2);
+                if (p == null)
+                {
+                    // point too close, check next section
+                    continue;
+                }
                 boolean onSegment = (this.path.get(i).x - p.x) * (this.path.get(i + 1).x - p.x) <= 1e-6
                         && (this.path.get(i).y - p.y) * (this.path.get(i + 1).y - p.y) <= 1e-6;
                 if (p != null // on segment, or last segment

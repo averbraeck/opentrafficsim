@@ -113,7 +113,7 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public final static class Builder
+    public static final class Builder
     {
         /** The list of included colorers. */
         private List<GTUColorer> preColorers = new ArrayList<>();

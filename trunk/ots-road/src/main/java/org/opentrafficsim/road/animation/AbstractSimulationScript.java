@@ -231,6 +231,24 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
                     SimulatorInterface.END_OF_REPLICATION_EVENT);
         }
     }
+    
+    /**
+     * Returns the simulator.
+     * @return OTSDEVSSimulatorInterface; simulator
+     */
+    public final OTSDEVSSimulatorInterface getSimulator()
+    {
+        return AbstractSimulationScript.this.simulator;
+    }
+    
+    /**
+     * Returns the network.
+     * @return OTSNetwork; network
+     */
+    public final OTSNetwork getNetwork()
+    {
+        return AbstractSimulationScript.this.network;
+    }
 
     // Overridable methods
 
@@ -268,6 +286,16 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * Method that is called when the simulation has ended. This can be used to store data.
      */
     protected void onSimulationEnd()
+    {
+        //
+    }
+
+    /**
+     * Method that is called when the animation has been created, to add components for a demo.
+     * @param animation AbstractWrappableAnimation; animation
+     * @param net OTSNetwork; network
+     */
+    protected void setupDemo(final AbstractWrappableAnimation animation, final OTSNetwork net)
     {
         //
     }
@@ -387,6 +415,14 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         {
             return AbstractSimulationScript.this.gtuColorer;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void setupDemo(final AbstractWrappableAnimation animation, final OTSNetwork net)
+        {
+            AbstractSimulationScript.this.setupDemo(animation, net);
+        }
+
     }
 
     /**

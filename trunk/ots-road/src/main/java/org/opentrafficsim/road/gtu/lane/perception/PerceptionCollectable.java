@@ -25,6 +25,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
      * Collect the underlying objects in to a perceived result. This methodology is loosely based on Stream.collect().
      * @param collector PerceptionCollector; collector
      * @param <C> collection result type
+     * @param <I> intermediate type
      * @return C; collection result
      */
     default <C, I> C collect(final PerceptionCollector<C, ? super U, I> collector)
@@ -38,6 +39,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
      * @param accumulator PerceptionAccumulator; accumulator
      * @param finalizer PerceptionFinalizer; finalizer
      * @param <C> collection result type
+     * @param <I> intermediate type
      * @return C; collection result
      */
     <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator,
@@ -141,7 +143,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>]
      * @param <I> intermediate result type
      */
-    public class Intermediate<I>
+    class Intermediate<I>
     {
         /** Number of underlying object being iterated. */
         private int number = 0;

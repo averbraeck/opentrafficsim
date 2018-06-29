@@ -172,7 +172,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         this.togglePanel = new JPanel();
         this.togglePanel.setLayout(new BoxLayout(this.togglePanel, BoxLayout.Y_AXIS));
         this.borderPanel.add(this.togglePanel, BorderLayout.WEST);
-
+        
         // add the buttons for home, zoom all, grid, and mouse coordinates
         buttonPanel.add(new JLabel("   "));
         buttonPanel.add(makeButton("allButton", "/Expand.png", "ZoomAll", "Zoom whole network", true));
@@ -901,5 +901,5 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             super.paint(g);
         }
     }
-
+    
 }

@@ -49,8 +49,8 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
-                    Double SAmax = params.getParameterOrNull(SA_MAX);
-                    Throw.when(SAmax != null && value > SAmax, ParameterException.class,
+                    Double saMax = params.getParameterOrNull(SA_MAX);
+                    Throw.when(saMax != null && value > saMax, ParameterException.class,
                             "Value for SA_MIN should not be larger than SA_MAX.");
                 }
             };
@@ -66,8 +66,8 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
-                    Double SAmin = params.getParameterOrNull(SA_MIN);
-                    Throw.when(SAmin != null && value < SAmin, ParameterException.class,
+                    Double saMin = params.getParameterOrNull(SA_MIN);
+                    Throw.when(saMin != null && value < saMin, ParameterException.class,
                             "Value for SA_MAX should not be larger than SA_MIN.");
                 }
             };

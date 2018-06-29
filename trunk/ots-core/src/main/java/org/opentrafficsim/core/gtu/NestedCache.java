@@ -61,7 +61,7 @@ public class NestedCache<T>
     private T getValue(final Supplier<T> supplier, final List<Object> keys)
     {
         Throw.when(keys.size() != this.types.length, IllegalArgumentException.class, "Incorrect number of keys.");
-        Throw.when(!this.types[0].isAssignableFrom(keys.get(0).getClass()), IllegalArgumentException.class,
+        Throw.when(keys.get(0) != null && !this.types[0].isAssignableFrom(keys.get(0).getClass()), IllegalArgumentException.class,
                 "Key %s is not of %s.", keys.get(0), this.types[0]);
         Object sub = this.map.get(keys.get(0));
         if (this.types.length == 1)

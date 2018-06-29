@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -8,12 +9,11 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
-import org.opentrafficsim.road.gtu.lane.perception.mental.TaskCarFollowing.TaskCarFollowingCollector;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 
 /**
- * Lane changing task based on car-following (as gap-acceptance proxy), and an underlying fraction to include adjacent lanes.
+ * Lane changing task based on car-following (as gap-acceptance proxy), and an underlying consideration to include adjacent
+ * lanes.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -23,7 +23,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TaskLaneChanging implements Task
+public class TaskLaneChanging extends TaskHeadwayBased
 {
 
     /** Lateral consideration. */
@@ -38,39 +38,51 @@ public class TaskLaneChanging implements Task
         this.lateralConsideration = lateralConsideration;
     }
 
-    /**
-     * Returns the demand of this task.
-     * @param perception LanePerception; perception
-     * @param gtu LaneBasedGTU; gtu
-     * @param parameters Parameters; parameters
-     * @return double; demand of this task
-     * @throws ParameterException if a parameter is missing or out of bounds
-     * @throws GTUException exceptions pertaining to the GTU
-     */
-    public double demand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
-            throws ParameterException, GTUException
+    /** {@inheritDoc} */
+    @Override
+    protected Duration getHeadway(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
+            throws ParameterException
     {
-        double lat = this.lateralConsideration.getConsideration(perception, gtu, parameters);
-        if (lat == 0.0)
-        {
-            return 0.0;
-        }
+        NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
+                "NeighborsPerception not available.");
+        double lat = Try.assign(() -> this.lateralConsideration.getConsideration(perception, gtu, parameters),
+                "Exception during lateral consideration.");
         RelativeLane lane;
+        if (Math.abs(lat) < 1e-9)
+        {
+            return null;
+        }
         if (lat < 0.0)
         {
             lane = RelativeLane.LEFT;
-            lat *= -1;
+            lat = -lat;
         }
         else
         {
             lane = RelativeLane.RIGHT;
         }
-        NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
-                "NeighborsPerception not available.");
-        Try.execute(() -> neighbors.updateLeaders(lane), "Exception while updating leaders.");
-        Try.execute(() -> neighbors.updateFollowers(lane), "Exception while updating leaders.");
-        return lat * (0.6 * neighbors.getLeaders(lane).collect(new TaskCarFollowingCollector(gtu, parameters))
-                + 0.4 * neighbors.getFollowers(lane).collect(new TaskCarFollowingCollector(gtu, parameters)));
+        Try.execute(() -> neighbors.updateGtuAlongside(lane.getLateralDirectionality()), "Exception while updating alongside.");
+        if (neighbors.isGtuAlongside(lane.getLateralDirectionality()))
+        {
+            return Duration.ZERO;
+        }
+        Try.execute(() -> neighbors.updateLeaders(lane), "Exception while updating adjacent leaders.");
+        Try.execute(() -> neighbors.updateFollowers(lane), "Exception while updating adjacent followers.");
+        Duration h1 = neighbors.getLeaders(lane).collect(new TaskHeadwayCollector(getSpeed()));
+        Duration h2 = neighbors.getFollowers(lane).collect(new TaskHeadwayCollector(getSpeed()));
+        if (h1 == null)
+        {
+            return h2 == null ? null : h2.divideBy(lat);
+        }
+        if (h2 == null)
+        {
+            return h1 == null ? null : h1.divideBy(lat);
+        }
+        if (h1.eq0() && h2.eq0())
+        {
+            return Duration.ZERO;
+        }
+        return Duration.createSI(h1.si * h2.si / (lat * (h1.si + h2.si)));
     }
 
     /**
@@ -89,7 +101,7 @@ public class TaskLaneChanging implements Task
     {
 
         /** Desire based lateral consideration. */
-        public static final LateralConsideration DESIRE = new LateralConsideration()
+        LateralConsideration DESIRE = new LateralConsideration()
         {
             @Override
             public double getConsideration(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)

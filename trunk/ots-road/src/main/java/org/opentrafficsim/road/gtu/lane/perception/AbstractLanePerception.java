@@ -115,6 +115,13 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
     
     /** {@inheritDoc} */
     @Override
+    public Mental getMental()
+    {
+        return this.mental;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     public void perceive() throws GTUException, NetworkException, ParameterException
     {
         if (this.mental != null)
