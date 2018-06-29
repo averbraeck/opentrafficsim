@@ -614,7 +614,6 @@ public class LmrsStrategies implements EventListenerInterface
                             origin, destination, VehicleModel.NONE);
                 }
             }
-            // perception factory with ego, infra, neighbors and traffic only
             /** Perception factory. */
             class LmrsStrategiesPerceptionFactory implements PerceptionFactory
             {
@@ -640,7 +639,6 @@ public class LmrsStrategies implements EventListenerInterface
                 }
             }
             PerceptionFactory perceptionFactory = new LmrsStrategiesPerceptionFactory();
-            // IDM factory with socio desired speed
             /** IDM factory with socio speed. */
             class SocioIDMFactory implements CarFollowingModelFactory<IDMPlus>
             {

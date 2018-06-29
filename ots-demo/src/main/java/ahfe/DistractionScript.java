@@ -125,7 +125,7 @@ import nl.tudelft.simulation.language.io.URLResource;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class DistractionScript extends AbstractSimulationScript
+public final class DistractionScript extends AbstractSimulationScript
 {
 
     /** Distance to not consider at start of the network. */
@@ -135,7 +135,7 @@ public class DistractionScript extends AbstractSimulationScript
     private static Length ignoreEnd = Length.createSI(1000);
 
     /** Sampler. */
-    RoadSampler sampler;
+    private RoadSampler sampler;
 
     /**
      * Main method.
@@ -143,16 +143,16 @@ public class DistractionScript extends AbstractSimulationScript
      */
     public static void main(final String[] args)
     {
-        //Long start = System.currentTimeMillis();
+        // Long start = System.currentTimeMillis();
         DistractionScript script = new DistractionScript(args);
         // script.setProperty("autorun", true);
         script.start();
-        //Long end = System.currentTimeMillis();
-        //System.out.println("That took " + (end - start) / 1000 + "s.");
+        // Long end = System.currentTimeMillis();
+        // System.out.println("That took " + (end - start) / 1000 + "s.");
     }
 
     /**
-     * Constructor;
+     * Constructor.
      * @param properties String[]; properties as name-value pairs
      */
     private DistractionScript(final String[] properties)
@@ -163,7 +163,8 @@ public class DistractionScript extends AbstractSimulationScript
                 .addColorer(
                         new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
                 .addColorer(new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)))
-                .addColorer(new SynchronizationColorer()).addColorer(new DesiredHeadwayColorer(Duration.createSI(0.56), Duration.createSI(2.4)))
+                .addColorer(new SynchronizationColorer())
+                .addColorer(new DesiredHeadwayColorer(Duration.createSI(0.56), Duration.createSI(2.4)))
                 .addColorer(new TotalDesireColorer()).addColorer(new IncentiveColorer(IncentiveRoute.class))
                 .addColorer(new IncentiveColorer(IncentiveSpeedWithCourtesy.class))
                 .addColorer(new IncentiveColorer(IncentiveSpeed.class)).addColorer(new IncentiveColorer(IncentiveKeep.class))
@@ -215,8 +216,8 @@ public class DistractionScript extends AbstractSimulationScript
         {
             exception.printStackTrace();
         }
-        new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0), Length.createSI(1000), sim,
-                new TrapezoidProfile(0.2, Length.createSI(-400), Length.createSI(200), Length.createSI(400)));
+        new Distraction("distraction", ((CrossSectionLink) network.getLink("END")).getLanes().get(0), Length.createSI(1000),
+                sim, new TrapezoidProfile(0.2, Length.createSI(-400), Length.createSI(200), Length.createSI(400)));
 
         // OD
         List<Node> origins = new ArrayList<>();
@@ -290,7 +291,7 @@ public class DistractionScript extends AbstractSimulationScript
      * @return FrequencyVector demand vector
      * @throws ValueException
      */
-    private final static FrequencyVector getDemand(final double demand) throws ValueException
+    private static FrequencyVector getDemand(final double demand) throws ValueException
     {
         return new FrequencyVector(new double[] { demand * 0.5, demand * 0.5, demand, demand, 0.0 }, FrequencyUnit.PER_HOUR,
                 StorageType.DENSE);
@@ -311,7 +312,7 @@ public class DistractionScript extends AbstractSimulationScript
     private class DistractionFactorySupplier implements StrategicalPlannerFactorySupplierOD
     {
         /** */
-        public DistractionFactorySupplier()
+        DistractionFactorySupplier()
         {
         }
 

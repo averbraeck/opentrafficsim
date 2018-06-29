@@ -24,19 +24,19 @@ public class TaskSaturationColorer implements GTUColorer
 {
 
     /** Full. */
-    final static Color MAX = Color.RED;
+    static final Color MAX = Color.RED;
     
     /** Medium. */
-    final static Color MID = Color.YELLOW;
+    static final Color MID = Color.YELLOW;
     
     /** Zero. */
-    final static Color SUBCRIT = Color.GREEN;
+    static final Color SUBCRIT = Color.GREEN;
     
     /** Not available. */
-    final static Color NA = Color.WHITE;
+    static final Color NA = Color.WHITE;
     
     /** Legend. */
-    final static List<LegendEntry> LEGEND;
+    static final List<LegendEntry> LEGEND;
     
     static
     {

@@ -25,6 +25,7 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -217,6 +218,17 @@ public final class LaneFactory
             Length latPosAtEnd = new Length((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
             result[laneIndex] =
                     makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit, simulator);
+        }
+        if (simulator instanceof OTSAnimatorInterface)
+        {
+            try
+            {
+                new LinkAnimation(link, simulator, 3f);
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
         }
         return result;
     }

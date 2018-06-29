@@ -1,11 +1,14 @@
 package org.opentrafficsim.simulationengine;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Rectangle;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -24,6 +27,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.naming.NamingException;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -31,6 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.MenuElement;
@@ -38,6 +43,7 @@ import javax.swing.MenuSelectionManager;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Point3d;
@@ -52,6 +58,7 @@ import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.gui.Appearance;
 import org.opentrafficsim.gui.AppearanceControl;
 import org.opentrafficsim.gui.OTSAnimationPanel;
@@ -249,13 +256,17 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         }
         this.appearance = Appearance.valueOf(this.frameProperties.getProperty("Appearance").toUpperCase());
 
-        // Menu class to only accept the font of an Appearance
+        /** Menu class to only accept the font of an Appearance */
         class AppearanceControlMenu extends JMenu implements AppearanceControl
         {
             /** */
             private static final long serialVersionUID = 20180206L;
 
-            public AppearanceControlMenu(final String string)
+            /**
+             * Constructor.
+             * @param string String; string
+             */
+            AppearanceControlMenu(final String string)
             {
                 super(string);
             }
@@ -288,8 +299,8 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         {
             appGroup.add(addAppearance(app, appearanceValue));
         }
-        
-        // PopupMenu class to only accept the font of an Appearance
+
+        /** PopupMenu class to only accept the font of an Appearance */
         class AppearanceControlPopupMenu extends JPopupMenu implements AppearanceControl
         {
             /** */
@@ -302,7 +313,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
                 return true;
             }
         }
-        
+
         // Popup menu to change the Look and Feel or Appearance
         JPopupMenu popMenu = new AppearanceControlPopupMenu();
         popMenu.add(laf);
@@ -315,6 +326,10 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
                 "Could not set look-and-feel %s", laf);
         SwingUtilities.invokeLater(() -> SwingUtilities.updateComponentTreeUI(frame));
 
+        // demo
+        this.demoPanel = null;
+        setupDemo(this, this.model.getNetwork());
+        
         return simulator;
     }
 
@@ -358,7 +373,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         {
             /** {@inheritDoc} */
             @Override
-            public void mouseClicked(MouseEvent e)
+            public void mouseClicked(final MouseEvent e)
             {
                 setAppearance(appear);
             }
@@ -380,39 +395,39 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     /**
      * Sets an appearance recursively on components.
      * @param c Component; visual component
-     * @param appearance Appearance; look and feel
+     * @param appear Appearance; look and feel
      */
-    private void setAppearance(final Component c, final Appearance appearance)
+    private void setAppearance(final Component c, final Appearance appear)
     {
         if (c instanceof AppearanceControl)
         {
             AppearanceControl ac = (AppearanceControl) c;
             if (ac.isBackground())
             {
-                c.setBackground(appearance.getBackground());
+                c.setBackground(appear.getBackground());
             }
             if (ac.isForeground())
             {
-                c.setForeground(appearance.getForeground());
+                c.setForeground(appear.getForeground());
             }
             if (ac.isFont())
             {
-                changeFont(c, appearance.getFont());
+                changeFont(c, appear.getFont());
             }
         }
         else if (c instanceof AnimationPanel)
         {
             // animation backdrop
-            c.setBackground(appearance.getBackdrop()); // not background
-            c.setForeground(appearance.getForeground());
-            changeFont(c, appearance.getFont());
+            c.setBackground(appear.getBackdrop()); // not background
+            c.setForeground(appear.getForeground());
+            changeFont(c, appear.getFont());
         }
         else
         {
             // default
-            c.setBackground(appearance.getBackground());
-            c.setForeground(appearance.getForeground());
-            changeFont(c, appearance.getFont());
+            c.setBackground(appear.getBackground());
+            c.setForeground(appear.getForeground());
+            changeFont(c, appear.getFont());
         }
         if (c instanceof JSlider)
         {
@@ -422,8 +437,8 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             while (keys.hasMoreElements())
             {
                 JLabel label = (JLabel) dictionary.get(keys.nextElement());
-                label.setForeground(appearance.getForeground());
-                label.setBackground(appearance.getBackground());
+                label.setForeground(appear.getForeground());
+                label.setBackground(appear.getBackground());
             }
         }
         // children
@@ -431,7 +446,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         {
             for (Component child : ((JComponent) c).getComponents())
             {
-                setAppearance(child, appearance);
+                setAppearance(child, appear);
             }
         }
     }
@@ -484,6 +499,16 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     protected void addAnimationToggles()
     {
         // overridable placeholder to place animation buttons or to show/hide classes on the animation.
+    }
+    
+    /**
+     * Method that is called when the animation has been created, to add components for a demo.
+     * @param animation AbstractWrappableAnimation; animation
+     * @param net OTSNetwork; network
+     */
+    protected void setupDemo(final AbstractWrappableAnimation animation, final OTSNetwork net)
+    {
+        // overridable placeholderv
     }
 
     /**
@@ -717,6 +742,49 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         this.replication = nextReplication;
     }
 
+    // Demo panel
+
+    /** Panel for on-screen demo settings. */
+    private JPanel demoPanel;
+
+    /**
+     * Return a panel for on-screen demo controls. The panel is create on first call.
+     * @return JPanel; panel
+     */
+    public JPanel getDemoPanel()
+    {
+        if (this.demoPanel == null)
+        {
+            this.demoPanel = new JPanel();
+            this.demoPanel.setLayout(new BoxLayout(this.demoPanel, BoxLayout.Y_AXIS));
+            this.demoPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+            this.demoPanel.setPreferredSize(new Dimension(300, 300));
+            this.getPanel().getAnimationPanel().getParent().add(this.demoPanel, BorderLayout.EAST);
+            this.demoPanel.addContainerListener(new ContainerListener()
+            {
+                @Override
+                public void componentAdded(final ContainerEvent e)
+                {
+                    try
+                    {
+                        setAppearance(getAppearance());
+                    }
+                    catch (@SuppressWarnings("unused") NullPointerException exception)
+                    {
+                        //
+                    }
+                }
+
+                @Override
+                public void componentRemoved(final ContainerEvent e)
+                {
+                    //
+                }
+            });
+        }
+        return this.demoPanel;
+    }
+
     /**
      * Mouse listener which shows the submenu when the mouse enters the button.
      * <p>
@@ -739,14 +807,14 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
          * Constructor.
          * @param menu JMenu; menu
          */
-        public SubMenuShower(final JMenu menu)
+        SubMenuShower(final JMenu menu)
         {
             this.menu = menu;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void mouseEntered(MouseEvent e)
+        public void mouseEntered(final MouseEvent e)
         {
             MenuSelectionManager.defaultManager().setSelectedPath(
                     new MenuElement[] { (MenuElement) this.menu.getParent(), this.menu, this.menu.getPopupMenu() });
@@ -779,7 +847,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             {
 
                 @Override
-                public void stateChanged(ChangeEvent e)
+                public void stateChanged(final ChangeEvent e)
                 {
                     if (getModel().isArmed() && isShowing())
                     {
@@ -803,14 +871,14 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
          * @param text String; menu item text
          * @param selected boolean; if the item is selected
          */
-        public StayOpenCheckBoxMenuItem(final String text, final boolean selected)
+        StayOpenCheckBoxMenuItem(final String text, final boolean selected)
         {
             super(text, selected);
         }
 
         /** {@inheritDoc} */
         @Override
-        public void doClick(int pressTime)
+        public void doClick(final int pressTime)
         {
             super.doClick(pressTime);
             for (MenuElement element : path)

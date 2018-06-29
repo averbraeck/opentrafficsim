@@ -56,8 +56,8 @@ public class Fuller implements Mental
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
-                    Double TSmax = params.getParameterOrNull(TS_MAX);
-                    Throw.when(TSmax != null && value > TSmax, ParameterException.class,
+                    Double tsMax = params.getParameterOrNull(TS_MAX);
+                    Throw.when(tsMax != null && value > tsMax, ParameterException.class,
                             "Value for TS_CRIT should not be larger than TS_MAX.");
                 }
             };
@@ -73,8 +73,8 @@ public class Fuller implements Mental
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
-                    Double TScrit = params.getParameterOrNull(TS_CRIT);
-                    Throw.when(TScrit != null && value < TScrit, ParameterException.class,
+                    Double tsCrit = params.getParameterOrNull(TS_CRIT);
+                    Throw.when(tsCrit != null && value < tsCrit, ParameterException.class,
                             "Value for TS_MAX should not be smaller than TS_CRIT.");
                 }
             };
@@ -103,6 +103,24 @@ public class Fuller implements Mental
         this.behavioralAdapatations = behavioralAdapatations;
     }
 
+    /**
+     * Adds a task.
+     * @param task Task; task to add
+     */
+    public void addTask(final Task task)
+    {
+        this.tasks.add(task);
+    }
+    
+    /**
+     * Removes a task.
+     * @param task Task; task to remove
+     */
+    public void removeTask(final Task task)
+    {
+        this.tasks.remove(task);
+    }
+    
     /** {@inheritDoc} */
     @Override
     public void apply(final LanePerception perception) throws ParameterException, GTUException
@@ -117,6 +135,10 @@ public class Fuller implements Mental
             taskDemand += task.demand(perception, gtu, parameters);
         }
         double taskSaturation = taskDemand / parameters.getParameter(TC);
+        if (taskSaturation < 0.0)
+        {
+            System.out.println("oh dear");
+        }
         parameters.setParameter(TS, taskSaturation);
         // c) behavioral adaptation
         for (BehavioralAdaptation behavioralAdapatation : this.behavioralAdapatations)
@@ -154,6 +176,32 @@ public class Fuller implements Mental
          */
         double demand(LanePerception perception, LaneBasedGTU gtu, Parameters parameters)
                 throws ParameterException, GTUException;
+        
+        /**
+         * Class for constant demand.
+         */
+        class Constant implements Task
+        {
+            /** Task demand. */
+            private double taskDemand;
+            
+            /**
+             * Constructor.
+             * @param taskDemand double; task demand
+             */
+            public Constant(final double taskDemand)
+            {
+                this.taskDemand = taskDemand;
+            }
+            
+            /** {@inheritDoc} */
+            @Override
+            public double demand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
+                    throws ParameterException, GTUException
+            {
+                return this.taskDemand;
+            }
+        }
     }
 
     /**

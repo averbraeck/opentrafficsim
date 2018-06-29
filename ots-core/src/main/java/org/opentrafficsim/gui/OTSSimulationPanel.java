@@ -46,6 +46,9 @@ public class OTSSimulationPanel extends JPanel
     /** The control panel to control start/stop, speed of the simulation. */
     private final OTSControlPanel otsControlPanel;
 
+    /** Animation, required to add properties tab. */
+    private final WrappableAnimation wrappableAnimation;
+
     static
     {
         // use narrow border for TabbedPane, which cannot be changed afterwards
@@ -70,6 +73,7 @@ public class OTSSimulationPanel extends JPanel
     {
 
         this.simulator = simulator;
+        this.wrappableAnimation = wrappableAnimation;
 
         this.setLayout(new BorderLayout());
 
@@ -77,14 +81,35 @@ public class OTSSimulationPanel extends JPanel
         this.otsControlPanel = new OTSControlPanel(simulator, wrappableAnimation);
         this.add(this.otsControlPanel, BorderLayout.NORTH);
 
+        // Let's display our tabbed contentPane
+        this.add(this.tabbedPane, BorderLayout.CENTER);
+
+        // put a status bar at the bottom
+        // this.statusBar = new StatusBar(this.simulator);
+        // this.add(this.statusBar, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Adds the console tab.
+     */
+    public final void addConsoleTab()
+    {
         // Let's add our console to our tabbed pane
         JScrollPane cons = new JScrollPane(this.console);
         cons.setBorder(null);
         this.tabbedPane.addTab("console", cons);
+    }
 
+    /**
+     * Adds the properties tab.
+     * @throws PropertyException on exception with properties
+     */
+    public final void addPropertiesTab() throws PropertyException
+    {
         // Let's add the properties of the simulation model as a tab
         List<Property<?>> propertyList =
-                new CompoundProperty("", "", "", wrappableAnimation.getUserModifiedProperties(), true, 0).displayOrderedValue();
+                new CompoundProperty("", "", "", this.wrappableAnimation.getUserModifiedProperties(), true, 0)
+                        .displayOrderedValue();
         StringBuilder html = new StringBuilder();
         html.append("<html><table border=\"1\"><tr><th colspan=\"" + propertyList.size() + "\">Settings</th></tr><tr>");
 
@@ -97,13 +122,6 @@ public class OTSSimulationPanel extends JPanel
         JScrollPane settings = new JScrollPane(propertySettings);
         settings.setBorder(null);
         this.tabbedPane.addTab("settings", settings);
-
-        // Let's display our tabbed contentPane
-        this.add(this.tabbedPane, BorderLayout.CENTER);
-
-        // put a status bar at the bottom
-        // this.statusBar = new StatusBar(this.simulator);
-        // this.add(this.statusBar, BorderLayout.SOUTH);
     }
 
     /**
@@ -153,7 +171,8 @@ public class OTSSimulationPanel extends JPanel
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 feb. 2018 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author$,
+     *          initial version 6 feb. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
