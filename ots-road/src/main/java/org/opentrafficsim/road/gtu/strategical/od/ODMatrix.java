@@ -759,7 +759,7 @@ public class ODMatrix implements Serializable, Identifiable
         {
             destinLength = destinLength >= destination.getId().length() ? destinLength : destination.getId().length();
         }
-        String format = "%-" + originLength + "s -> %-" + destinLength + "s | ";
+        String format = "%-" + Math.max(originLength, 1) + "s -> %-" + Math.max(destinLength, 1) + "s | ";
         for (Node origin : this.origins)
         {
             Map<Node, Map<Category, DemandPattern>> destinationMap = this.demandData.get(origin);
@@ -791,6 +791,7 @@ public class ODMatrix implements Serializable, Identifiable
                             sep = ", ";
                         }
                         catStr.append("]");
+                        // System.out.println("DEBUG format is \"" + format + "\"");
                         System.out.println(String.format(format, origin.getId(), destination.getId()) + catStr + " | "
                                 + categoryMap.get(category).getDemandVector());
                     }
