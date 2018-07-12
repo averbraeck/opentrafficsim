@@ -945,6 +945,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     DirectedPoint loc = getLocation();
                     try
                     {
+                        // FIXME: should this not be a test for Double.infinity? Or should closest be initialized to null?
                         if (closest == null)
                         {
                             double f = refLane.getCenterLine().projectFractional(null, null, loc.x, loc.y,
@@ -992,6 +993,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         double endPosition = position(ref.getLane(), getReference(), getOperationalPlan().getEndTime()).si;
         double moveSI = endPosition - ref.getPosition().si; // getOperationalPlan().getTotalLength().si;
 
+        // Figure out which lanes this GTU will enter with its FRONT, and schedule the lane enter events
         Map<Lane, GTUDirectionality> lanesCopy = new LinkedHashMap<>(this.lanesCurrentOperationalPlan);
         Iterator<Lane> it = lanesCopy.keySet().iterator();
         Lane enteredLane = null;
@@ -1014,6 +1016,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
             // schedule triggers on this lane
             double referenceStartSI = this.fractionalLinkPositions.get(lane.getParentLink()) * lane.getLength().getSI();
+            // referenceStartSI is position of reference of GTU on current lane
             if (sign > 0.0)
             {
                 lane.scheduleSensorTriggers(this, referenceStartSI, moveSI);
@@ -1047,6 +1050,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     }
                     direction = lane.nextLanes(getGTUType()).get(nextLane);
                     end = lane.getCenterLine().getLocationExtendedSI(lane.getLength().si - getFront().getDx().si);
+                    // end is the location where the center (reference) of the GTU is when its front moves out of the lane
                     if (direction.isPlus())
                     {
                         // o----L1-r->o----L2--->o
@@ -1098,7 +1102,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
         }
 
-        // move the vehicle out of any lanes with the BACK, and schedule exit during this time step
+        // Figure out which lanes this GTU will exit with its BACK, and schedule the lane exit events
         for (Lane lane : this.lanesCurrentOperationalPlan.keySet())
         {
             double referenceStartSI = this.fractionalLinkPositions.get(lane.getParentLink()) * lane.getLength().getSI();
@@ -1179,7 +1183,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (nextNode == candidateLane.getParentLink().getEndNode()
                     || nextNode == candidateLane.getParentLink().getStartNode())
             {
-                nextLane = candidateLane;
+                // XXX Hack: use the one that has lexicographic lower parent link id.
+                if (null == nextLane || (nextLane.getParentLink().getId().compareTo(candidateLane.getParentLink().getId()) > 0))
+                {
+                    nextLane = candidateLane;
+                }
                 continuingLaneCount++;
             }
         }
@@ -1190,9 +1198,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
         if (continuingLaneCount > 1)
         {
-            throw new NetworkException(
-                    this + " reached branch and the route specifies multiple lanes to continue on at this branch ("
-                            + lane.getParentLink().getEndNode() + "). This is not yet supported");
+            System.err.println(this + " reached branch and the route specifies multiple lanes to continue on at this branch ("
+                            + lane.getParentLink().getEndNode() + "). Selecting lane " + nextLane.getId());
+            // throw new NetworkException(
+            // this + " reached branch and the route specifies multiple lanes to continue on at this branch ("
+            // + lane.getParentLink().getEndNode() + "). This is not yet supported");
         }
         // }
         return nextLane;
