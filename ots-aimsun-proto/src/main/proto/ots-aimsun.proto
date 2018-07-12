@@ -25,8 +25,13 @@ message GTUPositions {
 		required double y = 3;
 		optional double z = 4;
 		required double angle = 5;
+		required double width = 6;
+		required double length = 7;
+		required int32 gtuTypeId = 8;
+		required double speed = 9;
 	}
 	repeated GTUPosition gtuPos = 1;
+	required string status = 2; 
 }
 
 message OTSMessage {
