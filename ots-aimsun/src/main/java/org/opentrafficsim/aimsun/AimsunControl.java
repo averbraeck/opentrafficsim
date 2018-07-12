@@ -27,6 +27,7 @@ import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
+import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -130,7 +131,7 @@ public class AimsunControl extends AbstractWrappableAnimation
             serverSocket.close(); // don't accept any other connections
             System.out.println("Socket time out is " + clientSocket.getSoTimeout());
             clientSocket.setSoTimeout(0);
-            System.out.println("Calling command loop");
+            System.out.println("Constructing animation/simulation");
             AimsunControl aimsunControl = new AimsunControl();
             aimsunControl.commandLoop(clientSocket);
         }
@@ -275,31 +276,40 @@ public class AimsunControl extends AbstractWrappableAnimation
                                 gpb.setY(dp.y);
                                 gpb.setZ(dp.z);
                                 gpb.setAngle(dp.getRotZ());
+                                gpb.setLength(gtu.getLength().si);
+                                gpb.setWidth(gtu.getWidth().si);
+                                gpb.setGtuTypeId(Integer.parseInt(gtu.getGTUType().getId().split("\\.")[1]));
+                                gpb.setSpeed(gtu.getSpeed().si);
                                 builder.addGtuPos(gpb.build());
                             }
-                            AimsunControlProtoBuf.GTUPositions gtuPositions = builder.build();
+                            builder.setStatus("OK");
+                            GTUPositions gtuPositions = builder.build();
                             AimsunControlProtoBuf.OTSMessage.Builder resultBuilder =
                                     AimsunControlProtoBuf.OTSMessage.newBuilder();
                             resultBuilder.setGtuPositions(gtuPositions);
                             AimsunControlProtoBuf.OTSMessage result = resultBuilder.build();
-                            size = result.getSerializedSize();
-                            System.out.print("Transmitting " + this.model.getNetwork().getGTUs().size()
-                                    + " GTU positions encoded in " + size + " bytes ... ");
-                            sizeBytes[0] = (byte) ((size >> 24) & 0xff);
-                            sizeBytes[1] = (byte) ((size >> 16) & 0xff);
-                            sizeBytes[2] = (byte) ((size >> 8) & 0xff);
-                            sizeBytes[3] = (byte) (size & 0xff);
-                            outputStream.write(sizeBytes);
-                            buffer = new byte[size];
-                            buffer = result.toByteArray();
-                            outputStream.write(buffer);
-                            System.out.println("Done");
-                            // result.writeDelimitedTo(outputStream);
+                            transmitMessage(result, outputStream);
+                            /*
+                             * size = result.getSerializedSize(); System.out.print("Transmitting " +
+                             * this.model.getNetwork().getGTUs().size() + " GTU positions encoded in " + size + " bytes ... ");
+                             * sizeBytes[0] = (byte) ((size >> 24) & 0xff); sizeBytes[1] = (byte) ((size >> 16) & 0xff);
+                             * sizeBytes[2] = (byte) ((size >> 8) & 0xff); sizeBytes[3] = (byte) (size & 0xff);
+                             * outputStream.write(sizeBytes); buffer = new byte[size]; buffer = result.toByteArray();
+                             * outputStream.write(buffer); System.out.println("Done");
+                             */
                         }
                         catch (SimRuntimeException | OperationalPlanException exception)
                         {
-                            System.out.println("Error in runUpTo");
+                            System.out.println("Error while handling SIMULATEUNTIL");
                             exception.printStackTrace();
+                            // Stop the simulation
+                            AimsunControlProtoBuf.GTUPositions.Builder builder =
+                                    AimsunControlProtoBuf.GTUPositions.newBuilder();
+                            builder.setStatus("FAILED");
+                            AimsunControlProtoBuf.OTSMessage.Builder resultBuilder =
+                                    AimsunControlProtoBuf.OTSMessage.newBuilder();
+                            resultBuilder.setGtuPositions(builder);
+                            transmitMessage(resultBuilder.build(), outputStream);
                         }
                         break;
 
@@ -328,6 +338,30 @@ public class AimsunControl extends AbstractWrappableAnimation
     }
 
     /**
+     * Transmit a message
+     * @param message AimsunControlProtoBuf.OTSMessage; the message
+     * @param outputStream OutputStream; the output stream
+     * @throws IOException when transmission fails
+     */
+    private void transmitMessage(final AimsunControlProtoBuf.OTSMessage message, final OutputStream outputStream)
+            throws IOException
+    {
+        int size = message.getSerializedSize();
+        System.out.print("Transmitting " + message.getGtuPositions().getGtuPosCount() + " GTU positions and status \""
+                + message.getGtuPositions().getStatus() + "\" encoded in " + size + " bytes ... ");
+        byte[] sizeBytes = new byte[4];
+        sizeBytes[0] = (byte) ((size >> 24) & 0xff);
+        sizeBytes[1] = (byte) ((size >> 16) & 0xff);
+        sizeBytes[2] = (byte) ((size >> 8) & 0xff);
+        sizeBytes[3] = (byte) (size & 0xff);
+        outputStream.write(sizeBytes);
+        byte[] buffer = new byte[size];
+        buffer = message.toByteArray();
+        outputStream.write(buffer);
+        System.out.println("Done");
+    }
+
+    /**
      * Fill a buffer from a stream; retry until the buffer is entirely filled.
      * @param in InputStream; the input stream for the data
      * @param buffer byte[]; the buffer
@@ -347,7 +381,7 @@ public class AimsunControl extends AbstractWrappableAnimation
             offset += bytesRead;
             if (buffer.length == offset)
             {
-                System.out.println("Got all " + buffer.length + " requested bytes");
+                System.out.println("got all " + buffer.length + " requested bytes");
                 break;
             }
             if (buffer.length < offset)
@@ -355,7 +389,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                 System.out.println("Oops: Got more than " + buffer.length + " requested bytes");
                 break;
             }
-            System.out.print("Now got " + offset + " bytes; need to read " + (buffer.length - offset) + " more bytes ");
+            System.out.print("now got " + offset + " bytes; need to read " + (buffer.length - offset) + " more bytes ... ");
         }
         if (offset != buffer.length)
         {
