@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,9 +12,13 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
+import nl.tudelft.simulation.language.io.URLResource;
+
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
 
-import nl.tudelft.simulation.language.io.URLResource;
+import com.google.protobuf.CodedOutputStream;
+
+//import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * Test client for AimsunController.
@@ -158,9 +163,11 @@ public final class TestController
         sizeBytes[2] = (byte) ((size >> 8) & 0xff);
         sizeBytes[3] = (byte) (size & 0xff);
         outputStream.write(sizeBytes);
-        byte[] buffer = new byte[size];
-        buffer = message.toByteArray();
-        outputStream.write(buffer);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        message.writeTo(CodedOutputStream.newInstance(baos));
+        // byte[] buffer = new byte[size];
+        // buffer = message.toByteArray();
+        outputStream.write(baos.toByteArray());
         // System.out.println("Done");
     }
 
