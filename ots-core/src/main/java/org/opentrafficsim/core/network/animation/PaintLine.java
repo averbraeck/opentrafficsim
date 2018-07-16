@@ -45,7 +45,8 @@ public final class PaintLine
     {
         graphics.setColor(color);
         Stroke oldStroke = graphics.getStroke();
-        graphics.setStroke(new BasicStroke((float) width));
+        // Setting cap and join to make perfectly visible where a line begins and ends.
+        graphics.setStroke(new BasicStroke((float) width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
         Path2D.Double path = new Path2D.Double();
         OTSPoint3D point = line.getFirst();
         path.moveTo(point.x - referencePoint.x, -point.y + referencePoint.y);

@@ -12,6 +12,9 @@ import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Link;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -47,8 +50,8 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
-    public LinkAnimation(final Link link, final OTSSimulatorInterface simulator, final float width)
-            throws NamingException, RemoteException
+    public LinkAnimation(final Link link, final OTSSimulatorInterface simulator, final float width) throws NamingException,
+            RemoteException
     {
         super(link, simulator);
         this.width = width;
@@ -61,6 +64,52 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
     {
         Color color = getSource().getLinkType().isConnector() ? Color.BLUE : Color.RED;
         PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), getSource().getDesignLine());
+        // Accentuate the end points
+        OTSLine3D designLine = getSource().getDesignLine();
+        try
+        {
+            drawEndPoint(designLine.getFirst(), designLine.get(1), graphics);
+            drawEndPoint(designLine.getLast(), designLine.get(designLine.size() - 2), graphics);
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Cannot happen
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * Draw end point on design line.
+     * @param endPoint OTSPoint3D; the end of the design line where a end point must be highlighted
+     * @param nextPoint OTSPoint3D; the point nearest <code>endPoint</code> (needed to figure out the direction of the design
+     *            line)
+     * @param graphics Graphics2D; graphics content
+     */
+    private void drawEndPoint(final OTSPoint3D endPoint, final OTSPoint3D nextPoint, final Graphics2D graphics)
+    {
+        // End point marker is 2 times the width of the design line
+        double dx = nextPoint.x - endPoint.x;
+        double dy = nextPoint.y - endPoint.y;
+        double length = endPoint.distanceSI(nextPoint);
+        // scale dx, dy so that size is this.width
+        dx *= this.width / length;
+        dy *= this.width / length;
+        try
+        {
+            OTSLine3D line =
+                    new OTSLine3D(new OTSPoint3D(endPoint.x - dy, endPoint.y + dx, endPoint.z), new OTSPoint3D(endPoint.x
+                            + dy, endPoint.y - dx, endPoint.z));
+            PaintLine.paintLine(graphics, getSource().getLinkType().isConnector() ? Color.BLUE : Color.RED, this.width / 30,
+                    getSource().getLocation(), line);
+        }
+        catch (OTSGeometryException exception)
+        {
+            exception.printStackTrace();
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /** {@inheritDoc} */
@@ -91,8 +140,7 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
     /**
      * Text animation for the Link. Separate class to be able to turn it on and off...
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
      * </p>
      * $LastChangedDate$, @version $Revision$, by $Author$,
