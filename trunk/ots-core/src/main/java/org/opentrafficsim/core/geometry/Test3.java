@@ -36,5 +36,6 @@ public final class Test3
                         new OTSPoint3D(5.000, -8.700, 0.000), new OTSPoint3D(5.700, -8.200, 0.000), new OTSPoint3D(9.960,
                                 -0.900, 0.000), new OTSPoint3D(10.000, 0.000, 0.000), new OTSPoint3D(10.000, 10.000, 0.000));
         OTSLine3D offsetLine = referenceLine.offsetLine(7.5);
+        System.out.println("offset line has " + offsetLine.size() + " points");
     }
 }
