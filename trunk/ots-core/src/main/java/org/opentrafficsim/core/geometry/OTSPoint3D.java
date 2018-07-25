@@ -253,7 +253,7 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param line OTSLine3D; the line
      * @param useHorizontalDistance boolean; if true; the horizontal distance is used to determine the closest point; if false;
      *            the 3D distance is used to determine the closest point
-     * @return OTSPoint3D; the Z component of the returned point matches the Z-component of hte line at that point
+     * @return OTSPoint3D; the Z component of the returned point matches the Z-component of the line at that point
      */
     private OTSPoint3D internalClosestPointOnLine(final OTSLine3D line, final boolean useHorizontalDistance)
     {
