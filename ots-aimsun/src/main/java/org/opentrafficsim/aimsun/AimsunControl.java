@@ -12,6 +12,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
+import javax.xml.parsers.ParserConfigurationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
@@ -36,6 +37,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
@@ -47,6 +49,7 @@ import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.xml.sax.SAXException;
 
 /**
  * <p>
@@ -187,6 +190,7 @@ public class AimsunControl extends AbstractWrappableAnimation
         System.out.println("Entering command loop");
         InputStream inputStream = socket.getInputStream();
         OutputStream outputStream = socket.getOutputStream();
+        String error = null;
         while (true)
         {
             // byte[] in = new byte[1];
@@ -235,6 +239,8 @@ public class AimsunControl extends AbstractWrappableAnimation
                         catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception1)
                         {
                             exception1.printStackTrace();
+                            // Stop the simulation
+                            error = "FAILED (XML ERROR)";
                         }
                         break;
 
@@ -252,6 +258,10 @@ public class AimsunControl extends AbstractWrappableAnimation
                         DEVSSimulator<Time, ?, ?> simulator = (DEVSSimulator<Time, ?, ?>) this.model.getSimulator();
                         try
                         {
+                            if (null != error)
+                            {
+                                throw new SimRuntimeException(error);
+                            }
                             simulator.runUpTo(stopTime);
                             while (simulator.isRunning())
                             {
@@ -300,12 +310,16 @@ public class AimsunControl extends AbstractWrappableAnimation
                         }
                         catch (SimRuntimeException | OperationalPlanException exception)
                         {
-                            System.out.println("Error while handling SIMULATEUNTIL");
-                            exception.printStackTrace();
+                            if (null == error)
+                            {
+                                error = "Error while handling SIMULATEUNTIL";
+                                System.out.println(error);
+                                exception.printStackTrace();
+                            }
                             // Stop the simulation
                             AimsunControlProtoBuf.GTUPositions.Builder builder =
                                     AimsunControlProtoBuf.GTUPositions.newBuilder();
-                            builder.setStatus("FAILED");
+                            builder.setStatus("FAILED (" + error + ")");
                             AimsunControlProtoBuf.OTSMessage.Builder resultBuilder =
                                     AimsunControlProtoBuf.OTSMessage.newBuilder();
                             resultBuilder.setGtuPositions(builder);
@@ -439,18 +453,20 @@ public class AimsunControl extends AbstractWrappableAnimation
         public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
                 throws SimRuntimeException, RemoteException
         {
+            this.simulator = theSimulator;
+            // URL url = URLResource.getResource("/aimsun/singleRoad.xml");
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
+            @SuppressWarnings("synthetic-access")
+            String xml = AimsunControl.this.networkXML;
             try
             {
-                this.simulator = theSimulator;
-                // URL url = URLResource.getResource("/aimsun/singleRoad.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
-                @SuppressWarnings("synthetic-access")
-                String xml = AimsunControl.this.networkXML;
                 this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), true);
             }
-            catch (Exception exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
+                    | GTUException | OTSGeometryException | ValueException | ParameterException exception)
             {
                 exception.printStackTrace();
+                throw new SimRuntimeException(exception);
             }
         }
 
