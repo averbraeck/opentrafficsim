@@ -18,6 +18,7 @@ public interface GtuTypeDataInterface extends Identifiable
     /**
      * @return GTU type
      */
+    @Override
     String getId();
 
 }

@@ -31,6 +31,7 @@ public interface LinkDataInterface extends Identifiable
     /**
      * @return link id
      */
+    @Override
     String getId();
 
 }
