@@ -63,9 +63,9 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         Color color = getSource().getLinkType().isConnector() ? Color.BLUE : Color.RED;
-        PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), getSource().getDesignLine());
-        // Accentuate the end points
         OTSLine3D designLine = getSource().getDesignLine();
+        PaintLine.paintLine(graphics, color, this.width, getSource().getLocation(), designLine);
+        // Accentuate the end points
         try
         {
             drawEndPoint(designLine.getFirst(), designLine.get(1), graphics);
