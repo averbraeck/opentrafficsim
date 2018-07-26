@@ -29,6 +29,7 @@ class PolyLineTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length length = null;
 
+    /** Coordinates of this PolyLineTag. */
     OTSPoint3D[] coordinates = null;
 
     /**
