@@ -38,6 +38,7 @@ public abstract class MetaDataType<T> implements Identifiable
     /**
      * @return id.
      */
+    @Override
     public final String getId()
     {
         return this.id;

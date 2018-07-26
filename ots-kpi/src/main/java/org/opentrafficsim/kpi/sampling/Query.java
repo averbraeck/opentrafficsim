@@ -178,6 +178,7 @@ public final class Query implements Identifiable
      * return the unique id for the query.
      * @return String; the unique id for the query
      */
+    @Override
     public String getId()
     {
         return this.id.toString();

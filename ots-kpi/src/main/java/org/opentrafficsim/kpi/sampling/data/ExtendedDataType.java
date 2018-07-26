@@ -47,6 +47,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
     /**
      * @return id
      */
+    @Override
     public final String getId()
     {
         return this.id;
