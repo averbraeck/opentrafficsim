@@ -58,7 +58,7 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Try
+public final class Try
 {
     /** private constructor for utility class. */
     private Try()
