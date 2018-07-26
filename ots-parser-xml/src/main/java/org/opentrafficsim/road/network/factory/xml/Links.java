@@ -11,6 +11,12 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.language.d3.CartesianPoint;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+import nl.tudelft.simulation.language.reflection.ClassUtil;
+
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.value.AngleUtil;
@@ -43,14 +49,7 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
-import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.xml.sax.SAXException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
-import nl.tudelft.simulation.language.d3.CartesianPoint;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * <p>
