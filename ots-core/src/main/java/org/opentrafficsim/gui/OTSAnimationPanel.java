@@ -197,8 +197,11 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         gtuPanel.setMinimumSize(new Dimension(250, 10));
         gtuPanel.setPreferredSize(new Dimension(250, 10));
         infoTextPanel.add(gtuPanel);
-        network.addListener(this, Network.GTU_ADD_EVENT);
-        network.addListener(this, Network.GTU_REMOVE_EVENT);
+        if (null != network)
+        {
+            network.addListener(this, Network.GTU_ADD_EVENT);
+            network.addListener(this, Network.GTU_REMOVE_EVENT);
+        }
         // gtu follow
         /** Text field with appearance control. */
         class AppearanceTextField extends JTextField implements AppearanceControl
@@ -233,7 +236,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         gtuPanel.add(this.autoPanField);
         // gtu counter
         this.gtuCountField = new JLabel("0 GTU's");
-        this.gtuCount = network.getGTUs().size();
+        this.gtuCount = null == network ? 0 : network.getGTUs().size();
         gtuPanel.add(this.gtuCountField);
         setGtuCountText();
 
