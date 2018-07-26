@@ -19,10 +19,10 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class Profile
+public final class Profile
 {
 
-    /** Map containing infos. */
+    /** Map containing ProfileInfo objects. */
     private static final Map<String, ProfileInfo> infos = new HashMap<>();
 
     /** Map containing most recent part id's as line numbers. */
