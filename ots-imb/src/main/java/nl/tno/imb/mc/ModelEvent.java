@@ -25,12 +25,14 @@ public abstract class ModelEvent implements SelfWrapper
      * Prepare this ModelEvent for transmission over IMB.
      * @param payload TByteBuffer; the transmit buffer
      */
+    @Override
     public abstract void prepare(TByteBuffer payload);
 
     /**
      * Transmit this ModelEvent over IMB.
      * @param payload TByteBuffer; the transmit buffer
      */
+    @Override
     public abstract void qWrite(TByteBuffer payload);
 
     /**
