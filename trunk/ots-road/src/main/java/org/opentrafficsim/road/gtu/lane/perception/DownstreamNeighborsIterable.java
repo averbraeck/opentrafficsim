@@ -47,10 +47,10 @@ public class DownstreamNeighborsIterable<R extends LaneRecord<R>>
 {
 
     /** Margin in case of a left lane. */
-    private final static Length LEFT = Length.createSI(-0.000001);
+    private static final Length LEFT = Length.createSI(-0.000001);
 
     /** Margin in case of a right lane. */
-    private final static Length RIGHT = Length.createSI(0.000001);
+    private static final Length RIGHT = Length.createSI(0.000001);
 
     /** Headway GTU type that should be used. */
     private final HeadwayGtuType headwayGtuType;
