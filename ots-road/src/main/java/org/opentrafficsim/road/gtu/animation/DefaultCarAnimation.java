@@ -122,7 +122,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             return;
         }
 
-        double scale =graphics.getTransform().getDeterminant();// Math.sqrt(Math.pow(graphics.getTransform()..getScaleX(), 2)
+        double scale = graphics.getTransform().getDeterminant();
+                // Math.sqrt(Math.pow(graphics.getTransform()..getScaleX(), 2)
                 // Math.pow(graphics.getTransform().getScaleY(), 2));
         if (scale > 1)
         {
