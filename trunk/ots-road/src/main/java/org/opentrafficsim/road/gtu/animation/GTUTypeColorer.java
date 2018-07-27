@@ -35,18 +35,18 @@ public class GTUTypeColorer implements GTUColorer, Serializable
     private int nextDefault = 0;
 
     /** Defaults colors. */
-    private static Color[] DEFAULTS = new Color[10];
+    private static Color[] standardColors = new Color[10];
     {
-        DEFAULTS[0] = Color.BLACK;
-        DEFAULTS[1] = new Color(0xa5, 0x2a, 0x2a);
-        DEFAULTS[2] = Color.RED;
-        DEFAULTS[3] = Color.ORANGE;
-        DEFAULTS[4] = Color.YELLOW;
-        DEFAULTS[5] = Color.GREEN;
-        DEFAULTS[6] = Color.BLUE;
-        DEFAULTS[7] = Color.MAGENTA;
-        DEFAULTS[8] = Color.GRAY;
-        DEFAULTS[9] = Color.WHITE;
+        standardColors[0] = Color.BLACK;
+        standardColors[1] = new Color(0xa5, 0x2a, 0x2a);
+        standardColors[2] = Color.RED;
+        standardColors[3] = Color.ORANGE;
+        standardColors[4] = Color.YELLOW;
+        standardColors[5] = Color.GREEN;
+        standardColors[6] = Color.BLUE;
+        standardColors[7] = Color.MAGENTA;
+        standardColors[8] = Color.GRAY;
+        standardColors[9] = Color.WHITE;
     }
     
     /** Default instance with colors for common GTUTypes. */
@@ -60,9 +60,9 @@ public class GTUTypeColorer implements GTUColorer, Serializable
      */
     public GTUTypeColorer add(final GTUType gtuType)
     {
-        this.map.put(gtuType, DEFAULTS[this.nextDefault]);
+        this.map.put(gtuType, standardColors[this.nextDefault]);
         this.nextDefault++;
-        if (this.nextDefault == DEFAULTS.length)
+        if (this.nextDefault == standardColors.length)
         {
             this.nextDefault = 0;
         }
