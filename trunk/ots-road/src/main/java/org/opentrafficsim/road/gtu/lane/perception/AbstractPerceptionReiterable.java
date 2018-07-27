@@ -84,7 +84,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
     /** {@inheritDoc} */
     @Override
-    public synchronized final H first()
+    public final synchronized H first()
     {
         assureFirst();
         if (this.first == null)
@@ -312,7 +312,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
          * @param object U; object
          * @param distance Length; distance to object
          */
-        public SecondaryIteratorEntry(final U object, final Length distance)
+        SecondaryIteratorEntry(final U object, final Length distance)
         {
             this.object = object;
             this.distance = distance;
