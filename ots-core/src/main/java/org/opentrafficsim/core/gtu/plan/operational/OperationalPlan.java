@@ -166,8 +166,9 @@ public class OperationalPlan implements Serializable
         this.totalLength = Length.ZERO;
 
         // make a path
-        OTSPoint3D p2 = new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
-                waitPoint.z);
+        OTSPoint3D p2 =
+                new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
+                        waitPoint.z);
         try
         {
             this.path = new OTSLine3D(new OTSPoint3D(waitPoint), p2);
@@ -368,23 +369,23 @@ public class OperationalPlan implements Serializable
     {
         if (time.lt(this.startTime))
         {
-            throw new OperationalPlanException(
-                    this.gtu + ", t = " + time + "SegmentProgress cannot be determined for time before startTime "
-                            + getStartTime() + " of this OperationalPlan");
+            throw new OperationalPlanException(this.gtu + ", t = " + time
+                    + "SegmentProgress cannot be determined for time before startTime " + getStartTime()
+                    + " of this OperationalPlan");
         }
         double cumulativeDistance = 0;
         for (int i = 0; i < this.segmentStartTimesRelSI.length - 1; i++)
         {
             if (this.startTime.si + this.segmentStartTimesRelSI[i + 1] >= time.si)
             {
-                return new SegmentProgress(this.operationalPlanSegmentList.get(i),
-                        new Time(this.startTime.si + this.segmentStartTimesRelSI[i], TimeUnit.BASE),
-                        new Length(cumulativeDistance, LengthUnit.SI));
+                return new SegmentProgress(this.operationalPlanSegmentList.get(i), new Time(this.startTime.si
+                        + this.segmentStartTimesRelSI[i], TimeUnit.BASE), new Length(cumulativeDistance, LengthUnit.SI));
             }
             cumulativeDistance += this.operationalPlanSegmentList.get(i).distanceSI();
         }
         throw new OperationalPlanException(this.gtu + ", t = " + time
-                + " SegmentProgress cannot be determined for time after endTime " + getEndTime() + " of this OperationalPlan");
+                + " SegmentProgress cannot be determined for time after endTime " + getEndTime()
+                + " of this OperationalPlan");
     }
 
     /**
@@ -403,9 +404,8 @@ public class OperationalPlan implements Serializable
             double distanceOfSegment = segment.distanceSI();
             if (distanceOfSegment > remainingDistanceSI)
             {
-                return new Time(
-                        timeAtStartOfSegment + segment.timeAtDistance(new Length(remainingDistanceSI, LengthUnit.SI)).si,
-                        TimeUnit.BASE);
+                return new Time(timeAtStartOfSegment
+                        + segment.timeAtDistance(new Length(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.BASE);
             }
             remainingDistanceSI -= distanceOfSegment;
             timeAtStartOfSegment += segment.getDurationSI();
@@ -502,12 +502,11 @@ public class OperationalPlan implements Serializable
     /**
      * Calculate the location after the given duration since the start of the plan.
      * @param time the relative time to look for a location
-     * @param pos relative position 
+     * @param pos relative position
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final DirectedPoint getLocation(final Time time, final RelativePosition pos)
-            throws OperationalPlanException
+    public final DirectedPoint getLocation(final Time time, final RelativePosition pos) throws OperationalPlanException
     {
         double distanceSI = getTraveledDistanceSI(time) + pos.getDx().si;
         return this.path.getLocationExtendedSI(distanceSI);
@@ -582,14 +581,22 @@ public class OperationalPlan implements Serializable
             }
             for (int i = 0; i < this.path.size() - 1; i++)
             {
-                OTSPoint3D p = OTSPoint3D.intersectionOfLines(this.path.get(i), this.path.get(i + 1), p1, p2);
+                OTSPoint3D prevPoint = this.path.get(i);
+                OTSPoint3D nextPoint = this.path.get(i + 1);
+                OTSPoint3D p = OTSPoint3D.intersectionOfLines(prevPoint, nextPoint, p1, p2);
                 if (p == null)
                 {
                     // point too close, check next section
                     continue;
                 }
-                boolean onSegment = (this.path.get(i).x - p.x) * (this.path.get(i + 1).x - p.x) <= 1e-6
-                        && (this.path.get(i).y - p.y) * (this.path.get(i + 1).y - p.y) <= 1e-6;
+                boolean onSegment =
+                        (prevPoint.x - p.x) * (nextPoint.x - p.x) <= 2e-5/* PK 1e-6 is too small */
+                                && (prevPoint.y - p.y) * (nextPoint.y - p.y) <= 2e-5/* PK 1e-6 is too small */;
+                // if (i > 64)
+                // {
+                // System.err.println(String.format("i=%d, prevPoint=%s, nextPoint=%s, intersection=%s, onSegment=%s", i,
+                // prevPoint, nextPoint, p, onSegment));
+                // }
                 if (p != null // on segment, or last segment
                         && (i == this.path.size() - 2 || onSegment))
                 {
@@ -607,6 +614,7 @@ public class OperationalPlan implements Serializable
         {
             throw new RuntimeException("Index out of bounds on projection of point to path of operational plan", exception);
         }
+        System.err.println("timeAtPoint failed");
         return null;
     }
 
@@ -628,7 +636,9 @@ public class OperationalPlan implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
+        result =
+                prime * result
+                        + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
         result = prime * result + ((this.path == null) ? 0 : this.path.hashCode());
         result = prime * result + ((this.startSpeed == null) ? 0 : this.startSpeed.hashCode());
         result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
@@ -684,9 +694,9 @@ public class OperationalPlan implements Serializable
     public String toString()
     {
         return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed=" + this.startSpeed
-                + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration=" + this.totalDuration
-                + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesRelSI) + ", endSpeed = " + this.endSpeed
-                + "]";
+                + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration="
+                + this.totalDuration + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesRelSI)
+                + ", endSpeed = " + this.endSpeed + "]";
     }
 
     /****************************************************************************************************************/
