@@ -212,7 +212,7 @@ public final class CarFollowingUtil
      * @param speed Speed; leader speed
      * @return Set; set with a single leader
      */
-    private final static PerceptionIterable<Headway> createLeader(final Length headway, final Speed speed)
+    private static final PerceptionIterable<Headway> createLeader(final Length headway, final Speed speed)
     {
         PerceptionIterable<Headway> leaders =
                 Try.assign(() -> new PerceptionIterableSet<>(new CarFollowingHeadway(headway, speed)),
