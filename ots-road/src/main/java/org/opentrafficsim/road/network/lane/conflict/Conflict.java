@@ -473,6 +473,8 @@ public final class Conflict extends AbstractLaneBasedObject
      * Therefore, it extends HeadwayGTUReal which simply wraps the GTU. As the HeadwayGTUReal class has the actual GTU hidden,
      * this class can provide it.
      * <p>
+     * FIXME: why not create a getter for the gtu in the super class?
+     * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
