@@ -957,7 +957,7 @@ public final class GeneratorPositions implements Locatable
              * Constructor.
              * @param value double; road position
              */
-            public ByValue(double value)
+            public ByValue(final double value)
             {
                 Throw.when(value < 0.0 || value > 1.0, IllegalArgumentException.class,
                         "Road position value should be in the range [0...1].");
