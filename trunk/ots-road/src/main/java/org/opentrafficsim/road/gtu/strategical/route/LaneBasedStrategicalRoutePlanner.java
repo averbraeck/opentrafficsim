@@ -42,8 +42,8 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner
-        implements LaneBasedStrategicalPlanner, Serializable
+public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner implements
+        LaneBasedStrategicalPlanner, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150724L;
@@ -185,8 +185,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         if (node.getLinks().size() == 1 && previousLink != null)
         {
             // end node
-            throw new NetworkException(
-                    "LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node + " has no successors");
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node
+                    + " has no successors");
         }
         if (node.getLinks().size() == 1 && previousLink == null)
         {
@@ -235,10 +235,10 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                         if (cse instanceof Lane)
                         {
                             Lane lane = (Lane) cse;
-                            if ((link.getStartNode().equals(node)
-                                    && lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_PLUS))
-                                    || (link.getEndNode().equals(node)
-                                            && lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_MINUS)))
+                            if ((link.getStartNode().equals(node) && lane.getLaneType().isCompatible(gtuType,
+                                    GTUDirectionality.DIR_PLUS))
+                                    || (link.getEndNode().equals(node) && lane.getLaneType().isCompatible(gtuType,
+                                            GTUDirectionality.DIR_MINUS)))
                             {
                                 out = true;
                             }
@@ -267,30 +267,45 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         int i = this.route.getNodes().indexOf(node);
         if (i == -1)
         {
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from " + previousLink
-                    + ", but node " + node + " not in route " + this.route);
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
+                    + previousLink + ", but node " + node + " not in route " + this.route);
         }
         if (i == this.route.getNodes().size() - 1)
         {
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from " + previousLink
-                    + ", but the GTU reached the last node for route " + this.route);
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
+                    + previousLink + ", but the GTU reached the last node for route " + this.route);
         }
         Node nextNode = this.route.getNode(i + 1);
-
+        LinkDirection result = null;
         for (Link link : links)
         {
+            // TODO this takes the first in the set of links that connects the correct nodes; does not handle parallel links
+            // consistently
+            LinkDirection ld = null;
             if (link.getStartNode().equals(nextNode) && link.getEndNode().equals(node))
             {
-                return new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+                ld = new LinkDirection(link, GTUDirectionality.DIR_MINUS);
             }
             if (link.getEndNode().equals(nextNode) && link.getStartNode().equals(node))
             {
-                return new LinkDirection(link, GTUDirectionality.DIR_PLUS);
+                ld = new LinkDirection(link, GTUDirectionality.DIR_PLUS);
+            }
+            if (null != result && null != ld)
+            {
+                throw new NetworkException("Cannot choose among multiple links from " + node + " to " + nextNode);
+            }
+            else if (null == result)
+            {
+                result = ld;
             }
         }
-        throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
-                + previousLink.getId() + ", but no link could be found connecting node " + node + " and node " + nextNode
-                + " for route " + this.route);
+        if (null == result)
+        {
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
+                    + previousLink.getId() + ", but no link could be found connecting node " + node + " and node "
+                    + nextNode + " for route " + this.route);
+        }
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -306,6 +321,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 CrossSectionLink link = pos.getLane().getParentLink();
                 Node from = pos.getGtuDirection().isPlus() ? link.getStartNode() : link.getEndNode();
                 this.route = link.getNetwork().getShortestRouteBetween(getGtu().getGTUType(), from, this.destination);
+                System.out.println("Shortest route for " + getGtu().getId() + ": " + this.route);
             }
             catch (GTUException | NetworkException exception)
             {
@@ -316,7 +332,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     }
 
     /**
-     * Assures a route is available if a route is already present, or a destination and route supplier are provided. 
+     * Assures a route is available if a route is already present, or a destination and route supplier are provided.
      * @param gtuType
      */
     private void assureRoute(final GTUType gtuType)
@@ -327,19 +343,23 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             List<Node> nodes = new ArrayList<>();
             if (this.origin != null)
             {
-                nodes.addAll(
-                        this.routeSupplier.getRoute(this.origin, ref.getLinkDirection().getNodeFrom(), gtuType).getNodes());
+                nodes.addAll(this.routeSupplier.getRoute(this.origin, ref.getLinkDirection().getNodeFrom(), gtuType)
+                        .getNodes());
             }
             else
             {
                 nodes.add(ref.getLinkDirection().getNodeFrom());
             }
-            nodes.addAll(this.routeSupplier.getRoute(ref.getLinkDirection().getNodeTo(), this.destination, gtuType).getNodes());
+            // LinkDirection ld = ref.getLinkDirection();
+            // Node n = ld.getNodeTo();
+            // Route r = this.routeSupplier.getRoute(n, this.destination, gtuType);
+            nodes.addAll(this.routeSupplier.getRoute(ref.getLinkDirection().getNodeTo(), this.destination, gtuType)
+                    .getNodes());
             this.route =
-                    Try.assign(
-                            () -> new CompleteRoute("Route for " + gtuType + " from " + this.origin + "to " + this.destination
-                                    + " via " + ref.getLinkDirection(), gtuType, nodes),
+                    Try.assign(() -> new CompleteRoute("Route for " + gtuType + " from " + this.origin + "to "
+                            + this.destination + " via " + ref.getLinkDirection(), gtuType, nodes),
                             "No route possible over nodes %s", nodes);
+            // System.out.println("RouteSupplier route for GTU " + getGtu().getId() + ": " + this.route);
         }
     }
 
@@ -361,8 +381,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     @Override
     public final String toString()
     {
-        return "LaneBasedStrategicalRoutePlanner [route=" + this.route + ", fixedTacticalPlanner=" + this.fixedTacticalPlanner
-                + "]";
+        return "LaneBasedStrategicalRoutePlanner [route=" + this.route + ", fixedTacticalPlanner="
+                + this.fixedTacticalPlanner + "]";
     }
 
 }
