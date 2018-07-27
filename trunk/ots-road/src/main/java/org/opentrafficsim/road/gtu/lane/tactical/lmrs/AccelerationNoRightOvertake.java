@@ -35,10 +35,10 @@ public class AccelerationNoRightOvertake implements AccelerationIncentive
 {
 
     /** Speed threshold below which traffic is considered congested. */
-    public final static ParameterTypeSpeed VCONG = ParameterTypes.VCONG;
+    public static final ParameterTypeSpeed VCONG = ParameterTypes.VCONG;
 
     /** Maximum adjustment deceleration, e.g. when speed limit drops. */
-    public final static ParameterTypeAcceleration B0 = ParameterTypes.B0;
+    public static final ParameterTypeAcceleration B0 = ParameterTypes.B0;
 
     /** {@inheritDoc} */
     @Override
