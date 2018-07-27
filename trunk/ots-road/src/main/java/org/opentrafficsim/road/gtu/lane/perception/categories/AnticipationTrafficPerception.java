@@ -57,7 +57,7 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
     private Map<RelativeLane, TimeStampedObject<LinearDensity>> antDensity = new HashMap<>();
 
     /** Density collector. */
-    private final static AnticipationDensity density = new AnticipationDensity();
+    private static final AnticipationDensity density = new AnticipationDensity();
 
     /**
      * Constructor.
