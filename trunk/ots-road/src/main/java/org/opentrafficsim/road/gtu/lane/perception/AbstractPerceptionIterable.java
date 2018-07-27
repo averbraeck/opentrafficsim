@@ -150,7 +150,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
         private Length postponedPosition = null;
 
         /** Constructor. */
-        public PrimaryIterator()
+        PrimaryIterator()
         {
             //
         }
@@ -225,7 +225,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
          * @param record R; record
          * @param position Length; position
          */
-        private final void prepareNext(final R record, final Length position)
+        private void prepareNext(final R record, final Length position)
         {
             Entry next = Try.assign(() -> AbstractPerceptionIterable.this.getNext(record, position, this.counters.get(record)),
                     "Exception while deriving next object.");
