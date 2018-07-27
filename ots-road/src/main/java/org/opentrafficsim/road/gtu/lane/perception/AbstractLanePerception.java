@@ -106,6 +106,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
             }
             catch (GTUException exception)
             {
+                exception.printStackTrace();
                 throw new RuntimeException("Error while updating the lane map.", exception);
             }
             this.updateTime = getGtu().getSimulator().getSimulatorTime().getTime();
