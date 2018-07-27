@@ -274,7 +274,6 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         {
             return new LaneBasedOperationalPlan(gtu, gtu.getLocation(), startTime, timeStep, false);
         }
-
         OTSLine3D path = createPathAlongCenterLine(gtu, distance);
         return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, false);
     }
@@ -284,7 +283,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      * @param gtu LaneBasedGTU; gtu
      * @param distance Length; minimum distance
      * @return OTSLine3D; path along lane center lines
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException when any of the OTSLine3D operations fails
      */
     public static OTSLine3D createPathAlongCenterLine(final LaneBasedGTU gtu, final Length distance) throws OTSGeometryException
     {
