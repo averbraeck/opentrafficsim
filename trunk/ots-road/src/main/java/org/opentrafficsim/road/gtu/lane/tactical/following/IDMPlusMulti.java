@@ -25,7 +25,7 @@ public class IDMPlusMulti extends AbstractIDM
 {
 
     /** Number of leaders considered parameter. */
-    public final static ParameterTypeInteger NLEADERS =
+    public static final ParameterTypeInteger NLEADERS =
             new ParameterTypeInteger("nLeaders", "Number of leaders in car-following model.", 2, POSITIVE);
 
     /**
