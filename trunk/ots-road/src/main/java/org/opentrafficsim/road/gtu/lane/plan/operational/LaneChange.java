@@ -368,14 +368,14 @@ public class LaneChange implements Serializable
         {
             /** {@inheritDoc} */
             @Override
-            protected double lateralFraction(double lcFraction)
+            protected double lateralFraction(final double lcFraction)
             {
                 return -1.0 / (2 * Math.PI) * Math.sin(2 * Math.PI * lcFraction) + lcFraction;
             }
 
             /** {@inheritDoc} */
             @Override
-            protected double angle(double width, double cumulLcLength, double totalLcLength)
+            protected double angle(final double width, final double cumulLcLength, final double totalLcLength)
             {
                 return Math.atan((-width * Math.cos(2 * Math.PI * cumulLcLength / totalLcLength) / totalLcLength)
                         + width / totalLcLength);
@@ -387,14 +387,14 @@ public class LaneChange implements Serializable
         {
             /** {@inheritDoc} */
             @Override
-            protected double lateralFraction(double lcFraction)
+            protected double lateralFraction(final double lcFraction)
             {
                 return 3 * (lcFraction * lcFraction) - 2 * (lcFraction * lcFraction * lcFraction);
             }
 
             /** {@inheritDoc} */
             @Override
-            protected double angle(double width, double cumulLcLength, double totalLcLength)
+            protected double angle(final double width, final double cumulLcLength, final double totalLcLength)
             {
                 return Math.atan(cumulLcLength * 6 * width / (totalLcLength * totalLcLength)
                         - cumulLcLength * cumulLcLength * 6 * width / (totalLcLength * totalLcLength * totalLcLength));
