@@ -101,7 +101,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final void init(LaneBasedGTU gtu)
+    public final void init(final LaneBasedGTU gtu)
     {
         if (this.desiredHeadwayModel instanceof Initialisable)
         {
