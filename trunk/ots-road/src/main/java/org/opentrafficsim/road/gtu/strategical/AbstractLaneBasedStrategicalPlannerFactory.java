@@ -84,7 +84,7 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
      * @return Parameters; next parameter set
      * @throws GTUException on parameter exception
      */
-    private final Parameters peekParameters(final GTUType gtuType) throws GTUException
+    private Parameters peekParameters(final GTUType gtuType) throws GTUException
     {
         if (this.peekedParameters != null)
         {
