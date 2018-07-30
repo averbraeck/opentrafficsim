@@ -159,7 +159,7 @@ public interface HeadwayGtuType
         /** {@inheritDoc} */
         @Override
         public HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-                Length overlapFront, Length overlap, Length overlapRear) throws GTUException
+                final Length overlapFront, final Length overlap, final Length overlapRear) throws GTUException
         {
             return new HeadwayGTUPerceived(perceivedGtu, overlapFront, overlap, overlapRear, perceivedGtu.getSpeed(),
                     perceivedGtu.getAcceleration());
