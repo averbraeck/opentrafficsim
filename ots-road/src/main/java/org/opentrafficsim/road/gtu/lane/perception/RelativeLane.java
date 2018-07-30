@@ -177,7 +177,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {
