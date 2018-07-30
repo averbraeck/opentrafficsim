@@ -97,18 +97,19 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
      * Returns a builder for SwitchableGTUColorer.
      * @return Builder; builder for SwitchableGTUColorer
      */
-    public final static Builder builder()
+    public static final Builder builder()
     {
         return new Builder();
     }
 
     /**
-     * Builder for SwitchableGTUColorer. 
+     * Builder for SwitchableGTUColorer.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 2 mrt. 2018 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author$,
+     *          initial version 2 mrt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
