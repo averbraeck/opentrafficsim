@@ -670,6 +670,9 @@ public final class Conflict extends AbstractLaneBasedObject
         @Override
         protected Iterator<PrimaryIteratorEntry> primaryIterator()
         {
+            /**
+             * Iterator that iterates over PrimaryIteratorEntry objects. 
+             */
             class ConflictGtuIterator implements Iterator<PrimaryIteratorEntry>
             {
                 /** Next entry. */
