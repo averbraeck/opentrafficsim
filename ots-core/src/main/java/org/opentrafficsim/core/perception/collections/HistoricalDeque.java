@@ -23,6 +23,7 @@ public interface HistoricalDeque<E> extends HistoricalQueue<E>, Deque<E>
      * Returns the current deque.
      * @return Deque; current deque
      */
+    @Override
     Deque<E> get();
 
     /**
@@ -30,6 +31,7 @@ public interface HistoricalDeque<E> extends HistoricalQueue<E>, Deque<E>
      * @param time Time; time to obtain the deque at
      * @return Deque; past deque
      */
+    @Override
     Deque<E> get(Time time);
 
 }
