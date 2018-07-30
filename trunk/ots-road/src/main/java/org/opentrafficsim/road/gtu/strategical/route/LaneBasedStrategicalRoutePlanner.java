@@ -92,7 +92,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     }
 
     /**
-     * Constructor for a strategical planner with route supplier
+     * Constructor for a strategical planner with route supplier.
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      * @param gtu GTU
      * @param origin origin node
