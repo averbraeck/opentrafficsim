@@ -47,7 +47,7 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedTacticalPlanner getTacticalPlanner(final Time time)
+    public final LaneBasedTacticalPlanner getTacticalPlanner(final Time time)
     {
         return null;
     }
