@@ -38,34 +38,34 @@ public abstract class TextAnimation implements Locatable, Serializable
     /** */
     private static final long serialVersionUID = 20161211L;
 
-    /** the object for which the text is displayed. */
+    /** The object for which the text is displayed. */
     private final Locatable source;
 
-    /** the text to display. */
+    /** The text to display. */
     private String text;
 
-    /** the horizontal movement of the text, in meters. */
+    /** The horizontal movement of the text, in meters. */
     private final float dx;
 
-    /** the vertical movement of the text, in meters. */
+    /** The vertical movement of the text, in meters. */
     private final float dy;
 
-    /** whether to center or not. */
+    /** Whether to center or not. */
     private final TextAlignment textAlignment;
 
-    /** the color of the text. */
+    /** The color of the text. */
     private Color color;
 
-    /** fontSize the size of the font; default = 2.0 (meters). */
+    /** FontSize the size of the font; default = 2.0 (meters). */
     private final float fontSize;
 
-    /** the animation implementation. */
+    /** The animation implementation. */
     private final AnimationImpl animationImpl;
 
-    /** the font. */
+    /** The font. */
     private Font font;
 
-    /** the font rectangle. */
+    /** The font rectangle. */
     private Rectangle2D fontRectangle = null;
 
     /**
