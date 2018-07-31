@@ -69,16 +69,16 @@ public abstract class TextAnimation implements Locatable, Serializable
     private Rectangle2D fontRectangle = null;
 
     /**
-     * @param source the object for which the text is displayed
-     * @param text the text to display
-     * @param dx the horizontal movement of the text, in meters
-     * @param dy the vertical movement of the text, in meters
-     * @param textAlignment where to place the text
-     * @param color the color of the text
-     * @param fontSize the size of the font; default = 2.0 (meters)
-     * @param simulator the simulator
+     * @param source Locatable; the object for which the text is displayed
+     * @param text String; the text to display
+     * @param dx float; the horizontal movement of the text, in meters
+     * @param dy float; the vertical movement of the text, in meters
+     * @param textAlignment TextAlignment; where to place the text
+     * @param color Color; the color of the text
+     * @param fontSize float; the size of the font; default = 2.0 (meters)
+     * @param simulator OTSSimulatorInterface; the simulator
      * @throws NamingException when animation context cannot be created or retrieved
-     * @throws RemoteException - when remote context cannot be found
+     * @throws RemoteException when remote context cannot be found
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
@@ -103,15 +103,15 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @param source the object for which the text is displayed
-     * @param text the text to display
-     * @param dx the horizontal movement of the text, in meters
-     * @param dy the vertical movement of the text, in meters
-     * @param textAlignment where to place the text
-     * @param color the color of the text
-     * @param simulator the simulator
+     * @param source Locatable; the object for which the text is displayed
+     * @param text String; the text to display
+     * @param dx float; the horizontal movement of the text, in meters
+     * @param dy float; the vertical movement of the text, in meters
+     * @param textAlignment TextAlignment; where to place the text
+     * @param color Color; the color of the text
+     * @param simulator OTSSimulatorInterface; the simulator
      * @throws NamingException when animation context cannot be created or retrieved
-     * @throws RemoteException - when remote context cannot be found
+     * @throws RemoteException when remote context cannot be found
      */
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final OTSSimulatorInterface simulator)
@@ -139,8 +139,8 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /**
      * paint() method so it can be overridden or extended.
-     * @param graphics the graphics object
-     * @param observer the observer
+     * @param graphics Graphics2D; the graphics object
+     * @param observer ImageObserver; the observer
      * @throws RemoteException on network exception
      */
     @SuppressWarnings("checkstyle:designforextension")
@@ -179,9 +179,9 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /**
      * Clone the TextAnimation and return a copy for the new source on the new simulator.
-     * @param newSource the new source to link to the text animation
-     * @param newSimulator the new simulator to register the animation on
-     * @return a copy of the TextAnimation
+     * @param newSource Locatable; the new source to link to the text animation
+     * @param newSimulator OTSSimulatorInterface; the new simulator to register the animation on
+     * @return TextAnimation; a copy of this TextAnimation
      * @throws RemoteException when remote animation cannot be reached
      * @throws NamingException when animation name cannot be found or bound in the Context
      */
@@ -189,7 +189,8 @@ public abstract class TextAnimation implements Locatable, Serializable
             throws RemoteException, NamingException;
 
     /**
-     * @return source
+     * Retrieve the source.
+     * @return Locatable; the source
      */
     protected final Locatable getSource()
     {
@@ -197,7 +198,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return dx
+     * Retrieve dx.
+     * @return float; the value of dx
      */
     protected final float getDx()
     {
@@ -205,7 +207,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return dy
+     * Retrieve dy.
+     * @return float; the value of dy
      */
     protected final float getDy()
     {
@@ -213,7 +216,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return textAlignment
+     * Retrieve the text alignment.
+     * @return TextAlignment; the text alignment
      */
     protected final TextAlignment getTextAlignment()
     {
@@ -221,7 +225,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return fontSize
+     * Retrieve the font size.
+     * @return float; the font size
      */
     protected final float getFontSize()
     {
@@ -229,7 +234,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return font
+     * Retrieve the font.
+     * @return Font; the font
      */
     protected final Font getFont()
     {
@@ -237,7 +243,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return current text
+     * Retrieve the current text.
+     * @return String; the current text
      */
     protected final String getText()
     {
@@ -245,7 +252,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @param text set new text
+     * Update the text.
+     * @param text String; the new text
      */
     protected final void setText(final String text)
     {
@@ -257,7 +265,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return current color
+     * Retrieve the current color.
+     * @return Color; the current color
      */
     protected final Color getColor()
     {
@@ -265,7 +274,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @param color set new color
+     * Update the color.
+     * @param color Color; the new color
      */
     protected final void setColor(final Color color)
     {
@@ -273,7 +283,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return Returns the flip.
+     * Retrieve the current flip status.
+     * @return boolean; the current flip status
      */
     public final boolean isFlip()
     {
@@ -281,7 +292,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @param flip The flip to set.
+     * Update the flip status.
+     * @param flip boolean; the new flip status
      */
     public final void setFlip(final boolean flip)
     {
@@ -289,7 +301,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return Returns the rotate.
+     * Retrieve the current rotation status.
+     * @return boolean; the current rotation status
      */
     public final boolean isRotate()
     {
@@ -297,7 +310,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @param rotate The rotate to set.
+     * Update the rotation status.
+     * @param rotate boolean; the new rotation status
      */
     public final void setRotate(final boolean rotate)
     {
@@ -306,7 +320,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return Returns the scale.
+     * Retrieve the current scale status.
+     * @return boolean; the current scale status
      */
     public final boolean isScale()
     {
@@ -314,7 +329,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @param scale The scale to set.
+     * Update the scale status.
+     * @param scale boolean; the new scale status
      */
     public final void setScale(final boolean scale)
     {
@@ -322,7 +338,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @return Returns the translate.
+     * Retrieve the current translate status.
+     * @return boolean; the current translate status
      */
     public final boolean isTranslate()
     {
@@ -330,7 +347,8 @@ public abstract class TextAnimation implements Locatable, Serializable
     }
 
     /**
-     * @param translate The translate to set.
+     * Update the translate status.
+     * @param translate boolean; the new translate status
      */
     public final void setTranslate(final boolean translate)
     {
@@ -350,16 +368,17 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private static class AnimationImpl extends Renderable2D implements Serializable
+    private static class AnimationImpl extends Renderable2D<Locatable> implements Serializable
     {
         /** */
         private static final long serialVersionUID = 20170400L;
 
         /**
-         * @param source the source
-         * @param simulator the simulator
+         * Construct a new AnimationImpl.
+         * @param source Locatable; the source
+         * @param simulator OTSSimulatorInterface; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
-         * @throws RemoteException - when remote context cannot be found
+         * @throws RemoteException when remote context cannot be found
          */
         AnimationImpl(final Locatable source, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
         {
