@@ -85,7 +85,6 @@ public class VerifyRequiredMethods
                             + "class implements a final toString method");
                 }
                 else if (!ClassList.hasNonStaticFields(c))
-
                 {
                     System.out.println("Class " + c.getName()
                             + " does not have to override the toString method because it does not have non-static fields");
@@ -112,15 +111,12 @@ public class VerifyRequiredMethods
      * Check that all classes implement the Serializable interface.
      */
     @Test
+    @SuppressWarnings("checkstyle:methodlength")
     public final void serializableTest()
     {
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)
         {
-            // if (c.getName().endsWith("AccelerationContourPlot"))
-            // {
-            // System.out.println("Let op");
-            // }
             if (Serializable.class.isAssignableFrom(c))
             {
                 if (c.isEnum())
@@ -219,7 +215,7 @@ public class VerifyRequiredMethods
                 }
                 else
                 {
-                    // System.out.println("Class " + c.getName() + " implements hashCode, but not equals");
+                    System.out.println("Class " + c.getName() + " implements hashCode, but not equals");
                 }
             }
             else if (null == hashCodeMethod)
