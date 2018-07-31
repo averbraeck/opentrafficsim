@@ -118,10 +118,6 @@ public class VerifyRequiredMethods
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)
         {
-            // if (c.getName().endsWith("AccelerationContourPlot"))
-            // {
-            // System.out.println("Let op");
-            // }
             if (Serializable.class.isAssignableFrom(c))
             {
                 if (c.isEnum())
