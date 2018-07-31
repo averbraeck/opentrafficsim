@@ -230,6 +230,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                     // are there no lanes from the node into this link in the outgoing direction?
                     boolean out = false;
                     CrossSectionLink csLink = (CrossSectionLink) link;
+                    // TODO: Is there a reason not to iterate over csLink.getLanes()?
                     for (CrossSectionElement cse : csLink.getCrossSectionElementList())
                     {
                         if (cse instanceof Lane)
