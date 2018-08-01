@@ -3,6 +3,8 @@ package org.opentrafficsim.road;
 import java.lang.reflect.Field;
 import java.util.Set;
 
+import nl.tudelft.simulation.language.reflection.ClassUtil;
+
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeBoolean;
@@ -10,14 +12,11 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeInteger;
 import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
-
-import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * Creator of set of parameters with default values.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 15, 2016 <br>
@@ -31,7 +30,7 @@ public final class DefaultTestParameters
      */
     private DefaultTestParameters()
     {
-        //
+        // Do not instantiate
     }
 
     /**
@@ -41,7 +40,6 @@ public final class DefaultTestParameters
     @SuppressWarnings("unchecked")
     public static ParameterSet create()
     {
-
         ParameterSet params = new ParameterSet();
 
         // set all default values using reflection
@@ -50,58 +48,39 @@ public final class DefaultTestParameters
         {
             for (Field field : fields)
             {
-                if (ParameterTypeNumeric.class.isAssignableFrom(field.getType()))
+                try
                 {
-                    try
+                    if (ParameterTypeNumeric.class.isAssignableFrom(field.getType()))
                     {
                         field.setAccessible(true);
                         @SuppressWarnings("rawtypes")
                         ParameterTypeNumeric p = (ParameterTypeNumeric) field.get(ParameterTypes.class);
                         params.setParameter(p, p.getDefaultValue());
                     }
-                    catch (ParameterException pe)
-                    {
-                        // do not set parameter without default value
-                    }
-                }
-                else if (ParameterTypeBoolean.class.equals(field.getType()))
-                {
-                    try
+                    else if (ParameterTypeBoolean.class.equals(field.getType()))
                     {
                         field.setAccessible(true);
                         ParameterTypeBoolean p = (ParameterTypeBoolean) field.get(ParameterTypes.class);
                         params.setParameter(p, p.getDefaultValue());
                     }
-                    catch (ParameterException pe)
-                    {
-                        // do not sat parameter without default value
-                    }
-                }
-                else if (ParameterTypeDouble.class.equals(field.getType()))
-                {
-                    try
+                    else if (ParameterTypeDouble.class.equals(field.getType()))
                     {
                         field.setAccessible(true);
                         ParameterTypeDouble p = (ParameterTypeDouble) field.get(ParameterTypes.class);
                         params.setParameter(p, p.getDefaultValue());
                     }
-                    catch (ParameterException pe)
-                    {
-                        // do not sat parameter without default value
-                    }
-                }
-                else if (ParameterTypeInteger.class.equals(field.getType()))
-                {
-                    try
+                    else if (ParameterTypeInteger.class.equals(field.getType()))
                     {
                         field.setAccessible(true);
                         ParameterTypeInteger p = (ParameterTypeInteger) field.get(ParameterTypes.class);
                         params.setParameter(p, p.getDefaultValue());
                     }
-                    catch (ParameterException pe)
-                    {
-                        // do not sat parameter without default value
-                    }
+                    // FIXME: add another else to catch any unanticipated cases?
+                }
+                catch (ParameterException pe)
+                {
+                    // FIXME: Explain why this exception can/should be ignored.
+                    // do not set parameter without default value
                 }
             }
         }
@@ -113,9 +92,7 @@ public final class DefaultTestParameters
         {
             iace.printStackTrace();
         }
-
         return params;
-
     }
 
 }
