@@ -501,8 +501,8 @@ final class Links
             if (linkTag.laneOverrideTags.containsKey(cseTag.name))
                 laneOverrideTag = linkTag.laneOverrideTags.get(cseTag.name);
 
-            Length startOffset = cseTag.offset != null ? cseTag.offset : cseTag.startOffSet;
-            Length endOffset = cseTag.offset != null ? cseTag.offset : cseTag.endOffSet;
+            Length startOffset = cseTag.offset != null ? cseTag.offset : cseTag.offSetStart;
+            Length endOffset = cseTag.offset != null ? cseTag.offset : cseTag.offSetEnd;
             switch (cseTag.elementType)
             {
                 case STRIPE:
