@@ -147,11 +147,11 @@ class CrossSectionElementTag implements Serializable
 
     /** Start offset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length startOffSet = null;
+    Length offSetStart = null;
 
     /** End offset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length endOffSet = null;
+    Length offSetEnd = null;
 
     /** Speed limits. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -483,14 +483,14 @@ class CrossSectionElementTag implements Serializable
         if (attributes.getNamedItem("OFFSET") != null)
             cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
 
-        if (attributes.getNamedItem("STARTOFFSET") != null)
-            cseTag.startOffSet = LengthUnits.parseLength(attributes.getNamedItem("STARTOFFSET").getNodeValue().trim());
+        if (attributes.getNamedItem("OFFSETSTART") != null)
+            cseTag.offSetStart = LengthUnits.parseLength(attributes.getNamedItem("OFFSETSTART").getNodeValue().trim());
 
-        if (attributes.getNamedItem("ENDOFFSET") != null)
-            cseTag.endOffSet = LengthUnits.parseLength(attributes.getNamedItem("ENDOFFSET").getNodeValue().trim());
+        if (attributes.getNamedItem("OFFSETEND") != null)
+            cseTag.offSetEnd = LengthUnits.parseLength(attributes.getNamedItem("OFFSETEND").getNodeValue().trim());
 
-        if ((cseTag.offset == null && (cseTag.startOffSet == null || cseTag.endOffSet == null))
-                || (cseTag.offset != null && (cseTag.startOffSet != null || cseTag.endOffSet != null)))
+        if ((cseTag.offset == null && (cseTag.offSetStart == null || cseTag.offSetEnd == null))
+                || (cseTag.offset != null && (cseTag.offSetStart != null || cseTag.offSetEnd != null)))
         {
             String namedPart = attributes.getNamedItem("NAME") == null ? "on " + roadLayoutTag.name
                     : roadLayoutTag.name + "." + cseTag.name;
