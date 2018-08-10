@@ -240,7 +240,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                         {
                             exception1.printStackTrace();
                             // Stop the simulation
-                            error = "FAILED (XML ERROR)";
+                            error = "XML ERROR";
                         }
                         break;
 
