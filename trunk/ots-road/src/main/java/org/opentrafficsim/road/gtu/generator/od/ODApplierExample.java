@@ -229,8 +229,10 @@ public class ODApplierExample extends AbstractWrappableAnimation
                         new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Set<GTUType> gtuTypes = new HashSet<>();
                 gtuTypes.add(GTUType.VEHICLE);
-                Stripe stripe12 = new Stripe(linkA2B, Length.createSI(1.75), Length.createSI(0.2), gtuTypes, Permeable.BOTH);
-                Stripe stripe23 = new Stripe(linkA2B, Length.createSI(-1.75), Length.createSI(0.2), gtuTypes, Permeable.BOTH);
+                Stripe stripe12 = new Stripe(linkA2B, Length.createSI(1.75), Length.createSI(1.75), Length.createSI(0.2),
+                        gtuTypes, Permeable.BOTH);
+                Stripe stripe23 = new Stripe(linkA2B, Length.createSI(-1.75), Length.createSI(-1.75), Length.createSI(0.2),
+                        gtuTypes, Permeable.BOTH);
                 // animation
                 new NodeAnimation(nodeA, this.simulator);
                 new NodeAnimation(nodeA1, this.simulator);

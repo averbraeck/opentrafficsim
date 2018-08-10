@@ -166,7 +166,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new LinkedHashMap<>();
         Map<LaneStructureRecord, InfrastructureLaneChangeInfo> nextSet = new LinkedHashMap<>();
         RelativePosition front = getPerception().getGtu().getFront();
-        currentSet.put(record, new InfrastructureLaneChangeInfo(0, record, front, record.isDeadEnd()));
+        currentSet.put(record,
+                new InfrastructureLaneChangeInfo(0, record, front, record.isDeadEnd(), LateralDirectionality.NONE));
         while (!currentSet.isEmpty())
         {
             // move lateral
@@ -176,8 +177,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                 while (laneRecord.legalLeft() && !nextSet.containsKey(laneRecord.getLeft()))
                 {
                     InfrastructureLaneChangeInfo info =
-                            new InfrastructureLaneChangeInfo(nextSet.get(laneRecord).getRequiredNumberOfLaneChanges() + 1,
-                                    laneRecord.getLeft(), front, laneRecord.getLeft().isDeadEnd());
+                            nextSet.get(laneRecord).left(laneRecord.getLeft(), front, laneRecord.getLeft().isDeadEnd());
                     nextSet.put(laneRecord.getLeft(), info);
                     laneRecord = laneRecord.getLeft();
                 }
@@ -187,8 +187,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                 while (laneRecord.legalRight() && !nextSet.containsKey(laneRecord.getRight()))
                 {
                     InfrastructureLaneChangeInfo info =
-                            new InfrastructureLaneChangeInfo(nextSet.get(laneRecord).getRequiredNumberOfLaneChanges() + 1,
-                                    laneRecord.getRight(), front, laneRecord.getRight().isDeadEnd());
+                            nextSet.get(laneRecord).right(laneRecord.getRight(), front, laneRecord.getRight().isDeadEnd());
                     nextSet.put(laneRecord.getRight(), info);
                     laneRecord = laneRecord.getRight();
                 }
@@ -207,8 +206,10 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                     // add to nextSet
                     for (LaneStructureRecord next : laneRecord.getNext())
                     {
-                        InfrastructureLaneChangeInfo info = new InfrastructureLaneChangeInfo(
-                                currentSet.get(laneRecord).getRequiredNumberOfLaneChanges(), next, front, next.isDeadEnd());
+                        InfrastructureLaneChangeInfo prev = currentSet.get(laneRecord);
+                        InfrastructureLaneChangeInfo info =
+                                new InfrastructureLaneChangeInfo(prev.getRequiredNumberOfLaneChanges(), next, front,
+                                        next.isDeadEnd(), prev.getLateralDirectionality());
                         nextSet.put(next, info);
                     }
                     // take best ok
@@ -412,8 +413,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         else
         {
             dx = tail;
-            while (record != null
-                    && ((lat.isLeft() && !record.legalLeft()) || (lat.isRight() && !record.legalRight())))
+            while (record != null && ((lat.isLeft() && !record.legalLeft()) || (lat.isRight() && !record.legalRight())))
             {
                 // TODO splits
                 prevRecord = record;
@@ -652,10 +652,10 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     {
 
         /** Structure the end of which determines the available distance. */
-        final LaneStructureRecord record;
+        private final LaneStructureRecord record;
 
         /** Relative distance towards nose or tail. */
-        final double dx;
+        private final double dx;
 
         /** Whether to apply legal accessibility. */
         private final boolean legal;
@@ -665,7 +665,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
          * @param dx Length; relative distance towards nose or tail
          * @param legal boolean; whether to apply legal accessibility
          */
-        public LaneChangePossibility(final LaneStructureRecord record, final Length dx, final boolean legal)
+        LaneChangePossibility(final LaneStructureRecord record, final Length dx, final boolean legal)
         {
             this.record = record;
             this.dx = dx.si;
@@ -679,7 +679,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
          */
         final Length getDistance(final LateralDirectionality lat)
         {
-            double  d = this.record.getStartDistance().si + this.record.getLane().getLength().si - this.dx;
+            double d = this.record.getStartDistance().si + this.record.getLane().getLength().si - this.dx;
             if (this.legal)
             {
                 if ((lat.isLeft() && this.record.legalLeft()) || (lat.isRight() && this.record.legalRight()))

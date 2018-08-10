@@ -44,7 +44,7 @@ import nl.tudelft.simulation.language.Throw;
  * @param <T> value type
  * @param <E> event type
  */
-public abstract class AbstractHistorical<T, E extends Event<T>> implements HistoricalElement
+public abstract class AbstractHistorical<T, E extends Event> implements HistoricalElement
 {
 
     /** History manager. */
@@ -175,22 +175,15 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     * @param <T> value type
      */
-    static interface Event<T>
+    interface Event
     {
 
         /**
          * Returns the time of this event.
          * @return double; time of this event
          */
-        public abstract double getTime();
-
-        /**
-         * Returns the value of this event.
-         * @return T; value of this event
-         */
-        public abstract T getValue();
+        double getTime();
 
     }
 
@@ -207,7 +200,7 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      * @param <T> value type
      */
-    public static class EventValue<T> implements Event<T>
+    public static class EventValue<T> implements Event
     {
 
         /** Time of event. */
@@ -234,8 +227,10 @@ public abstract class AbstractHistorical<T, E extends Event<T>> implements Histo
             return this.time;
         }
 
-        /** {@inheritDoc} */
-        @Override
+        /**
+         * Returns the value of this event.
+         * @return T; value of this event
+         */
         public T getValue()
         {
             return this.value;

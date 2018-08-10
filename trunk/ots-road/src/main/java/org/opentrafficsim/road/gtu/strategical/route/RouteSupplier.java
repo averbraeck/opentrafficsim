@@ -20,7 +20,7 @@ import org.opentrafficsim.core.network.route.Route;
 public interface RouteSupplier
 {
     /** No route route supplier. */
-    public static RouteSupplier NULL = new RouteSupplier()
+    RouteSupplier NULL = new RouteSupplier()
     {
         @Override
         public Route getRoute(final Node origin, final Node destination, final GTUType gtuType)
@@ -30,7 +30,7 @@ public interface RouteSupplier
     };
 
     /** Shortest route route supplier. */
-    public static RouteSupplier SHORTEST = new RouteSupplier()
+    RouteSupplier SHORTEST = new RouteSupplier()
     {
         /** Shortest route cache. */
         private NestedCache<Route> shortestRouteCache = new NestedCache<>(GTUType.class, Node.class, Node.class);

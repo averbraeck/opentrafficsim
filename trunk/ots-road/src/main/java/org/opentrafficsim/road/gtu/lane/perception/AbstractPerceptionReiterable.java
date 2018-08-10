@@ -13,7 +13,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
  * This class uses a single primary iterator which a subclass defines, and makes sure that all elements are only looked up and
- * create once. It does so by storing the elements in a linked list. All calls to {@code iterator()} return an iterator which
+ * created once. It does so by storing the elements in a linked list. All calls to {@code iterator()} return an iterator which
  * iterates over the linked list. If an iterator runs to the end of the linked list, the primary iterator is requested to add an
  * element if it has one.
  * <p>
@@ -55,7 +55,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
      * Returns the primary iterator.
      * @return Iterator; primary iterator
      */
-    Iterator<PrimaryIteratorEntry> getPrimaryIterator()
+    final Iterator<PrimaryIteratorEntry> getPrimaryIterator()
     {
         if (this.primaryIterator == null)
         {
@@ -95,16 +95,13 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     }
 
     /**
-     * Assures a first IteratorEntry is present, if the primary iterator has any elements.
+     * Assures a first SecondaryIteratorEntry is present, if the primary iterator has any elements.
      */
     private synchronized void assureFirst()
     {
-        if (this.first == null)
+        if (this.first == null && getPrimaryIterator().hasNext())
         {
-            if (getPrimaryIterator().hasNext())
-            {
-                addNext(getPrimaryIterator().next());
-            }
+            addNext(getPrimaryIterator().next());
         }
     }
 
@@ -112,7 +109,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
      * Adds an iterator entry to the internal linked list.
      * @param next PrimaryIteratorEntry; next object
      */
-    void addNext(final PrimaryIteratorEntry next)
+    final void addNext(final PrimaryIteratorEntry next)
     {
         SecondaryIteratorEntry entry = new SecondaryIteratorEntry(next.object, next.distance);
         if (AbstractPerceptionReiterable.this.last == null)
@@ -167,8 +164,8 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
     /**
      * This iterator is returned to callers of the {@code iterator()} method. Multiple instances may be returned which use the
-     * same linked list of {@code IteratorEntry}. Whenever an iterator runs to the end of this list, the primary iterator is
-     * requested to find the next object, if it has a next object.
+     * same linked list of {@code SecondaryIteratorEntry}. Whenever an iterator runs to the end of this list, the primary
+     * iterator is requested to find the next object, if it has a next object.
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>

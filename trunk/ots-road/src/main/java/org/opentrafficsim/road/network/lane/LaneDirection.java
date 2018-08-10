@@ -1,18 +1,19 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
-import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -68,7 +69,7 @@ public class LaneDirection implements Serializable
      * @param fraction double; fractional position
      * @return Length; covered distance driven to the given fractional position
      */
-    public final Length coveredDistance(double fraction)
+    public final Length coveredDistance(final double fraction)
     {
         if (this.direction.isPlus())
         {
@@ -82,7 +83,7 @@ public class LaneDirection implements Serializable
      * @param fraction double; fractional position
      * @return Length; remaining distance to be driven from the given fractional position
      */
-    public final Length remainingDistance(double fraction)
+    public final Length remainingDistance(final double fraction)
     {
         if (this.direction.isPlus())
         {
@@ -128,19 +129,28 @@ public class LaneDirection implements Serializable
         {
             throw new RuntimeException("Strategical planner experiences exception on network.", exception);
         }
-        LaneDirection out = null;
-        int count = 0;
+        Set<LaneDirection> out = new HashSet<>();
         for (Lane l : next.keySet())
         {
             GTUDirectionality dir = next.get(l);
             if (l.getParentLink().equals(ld.getLink()) && dir.equals(ld.getDirection()))
             {
-                out = new LaneDirection(l, dir);
-                count++;
+                out.add(new LaneDirection(l, dir));
             }
         }
-        Throw.when(count > 1, RuntimeException.class, "Multiple candidate downtream lanes.");
-        return out;
+        if (out.isEmpty())
+        {
+            return null;
+        }
+        else if (out.size() == 1)
+        {
+            return out.iterator().next();
+        }
+        else
+        {
+            // ask tactical planner
+            return Try.assign(() -> gtu.getTacticalPlanner().chooseLaneAtSplit(out), "Missing parameter.");
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 
@@ -38,7 +39,8 @@ public class InfrastructureLaneChangeInfoToledo extends InfrastructureLaneChange
     public InfrastructureLaneChangeInfoToledo(final int requiredNumberOfLaneChanges, final LaneStructureRecord record,
             final int splitNumber) throws GTUException
     {
-        super(requiredNumberOfLaneChanges, record, RelativePosition.REFERENCE_POSITION, splitNumber > 0);
+        super(requiredNumberOfLaneChanges, record, RelativePosition.REFERENCE_POSITION, splitNumber > 0,
+                LateralDirectionality.NONE);
         Throw.when(splitNumber <= 0, GTUException.class, "Split number should be at least 1.");
         this.splitNumber = splitNumber;
     }

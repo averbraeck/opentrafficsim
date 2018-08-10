@@ -16,6 +16,7 @@ import javax.vecmath.Point3d;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -225,6 +226,8 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
             carBuilder.setAnimationClass(DefaultCarAnimation.class);
             carBuilder.setGtuColorer(this.gtuColorer);
             carBuilder.setNetwork(this.network);
+            carBuilder.setMaximumAcceleration(Acceleration.createSI(3.0));
+            carBuilder.setMaximumDeceleration(Acceleration.createSI(-8.0));
             this.generatedGTUs++;
 
             if (enoughSpace(carBuilder))

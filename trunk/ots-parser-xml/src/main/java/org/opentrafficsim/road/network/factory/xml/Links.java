@@ -501,6 +501,8 @@ final class Links
             if (linkTag.laneOverrideTags.containsKey(cseTag.name))
                 laneOverrideTag = linkTag.laneOverrideTags.get(cseTag.name);
 
+            Length startOffset = cseTag.offset != null ? cseTag.offset : cseTag.startOffSet;
+            Length endOffset = cseTag.offset != null ? cseTag.offset : cseTag.endOffSet;
             switch (cseTag.elementType)
             {
                 case STRIPE:
@@ -508,7 +510,7 @@ final class Links
                     {
                         case BLOCKED:
                         case DASHED:
-                            Stripe dashedLine = new Stripe(csl, cseTag.offset, cseTag.width);
+                            Stripe dashedLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
                             dashedLine.addPermeability(GTUType.VEHICLE, Permeable.BOTH);
                             if (simulator != null && simulator instanceof AnimatorInterface)
                             {
@@ -525,7 +527,7 @@ final class Links
                             break;
 
                         case DOUBLE:
-                            Stripe doubleLine = new Stripe(csl, cseTag.offset, cseTag.width);
+                            Stripe doubleLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
                             if (simulator != null && simulator instanceof AnimatorInterface)
                             {
                                 try
@@ -541,7 +543,7 @@ final class Links
                             break;
 
                         case LEFTONLY:
-                            Stripe leftOnlyLine = new Stripe(csl, cseTag.offset, cseTag.width);
+                            Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
                             leftOnlyLine.addPermeability(GTUType.VEHICLE, Permeable.LEFT); // TODO correct?
                             if (simulator != null && simulator instanceof AnimatorInterface)
                             {
@@ -558,7 +560,7 @@ final class Links
                             break;
 
                         case RIGHTONLY:
-                            Stripe rightOnlyLine = new Stripe(csl, cseTag.offset, cseTag.width);
+                            Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
                             rightOnlyLine.addPermeability(GTUType.VEHICLE, Permeable.RIGHT); // TODO correct?
                             if (simulator != null && simulator instanceof AnimatorInterface)
                             {
@@ -575,7 +577,7 @@ final class Links
                             break;
 
                         case SOLID:
-                            Stripe solidLine = new Stripe(csl, cseTag.offset, cseTag.width);
+                            Stripe solidLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
                             if (simulator != null && simulator instanceof AnimatorInterface)
                             {
                                 try
@@ -629,7 +631,7 @@ final class Links
                     }
 
                     // XXX: LaneTypes with compatibilities might have to be defined in a new way -- LaneType.FREEWAY for now...
-                    Lane lane = new Lane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,
+                    Lane lane = new Lane(csl, cseTag.name, startOffset, endOffset, cseTag.width, cseTag.width,
                             LaneType.FREEWAY, cseTag.legalSpeedLimits, overtakingConditions);
                     // System.out.println(OTSGeometry.printCoordinates("#link design line: \nc1,0,0\n#",
                     // lane.getParentLink().getDesignLine(), "\n "));
@@ -733,7 +735,7 @@ final class Links
 
                 case NOTRAFFICLANE:
                 {
-                    Lane lane = new NoTrafficLane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width);
+                    Lane lane = new NoTrafficLane(csl, cseTag.name, startOffset, endOffset, cseTag.width, cseTag.width);
                     cseList.add(lane);
                     if (simulator != null && simulator instanceof AnimatorInterface)
                     {
@@ -757,7 +759,7 @@ final class Links
 
                 case SHOULDER:
                 {
-                    Shoulder shoulder = new Shoulder(csl, cseTag.name, cseTag.offset, cseTag.width);
+                    Shoulder shoulder = new Shoulder(csl, cseTag.name, startOffset, endOffset, cseTag.width, cseTag.width);
                     cseList.add(shoulder);
                     if (simulator != null && simulator instanceof AnimatorInterface)
                     {

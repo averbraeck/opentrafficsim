@@ -243,7 +243,7 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
          * Restores the collection to the state of before the event.
          * @param collection C; collection to restore
          */
-        public abstract void restore(final C collection);
+        public abstract void restore(C collection);
 
     }
 

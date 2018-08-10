@@ -23,7 +23,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
 {
 
     /** Current parameter set. */
-    private final Parameters parameters;
+    private final Parameters params;
 
     /**
      * Constructor.
@@ -33,7 +33,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
     public HistoricalParameters(final HistoryManager manager, final Parameters parameters)
     {
         super(manager);
-        this.parameters = parameters;
+        this.params = parameters;
     }
 
     /**
@@ -42,7 +42,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
      */
     public Parameters getParameters()
     {
-        return new ParameterSet(this.parameters);
+        return new ParameterSet(this.params);
     }
 
     /**
@@ -52,64 +52,64 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
      */
     public Parameters getParameters(final Time time)
     {
-        Parameters params = getParameters();
+        Parameters parameters = getParameters();
         for (ParameterEvent event : getEvents(time))
         {
-            event.resetEvent(params);
+            event.resetEvent(parameters);
         }
-        return params;
+        return parameters;
     }
 
     /** {@inheritDoc} */
     @Override
     public <T> void setParameter(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
-        addEvent(new ParameterEvent(now().si, parameterType, this.parameters));
-        this.parameters.setParameter(parameterType, value);
+        addEvent(new ParameterEvent(now().si, parameterType, this.params));
+        this.params.setParameter(parameterType, value);
     }
 
     /** {@inheritDoc} */
     @Override
     public <T> void setParameterResettable(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
-        addEvent(new ParameterEvent(now().si, parameterType, this.parameters));
-        this.parameters.setParameterResettable(parameterType, value);
+        addEvent(new ParameterEvent(now().si, parameterType, this.params));
+        this.params.setParameterResettable(parameterType, value);
     }
 
     /** {@inheritDoc} */
     @Override
     public void resetParameter(final ParameterType<?> parameterType) throws ParameterException
     {
-        addEvent(new ParameterEvent(now().si, parameterType, this.parameters));
-        this.parameters.resetParameter(parameterType);
+        addEvent(new ParameterEvent(now().si, parameterType, this.params));
+        this.params.resetParameter(parameterType);
     }
 
     /** {@inheritDoc} */
     @Override
     public <T> T getParameter(final ParameterType<T> parameterType) throws ParameterException
     {
-        return this.parameters.getParameter(parameterType);
+        return this.params.getParameter(parameterType);
     }
 
     /** {@inheritDoc} */
     @Override
     public <T> T getParameterOrNull(final ParameterType<T> parameterType)
     {
-        return this.parameters.getParameterOrNull(parameterType);
+        return this.params.getParameterOrNull(parameterType);
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean contains(final ParameterType<?> parameterType)
     {
-        return this.parameters.contains(parameterType);
+        return this.params.contains(parameterType);
     }
 
     /** {@inheritDoc} */
     @Override
     public void setAllIn(final Parameters parameters)
     {
-        this.parameters.setAllIn(parameters);
+        this.params.setAllIn(parameters);
     }
 
     /**
@@ -128,16 +128,17 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
     {
 
         /** Parameter type. */
-        final ParameterType<?> parameter;
+        private final ParameterType<?> parameter;
 
         /** Previous parameter value. */
-        final Object value;
+        private final Object value;
 
         /**
-         * @param value
-         * @param parameter
+         * @param parameter ParameterType; parameter
+         * @param value T; parameter value
+         * @param <T> parameter value type
          */
-        public <T> ParameterValueSet(ParameterType<T> parameter, final T value)
+        public <T> ParameterValueSet(final ParameterType<T> parameter, final T value)
         {
             this.value = value;
             this.parameter = parameter;
@@ -181,6 +182,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
          * @param time double; time of event
          * @param parameterType ParameterType; parameter type
          * @param parameters Parameters; parameters
+         * @param <T> parameter value type
          */
         public <T> ParameterEvent(final double time, final ParameterType<T> parameterType, final Parameters parameters)
         {
@@ -189,7 +191,8 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
 
         /**
          * Resets the parameter type to it's value before the change.
-         * @param parameters
+         * @param parameters Parameters; parameters
+         * @param <T> parameter value type
          */
         @SuppressWarnings("unchecked")
         public final <T> void resetEvent(final Parameters parameters)
