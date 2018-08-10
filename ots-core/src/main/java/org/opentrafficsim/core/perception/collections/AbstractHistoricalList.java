@@ -94,12 +94,13 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
 
     /** {@inheritDoc} */
     @Override
-    public boolean addAll(int index, final Collection<? extends E> c)
+    public boolean addAll(final int index, final Collection<? extends E> c)
     {
+        int ind = index;
         for (E e : c)
         {
-            add(index, e);
-            index++;
+            add(ind, e);
+            ind++;
         }
         return !c.isEmpty();
     }

@@ -84,7 +84,7 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
     @Override
     public String toString()
     {
-        return "Historical [current=" + get() + "]";
+        return "HistoricalValue [current=" + get() + "]";
     }
     
 }

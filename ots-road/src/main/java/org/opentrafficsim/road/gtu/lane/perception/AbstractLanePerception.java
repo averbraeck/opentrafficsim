@@ -96,7 +96,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
                 // negative values for upstream
                 up = up.neg();
                 upMerge = upMerge.neg();
-                this.laneStructure = new LaneStructure(lookAhead, down, up, lookAhead, upMerge, getGtu().getSimulator());
+                this.laneStructure = new LaneStructure(lookAhead, down, up, lookAhead, upMerge, getGtu());
             }
             DirectedLanePosition dlp;
             try

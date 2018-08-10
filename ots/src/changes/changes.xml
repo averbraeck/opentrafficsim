@@ -75,6 +75,12 @@
       <action issue="OTS-374" type="update">
         OTS-374. Gradual lane changes and exact lane and sensor events
       </action>
+      <action issue="OTS-375" type="update">
+        OTS-375. Add lane choice at split function to tactical planner
+      </action>
+      <action issue="OTS-376" type="update">
+        OTS-376. Offset at start and end for all cross-section elements
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">

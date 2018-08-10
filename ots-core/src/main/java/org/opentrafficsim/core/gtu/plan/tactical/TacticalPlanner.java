@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.plan.tactical;
 
+import java.util.Set;
+
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;

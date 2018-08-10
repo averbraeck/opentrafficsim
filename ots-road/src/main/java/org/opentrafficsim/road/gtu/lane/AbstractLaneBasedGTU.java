@@ -40,7 +40,6 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.HistoricalLinkedHashMap;
@@ -55,11 +54,11 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -458,14 +457,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 if (pos != null && pos.si + getFront().getDx().si > adjacentLane.getLength().si)
                 {
                     // scheduleEnterLeaveTriggers won't trigger this lane as the nose is already on it
-                    Lane nextLane =
-                            Try.assign(() -> determineNextLane(adjacentLane), "Exception while determining next lane.");
-                    GTUDirectionality dir =
-                            (lanesCopy.get(lane).isPlus() ? adjacentLane.nextLanes(getGTUType()) : adjacentLane
-                                    .prevLanes(getGTUType())).get(nextLane);
+                    LaneDirection nextLane = new LaneDirection(adjacentLane, getDirection(lane)).getNextLaneDirection(this);
                     // need to postpone scheduling until we know no other current lane has this lane as adjacent lane
                     // position is current position at start of new plan, as we schedule for right after the move method
-                    sidewaysEnter.add(new DirectedLanePosition(nextLane, pos.minus(adjacentLane.getLength()), dir));
+                    sidewaysEnter.add(new DirectedLanePosition(nextLane.getLane(), pos.minus(adjacentLane.getLength()),
+                            nextLane.getDirection()));
                 }
 
                 lanesToBeRemoved.remove(adjacentLane); // don't remove lanes we might end up on
@@ -1086,19 +1082,12 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (sign > 0.0 && referenceStartSI + getFront().getDx().si <= lane.getLength().si
                     && nextFrontPosSI > lane.getLength().si)
             {
-                nextLane = determineNextLane(lane);
-                if (nextLane == null)
-                {
-                    System.err.println("determineNextLane returned null");
-                    // already on the lane, can happen at a lane change, or will make a lane change before end of lane
-                    continue;
-                    // TODO lane change needs to be more accurate, this can happen the other way around too (GTU was not
-                    // registered during the lane change, and this scheduling is also not triggered as the GTU is too far
-                }
-                direction = lane.nextLanes(getGTUType()).get(nextLane);
+                LaneDirection next = new LaneDirection(lane, GTUDirectionality.DIR_PLUS).getNextLaneDirection(this);
+                direction = next.getDirection();
+                nextLane = next.getLane();
+
                 end = lane.getCenterLine().getLocationExtendedSI(lane.getLength().si - getFront().getDx().si);
-                // end is the location where the center (reference) of the GTU is when its front moves out of the lane
-                if (direction.isPlus())
+                if (next.getDirection().isPlus())
                 {
                     // o----L1-r->o----L2--->o
                     refPosAtLastTimestep = Length.createSI(referenceStartSI - lane.getLength().si);
@@ -1111,14 +1100,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
             else if (sign < 0.0 && referenceStartSI - getFront().getDx().si >= 0.0 && nextFrontPosSI < 0.0)
             {
-                nextLane = determinePrevLane(lane);
-                if (nextLane == null)
-                {
-                    System.err.println("determineNextLane returned null");
-                    // already on the lane, can happen at a lane change, or will make a lane change before end of lane
-                    continue;
-                }
-                direction = lane.prevLanes(getGTUType()).get(nextLane);
+                LaneDirection next = new LaneDirection(lane, GTUDirectionality.DIR_MINUS).getNextLaneDirection(this);
+                direction = next.getDirection();
+                nextLane = next.getLane();
                 end = lane.getCenterLine().getLocationExtendedSI(getFront().getDx().si);
                 end.setRotZ(end.getRotZ() + Math.PI); // probably doesn't matter: intersection with perpendicular line
                 if (direction.isPlus())
@@ -1212,138 +1196,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 addTrigger(lane, event);
             }
         }
-    }
-
-    /**
-     * Get the next lane.
-     * @param lane the lane to find the successor for
-     * @return the next lane for this GTU
-     * @throws NetworkException when no next lane exists or the route branches into multiple next lanes
-     * @throws GTUException when no route could be found or the routeNavigator returns null
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    protected Lane determineNextLane(final Lane lane) throws NetworkException, GTUException
-    {
-        // if ("1".equals(this.getId()) && this.getSimulator().getSimulatorTime().getTime().si >= 9.5)
-        // {
-        // System.err.println("determineNextLane of lane " + lane.getId() + " of link " + lane.getParentLink().getId());
-        // }
-        Lane nextLane = null;
-        Map<Lane, GTUDirectionality> nextLanes = lane.nextLanes(getGTUType());
-        Throw.when(nextLanes.size() == 0, NetworkException.class, "%s - lane %s does not have a successor", this, lane);
-        // if (nextLanes.size() == 1)
-        // {
-        // nextLane = nextLanes.keySet().iterator().next();
-        // Throw.when(this.lanesCurrentOperationalPlan.containsKey(nextLane), NetworkException.class,
-        // "%s - lane %s is already registered to the GTU", this, lane);
-        // }
-        // else
-        // {
-        Node nextNode = getStrategicalPlanner().nextNode(lane.getParentLink(), GTUDirectionality.DIR_PLUS, getGTUType());
-        Throw.when(nextNode == null, GTUException.class, "%s reaches branch and the route returns null as nextNodeToVisit",
-                this);
-        int continuingLaneCount = 0;
-        for (Lane candidateLane : nextLanes.keySet())
-        {
-            if (null != this.lanesCurrentOperationalPlan.get(candidateLane))
-            {
-                return null; // Already on this lane
-            }
-            // XXX Hack - this should be done more considerate -- fails at loops...
-            if (nextNode == candidateLane.getParentLink().getEndNode()
-                    || nextNode == candidateLane.getParentLink().getStartNode())
-            {
-                // XXX Hack: use the one that has lexicographic lower parent link id.
-                if (null == nextLane
-                        || (nextLane.getParentLink().getId().compareTo(candidateLane.getParentLink().getId()) > 0))
-                {
-                    nextLane = candidateLane;
-                }
-                continuingLaneCount++;
-            }
-        }
-        if (continuingLaneCount == 0)
-        {
-            return null;
-            // TODO this should not be a NetworkException; this method should simply return null
-            // throw new NetworkException(this + " reached branch and the route specifies a nextNodeToVisit (" + nextNode
-            // + ") that is not a next node at this branch at (" + lane.getParentLink().getEndNode() + ")");
-        }
-        if (continuingLaneCount > 1)
-        {
-            System.err.println(this
-                    + " reached branch and the route specifies multiple lanes to continue on at this branch ("
-                    + lane.getParentLink().getEndNode() + "). Selecting lane " + nextLane.getId() + " on link "
-                    + nextLane.getParentLink().getId());
-            // throw new NetworkException(
-            // this + " reached branch and the route specifies multiple lanes to continue on at this branch ("
-            // + lane.getParentLink().getEndNode() + "). This is not yet supported");
-        }
-        // }
-        return nextLane;
-    }
-
-    /**
-     * Get the previous lane, that is next for the GTU.
-     * @param lane the lane to find the predecessor for
-     * @return the next lane for this GTU
-     * @throws NetworkException when no next lane exists or the route branches into multiple next lanes
-     * @throws GTUException when no route could be found or the routeNavigator returns null
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    protected Lane determinePrevLane(final Lane lane) throws NetworkException, GTUException
-    {
-        Lane prevLane = null;
-        Map<Lane, GTUDirectionality> prevLanes = lane.prevLanes(getGTUType());
-        if (prevLanes.size() == 0)
-        {
-            return null; // throw new NetworkException(this + " - lane " + lane + " does not have a predecessor");
-        }
-        if (prevLanes.size() == 1)
-        {
-            prevLane = lane.prevLanes(getGTUType()).keySet().iterator().next();
-        }
-        else
-        {
-            if (!(getStrategicalPlanner() instanceof LaneBasedStrategicalRoutePlanner))
-            {
-                throw new GTUException(this + " reaches branch but has no route navigator");
-            }
-            Node prevNode =
-                    ((LaneBasedStrategicalRoutePlanner) getStrategicalPlanner()).nextNode(lane.getParentLink(),
-                            GTUDirectionality.DIR_MINUS, getGTUType());
-            if (null == prevNode)
-            {
-                throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
-            }
-            int continuingLaneCount = 0;
-            for (Lane candidateLane : prevLanes.keySet())
-            {
-                if (null != this.lanesCurrentOperationalPlan.get(candidateLane))
-                {
-                    return null; // Already on this lane
-                }
-                // XXX Hack - this should be done more considerate -- fails at loops...
-                if (prevNode == candidateLane.getParentLink().getEndNode()
-                        || prevNode == candidateLane.getParentLink().getStartNode())
-                {
-                    prevLane = candidateLane;
-                    continuingLaneCount++;
-                }
-            }
-            if (continuingLaneCount == 0)
-            {
-                throw new NetworkException(this + " reached branch and the route specifies a nextNodeToVisit (" + prevNode
-                        + ") that is not a next node at this branch at (" + lane.getParentLink().getStartNode() + ")");
-            }
-            if (continuingLaneCount > 1)
-            {
-                throw new NetworkException(this
-                        + " reached branch and the route specifies multiple lanes to continue on at this branch ("
-                        + lane.getParentLink().getStartNode() + "). This is not yet supported");
-            }
-        }
-        return prevLane;
     }
 
     /** {@inheritDoc} */

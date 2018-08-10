@@ -743,13 +743,19 @@ public class LmrsStrategies implements EventListenerInterface
                         new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Set<GTUType> gtuTypes = new HashSet<>();
                 gtuTypes.add(GTUType.VEHICLE);
-                Stripe stripeAB1 = new Stripe(linkAB, Length.createSI(-1.75), Length.createSI(0.2));
-                Stripe stripeAB2 = new Stripe(linkAB, Length.createSI(1.75), Length.createSI(0.2), gtuTypes, Permeable.BOTH);
-                Stripe stripeAB3 = new Stripe(linkAB, Length.createSI(5.25), Length.createSI(0.2), gtuTypes, Permeable.BOTH);
-                Stripe stripeAB4 = new Stripe(linkAB, Length.createSI(8.75), Length.createSI(0.2), gtuTypes, Permeable.BOTH);
-                Stripe stripeBC1 = new Stripe(linkBC, Length.createSI(-1.75), Length.createSI(0.2), gtuTypes, Permeable.BOTH);
-                Stripe stripeBC2 = new Stripe(linkBC, Length.createSI(1.75), Length.createSI(0.2), gtuTypes, Permeable.BOTH);
-                Stripe stripeBC3 = new Stripe(linkBC, Length.createSI(5.25), Length.createSI(0.2), gtuTypes, Permeable.BOTH);
+                Stripe stripeAB1 = new Stripe(linkAB, Length.createSI(-1.75), Length.createSI(-1.75), Length.createSI(0.2));
+                Stripe stripeAB2 = new Stripe(linkAB, Length.createSI(1.75), Length.createSI(1.75), Length.createSI(0.2),
+                        gtuTypes, Permeable.BOTH);
+                Stripe stripeAB3 = new Stripe(linkAB, Length.createSI(5.25), Length.createSI(5.25), Length.createSI(0.2),
+                        gtuTypes, Permeable.BOTH);
+                Stripe stripeAB4 = new Stripe(linkAB, Length.createSI(8.75), Length.createSI(8.75), Length.createSI(0.2),
+                        gtuTypes, Permeable.BOTH);
+                Stripe stripeBC1 = new Stripe(linkBC, Length.createSI(-1.75), Length.createSI(-1.75), Length.createSI(0.2),
+                        gtuTypes, Permeable.BOTH);
+                Stripe stripeBC2 = new Stripe(linkBC, Length.createSI(1.75), Length.createSI(1.75), Length.createSI(0.2),
+                        gtuTypes, Permeable.BOTH);
+                Stripe stripeBC3 = new Stripe(linkBC, Length.createSI(5.25), Length.createSI(5.25), Length.createSI(0.2),
+                        gtuTypes, Permeable.BOTH);
                 new NodeAnimation(nodeA, sim);
                 new NodeAnimation(nodeB, sim);
                 new NodeAnimation(nodeC, sim);

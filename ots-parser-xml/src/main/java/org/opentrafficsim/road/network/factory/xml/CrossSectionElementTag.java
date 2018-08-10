@@ -19,6 +19,7 @@ import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.road.network.factory.xml.units.LaneAttributes;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -144,6 +145,14 @@ class CrossSectionElementTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length offset = null;
 
+    /** Start offset. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Length startOffSet = null;
+
+    /** End offset. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Length endOffSet = null;
+
     /** Speed limits. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<GTUType, Speed> legalSpeedLimits = null;
@@ -198,10 +207,11 @@ class CrossSectionElementTag implements Serializable
             cseTag.laneTypeTag = parser.laneTypeTags.get(laneTypeString);
         }
 
-        if (attributes.getNamedItem("OFFSET") != null)
-            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
-        else
-            throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
+        // if (attributes.getNamedItem("OFFSET") != null)
+        // cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
+        // else
+        // throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
+        parseOffset(cseTag, attributes, roadLayoutTag);
 
         if (attributes.getNamedItem("WIDTH") != null)
             cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
@@ -298,10 +308,11 @@ class CrossSectionElementTag implements Serializable
 
         cseTag.elementType = ElementType.NOTRAFFICLANE;
 
-        if (attributes.getNamedItem("OFFSET") != null)
-            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
-        else
-            throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
+        // if (attributes.getNamedItem("OFFSET") != null)
+        // cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
+        // else
+        // throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
+        parseOffset(cseTag, attributes, roadLayoutTag);
 
         if (attributes.getNamedItem("WIDTH") != null)
             cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
@@ -349,10 +360,11 @@ class CrossSectionElementTag implements Serializable
 
         cseTag.elementType = ElementType.SHOULDER;
 
-        if (attributes.getNamedItem("OFFSET") != null)
-            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
-        else
-            throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
+        // if (attributes.getNamedItem("OFFSET") != null)
+        // cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
+        // else
+        // throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
+        parseOffset(cseTag, attributes, roadLayoutTag);
 
         if (attributes.getNamedItem("WIDTH") != null)
             cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
@@ -403,10 +415,11 @@ class CrossSectionElementTag implements Serializable
         if (attributes.getNamedItem("TYPE") != null)
             cseTag.stripeType = parseStripeType(attributes.getNamedItem("TYPE").getNodeValue());
 
-        if (attributes.getNamedItem("OFFSET") != null)
-            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
-        else
-            throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
+        // if (attributes.getNamedItem("OFFSET") != null)
+        // cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
+        // else
+        // throw new SAXException("ROADLAYOUT.LANE: missing attribute OFFSET for lane " + roadLayoutTag.name + "." + name);
+        parseOffset(cseTag, attributes, roadLayoutTag);
 
         if (attributes.getNamedItem("WIDTH") != null)
             cseTag.width = LengthUnits.parseLength(attributes.getNamedItem("WIDTH").getNodeValue());
@@ -454,6 +467,36 @@ class CrossSectionElementTag implements Serializable
             return StripeType.RIGHTONLY;
         }
         throw new NetworkException("Unknown stripe type: " + stripeStr);
+    }
+
+    /**
+     * @param cseTag CrossSectionElementTag; element tag
+     * @param attributes NamedNodeMap; attributes
+     * @param roadLayoutTag RoadLayoutTag; road layout tag
+     * @throws SAXException on xml exception
+     * @throws DOMException on xml exception
+     * @throws NetworkException on network exception
+     */
+    private static void parseOffset(final CrossSectionElementTag cseTag, final NamedNodeMap attributes,
+            final RoadLayoutTag roadLayoutTag) throws SAXException, DOMException, NetworkException
+    {
+        if (attributes.getNamedItem("OFFSET") != null)
+            cseTag.offset = LengthUnits.parseLength(attributes.getNamedItem("OFFSET").getNodeValue());
+
+        if (attributes.getNamedItem("STARTOFFSET") != null)
+            cseTag.startOffSet = LengthUnits.parseLength(attributes.getNamedItem("STARTOFFSET").getNodeValue().trim());
+
+        if (attributes.getNamedItem("ENDOFFSET") != null)
+            cseTag.endOffSet = LengthUnits.parseLength(attributes.getNamedItem("ENDOFFSET").getNodeValue().trim());
+
+        if ((cseTag.offset == null && (cseTag.startOffSet == null || cseTag.endOffSet == null))
+                || (cseTag.offset != null && (cseTag.startOffSet != null || cseTag.endOffSet != null)))
+        {
+            String namedPart = attributes.getNamedItem("NAME") == null ? "on " + roadLayoutTag.name
+                    : roadLayoutTag.name + "." + cseTag.name;
+            throw new SAXException("ROADLAYOUT." + cseTag.elementType
+                    + ": missing attribute OFFSET or both STARTOFFSET and ENDOFFSET for cross-section element " + namedPart);
+        }
     }
 
     /** {@inheritDoc} */

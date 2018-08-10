@@ -471,12 +471,12 @@ public class Lane extends CrossSectionElement implements Serializable
         if (direction.equals(LateralDirectionality.LEFT))
         {
             // TODO take the cross section slices into account...
-            if (Math.abs((getDesignLineOffsetAtBegin().getSI() + getBeginWidth().getSI() / 2.0)
-                    - (lane.getDesignLineOffsetAtBegin().getSI() - lane.getBeginWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                            .getSI()
-                    && Math.abs((getDesignLineOffsetAtEnd().getSI() + getEndWidth().getSI() / 2.0)
-                            - (lane.getDesignLineOffsetAtEnd().getSI() - lane.getEndWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                                    .getSI())
+            if (lane.getDesignLineOffsetAtBegin().si + ADJACENT_MARGIN.si > getDesignLineOffsetAtBegin().si
+                    && lane.getDesignLineOffsetAtEnd().si + ADJACENT_MARGIN.si > getDesignLineOffsetAtEnd().si
+                    && (lane.getDesignLineOffsetAtBegin().si - lane.getBeginWidth().si / 2.0)
+                            - (getDesignLineOffsetAtBegin().si + getBeginWidth().si / 2.0) < ADJACENT_MARGIN.si
+                    && (lane.getDesignLineOffsetAtEnd().si - lane.getEndWidth().si / 2.0)
+                            - (getDesignLineOffsetAtEnd().si + getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
             {
                 // look at stripes between the two lanes
                 if (legal)
@@ -487,10 +487,10 @@ public class Lane extends CrossSectionElement implements Serializable
                         {
                             Stripe stripe = (Stripe) cse;
                             // TODO take the cross section slices into account...
-                            if (Math.abs((getDesignLineOffsetAtBegin().getSI() + getBeginWidth().getSI() / 2.0)
-                                    - stripe.getDesignLineOffsetAtBegin().getSI()) < ADJACENT_MARGIN.getSI()
-                                    && Math.abs((getDesignLineOffsetAtEnd().getSI() + getEndWidth().getSI() / 2.0)
-                                            - stripe.getDesignLineOffsetAtEnd().getSI()) < ADJACENT_MARGIN.getSI())
+                            if ((getDesignLineOffsetAtBegin().si < stripe.getDesignLineOffsetAtBegin().si
+                                    && stripe.getDesignLineOffsetAtBegin().si < lane.getDesignLineOffsetAtBegin().si)
+                                    || (getDesignLineOffsetAtEnd().si < stripe.getDesignLineOffsetAtEnd().si
+                                            && stripe.getDesignLineOffsetAtEnd().si < lane.getDesignLineOffsetAtEnd().si))
                             {
                                 if (!stripe.isPermeable(gtuType, LateralDirectionality.LEFT))
                                 {
@@ -511,12 +511,12 @@ public class Lane extends CrossSectionElement implements Serializable
         // direction.equals(LateralDirectionality.RIGHT)
         {
             // TODO take the cross section slices into account...
-            if (Math.abs((getDesignLineOffsetAtBegin().getSI() - getBeginWidth().getSI() / 2.0)
-                    - (lane.getDesignLineOffsetAtBegin().getSI() + lane.getBeginWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                            .getSI()
-                    && Math.abs((getDesignLineOffsetAtEnd().getSI() - getEndWidth().getSI() / 2.0)
-                            - (lane.getDesignLineOffsetAtEnd().getSI() + lane.getEndWidth().getSI() / 2.0)) < ADJACENT_MARGIN
-                                    .getSI())
+            if (lane.getDesignLineOffsetAtBegin().si < getDesignLineOffsetAtBegin().si + ADJACENT_MARGIN.si
+                    && lane.getDesignLineOffsetAtEnd().si < getDesignLineOffsetAtEnd().si + ADJACENT_MARGIN.si
+                    && (getDesignLineOffsetAtBegin().si - getBeginWidth().si / 2.0)
+                            - (lane.getDesignLineOffsetAtBegin().si + lane.getBeginWidth().si / 2.0) < ADJACENT_MARGIN.si
+                    && (getDesignLineOffsetAtEnd().si - getEndWidth().si / 2.0)
+                            - (lane.getDesignLineOffsetAtEnd().si + lane.getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
             {
                 // look at stripes between the two lanes
                 if (legal)
@@ -527,10 +527,10 @@ public class Lane extends CrossSectionElement implements Serializable
                         {
                             Stripe stripe = (Stripe) cse;
                             // TODO take the cross section slices into account...
-                            if (Math.abs((getDesignLineOffsetAtBegin().getSI() - getBeginWidth().getSI() / 2.0)
-                                    - stripe.getDesignLineOffsetAtBegin().getSI()) < ADJACENT_MARGIN.getSI()
-                                    && Math.abs((getDesignLineOffsetAtEnd().getSI() - getEndWidth().getSI() / 2.0)
-                                            - stripe.getDesignLineOffsetAtEnd().getSI()) < ADJACENT_MARGIN.getSI())
+                            if ((getDesignLineOffsetAtBegin().si > stripe.getDesignLineOffsetAtBegin().si
+                                    && stripe.getDesignLineOffsetAtBegin().si > lane.getDesignLineOffsetAtBegin().si)
+                                    || (getDesignLineOffsetAtEnd().si > stripe.getDesignLineOffsetAtEnd().si
+                                            && stripe.getDesignLineOffsetAtEnd().si > lane.getDesignLineOffsetAtEnd().si))
                             {
                                 if (!stripe.isPermeable(gtuType, LateralDirectionality.RIGHT))
                                 {
@@ -1704,7 +1704,8 @@ public class Lane extends CrossSectionElement implements Serializable
             return this.gtuListAtTime;
         }
         this.gtuListTime = time;
-        return this.gtuListAtTime = this.gtuList == null ? new ArrayList<>() : this.gtuList.get(time);
+        this.gtuListAtTime = this.gtuList == null ? new ArrayList<>() : this.gtuList.get(time);
+        return this.gtuListAtTime;
     }
 
     /**

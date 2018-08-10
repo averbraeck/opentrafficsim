@@ -19,7 +19,7 @@ public class NullHistorical<T> implements Historical<T>
 {
 
     /** Value. */
-    private T value;
+    private T val;
 
     /**
      * Constructor.
@@ -27,28 +27,28 @@ public class NullHistorical<T> implements Historical<T>
      */
     public NullHistorical(final T value)
     {
-        this.value = value;
+        this.val = value;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void set(T value)
+    public void set(final T value)
     {
-        this.value = value;
+        this.val = value;
     }
 
     /** {@inheritDoc} */
     @Override
     public T get()
     {
-        return this.value;
+        return this.val;
     }
 
     /** {@inheritDoc} */
     @Override
-    public T get(Time time)
+    public T get(final Time time)
     {
-        return this.value;
+        return this.val;
     }
 
 }

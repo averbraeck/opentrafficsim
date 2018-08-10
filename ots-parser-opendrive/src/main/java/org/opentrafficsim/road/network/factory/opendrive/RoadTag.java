@@ -434,7 +434,7 @@ class RoadTag implements Serializable
             if (centerLane.widthTags.size() != 0)
                 System.err.println("error in show center stripe!");
 
-            Stripe centerStripe = new Stripe(currentLink, centerOffset, laneWidth);
+            Stripe centerStripe = new Stripe(currentLink, centerOffset, centerOffset, laneWidth);
             try
             {
                 Renderable2D animation = new StripeAnimation(centerStripe, simulator, StripeAnimation.TYPE.SOLID);

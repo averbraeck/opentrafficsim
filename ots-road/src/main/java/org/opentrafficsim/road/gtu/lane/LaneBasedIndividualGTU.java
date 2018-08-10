@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
@@ -270,6 +271,12 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         /** The maximum speed of the GTU (in the driving direction). */
         private Speed maximumSpeed = null;
 
+        /** Maximum acceleration. */
+        private Acceleration maximumAcceleration = null;
+
+        /** Maximum deceleration (a negative value). */
+        private Acceleration maximumDeceleration = null;
+
         /** The distance of the front relative to the reference position. */
         private Length front = null;
 
@@ -357,6 +364,26 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
+         * @param maximumAcceleration Acceleration; maximum acceleration
+         * @return the class itself for chaining the setters
+         */
+        public final LaneBasedIndividualCarBuilder setMaximumAcceleration(final Acceleration maximumAcceleration)
+        {
+            this.maximumAcceleration = maximumAcceleration;
+            return this;
+        }
+
+        /**
+         * @param maximumDeceleration Acceleration; maximum deceleration (a negative value)
+         * @return the class itself for chaining the setters
+         */
+        public final LaneBasedIndividualCarBuilder setMaximumDeceleration(final Acceleration maximumDeceleration)
+        {
+            this.maximumDeceleration = maximumDeceleration;
+            return this;
+        }
+
+        /**
          * @param simulator set simulator
          * @return the class itself for chaining the setters
          */
@@ -365,7 +392,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
             this.simulator = simulator;
             return this;
         }
-        
+
         /**
          * @param front distance of the front relative to the reference point
          * @return the class itself for chaining the setters
@@ -510,13 +537,16 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         {
             if (null == this.id || null == this.gtuType || null == this.initialLongitudinalPositions
                     || null == this.initialSpeed || null == this.length || null == this.width || null == this.maximumSpeed
-                    || null == this.front || null == this.simulator || null == this.network)
+                    || null == this.maximumAcceleration || null == this.maximumDeceleration || null == this.front
+                    || null == this.simulator || null == this.network)
             {
                 // TODO Should throw a more specific Exception type
                 throw new GTUException("factory settings incomplete");
             }
             LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(this.id, this.gtuType, this.length, this.width,
                     this.maximumSpeed, this.front, this.simulator, this.network);
+            gtu.setMaximumAcceleration(this.maximumAcceleration);
+            gtu.setMaximumDeceleration(this.maximumDeceleration);
             gtu.initWithAnimation(laneBasedStrategicalPlannerFactory.create(gtu, route, origin, destination),
                     this.initialLongitudinalPositions, this.initialSpeed, this.animationClass, this.gtuColorer);
             return gtu;

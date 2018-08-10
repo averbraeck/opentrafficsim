@@ -563,7 +563,7 @@ public final class ConflictUtil
                 ttpDs = new AnticipationInfo(Duration.ZERO, Speed.ZERO);
             }
         }
-        
+
         // TODO this perceives all conflicting GTU's, while only the first may be required, i.e. this is inefficient
         List<HeadwayGTU> conflictingVehicles = new ArrayList<>();
         if (!conflict.getUpstreamConflictingGTUs().isEmpty())

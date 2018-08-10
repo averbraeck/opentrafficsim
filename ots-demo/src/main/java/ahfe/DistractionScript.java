@@ -53,10 +53,10 @@ import org.opentrafficsim.road.gtu.animation.IncentiveColorer;
 import org.opentrafficsim.road.gtu.animation.SynchronizationColorer;
 import org.opentrafficsim.road.gtu.animation.TaskSaturationColorer;
 import org.opentrafficsim.road.gtu.animation.TotalDesireColorer;
+import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions.DefaultGTUCharacteristicsGeneratorOD;
-import org.opentrafficsim.road.gtu.generator.od.ODOptions.StrategicalPlannerFactorySupplierOD;
+import org.opentrafficsim.road.gtu.generator.od.StrategicalPlannerFactorySupplierOD;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -289,7 +289,7 @@ public final class DistractionScript extends AbstractSimulationScript
      * Compose demand vector.
      * @param demand double; maximum demand value
      * @return FrequencyVector demand vector
-     * @throws ValueException
+     * @throws ValueException on value exception
      */
     private static FrequencyVector getDemand(final double demand) throws ValueException
     {

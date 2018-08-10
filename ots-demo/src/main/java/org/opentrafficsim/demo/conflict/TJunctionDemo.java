@@ -21,6 +21,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -103,7 +104,7 @@ public class TJunctionDemo extends AbstractWrappableAnimation
             {
                 URL url = URLResource.getResource("/conflict/TJunction.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator, TJunctionDemo.this.getColorer());
-                this.network = nlp.build(url, true);
+                this.network = nlp.build(url, false);
 
                 // add conflicts
                 // ((CrossSectionLink) this.network.getLink("SCEC")).setPriority(Priority.STOP);
@@ -185,6 +186,7 @@ public class TJunctionDemo extends AbstractWrappableAnimation
      */
     public static void main(final String[] args) throws SimRuntimeException
     {
+        LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
         SwingUtilities.invokeLater(new Runnable()
         {
             @Override

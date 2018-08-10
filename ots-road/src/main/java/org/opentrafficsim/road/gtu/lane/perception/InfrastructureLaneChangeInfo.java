@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.LateralDirectionality;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -35,6 +36,9 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
     /** Whether the need to change lane comes from a dead-end. */
     private boolean deadEnd;
 
+    /** Lateral directionality of required lane changes. */
+    private final LateralDirectionality lat;
+
     /**
      * Constructor for subclasses.
      * @param requiredNumberOfLaneChanges required number of lane changes
@@ -46,6 +50,7 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
         this.record = null;
         this.deadEnd = deadEnd;
         this.afterStartLength = null;
+        this.lat = LateralDirectionality.NONE;
     }
 
     /**
@@ -54,19 +59,24 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
      * @param record record who's end defines the remaining distance
      * @param relativePosition critical relative position (i.e. nose when driving forward)
      * @param deadEnd whether the need to change lane comes from a dead-end
+     * @param lat LateralDirectionality; lateral directionality of required lane changes
      * @throws IllegalArgumentException if required number of lane changes or remaining distance is negative
      * @throws NullPointerException if remaining distance is null
      */
     public InfrastructureLaneChangeInfo(final int requiredNumberOfLaneChanges, final LaneStructureRecord record,
-            final RelativePosition relativePosition, final boolean deadEnd)
+            final RelativePosition relativePosition, final boolean deadEnd, final LateralDirectionality lat)
     {
         Throw.when(requiredNumberOfLaneChanges < 0, IllegalArgumentException.class,
                 "Required number of lane changes may not be negative.");
+        Throw.whenNull(lat, "Lateral directionality may not be null.");
+        Throw.when(requiredNumberOfLaneChanges != 0 && lat.equals(LateralDirectionality.NONE), IllegalArgumentException.class,
+                "Lateral directionality may not be NONE for non-zero lane changes.");
         Throw.whenNull(record, "Record may not be null.");
         this.requiredNumberOfLaneChanges = requiredNumberOfLaneChanges;
         this.record = record;
         this.afterStartLength = this.record.getLane().getLength().minus(relativePosition.getDx());
         this.deadEnd = deadEnd;
+        this.lat = lat;
     }
 
     /**
@@ -102,6 +112,15 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
         this.deadEnd = deadEnd;
     }
 
+    /**
+     * Returns the lateral directionality of the required lane changes.
+     * @return LateralDirectionality; lateral directionality of the required lane changes
+     */
+    public final LateralDirectionality getLateralDirectionality()
+    {
+        return this.lat;
+    }
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
@@ -116,6 +135,34 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
     public final int compareTo(final InfrastructureLaneChangeInfo infrastructureLaneChangeInfo)
     {
         return this.getRemainingDistance().compareTo(infrastructureLaneChangeInfo.getRemainingDistance());
+    }
+
+    /**
+     * Returns lane change info for one lane towards the left.
+     * @param rec record who's end defines the remaining distance
+     * @param rel critical relative position (i.e. nose when driving forward)
+     * @param dead whether the need to change lane comes from a dead-end
+     * @return InfrastructureLaneChangeInfo; lane change info for one lane towards the left
+     */
+    public final InfrastructureLaneChangeInfo left(final LaneStructureRecord rec, final RelativePosition rel,
+            final boolean dead)
+    {
+        LateralDirectionality l = this.lat.equals(LateralDirectionality.NONE) ? LateralDirectionality.LEFT : this.lat;
+        return new InfrastructureLaneChangeInfo(this.requiredNumberOfLaneChanges + 1, rec, rel, dead, l);
+    }
+
+    /**
+     * Returns lane change info for one lane towards the left.
+     * @param rec record who's end defines the remaining distance
+     * @param rel critical relative position (i.e. nose when driving forward)
+     * @param dead whether the need to change lane comes from a dead-end
+     * @return InfrastructureLaneChangeInfo; lane change info for one lane towards the left
+     */
+    public final InfrastructureLaneChangeInfo right(final LaneStructureRecord rec, final RelativePosition rel,
+            final boolean dead)
+    {
+        LateralDirectionality l = this.lat.equals(LateralDirectionality.NONE) ? LateralDirectionality.RIGHT : this.lat;
+        return new InfrastructureLaneChangeInfo(this.requiredNumberOfLaneChanges + 1, rec, rel, dead, l);
     }
 
     /**
