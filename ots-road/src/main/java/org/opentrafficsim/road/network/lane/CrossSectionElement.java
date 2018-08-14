@@ -492,11 +492,10 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             }
             result[resultIndex] = rightBoundary.get(0); // close the contour
         }
-
         else
-
         {
             List<OTSPoint3D> resultList = new ArrayList<>();
+            List<OTSPoint3D> rightBoundary = new ArrayList<>();
             for (int i = 0; i < cse.crossSectionSlices.size() - 1; i++)
             {
                 double plLength = cse.getParentLink().getLength().si;
@@ -508,22 +507,17 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
                 double ef = cse.crossSectionSlices.get(i + 1).getRelativeLength().si / plLength;
                 OTSLine3D crossSectionDesignLine =
                         cse.getParentLink().getDesignLine().extractFractional(sf, ef).offsetLine(so, eo);
-                OTSLine3D rightBoundary = crossSectionDesignLine.offsetLine(-sw2, -ew2);
-                OTSLine3D leftBoundary = crossSectionDesignLine.offsetLine(sw2, ew2);
-                for (int index = 0; index < rightBoundary.size(); index++)
-                {
-                    resultList.add(rightBoundary.get(index));
-                }
-                for (int index = leftBoundary.size(); --index >= 0;)
-                {
-                    resultList.add(leftBoundary.get(index));
-                }
+                resultList.addAll(Arrays.asList(crossSectionDesignLine.offsetLine(-sw2, -ew2).getPoints()));
+                rightBoundary.addAll(Arrays.asList(crossSectionDesignLine.offsetLine(sw2, ew2).getPoints()));
             }
-            // close the contour if needed
+            for (int index = rightBoundary.size(); --index >= 0;)
+            {
+                resultList.add(rightBoundary.get(index));
+            }
+            // close the contour (might not be needed)
             resultList.add(resultList.get(0));
             result = resultList.toArray(new OTSPoint3D[] {});
         }
-
         return OTSShape.createAndCleanOTSShape(result);
     }
 
