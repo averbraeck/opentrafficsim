@@ -133,16 +133,16 @@ public final class Bezier
             * 
             * {@formatter:on}
             */
-            if (s.distanceSI(intersection) < s.distanceSI(control1)
-                    && control1.distanceSI(intersection) < control1.distanceSI(s))
-            {
-                control1 = intersection;
-            }
-            if (e.distanceSI(intersection) < e.distanceSI(control2)
-                    && control2.distanceSI(intersection) < control2.distanceSI(e))
-            {
-                control2 = intersection;
-            }
+//            if (s.distanceSI(intersection) < s.distanceSI(control1)
+//                    && control1.distanceSI(intersection) < control1.distanceSI(s))
+//            {
+//                control1 = intersection;
+//            }
+//            if (e.distanceSI(intersection) < e.distanceSI(control2)
+//                    && control2.distanceSI(intersection) < control2.distanceSI(e))
+//            {
+//                control2 = intersection;
+//            }
         }
 
         // return cubic(numPoints, new OTSPoint3D(start), control1, control2, new OTSPoint3D(end));
