@@ -473,9 +473,13 @@ public class XmlNetworkLaneParser implements Serializable
                 new LinkAnimation(connectorLink, this.simulator, 0.5f);
             }
         }
-        if (startTimeStrings.size() != 1)
+        if (startTimeStrings.size() > 1)
         {
             throw new NetworkException("Cannot handle multiple start times - yet");
+        }
+        if (startTimeStrings.size() == 0)
+        {
+            throw new NetworkException("Missing start time XML comment");
         }
         String startTimeString = startTimeStrings.iterator().next();
         double start = Double.parseDouble(startTimeString);
