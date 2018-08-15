@@ -15,6 +15,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
+import nl.tudelft.simulation.language.Throw;
+
 /**
  * Container for a reference to information about a (lane based) GTU and a headway. The Headway can store information about GTUs
  * or objects ahead of the reference GTU, behind the reference GTU, or (partially) parallel to the reference GTU. In addition to
@@ -56,6 +58,9 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
     /** Perceived desired speed. */
     private final Speed desiredSpeed;
 
+    /** Perceived width. */
+    private final Length width;
+
     /**
      * Construct a new Headway information object, for a moving GTU ahead of us or behind us.
      * @param id the id of the GTU for comparison purposes, can not be null.
@@ -63,6 +68,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param facingSameDirection whether the GTU is facing the same direction.
      * @param length the (perceived) length of the other object; can not be null.
+     * @param width the (perceived) width of the other object; can not be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @param desiredSpeed desired speed
@@ -71,10 +77,12 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length distance, final boolean facingSameDirection,
-            final Length length, final Speed speed, final Acceleration acceleration, final Speed desiredSpeed,
-            final GTUStatus... gtuStatus) throws GTUException
+            final Length length, final Length width, final Speed speed, final Acceleration acceleration,
+            final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GTUException
     {
         super(ObjectType.GTU, id, distance, length, speed, acceleration);
+        Throw.whenNull(width, "Width may not be null.");
+        this.width = width;
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
         this.desiredSpeed = desiredSpeed;
@@ -91,14 +99,17 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param distance Length; the distance to the other GTU; if this constructor is used, distance cannot be null.
      * @param facingSameDirection whether the GTU is facing the same direction.
      * @param length the (perceived) length of the other object; can not be null.
+     * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed desired speed
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length distance, final boolean facingSameDirection,
-            final Length length, final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GTUException
+            final Length length, final Length width, final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GTUException
     {
         super(ObjectType.GTU, id, distance, length);
+        Throw.whenNull(width, "Width may not be null.");
+        this.width = width;
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
         this.desiredSpeed = desiredSpeed;
@@ -117,6 +128,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param facingSameDirection whether the GTU is facing the same direction.
      * @param length the (perceived) length of the other object; can not be null.
+     * @param width the (perceived) width of the other object; can not be null.
      * @param speed the (perceived) speed of the other GTU; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other GTU; can be null if unknown.
      * @param desiredSpeed desired speed
@@ -125,10 +137,13 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final boolean facingSameDirection, final Length length, final Speed speed,
-            final Acceleration acceleration, final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GTUException
+            final Length overlapRear, final boolean facingSameDirection, final Length length, final Length width,
+            final Speed speed, final Acceleration acceleration, final Speed desiredSpeed, final GTUStatus... gtuStatus)
+            throws GTUException
     {
         super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, length, speed, acceleration);
+        Throw.whenNull(width, "Width may not be null.");
+        this.width = width;
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
         this.desiredSpeed = desiredSpeed;
@@ -147,16 +162,19 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param facingSameDirection whether the GTU is facing the same direction.
      * @param length the (perceived) length of the other object; can not be null.
+     * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed desired speed
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final boolean facingSameDirection, final Length length, final Speed desiredSpeed,
-            final GTUStatus... gtuStatus) throws GTUException
+            final Length overlapRear, final boolean facingSameDirection, final Length length, final Length width,
+            final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GTUException
     {
         super(ObjectType.GTU, id, overlapFront, overlap, overlapRear, length);
+        Throw.whenNull(width, "Width may not be null.");
+        this.width = width;
         this.facingSameDirection = facingSameDirection;
         this.gtuType = gtuType;
         this.desiredSpeed = desiredSpeed;
@@ -234,7 +252,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
     {
         return this.gtuStatus.toArray(new GTUStatus[this.gtuStatus.size()]);
     }
-    
+
     /**
      * Collects GTU statuses from a gtu.
      * @param gtu LaneBasedGTU; gtu
@@ -262,7 +280,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
         }
         return statuses.toArray(new GTUStatus[statuses.size()]);
     }
-    
+
     /**
      * Creates speed limit info for given GTU.
      * @param gtu gtu to the the speed limit info for
@@ -281,6 +299,13 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
             throw new RuntimeException("Could not obtain speed limit from lane for perception.", exception);
         }
         return sli;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Length getWidth()
+    {
+        return this.width;
     }
 
     /** {@inheritDoc} */

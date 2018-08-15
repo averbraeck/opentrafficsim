@@ -101,19 +101,19 @@ public final class Conflict extends AbstractLaneBasedObject
     private final Length rootPosition;
 
     /** Current upstream GTUs provider. */
-    private AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, LaneDirectionRecord, Integer> upstreamGtus;
+    private AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer> upstreamGtus;
 
     /** Upstream GTUs update time. */
     private Time upstreamTime;
 
     /** Current downstream GTUs provider. */
-    private AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, LaneDirectionRecord, Integer> downstreamGtus;
+    private AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer> downstreamGtus;
 
     /** Downstream GTUs update time. */
     private Time downstreamTime;
 
     /** Headway type for the provided GTUs. */
-    final HeadwayGtuType conflictGtuType = new ConflictGtuType();
+    private final HeadwayGtuType conflictGtuType = new ConflictGtuType();
 
     /** Distance within which upstreamGTUs are provided (is automatically enlarged). */
     private Length maxUpstreamVisibility = Length.ZERO;
@@ -231,7 +231,7 @@ public final class Conflict extends AbstractLaneBasedObject
         {
             // setup a base iterable to provide the GTUs
             this.upstreamGtus =
-                    new UpstreamNeighborsIterable<>(perceivingGtu, this.root, this.rootPosition, this.maxUpstreamVisibility,
+                    new UpstreamNeighborsIterable(perceivingGtu, this.root, this.rootPosition, this.maxUpstreamVisibility,
                             RelativePosition.REFERENCE_POSITION, this.conflictGtuType, RelativeLane.CURRENT);
             this.upstreamTime = time;
         }
@@ -255,7 +255,7 @@ public final class Conflict extends AbstractLaneBasedObject
         {
             // setup a base iterable to provide the GTUs
             boolean ignoreIfUpstream = false;
-            this.downstreamGtus = new DownstreamNeighborsIterable<>(perceivingGtu, this.root, this.rootPosition,
+            this.downstreamGtus = new DownstreamNeighborsIterable(perceivingGtu, this.root, this.rootPosition,
                     this.maxDownstreamVisibility, RelativePosition.REFERENCE_POSITION, this.conflictGtuType, null,
                     RelativeLane.CURRENT, ignoreIfUpstream);
             this.downstreamTime = time;
@@ -490,7 +490,7 @@ public final class Conflict extends AbstractLaneBasedObject
         private static final long serialVersionUID = 20180221L;
 
         /** Visible pointer to the GTU (which HeadwayGTUReal has not). */
-        final LaneBasedGTU gtu;
+        private final LaneBasedGTU gtu;
 
         /**
          * Constructor.
@@ -500,7 +500,7 @@ public final class Conflict extends AbstractLaneBasedObject
          * @param overlapRear Length; rear overlap
          * @throws GTUException on exception
          */
-        public ConflictGtu(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
+        ConflictGtu(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
                 throws GTUException
         {
             super(gtu, overlapFront, overlap, overlapRear, true);
@@ -513,7 +513,7 @@ public final class Conflict extends AbstractLaneBasedObject
          * @param distance Length; distance
          * @throws GTUException on exception
          */
-        public ConflictGtu(final LaneBasedGTU gtu, final Length distance) throws GTUException
+        ConflictGtu(final LaneBasedGTU gtu, final Length distance) throws GTUException
         {
             super(gtu, distance, true);
             this.gtu = gtu;
@@ -536,7 +536,7 @@ public final class Conflict extends AbstractLaneBasedObject
     private class ConflictGtuType implements HeadwayGtuType
     {
         /** Constructor. */
-        public ConflictGtuType()
+        ConflictGtuType()
         {
             //
         }
@@ -581,7 +581,7 @@ public final class Conflict extends AbstractLaneBasedObject
          * Constructor.
          * @param wrappedType HeadwayGtuType; wrapped headway type
          */
-        public OverlapHeadway(final HeadwayGtuType wrappedType)
+        OverlapHeadway(final HeadwayGtuType wrappedType)
         {
             this.wrappedType = wrappedType;
         }
@@ -640,13 +640,13 @@ public final class Conflict extends AbstractLaneBasedObject
         private final HeadwayGtuType headwayGtuType;
 
         /** Guaranteed visibility. */
-        final Length visibility;
+        private final Length visibility;
 
         /** Downstream (or upstream) neighbors. */
-        final boolean downstream;
+        private final boolean downstream;
 
         /** Base iterator of the base iterable. */
-        final Iterator<HeadwayGTU> baseIterator;
+        private final Iterator<HeadwayGTU> baseIterator;
 
         /**
          * @param perceivingGtu LaneBasedGTU; perceiving GTU
@@ -655,9 +655,9 @@ public final class Conflict extends AbstractLaneBasedObject
          * @param downstream boolean; downstream (or upstream) neighbors
          * @param base AbstractPerceptionIterable; base iterable from the conflict
          */
-        public ConflictGtuIterable(final LaneBasedGTU perceivingGtu, final HeadwayGtuType headwayGtuType,
+        ConflictGtuIterable(final LaneBasedGTU perceivingGtu, final HeadwayGtuType headwayGtuType,
                 final Length visibility, final boolean downstream,
-                final AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, LaneDirectionRecord, Integer> base)
+                final AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer> base)
         {
             super(perceivingGtu);
             this.headwayGtuType = headwayGtuType;
@@ -671,7 +671,7 @@ public final class Conflict extends AbstractLaneBasedObject
         protected Iterator<PrimaryIteratorEntry> primaryIterator()
         {
             /**
-             * Iterator that iterates over PrimaryIteratorEntry objects. 
+             * Iterator that iterates over PrimaryIteratorEntry objects.
              */
             class ConflictGtuIterator implements Iterator<PrimaryIteratorEntry>
             {
@@ -679,6 +679,7 @@ public final class Conflict extends AbstractLaneBasedObject
                 private PrimaryIteratorEntry next;
 
                 /** {@inheritDoc} */
+                @SuppressWarnings("synthetic-access")
                 @Override
                 public boolean hasNext()
                 {

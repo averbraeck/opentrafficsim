@@ -15,13 +15,10 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
@@ -44,6 +41,10 @@ import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventProducer;
 
 /**
  * Select a OTS-network XML file, load it and run it.
@@ -77,8 +78,8 @@ public class LoadXML extends AbstractWrappableAnimation
      * @throws NamingException when a name collision is detected
      * @throws SimRuntimeException should never happen
      */
-    public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException,
-            OTSSimulationException, PropertyException
+    public static void main(final String[] args)
+            throws IOException, SimRuntimeException, NamingException, OTSSimulationException, PropertyException
     {
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
         LoadXML loadXML = new LoadXML();
@@ -122,8 +123,8 @@ public class LoadXML extends AbstractWrappableAnimation
         loadXML.xml = new String(Files.readAllBytes(Paths.get(loadXML.fileName)));
         try
         {
-            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, DurationUnit.SI),
-                    new ArrayList<Property<?>>(), null, true);
+            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, DurationUnit.SI), new ArrayList<Property<?>>(),
+                    null, true);
         }
         catch (SimRuntimeException sre)
         {
@@ -165,7 +166,6 @@ public class LoadXML extends AbstractWrappableAnimation
         toggleAnimationClass(OTSLink.class);
         toggleAnimationClass(OTSNode.class);
         showAnimationClass(SpeedSign.class);
-        ;
     }
 
     /**
@@ -194,11 +194,11 @@ public class LoadXML extends AbstractWrappableAnimation
             try
             {
                 this.network = nlp.build(new ByteArrayInputStream(LoadXML.this.xml.getBytes(StandardCharsets.UTF_8)), true);
-                // ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, (OTSDEVSSimulatorInterface) theSimulator,
-                // ConflictBuilder.DEFAULT_WIDTH_GENERATOR);
+                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, (OTSDEVSSimulatorInterface) theSimulator,
+                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                    | GTUException | OTSGeometryException | ValueException | ParameterException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException | ValueException | ParameterException exception)
             {
                 exception.printStackTrace();
                 // Abusing the SimRuntimeException to propagate the message to the main method (the problem could actually be a

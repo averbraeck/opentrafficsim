@@ -303,8 +303,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         referenceCar.setParameters(parameters);
         referenceCar.init(strategicalPlanner, initialLongitudinalPositions, referenceSpeed);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
-        sameLaneGTUs.add(new HeadwayGTUSimple(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO,
-                referenceCar.getLength(), referenceCar.getSpeed(), referenceCar.getAcceleration(), null));
+        sameLaneGTUs.add(
+                new HeadwayGTUSimple(referenceCar.getId(), referenceCar.getGTUType(), Length.ZERO, referenceCar.getLength(),
+                        referenceCar.getWidth(), referenceCar.getSpeed(), referenceCar.getAcceleration(), null));
         // TODO play with the speed limit
         // TODO play with the preferredLaneRouteIncentive
         LaneMovementStep lowResult = computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, low, lanes[1],
@@ -385,7 +386,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 referenceCar.positions(referenceCar.getReference()).keySet().iterator().next(), referenceCar.getReference());
         Headway otherHeadwayGTU =
                 new HeadwayGTUSimple(otherCar.getId(), otherCar.getGTUType(), otherCarPosition.minus(referenceCarPosition),
-                        otherCar.getLength(), otherCar.getSpeed(), otherCar.getAcceleration(), null);
+                        otherCar.getLength(), otherCar.getWidth(), otherCar.getSpeed(), otherCar.getAcceleration(), null);
         if (mergeRight)
         {
             preferredLaneGTUs.add(otherHeadwayGTU);

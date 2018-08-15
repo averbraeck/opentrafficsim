@@ -232,7 +232,7 @@ public interface LaneBasedGTU extends GTU
      * @return Acceleration; current car-following acceleration
      */
     Acceleration getCarFollowingAcceleration();
-    
+
     /**
      * Returns the vehicle model.
      * @return VehicleModel; vehicle model

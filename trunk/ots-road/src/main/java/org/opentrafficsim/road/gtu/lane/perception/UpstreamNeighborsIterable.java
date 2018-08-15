@@ -18,17 +18,15 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <R> record type
  */
-public class UpstreamNeighborsIterable<R extends LaneRecord<R>>
-        extends AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, R, Integer>
+public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer>
 {
 
     /** Margin in case of a left lane. */
-    private final static Length LEFT = Length.createSI(0.000001);
+    private static final Length LEFT = Length.createSI(0.000001);
 
     /** Margin in case of a right lane. */
-    private final static Length RIGHT = Length.createSI(-0.000001);
+    private static final Length RIGHT = Length.createSI(-0.000001);
 
     /** Headway GTU type that should be used. */
     private final HeadwayGtuType headwayGtuType;
@@ -49,7 +47,7 @@ public class UpstreamNeighborsIterable<R extends LaneRecord<R>>
      * @param headwayGtuType HeadwayGtuType; type of HeadwayGTU to return
      * @param lane RelativeLane; relative lane (used for a left/right distinction to prevent dead-locks)
      */
-    public UpstreamNeighborsIterable(final LaneBasedGTU perceivingGtu, final R root, final Length initialPosition,
+    public UpstreamNeighborsIterable(final LaneBasedGTU perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
             final Length maxDistance, final RelativePosition relativePosition, final HeadwayGtuType headwayGtuType,
             final RelativeLane lane)
     {
@@ -60,7 +58,7 @@ public class UpstreamNeighborsIterable<R extends LaneRecord<R>>
 
     /** {@inheritDoc} */
     @Override
-    protected Entry getNext(final R record, final Length position, final Integer counter) throws GTUException
+    protected Entry getNext(final LaneRecord<?> record, final Length position, final Integer counter) throws GTUException
     {
         int n;
         LaneBasedGTU next;
@@ -107,7 +105,7 @@ public class UpstreamNeighborsIterable<R extends LaneRecord<R>>
 
     /** {@inheritDoc} */
     @Override
-    protected Length getDistance(final LaneBasedGTU object, final R record, final Length position)
+    protected Length getDistance(final LaneBasedGTU object, final LaneRecord<?> record, final Length position)
     {
         return record.getDistanceToPosition(position).neg().plus(getDx());
     }

@@ -30,7 +30,7 @@ public interface LanePerception extends Perception<LaneBasedGTU>
      * @throws ParameterException if parameter is not defined
      */
     LaneStructure getLaneStructure() throws ParameterException;
-    
+
     /**
      * Returns the mental module of perception.
      * @return Mental; mental module of perception, may be {@code null} if not used

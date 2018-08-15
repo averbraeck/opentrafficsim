@@ -340,7 +340,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         Length pos = record.getStartDistance().neg();
         pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx()) : pos.minus(getGtu().getFront().getDx());
         boolean ignoreIfUpstream = true;
-        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> it = new DownstreamNeighborsIterable<>(getGtu(), record,
+        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> it = new DownstreamNeighborsIterable(getGtu(), record,
                 Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
                 this.headwayGtuType, getGtu(), lane, ignoreIfUpstream);
         this.leaders.put(lane, new TimeStampedObject<>(it, getTimestamp()));
@@ -355,7 +355,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         Length pos = record.getStartDistance().neg();
         pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx()) : pos.minus(getGtu().getFront().getDx());
         PerceptionCollectable<HeadwayGTU, LaneBasedGTU> it =
-                new UpstreamNeighborsIterable<>(getGtu(), record, Length.max(Length.ZERO, pos),
+                new UpstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),
                         getGtu().getParameters().getParameter(LOOKBACK), getGtu().getRear(), this.headwayGtuType, lane);
         this.followers.put(lane, new TimeStampedObject<>(it, getTimestamp()));
     }
@@ -527,7 +527,8 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /**
      * GTU at a distance, as preliminary info towards perceiving it. For instance, as a set from a search algorithm.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 22 apr. 2018 <br>
@@ -549,7 +550,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
          * @param gtu LaneBasedGTU; GTU
          * @param distance Length; distance
          */
-        public DistanceGTU(final LaneBasedGTU gtu, final Length distance)
+        DistanceGTU(final LaneBasedGTU gtu, final Length distance)
         {
             this.gtu = gtu;
             this.distance = distance;
@@ -585,7 +586,8 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * Translation from a set of {@code DistanceGTU}'s, to a sorted set of {@code HeadwayGTU}'s. This bridges the gap between a
      * raw network search, and the perceived result.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 22 apr. 2018 <br>
@@ -597,19 +599,19 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     {
 
         /** Base set of GTU's at distance. */
-        final SortedSet<DistanceGTU> base;
+        private final SortedSet<DistanceGTU> base;
 
         /** Headway type for perceived GTU's. */
-        final HeadwayGtuType headwayGtuType;
+        private final HeadwayGtuType headwayGtuType;
 
         /** Perceiving GTU. */
-        final LaneBasedGTU perceivingGtu;
+        private final LaneBasedGTU perceivingGtu;
 
         /** Whether the GTU's are downstream. */
-        final boolean downstream;
+        private final boolean downstream;
 
         /** Contains all GTU's preceived so far, to prevent re-perception. */
-        final SortedMap<String, HeadwayGTU> all = new TreeMap<>();
+        private final SortedMap<String, HeadwayGTU> all = new TreeMap<>();
 
         /**
          * Constructor.
@@ -618,7 +620,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
          * @param perceivingGtu LaneBasedGTU; perceiving GTU
          * @param downstream boolean; whether the GTU's are downstream
          */
-        public SortedNeighborsSet(final SortedSet<DistanceGTU> base, final HeadwayGtuType headwayGtuType,
+        SortedNeighborsSet(final SortedSet<DistanceGTU> base, final HeadwayGtuType headwayGtuType,
                 final LaneBasedGTU perceivingGtu, final boolean downstream)
         {
             this.base = base;
@@ -646,9 +648,11 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
          */
         private void getAll()
         {
-            for (@SuppressWarnings("unused") HeadwayGTU gtu : this)
+            Iterator<HeadwayGTU> it = iterator();
+            while (it.hasNext())
             {
-                // the iterator will create them all
+                @SuppressWarnings("unused")
+                HeadwayGTU gtu = it.next(); // iterator creates all HeadwayGTU's
             }
         }
 
@@ -666,7 +670,8 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         {
             return new Iterator<HeadwayGTU>()
             {
-                Iterator<DistanceGTU> it = SortedNeighborsSet.this.base.iterator();
+                @SuppressWarnings("synthetic-access")
+                private Iterator<DistanceGTU> it = SortedNeighborsSet.this.base.iterator();
 
                 @Override
                 public boolean hasNext()
@@ -674,6 +679,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                     return this.it.hasNext();
                 }
 
+                @SuppressWarnings("synthetic-access")
                 @Override
                 public HeadwayGTU next()
                 {

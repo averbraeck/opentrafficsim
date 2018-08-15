@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
+import org.opentrafficsim.road.gtu.lane.perception.LaneRecord;
 import org.opentrafficsim.road.gtu.lane.perception.MultiLanePerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -62,29 +62,27 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
         MultiLanePerceptionIterable<HeadwayBusStop, BusStop> stops = new MultiLanePerceptionIterable<>(getGtu());
         for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
         {
-            LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
+            LaneRecord<?> record = getPerception().getLaneStructure().getFirstRecord(lane);
             Length pos = record.getStartDistance().neg();
             pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
                     : pos.minus(getGtu().getFront().getDx());
-            AbstractPerceptionIterable<HeadwayBusStop, BusStop, ?, ?> it =
-                    new LaneBasedObjectIterable<HeadwayBusStop, BusStop, LaneStructureRecord>(getGtu(), BusStop.class, record,
-                            Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
-                            route)
+            AbstractPerceptionIterable<HeadwayBusStop, BusStop, ?> it = new LaneBasedObjectIterable<HeadwayBusStop, BusStop>(
+                    getGtu(), BusStop.class, record, Length.max(Length.ZERO, pos),
+                    getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), route)
+            {
+                /** {@inheritDoc} */
+                @Override
+                public HeadwayBusStop perceive(final LaneBasedGTU perceivingGtu, final BusStop busStop, final Length distance)
+                {
+                    Set<String> conflictIds = new HashSet<>();
+                    for (Conflict conflict : busStop.getConflicts())
                     {
-                        /** {@inheritDoc} */
-                        @Override
-                        public HeadwayBusStop perceive(final LaneBasedGTU perceivingGtu, final BusStop busStop,
-                                final Length distance)
-                        {
-                            Set<String> conflictIds = new HashSet<>();
-                            for (Conflict conflict : busStop.getConflicts())
-                            {
-                                conflictIds.add(conflict.getId());
-                            }
-                            return Try.assign(() -> new HeadwayBusStop(busStop, distance, lane, conflictIds),
-                                    "Exception while creating bus stop headway.");
-                        }
-                    };
+                        conflictIds.add(conflict.getId());
+                    }
+                    return Try.assign(() -> new HeadwayBusStop(busStop, distance, lane, conflictIds),
+                            "Exception while creating bus stop headway.");
+                }
+            };
             stops.addIterable(lane, it);
         }
         this.busStops = new TimeStampedObject<>(stops, getTimestamp());

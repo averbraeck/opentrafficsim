@@ -31,6 +31,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -115,6 +116,7 @@ public final class ConflictUtil
      * @param leaders leading vehicles
      * @param carFollowingModel car-following model
      * @param vehicleLength length of vehicle
+     * @param vehicleWidth width of vehicle
      * @param speed current speed
      * @param acceleration current acceleration
      * @param speedLimitInfo speed limit info
@@ -128,8 +130,9 @@ public final class ConflictUtil
     public static Acceleration approachConflicts(final Parameters parameters,
             final PerceptionCollectable<HeadwayConflict, Conflict> conflicts,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final CarFollowingModel carFollowingModel,
-            final Length vehicleLength, final Speed speed, final Acceleration acceleration, final SpeedLimitInfo speedLimitInfo,
-            final ConflictPlans conflictPlans, final LaneBasedGTU gtu) throws GTUException, ParameterException
+            final Length vehicleLength, final Length vehicleWidth, final Speed speed, final Acceleration acceleration,
+            final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans, final LaneBasedGTU gtu)
+            throws GTUException, ParameterException
     {
 
         conflictPlans.cleanPlans();
@@ -158,8 +161,8 @@ public final class ConflictUtil
             else
             {
                 // follow leading GTUs on merge or split
-                a = Acceleration.min(a,
-                        followConflictingLeaderOnMergeOrSplit(conflict, parameters, carFollowingModel, speed, speedLimitInfo));
+                a = Acceleration.min(a, followConflictingLeaderOnMergeOrSplit(conflict, parameters, carFollowingModel, speed,
+                        speedLimitInfo, vehicleWidth));
             }
             if (conflict.getDistance().lt0())
             {
@@ -297,38 +300,67 @@ public final class ConflictUtil
      * @param carFollowingModel car-following model
      * @param speed current speed
      * @param speedLimitInfo speed limit info
+     * @param vehicleWidth Length; own width
      * @return acceleration for following conflicting vehicles <i>on</i> a merge or split conflict
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     private static Acceleration followConflictingLeaderOnMergeOrSplit(final HeadwayConflict conflict,
             final Parameters parameters, final CarFollowingModel carFollowingModel, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo) throws ParameterException
+            final SpeedLimitInfo speedLimitInfo, final Length vehicleWidth) throws ParameterException
     {
-        // ignore if no conflicting GTU's
-        if (conflict.getDownstreamConflictingGTUs().isEmpty())
+        // ignore if no conflicting GTU's, or if first is downstream of conflict
+        PerceptionIterable<HeadwayGTU> downstreamGTUs = conflict.getDownstreamConflictingGTUs();
+        if (downstreamGTUs.isEmpty() || downstreamGTUs.first().isAhead())
         {
             return Acceleration.POS_MAXVALUE;
         }
         // get the most upstream GTU to consider
-        HeadwayGTU c = conflict.getDownstreamConflictingGTUs().first();
-        if (c.isAhead())
+        HeadwayGTU c = null;
+        Length virtualHeadway = null;
+        if (conflict.getDistance().gt0())
         {
-            // conflict GTU completely downstream of conflict (i.e. regular car-following, ignore here)
-            return Acceleration.POS_MAXVALUE;
+            c = downstreamGTUs.first();
+            virtualHeadway = conflict.getDistance().plus(c.getOverlapRear());
         }
-        // conflict GTU (partially) on the conflict
-        // {@formatter:off}
-        // ______________________________________________ 
-        //   ___      virtual headway   |  ___  |
-        //  |___|(-----------------------)|___|(vehicle from south, on lane from south)
-        // _____________________________|_______|________
-        //                              /       / 
-        //                             /       /
-        // {@formatter:on}
-        Length virtualHeadway = conflict.getDistance().plus(c.getOverlapRear());
-        if (virtualHeadway.le0() && conflict.getDistance().le0())
+        else
         {
-            // TODO what about long conflicts where we need to follow the second conflicting downstream vehicle?
+            for (HeadwayGTU con : downstreamGTUs)
+            {
+                if (con.isAhead())
+                {
+                    // conflict GTU completely downstream of conflict (i.e. regular car-following, ignore here)
+                    return Acceleration.POS_MAXVALUE;
+                }
+                // conflict GTU (partially) on the conflict
+                // {@formatter:off}
+                // ______________________________________________ 
+                //   ___      virtual headway   |  ___  |
+                //  |___|(-----------------------)|___|(vehicle from south, on lane from south)
+                // _____________________________|_______|________
+                //                              /       / 
+                //                             /       /
+                // {@formatter:on}
+                virtualHeadway = conflict.getDistance().plus(con.getOverlapRear());
+                if (virtualHeadway.gt0())
+                {
+                    if (conflict.isSplit())
+                    {
+                        double conflictWidth = conflict.getWidthAtFraction(
+                                (-conflict.getDistance().si + virtualHeadway.si) / conflict.getLength().si).si;
+                        double gtuWidth = con.getWidth().si + vehicleWidth.si;
+                        if (conflictWidth > gtuWidth)
+                        {
+                            continue;
+                        }
+                    }
+                    // found first downstream GTU on conflict
+                    c = con;
+                    break;
+                }
+            }
+        }
+        if (c == null)
+        {
             // conflict GTU downstream of start of conflict, but upstream of us
             return Acceleration.POS_MAXVALUE;
         }
@@ -482,8 +514,8 @@ public final class ConflictUtil
                 .plus(passableDistance(vehicleLength, parameters)).plus(typeCorrection);
         if (distance.gt0())
         {
-            Length required = conflict.getDistance().plus(typeCorrection).plus(passableDistance(vehicleLength, parameters)); // for
-                                                                                                                             // ourselves
+            // for ourselves
+            Length required = conflict.getDistance().plus(typeCorrection).plus(passableDistance(vehicleLength, parameters));
             for (HeadwayGTU leader : leaders)
             {
                 if (leader.getSpeed().eq0())
@@ -587,7 +619,7 @@ public final class ConflictUtil
             try
             {
                 HeadwayGTUSimple conflictGtu = new HeadwayGTUSimple("virtual " + UUID.randomUUID().toString(), GTUType.CAR,
-                        conflict.getConflictingVisibility(), new Length(4.0, LengthUnit.SI),
+                        conflict.getConflictingVisibility(), new Length(4.0, LengthUnit.SI), new Length(2.0, LengthUnit.SI),
                         conflict.getConflictingSpeedLimit(), Acceleration.ZERO, Speed.ZERO);
                 conflictingVehicles.add(conflictGtu);
             }
