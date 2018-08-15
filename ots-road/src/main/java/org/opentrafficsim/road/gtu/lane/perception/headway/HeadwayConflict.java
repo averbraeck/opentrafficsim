@@ -1,7 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.perception.headway;
 
+import org.djunits.value.StorageType;
+import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.vector.LengthVector;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -73,6 +76,9 @@ public class HeadwayConflict extends AbstractHeadwayCopy
     /** Whether the conflict is permitted by the traffic light. */
     private boolean permitted = false;
 
+    /** Width progression of conflict. */
+    private final Width width;
+
     /**
      * Constructor.
      * @param conflictType conflict type
@@ -87,6 +93,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
      * @param conflictingVisibility visibility on the conflicting lane within which conflicting vehicles are visible
      * @param conflictingSpeedLimit speed limit on the conflicting lane
      * @param conflictingLink conflicting link
+     * @param width width progression of conflict
      * @param stopLine stop line on the own lane
      * @param conflictingStopLine stop line on the conflicting lane
      * @throws GTUException when id is null, or parameters are inconsistent
@@ -96,8 +103,8 @@ public class HeadwayConflict extends AbstractHeadwayCopy
             final Class<? extends ConflictRule> conflictRuleType, final String id, final Length distance, final Length length,
             final Length conflictingLength, final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
-            final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final HeadwayStopLine stopLine,
-            final HeadwayStopLine conflictingStopLine) throws GTUException
+            final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final Width width,
+            final HeadwayStopLine stopLine, final HeadwayStopLine conflictingStopLine) throws GTUException
     {
         super(ObjectType.CONFLICT, id, distance, length);
         Throw.whenNull(conflictType, "Conflict type may not be null.");
@@ -108,6 +115,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
         Throw.whenNull(conflictingLength, "Conflict length may not be null.");
         Throw.whenNull(upstreamConflictingGTUs, "Upstreaem conflicting GTU's may not be null.");
         Throw.whenNull(downstreamConflictingGTUs, "Downstream conflicting GTU's may not be null.");
+        Throw.whenNull(width, "Width may not be null.");
         Throw.whenNull(conflictingVisibility, "Conflict visibility may not be null.");
         Throw.whenNull(conflictingSpeedLimit, "Conflict speed limit may not be null.");
         this.conflictType = conflictType;
@@ -119,6 +127,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
         this.conflictingVisibility = conflictingVisibility;
         this.conflictingSpeedLimit = conflictingSpeedLimit;
         this.conflictingLink = conflictingLink;
+        this.width = width;
         this.stopLine = stopLine;
         this.conflictingStopLine = conflictingStopLine;
     }
@@ -137,6 +146,7 @@ public class HeadwayConflict extends AbstractHeadwayCopy
      * @param conflictingVisibility visibility on the conflicting lane within which conflicting vehicles are visible
      * @param conflictingSpeedLimit speed limit on the conflicting lane
      * @param conflictingLink conflicting link
+     * @param width width progression of conflict
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -144,10 +154,10 @@ public class HeadwayConflict extends AbstractHeadwayCopy
             final Class<? extends ConflictRule> conflictRuleType, final String id, final Length distance, final Length length,
             final Length conflictingLength, final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs, final Length conflictingVisibility,
-            final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink) throws GTUException
+            final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink, final Width width) throws GTUException
     {
         this(conflictType, conflictPriority, conflictRuleType, id, distance, length, conflictingLength, upstreamConflictingGTUs,
-                downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit, conflictingLink, null, null);
+                downstreamConflictingGTUs, conflictingVisibility, conflictingSpeedLimit, conflictingLink, width, null, null);
     }
 
     /**
@@ -307,6 +317,112 @@ public class HeadwayConflict extends AbstractHeadwayCopy
     {
         this.conflictingTrafficLightDistance = trafficLightDistance;
         this.permitted = permittedConflict;
+    }
+
+    /**
+     * Returns the width at the given fraction.
+     * @param fraction double; fraction from 0 to 1
+     * @return Length; width at the given fraction
+     */
+    public final Length getWidthAtFraction(final double fraction)
+    {
+        try
+        {
+            return this.width.getWidth(fraction);
+        }
+        catch (ValueException exception)
+        {
+            throw new RuntimeException("Unexpected exception: fraction could not be interpolated.", exception);
+        }
+    }
+
+    /**
+     * Width progression of conflict.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 11 aug. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static class Width
+    {
+
+        /** Fractions, from 0 to 1. */
+        private final double[] fractions;
+
+        /** Vector with widths. */
+        private final LengthVector width;
+
+        /**
+         * @param fractions double[]; fractions, from 0 to 1
+         * @param width LengthVector; vector of equal length with widths
+         */
+        public Width(final double[] fractions, final LengthVector width)
+        {
+            Throw.whenNull(fractions, "Fractions may not be null.");
+            Throw.whenNull(width, "Width may not be null.");
+            Throw.when(fractions.length != width.size(), IllegalArgumentException.class,
+                    "Array and vector are not of equal length.");
+            Throw.when(fractions.length < 2, IllegalArgumentException.class, "Input should at least contain 2 values.");
+            Throw.when(fractions[0] != 0.0 || fractions[fractions.length - 1] != 1.0, IllegalArgumentException.class,
+                    "Fractions should range from 0 to 1.");
+            for (int i = 1; i < fractions.length; i++)
+            {
+                Throw.when(fractions[i] <= fractions[i - 1], IllegalArgumentException.class, "Fractions are not increasing.");
+            }
+            this.fractions = fractions;
+            this.width = width;
+        }
+
+        /**
+         * Returns the width at the given fraction.
+         * @param fraction double; fraction from 0 to 1
+         * @return Length; width at the given fraction
+         * @throws ValueException when index is out of bounds
+         */
+        public Length getWidth(final double fraction) throws ValueException
+        {
+            Throw.when(fraction < 0.0 || fraction > 1.0, IllegalArgumentException.class, "Fraction should be between 0 and 1.");
+            if (fraction == 1.0)
+            {
+                return this.width.get(this.width.size() - 1);
+            }
+            for (int i = 0; i < this.fractions.length - 1; i++)
+            {
+                if (this.fractions[i] <= fraction && this.fractions[i + 1] > fraction)
+                {
+                    double r = (fraction - this.fractions[i]) / (this.fractions[i + 1] - this.fractions[i]);
+                    return Length.interpolate(this.width.get(i), this.width.get(i + 1), r);
+                }
+            }
+            throw new RuntimeException("Unexpected exception: fraction could not be interpolated.");
+        }
+
+        /**
+         * Returns a linear width progression.
+         * @param startWidth Length; start width
+         * @param endWidth Length; end width
+         * @return Width; linear width progression
+         */
+        public static Width linear(final Length startWidth, final Length endWidth)
+        {
+            Throw.whenNull(startWidth, "Start width may not be null.");
+            Throw.whenNull(endWidth, "End width may not be null.");
+            try
+            {
+                return new Width(new double[] { 0.0, 1.0 },
+                        new LengthVector(new Length[] { startWidth, endWidth }, StorageType.DENSE));
+            }
+            catch (ValueException exception)
+            {
+                throw new RuntimeException("Unexpected exception: widths could not be put in a vector.", exception);
+            }
+        }
+
     }
 
     /** {@inheritDoc} */

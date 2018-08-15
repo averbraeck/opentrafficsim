@@ -30,30 +30,28 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <H> headway type
  * @param <U> underlying object type
- * @param <R> record type
  * @param <C> counter type
  */
-public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends LaneRecord<R>, C>
-        extends AbstractPerceptionReiterable<H, U>
+public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extends AbstractPerceptionReiterable<H, U>
 {
 
     /** Root record. */
-    final R root;
+    private final LaneRecord<?> root;
 
     /** Initial position. */
-    final Length initialPosition;
+    private final Length initialPosition;
 
     /** Search downstream (or upstream). */
-    final boolean downstream;
+    private final boolean downstream;
 
     /** Max distance. */
-    final double maxDistance;
+    private final double maxDistance;
 
     /** Position to which distance are calculated by subclasses. */
     private final RelativePosition relativePosition;
 
     /** Route of the GTU. */
-    final Route route;
+    private final Route route;
 
     /**
      * Constructor.
@@ -65,7 +63,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
      * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
      * @param route Route; route of the GTU, may be {@code null}
      */
-    public AbstractPerceptionIterable(final LaneBasedGTU perceivingGtu, final R root, final Length initialPosition,
+    public AbstractPerceptionIterable(final LaneBasedGTU perceivingGtu, final LaneRecord<?> root, final Length initialPosition,
             final boolean downstream, final Length maxDistance, final RelativePosition relativePosition, final Route route)
     {
         super(perceivingGtu);
@@ -93,7 +91,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
      * @return next object(s) on the lane or {@code null} if none
      * @throws GTUException on any exception in the process
      */
-    protected abstract Entry getNext(R record, Length position, C counter) throws GTUException;
+    protected abstract Entry getNext(LaneRecord<?> record, Length position, C counter) throws GTUException;
 
     /**
      * Returns the distance to the object. The position fed in to this method is directly taken from an {@code Entry} returned
@@ -103,7 +101,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
      * @param position Length; position of the object on the lane
      * @return Length; distance to the object
      */
-    protected abstract Length getDistance(U object, R record, Length position);
+    protected abstract Length getDistance(U object, LaneRecord<?> record, Length position);
 
     /**
      * Returns the longitudinal length of the relevant relative position such that distances to this points can be calculated.
@@ -132,19 +130,19 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
     {
 
         /** Map containing the objects found per branch. */
-        SortedMap<PrimaryIteratorEntry, R> map;
+        private SortedMap<PrimaryIteratorEntry, LaneRecord<?>> map;
 
         /** Position on the lane of each object. */
-        Map<U, Length> positions = new HashMap<>();
+        private Map<U, Length> positions = new HashMap<>();
 
         /** Sets of remaining objects at the same location. */
-        Map<R, Queue<PrimaryIteratorEntry>> queues = new HashMap<>();
+        private Map<LaneRecord<?>, Queue<PrimaryIteratorEntry>> queues = new HashMap<>();
 
         /** Counter objects per lane. */
-        Map<R, C> counters = new HashMap<>();
+        private Map<LaneRecord<?>, C> counters = new HashMap<>();
 
         /** Record regarding a postponed call to {@code getNext()}. */
-        private R postponedRecord = null;
+        private LaneRecord<?> postponedRecord = null;
 
         /** Position regarding a postponed call to {@code getNext()}. */
         private Length postponedPosition = null;
@@ -176,7 +174,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
             // get and remove next
             PrimaryIteratorEntry nextEntry = this.map.firstKey();
             U next = nextEntry.object;
-            R record = this.map.get(nextEntry);
+            LaneRecord<?> record = this.map.get(nextEntry);
             Length position = this.positions.get(next);
             this.map.remove(nextEntry);
 
@@ -203,6 +201,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
         /**
          * Starts or restarts the process.
          */
+        @SuppressWarnings("synthetic-access")
         private void startProcess()
         {
             if (this.postponedRecord != null)
@@ -225,7 +224,8 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
          * @param record R; record
          * @param position Length; position
          */
-        private void prepareNext(final R record, final Length position)
+        @SuppressWarnings("synthetic-access")
+        private void prepareNext(final LaneRecord<?> record, final Length position)
         {
             Entry next = Try.assign(() -> AbstractPerceptionIterable.this.getNext(record, position, this.counters.get(record)),
                     "Exception while deriving next object.");
@@ -239,17 +239,17 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
                 {
                     if (AbstractPerceptionIterable.this.downstream)
                     {
-                        for (R nextRecord : record.getNext())
+                        for (LaneRecord<?> nextRecord : record.getNext())
                         {
                             if (isOnRoute(nextRecord))
                             {
-                                prepareNext(nextRecord, Length.ZERO);
+                                prepareNext(nextRecord, Length.createSI(-1e-9));
                             }
                         }
                     }
                     else
                     {
-                        for (R nextRecord : record.getPrev())
+                        for (LaneRecord<?> nextRecord : record.getPrev())
                         {
                             if (isOnRoute(nextRecord))
                             {
@@ -307,7 +307,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
      * @param record R; record
      * @return boolean; whether the record is on the route
      */
-    boolean isOnRoute(final R record)
+    final boolean isOnRoute(final LaneRecord<?> record)
     {
         if (this.route == null)
         {
@@ -346,16 +346,16 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
     {
 
         /** Set. */
-        final Set<U> set;
+        private final Set<U> set;
 
         /** Object. */
-        final U object;
+        private final U object;
 
         /** Counter. */
-        final C counter;
+        private final C counter;
 
         /** Position on the lane. */
-        final Length position;
+        private final Length position;
 
         /**
          * Constructor.
@@ -389,7 +389,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, R extends
          * Returns whether this entry contains a set.
          * @return whether this entry contains a set
          */
-        boolean isSet()
+        final boolean isSet()
         {
             return this.set != null;
         }

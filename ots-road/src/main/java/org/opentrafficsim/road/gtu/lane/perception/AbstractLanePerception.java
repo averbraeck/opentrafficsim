@@ -51,7 +51,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
 
     /** Most recent update time of lane structure. */
     private Time updateTime = null;
-    
+
     /** Mental module. */
     private Mental mental;
 
@@ -64,7 +64,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
         super(gtu);
         this.mental = null;
     }
-    
+
     /**
      * Create a new LanePerception module with mental module.
      * @param gtu GTU
@@ -96,7 +96,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
                 // negative values for upstream
                 up = up.neg();
                 upMerge = upMerge.neg();
-                this.laneStructure = new LaneStructure(lookAhead, down, up, lookAhead, upMerge, getGtu());
+                this.laneStructure = new RollingLaneStructure(lookAhead, down, up, lookAhead, upMerge, getGtu());
             }
             DirectedLanePosition dlp;
             try
@@ -113,14 +113,14 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
         }
         return this.laneStructure;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Mental getMental()
     {
         return this.mental;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void perceive() throws GTUException, NetworkException, ParameterException

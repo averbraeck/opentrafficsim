@@ -33,10 +33,10 @@ public class HeadwayGTUPerceived extends HeadwayGTURealCopy
     public HeadwayGTUPerceived(final LaneBasedGTU gtu, final Length distance, final Speed speed,
             final Acceleration acceleration) throws GTUException
     {
-        super(gtu.getId(), gtu.getGTUType(), distance, gtu.getLength(), speed, acceleration, gtu.getTacticalPlanner()
-                .getCarFollowingModel(), new ParameterSet(gtu.getParameters()), getSpeedLimitInfo(gtu), gtu
-                .getStrategicalPlanner().getRoute(), gtu.getDesiredSpeed(), getGTUStatuses(gtu, gtu.getSimulator()
-                .getSimulatorTime().getTime()));
+        super(gtu.getId(), gtu.getGTUType(), distance, gtu.getLength(), gtu.getWidth(), speed, acceleration,
+                gtu.getTacticalPlanner().getCarFollowingModel(), new ParameterSet(gtu.getParameters()), getSpeedLimitInfo(gtu),
+                gtu.getStrategicalPlanner().getRoute(), gtu.getDesiredSpeed(),
+                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime().getTime()));
     }
 
     /**
@@ -51,10 +51,10 @@ public class HeadwayGTUPerceived extends HeadwayGTURealCopy
     public HeadwayGTUPerceived(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap,
             final Length overlapRear, final Speed speed, final Acceleration acceleration) throws GTUException
     {
-        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, gtu.getLength(), speed, acceleration, gtu
-                .getTacticalPlanner().getCarFollowingModel(), new ParameterSet(gtu.getParameters()), getSpeedLimitInfo(gtu),
-                gtu.getStrategicalPlanner().getRoute(), gtu.getDesiredSpeed(), getGTUStatuses(gtu, gtu.getSimulator()
-                        .getSimulatorTime().getTime()));
+        super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, gtu.getLength(), gtu.getWidth(), speed,
+                acceleration, gtu.getTacticalPlanner().getCarFollowingModel(), new ParameterSet(gtu.getParameters()),
+                getSpeedLimitInfo(gtu), gtu.getStrategicalPlanner().getRoute(), gtu.getDesiredSpeed(),
+                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime().getTime()));
     }
 
 }

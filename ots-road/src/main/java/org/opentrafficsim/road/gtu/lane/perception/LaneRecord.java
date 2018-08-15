@@ -15,8 +15,8 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 19 feb. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <R> the type
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>\
+ * @param <R> lane record type
  */
 public interface LaneRecord<R extends LaneRecord<R>>
 {
@@ -25,13 +25,13 @@ public interface LaneRecord<R extends LaneRecord<R>>
      * Returns a list of next lanes. Callers of this method do not have to mind GTUDirectionality, this is taken care of.
      * @return List; list of next lanes
      */
-    List<R> getNext();
+    List<? extends R> getNext();
 
     /**
      * Returns a list of previous lanes. Callers of this method do not have to mind GTUDirectionality, this is taken care of.
      * @return List; list of previous lanes
      */
-    List<R> getPrev();
+    List<? extends R> getPrev();
 
     /**
      * Returns the distance from a reference to the start of this lane, negative for upstream distance.

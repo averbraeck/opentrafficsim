@@ -57,7 +57,7 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
     private Map<RelativeLane, TimeStampedObject<LinearDensity>> antDensity = new HashMap<>();
 
     /** Density collector. */
-    private static final AnticipationDensity density = new AnticipationDensity();
+    private static final AnticipationDensity DENSITY = new AnticipationDensity();
 
     /**
      * Constructor.
@@ -162,7 +162,7 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
         if (tK == null || tK.getTimestamp().si < now.si)
         {
             LinearDensity k =
-                    getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(lane).collect(density);
+                    getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(lane).collect(DENSITY);
             this.antDensity.put(lane, new TimeStampedObject<>(k, now));
             return k;
         }

@@ -206,11 +206,21 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
                     // add to nextSet
                     for (LaneStructureRecord next : laneRecord.getNext())
                     {
-                        InfrastructureLaneChangeInfo prev = currentSet.get(laneRecord);
-                        InfrastructureLaneChangeInfo info =
-                                new InfrastructureLaneChangeInfo(prev.getRequiredNumberOfLaneChanges(), next, front,
-                                        next.isDeadEnd(), prev.getLateralDirectionality());
-                        nextSet.put(next, info);
+                        try
+                        {
+                            if (next.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType()))
+                            {
+                                InfrastructureLaneChangeInfo prev = currentSet.get(laneRecord);
+                                InfrastructureLaneChangeInfo info =
+                                        new InfrastructureLaneChangeInfo(prev.getRequiredNumberOfLaneChanges(), next, front,
+                                                next.isDeadEnd(), prev.getLateralDirectionality());
+                                nextSet.put(next, info);
+                            }
+                        }
+                        catch (NetworkException exception)
+                        {
+                            throw new RuntimeException("Network exception while considering route on next lane.", exception);
+                        }
                     }
                     // take best ok
                     if (bestOk == null || currentSet.get(laneRecord).getRequiredNumberOfLaneChanges() < bestOk
@@ -233,18 +243,18 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             }
             if (bestOk == null)
             {
-                if (lane.isCurrent())
-                {
-                    // on the current lane, we need something to drive to
-                    throw new GTUException("No lane was found on which to continue from link "
-                            + currentSet.keySet().iterator().next().getLane().getParentLink().getId() + " for route "
-                            + getGtu().getStrategicalPlanner().getRoute().getId());
-                }
-                else
-                {
-                    // empty set on other lanes permissible, on adjacent lanes, we might not be able to continue on our route
-                    break;
-                }
+                // if (lane.isCurrent())
+                // {
+                // // on the current lane, we need something to drive to
+                // throw new GTUException("No lane was found on which to continue from link "
+                // + currentSet.keySet().iterator().next().getLane().getParentLink().getId() + " for route "
+                // + getGtu().getStrategicalPlanner().getRoute().getId());
+                // }
+                // else
+                // {
+                // empty set on other lanes permissible, on adjacent lanes, we might not be able to continue on our route
+                break;
+                // }
             }
             // if there are lanes that are not okay and only -further- lanes that are ok, we need to change to one of the ok's
             if (bestNotOk != null && bestOk.getRequiredNumberOfLaneChanges() > bestNotOk.getRequiredNumberOfLaneChanges())

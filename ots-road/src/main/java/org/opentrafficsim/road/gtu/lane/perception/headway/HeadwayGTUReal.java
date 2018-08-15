@@ -150,7 +150,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     {
         try
         {
-            return new HeadwayGTURealCopy(getId(), getGtuType(), headway, getLength(), speed, acceleration,
+            return new HeadwayGTURealCopy(getId(), getGtuType(), headway, getLength(), getWidth(), speed, acceleration,
                     getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getDesiredSpeed(),
                     getGtuStatus());
         }
@@ -203,6 +203,13 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
     public final Length getLength()
     {
         return this.gtu.getLength();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Length getWidth()
+    {
+        return this.gtu.getWidth();
     }
 
     /** {@inheritDoc} */

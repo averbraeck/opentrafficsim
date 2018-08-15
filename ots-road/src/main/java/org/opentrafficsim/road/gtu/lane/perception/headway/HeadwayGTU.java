@@ -118,4 +118,10 @@ public interface HeadwayGTU extends Headway
      */
     Speed getDesiredSpeed();
 
+    /**
+     * Returns the width of the GTU.
+     * @return Length; width of the GTU
+     */
+    Length getWidth();
+
 }

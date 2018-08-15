@@ -47,6 +47,7 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
      * @param gtuType the perceived GTU Type, or null if unknown.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
+     * @param width the (perceived) width of the other object; can not be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @param desiredSpeed desired speed
@@ -54,10 +55,10 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
     public HeadwayGTUSimple(final String id, final GTUType gtuType, final Length distance, final Length length,
-            final Speed speed, final Acceleration acceleration, final Speed desiredSpeed, final GTUStatus... gtuStatus)
-            throws GTUException
+            final Length width, final Speed speed, final Acceleration acceleration, final Speed desiredSpeed,
+            final GTUStatus... gtuStatus) throws GTUException
     {
-        super(id, gtuType, distance, true, length, speed, acceleration, desiredSpeed, gtuStatus);
+        super(id, gtuType, distance, true, length, width, speed, acceleration, desiredSpeed, gtuStatus);
     }
 
     /**
@@ -66,14 +67,15 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
      * @param gtuType the perceived GTU Type, or null if unknown.
      * @param distance Length; the distance to the other GTU; if this constructor is used, distance cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
+     * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed desired speed
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayGTUSimple(final String id, final GTUType gtuType, final Length distance, final Length length,
-            final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GTUException
+            final Length width, final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GTUException
     {
-        super(id, gtuType, distance, true, length, desiredSpeed, gtuStatus);
+        super(id, gtuType, distance, true, length, width, desiredSpeed, gtuStatus);
     }
 
     /**
@@ -84,6 +86,7 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
+     * @param width the (perceived) width of the other object; can not be null.
      * @param speed the (perceived) speed of the other GTU; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other GTU; can be null if unknown.
      * @param desiredSpeed desired speed
@@ -92,10 +95,11 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayGTUSimple(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final Length length, final Speed speed, final Acceleration acceleration,
-            final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GTUException
+            final Length overlapRear, final Length length, final Length width, final Speed speed,
+            final Acceleration acceleration, final Speed desiredSpeed, final GTUStatus... gtuStatus) throws GTUException
     {
-        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, speed, acceleration, desiredSpeed, gtuStatus);
+        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, speed, acceleration, desiredSpeed,
+                gtuStatus);
     }
 
     /**
@@ -106,15 +110,16 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
+     * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed desired speed
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayGTUSimple(final String id, final GTUType gtuType, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final Length length, final Speed desiredSpeed, final GTUStatus... gtuStatus)
-            throws GTUException
+            final Length overlapRear, final Length length, final Length width, final Speed desiredSpeed,
+            final GTUStatus... gtuStatus) throws GTUException
     {
-        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, desiredSpeed, gtuStatus);
+        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, desiredSpeed, gtuStatus);
     }
 
     /** {@inheritDoc} */
@@ -151,8 +156,8 @@ public class HeadwayGTUSimple extends AbstractHeadwayGTU
     {
         try
         {
-            return new HeadwayGTUSimple(getId(), getGtuType(), headway, getLength(), speed, acceleration, getDesiredSpeed(),
-                    getGtuStatus());
+            return new HeadwayGTUSimple(getId(), getGtuType(), headway, getLength(), getWidth(), speed, acceleration,
+                    getDesiredSpeed(), getGtuStatus());
         }
         catch (GTUException exception)
         {

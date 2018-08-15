@@ -50,13 +50,14 @@ public class AccelerationConflicts implements AccelerationIncentive
         EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
         Acceleration acceleration = ego.getAcceleration();
         Length length = ego.getLength();
+        Length width = ego.getWidth();
         PerceptionCollectable<HeadwayConflict, Conflict> conflicts =
                 perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
         PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
 
         simplePlan.minimizeAcceleration(ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length,
-                speed, acceleration, speedLimitInfo, this.yieldPlans, gtu));
+                width, speed, acceleration, speedLimitInfo, this.yieldPlans, gtu));
         if (this.yieldPlans.getIndicatorIntent().isLeft())
         {
             simplePlan.setIndicatorIntentLeft(this.yieldPlans.getIndicatorObjectDistance());

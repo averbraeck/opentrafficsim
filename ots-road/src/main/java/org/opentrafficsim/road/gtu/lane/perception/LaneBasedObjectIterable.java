@@ -23,10 +23,9 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <H> headway type
  * @param <L> lane based object type
- * @param <R> record type
  */
-public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneBasedObject, R extends LaneRecord<R>>
-        extends AbstractPerceptionIterable<H, L, R, Void>
+public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneBasedObject>
+        extends AbstractPerceptionIterable<H, L, Void>
 {
 
     /** Class of lane based objects to return. */
@@ -36,13 +35,13 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
      * Constructor.
      * @param perceivingGtu LaneBasedGTU; perceiving GTU
      * @param clazz Class&lt;H&gt;; class of lane based objects to return
-     * @param root R; root record
+     * @param root LaneRecord; root record
      * @param initialPosition Length; initial position
      * @param maxDistance Length; max distance to search
      * @param relativePosition RelativePosition; relative position
      * @param route Route; route of the GTU, may be {@code null}
      */
-    public LaneBasedObjectIterable(final LaneBasedGTU perceivingGtu, final Class<L> clazz, final R root,
+    public LaneBasedObjectIterable(final LaneBasedGTU perceivingGtu, final Class<L> clazz, final LaneRecord<?> root,
             final Length initialPosition, final Length maxDistance, final RelativePosition relativePosition, final Route route)
     {
         super(perceivingGtu, root, initialPosition, true, maxDistance, relativePosition, route);
@@ -52,7 +51,7 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
-    protected Entry getNext(final R record, final Length position, final Void counter)
+    protected Entry getNext(final LaneRecord<?> record, final Length position, final Void counter)
     {
         List<LaneBasedObject> list = record.getLane().getObjectAhead(position, record.getDirection());
         while (list != null)
@@ -82,7 +81,7 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
 
     /** {@inheritDoc} */
     @Override
-    protected final Length getDistance(final L object, final R record, final Length position)
+    protected final Length getDistance(final L object, final LaneRecord<?> record, final Length position)
     {
         return record.getDistanceToPosition(position).minus(getDx());
     }

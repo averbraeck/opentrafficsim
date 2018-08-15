@@ -73,6 +73,20 @@ public final class Break
             trigger();
         }
     }
+    
+    /**
+     * This method can be used if the context of a lower-level function does not contain the information on which to break. This
+     * method will only trigger a break if at a higher-level function where the context was sufficient, the break condition was
+     * set to true using {@code onSuper()}.
+     * @param additionalCondition boolean; additional condition
+     */
+    public static void onSub(final boolean additionalCondition)
+    {
+        if (superCondition && additionalCondition)
+        {
+            trigger();
+        }
+    }
 
     /**
      * @param perception perception to obtain gtu from

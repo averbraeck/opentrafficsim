@@ -713,8 +713,8 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
             }
             double gtuDistanceSI = Math.abs(laneBasedGTU.position(lane, laneBasedGTU.getRear()).si - startPosSI);
             return new HeadwayGTUSimple(laneBasedGTU.getId(), laneBasedGTU.getGTUType(),
-                    new Length(cumDistSI + gtuDistanceSI, LengthUnit.SI), laneBasedGTU.getLength(), laneBasedGTU.getSpeed(),
-                    laneBasedGTU.getAcceleration(), null, getGtuStatus(laneBasedGTU));
+                    new Length(cumDistSI + gtuDistanceSI, LengthUnit.SI), laneBasedGTU.getLength(), laneBasedGTU.getWidth(),
+                    laneBasedGTU.getSpeed(), laneBasedGTU.getAcceleration(), null, getGtuStatus(laneBasedGTU));
         }
 
         else
@@ -833,8 +833,8 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
         if (foundHeadway instanceof AbstractHeadwayGTU)
         {
             return new HeadwayGTUSimple(foundHeadway.getId(), ((AbstractHeadwayGTU) foundHeadway).getGtuType(),
-                    foundHeadway.getDistance().neg(), foundHeadway.getLength(), foundHeadway.getSpeed(),
-                    foundHeadway.getAcceleration(), null);
+                    foundHeadway.getDistance().neg(), foundHeadway.getLength(), ((AbstractHeadwayGTU) foundHeadway).getWidth(),
+                    foundHeadway.getSpeed(), foundHeadway.getAcceleration(), null);
         }
         if (foundHeadway instanceof HeadwayDistance)
         {
@@ -871,7 +871,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), new Length(distanceM, LengthUnit.SI),
-                        otherGTU.getLength(), otherGTU.getSpeed(), otherGTU.getAcceleration(), null);
+                        otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(), otherGTU.getAcceleration(), null);
             }
             return new HeadwayDistance(Double.MAX_VALUE);
         }
@@ -957,8 +957,8 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
                             Length overlap = new Length(1.0, LengthUnit.SI);
                             Length overlapRear = new Length(1.0, LengthUnit.SI);
                             headwayCollection.add(new HeadwayGTUSimple(otherGTU.getId(), otherGTU.getGTUType(), overlapFront,
-                                    overlap, overlapRear, otherGTU.getLength(), otherGTU.getSpeed(), otherGTU.getAcceleration(),
-                                    null, getGtuStatus(otherGTU)));
+                                    overlap, overlapRear, otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(),
+                                    otherGTU.getAcceleration(), null, getGtuStatus(otherGTU)));
                         }
                     }
                 }
@@ -1047,8 +1047,8 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
                 if (!found)
                 {
                     result.add(new HeadwayGTUSimple(follower.getId(), ((AbstractHeadwayGTU) follower).getGtuType(),
-                            follower.getDistance().neg(), follower.getLength(), follower.getSpeed(), follower.getAcceleration(),
-                            null));
+                            follower.getDistance().neg(), follower.getLength(), ((AbstractHeadwayGTU) follower).getWidth(),
+                            follower.getSpeed(), follower.getAcceleration(), null));
                 }
             }
             else if (follower instanceof HeadwayDistance) // always add for potential lane drop

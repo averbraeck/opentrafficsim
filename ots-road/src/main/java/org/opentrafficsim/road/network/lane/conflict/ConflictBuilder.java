@@ -8,9 +8,6 @@ import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import nl.tudelft.simulation.immutablecollections.ImmutableMap;
-import nl.tudelft.simulation.language.Throw;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -24,6 +21,9 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.immutablecollections.ImmutableMap;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>
@@ -239,7 +239,11 @@ public final class ConflictBuilder
             final WidthGenerator widthGenerator) throws OTSGeometryException, NetworkException
     {
 
-        // TODO quick bounding box check of both lanes, skip if not overlapping
+        // Quick contour check, skip if not overlapping
+        if (!lane1.getContour().intersects(lane2.getContour()))
+        {
+            return;
+        }
 
         // Get left and right lines at specified width
         OTSLine3D line1 = lane1.getCenterLine();

@@ -27,7 +27,7 @@ public class CategoricalLanePerception extends AbstractLanePerception
     {
         super(gtu);
     }
-    
+
     /**
      * @param gtu GTU
      * @param mental Mental

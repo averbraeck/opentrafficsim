@@ -41,6 +41,7 @@ public interface Perception<G extends GTU> extends Serializable
     /**
      * Adds given perception category to the perception.
      * @param perceptionCategory perception category
+     * @param <T> perception category type
      */
     <T extends PerceptionCategory<?, ?>> void addPerceptionCategory(T perceptionCategory);
 

@@ -148,7 +148,8 @@ public final class LmrsUtil implements LmrsParameters
                 ConflictPlans conflictPlan = new ConflictPlans(); // TODO acquire conflict plans
                 a = Acceleration.min(a,
                         ConflictUtil.approachConflicts(params, intersection.getConflicts(secondLane), secondLeaders,
-                                carFollowingModel, ego.getLength(), speed, ego.getAcceleration(), sli, conflictPlan, gtu));
+                                carFollowingModel, ego.getLength(), ego.getWidth(), speed, ego.getAcceleration(), sli,
+                                conflictPlan, gtu));
                 // a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
                 // secondLane.getLateralDirectionality(), intersection));
             }
