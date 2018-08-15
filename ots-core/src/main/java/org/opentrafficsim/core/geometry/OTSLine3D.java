@@ -644,7 +644,7 @@ public class OTSLine3D implements Locatable, Serializable
         {
             return new OTSLine3D(pointList);
         }
-        catch (OTSGeometryException exception)
+        catch (@SuppressWarnings("unused") OTSGeometryException exception)
         {
             System.err.println("interval " + start + ".." + end + " too short");
             throw new OTSGeometryException("interval " + start + ".." + end + "too short");
@@ -927,7 +927,7 @@ public class OTSLine3D implements Locatable, Serializable
             {
                 return getLocationSI(positionSI);
             }
-            catch (OTSGeometryException exception)
+            catch (@SuppressWarnings("unused") OTSGeometryException exception)
             {
                 // cannot happen
             }
@@ -1339,10 +1339,8 @@ public class OTSLine3D implements Locatable, Serializable
                         new OTSPoint3D(x + this.fractionalHelperDirections[i].x, y + this.fractionalHelperDirections[i].y);
                 p = OTSPoint3D.intersectionOfLines(point, offsetPoint, this.points[i], this.points[i + 1]);
             }
-            if (p == null || p.x < Math.min(this.points[i].x, this.points[i + 1].x) - FRAC_PROJ_PRECISION
-                    || p.x > Math.max(this.points[i].x, this.points[i + 1].x) + FRAC_PROJ_PRECISION
-                    || p.y < Math.min(this.points[i].y, this.points[i + 1].y) - FRAC_PROJ_PRECISION
-                    || p.y > Math.max(this.points[i].y, this.points[i + 1].y) + FRAC_PROJ_PRECISION)
+            double segLength = this.points[i].distance(this.points[i + 1]).si + FRAC_PROJ_PRECISION;
+            if (p == null || this.points[i].distance(p).si > segLength || this.points[i + 1].distance(p).si > segLength)
             {
                 // intersection must be on the segment
                 // in case of p == null, the length of the fractional helper direction falls away due to precision
@@ -1367,6 +1365,7 @@ public class OTSLine3D implements Locatable, Serializable
 
         // return
         if (minSegment == -1)
+
         {
             /*
              * If fractional projection fails (x, y) is either outside of the applicable area for fractional projection, or is
@@ -1376,8 +1375,11 @@ public class OTSLine3D implements Locatable, Serializable
             System.err.println("projectFractional failed to project " + point + " on " + this + "; using fallback approach");
             return fallback.getFraction(this, x, y);
         }
+
         double segLen = this.lengthIndexedLine[minSegment + 1] - this.lengthIndexedLine[minSegment];
-        return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) / getLengthSI();
+        return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) /
+
+                getLengthSI();
 
     }
 
@@ -1443,6 +1445,7 @@ public class OTSLine3D implements Locatable, Serializable
          * @return double; fraction for when fractional projection fails
          */
         abstract double getFraction(OTSLine3D line, double x, double y);
+
     }
 
     /**
@@ -1471,7 +1474,8 @@ public class OTSLine3D implements Locatable, Serializable
                 {
                     parStartPoint = OTSPoint3D.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
                             nextOfsSeg.get(1));
-                    if (parStartPoint == null)
+                    if (parStartPoint == null || prevOfsSeg.get(1).distanceSI(nextOfsSeg.get(0)) < Math
+                            .min(prevOfsSeg.get(1).distanceSI(parStartPoint), nextOfsSeg.get(0).distanceSI(parStartPoint)))
                     {
                         parStartPoint = new OTSPoint3D((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
                                 (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
@@ -1494,7 +1498,8 @@ public class OTSLine3D implements Locatable, Serializable
                     {
                         parEndPoint = OTSPoint3D.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
                                 nextOfsSeg.get(1));
-                        if (parEndPoint == null)
+                        if (parEndPoint == null || prevOfsSeg.get(1).distanceSI(nextOfsSeg.get(0)) < Math
+                                .min(prevOfsSeg.get(1).distanceSI(parEndPoint), nextOfsSeg.get(0).distanceSI(parEndPoint)))
                         {
                             parEndPoint = new OTSPoint3D((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
                                     (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
@@ -1564,40 +1569,40 @@ public class OTSLine3D implements Locatable, Serializable
     private OTSLine3D unitOffsetSegment(final int segment)
     {
 
-        double angle = Math.atan2(this.points[segment + 1].y - this.points[segment].y,
-                this.points[segment + 1].x - this.points[segment].x) + Math.PI / 2;
-        while (angle > Math.PI)
-        {
-            angle -= Math.PI;
-        }
-        while (angle < Math.PI)
-        {
-            angle += Math.PI;
-        }
-        OTSPoint3D from = new OTSPoint3D(this.points[segment].x + Math.cos(angle), this.points[segment].y + Math.sin(angle));
-        OTSPoint3D to =
-                new OTSPoint3D(this.points[segment + 1].x + Math.cos(angle), this.points[segment + 1].y + Math.sin(angle));
-        try
-        {
-            return new OTSLine3D(from, to);
-        }
-        catch (OTSGeometryException oge)
-        {
-            // cannot happen as points are from this OTSLine3D which performed the same checks and 2 points are given
-            throw new RuntimeException(oge);
-        }
-        // OTSPoint3D from = new OTSPoint3D(this.points[segment].x, this.points[segment].y);
-        // OTSPoint3D to = new OTSPoint3D(this.points[segment + 1].x, this.points[segment + 1].y);
+        // double angle = Math.atan2(this.points[segment + 1].y - this.points[segment].y,
+        // this.points[segment + 1].x - this.points[segment].x) + Math.PI / 2;
+        // while (angle > Math.PI)
+        // {
+        // angle -= Math.PI;
+        // }
+        // while (angle < -Math.PI)
+        // {
+        // angle += Math.PI;
+        // }
+        // OTSPoint3D from = new OTSPoint3D(this.points[segment].x + Math.cos(angle), this.points[segment].y + Math.sin(angle));
+        // OTSPoint3D to =
+        // new OTSPoint3D(this.points[segment + 1].x + Math.cos(angle), this.points[segment + 1].y + Math.sin(angle));
         // try
         // {
-        // OTSLine3D line = new OTSLine3D(from, to);
-        // return line.offsetLine(1.0);
+        // return new OTSLine3D(from, to);
         // }
         // catch (OTSGeometryException oge)
         // {
         // // cannot happen as points are from this OTSLine3D which performed the same checks and 2 points are given
         // throw new RuntimeException(oge);
         // }
+        OTSPoint3D from = new OTSPoint3D(this.points[segment].x, this.points[segment].y);
+        OTSPoint3D to = new OTSPoint3D(this.points[segment + 1].x, this.points[segment + 1].y);
+        try
+        {
+            OTSLine3D line = new OTSLine3D(from, to);
+            return line.offsetLine(1.0);
+        }
+        catch (OTSGeometryException oge)
+        {
+            // cannot happen as points are from this OTSLine3D which performed the same checks and 2 points are given
+            throw new RuntimeException(oge);
+        }
     }
 
     /**
