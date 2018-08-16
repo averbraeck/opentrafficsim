@@ -322,7 +322,6 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 CrossSectionLink link = pos.getLane().getParentLink();
                 Node from = pos.getGtuDirection().isPlus() ? link.getStartNode() : link.getEndNode();
                 this.route = link.getNetwork().getShortestRouteBetween(getGtu().getGTUType(), from, this.destination);
-                System.out.println("Shortest route for " + getGtu().getId() + ": " + this.route);
             }
             catch (GTUException | NetworkException exception)
             {

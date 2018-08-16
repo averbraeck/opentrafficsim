@@ -186,10 +186,10 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         this.downSplit = downSplit;
         this.upMerge = upMerge;
         this.containingGtu = gtu;
-        if (gtu.getId().equals("8"))
-        {
-            visualize(gtu);
-        }
+        // if (gtu.getId().equals("8"))
+        // {
+        // visualize(gtu);
+        // }
     }
 
     /**

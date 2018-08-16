@@ -81,6 +81,9 @@
       <action issue="OTS-376" type="update">
         OTS-376. Offset at start and end for all cross-section elements
       </action>
+      <action issue="OTS-377" type="update">
+        OTS377. Add YIELD and TOR to priority
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
