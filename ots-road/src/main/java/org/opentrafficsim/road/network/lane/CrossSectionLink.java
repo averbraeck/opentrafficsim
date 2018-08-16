@@ -215,6 +215,12 @@ public class CrossSectionLink extends OTSLink implements Serializable
         /** No priority. */
         NONE,
 
+        /** Turn on red. */
+        TURN_ON_RED,
+        
+        /** Yield. */
+        YIELD,
+        
         /** Need to stop. */
         STOP,
 
@@ -241,7 +247,25 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             return this.equals(NONE);
         }
+        
+        /**
+         * Returns whether this is turn on red.
+         * @return whether this is turn on red
+         */
+        public boolean isTurnOnRed()
+        {
+            return this.equals(TURN_ON_RED);
+        }
 
+        /**
+         * Returns whether this is yield.
+         * @return whether this is yield
+         */
+        public boolean isYield()
+        {
+            return this.equals(YIELD);
+        }
+        
         /**
          * Returns whether this is stop.
          * @return whether this is stop
@@ -250,7 +274,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             return this.equals(STOP);
         }
-
+        
         /**
          * Returns whether this is all-stop.
          * @return whether this is all-stop

@@ -136,7 +136,7 @@
   
   <xsd:simpleType name="PRIORITYTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="PRIORITY|NONE|STOP|ALL_STOP|BUS_STOP"></xsd:pattern>
+      <xsd:pattern value="PRIORITY|NONE|TURN_ON_RED|YIELD|STOP|ALL_STOP|BUS_STOP"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 

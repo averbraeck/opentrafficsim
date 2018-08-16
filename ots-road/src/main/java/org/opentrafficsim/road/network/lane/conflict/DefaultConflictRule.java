@@ -29,7 +29,7 @@ public class DefaultConflictRule implements ConflictRule
 {
 
     /** Priority per conflict. */
-    private Map<Conflict, ConflictPriority> map = null;
+    private Map<String, ConflictPriority> map = null;
 
     // Throw.whenNull(priority1, "Conflict rule may not be null.");
     // Throw.whenNull(priority2, "Conflict rule may not be null.");
@@ -77,12 +77,13 @@ public class DefaultConflictRule implements ConflictRule
                     conflict.getOtherConflict().getLane(), conflict.getOtherConflict().getLongitudinalPosition(),
                     conflict.getConflictType());
             this.map = new HashMap<>();
-            this.map.put(conflict, conflictPriorities[0]);
-            this.map.put(conflict.getOtherConflict(), conflictPriorities[1]);
+            this.map.put(conflict.getId(), conflictPriorities[0]);
+            this.map.put(conflict.getOtherConflict().getId(), conflictPriorities[1]);
         }
-        Throw.when(!this.map.containsKey(conflict), IllegalArgumentException.class,
+        ConflictPriority out = this.map.get(conflict.getId());
+        Throw.when(out == null, IllegalArgumentException.class,
                 "Conflict %s is not related to a conflict that was used before in the same conflict rule.", conflict);
-        return this.map.get(conflict);
+        return out;
     }
 
     /**
@@ -107,8 +108,12 @@ public class DefaultConflictRule implements ConflictRule
             conflictRules[0] = ConflictPriority.ALL_STOP;
             conflictRules[1] = ConflictPriority.ALL_STOP;
         }
-        else if (priority1.equals(priority2))
+        else if (priority1.equals(priority2) || (priority1.isYield() && priority2.isStop())
+                || (priority2.isYield() && priority1.isStop()))
         {
+            Throw.when(priority1.isTurnOnRed() || priority1.isBusStop(), IllegalArgumentException.class,
+                    "Both priorities are either 'turn on red' or 'bus stop', which is not allowed. "
+                            + "Use BusStopConflictRule for bus stops.");
             // Based on right- or left-hand traffic
             DirectedPoint p1;
             DirectedPoint p2;
@@ -143,29 +148,33 @@ public class DefaultConflictRule implements ConflictRule
                 conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
             }
         }
-        else if (priority1.isPriority() && (priority2.isNone() || priority2.isStop()))
+        else if ((priority1.isPriority() || priority1.isNone()) // note, both NONE already captured
+                && (priority2.isNone() || priority2.isTurnOnRed() || priority2.isYield() || priority2.isStop()))
         {
             conflictRules[0] = ConflictPriority.PRIORITY;
-            conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
+            conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP
+                    : (priority2.isTurnOnRed() ? ConflictPriority.TURN_ON_RED : ConflictPriority.GIVE_WAY);
         }
-        else if (priority2.isPriority() && (priority1.isNone() || priority1.isStop()))
+        else if ((priority2.isPriority() || priority2.isNone())
+                && (priority1.isNone() || priority1.isTurnOnRed() || priority1.isYield() || priority1.isStop()))
         {
-            conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
+            conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP
+                    : (priority1.isTurnOnRed() ? ConflictPriority.TURN_ON_RED : ConflictPriority.GIVE_WAY);
             conflictRules[1] = ConflictPriority.PRIORITY;
         }
-        else if (priority1.isNone() && priority2.isStop())
+        else if (priority1.isTurnOnRed() && (priority2.isYield() || priority2.isStop()))
+        {
+            conflictRules[0] = ConflictPriority.TURN_ON_RED;
+            conflictRules[1] = ConflictPriority.PRIORITY;
+        }
+        else if (priority2.isTurnOnRed() && (priority1.isYield() || priority1.isStop()))
         {
             conflictRules[0] = ConflictPriority.PRIORITY;
-            conflictRules[1] = ConflictPriority.STOP;
-        }
-        else if (priority2.isNone() && priority1.isStop())
-        {
-            conflictRules[0] = ConflictPriority.STOP;
-            conflictRules[1] = ConflictPriority.PRIORITY;
+            conflictRules[1] = ConflictPriority.TURN_ON_RED;
         }
         else
         {
-            throw new RuntimeException(
+            throw new IllegalArgumentException(
                     "Could not sort out conflict priority from link priorities " + priority1 + " and " + priority2);
         }
         return conflictRules;
