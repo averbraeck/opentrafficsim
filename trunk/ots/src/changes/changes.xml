@@ -15,7 +15,7 @@
       <action issue="OTS-332" type="update">
         OTS-332. Make GTUType and LaneType hierarchal
       </action>
-      <action issue="OTS-345" type="add">   
+      <action issue="OTS-345" type="add">
         OTS-345. Create utility to apply an OD matrix on the network
       </action>
       <action issue="OTS-346" type="update">
@@ -84,6 +84,9 @@
       <action issue="OTS-377" type="update">
         OTS377. Add YIELD and TOR to priority
       </action>
+      <action issue="OTS-378" type="update">
+        OTS378. Allow demand to be split over several connectors
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
@@ -91,65 +94,78 @@
         OTS-126. Add class for a speed sign.
       </action>
       <action issue="OTS-156" type="add">
-        OTS-156. Make conflicts GTUType dependent. Priority at conflicts may depend on the GTUType, e.g. at some conflicts, 
-        trams have absolute priority over cars, but cars may behave according to a right-has-priority rule. 
+        OTS-156. Make conflicts GTUType dependent. Priority at conflicts may depend on the
+        GTUType, e.g. at some conflicts,
+        trams have absolute priority over cars, but cars may behave according to a right-has-priority rule.
       </action>
       <action issue="OTS-217" type="update">
-        OTS-217. Initial operational plans and lane changes. In some cases, tactical planners should not create an 
-        operational plan containing a lane change. E.g. filling the network at t=0, some surrounding GTUs 
+        OTS-217. Initial operational plans and lane changes. In some cases, tactical planners
+        should not create an
+        operational plan containing a lane change. E.g. filling the network at t=0, some surrounding GTUs
         may not yet be generated.
       </action>
       <action issue="OTS-319" type="add">
-        OTS-319. Alignment with DJUNITS 3.00. Units for absolute and relative values have been separated. 
-        They are truly different and should never have been mixed. As an example, an AbsoluteTemperature 
+        OTS-319. Alignment with DJUNITS 3.00. Units for absolute and relative values have been
+        separated.
+        They are truly different and should never have been mixed. As an example, an AbsoluteTemperature
         of 10 degrees Celsius has an offset of 283.15 Kelvin from absolute zero. A relative temperature of
-        10 degrees Celsius, however, is equivalent to 10 Kelvin, and does not have any offset. The same
-        holds for Direction, Time, and Position. This has quite some effects on the code, as TimeUnits in
-        Durations had to be replaced with a DurationUnit. Same for Directions that now have their own
-        DirectionUnit (e.g., NORTH_RADIANS: radians relative to NORTH, or EAST_DEGREES:degrees relative 
+        10 degrees Celsius, however,
+        is equivalent to 10 Kelvin, and does not have any offset. The same
+        holds for Direction, Time, and Position. This has
+        quite some effects on the code, as TimeUnits in
+        Durations had to be replaced with a DurationUnit. Same for Directions
+        that now have their own
+        DirectionUnit (e.g., NORTH_RADIANS: radians relative to NORTH, or EAST_DEGREES:degrees relative
         to EAST). Time can be stated relative to the POSIX Epoch (1-1-1970), AD 1, or the J2000.1 Epoch.
       </action>
       <action issue="OTS-320" type="fix">
-        OTS-320. SpeedSign ENDOFDAY 
+        OTS-320. SpeedSign ENDOFDAY
       </action>
       <action issue="OTS-321" type="add">
-        OTS-321. AIMSUN classes have to go into ots-aimsun project. 
+        OTS-321. AIMSUN classes have to go into ots-aimsun project.
         ots-aimsun for aimsun classes on the OTS side.
         ots-aimsun-demo for demos with aimsun classes.
-        ots-aimsun-proto for proto files and generated classes.
-        The last one is important to separate because of suppression of javadoc and formatting 
+        ots-aimsun-proto for proto files and
+        generated classes.
+        The last one is important to separate because of suppression of javadoc and formatting
         error messages because of checkstyle.
       </action>
       <action issue="OTS-325" type="fix">
         OTS-325. Toledo demos complain about missing TacticalPlanner
       </action>
       <action issue="OTS-327" type="fix">
-        OTS-327. Demo Crossing with Traffic Lights has a casting error. There was still a reference to the 
+        OTS-327. Demo Crossing with Traffic Lights has a casting error. There was still a
+        reference to the
         TimeUnit in the typed distributions, where a DurationUnit should have been used. This has been
-        solved in all four typed Distributions.
+        solved in all four typed
+        Distributions.
       </action>
       <action issue="OTS-328" type="fix">
-        OTS-328. TRAFCOD2 demo does not start anymore. To make the registration work better in the OTSNetwork, 
-        the name of any registered object should be unique within a lane. In order to make a) inspecting 
-        ids easy, while b) still registering full ids with a cross section name and a cross section element name, 
-        the method getFullId() has been added in addition to getId(). When displaying objects, getId() is used. 
+        OTS-328. TRAFCOD2 demo does not start anymore. To make the registration work better in
+        the OTSNetwork,
+        the name of any registered object should be unique within a lane. In order to make a) inspecting
+        ids easy, while b) still registering full ids with a cross section name and a cross section element name,
+        the method getFullId() has been added in addition to getId(). When displaying objects, getId() is used.
         When registering objects, getFullId() is used.
       </action>
       <action issue="OTS-329" type="fix">
-        OTS-329. N201 XML Parser demo throws error. All sensor, trafficlight, and sensor objects in XML files 
+        OTS-329. N201 XML Parser demo throws error. All sensor, trafficlight, and sensor
+        objects in XML files
         have to be globally unique in the network. N201v8.xml in the ots-parser-xml project test has been
-        updated to make the names of Lane objects unique.
+        updated to make the names of
+        Lane objects unique.
       </action>
       <action issue="OTS-330" type="fix">
-        OTS-330. Directions not interpreted correctly when parsing. This was caused by the fact that the DirectionUnit 
-        uses NORTH_RADIANS as the BASE, and EAST_RADIANS is -90 degrees rotated with respect to NORTH_RADIANS. 
+        OTS-330. Directions not interpreted correctly when parsing. This was caused by the
+        fact that the DirectionUnit
+        uses NORTH_RADIANS as the BASE, and EAST_RADIANS is -90 degrees rotated with respect to NORTH_RADIANS.
         Instead of using getSI() or .si for the direction, getInUnit() should be used in Links.java.
       </action>
       <action type="update">
         Updated to DJUNITS version 3.00.01.
       </action>
     </release>
-  
+
     <release version="0.14.00" date="2017-04-17" description="Release 0.14.00">
       <action issue="OTS-269" type="update">
         OTS-269. Settable deletion of GTU's if in trouble.
@@ -178,11 +194,13 @@
       </action>
       <action issue="OTS-299" type="add">
         OTS-299. Method projectedPosition was actually translatedPosition; method name
-        fixed. Added new method projectedPosition.
+        fixed.
+        Added new method projectedPosition.
       </action>
       <action issue="OTS-297" type="update">
         OTS-297. DJUNITS version 2.01.03 used. Scalars in SI units with the exception
-        of Money scalars can now be created with e.g., Length len = Length.createSI(5.0).
+        of Money
+        scalars can now be created with e.g., Length len = Length.createSI(5.0).
       </action>
       <action issue="OTS-298" type="update">
         OTS-298. DJUNITS version 2.01.03 used. Constants NaN, POSITIVI_INFINITY,
@@ -301,7 +319,8 @@
       <action issue="OTS-240" type="add">
         OTS-240: The threshold distance for differences between initial locations of
         the GTU
-        on different lanes should be settable.
+        on
+        different lanes should be settable.
       </action>
     </release>
 

@@ -11,12 +11,6 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
-import nl.tudelft.simulation.language.d3.CartesianPoint;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-import nl.tudelft.simulation.language.reflection.ClassUtil;
-
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.value.AngleUtil;
@@ -50,6 +44,12 @@ import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.language.d3.CartesianPoint;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * <p>
@@ -312,6 +312,38 @@ final class Links
             }
         }
 
+    }
+
+    /**
+     * Build connectors.
+     * @param connectorTag the connector to process
+     * @param parser the parser with the lists of information
+     * @param simulator to be able to make the animation
+     * @throws OTSGeometryException when both nodes are null
+     * @throws NamingException when node animation cannot link to the animation context
+     * @throws NetworkException when tag type not filled
+     */
+    static void buildConnector(final ConnectorTag connectorTag, final XmlNetworkLaneParser parser,
+            final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NamingException, NetworkException
+    {
+        OTSLine3D designLine =
+                new OTSLine3D(connectorTag.nodeStartTag.node.getPoint(), connectorTag.nodeEndTag.node.getPoint());
+        CrossSectionLink connector = new CrossSectionLink(parser.network, connectorTag.name, connectorTag.nodeStartTag.node,
+                connectorTag.nodeEndTag.node, LinkType.CONNECTOR, designLine, simulator, null);
+        if (connectorTag.demandWeight != null)
+        {
+            connector.setDemandWeight(connectorTag.demandWeight);
+        }
+
+        try
+        {
+            new LinkAnimation(connector, simulator, 0.5f);
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
+        connectorTag.connector = connector;
     }
 
     /**
@@ -631,8 +663,8 @@ final class Links
                     }
 
                     // XXX: LaneTypes with compatibilities might have to be defined in a new way -- LaneType.FREEWAY for now...
-                    Lane lane = new Lane(csl, cseTag.name, startOffset, endOffset, cseTag.width, cseTag.width,
-                            LaneType.FREEWAY, cseTag.legalSpeedLimits, overtakingConditions);
+                    Lane lane = new Lane(csl, cseTag.name, startOffset, endOffset, cseTag.width, cseTag.width, LaneType.FREEWAY,
+                            cseTag.legalSpeedLimits, overtakingConditions);
                     // System.out.println(OTSGeometry.printCoordinates("#link design line: \nc1,0,0\n#",
                     // lane.getParentLink().getDesignLine(), "\n "));
                     // System.out.println(OTSGeometry.printCoordinates("#lane center line: \nc0,1,0\n#", lane.getCenterLine(),
@@ -787,4 +819,5 @@ final class Links
 
         } // for (CrossSectionElementTag cseTag : roadTypeTag.cseTags.values())
     }
+
 }

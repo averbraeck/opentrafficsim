@@ -238,6 +238,7 @@ public final class ODApplier
             // Step 2: gather DirectedLanePositions for each generator pertaining to each DemandNode<...>
             Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<DirectedLanePosition>> initialPositions =
                     new LinkedHashMap<>();
+            Map<CrossSectionLink, Double> linkWeights = null;
             if (laneBased)
             {
                 for (Lane lane : originNodePerLane.keySet())
@@ -267,10 +268,29 @@ public final class ODApplier
                         if (link.getStartNode().equals(origin))
                         {
                             Node connectedNode = link.getEndNode();
+                            // count number of served links
+                            int served = 0;
+                            for (Link connectedLink : connectedNode.getLinks())
+                            {
+                                if (connectedLink instanceof CrossSectionLink && !connectedLink.getLinkType().isConnector())
+                                {
+                                    served++;
+                                }
+                            }
                             for (Link connectedLink : connectedNode.getLinks())
                             {
                                 if (connectedLink instanceof CrossSectionLink)
                                 {
+                                    if (link instanceof CrossSectionLink && ((CrossSectionLink) link).getDemandWeight() != null)
+                                    {
+                                        if (linkWeights == null)
+                                        {
+                                            linkWeights = new LinkedHashMap<>();
+                                        }
+                                        // store weight under connected link, as this
+                                        linkWeights.put(((CrossSectionLink) connectedLink),
+                                                ((CrossSectionLink) link).getDemandWeight() / served);
+                                    }
                                     setDirectedLanePosition((CrossSectionLink) connectedLink, connectedNode, positionSet);
                                 }
                             }
@@ -331,8 +351,8 @@ public final class ODApplier
                 try
                 {
                     LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator(id, headwayGenerator, gtuColorer,
-                            characteristicsGenerator, GeneratorPositions.create(initialPosition, stream, biases), network,
-                            simulator, roomChecker, idGenerator);
+                            characteristicsGenerator, GeneratorPositions.create(initialPosition, stream, biases, linkWeights),
+                            network, simulator, roomChecker, idGenerator);
                     generator.setNoLaneChangeDistance(odOptions.get(ODOptions.NO_LC_DIST, lane, o, linkType));
                     output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
                     if (animation)

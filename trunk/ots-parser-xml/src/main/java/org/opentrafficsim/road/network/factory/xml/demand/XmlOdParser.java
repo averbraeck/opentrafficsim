@@ -175,7 +175,7 @@ public class XmlOdParser implements Serializable
      */
     public final void apply(final Node xmlNode) throws XmlParserException
     {
-        apply(xmlNode);
+        apply(xmlNode, new ODOptions());
     }
 
     /**
@@ -291,6 +291,8 @@ public class XmlOdParser implements Serializable
         }
 
         // parse data
+        // TODO global time as optional
+        // TODO order of time values, and demand values later, is not guaranteed in xml, need a way to order them
         NodeList odNodeList = xmlNode.getChildNodes();
         List<Node> nodes = XMLParser.getNodes(odNodeList, "GLOBALTIME");
         Throw.when(nodes.size() > 1, XmlParserException.class, "Multiple GLOBALTIME tags, only 1 is allowed.");

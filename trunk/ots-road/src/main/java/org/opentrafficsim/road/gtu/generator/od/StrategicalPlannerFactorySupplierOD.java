@@ -34,7 +34,7 @@ public interface StrategicalPlannerFactorySupplierOD
         {
             return new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()),
-                    RouteSupplier.SHORTEST);
+                    RouteSupplier.getDefaultRouteSupplier(randomStream));
         }
     };
 

@@ -1,10 +1,20 @@
 package org.opentrafficsim.road.gtu.strategical.route;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.NestedCache;
 import org.opentrafficsim.core.gtu.Try;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Supplies a route by determining one.
@@ -29,19 +39,81 @@ public interface RouteSupplier
         }
     };
 
+    /** Cache of default route suppliers per stream. */
+    Map<StreamInterface, RouteSupplier> DEFAULT_MAP = new LinkedHashMap<>();
+
+    /**
+     * Returns a default route supplier for shortest routes based on the given stream.
+     * @param stream StreamInterface; random number stream
+     * @return RouteSupplier; default route supplier for shortest routes based on the given stream
+     */
+    static RouteSupplier getDefaultRouteSupplier(final StreamInterface stream)
+    {
+        RouteSupplier def = DEFAULT_MAP.get(stream);
+        if (def == null)
+        {
+            def = new DefaultRouteSupplier(stream);
+            DEFAULT_MAP.put(stream, def);
+        }
+        return def;
+    }
+
     /** Shortest route route supplier. */
-    RouteSupplier SHORTEST = new RouteSupplier()
+    class DefaultRouteSupplier implements RouteSupplier
     {
         /** Shortest route cache. */
-        private NestedCache<Route> shortestRouteCache = new NestedCache<>(GTUType.class, Node.class, Node.class);
+        private NestedCache<Route> shortestRouteCache = new NestedCache<>(GTUType.class, Node.class, Node.class, List.class);
+
+        /** Stream of random numbers. */
+        private final StreamInterface stream;
+
+        /**
+         * Constructor.
+         * @param stream StreamInterface; stream of random numbers
+         */
+        public DefaultRouteSupplier(final StreamInterface stream)
+        {
+            Throw.whenNull(stream, "Stream may not be null.");
+            this.stream = stream;
+        }
 
         @Override
         public Route getRoute(final Node origin, final Node destination, final GTUType gtuType)
         {
+            List<Node> viaNodes = new ArrayList<>();
+            double cumulWeight = 0.0;
+            List<Double> weights = new ArrayList<>();
+            List<Link> links = new ArrayList<>();
+            for (Link link : destination.getLinks())
+            {
+                if (link.getLinkType().isConnector() && link instanceof CrossSectionLink
+                        && ((CrossSectionLink) link).getDemandWeight() != null)
+                {
+                    Double weight = ((CrossSectionLink) link).getDemandWeight();
+                    weights.add(weight);
+                    links.add(link);
+                    cumulWeight += weight;
+                }
+            }
+            double r = this.stream.nextDouble() * cumulWeight;
+            Link via = null;
+            for (int i = 0; i < weights.size() - 2; i++)
+            {
+                if (weights.get(i) <= r && weights.get(i + 1) < r)
+                {
+                    via = links.get(i);
+                    break;
+                }
+            }
+            if (via == null)
+            {
+                via = links.get(links.size() - 1); // due to rounding, r == cumulWeight or no weights
+            }
+            viaNodes.add(via.getStartNode().equals(destination) ? via.getEndNode() : via.getStartNode());
             return this.shortestRouteCache.getValue(
-                    () -> Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination),
-                            "Could not determine the shortest route from %s to %s.", origin, destination),
-                    gtuType, origin, destination);
+                    () -> Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes),
+                            "Could not determine the shortest route from %s to %s via %s.", origin, destination, viaNodes),
+                    gtuType, origin, destination, viaNodes);
         }
 
         /** {@inheritDoc} */

@@ -193,7 +193,8 @@ public final class ConflictUtil
                     stop = stopForPriorityConflict(conflict, leaders, speed, vehicleLength, parameters, conflictPlans);
                     break;
                 }
-                case GIVE_WAY:
+                case GIVE_WAY: // TODO depending on rules, we may need to stop and not just yield
+                case TURN_ON_RED:
                 {
                     stop = stopForGiveWayConflict(conflict, leaders, speed, acceleration, vehicleLength, parameters,
                             speedLimitInfo, carFollowingModel);
@@ -732,6 +733,7 @@ public final class ConflictUtil
             final Length vehicleLength, final Parameters parameters, final SpeedLimitInfo speedLimitInfo,
             final CarFollowingModel carFollowingModel) throws ParameterException
     {
+        // TODO stopping
         return stopForGiveWayConflict(conflict, leaders, speed, acceleration, vehicleLength, parameters, speedLimitInfo,
                 carFollowingModel);
     }

@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,7 @@ import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
+import org.opentrafficsim.road.gtu.generator.od.GTUCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
@@ -49,6 +51,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.RouteSupplier;
+import org.opentrafficsim.road.network.factory.xml.demand.XmlOdParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -84,6 +87,10 @@ public class XmlNetworkLaneParser implements Serializable
     /** The UNprocessed nodes for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, NodeTag> nodeTags = new HashMap<>();
+
+    /** The UNprocessed connectors for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, ConnectorTag> connectorTags = new HashMap<>();
 
     /** The UNprocessed links for further reference. */
     @SuppressWarnings("visibilitymodifier")
@@ -328,10 +335,13 @@ public class XmlNetworkLaneParser implements Serializable
         ShortestRouteTag.parseShortestRoutes(networkNodeList, this);
         RouteMixTag.parseRouteMix(networkNodeList, this);
         ShortestRouteMixTag.parseShortestRouteMix(networkNodeList, this);
+        ConnectorTag.parseConnectors(networkNodeList, this);
         LinkTag.parseLinks(networkNodeList, this);
 
         // process nodes and links to calculate coordinates and positions
         Links.calculateNodeCoordinates(this);
+        for (ConnectorTag connectorTag : this.connectorTags.values())
+            Links.buildConnector(connectorTag, this, this.simulator);
         for (LinkTag linkTag : this.linkTags.values())
             Links.buildLink(linkTag, this, this.simulator);
         for (LinkTag linkTag : this.linkTags.values())
@@ -343,12 +353,41 @@ public class XmlNetworkLaneParser implements Serializable
         // TODO shortestRoute, routeMix, ShortestRouteMix
 
         // store the structure information in the network
-        OTSNetwork result = makeNetwork();
+        makeNetwork();
         if (interpretXMLComments)
         {
-            fixOD(result);
+            // fixOD(result);
         }
-        return result;
+
+        List<Node> od = XMLParser.getNodes(networkNodeList, "OD");
+        if (od.size() == 1)
+        {
+            Set<TemplateGTUType> templates = new LinkedHashSet<>();
+            for (String gtuType : this.gtuTags.keySet())
+            {
+                GTUTag gtuTag = this.gtuTags.get(gtuType);
+                templates.add(new TemplateGTUType(this.gtuTypes.get(gtuType), gtuTag.lengthDist, gtuTag.widthDist,
+                        gtuTag.maxSpeedDist));
+            }
+            GTUCharacteristicsGeneratorOD gtuTypeGenerator = new DefaultGTUCharacteristicsGeneratorOD(templates);
+            ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE, gtuTypeGenerator);
+            // TODO add chosen model in gtuTypeGenerator
+            XmlOdParser xmlOdParser =
+                    new XmlOdParser(this.simulator, this.network, new LinkedHashSet<>(this.gtuTypes.values()));
+            try
+            {
+                xmlOdParser.apply(od.get(0), odOptions);
+            }
+            catch (XmlParserException exception)
+            {
+                throw new SAXException("Exception while applying OD.", exception);
+            }
+        }
+        else if (od.size() > 1)
+        {
+            throw new SAXException("XmlNetworkLaneParser.build: XML document contains multiple OD tags");
+        }
+        return this.network;
     }
 
     /**
@@ -570,10 +609,10 @@ public class XmlNetworkLaneParser implements Serializable
     }
 
     /**
-     * @return the OTSNetwork with the static information about the network
+     * Adds routes.
      * @throws NetworkException if items cannot be added to the Network
      */
-    private OTSNetwork makeNetwork() throws NetworkException
+    private void makeNetwork() throws NetworkException
     {
         for (RouteTag routeTag : this.routeTags.values())
         {
@@ -581,7 +620,6 @@ public class XmlNetworkLaneParser implements Serializable
             // TODO Automate addition of Routes to network
             this.network.addRoute(GTUType.VEHICLE, routeTag.route);
         }
-        return this.network;
     }
 
     /**

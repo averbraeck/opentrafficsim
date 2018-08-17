@@ -14,6 +14,7 @@ import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * A CrossSectionLink is a link with lanes where GTUs can possibly switch between lanes.
@@ -44,6 +45,9 @@ public class CrossSectionLink extends OTSLink implements Serializable
     /** Priority. */
     // TODO per GTUDirectionality / LongitudinalDirectionality?
     private Priority priority = Priority.NONE;
+
+    /** Fraction in range 0...1 to divide origin or destination flow over connectors. */
+    private Double demandWeight = null;
 
     /**
      * The (regular, not timed) event type for pub/sub indicating the addition of a Lane to a CrossSectionLink. <br>
@@ -178,6 +182,35 @@ public class CrossSectionLink extends OTSLink implements Serializable
         this.priority = priority;
     }
 
+    /**
+     * Sets the demand weight. This is only applicable to links of type CONNECTOR.
+     * @param demandWeight double; demand weight, which is any positive value
+     */
+    public final void setDemandWeight(final double demandWeight)
+    {
+        Throw.when(demandWeight < 0.0, IllegalArgumentException.class, "Demand weight should be positive.");
+        Throw.when(!getLinkType().isConnector(), IllegalArgumentException.class,
+                "Demand weight can only be set on connectors.");
+        this.demandWeight = demandWeight;
+    }
+
+    /**
+     * Clears the demand weight. This is only applicable to links of type CONNECTOR.
+     */
+    public final void clearDemandWeight()
+    {
+        this.demandWeight = null;
+    }
+
+    /**
+     * Returns the demand weight. This is only applicable to links of type CONNECTOR.
+     * @return Double; demand weight, any positive value, or {@code null}
+     */
+    public final Double getDemandWeight()
+    {
+        return this.demandWeight;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
@@ -217,10 +250,10 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
         /** Turn on red. */
         TURN_ON_RED,
-        
+
         /** Yield. */
         YIELD,
-        
+
         /** Need to stop. */
         STOP,
 
@@ -247,7 +280,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             return this.equals(NONE);
         }
-        
+
         /**
          * Returns whether this is turn on red.
          * @return whether this is turn on red
@@ -265,7 +298,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             return this.equals(YIELD);
         }
-        
+
         /**
          * Returns whether this is stop.
          * @return whether this is stop
@@ -274,7 +307,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             return this.equals(STOP);
         }
-        
+
         /**
          * Returns whether this is all-stop.
          * @return whether this is all-stop

@@ -126,7 +126,7 @@ final class LinkTag implements Serializable
 
     /** The priority for conflicts. */
     Priority priority = null;
-
+    
     /**
      * Parse the LINK tags.
      * @param nodeList nodeList the top-level nodes of the XML-file
@@ -145,7 +145,7 @@ final class LinkTag implements Serializable
             if (attributes.getNamedItem("NAME") == null)
                 throw new SAXException("LINK: missing attribute NAME");
             linkTag.name = attributes.getNamedItem("NAME").getNodeValue().trim();
-            if (parser.linkTags.keySet().contains(linkTag.name))
+            if (parser.connectorTags.keySet().contains(linkTag.name) || parser.linkTags.keySet().contains(linkTag.name))
                 throw new SAXException("LINK: NAME " + linkTag.name + " defined twice");
 
             if (attributes.getNamedItem("ROADLAYOUT") == null)
@@ -183,7 +183,7 @@ final class LinkTag implements Serializable
 
             if (attributes.getNamedItem("PRIORITY") != null)
                 linkTag.priority = LaneAttributes.parsePriority(attributes.getNamedItem("PRIORITY").getNodeValue());
-
+            
             Node lkp = attributes.getNamedItem("LANEKEEPING");
             if (lkp != null)
                 linkTag.laneKeepingPolicy = LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());
