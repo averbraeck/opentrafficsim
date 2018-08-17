@@ -97,7 +97,7 @@ public interface RouteSupplier
             }
             double r = this.stream.nextDouble() * cumulWeight;
             Link via = null;
-            for (int i = 0; i < weights.size() - 2; i++)
+            for (int i = 0; i < weights.size() - 1; i++)
             {
                 if (weights.get(i) <= r && weights.get(i + 1) < r)
                 {
