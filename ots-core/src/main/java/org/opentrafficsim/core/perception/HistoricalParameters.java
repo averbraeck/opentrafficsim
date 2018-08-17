@@ -160,6 +160,13 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
             return this.parameter;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "ParameterValueSet [parameter=" + this.parameter + ", value=" + this.value + "]";
+        }
+
     }
 
     /**
@@ -208,6 +215,20 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
             }
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "ParameterEvent []";
+        }
+
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "HistoricalParameters [params=" + this.params + "]";
     }
 
 }

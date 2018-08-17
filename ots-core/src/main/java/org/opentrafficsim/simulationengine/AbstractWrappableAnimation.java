@@ -277,6 +277,13 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             {
                 return true;
             }
+
+            /** {@inheritDoc} */
+            @Override
+            public String toString()
+            {
+                return "AppearanceControlMenu []";
+            }
         }
 
         // Look and feel menu
@@ -311,6 +318,13 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             public boolean isFont()
             {
                 return true;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public String toString()
+            {
+                return "AppearanceControlPopupMenu []";
             }
         }
 
@@ -819,6 +833,13 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             MenuSelectionManager.defaultManager().setSelectedPath(
                     new MenuElement[] { (MenuElement) this.menu.getParent(), this.menu, this.menu.getPopupMenu() });
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "SubMenuShower [menu=" + this.menu + "]";
+        }
     }
 
     /**
@@ -898,6 +919,13 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         public boolean isFont()
         {
             return true;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "StayOpenCheckBoxMenuItem []";
         }
     }
 

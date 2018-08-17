@@ -66,6 +66,13 @@ public class ColorControlPanel extends JPanel implements ActionListener
                 {
                     return true;
                 }
+
+                /** {@inheritDoc} */
+                @Override
+                public String toString()
+                {
+                    return "AppearanceControlComboBox []";
+                }
             }
             this.comboBoxGTUColor = new AppearanceControlComboBox<>();
             this.add(this.comboBoxGTUColor);
@@ -133,6 +140,13 @@ public class ColorControlPanel extends JPanel implements ActionListener
                 public ColorBox()
                 {
                     super("     ");
+                }
+
+                /** {@inheritDoc} */
+                @Override
+                public String toString()
+                {
+                    return "ColorBox []";
                 }
             }
             ColorBox colorBox = new ColorBox();

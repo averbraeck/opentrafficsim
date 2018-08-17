@@ -120,4 +120,11 @@ public class NestedCache<T>
         return (T) this.map.get(key);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "NestedCache [types=" + Arrays.toString(this.types) + ", map=" + this.map + "]";
+    }
+
 }

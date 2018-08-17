@@ -51,4 +51,11 @@ public class NullHistorical<T> implements Historical<T>
         return this.val;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "NullHistorical [val=" + this.val + "]";
+    }
+
 }

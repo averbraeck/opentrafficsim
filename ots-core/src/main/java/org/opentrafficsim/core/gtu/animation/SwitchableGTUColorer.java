@@ -157,6 +157,13 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
             colorer.activeColorer = this.preActiveColorer;
             return colorer;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "Builder [preColorers=" + this.preColorers + ", preActiveColorer=" + this.preActiveColorer + "]";
+        }
         
     }
     

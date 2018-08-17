@@ -359,6 +359,15 @@ public final class Profile
             return this.maxTime / 1000000000.0;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "ProfileInfo [name=" + this.name + ", start=" + this.start + ", total=" + this.total + ", totalSquared="
+                    + this.totalSquared + ", minTime=" + this.minTime + ", maxTime=" + this.maxTime + ", invocations="
+                    + this.invocations + "]";
+        }
+
     }
 
 }
