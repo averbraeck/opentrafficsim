@@ -120,13 +120,13 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     protected boolean windowExited = false;
 
     /** Autopan. */
-    boolean autoPan = false;
+    private boolean autoPan = false;
 
     /** Autopan toggle. */
-    final JCheckBox autoPanToggle;
+    private final JCheckBox autoPanToggle;
 
     /** Autopan Id text field. */
-    final JTextField autoPanField;
+    private final JTextField autoPanField;
 
     /** Initialize the formatter. */
     static
@@ -172,7 +172,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         this.togglePanel = new JPanel();
         this.togglePanel.setLayout(new BoxLayout(this.togglePanel, BoxLayout.Y_AXIS));
         this.borderPanel.add(this.togglePanel, BorderLayout.WEST);
-        
+
         // add the buttons for home, zoom all, grid, and mouse coordinates
         buttonPanel.add(new JLabel("   "));
         buttonPanel.add(makeButton("allButton", "/Expand.png", "ZoomAll", "Zoom whole network", true));
@@ -224,11 +224,17 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         this.autoPanToggle.setToolTipText("Pan to GTU");
         this.autoPanToggle.addActionListener(new ActionListener()
         {
+            @SuppressWarnings("synthetic-access")
             @Override
             public void actionPerformed(final ActionEvent e)
             {
                 OTSAnimationPanel.this.autoPan = !OTSAnimationPanel.this.autoPanField.isVisible();
                 OTSAnimationPanel.this.autoPanField.setVisible(OTSAnimationPanel.this.autoPan);
+                if (OTSAnimationPanel.this.autoPan)
+                {
+                    OTSAnimationPanel.this.autoPanField.requestFocusInWindow();
+                    OTSAnimationPanel.this.autoPanField.selectAll();
+                }
                 gtuPanel.revalidate();
             }
         });
@@ -782,7 +788,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 30 apr. 2018 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author$,
+     *          initial version 30 apr. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -819,6 +826,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             this.addMouseListener(new MouseAdapter()
             {
                 /** {@inheritDoc} */
+                @SuppressWarnings("synthetic-access")
                 @Override
                 public void mouseReleased(final MouseEvent e)
                 {
@@ -874,6 +882,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public void paint(final Graphics g)
         {
@@ -904,5 +913,5 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             super.paint(g);
         }
     }
-    
+
 }
