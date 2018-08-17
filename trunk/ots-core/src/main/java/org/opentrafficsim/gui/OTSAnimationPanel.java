@@ -207,6 +207,13 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         class AppearanceTextField extends JTextField implements AppearanceControl
         {
             private static final long serialVersionUID = 20180430L;
+
+            /** {@inheritDoc} */
+            @Override
+            public String toString()
+            {
+                return "AppearanceTextField []";
+            }
         }
         this.autoPanField = new AppearanceTextField();
         this.autoPanField.setMaximumSize(new Dimension(100, 20));
@@ -911,6 +918,13 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 }
             }
             super.paint(g);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "AutoAnimationPanel [network=" + this.network + ", lastGtu=" + this.lastGtu + "]";
         }
     }
 

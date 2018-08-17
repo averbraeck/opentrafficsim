@@ -189,6 +189,13 @@ public class OTSSimulationPanel extends JPanel
         {
             super(tabPlacement);
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "AppearanceControlTabbedContentPane []";
+        }
     }
 
 }

@@ -245,6 +245,13 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
          */
         public abstract void restore(C collection);
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "EventCollection []";
+        }
+
     }
 
     /**
@@ -281,6 +288,13 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
             collection.remove(getValue()); // events are only created upon effective addition, so we can remove it
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "AddEvent []";
+        }
+
     }
 
     /**
@@ -315,6 +329,13 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
         public void restore(final C collection)
         {
             collection.add(getValue()); // events are only created upon effective removal, so we can add it
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "RemoveEvent []";
         }
 
     }

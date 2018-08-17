@@ -157,6 +157,13 @@ public class OTSControlPanel extends JPanel
             {
                 return true;
             }
+
+            /** {@inheritDoc} */
+            @Override
+            public String toString()
+            {
+                return "AppearanceControlLabel []";
+            }
         }
         JLabel speedLabel = new AppearanceControlLabel();
         this.clockPanel = new ClockLabel(speedLabel);
@@ -208,6 +215,13 @@ public class OTSControlPanel extends JPanel
             public boolean isFont()
             {
                 return true;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public String toString()
+            {
+                return "AppearanceControlButton []";
             }
         }
         JButton result = new AppearanceControlButton(loadIcon(iconPath));
