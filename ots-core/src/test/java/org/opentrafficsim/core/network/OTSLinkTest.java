@@ -6,10 +6,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.media.j3d.Bounds;
+
+import mockit.Mock;
+import mockit.MockUp;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
@@ -20,13 +25,6 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
-
-import mockit.Mock;
-import mockit.MockUp;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the OTSLink class.
