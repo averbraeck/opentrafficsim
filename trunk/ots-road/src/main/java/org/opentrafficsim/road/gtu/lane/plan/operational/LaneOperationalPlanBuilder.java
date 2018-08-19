@@ -51,7 +51,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public final class LaneOperationalPlanBuilder // class package private for scheduling static method on an instance
 {
-    
+
     /** Use instant lane changes. */
     public static boolean INSTANT_LANE_CHANGES = false;
 
@@ -302,8 +302,8 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 from = from.getNextLaneDirection(gtu);
                 try
                 {
-                path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getDirection().isPlus() ? from.getLane().getCenterLine()
-                        : from.getLane().getCenterLine().reverse());
+                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getDirection().isPlus()
+                            ? from.getLane().getCenterLine() : from.getLane().getCenterLine().reverse());
                 }
                 catch (NullPointerException nas)
                 {
