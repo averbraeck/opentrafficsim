@@ -87,6 +87,9 @@
       <action issue="OTS-378" type="update">
         OTS378. Allow demand to be split over several connectors
       </action>
+      <action issue="OTS-380" type="fix">
+        OTS380. GTU-Lane connections with instantaneous lane changes
+      </action>
     </release>
 
     <release version="0.15.00" date="2017-04-30" description="Release 0.15.00">
