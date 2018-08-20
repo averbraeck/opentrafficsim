@@ -333,7 +333,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /**
      * Assures a route is available if a route is already present, or a destination and route supplier are provided.
-     * @param gtuType
+     * @param gtuType GTUType; the type of the GTU for which a route must be assured
      */
     private void assureRoute(final GTUType gtuType)
     {
