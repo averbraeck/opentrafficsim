@@ -116,7 +116,7 @@ public interface ContinuousDistDoubleScalar
          * @return a drawn number from the distribution in the given unit.
          */
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        public final T draw()
+        public T draw()
         {
             switch (getUnit().getClass().getSimpleName())
             {
@@ -139,7 +139,7 @@ public interface ContinuousDistDoubleScalar
 
         /** {@inheritDoc} */
         @Override
-        public final String toString()
+        public String toString()
         {
             return "ContinuousDistDoubleScalar.Abs [T=" + getUnit().getClass().getSimpleName() + "]";
         }
@@ -179,7 +179,7 @@ public interface ContinuousDistDoubleScalar
          * @return a drawn number from the distribution in the given unit.
          */
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        public final T draw()
+        public T draw()
         {
             switch (getUnit().getClass().getSimpleName())
             {
@@ -265,7 +265,7 @@ public interface ContinuousDistDoubleScalar
 
         /** {@inheritDoc} */
         @Override
-        public final String toString()
+        public String toString()
         {
             return "ContinuousDistDoubleScalar.Rel [T=" + getUnit().getClass().getSimpleName() + "]";
         }
