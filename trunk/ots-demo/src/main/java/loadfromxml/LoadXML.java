@@ -160,7 +160,7 @@ public class LoadXML extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected void addAnimationToggles()
+    protected final void addAnimationToggles()
     {
         AnimationToggles.setIconAnimationTogglesFull(this);
         toggleAnimationClass(OTSLink.class);
