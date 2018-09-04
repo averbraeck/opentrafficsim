@@ -193,7 +193,7 @@ public class LoadXML extends AbstractWrappableAnimation
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator, getColorer());
             try
             {
-                this.network = nlp.build(new ByteArrayInputStream(LoadXML.this.xml.getBytes(StandardCharsets.UTF_8)), true);
+                this.network = nlp.build(new ByteArrayInputStream(LoadXML.this.xml.getBytes(StandardCharsets.UTF_8)), false);
                 ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, (OTSDEVSSimulatorInterface) theSimulator,
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
