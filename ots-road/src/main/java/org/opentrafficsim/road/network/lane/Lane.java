@@ -780,6 +780,16 @@ public class Lane extends CrossSectionElement implements Serializable
                         gtu.getSimulator().scheduleEvent(event);
                         gtu.addTrigger(this, event);
                     }
+                    else if (sensor.getLongitudinalPosition().si < minPos)
+                    {
+                        // TODO this is a hack for when sink sensors aren't perfectly adjacent or the GTU overshoots with nose
+                        // due to curvature
+                        SimEvent<OTSSimTimeDouble> event =
+                                new SimEvent<>(new OTSSimTimeDouble(gtu.getSimulator().getSimulatorTime().get()), this, sensor,
+                                        "trigger", new Object[] { gtu });
+                        gtu.getSimulator().scheduleEvent(event);
+                        gtu.addTrigger(this, event);
+                    }
                 }
             }
         }

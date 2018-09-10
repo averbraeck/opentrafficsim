@@ -1,9 +1,12 @@
 package org.opentrafficsim.road.animation;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -11,13 +14,29 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.animation.LinkAnimation;
+import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.generator.GTUGenerator;
+import org.opentrafficsim.road.network.animation.LaneAnimation;
+import org.opentrafficsim.road.network.animation.ShoulderAnimation;
+import org.opentrafficsim.road.network.animation.StripeAnimation;
+import org.opentrafficsim.road.network.animation.StripeAnimation.TYPE;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.Shoulder;
+import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
@@ -231,7 +250,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
                     SimulatorInterface.END_OF_REPLICATION_EVENT);
         }
     }
-    
+
     /**
      * Returns the simulator.
      * @return OTSDEVSSimulatorInterface; simulator
@@ -240,7 +259,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     {
         return AbstractSimulationScript.this.simulator;
     }
-    
+
     /**
      * Returns the network.
      * @return OTSNetwork; network
@@ -251,6 +270,60 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     }
 
     // Overridable methods
+
+    /**
+     * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML.
+     * @param net OTSNetwork; network
+     */
+    protected void animateNetwork(final OTSNetwork net)
+    {
+        try
+        {
+            for (Node node : net.getNodeMap().values())
+            {
+                new NodeAnimation(node, AbstractSimulationScript.this.simulator);
+            }
+            for (Link link : net.getLinkMap().values())
+            {
+                new LinkAnimation(link, AbstractSimulationScript.this.simulator, 0.5f);
+                if (link instanceof CrossSectionLink)
+                {
+                    for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
+                    {
+                        if (element instanceof Lane)
+                        {
+                            new LaneAnimation((Lane) element, AbstractSimulationScript.this.simulator, Color.GRAY.brighter(),
+                                    false);
+                        }
+                        else if (element instanceof Shoulder)
+                        {
+                            new ShoulderAnimation((Shoulder) element, AbstractSimulationScript.this.simulator, Color.DARK_GRAY);
+                        }
+                        else if (element instanceof Stripe)
+                        {
+                            Stripe stripe = (Stripe) element;
+                            TYPE type;
+                            if (stripe.isPermeable(GTUType.CAR, LateralDirectionality.LEFT))
+                            {
+                                type = stripe.isPermeable(GTUType.CAR, LateralDirectionality.RIGHT) ? TYPE.DASHED
+                                        : TYPE.LEFTONLY;
+                            }
+                            else
+                            {
+                                type = stripe.isPermeable(GTUType.CAR, LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY
+                                        : TYPE.SOLID;
+                            }
+                            new StripeAnimation((Stripe) element, AbstractSimulationScript.this.simulator, type);
+                        }
+                    }
+                }
+            }
+        }
+        catch (RemoteException | NamingException | OTSGeometryException exception)
+        {
+            throw new RuntimeException("Exception while creating network animation.", exception);
+        }
+    }
 
     /**
      * Sets the animation toggles. May be overridden.

@@ -41,8 +41,8 @@ public abstract class TaskHeadwayBased implements Task
             throws ParameterException
     {
         double a = gtu.getAcceleration().si;
-        double b = parameters.getParameterOrNull(ParameterTypes.B).si;
-        double tMin = parameters.getParameterOrNull(ParameterTypes.TMIN).si;
+        double b = parameters.getParameter(ParameterTypes.B).si;
+        double tMin = parameters.getParameter(ParameterTypes.TMIN).si;
         double hMin = a < -b ? (1.0 - (a + b) / (8.0 - b)) * tMin : tMin;
         EgoPerception ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
         Try.execute(() -> ego.updateSpeed(), "Could not update perception of ego speed.");

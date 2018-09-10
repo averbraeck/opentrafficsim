@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.factory.xml.demand;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.djunits.unit.FrequencyUnit;
@@ -83,7 +83,7 @@ public class DemandTag implements Serializable
      */
     static void parse(final NodeList nodeList, final XmlOdParser parser) throws XmlParserException
     {
-        for (Node node : XMLParser.getNodes(nodeList, "DEMAND"))
+        for (Node node : XMLParser.getNodesSorted(nodeList, "DEMAND", "ORIGIN", "DESTINATION", "CATEGORY"))
         {
             NamedNodeMap attributes = node.getAttributes();
             DemandTag tag = new DemandTag();
@@ -193,7 +193,7 @@ public class DemandTag implements Serializable
                         "Unexpected exception while converting list of time values to an array.");
             }
 
-            parser.demand.getValue(() -> new HashSet<>(), tag.origin, tag.destination).add(tag);
+            parser.demand.getValue(() -> new LinkedHashSet<>(), tag.origin, tag.destination).add(tag);
         }
     }
 

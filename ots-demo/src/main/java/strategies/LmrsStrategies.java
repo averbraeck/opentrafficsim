@@ -67,6 +67,7 @@ import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
@@ -668,7 +669,7 @@ public class LmrsStrategies implements EventListenerInterface
                 parameterFactory.addCorrelation(GTUType.CAR, null, LmrsParameters.SOCIO,
                         (first, then) -> then <= 1.0 ? then : 1.0);
                 parameterFactory.addParameter(GTUType.TRUCK, LmrsParameters.SOCIO, 1.0);
-                parameterFactory.addParameter(GTUType.CAR, LmrsParameters.VGAIN, new ContinuousDistDoubleScalar.Rel<>(
+                parameterFactory.addParameter(GTUType.CAR, LmrsParameters.VGAIN, new ContinuousDistSpeed(
                         new DistLogNormal(stream, LmrsStrategies.this.vGain, 0.4), SpeedUnit.KM_PER_HOUR));
                 parameterFactory.addParameter(GTUType.TRUCK, LmrsParameters.VGAIN, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
                 parameterFactory.addParameter(ParameterTypes.TMAX, Duration.createSI(LmrsStrategies.this.tMax));
@@ -695,7 +696,7 @@ public class LmrsStrategies implements EventListenerInterface
                     Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
                     mandatoryIncentives.add(new IncentiveRoute());
                     voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
-                    voluntaryIncentives.add(new IncentiveKeep());
+                    voluntaryIncentives.add(new IncentiveKeep()); // before socio-speed and stay-right
                     if (!LmrsStrategies.this.baseLMRS)
                     {
                         voluntaryIncentives.add(new IncentiveSocioSpeed());

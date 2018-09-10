@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.gtu;
 
 import java.awt.Color;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
@@ -93,9 +95,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /** The model in which this GTU is registered. */
     private PerceivableContext perceivableContext;
 
-    /** Turn indicator status. */
-    private final Historical<TurnIndicatorStatus> turnIndicatorStatus;
-
     /** Is this GTU destroyed? */
     private boolean destroyed = false;
 
@@ -121,6 +120,12 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** Cached acceleration. */
     private Acceleration cachedAcceleration = null;
+
+    /** Parent GTU. */
+    private GTU parent = null;
+
+    /** Children GTU's. */
+    private Set<GTU> children = new LinkedHashSet<>();
 
     /**
      * @param id String; the id of the GTU
@@ -149,7 +154,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.perceivableContext.addGTU(this);
         this.strategicalPlanner = new HistoricalValue<>(HistoryManager.get(simulator));
         this.tacticalPlanner = new HistoricalValue<>(HistoryManager.get(simulator), null);
-        this.turnIndicatorStatus = new HistoricalValue<>(HistoryManager.get(simulator), TurnIndicatorStatus.NOTPRESENT);
         this.operationalPlan = new HistoricalValue<>(HistoryManager.get(simulator), null);
     }
 
@@ -311,8 +315,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         }
         this.simulator.scheduleEvent(this.nextMoveEvent);
 
-        fireTimedEvent(GTU.MOVE_EVENT,
-                new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(), getTurnIndicatorStatus(), getOdometer() },
+        fireTimedEvent(GTU.MOVE_EVENT, new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(), getOdometer() },
                 this.simulator.getSimulatorTime());
     }
 
@@ -389,20 +392,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     public StrategicalPlanner getStrategicalPlanner(final Time time)
     {
         return this.strategicalPlanner.get(time);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TacticalPlanner<?, ?> getTacticalPlanner()
-    {
-        return this.strategicalPlanner.get().getTacticalPlanner();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TacticalPlanner<?, ?> getTacticalPlanner(final Time time)
-    {
-        return this.strategicalPlanner.get(time).getTacticalPlanner(time);
     }
 
     /** {@inheritDoc} */
@@ -594,27 +583,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public final TurnIndicatorStatus getTurnIndicatorStatus()
-    {
-        return this.turnIndicatorStatus.get();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final TurnIndicatorStatus getTurnIndicatorStatus(final Time time)
-    {
-        return this.turnIndicatorStatus.get(time);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void setTurnIndicatorStatus(final TurnIndicatorStatus turnIndicatorStatus)
-    {
-        this.turnIndicatorStatus.set(turnIndicatorStatus);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public Color getBaseColor()
     {
@@ -639,6 +607,51 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     public final PerceivableContext getPerceivableContext()
     {
         return this.perceivableContext;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addGtu(final GTU gtu) throws GTUException
+    {
+        this.children.add(gtu);
+        gtu.setParent(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void removeGtu(final GTU gtu)
+    {
+        this.children.remove(gtu);
+        try
+        {
+            gtu.setParent(null);
+        }
+        catch (@SuppressWarnings("unused") GTUException exception)
+        {
+            // cannot happen, setting null is always ok
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setParent(final GTU gtu) throws GTUException
+    {
+        Throw.when(gtu != null && this.parent != null, GTUException.class, "GTU %s already has a parent.", this);
+        this.parent = gtu;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public GTU getParent()
+    {
+        return this.parent;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<GTU> getChildren()
+    {
+        return new LinkedHashSet<>(this.children); // safe copy
     }
 
     /** {@inheritDoc} */

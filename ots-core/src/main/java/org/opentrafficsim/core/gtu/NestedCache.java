@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,12 +24,12 @@ import nl.tudelft.simulation.language.Throw;
  */
 public class NestedCache<T>
 {
-    
+
     /** Key types. */
     private final Class<?>[] types;
 
     /** Map with cache. */
-    private final Map<Object, Object> map = new HashMap<>();
+    private final Map<Object, Object> map = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -61,8 +61,8 @@ public class NestedCache<T>
     private T getValue(final Supplier<T> supplier, final List<Object> keys)
     {
         Throw.when(keys.size() != this.types.length, IllegalArgumentException.class, "Incorrect number of keys.");
-        Throw.when(keys.get(0) != null && !this.types[0].isAssignableFrom(keys.get(0).getClass()), IllegalArgumentException.class,
-                "Key %s is not of %s.", keys.get(0), this.types[0]);
+        Throw.when(keys.get(0) != null && !this.types[0].isAssignableFrom(keys.get(0).getClass()),
+                IllegalArgumentException.class, "Key %s is not of %s.", keys.get(0), this.types[0]);
         Object sub = this.map.get(keys.get(0));
         if (this.types.length == 1)
         {
@@ -84,7 +84,7 @@ public class NestedCache<T>
         // return from sub-NestedCache with 1 less key
         return ((NestedCache<T>) sub).getValue(supplier, keys.subList(1, keys.size()));
     }
-    
+
     /**
      * Return set of key objects on this level.
      * @return Set; set of key objects on this level
@@ -93,7 +93,7 @@ public class NestedCache<T>
     {
         return this.map.keySet();
     }
-    
+
     /**
      * Return branch for key.
      * @param key Object; key
@@ -106,7 +106,7 @@ public class NestedCache<T>
         Throw.when(this.types.length < 2, IllegalStateException.class, "Children can only be obtained on branch levels.");
         return (NestedCache<T>) this.map.get(key);
     }
-    
+
     /**
      * Return value for key.
      * @param key Object; key

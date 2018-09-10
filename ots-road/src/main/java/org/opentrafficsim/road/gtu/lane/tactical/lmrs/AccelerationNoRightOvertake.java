@@ -48,7 +48,7 @@ public class AccelerationNoRightOvertake implements AccelerationIncentive
             throws OperationalPlanException, ParameterException, GTUException
     {
         // TODO ignore incentive if we need to change lane for the route
-        if (lane.isCurrent() && perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
+        if (lane.isCurrent() && perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
         {
             Speed vCong = params.getParameter(VCONG);
             if (perception.getPerceptionCategory(TrafficPerception.class).getSpeed(RelativeLane.CURRENT).si > vCong.si)

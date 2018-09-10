@@ -521,8 +521,8 @@ public final class AHFEUtil
                 final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
                 throws ParameterException, OperationalPlanException
         {
-            if (perception.getLaneStructure().getRootLSR().getRight() != null
-                    && perception.getLaneStructure().getRootLSR().getRight().getRight() != null
+            if (perception.getLaneStructure().getRootRecord().getRight() != null
+                    && perception.getLaneStructure().getRootRecord().getRight().getRight() != null
                     && perception.getPerceptionCategory(EgoPerception.class).getSpeed()
                             .gt(parameters.getParameter(ParameterTypes.VCONG)))
             {
@@ -530,7 +530,7 @@ public final class AHFEUtil
                 return new Desire(0, 1);
             }
             if (mandatoryDesire.getRight() < 0 || voluntaryDesire.getRight() < 0
-                    || !perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
+                    || !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT))
             {
                 // no desire to go right if more dominant incentives provide a negative desire to go right
                 return new Desire(0, 0);

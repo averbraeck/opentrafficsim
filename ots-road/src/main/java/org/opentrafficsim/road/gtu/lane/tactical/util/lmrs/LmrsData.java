@@ -167,7 +167,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /** {@inheritDoc} */
     @Override
-    public Desire getLatestDesire(Class<? extends Incentive> incentiveClass)
+    public Desire getLatestDesire(final Class<? extends Incentive> incentiveClass)
     {
         return this.desireMap.get(incentiveClass);
     }

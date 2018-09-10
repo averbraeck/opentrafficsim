@@ -39,21 +39,13 @@ public interface LaneStructure
      * Returns the root record.
      * @return LaneRecord; root record
      */
-    LaneStructureRecord getRootLSR();
+    LaneStructureRecord getRootRecord();
 
     /**
-     * Returns the cross-section.
+     * Returns the extended cross-section, which includes all lanes for which a first record is present.
      * @return SortedSet; the cross-section
      */
-    SortedSet<RelativeLane> getCrossSection();
-
-    /**
-     * Returns the record on the cross-section at the given lane.
-     * @param lane RelativeLane; lane
-     * @return LaneRecord; record on the cross-section at the given lane
-     * @throws GTUException if the lane is not in the cross section
-     */
-    LaneStructureRecord getLaneLSR(RelativeLane lane) throws GTUException;
+    SortedSet<RelativeLane> getExtendedCrossSection();
 
     /**
      * Returns the first record on the given lane. This is often a record in the current cross section, but it may be one

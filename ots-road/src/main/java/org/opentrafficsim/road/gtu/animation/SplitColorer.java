@@ -15,6 +15,7 @@ import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
  * <p>
@@ -31,13 +32,13 @@ public class SplitColorer implements GTUColorer
 {
 
     /** Left color. */
-    static final Color LEFT = Color.RED;
+    static final Color LEFT = Color.GREEN;
 
     /** Other color. */
     static final Color OTHER = Color.BLUE;
 
     /** Right color. */
-    static final Color RIGHT = Color.GREEN;
+    static final Color RIGHT = Color.RED;
 
     /** Unknown color. */
     static final Color UNKNOWN = Color.WHITE;
@@ -63,15 +64,17 @@ public class SplitColorer implements GTUColorer
             return UNKNOWN;
         }
         LaneBasedGTU laneGtu = (LaneBasedGTU) gtu;
-        LinkDirection linkDir;
+        DirectedLanePosition refPos;
         try
         {
-            linkDir = laneGtu.getReferencePosition().getLinkDirection();
+            refPos = laneGtu.getReferencePosition();
+
         }
         catch (@SuppressWarnings("unused") GTUException exception)
         {
             return UNKNOWN;
         }
+        LinkDirection linkDir = refPos.getLinkDirection();
         Route route = laneGtu.getStrategicalPlanner().getRoute();
         if (route == null)
         {
@@ -95,7 +98,7 @@ public class SplitColorer implements GTUColorer
             }
             catch (@SuppressWarnings("unused") NetworkException exception)
             {
-                System.err.println("Network exception while defining split color for GTU.");
+                //System.err.println("Network exception while defining split color for GTU.");
                 return UNKNOWN;
             }
         }
@@ -156,11 +159,11 @@ public class SplitColorer implements GTUColorer
             int index = links.indexOf(linkDir.getLink());
             if (index == 0)
             {
-                return LEFT;
+                return RIGHT;
             }
             else if (index == links.size() - 1)
             {
-                return RIGHT;
+                return LEFT;
             }
             return OTHER;
         }

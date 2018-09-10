@@ -29,7 +29,7 @@ public interface GapAcceptance
 {
 
     /** Being informed of the model and parameters of other drivers (default LMRS). */
-    public static final GapAcceptance INFORMED = new GapAcceptance()
+    GapAcceptance INFORMED = new GapAcceptance()
     {
 
         @Override
@@ -60,9 +60,7 @@ public interface GapAcceptance
              */
             Acceleration b = params.getParameter(ParameterTypes.B);
             Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-            for (
-
-            HeadwayGTU follower : neighbors.getFirstFollowers(lat))
+            for (HeadwayGTU follower : neighbors.getFirstFollowers(lat))
             {
                 if (follower.getSpeed().gt0() || follower.getAcceleration().gt0())
                 {
@@ -77,10 +75,17 @@ public interface GapAcceptance
             return aFollow.ge(threshold) && aSelf.ge(threshold) && ownAcceleration.ge(threshold);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "INFORMED";
+        }
+
     };
 
     /** Being informed of the model and parameters of other drivers, but applying own headway value. */
-    public static final GapAcceptance EGO_HEADWAY = new GapAcceptance()
+    GapAcceptance EGO_HEADWAY = new GapAcceptance()
     {
 
         @Override
@@ -116,6 +121,13 @@ public interface GapAcceptance
             Acceleration aSelf = egoAcceleration(perception, params, sli, cfm, desire, ownSpeed, lat);
             Acceleration threshold = b.multiplyBy(-desire);
             return aFollow.ge(threshold) && aSelf.ge(threshold);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "EGO_HEADWAY";
         }
 
     };

@@ -147,22 +147,22 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
     public final InfrastructureLaneChangeInfo left(final LaneStructureRecord rec, final RelativePosition rel,
             final boolean dead)
     {
-        LateralDirectionality l = this.lat.equals(LateralDirectionality.NONE) ? LateralDirectionality.LEFT : this.lat;
-        return new InfrastructureLaneChangeInfo(this.requiredNumberOfLaneChanges + 1, rec, rel, dead, l);
+        return new InfrastructureLaneChangeInfo(this.requiredNumberOfLaneChanges + 1, rec, rel, dead,
+                LateralDirectionality.LEFT);
     }
 
     /**
-     * Returns lane change info for one lane towards the left.
+     * Returns lane change info for one lane towards the right.
      * @param rec record who's end defines the remaining distance
      * @param rel critical relative position (i.e. nose when driving forward)
      * @param dead whether the need to change lane comes from a dead-end
-     * @return InfrastructureLaneChangeInfo; lane change info for one lane towards the left
+     * @return InfrastructureLaneChangeInfo; lane change info for one lane towards the right
      */
     public final InfrastructureLaneChangeInfo right(final LaneStructureRecord rec, final RelativePosition rel,
             final boolean dead)
     {
-        LateralDirectionality l = this.lat.equals(LateralDirectionality.NONE) ? LateralDirectionality.RIGHT : this.lat;
-        return new InfrastructureLaneChangeInfo(this.requiredNumberOfLaneChanges + 1, rec, rel, dead, l);
+        return new InfrastructureLaneChangeInfo(this.requiredNumberOfLaneChanges + 1, rec, rel, dead,
+                LateralDirectionality.RIGHT);
     }
 
     /**

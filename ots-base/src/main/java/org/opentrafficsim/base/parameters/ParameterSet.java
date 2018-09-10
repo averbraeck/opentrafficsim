@@ -269,32 +269,33 @@ public class ParameterSet implements Parameters, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final void setAllIn(final Parameters parameters)
+    public final void setAllIn(final Parameters params)
     {
-        if (parameters instanceof ParameterSet)
+        if (params instanceof ParameterSet)
         {
-            ParameterSet parameterSet = (ParameterSet) parameters;
+            ParameterSet parameterSet = (ParameterSet) params;
             parameterSet.checkCopyOnWrite();
             parameterSet.parameters.putAll(this.parameters);
         }
         else
         {
-            setAllOneByOne(parameters);
+            setAllOneByOne(params);
         }
     }
     
     /**
      * Sets the parameters of this set in the given set.
-     * @param parameters Parameters; parameters to set the values in
+     * @param params Parameters; parameters to set the values in
+     * @param <T> parameter value type
      */
     @SuppressWarnings("unchecked")
-    private <T> void setAllOneByOne(final Parameters parameters)
+    private <T> void setAllOneByOne(final Parameters params)
     {
         for (ParameterType<?> parameterType : this.parameters.keySet())
         {
             try
             {
-                parameters.setParameter((ParameterType<T>) parameterType, (T) this.parameters.get(parameterType));
+                params.setParameter((ParameterType<T>) parameterType, (T) this.parameters.get(parameterType));
             }
             catch (ParameterException exception)
             {

@@ -76,7 +76,7 @@ public abstract class MetaDataType<T> implements Identifiable
      * <li>The same as 2, but accept all if any is accepted.</li>
      * <li>etc.</li>
      * </ol>
-     * The default implementation is that of 1.<br>
+     * The default implementation is that of 1, checking that the meta data value is in the provided query set.<br>
      * @param trajectoryAcceptList containing {@code Trajectory}'s and {@code TrajectoryGroup}'s pertaining to a single GTU
      * @param querySet set of values in the query for this metadata type
      */

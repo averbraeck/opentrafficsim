@@ -11,7 +11,7 @@ import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -136,8 +136,8 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
             {
                 // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
                 template = new TemplateGTUType(type, new ConstantGenerator<>(Length.createSI(12.0)),
-                        new ConstantGenerator<>(Length.createSI(2.55)), new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(
-                                new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
+                        new ConstantGenerator<>(Length.createSI(2.55)),
+                        new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
             }
             else if (type.equals(GTUType.BUS))
             {

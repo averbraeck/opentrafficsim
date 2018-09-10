@@ -62,7 +62,7 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
                 fillColor = Color.green;
                 break;
 
-            case GIVE_WAY:
+            case YIELD:
                 fillColor = Color.orange;
                 break;
 

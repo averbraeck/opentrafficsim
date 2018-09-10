@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Intermediate;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionCollector;
@@ -24,17 +25,17 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationSpeed.
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class AnticipationSpeed implements PerceptionCollector<SpeedSet, GTU, SpeedSet>
+public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBasedGTU, SpeedSet>
 {
 
     /** Desired speed. */
-    double desiredSpeed;
+    private double desiredSpeed;
 
     /** Look-ahead distance. */
     private double x0;
 
     /** Lane. */
-    RelativeLane lane;
+    private RelativeLane lane;
 
     /**
      * Constructor.
@@ -55,6 +56,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, GTU, Spe
     {
         return new Supplier<SpeedSet>()
         {
+            @SuppressWarnings("synthetic-access")
             @Override
             public SpeedSet get()
             {
@@ -69,12 +71,13 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, GTU, Spe
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionAccumulator<GTU, SpeedSet> getAccumulator()
+    public PerceptionAccumulator<LaneBasedGTU, SpeedSet> getAccumulator()
     {
-        return new PerceptionAccumulator<GTU, SpeedSet>()
+        return new PerceptionAccumulator<LaneBasedGTU, SpeedSet>()
         {
+            @SuppressWarnings("synthetic-access")
             @Override
-            public Intermediate<SpeedSet> accumulate(final Intermediate<SpeedSet> intermediate, final GTU object,
+            public Intermediate<SpeedSet> accumulate(final Intermediate<SpeedSet> intermediate, final LaneBasedGTU object,
                     final Length distance)
             {
                 double v = anticipateSingle(object, distance);
@@ -114,7 +117,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, GTU, Spe
      * @param distance Length; distance to GTU
      * @return possibly lowered anticipation speed
      */
-    double anticipateSingle(final GTU gtu, final Length distance)
+    final double anticipateSingle(final GTU gtu, final Length distance)
     {
         Speed speed = gtu.getSpeed();
         double v = speed == null ? 0.0 : speed.si;
@@ -156,13 +159,13 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, GTU, Spe
     public static class SpeedSet
     {
         /** Speed regarding the left lane. */
-        double left = Double.POSITIVE_INFINITY;
+        private double left = Double.POSITIVE_INFINITY;
 
         /** Speed regarding the current lane. */
-        double current = Double.POSITIVE_INFINITY;
+        private double current = Double.POSITIVE_INFINITY;
 
         /** Speed regarding the right lane. */
-        double right = Double.POSITIVE_INFINITY;
+        private double right = Double.POSITIVE_INFINITY;
 
         /**
          * Returns the speed regarding the left lane.

@@ -55,7 +55,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     private static final long serialVersionUID = 20141025L;
 
     /** The animation. */
-    private Renderable2D<LaneBasedIndividualGTU> animation;
+    private Renderable2D<? super LaneBasedIndividualGTU> animation;
 
     /** Sensing positions. */
     private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new HashMap<>();

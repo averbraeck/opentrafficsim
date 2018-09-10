@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.NestedCache;
 import org.opentrafficsim.core.gtu.Try;
@@ -86,8 +87,10 @@ public interface RouteSupplier
             List<Link> links = new ArrayList<>();
             for (Link link : destination.getLinks())
             {
-                if (link.getLinkType().isConnector() && link instanceof CrossSectionLink
-                        && ((CrossSectionLink) link).getDemandWeight() != null)
+                GTUDirectionality direction =
+                        link.getEndNode().equals(destination) ? GTUDirectionality.DIR_PLUS : GTUDirectionality.DIR_MINUS;
+                if (link.getLinkType().isConnector() && link.getDirectionality(gtuType).permits(direction)
+                        && link instanceof CrossSectionLink && ((CrossSectionLink) link).getDemandWeight() != null)
                 {
                     Double weight = ((CrossSectionLink) link).getDemandWeight();
                     weights.add(weight);

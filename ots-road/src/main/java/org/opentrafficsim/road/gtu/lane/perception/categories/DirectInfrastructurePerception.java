@@ -75,6 +75,9 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     /** Root. */
     private LaneStructureRecord root;
 
+    /** Lanes registered to the GTU used to check if an update is required. */
+    private Set<Lane> lanes;
+
     /** Route. */
     private Route route;
 
@@ -98,13 +101,15 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         this.physicalLaneChangePossibility.keySet().retainAll(cs);
         this.speedLimitProspect.keySet().retainAll(cs);
         // only if required
-        LaneStructureRecord newRoot = getPerception().getLaneStructure().getRootLSR();
+        LaneStructureRecord newRoot = getPerception().getLaneStructure().getRootRecord();
         if (this.root == null || !newRoot.equals(this.root)
+                || !this.lanes.equals(getPerception().getGtu().positions(RelativePosition.REFERENCE_POSITION).keySet())
                 || !Objects.equals(this.route, getPerception().getGtu().getStrategicalPlanner().getRoute())
                 || this.cutOff.stream().filter((record) -> !record.isCutOffEnd()).count() > 0)
         {
             this.cutOff.clear();
             this.root = newRoot;
+            this.lanes = getPerception().getGtu().positions(RelativePosition.REFERENCE_POSITION).keySet();
             this.route = getPerception().getGtu().getStrategicalPlanner().getRoute();
             this.speedLimitProspect.clear();
             for (RelativeLane lane : getCrossSection())
@@ -149,9 +154,10 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
         // start at requested lane
         SortedSet<InfrastructureLaneChangeInfo> resultSet = new TreeSet<>();
-        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane);
+        LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
         try
         {
+            record = getPerception().getLaneStructure().getFirstRecord(lane);
             if (!record.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getGTUType()))
             {
                 resultSet.add(InfrastructureLaneChangeInfo.fromInaccessibleLane(record.isDeadEnd()));
@@ -372,116 +378,74 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     public final void updateLegalLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat)
             throws GTUException, ParameterException
     {
-        updateCrossSection();
-        checkLaneIsInCrossSection(lane);
-
-        if (this.legalLaneChangePossibility.get(lane) == null)
-        {
-            this.legalLaneChangePossibility.put(lane, new HashMap<>());
-        }
-        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane);
-        // check tail
-        Length tail = getPerception().getGtu().getRear().getDx();
-        while (record != null && record.getStartDistance().plus(record.getLane().getLength()).gt(tail))
-        {
-            // TODO merge
-            if ((lat.isLeft() && record.legalLeft()) || (lat.isRight() && record.legalRight()))
-            {
-                if (record.getPrev().isEmpty())
-                {
-                    break;
-                }
-                record = record.getPrev().isEmpty() ? null : record.getPrev().get(0);
-            }
-            else if (!record.equals(getPerception().getLaneStructure().getLaneLSR(lane)))
-            {
-                // tail needs to be passed the end of this record
-                this.legalLaneChangePossibility.get(lane).put(lat,
-                        new TimeStampedObject<>(new LaneChangePossibility(record, tail, true), getTimestamp()));
-                return;
-            }
-            else
-            {
-                // can not change on current lane
-                break;
-            }
-        }
-
-        LaneStructureRecord prevRecord = null;
-        record = getPerception().getLaneStructure().getLaneLSR(lane);
-        Length dx;
-        if ((lat.isLeft() && record.legalLeft()) || (lat.isRight() && record.legalRight()))
-        {
-            dx = getPerception().getGtu().getFront().getDx();
-            while (record != null && ((lat.isLeft() && record.legalLeft()) || (lat.isRight() && record.legalRight())))
-            {
-                // TODO splits
-                prevRecord = record;
-                record = record.getNext().isEmpty() ? null : record.getNext().get(0);
-            }
-        }
-        else
-        {
-            dx = tail;
-            while (record != null && ((lat.isLeft() && !record.legalLeft()) || (lat.isRight() && !record.legalRight())))
-            {
-                // TODO splits
-                prevRecord = record;
-                record = record.getNext().isEmpty() ? null : record.getNext().get(0);
-            }
-        }
-        this.legalLaneChangePossibility.get(lane).put(lat,
-                new TimeStampedObject<>(new LaneChangePossibility(prevRecord, dx, true), getTimestamp()));
+        updateLaneChangePossibility(lane, lat, true, this.legalLaneChangePossibility);
     }
 
     /** {@inheritDoc} */
     @Override
-    // TODO implement this method, lane map needs support for this (and legal lane changes)
     public final void updatePhysicalLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat)
+            throws GTUException, ParameterException
+    {
+        updateLaneChangePossibility(lane, lat, false, this.physicalLaneChangePossibility);
+    }
+
+    /**
+     * Updates the distance over which lane changes remains legally or physically possible.
+     * @param lane lane from which the lane change possibility is requested
+     * @param lat LEFT or RIGHT, null not allowed
+     * @param legal legal, or physical otherwise
+     * @param possibilityMap legal or physical possibility map
+     * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
+     * @throws ParameterException if a parameter is not defined
+     */
+    private void updateLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat, final boolean legal,
+            final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> possibilityMap)
             throws GTUException, ParameterException
     {
         updateCrossSection();
         checkLaneIsInCrossSection(lane);
 
-        if (this.physicalLaneChangePossibility.get(lane) == null)
+        if (possibilityMap.get(lane) == null)
         {
-            this.physicalLaneChangePossibility.put(lane, new HashMap<>());
+            possibilityMap.put(lane, new HashMap<>());
         }
-        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(lane);
+        LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
         // check tail
         Length tail = getPerception().getGtu().getRear().getDx();
-        while (record != null && record.getStartDistance().plus(record.getLane().getLength()).gt(tail))
+        while (record != null && record.getStartDistance().gt(tail) && !record.getPrev().isEmpty()
+                && ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal))))
         {
-            // TODO merge
-            if ((lat.isLeft() && record.physicalLeft()) || (lat.isRight() && record.physicalRight()))
+            if (record.getPrev().size() > 1)
             {
-                if (record.getPrev().isEmpty())
-                {
-                    break;
-                }
-                record = record.getPrev().isEmpty() ? null : record.getPrev().get(0);
-            }
-            else if (!record.equals(getPerception().getLaneStructure().getLaneLSR(lane)))
-            {
-                // tail needs to be passed the end of this record
-                this.physicalLaneChangePossibility.get(lane).put(lat,
-                        new TimeStampedObject<>(new LaneChangePossibility(record, tail, false), getTimestamp()));
+                // assume not possible at a merge
+                possibilityMap.get(lane).put(lat, new TimeStampedObject<>(
+                        new LaneChangePossibility(record.getPrev().get(0), tail, true), getTimestamp()));
                 return;
             }
-            else
+            else if (record.getPrev().isEmpty())
             {
-                // can not change on current lane
+                // dead-end, no lane upwards prevents a lane change
                 break;
+            }
+            record = record.getPrev().get(0);
+            if ((lat.isLeft() && !record.possibleLeft(legal)) || (lat.isRight() && !record.possibleRight(legal)))
+            {
+                // this lane prevents a lane change for the tail
+                possibilityMap.get(lane).put(lat,
+                        new TimeStampedObject<>(new LaneChangePossibility(record, tail, true), getTimestamp()));
+                return;
             }
         }
 
         LaneStructureRecord prevRecord = null;
-        record = getPerception().getLaneStructure().getLaneLSR(lane);
+        record = getPerception().getLaneStructure().getFirstRecord(lane);
+
         Length dx;
-        if ((lat.isLeft() && record.physicalLeft()) || (lat.isRight() && record.physicalRight()))
+        if ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal)))
         {
             dx = getPerception().getGtu().getFront().getDx();
-            while (record != null && ((lat.isLeft() && record.physicalLeft()) || (lat.isRight() && record.physicalRight())))
+            while (record != null
+                    && ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal))))
             {
                 // TODO splits
                 prevRecord = record;
@@ -490,17 +454,17 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         }
         else
         {
-            dx = tail;
+            dx = getPerception().getGtu().getRear().getDx();
             while (record != null
-                    && ((lat.isLeft() && record.getLeft() == null) || (lat.isRight() && record.getRight() == null)))
+                    && ((lat.isLeft() && !record.possibleLeft(legal)) || (lat.isRight() && !record.possibleRight(legal))))
             {
                 // TODO splits
                 prevRecord = record;
                 record = record.getNext().isEmpty() ? null : record.getNext().get(0);
             }
         }
-        this.physicalLaneChangePossibility.get(lane).put(lat,
-                new TimeStampedObject<>(new LaneChangePossibility(prevRecord, dx, false), getTimestamp()));
+        possibilityMap.get(lane).put(lat,
+                new TimeStampedObject<>(new LaneChangePossibility(prevRecord, dx, true), getTimestamp()));
     }
 
     /**
@@ -522,7 +486,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             // already done at this time
             return;
         }
-        this.crossSection = new TimeStampedObject<>(getPerception().getLaneStructure().getCrossSection(), getTimestamp());
+        this.crossSection = new TimeStampedObject<>(getPerception().getLaneStructure().getExtendedCrossSection(), getTimestamp());
     }
 
     /** {@inheritDoc} */
@@ -690,19 +654,10 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         final Length getDistance(final LateralDirectionality lat)
         {
             double d = this.record.getStartDistance().si + this.record.getLane().getLength().si - this.dx;
-            if (this.legal)
+            if ((lat.isLeft() && this.record.possibleLeft(this.legal))
+                    || (lat.isRight() && this.record.possibleRight(this.legal)))
             {
-                if ((lat.isLeft() && this.record.legalLeft()) || (lat.isRight() && this.record.legalRight()))
-                {
-                    return Length.createSI(d); // possible over d
-                }
-            }
-            else
-            {
-                if ((lat.isLeft() && this.record.physicalRight()) || (lat.isRight() && this.record.physicalRight()))
-                {
-                    return Length.createSI(d); // possible over d
-                }
+                return Length.createSI(d); // possible over d
             }
             return Length.createSI(-d); // not possible over d
         }

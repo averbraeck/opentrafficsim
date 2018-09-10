@@ -53,6 +53,10 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
     @Override
     protected Entry getNext(final LaneRecord<?> record, final Length position, final Void counter)
     {
+        if (!record.isDownstreamBranch())
+        {
+            return null;
+        }
         List<LaneBasedObject> list = record.getLane().getObjectAhead(position, record.getDirection());
         while (list != null)
         {

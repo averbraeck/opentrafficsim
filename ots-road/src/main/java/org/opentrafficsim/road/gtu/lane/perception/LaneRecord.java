@@ -68,4 +68,14 @@ public interface LaneRecord<R extends LaneRecord<R>>
         return Length.createSI(getStartDistance().si + (getDirection().isPlus() ? position.si : getLength().si - position.si));
     }
 
+    /**
+     * Returns whether the record is part of the downstream branch. This means the GTU can potentially get here and the lane is
+     * not upstream or on the other branch upstream of a merge. Default implementation returns {@code true}.
+     * @return Boolean; whether the record is part of the downstream branch
+     */
+    default boolean isDownstreamBranch()
+    {
+        return true;
+    }
+
 }

@@ -2,6 +2,7 @@ package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 
 /**
@@ -43,6 +44,33 @@ public class LinkDirection implements Serializable
     public final Link getLink()
     {
         return this.link;
+    }
+
+    /**
+     * @return String; link id
+     * @see org.opentrafficsim.core.network.Link#getId()
+     */
+    public String getId()
+    {
+        return this.link.getId();
+    }
+
+    /**
+     * @return LinkType; link type
+     * @see org.opentrafficsim.core.network.Link#getLinkType()
+     */
+    public LinkType getLinkType()
+    {
+        return this.link.getLinkType();
+    }
+
+    /**
+     * @return Length; length
+     * @see org.opentrafficsim.core.network.Link#getLength()
+     */
+    public Length getLength()
+    {
+        return this.link.getLength();
     }
 
     /**

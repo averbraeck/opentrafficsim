@@ -23,14 +23,14 @@ public final class Profile
 {
 
     /** Map containing ProfileInfo objects. */
-    private static final Map<String, ProfileInfo> infos = new HashMap<>();
+    private static final Map<String, ProfileInfo> INFOS = new HashMap<>();
 
     /** Map containing most recent part id's as line numbers. */
-    private static final Map<String, String> lines = new HashMap<>();
-    
+    private static final Map<String, String> LINES = new HashMap<>();
+
     /** Minimum print interval [ms]; during this time after a print, prints are suppressed. */
-    public static long printInterval = 1000;
-    
+    private static long printInterval = 1000;
+
     /** Time of last print. */
     private static long lastPrint = 0;
 
@@ -110,11 +110,11 @@ public final class Profile
             if (start)
             {
                 partId = ":" + String.valueOf(element.getLineNumber());
-                lines.put(classMethodId, partId);
+                LINES.put(classMethodId, partId);
             }
             else
             {
-                partId = lines.get(classMethodId);
+                partId = LINES.get(classMethodId);
             }
         }
         else
@@ -123,11 +123,11 @@ public final class Profile
         }
         classMethodId += partId;
 
-        ProfileInfo info = infos.get(classMethodId);
+        ProfileInfo info = INFOS.get(classMethodId);
         if (info == null)
         {
             info = new ProfileInfo(name);
-            infos.put(classMethodId, info);
+            INFOS.put(classMethodId, info);
         }
         return info;
     }
@@ -143,10 +143,10 @@ public final class Profile
         int maxInvocations = 0;
         int maxNameLength = 4;
         Map<Double, Entry<String, ProfileInfo>> sorted = new TreeMap<>(Collections.reverseOrder());
-        for (Entry<String, ProfileInfo> entry : infos.entrySet())
+        for (Entry<String, ProfileInfo> entry : INFOS.entrySet())
         {
             String id = entry.getKey();
-            ProfileInfo info = infos.get(id);
+            ProfileInfo info = INFOS.get(id);
             sorted.put(info.getTotal(), entry);
             sum += info.getTotal();
             maxInvocations = maxInvocations > info.getInvocations() ? maxInvocations : info.getInvocations();
@@ -160,7 +160,7 @@ public final class Profile
         String nameHeaderFormat = String.format("%%%d.%ds", maxNameLength, maxNameLength);
         String nameLineFormat = String.format("%%%ds", maxNameLength);
         String line = new String(new char[80 + lengthInvoke + maxNameLength]).replace("\0", "-"); // -------------- line
-        
+
         // header
         StringBuilder builder = new StringBuilder();
         builder.append("-").append(line).append("-\n");
@@ -170,7 +170,7 @@ public final class Profile
                 "AvgTime", "StdTime"));
         builder.append(String.format(nameHeaderFormat, "Name")).append(" |\n");
         builder.append("|").append(line).append("|\n");
-        
+
         // lines
         for (Entry<String, ProfileInfo> entry : sorted.values())
         {
@@ -201,7 +201,10 @@ public final class Profile
     }
 
     /**
-     * Prints profiling output to the console.
+     * Prints profiling output to the console once every 1s or longer, or according to the time set in
+     * {@code setPrintInterval()}. This method needs to be called repeatedly, and will only print again after the print
+     * interval. If execution time between two call to this method is longer than the print interval, this method prints
+     * directly.
      */
     public static void print()
     {
@@ -211,6 +214,15 @@ public final class Profile
             lastPrint = t;
             System.out.print(statistics());
         }
+    }
+    
+    /**
+     * Sets a print interval.
+     * @param printInterval long; print interval in ms
+     */
+    public static void setPrintInterval(final long printInterval)
+    {
+        Profile.printInterval = printInterval;
     }
 
     /**
@@ -253,7 +265,7 @@ public final class Profile
          * Constructor.
          * @param name String; user given name
          */
-        public ProfileInfo(final String name)
+        ProfileInfo(final String name)
         {
             this.name = name;
         }
@@ -280,7 +292,8 @@ public final class Profile
             this.totalSquared += duration * duration;
             if (this.invocations == 0)
             {
-                this.minTime = this.maxTime = duration;
+                this.minTime = duration;
+                this.maxTime = duration;
             }
             else
             {

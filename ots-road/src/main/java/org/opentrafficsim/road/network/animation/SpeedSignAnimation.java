@@ -1,8 +1,10 @@
 package org.opentrafficsim.road.network.animation;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -36,10 +38,7 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
     private static final double RADIUS = 1.6;
 
     /** Radius in meters. */
-    private static final double EDGE = 0.8;
-
-    /** Scaling for text. */
-    private static final double TEXT_SCALE = 0.14;
+    private static final double EDGE = 1.3;
 
     /**
      * @param source speed sign
@@ -51,29 +50,32 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
             throws NamingException, RemoteException
     {
         super(source, simulator);
+        setRotate(false);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D arg0, final ImageObserver arg1) throws RemoteException
+    public final void paint(final Graphics2D g, final ImageObserver arg1) throws RemoteException
     {
-        SpeedSign sign = getSource();
-        double r = RADIUS;
-        Ellipse2D ellipse = new Ellipse2D.Double(-r, -r, 2 * r, 2 * r);
-        arg0.setColor(Color.RED);
-        arg0.fill(ellipse);
-        r *= EDGE;
-        ellipse = new Ellipse2D.Double(-r, -r, 2 * r, 2 * r);
-        arg0.setColor(Color.WHITE);
-        arg0.fill(ellipse);
-        arg0.setColor(Color.BLACK);
-        arg0.scale(TEXT_SCALE, TEXT_SCALE);
-        String str = Integer.toString((int) sign.getSpeed().getInUnit(SpeedUnit.KM_PER_HOUR));
-        int width = arg0.getFontMetrics().stringWidth(str);
-        int height = arg0.getFontMetrics().getAscent();
-        // not sure why 0.7 is required, getAscent() alone is weird and refers to more than the height of numbers
-        arg0.drawString(str, (float) (-.5 * width), (float) (0.5 * 0.7 * height));
-        arg0.scale(1.0 / TEXT_SCALE, 1.0 / TEXT_SCALE);
+        Ellipse2D ellipse = new Ellipse2D.Double(-RADIUS, -RADIUS, 2 * RADIUS, 2 * RADIUS);
+        g.setColor(Color.RED);
+        g.fill(ellipse);
+        ellipse = new Ellipse2D.Double(-EDGE, -EDGE, 2 * EDGE, 2 * EDGE);
+        g.setColor(Color.WHITE);
+        g.fill(ellipse);
+        g.setColor(Color.BLACK);
+        int speed = (int) getSource().getSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+        if (speed < 100)
+        {
+            g.setFont(new Font("Arial", 0, -1).deriveFont(2.0f));
+        }
+        else
+        {
+            g.setFont(new Font("Arial narrow", 0, -1).deriveFont(1.85f));
+        }
+        String str = Integer.toString(speed);
+        Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(str, g);
+        g.drawString(str, (float) -stringBounds.getCenterX(), (float) -stringBounds.getCenterY());
     }
 
     /** {@inheritDoc} */

@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.generator;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -69,7 +69,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
 
     /** FIFO for templates that have not been generated yet due to insufficient room/headway, per position, and per link. */
     private final Map<CrossSectionLink, Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>>> unplacedTemplates =
-            new HashMap<>();
+            new LinkedHashMap<>();
 
     /** Name of the GTU generator. */
     private final String id;
@@ -172,10 +172,10 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             LaneBasedGTUCharacteristics characteristics = this.laneBasedGTUCharacteristicsGenerator.draw();
             GTUType gtuType = characteristics.getGTUType();
             // gather information on number of unplaced templates per lane, and per link, for the drawing of a new position
-            Map<CrossSectionLink, Map<Integer, Integer>> unplaced = new HashMap<>();
+            Map<CrossSectionLink, Map<Integer, Integer>> unplaced = new LinkedHashMap<>();
             for (CrossSectionLink link : this.unplacedTemplates.keySet())
             {
-                Map<Integer, Integer> linkMap = new HashMap<>();
+                Map<Integer, Integer> linkMap = new LinkedHashMap<>();
                 Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>> linkTemplates =
                         this.unplacedTemplates.get(link);
                 for (GeneratorLanePosition lanePosition : linkTemplates.keySet())
@@ -192,7 +192,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             // add template in the right map location
             if (!this.unplacedTemplates.containsKey(lanePosition.getLink()))
             {
-                this.unplacedTemplates.put(lanePosition.getLink(), new HashMap<>());
+                this.unplacedTemplates.put(lanePosition.getLink(), new LinkedHashMap<>());
             }
             Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>> linkMap =
                     this.unplacedTemplates.get(lanePosition.getLink());
@@ -492,7 +492,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
      */
     public Map<DirectedPoint, Integer> getQueueLengths()
     {
-        Map<DirectedPoint, Integer> result = new HashMap<>();
+        Map<DirectedPoint, Integer> result = new LinkedHashMap<>();
         for (CrossSectionLink link : this.unplacedTemplates.keySet())
         {
             for (GeneratorLanePosition lanePosition : this.unplacedTemplates.get(link).keySet())

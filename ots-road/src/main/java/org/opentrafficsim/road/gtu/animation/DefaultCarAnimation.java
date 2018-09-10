@@ -52,6 +52,9 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
     /** is the animation destroyed? */
     private boolean isDestroyed = false;
+    
+    /** Hashcode. */
+    private final int hashCode;
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
@@ -78,6 +81,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
             throws NamingException, RemoteException
     {
         super(gtu, simulator);
+        this.hashCode = gtu.hashCode();
         if (null == gtuColorer)
         {
             this.gtuColorer = new IDGTUColorer();
@@ -123,8 +127,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         }
 
         double scale = graphics.getTransform().getDeterminant();
-                // Math.sqrt(Math.pow(graphics.getTransform()..getScaleX(), 2)
-                // Math.pow(graphics.getTransform().getScaleY(), 2));
+        // Math.sqrt(Math.pow(graphics.getTransform()..getScaleX(), 2)
+        // Math.pow(graphics.getTransform().getScaleY(), 2));
         if (scale > 1)
         {
             final double length = car.getLength().si;
@@ -207,6 +211,13 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     public final String toString()
     {
         return super.toString(); // this.getSource().toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode()
+    {
+        return this.hashCode;
     }
 
     /**

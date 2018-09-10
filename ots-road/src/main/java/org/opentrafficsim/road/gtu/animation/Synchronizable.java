@@ -31,7 +31,7 @@ public interface Synchronizable
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public enum State
+    enum State
     {
         /** No synchronization. */
         NONE,
@@ -39,7 +39,7 @@ public interface Synchronizable
         /** Subject vehicle is adjusting speed. */
         SYNCHRONIZING,
 
-        /** Subject vehicle is adjusting speed and indicating derired lane change. */
+        /** Subject vehicle is adjusting speed and indicating desired lane change. */
         INDICATING,
 
         /** Subject vehicle is cooperating for a lane change of another GTU. */

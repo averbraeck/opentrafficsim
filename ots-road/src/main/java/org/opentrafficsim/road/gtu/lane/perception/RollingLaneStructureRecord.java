@@ -166,10 +166,6 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     final void updateStartDistance(final double fractionalPosition, final RollingLaneStructure laneStructure)
     {
         this.startDistance = this.sourceLink.calculateStartDistance(this.source, this, fractionalPosition);
-        if (this.startDistance.si < 0.0 && this.startDistance.si + this.lane.getLength().si > 0.0)
-        {
-            laneStructure.addToCrossSection(this);
-        }
         for (RollingLaneStructureRecord record : this.dependentRecords)
         {
             record.updateStartDistance(fractionalPosition, laneStructure);
@@ -469,6 +465,10 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
         this.left = leftRecord;
         this.mayChangeLeft = getLane().accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType, this.gtuDirectionality)
                 .contains(leftRecord.getLane());
+        if (getLane().getFullId().equals("1023.FORWARD3") && !this.mayChangeLeft)
+        {
+            System.out.println("Lane 1023.FORWARD3 allows left:" + this.mayChangeLeft);
+        }
     }
 
     /** {@inheritDoc} */
@@ -669,6 +669,14 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     public final Length getStartDistance()
     {
         return this.startDistance;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean isDownstreamBranch()
+    {
+        // DOWN, LATERAL_START and CROSS are part of the downstream branch
+        return !RecordLink.UP.equals(this.sourceLink) && !RecordLink.LATERAL_END.equals(this.sourceLink);
     }
 
     /** {@inheritDoc} */

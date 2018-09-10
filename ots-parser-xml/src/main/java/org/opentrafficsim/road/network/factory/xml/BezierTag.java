@@ -20,6 +20,10 @@ class BezierTag
     /** The shape factor. Will be filled after parsing. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     double shape;
+    
+    /** Whether the control point distances are weighted. Will be filled after parsing. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    boolean weighted;
 
     /**
      * Parse the LINK.BEZIER tag.
@@ -49,6 +53,15 @@ class BezierTag
                 throw new SAXException("BEZIER: SHAPE attribute negative or zero");
             }
             linkTag.bezierTag.shape = s;
+        }
+        Node weighted = bezierAttributes.getNamedItem("WEIGHTED");
+        if (weighted == null)
+        {
+            linkTag.bezierTag.weighted = false;
+        }
+        else
+        {
+            linkTag.bezierTag.weighted = Boolean.parseBoolean(weighted.getNodeValue());
         }
 
     }

@@ -7,6 +7,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -37,15 +38,20 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
 
     /** Peeked car following model. */
     private CarFollowingModel peekedCarFollowingModel = null;
+    
+    /** Perception factory. */
+    private final PerceptionFactory perceptionFactory;
 
     /**
      * Constructor.
      * @param carFollowingModelFactory CarFollowingModelFactory&lt;? extends CarFollowingModel&gt;; car-following model factory
+     * @param perceptionFactory PerceptionFactory; perception factory
      */
     public AbstractLaneBasedTacticalPlannerFactory(
-            final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory)
+            final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory, final PerceptionFactory perceptionFactory)
     {
         this.carFollowingModelFactory = carFollowingModelFactory;
+        this.perceptionFactory = perceptionFactory;
     }
 
     /**
@@ -128,6 +134,15 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
         {
             throw new GTUException(exception);
         }
+    }
+    
+    /**
+     * Returns the perception factory.
+     * @return PerceptionFactory; perception factory
+     */
+    public PerceptionFactory getPerceptionFactory()
+    {
+        return this.perceptionFactory;
     }
 
 }

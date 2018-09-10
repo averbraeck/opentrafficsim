@@ -38,7 +38,7 @@ public class TotalDelay extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    public final Duration calculate(final Query query, final Time startTime, final Time endTime,
+    protected Duration calculate(final Query query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup> trajectoryGroups)
     {
         Duration sumTime = Duration.ZERO;

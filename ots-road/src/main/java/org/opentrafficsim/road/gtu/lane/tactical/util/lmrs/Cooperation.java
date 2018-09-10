@@ -31,15 +31,15 @@ public interface Cooperation extends LmrsParameters
 {
 
     /** Simple passive cooperation. */
-    public static Cooperation PASSIVE = new Cooperation()
+    Cooperation PASSIVE = new Cooperation()
     {
         @Override
         public Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
-            if ((lat.isLeft() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
-                    || (lat.isRight() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT)))
+            if ((lat.isLeft() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
+                    || (lat.isRight() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT)))
             {
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
@@ -67,15 +67,15 @@ public interface Cooperation extends LmrsParameters
     };
 
     /** Simple passive cooperation. */
-    public static Cooperation PASSIVE_MOVING = new Cooperation()
+    Cooperation PASSIVE_MOVING = new Cooperation()
     {
         @Override
         public Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
-            if ((lat.isLeft() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
-                    || (lat.isRight() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT)))
+            if ((lat.isLeft() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
+                    || (lat.isRight() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT)))
             {
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
@@ -104,7 +104,7 @@ public interface Cooperation extends LmrsParameters
     };
 
     /** Cooperation similar to the default, with nuanced differences of when to ignore. */
-    public static Cooperation ACTIVE = new Cooperation()
+    Cooperation ACTIVE = new Cooperation()
     {
         @Override
         public Acceleration cooperate(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
@@ -112,8 +112,8 @@ public interface Cooperation extends LmrsParameters
                 throws ParameterException, OperationalPlanException
         {
 
-            if ((lat.isLeft() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
-                    || (lat.isRight() && !perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT)))
+            if ((lat.isLeft() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
+                    || (lat.isRight() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT)))
             {
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }

@@ -30,13 +30,16 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     /** The compatibility of GTU types with this link type. */
     private final GTUCompatibility<LinkType> compatibility;
 
+    /** Reversed link type. */
+    private LinkType reversed = null;
+
     /** The link type that does not allow any vehicles, or pedestrians. */
     public static final LinkType NONE;
 
     /** Two-directional road, accessible to all road GTU types (including PEDESTRIAN). */
     public static final LinkType ROAD;
-    
-    /** One-directional road, accessible to all road GTU types (excluding PEDESTRIAN and BICYCLE). */ 
+
+    /** One-directional road, accessible to all road GTU types (excluding PEDESTRIAN and BICYCLE). */
     public static final LinkType FREEWAY;
 
     /** Two-directional water way. */
@@ -44,11 +47,9 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
     /** Two-directional rail link. */
     public static final LinkType RAIL_WAY;
-    
+
     /** Virtual connection between nodes, e.g. to distribute demand. */
     public static final LinkType CONNECTOR;
-
-    
 
     static
     {
@@ -69,9 +70,9 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
         compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
         RAIL_WAY = new LinkType("WATER_WAY", null, compatibility);
         compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
-        compatibility.addAllowedGTUType(GTUType.WATER_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
-        compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
+        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGTUType(GTUType.WATER_WAY_USER, LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_PLUS);
         CONNECTOR = new LinkType("CONNECTOR", null, compatibility);
     }
 
@@ -90,11 +91,24 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+    public Boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
     {
         return this.compatibility.isCompatible(gtuType, directionality);
     }
-    
+
+    /**
+     * Returns a link type with directionality reversed.
+     * @return LinkType; link type with directionality reversed
+     */
+    public final LinkType reverse()
+    {
+        if (this.reversed == null)
+        {
+            this.reversed = new ReversedLinkType(this);
+        }
+        return this.reversed;
+    }
+
     /**
      * @return whether this is {@code NONE}
      */
@@ -102,7 +116,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     {
         return this.equals(NONE);
     }
-    
+
     /**
      * @return whether this is {@code ROAD}
      */
@@ -110,7 +124,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     {
         return this.equals(ROAD);
     }
-    
+
     /**
      * @return whether this is {@code WATER_WAY}
      */
@@ -118,7 +132,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     {
         return this.equals(WATER_WAY);
     }
-    
+
     /**
      * @return whether this is {@code RAIL_WAY}
      */
@@ -126,7 +140,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     {
         return this.equals(RAIL_WAY);
     }
-    
+
     /**
      * @return whether this is {@code CONNECTOR}
      */
@@ -148,6 +162,45 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     public final LongitudinalDirectionality getDirectionality(final GTUType gtuType, final boolean tryParentsOfGTUType)
     {
         return this.compatibility.getDirectionality(gtuType, tryParentsOfGTUType);
+    }
+
+    /**
+     * Reversed version of an original and wrapped link type.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 aug. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    private class ReversedLinkType extends LinkType
+    {
+
+        /** */
+        private static final long serialVersionUID = 20180824L;
+        
+        /** Original link type. */
+        private final LinkType original;
+        
+        /**
+         * Constructor.
+         * @param original LinkType; the original type (may not be null)
+         */
+        ReversedLinkType(final LinkType original)
+        {
+            super(original.getId() + "_rev", original.getParent().reverse(), new GTUCompatibility<>((LinkType) null));
+            this.original = original;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Boolean isCompatible(final GTUType gtuType, final GTUDirectionality directionality)
+        {
+            return this.original.isCompatible(gtuType, directionality.flip());
+        }
+
     }
 
 }

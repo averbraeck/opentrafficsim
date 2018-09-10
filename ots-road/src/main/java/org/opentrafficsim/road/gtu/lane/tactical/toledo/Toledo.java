@@ -572,7 +572,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     {
 
         ToledoPerception toledo = perception.getPerceptionCategory(ToledoPerception.class);
-        if (!perception.getLaneStructure().getCrossSection().contains(lane))
+        if (!perception.getLaneStructure().getExtendedCrossSection().contains(lane))
         {
             return 0.0;
         }

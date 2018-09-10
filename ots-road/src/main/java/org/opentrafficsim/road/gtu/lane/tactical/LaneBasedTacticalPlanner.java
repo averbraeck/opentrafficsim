@@ -6,6 +6,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -92,6 +94,15 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGTU, 
         LaneDirection next = lane.getNextLaneDirection(getGtu());
         if (next == null)
         {
+            Node endNode = lane.getDirection().isPlus() ? lane.getLane().getParentLink().getEndNode()
+                    : lane.getLane().getParentLink().getStartNode();
+            Set<Link> links = endNode.getLinks().toSet();
+            links.remove(lane.getLane().getParentLink());
+            if (route.contains(endNode) && (links.isEmpty() || links.iterator().next().getLinkType().isConnector()))
+            {
+                // dead-end link, must be destination
+                return maxDistance;
+            }
             // there is no next lane on the route, return the distance to the end of this lane
             return distance.plus(lane.getLength());
         }

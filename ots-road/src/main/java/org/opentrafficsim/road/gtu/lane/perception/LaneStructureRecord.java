@@ -67,6 +67,26 @@ public interface LaneStructureRecord extends LaneRecord<LaneStructureRecord>
     boolean physicalRight();
 
     /**
+     * Returns the left lane change possibility.
+     * @param legal boolean; legal, or otherwise physical, possibility
+     * @return boolean; left lane change possibility
+     */
+    default boolean possibleLeft(final boolean legal)
+    {
+        return legal ? legalLeft() : physicalLeft();
+    }
+    
+    /**
+     * Returns the right lane change possibility.
+     * @param legal boolean; legal, or otherwise physical, possibility
+     * @return boolean; right lane change possibility
+     */
+    default boolean possibleRight(final boolean legal)
+    {
+        return legal ? legalRight() : physicalRight();
+    }
+    
+    /**
      * Returns whether this lane has no next records as the lane structure was cut-off.
      * @return whether this lane has no next records as the lane structure was cut-off
      */
@@ -101,5 +121,5 @@ public interface LaneStructureRecord extends LaneRecord<LaneStructureRecord>
      * @throws NetworkException if no destination node
      */
     boolean allowsRouteAtEnd(Route route, GTUType gtuType) throws NetworkException;
-
+    
 }

@@ -42,9 +42,6 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
     /** */
     private static final long serialVersionUID = 20160811L;
 
-    /** Factory for perception. */
-    private final PerceptionFactory perceptionFactory;
-
     /** Type of synchronization. */
     private final Synchronization synchronization;
 
@@ -75,8 +72,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
     public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
             final PerceptionFactory perceptionFactory) throws GTUException
     {
-        super(carFollowingModelFactory);
-        this.perceptionFactory = perceptionFactory;
+        super(carFollowingModelFactory, perceptionFactory);
         this.synchronization = Synchronization.PASSIVE;
         this.cooperation = Cooperation.PASSIVE;
         this.gapAcceptance = GapAcceptance.INFORMED;
@@ -91,8 +87,8 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
      * @param cooperation type of cooperation
      * @param gapAcceptance gap-acceptance
      * @param tailGating tail gating
-     * @param mandatoryIncentives mandatory incentives
-     * @param voluntaryIncentives voluntary incentives
+     * @param mandatoryIncentives mandatory incentives; note that order may matter
+     * @param voluntaryIncentives voluntary incentives; note that order may matter
      * @param accelerationIncentives acceleration incentives
      * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
      */
@@ -102,8 +98,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
             final Set<VoluntaryIncentive> voluntaryIncentives, final Set<AccelerationIncentive> accelerationIncentives)
             throws GTUException
     {
-        super(carFollowingModelFactory);
-        this.perceptionFactory = perceptionFactory;
+        super(carFollowingModelFactory, perceptionFactory);
         this.synchronization = synchronization;
         this.cooperation = cooperation;
         this.gapAcceptance = gapAcceptance;
@@ -123,7 +118,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
         parameters.setDefaultParameters(ConflictUtil.class);
         parameters.setDefaultParameters(TrafficLightUtil.class);
         getCarFollowingParameters().setAllIn(parameters);
-        this.perceptionFactory.getParameters().setAllIn(parameters);
+        getPerceptionFactory().getParameters().setAllIn(parameters);
         parameters.setDefaultParameter(ParameterTypes.VCONG);
         parameters.setDefaultParameter(ParameterTypes.T0);
         parameters.setDefaultParameter(ParameterTypes.LCDUR);
@@ -134,7 +129,7 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
     @Override
     public final LMRS create(final LaneBasedGTU gtu) throws GTUException
     {
-        LMRS lmrs = new LMRS(nextCarFollowingModel(gtu), gtu, this.perceptionFactory.generatePerception(gtu),
+        LMRS lmrs = new LMRS(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu),
                 this.synchronization, this.cooperation, this.gapAcceptance, this.tailGating);
         if (this.mandatoryIncentives.isEmpty())
         {

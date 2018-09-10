@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
+import java.awt.geom.Line2D;
+
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -91,59 +93,68 @@ public final class Bezier
      * @param end the directed end point of the B&eacute;zier curve
      * @param shape shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a pointier
      *            shape, &lt; 1 results in a flatter shape, value should be above 0
-     * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
+     * @return a cubic B&eacute;zier curve between start and end, with the two determined control points
      * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
     public static OTSLine3D cubic(final int numPoints, final DirectedPoint start, final DirectedPoint end, final double shape)
             throws OTSGeometryException
     {
-        double distance2 =
-                shape * Math.sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y)) / 2.0;
-        OTSPoint3D control1 = new OTSPoint3D(start.x + distance2 * Math.cos(start.getRotZ()),
-                start.y + distance2 * Math.sin(start.getRotZ()), start.z);
-        OTSPoint3D control2 =
-                new OTSPoint3D(end.x - distance2 * Math.cos(end.getRotZ()), end.y - distance2 * Math.sin(end.getRotZ()), end.z);
+        return cubic(numPoints, start, end, shape, false);
+    }
+
+    /**
+     * Construct a cubic B&eacute;zier curve from start to end with two generated control points at half the distance between
+     * start and end. The z-value is interpolated in a linear way.
+     * @param numPoints the number of points for the B&eacute;zier curve
+     * @param start the directed start point of the B&eacute;zier curve
+     * @param end the directed end point of the B&eacute;zier curve
+     * @param shape shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a pointier
+     *            shape, &lt; 1 results in a flatter shape, value should be above 0
+     * @param weighted boolean; control point distance relates to distance to projected point on extended line from other end
+     * @return a cubic B&eacute;zier curve between start and end, with the two determined control points
+     * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
+     *             constructed
+     */
+    public static OTSLine3D cubic(final int numPoints, final DirectedPoint start, final DirectedPoint end, final double shape,
+            final boolean weighted) throws OTSGeometryException
+    {
+        OTSPoint3D control1;
+        OTSPoint3D control2;
+
+        if (weighted)
+        {
+            // each control point is 'w' * the distance between the end-points away from the respective end point
+            // 'w' is a weight given by the distance from the end point to the extended line of the other end point
+            double distance = shape * Math.sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y));
+            double cosEnd = Math.cos(end.getRotZ());
+            double sinEnd = Math.sin(end.getRotZ());
+            double dStart = Line2D.ptLineDist(end.x, end.y, end.x + cosEnd, end.y + sinEnd, start.x, start.y);
+            double cosStart = Math.cos(start.getRotZ());
+            double sinStart = Math.sin(start.getRotZ());
+            double dEnd = Line2D.ptLineDist(start.x, start.y, start.x + cosStart, start.y + sinStart, end.x, end.y);
+            double wStart = dStart / (dStart + dEnd);
+            double wEnd = dEnd / (dStart + dEnd);
+            double wStartDistance = wStart * distance;
+            double wEndDistance = wEnd * distance;
+            control1 = new OTSPoint3D(start.x + wStartDistance * cosStart, start.y + wStartDistance * sinStart);
+            // - (minus) as the angle is where the line leaves, i.e. from shape point to end
+            control2 = new OTSPoint3D(end.x - wEndDistance * cosEnd, end.y - wEndDistance * sinEnd);
+        }
+        else
+        {
+            // each control point is half the distance between the end-points away from the respective end point
+            double distance2 =
+                    shape * Math.sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y)) / 2.0;
+            control1 = new OTSPoint3D(start.x + distance2 * Math.cos(start.getRotZ()),
+                    start.y + distance2 * Math.sin(start.getRotZ()), start.z);
+            control2 = new OTSPoint3D(end.x - distance2 * Math.cos(end.getRotZ()), end.y - distance2 * Math.sin(end.getRotZ()),
+                    end.z);
+        }
 
         // Limit control points to not intersect with the other (infinite) line
-        double dx1 = Math.cos(start.getRotZ());
-        double dy1 = Math.sin(start.getRotZ());
-        double dx2 = Math.cos(end.getRotZ());
-        double dy2 = Math.sin(end.getRotZ());
         OTSPoint3D s = new OTSPoint3D(start);
         OTSPoint3D e = new OTSPoint3D(end);
-        OTSPoint3D intersection = OTSPoint3D.intersectionOfLines(s, new OTSPoint3D(start.x + dx1, start.y + dy1, start.z), e,
-                new OTSPoint3D(end.x + dx2, end.y + dy2, end.z));
-        if (intersection != null)
-        {
-            /* {@formatter:off}
-            *
-            * The intersection is selected as control point only if it is between the start (end) and the original control 
-            * point. Thus only the second situation below. This requires that the intersection (i) is closer to the start (s) 
-            * than the control (c), and that the intersection (i) is closer to the control (c) than the start (s).
-            * 
-            * i       s             c
-            * o-------o-------------o            (i) further from (c) than (s), not accepted
-            * 
-            *         s       i     c
-            *         o-------o-----o
-            *         
-            *         s             c     i
-            *         o-------------o-----o      (i) further from (s) than (c), not accepted
-            * 
-            * {@formatter:on}
-            */
-//            if (s.distanceSI(intersection) < s.distanceSI(control1)
-//                    && control1.distanceSI(intersection) < control1.distanceSI(s))
-//            {
-//                control1 = intersection;
-//            }
-//            if (e.distanceSI(intersection) < e.distanceSI(control2)
-//                    && control2.distanceSI(intersection) < control2.distanceSI(e))
-//            {
-//                control2 = intersection;
-//            }
-        }
 
         // return cubic(numPoints, new OTSPoint3D(start), control1, control2, new OTSPoint3D(end));
         return bezier(numPoints, s, control1, control2, e);

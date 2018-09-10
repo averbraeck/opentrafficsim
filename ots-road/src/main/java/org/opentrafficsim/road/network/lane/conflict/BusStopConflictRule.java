@@ -107,7 +107,7 @@ public class BusStopConflictRule implements ConflictRule
 
         // if bus has priority and bus is asking, PRIORITY
         // if bus has no priority and bus is not asking (i.e. car is asking), PRIORITY
-        return busHasPriority == requestingFromBusStop ? ConflictPriority.PRIORITY : ConflictPriority.GIVE_WAY;
+        return busHasPriority == requestingFromBusStop ? ConflictPriority.PRIORITY : ConflictPriority.YIELD;
 
     }
 

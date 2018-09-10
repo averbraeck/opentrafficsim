@@ -4,8 +4,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,6 +28,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
@@ -153,7 +152,7 @@ public final class ODApplier
             }
         }
 
-        Map<String, GeneratorObjects> output = new HashMap<>();
+        Map<String, GeneratorObjects> output = new LinkedHashMap<>();
         for (Node origin : od.getOrigins())
         {
             // Step 1: create DemandNode trees, starting with a root for each vehicle generator
@@ -244,7 +243,7 @@ public final class ODApplier
                 for (Lane lane : originNodePerLane.keySet())
                 {
                     DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> demandNode = originNodePerLane.get(lane);
-                    Set<DirectedLanePosition> initialPosition = new HashSet<>();
+                    Set<DirectedLanePosition> initialPosition = new LinkedHashSet<>();
                     try
                     {
                         initialPosition.add(lane.getParentLink().getStartNode().equals(demandNode.getObject())
@@ -306,7 +305,7 @@ public final class ODApplier
 
             // Step 3: create generator(s)
             initialPositions = sortByValue(initialPositions); // sorts by lateral position at link start
-            Map<Node, Integer> originGeneratorCounts = new HashMap<>();
+            Map<Node, Integer> originGeneratorCounts = new LinkedHashMap<>();
             for (DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root : initialPositions.keySet())
             {
                 Set<DirectedLanePosition> initialPosition = initialPositions.get(root);
@@ -528,7 +527,7 @@ public final class ODApplier
         private final List<Integer> gtuTypeCounts = new ArrayList<>();
 
         /** GTU type of leaf nodes. */
-        private final Map<K, GTUType> gtuTypesPerChild = new HashMap<>();
+        private final Map<K, GTUType> gtuTypesPerChild = new LinkedHashMap<>();
 
         /** Markov chain for GTU type selection. */
         private final MarkovChain markov;
@@ -600,23 +599,15 @@ public final class ODApplier
         public K draw(final Time time)
         {
             Throw.when(this.children.isEmpty(), RuntimeException.class, "Calling draw on a leaf node in the demand tree.");
-            // data that allows a draw
-            double frequencySum = 0;
-            double[] cumulFrequencies;
-            List<K> drawChildren;
+            Map<K, Double> weightMap = new LinkedHashMap<>();
             if (this.markov == null)
             {
                 // regular draw, loop children and collect their frequencies
-                cumulFrequencies = new double[this.children.size()];
-                int index = 0;
                 for (K child : this.children)
                 {
                     double f = child.getFrequency(time, true).si; // sliceStart = true is arbitrary
-                    frequencySum += f;
-                    cumulFrequencies[index] = frequencySum;
-                    index++;
+                    weightMap.put(child, f);
                 }
-                drawChildren = this.children;
             }
             else
             {
@@ -625,7 +616,7 @@ public final class ODApplier
                 gtuTypeArray = this.gtuTypes.toArray(gtuTypeArray);
                 Frequency[] steadyState = new Frequency[this.gtuTypes.size()];
                 Arrays.fill(steadyState, Frequency.ZERO);
-                Map<K, Frequency> frequencies = new HashMap<>(); // stored frequencies, saves us from calculating them twice
+                Map<K, Frequency> frequencies = new LinkedHashMap<>(); // stored, saves us from calculating them twice
                 for (K child : this.children)
                 {
                     GTUType gtuType = this.gtuTypesPerChild.get(child);
@@ -636,39 +627,16 @@ public final class ODApplier
                 }
                 GTUType nextGtuType = this.markov.draw(gtuTypeArray, steadyState, this.stream);
                 // select only child nodes registered to the next GTU type
-                int gtuTypeIndex = this.gtuTypes.indexOf(nextGtuType);
-                int nChildren = this.gtuTypeCounts.get(gtuTypeIndex);
-                cumulFrequencies = new double[nChildren];
-                drawChildren = new ArrayList<>(nChildren);
-                int index = 0;
                 for (K child : this.children)
                 {
                     if (this.gtuTypesPerChild.get(child).equals(nextGtuType))
                     {
                         double f = frequencies.get(child).si;
-                        frequencySum += f;
-                        cumulFrequencies[index] = frequencySum;
-                        drawChildren.add(child);
-                        index++;
+                        weightMap.put(child, f);
                     }
                 }
             }
-            // draw from list
-            Throw.when(frequencySum <= 0.0, RuntimeException.class,
-                    "Draw on destination or category when demand is 0 or negative.");
-            if (drawChildren.size() == 1)
-            {
-                return drawChildren.get(0);
-            }
-            double r = this.stream.nextDouble() * frequencySum;
-            for (int i = 0; i < drawChildren.size(); i++)
-            {
-                if (r <= cumulFrequencies[i])
-                {
-                    return drawChildren.get(i);
-                }
-            }
-            return this.children.get(this.children.size() - 1); // due to rounding
+            return Draw.drawWeighted(weightMap, this.stream);
         }
 
         /**
