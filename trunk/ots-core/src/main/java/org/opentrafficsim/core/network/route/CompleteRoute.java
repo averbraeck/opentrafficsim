@@ -90,16 +90,9 @@ public class CompleteRoute extends Route
      */
     public final boolean containsLink(final Link link)
     {
-        Node sn = link.getStartNode();
-        Node en = link.getEndNode();
-        for (int index = 1; index < size(); index++)
-        {
-            if (getNodes().get(index) == en && getNodes().get(index - 1) == sn)
-            {
-                return true;
-            }
-        }
-        return false;
+        int index1 = getNodes().indexOf(link.getStartNode());
+        int index2 = getNodes().indexOf(link.getEndNode());
+        return index1 >= 0 && index2 >= 0 && Math.abs(index2 - index1) == 1;
     }
 
     /** {@inheritDoc} */

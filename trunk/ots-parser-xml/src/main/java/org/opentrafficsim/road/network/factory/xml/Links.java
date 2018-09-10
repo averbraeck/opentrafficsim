@@ -472,10 +472,9 @@ final class Links
 
         else if (linkTag.bezierTag != null)
         {
-            coordinates = Bezier
-                    .cubic(128, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startAngle),
-                            new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle), linkTag.bezierTag.shape)
-                    .getPoints();
+            coordinates = Bezier.cubic(128, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startAngle),
+                    new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle), linkTag.bezierTag.shape,
+                    linkTag.bezierTag.weighted).getPoints();
         }
 
         else

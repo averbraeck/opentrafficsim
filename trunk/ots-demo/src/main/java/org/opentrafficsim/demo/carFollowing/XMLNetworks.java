@@ -863,21 +863,21 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         private Lane setupBlock(final Lane lane)
                 throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
         {
-            Length initialPosition = lane.getLength();
-            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-            initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            // GTUFollowingModelOld gfm =
-            // new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(java.lang.Double.MAX_VALUE,
-            // TimeUnit.SI));
-            // LaneChangeModel lcm = new FixedLaneChangeModel(null);
-            Parameters parameters = DefaultsFactory.getDefaultParameters();
-            LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", this.gtuType, new Length(1, METER),
-                    lane.getWidth(1), Speed.ZERO, Length.createSI(0.5), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                    new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
-            block.setParameters(parameters);
-            block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
-                    XMLNetworks.this.getColorer());
+//            Length initialPosition = lane.getLength();
+//            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+//            initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
+//            // GTUFollowingModelOld gfm =
+//            // new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(java.lang.Double.MAX_VALUE,
+//            // TimeUnit.SI));
+//            // LaneChangeModel lcm = new FixedLaneChangeModel(null);
+//            Parameters parameters = DefaultsFactory.getDefaultParameters();
+//            LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", this.gtuType, Length.ZERO,
+//                    lane.getWidth(1), Speed.ZERO, Length.ZERO, this.simulator, this.network);
+//            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
+//                    new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
+//            block.setParameters(parameters);
+//            block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
+//                    XMLNetworks.this.getColorer());
             return lane;
         }
 

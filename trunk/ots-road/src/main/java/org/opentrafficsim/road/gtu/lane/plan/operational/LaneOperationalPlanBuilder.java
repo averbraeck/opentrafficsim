@@ -53,7 +53,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
 {
 
     /** Use instant lane changes. */
-    public static boolean INSTANT_LANE_CHANGES = false;
+    public static boolean INSTANT_LANE_CHANGES = true;
 
     /** Maximum acceleration for unbounded accelerations: 1E12 m/s2. */
     private static final Acceleration MAX_ACCELERATION = new Acceleration(1E12, AccelerationUnit.SI);
@@ -294,11 +294,13 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             double f = ref.getLane().fraction(ref.getPosition());
             path = ref.getGtuDirection().isPlus() ? ref.getLane().getCenterLine().extractFractional(f, 1.0)
                     : ref.getLane().getCenterLine().extractFractional(0.0, f).reverse();
+            LaneDirection prevFrom = null;
             LaneDirection from = ref.getLaneDirection();
-            int n = 0;
+            int n = 1;
             while (path.getLength().si < distance.si + n * Lane.MARGIN.si)
             {
                 n++;
+                prevFrom = from;
                 from = from.getNextLaneDirection(gtu);
                 try
                 {
@@ -307,6 +309,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                 }
                 catch (NullPointerException nas)
                 {
+                    prevFrom.getNextLaneDirection(gtu);
                     ref.getLaneDirection().getNextLaneDirection(gtu);
                 }
             }

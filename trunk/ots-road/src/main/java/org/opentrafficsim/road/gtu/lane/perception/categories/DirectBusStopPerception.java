@@ -60,7 +60,7 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
     {
         Route route = getGtu().getStrategicalPlanner().getRoute();
         MultiLanePerceptionIterable<HeadwayBusStop, BusStop> stops = new MultiLanePerceptionIterable<>(getGtu());
-        for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
+        for (RelativeLane lane : getPerception().getLaneStructure().getExtendedCrossSection())
         {
             LaneRecord<?> record = getPerception().getLaneStructure().getFirstRecord(lane);
             Length pos = record.getStartDistance().neg();

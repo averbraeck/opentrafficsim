@@ -41,7 +41,7 @@ public class IncentiveStayRight implements VoluntaryIncentive
             throws ParameterException, OperationalPlanException
     {
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
-        LaneStructureRecord root = perception.getLaneStructure().getRootLSR();
+        LaneStructureRecord root = perception.getLaneStructure().getRootRecord();
         LaneStructureRecord record = root;
         RelativeLane lane = RelativeLane.CURRENT;
         Route route = Try.assign(() -> perception.getGtu().getStrategicalPlanner().getRoute(), "");

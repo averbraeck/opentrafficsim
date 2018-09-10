@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.strategical.od;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -12,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -159,8 +161,7 @@ public class SplitFraction
         {
             if (gtuType.isOfType(gtu))
             {
-                double sumProb = 0.0;
-                Map<Link, Double> currentFractions = new HashMap<>();
+                Map<Link, Double> currentFractions = new LinkedHashMap<>();
                 double t = this.simulator.getSimulatorTime().getTime().si;
                 for (Link link : this.fractions.get(gtu).keySet())
                 {
@@ -184,24 +185,11 @@ public class SplitFraction
                                         + r * this.fractions.get(gtuType).get(link).get(next);
                             }
                             currentFractions.put(link, f);
-                            sumProb += f;
                             break;
                         }
                     }
                 }
-                Throw.when(sumProb == 0.0, IllegalStateException.class, "Sum of probabilities should be larger than 0.0. "
-                        + "Perhaps simulation time is outside of specified time range.");
-                double r = this.random.nextDouble() * sumProb;
-                sumProb = 0.0;
-                for (Link link : currentFractions.keySet())
-                {
-                    double f = currentFractions.get(link);
-                    if (sumProb <= r && r <= sumProb + f)
-                    {
-                        return link;
-                    }
-                    sumProb += f;
-                }
+                return Draw.drawWeighted(currentFractions, this.random);
             }
         }
         // GTU Type not defined, distribute by number of lanes (or weight = 1.0 if not a CrossSectionLink)

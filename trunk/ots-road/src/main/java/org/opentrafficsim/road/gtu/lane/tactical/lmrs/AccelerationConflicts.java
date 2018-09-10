@@ -4,10 +4,12 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.animation.Blockable;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -18,6 +20,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
@@ -34,7 +37,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class AccelerationConflicts implements AccelerationIncentive
+public class AccelerationConflicts implements AccelerationIncentive, Blockable
 {
 
     /** Set of yield plans at conflicts with priority. Remembering for static model. */
@@ -47,6 +50,7 @@ public class AccelerationConflicts implements AccelerationIncentive
             final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException, GTUException
     {
+        // TODO consider adjacent lanes before and during lane change
         EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
         Acceleration acceleration = ego.getAcceleration();
         Length length = ego.getLength();
@@ -56,16 +60,37 @@ public class AccelerationConflicts implements AccelerationIncentive
         PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
 
-        simplePlan.minimizeAcceleration(ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length,
-                width, speed, acceleration, speedLimitInfo, this.yieldPlans, gtu));
-        if (this.yieldPlans.getIndicatorIntent().isLeft())
+        Acceleration a;
+        if (lane.isCurrent())
         {
-            simplePlan.setIndicatorIntentLeft(this.yieldPlans.getIndicatorObjectDistance());
+            a = ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length, width, speed,
+                    acceleration, speedLimitInfo, this.yieldPlans, gtu);
+            simplePlan.minimizeAcceleration(a);
+            if (this.yieldPlans.getIndicatorIntent().isLeft())
+            {
+                simplePlan.setIndicatorIntentLeft(this.yieldPlans.getIndicatorObjectDistance());
+            }
+            else if (this.yieldPlans.getIndicatorIntent().isRight())
+            {
+                simplePlan.setIndicatorIntentRight(this.yieldPlans.getIndicatorObjectDistance());
+            }
         }
-        else if (this.yieldPlans.getIndicatorIntent().isRight())
+        else if (!conflicts.isEmpty() && conflicts.first().getDistance().gt0())
         {
-            simplePlan.setIndicatorIntentRight(this.yieldPlans.getIndicatorObjectDistance());
+            // TODO this is too simple, needs to be consistent with gap-acceptance or GTU's may not change
+            a = CarFollowingUtil.followSingleLeader(carFollowingModel, params, speed, speedLimitInfo,
+                    conflicts.first().getDistance(), Speed.ZERO);
+            // limit deceleration on adjacent lanes
+            a = Acceleration.max(a, params.getParameter(ParameterTypes.BCRIT).neg());
+            simplePlan.minimizeAcceleration(a);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isBlocking()
+    {
+        return this.yieldPlans.isBlocking();
     }
 
     /** {@inheritDoc} */

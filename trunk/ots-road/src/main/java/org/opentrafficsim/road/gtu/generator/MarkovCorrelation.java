@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.generator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,13 +40,13 @@ public class MarkovCorrelation<S, I extends Number>
 {
 
     /** Leaf node for each state present in the Markov Chain, including in all sub-groups. */
-    private Map<S, FixedState<S, I>> leaves = new HashMap<>();
+    private Map<S, FixedState<S, I>> leaves = new LinkedHashMap<>();
 
     /** Transition Matrix for each super state, i.e. the matrix within which states are put that have the given super state. */
-    private Map<S, TransitionMatrix<S, I>> superMatrices = new HashMap<>();
+    private Map<S, TransitionMatrix<S, I>> superMatrices = new LinkedHashMap<>();
 
     /** Matrix in which each state is located. */
-    private Map<S, TransitionMatrix<S, I>> containingMatrices = new HashMap<>();
+    private Map<S, TransitionMatrix<S, I>> containingMatrices = new LinkedHashMap<>();
 
     /** Root matrix. */
     private TransitionMatrix<S, I> root = new TransitionMatrix<>(null, 0.0); // input not important, it's for sub-groups
@@ -216,7 +216,7 @@ public class MarkovCorrelation<S, I extends Number>
             superMatrix.addNode(superState, matrix);
             this.superMatrices.put(superState, matrix);
             // add original node to that matrix
-            superOriginal.correlation = 0.0;
+            superOriginal.clearCorrelation();
             matrix.addNode(superState, superOriginal);
             this.containingMatrices.put(superState, matrix);
         }
@@ -307,7 +307,7 @@ public class MarkovCorrelation<S, I extends Number>
         private final S state;
 
         /** Correlation. */
-        double correlation;
+        private double correlation;
 
         /**
          * Constructor.
@@ -338,6 +338,14 @@ public class MarkovCorrelation<S, I extends Number>
             return this.correlation;
         }
 
+        /**
+         * Clears the correlation.
+         */
+        protected final void clearCorrelation()
+        {
+            this.correlation = 0.0;
+        }
+        
         /**
          * Returns the current intensity, used for the Markov Chain process.
          * @return current intensity, used for the Markov Chain process, 0.0 if no intensity was provided
@@ -395,7 +403,7 @@ public class MarkovCorrelation<S, I extends Number>
          */
         void addNode(final S state, final MarkovNode<S, I> node)
         {
-            Set<S> set = new HashSet<>();
+            Set<S> set = new LinkedHashSet<>();
             set.add(state);
             this.states.add(set);
             this.nodes.add(node);

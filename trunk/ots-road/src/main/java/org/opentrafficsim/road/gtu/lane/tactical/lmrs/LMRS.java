@@ -15,8 +15,10 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.animation.Blockable;
 import org.opentrafficsim.road.gtu.animation.DesireBased;
 import org.opentrafficsim.road.gtu.animation.Synchronizable;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -32,6 +34,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsData;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
@@ -56,7 +59,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 13, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBased, Synchronizable
+public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBased, Synchronizable, Blockable
 {
 
     /** Parameter type for mandatory lane change incentives. */
@@ -166,6 +169,8 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
+
+        Break.on(getGtu(), "304", 5 * 60 + 50, true);
         
         // obtain objects to get info
         getPerception().perceive();
@@ -178,11 +183,28 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
                 this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);
 
-        // Lower acceleration from additional sources
+        // Lower acceleration from additional sources, consider adjacent lane when changing lane or synchronizing
         Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-        RelativeLane[] lanes = this.laneChange.isChangingLane()
-                ? new RelativeLane[] { RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu()) }
-                : new RelativeLane[] { RelativeLane.CURRENT };
+        RelativeLane[] lanes;
+        double dLeft = params.getParameterOrNull(LmrsParameters.DLEFT);
+        double dRight = params.getParameterOrNull(LmrsParameters.DRIGHT);
+        double dSync = params.getParameterOrNull(LmrsParameters.DSYNC);
+        if (this.laneChange.isChangingLane())
+        {
+            lanes = new RelativeLane[] { RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu()) };
+        }
+        else if (dLeft >= dSync && dLeft >= dRight)
+        {
+            lanes = new RelativeLane[] { RelativeLane.CURRENT, RelativeLane.LEFT };
+        }
+        else if (dRight >= dSync)
+        {
+            lanes = new RelativeLane[] { RelativeLane.CURRENT, RelativeLane.RIGHT };
+        }
+        else
+        {
+            lanes = new RelativeLane[] { RelativeLane.CURRENT };
+        }
         for (AccelerationIncentive incentive : this.accelerationIncentives)
         {
             for (RelativeLane lane : lanes)
@@ -223,6 +245,20 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
     public State getSynchronizationState()
     {
         return this.lmrsData.getSynchronizationState();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isBlocking()
+    {
+        for (AccelerationIncentive acc : this.accelerationIncentives)
+        {
+            if (acc instanceof AccelerationConflicts)
+            {
+                return ((AccelerationConflicts) acc).isBlocking();
+            }
+        }
+        return false;
     }
 
     /** {@inheritDoc} */

@@ -496,7 +496,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         return null;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final Route getRoute(final GTUType gtuType, final String routeId)
@@ -537,6 +537,18 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     @Override
     public final void buildGraph(final GTUType gtuType)
     {
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = buildGraph(gtuType, LinkWeight.LENGTH);
+        this.linkGraphs.put(gtuType, graph);
+    }
+
+    /**
+     * Builds a graph using the specified link weight.
+     * @param gtuType GTUType; GTU type
+     * @param linkWeight LinkWeight; link weight
+     * @return SimpleDirectedWeightedGraph graph
+     */
+    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> buildGraph(final GTUType gtuType, final LinkWeight linkWeight)
+    {
         // TODO take connections into account, and possibly do node expansion to build the graph
         @SuppressWarnings({ "unchecked" })
         Class<? extends LinkEdge<Link>> linkEdgeClass = (Class<? extends LinkEdge<Link>>) LinkEdge.class;
@@ -553,30 +565,25 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             {
                 LinkEdge<Link> linkEdge = new LinkEdge<>(link);
                 graph.addEdge(link.getStartNode(), link.getEndNode(), linkEdge);
-                graph.setEdgeWeight(linkEdge, link.getLength().doubleValue());
+                graph.setEdgeWeight(linkEdge, linkWeight.getWeight(link));
             }
             if (directionality.isBackwardOrBoth())
             {
                 LinkEdge<Link> linkEdge = new LinkEdge<>(link);
                 graph.addEdge(link.getEndNode(), link.getStartNode(), linkEdge);
-                graph.setEdgeWeight(linkEdge, link.getLength().doubleValue());
+                graph.setEdgeWeight(linkEdge, linkWeight.getWeight(link));
             }
         }
-        this.linkGraphs.put(gtuType, graph);
+        return graph;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo)
-            throws NetworkException
+    public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
+            final LinkWeight linkWeight) throws NetworkException
     {
         CompleteRoute route = new CompleteRoute("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo, gtuType);
-        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
-        if (graph == null)
-        {
-            buildGraph(gtuType);
-            graph = this.linkGraphs.get(gtuType);
-        }
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = getGraph(gtuType, linkWeight);
         DijkstraShortestPath<Node, LinkEdge<Link>> path = new DijkstraShortestPath<>(graph, nodeFrom, nodeTo);
         if (path.getPath() == null)
         {
@@ -608,14 +615,17 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia) throws NetworkException
     {
+        return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, LinkWeight.LENGTH);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
+            final List<Node> nodesVia, final LinkWeight linkWeight) throws NetworkException
+    {
         CompleteRoute route = new CompleteRoute(
                 "Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(), gtuType);
-        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
-        if (graph == null)
-        {
-            buildGraph(gtuType);
-            graph = this.linkGraphs.get(gtuType);
-        }
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = getGraph(gtuType, linkWeight);
         List<Node> nodes = new ArrayList<>();
         nodes.add(nodeFrom);
         nodes.addAll(nodesVia);
@@ -651,6 +661,31 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             from = to;
         }
         return route;
+    }
+    
+    /**
+     * Returns the graph, possibly a stored one.
+     * @param gtuType GTUType; GTU type
+     * @param linkWeight LinkWeight; link weight
+     * @return SimpleDirectedWeightedGraph
+     */
+    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> getGraph(final GTUType gtuType, final LinkWeight linkWeight)
+    {
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph;
+        if (linkWeight.equals(LinkWeight.LENGTH))
+        {
+            // stored default
+            if (!this.linkGraphs.containsKey(gtuType))
+            {
+                buildGraph(gtuType);
+            }
+            graph = this.linkGraphs.get(gtuType);
+        }
+        else
+        {
+            graph = buildGraph(gtuType, linkWeight);
+        }
+        return graph;
     }
 
     /***************************************************************************************/

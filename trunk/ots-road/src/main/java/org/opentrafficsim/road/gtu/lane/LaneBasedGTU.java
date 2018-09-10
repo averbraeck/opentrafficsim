@@ -11,6 +11,7 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -38,10 +39,24 @@ public interface LaneBasedGTU extends GTU
     /** {@inheritDoc} */
     @Override
     LaneBasedStrategicalPlanner getStrategicalPlanner();
+    
+    /** {@inheritDoc} */
+    @Override
+    LaneBasedStrategicalPlanner getStrategicalPlanner(Time time);
 
     /** {@inheritDoc} */
     @Override
-    LaneBasedTacticalPlanner getTacticalPlanner();
+    default LaneBasedTacticalPlanner getTacticalPlanner()
+    {
+        return getStrategicalPlanner().getTacticalPlanner();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    default LaneBasedTacticalPlanner getTacticalPlanner(final Time time)
+    {
+        return getStrategicalPlanner(time).getTacticalPlanner(time);
+    }
 
     /**
      * Return the location without a RemoteException. {@inheritDoc}
@@ -241,6 +256,55 @@ public interface LaneBasedGTU extends GTU
     {
         return VehicleModel.MINMAX;
     }
+    
+    /**
+     * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
+     * by:<br>
+     * <br>
+     * c0 * g(v) + c1 + c3*v^2<br>
+     * <br>
+     * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
+     * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
+     * @return boolean; whether the braking lights are on
+     */
+    default boolean isBrakingLightsOn()
+    {
+        return isBrakingLightsOn(getSimulator().getSimulatorTime().get());
+    }
+    
+    /**
+     * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
+     * by:<br>
+     * <br>
+     * c0 * g(v) + c1 + c3*v^2<br>
+     * <br>
+     * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
+     * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
+     * @param when Time; time
+     * @return boolean; whether the braking lights are on
+     */
+    default boolean isBrakingLightsOn(final Time when)
+    {
+        double v = getSpeed(when).si;
+        double a = getAcceleration(when).si;
+        return a < (v < 6.944 ? 0.0 : -0.2) - 0.15 * v - 0.00025 * v * v;
+    }
+
+    /** @return the status of the turn indicator */
+    TurnIndicatorStatus getTurnIndicatorStatus();
+
+    /**
+     * @param time Time; time to obtain the turn indicator status at
+     * @return the status of the turn indicator at the given time
+     */
+    TurnIndicatorStatus getTurnIndicatorStatus(Time time);
+
+    /**
+     * Set the status of the turn indicator.
+     * @param turnIndicatorStatus the new status of the turn indicator.
+     * @throws GTUException when GTUType does not have a turn indicator
+     */
+    void setTurnIndicatorStatus(TurnIndicatorStatus turnIndicatorStatus) throws GTUException;
 
     /**
      * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>

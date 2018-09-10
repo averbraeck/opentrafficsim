@@ -94,13 +94,13 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         this.firstLeaders.clear();
         this.firstFollowers.clear();
         this.gtuAlongside.clear();
-        if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
+        if (getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
         {
             updateFirstLeaders(LateralDirectionality.LEFT);
             updateFirstFollowers(LateralDirectionality.LEFT);
             updateGtuAlongside(LateralDirectionality.LEFT);
         }
-        if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
+        if (getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT))
         {
             updateFirstLeaders(LateralDirectionality.RIGHT);
             updateFirstFollowers(LateralDirectionality.RIGHT);
@@ -108,7 +108,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         }
         this.leaders.clear();
         this.followers.clear();
-        for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
+        for (RelativeLane lane : getPerception().getLaneStructure().getExtendedCrossSection())
         {
             updateLeaders(lane);
             updateFollowers(lane);
@@ -180,7 +180,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         SortedSet<DistanceGTU> headwaySet = new TreeSet<>();
         Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
         Set<LaneStructureRecord> nextSet = new LinkedHashSet<>();
-        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1));
+        LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1));
         Length dxSearch = getGtu().getRelativePositions().get(egoRelativePosition).getDx();
         Length dxHeadway = getGtu().getFront().getDx();
         branchUpstream(record, dxSearch, currentSet);
@@ -264,7 +264,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         SortedSet<DistanceGTU> headwaySet = new TreeSet<>();
         Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
         Set<LaneStructureRecord> prevSet = new LinkedHashSet<>();
-        LaneStructureRecord record = getPerception().getLaneStructure().getLaneLSR(new RelativeLane(lat, 1));
+        LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1));
         Length dxSearch = getGtu().getRelativePositions().get(egoRelativePosition).getDx();
         Length dxHeadway = getGtu().getRear().getDx();
         branchDownstream(record, dxSearch, currentSet);
@@ -511,9 +511,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
                 "Lateral directionality may not be NONE.");
         Throw.when(
                 (lat.equals(LateralDirectionality.LEFT)
-                        && !getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
+                        && !getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
                         || (lat.equals(LateralDirectionality.RIGHT)
-                                && !getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT)),
+                                && !getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT)),
                 IllegalArgumentException.class, "Lateral directionality may only point to an existing adjacent lane.");
     }
 

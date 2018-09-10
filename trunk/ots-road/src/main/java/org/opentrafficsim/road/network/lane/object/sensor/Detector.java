@@ -448,7 +448,7 @@ public class Detector extends AbstractSensor
     /**
      * Aggregation.
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused") // scheduled
     private void aggregate()
     {
         Frequency frequency = Frequency.createSI(this.periodCount / this.aggregation.si);

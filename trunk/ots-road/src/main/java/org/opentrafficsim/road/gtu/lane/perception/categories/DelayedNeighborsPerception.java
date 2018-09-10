@@ -299,7 +299,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
         try
         {
             // add empty sets on all lanes in the current cross section that are not considered yet
-            for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
+            for (RelativeLane lane : getPerception().getLaneStructure().getExtendedCrossSection())
             {
                 if (!this.followers.containsKey(lane))
                 {

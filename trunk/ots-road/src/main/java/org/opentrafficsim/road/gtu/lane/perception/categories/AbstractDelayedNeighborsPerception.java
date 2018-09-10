@@ -173,7 +173,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
          * delayed leaders/followers do not contain, and that is within 50m, 'gtuAlongSide' is overruled with 'true', preventing
          * a lane change.
          */
-        if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
+        if (getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
         {
             this.direct.updateFirstFollowers(LateralDirectionality.LEFT);
             this.direct.updateFirstLeaders(LateralDirectionality.LEFT);
@@ -184,7 +184,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
                             this.direct.getFirstLeaders(LateralDirectionality.LEFT))
                     || this.direct.isGtuAlongside(LateralDirectionality.LEFT);
         }
-        if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
+        if (getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT))
         {
             this.direct.updateFirstFollowers(LateralDirectionality.RIGHT);
             this.direct.updateFirstLeaders(LateralDirectionality.RIGHT);
@@ -254,24 +254,24 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
         this.direct.updateAll();
         // below code is a copy of the updateAll() method in the direct perception TODO structure better
-        if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
+        if (getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
         {
             updateFirstLeaders(LateralDirectionality.LEFT);
             updateFirstFollowers(LateralDirectionality.LEFT);
             updateGtuAlongside(LateralDirectionality.LEFT);
         }
-        if (getPerception().getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
+        if (getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT))
         {
             updateFirstLeaders(LateralDirectionality.RIGHT);
             updateFirstFollowers(LateralDirectionality.RIGHT);
             updateGtuAlongside(LateralDirectionality.RIGHT);
         }
-        for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
+        for (RelativeLane lane : getPerception().getLaneStructure().getExtendedCrossSection())
         {
             updateLeaders(lane);
             updateFollowers(lane);
         }
-        setInfo(CROSSSECTION, new TimeStampedObject<>(getPerception().getLaneStructure().getCrossSection(), getTimestamp()));
+        setInfo(CROSSSECTION, new TimeStampedObject<>(getPerception().getLaneStructure().getExtendedCrossSection(), getTimestamp()));
         setInfo(ODOMETER, new TimeStampedObject<>(getGtu().getOdometer(), getTimestamp()));
     }
 

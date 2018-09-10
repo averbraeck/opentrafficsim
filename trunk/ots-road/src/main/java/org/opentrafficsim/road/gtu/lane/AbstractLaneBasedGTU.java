@@ -29,11 +29,13 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.AbstractGTU;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.Try;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
@@ -42,6 +44,8 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.perception.Historical;
+import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.HistoricalLinkedHashMap;
 import org.opentrafficsim.core.perception.collections.HistoricalMap;
@@ -53,7 +57,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerc
 import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -140,6 +143,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:visibilitymodifier")
     public static Length initialLocationThresholdDifference = new Length(1.0, LengthUnit.MILLIMETER);
 
+    /** Turn indicator status. */
+    private final Historical<TurnIndicatorStatus> turnIndicatorStatus;
+
     /** Caching on or off. */
     // TODO: should be indicated with a Parameter
     public static boolean CACHING = true;
@@ -169,6 +175,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         super(id, gtuType, simulator, network);
         this.fractionalLinkPositions = new HistoricalLinkedHashMap<>(HistoryManager.get(simulator));
         this.currentLanes = new HistoricalLinkedHashMap<>(HistoryManager.get(simulator));
+        this.turnIndicatorStatus = new HistoricalValue<>(HistoryManager.get(simulator), TurnIndicatorStatus.NOTPRESENT);
     }
 
     /**
@@ -248,6 +255,33 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     }
 
     /**
+     * {@inheritDoc} All lanes the GTU is on will be left.
+     */
+    @Override
+    public void setParent(final GTU gtu) throws GTUException
+    {
+        for (Lane lane : new HashSet<>(this.currentLanes.keySet())) // copy for concurrency problems
+        {
+            leaveLane(lane);
+        }
+        super.setParent(gtu);
+    }
+
+    /**
+     * Reinitializes the GTU on the network using the existing strategical planner and zero speed.
+     * @param initialLongitudinalPositions &lt;Set&gt;; initial position
+     * @throws NetworkException when the GTU cannot be placed on the given lane
+     * @throws SimRuntimeException when the move method cannot be scheduled
+     * @throws GTUException when initial values are not correct
+     * @throws OTSGeometryException when the initial path is wrong
+     */
+    public void reinit(final Set<DirectedLanePosition> initialLongitudinalPositions)
+            throws NetworkException, SimRuntimeException, GTUException, OTSGeometryException
+    {
+        init(getStrategicalPlanner(), initialLongitudinalPositions, Speed.ZERO);
+    }
+
+    /**
      * Hack method. TODO remove and solve better
      * @return safe to change
      * @throws GTUException on error
@@ -297,7 +331,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     }
 
     /**
-     * Part of 'enterLane' which registers the lane in the GTU so the GTU can report its position on the lane.
+     * Part of 'enterLane' which registers the GTU with the lane so the lane can report its GTUs.
      * @param lane Lane; lane
      * @param position Length; position
      * @throws GTUException on exception
@@ -397,7 +431,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public void changeLaneInstantaneously(final LateralDirectionality laneChangeDirection) throws GTUException
     {
-        
+
         // from info
         DirectedLanePosition from = getReferencePosition();
 
@@ -607,18 +641,20 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             return; // Done; do not re-schedule execution of this move method.
         }
 
-        // remove enter events
-        for (Lane lane : this.pendingEnterTriggers.keySet())
-        {
-            List<SimEventInterface<OTSSimTimeDouble>> events = this.pendingEnterTriggers.get(lane);
-            for (SimEventInterface<OTSSimTimeDouble> event : events)
-            {
-                // also unregister from lane
-                this.currentLanes.remove(lane);
-                getSimulator().cancelEvent(event);
-            }
-        }
-        this.pendingEnterTriggers.clear();
+        // remove enter events 
+        // WS: why?
+        // for (Lane lane : this.pendingEnterTriggers.keySet())
+        // {
+        // System.out.println("GTU " + getId() + " is canceling event on lane " + lane.getFullId());
+        // List<SimEventInterface<OTSSimTimeDouble>> events = this.pendingEnterTriggers.get(lane);
+        // for (SimEventInterface<OTSSimTimeDouble> event : events)
+        // {
+        // // also unregister from lane
+        // this.currentLanes.remove(lane);
+        // getSimulator().cancelEvent(event);
+        // }
+        // }
+        // this.pendingEnterTriggers.clear();
 
         // get distance covered in previous plan, to aid a shift in link fraction (from which a plan moves onwards)
         Length covered = getOperationalPlan().getTraveledDistance(getSimulator().getSimulatorTime().get());
@@ -996,9 +1032,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @SuppressWarnings("checkstyle:designforextension")
     protected void scheduleEnterLeaveTriggers() throws NetworkException, SimRuntimeException, GTUException
     {
-        DirectedLanePosition ref = getReferencePosition();
-        double endPosition = position(ref.getLane(), getReference(), getOperationalPlan().getEndTime()).si;
-        double moveSI = endPosition - ref.getPosition().si; // getOperationalPlan().getTotalLength().si;
+        // DirectedLanePosition ref = getReferencePosition();
+        // double endPosition = position(ref.getLane(), getReference(), getOperationalPlan().getEndTime()).si;
+        double moveSI = getOperationalPlan().getTotalLength().si; // endPosition - ref.getPosition().si;
 
         // Figure out which lanes this GTU will enter with its FRONT, and schedule the lane enter events
         Map<Lane, GTUDirectionality> lanesCopy = new LinkedHashMap<>(this.currentLanes);
@@ -1030,6 +1066,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
             // schedule triggers on this lane
             double referenceStartSI = this.fractionalLinkPositions.get(lane.getParentLink()) * lane.getLength().getSI();
+            // System.out.println("referenceStartSI = " + referenceStartSI);
             // referenceStartSI is position of reference of GTU on current lane
             if (laneDir.isPlus())
             {
@@ -1041,6 +1078,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
 
             double nextFrontPosSI = referenceStartSI + sign * (moveSI + getFront().getDx().si);
+            // System.out.println("nextFrontPosSI = " + nextFrontPosSI);
+            // System.out.println("lane.getLength().si = " + lane.getLength().si);
             Lane nextLane = null;
             GTUDirectionality nextDirection = null;
             Length refPosAtLastTimestep = null;
@@ -1048,6 +1087,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (laneDir.isPlus() ? nextFrontPosSI > lane.getLength().si : nextFrontPosSI < 0.0)
             {
                 LaneDirection next = new LaneDirection(lane, laneDir).getNextLaneDirection(this);
+//                if (next == null)
+//                {
+//                    LaneDirection tmp = new LaneDirection(lane, laneDir);
+//                    tmp.getNextLaneDirection(this);
+//                }
                 nextLane = next.getLane();
                 nextDirection = next.getDirection();
                 double endPos = laneDir.isPlus() ? lane.getLength().si - getFront().getDx().si : getFront().getDx().si;
@@ -1299,9 +1343,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedTacticalPlanner getTacticalPlanner()
+    public final LaneBasedStrategicalPlanner getStrategicalPlanner(final Time time)
     {
-        return (LaneBasedTacticalPlanner) super.getTacticalPlanner();
+        return (LaneBasedStrategicalPlanner) super.getStrategicalPlanner(time);
     }
 
     /** {@inheritDoc} */
@@ -1359,6 +1403,27 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             this.carFollowingAccelerationTime = simTime;
         }
         return this.cachedCarFollowingAcceleration;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final TurnIndicatorStatus getTurnIndicatorStatus()
+    {
+        return this.turnIndicatorStatus.get();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final TurnIndicatorStatus getTurnIndicatorStatus(final Time time)
+    {
+        return this.turnIndicatorStatus.get(time);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void setTurnIndicatorStatus(final TurnIndicatorStatus turnIndicatorStatus)
+    {
+        this.turnIndicatorStatus.set(turnIndicatorStatus);
     }
 
     /** {@inheritDoc} */

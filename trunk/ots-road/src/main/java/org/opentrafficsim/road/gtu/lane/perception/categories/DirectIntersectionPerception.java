@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
     {
         this.trafficLights.clear();
         Route route = getPerception().getGtu().getStrategicalPlanner().getRoute();
-        for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
+        for (RelativeLane lane : getPerception().getLaneStructure().getExtendedCrossSection())
         {
             LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
             Length pos = record.getStartDistance().neg();
@@ -133,19 +134,31 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
     {
         this.conflicts.clear();
         Route route = getPerception().getGtu().getStrategicalPlanner().getRoute();
-        for (RelativeLane lane : getPerception().getLaneStructure().getCrossSection())
+        for (RelativeLane lane : getPerception().getLaneStructure().getExtendedCrossSection())
         {
             LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
-            Length pos = record.getStartDistance().neg();
+            Length pos = record.getStartDistance().neg().plus(getGtu().getRear().getDx());
+            while (pos.lt0() && !record.getPrev().isEmpty())
+            {
+                pos = pos.plus(record.getLength());
+                record = record.getPrev().get(0);
+            }
             // find all ConflictEnd, and the most upstream relating position
             List<LaneBasedObject> laneObjs;
-            if (record.getDirection().isPlus())
+            if (record.isDownstreamBranch())
             {
-                laneObjs = record.getLane().getLaneBasedObjects(Length.max(Length.ZERO, pos), record.getLane().getLength());
+                if (record.getDirection().isPlus())
+                {
+                    laneObjs = record.getLane().getLaneBasedObjects(Length.max(Length.ZERO, pos), record.getLane().getLength());
+                }
+                else
+                {
+                    laneObjs = record.getLane().getLaneBasedObjects(Length.ZERO, pos);
+                }
             }
             else
             {
-                laneObjs = record.getLane().getLaneBasedObjects(Length.ZERO, pos);
+                laneObjs = new ArrayList<>();
             }
             // TODO if conflicts span multiple lanes, this within-lane search fails
             for (LaneBasedObject object : laneObjs)
@@ -247,7 +260,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
         // alongside
         for (RelativeLane lane : new RelativeLane[] { RelativeLane.LEFT, RelativeLane.RIGHT })
         {
-            if (getPerception().getLaneStructure().getCrossSection().contains(lane))
+            if (getPerception().getLaneStructure().getExtendedCrossSection().contains(lane))
             {
                 SortedSet<Entry<Conflict>> conflictEntries = getPerception().getLaneStructure().getUpstreamObjects(lane,
                         Conflict.class, getGtu(), RelativePosition.FRONT);

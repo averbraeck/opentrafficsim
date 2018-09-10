@@ -138,28 +138,26 @@ public class DefaultConflictRule implements ConflictRule
             if (diff > 0.0)
             {
                 // 2 comes from the right
-                conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
+                conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP : ConflictPriority.YIELD;
                 conflictRules[1] = ConflictPriority.PRIORITY;
             }
             else
             {
                 // 1 comes from the right
                 conflictRules[0] = ConflictPriority.PRIORITY;
-                conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP : ConflictPriority.GIVE_WAY;
+                conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP : ConflictPriority.YIELD;
             }
         }
         else if ((priority1.isPriority() || priority1.isNone()) // note, both NONE already captured
-                && (priority2.isNone() || priority2.isTurnOnRed() || priority2.isYield() || priority2.isStop()))
+                && (priority2.isNone() || priority2.isYield() || priority2.isStop()))
         {
             conflictRules[0] = ConflictPriority.PRIORITY;
-            conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP
-                    : (priority2.isTurnOnRed() ? ConflictPriority.TURN_ON_RED : ConflictPriority.GIVE_WAY);
+            conflictRules[1] = priority2.isStop() ? ConflictPriority.STOP : ConflictPriority.YIELD;
         }
         else if ((priority2.isPriority() || priority2.isNone())
-                && (priority1.isNone() || priority1.isTurnOnRed() || priority1.isYield() || priority1.isStop()))
+                && (priority1.isNone() || priority1.isYield() || priority1.isStop()))
         {
-            conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP
-                    : (priority1.isTurnOnRed() ? ConflictPriority.TURN_ON_RED : ConflictPriority.GIVE_WAY);
+            conflictRules[0] = priority1.isStop() ? ConflictPriority.STOP : ConflictPriority.YIELD;
             conflictRules[1] = ConflictPriority.PRIORITY;
         }
         else if (priority1.isTurnOnRed() && (priority2.isYield() || priority2.isStop()))

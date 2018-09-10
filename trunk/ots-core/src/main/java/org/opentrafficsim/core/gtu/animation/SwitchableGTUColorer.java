@@ -27,10 +27,10 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     private static final long serialVersionUID = 20150000L;
 
     /** The currently active GTUColorer. */
-    GTUColorer activeColorer;
+    private GTUColorer activeColorer;
 
     /** The list of included colorers. */
-    List<GTUColorer> colorers = new ArrayList<>();
+    private List<GTUColorer> colorers = new ArrayList<>();
 
     /**
      * Empty constructor for the builder.
@@ -149,6 +149,7 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
          * Builds the colorer.
          * @return SwitchableGTUColorer; colorer
          */
+        @SuppressWarnings("synthetic-access")
         public GTUColorer build()
         {
             Throw.whenNull(this.preActiveColorer, "No active colorer was defined.");

@@ -18,6 +18,7 @@ import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.MetaData;
+import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataType;
 
 import nl.tudelft.simulation.language.Throw;
@@ -52,6 +53,9 @@ public abstract class Sampler<G extends GtuDataInterface>
     /** Set of registered meta data types. */
     private Set<MetaDataType<?>> registeredMetaDataTypes = new LinkedHashSet<>();
 
+    /** Space time regions. */
+    private Set<SpaceTimeRegion> spaceTimeRegions = new LinkedHashSet<>();
+
     /**
      * @param spaceTimeRegion space-time region
      * @throws IllegalStateException if data is not available from the requested start time
@@ -82,6 +86,7 @@ public abstract class Sampler<G extends GtuDataInterface>
             scheduleStartRecording(spaceTimeRegion.getStartTime(), spaceTimeRegion.getLaneDirection());
         }
         scheduleStopRecording(this.endTimes.get(spaceTimeRegion.getLaneDirection()), spaceTimeRegion.getLaneDirection());
+        this.spaceTimeRegions.add(spaceTimeRegion);
     }
 
     /**
@@ -327,19 +332,25 @@ public abstract class Sampler<G extends GtuDataInterface>
      * @param format number format, as used in {@code String.format()}
      * @param compression how to compress the data
      */
-    // TODO This returns all data, regardless of registered space-time regions. We need a query to have space-time regions.
-    // TODO Zip enum: bzip2, remove "omit repeated value", but add as compression option
     public final void writeToFile(final String file, final String format, final CompressionMethod compression)
     {
         int counter = 0;
         BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP));
+        // create Query, as this class is designed to filter for space-time regions
+        Query query = new Query(this, "", new MetaDataSet());
+        for (SpaceTimeRegion str : this.spaceTimeRegions)
+        {
+            query.addSpaceTimeRegion(str.getLaneDirection(), str.getStartPosition(), str.getEndPosition(), str.getStartTime(),
+                    str.getEndTime());
+        }
+        List<TrajectoryGroup> groups = query.getTrajectoryGroups(Time.createSI(Double.POSITIVE_INFINITY));
         try
         {
             // gather all meta data types for the header line
             List<MetaDataType<?>> allMetaDataTypes = new ArrayList<>();
-            for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
+            for (TrajectoryGroup group : groups)
             {
-                for (Trajectory<?> trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
+                for (Trajectory<?> trajectory : group.getTrajectories())
                 {
                     for (MetaDataType<?> metaDataType : trajectory.getMetaDataTypes())
                     {
@@ -352,9 +363,9 @@ public abstract class Sampler<G extends GtuDataInterface>
             }
             // gather all extended data types for the header line
             List<ExtendedDataType<?, ?, ?, ?>> allExtendedDataTypes = new ArrayList<>();
-            for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
+            for (TrajectoryGroup group : groups)
             {
-                for (Trajectory<?> trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
+                for (Trajectory<?> trajectory : group.getTrajectories())
                 {
                     for (ExtendedDataType<?, ?, ?, ?> extendedDataType : trajectory.getExtendedDataTypes())
                     {
@@ -380,9 +391,9 @@ public abstract class Sampler<G extends GtuDataInterface>
             }
             bw.write(str.toString());
             bw.newLine();
-            for (KpiLaneDirection kpiLaneDirection : this.trajectories.keySet())
+            for (TrajectoryGroup group : groups)
             {
-                for (Trajectory<?> trajectory : this.trajectories.get(kpiLaneDirection).getTrajectories())
+                for (Trajectory<?> trajectory : group.getTrajectories())
                 {
                     counter++;
                     float[] t = trajectory.getT();
@@ -410,12 +421,12 @@ public abstract class Sampler<G extends GtuDataInterface>
                         str = new StringBuilder();
                         str.append(counter);
                         str.append(",");
-                        if (!compression.equals(CompressionMethod.OMIT_DUMPLICATE_INFO) || i == 0)
+                        if (!compression.equals(CompressionMethod.OMIT_DUPLICATE_INFO) || i == 0)
                         {
-                            str.append(kpiLaneDirection.getLaneData().getLinkData().getId());
+                            str.append(group.getLaneDirection().getLaneData().getLinkData().getId());
                             str.append(",");
-                            str.append(kpiLaneDirection.getLaneData().getId());
-                            str.append(kpiLaneDirection.getKpiDirection().isPlus() ? "+" : "-");
+                            str.append(group.getLaneDirection().getLaneData().getId());
+                            str.append(group.getLaneDirection().getKpiDirection().isPlus() ? "+" : "-");
                             str.append(",");
                             str.append(trajectory.getGtuId());
                             str.append(",");
@@ -620,7 +631,7 @@ public abstract class Sampler<G extends GtuDataInterface>
         NONE,
 
         /** Duplicate info per trajectory is only stored at the first sample, and empty for other samples. */
-        OMIT_DUMPLICATE_INFO,
+        OMIT_DUPLICATE_INFO,
 
         /** Zip compression. */
         ZIP,

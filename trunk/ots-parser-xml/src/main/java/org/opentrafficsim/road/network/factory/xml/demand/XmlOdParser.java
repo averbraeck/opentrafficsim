@@ -6,8 +6,9 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,7 +78,7 @@ public class XmlOdParser implements Serializable
     Categorization categorization;
 
     /** Categories. */
-    Map<String, CategoryTag> categories = new HashMap<>();
+    Map<String, CategoryTag> categories = new LinkedHashMap<>();
 
     /** Global time vector. */
     TimeVector globalTime;
@@ -341,7 +342,7 @@ public class XmlOdParser implements Serializable
         {
             for (org.opentrafficsim.core.network.Node destination : destinations)
             {
-                Set<DemandTag> set = this.demand.getValue(() -> new HashSet<>(), origin, destination);
+                Set<DemandTag> set = this.demand.getValue(() -> new LinkedHashSet<>(), origin, destination);
                 if (!set.isEmpty())
                 {
                     // add demand

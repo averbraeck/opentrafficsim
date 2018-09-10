@@ -394,6 +394,8 @@ public class OperationalPlan implements Serializable
      */
     public final Time timeAtDistance(final Length distance)
     {
+        Throw.when(getTotalLength().lt(distance), RuntimeException.class, "Requesting %s from a plan with length %s", distance,
+                getTotalLength());
         double remainingDistanceSI = distance.si;
         double timeAtStartOfSegment = this.startTime.si;
         Iterator<Segment> it = this.operationalPlanSegmentList.iterator();
@@ -404,7 +406,7 @@ public class OperationalPlan implements Serializable
             if (distanceOfSegment > remainingDistanceSI)
             {
                 return new Time(
-                        timeAtStartOfSegment + segment.timeAtDistance(new Length(remainingDistanceSI, LengthUnit.SI)).si,
+                        timeAtStartOfSegment + segment.timeAtDistance(Length.createSI(remainingDistanceSI)).si,
                         TimeUnit.BASE);
             }
             remainingDistanceSI -= distanceOfSegment;
@@ -603,6 +605,10 @@ public class OperationalPlan implements Serializable
                 {
                     // point is on the line
                     traveledDistanceAlongPath += this.path.get(i).distance(p).si;
+                    if (traveledDistanceAlongPath > this.path.getLengthSI())
+                    {
+                        return Time.createSI(getEndTime().si - 1e-9); // -13-9 prevents that next move() reschedules enter
+                    }
                     return timeAtDistance(Length.createSI(traveledDistanceAlongPath));
                 }
                 else

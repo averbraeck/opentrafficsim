@@ -20,8 +20,8 @@ public enum ConflictPriority
     /** Turn on red. */
     TURN_ON_RED,
     
-    /** Give priority. */
-    GIVE_WAY,
+    /** Yield. */
+    YIELD,
 
     /** Stop and give priority. */
     STOP,
@@ -56,7 +56,7 @@ public enum ConflictPriority
      */
     public final boolean isGiveWay()
     {
-        return this.equals(GIVE_WAY);
+        return this.equals(YIELD);
     }
 
     /**

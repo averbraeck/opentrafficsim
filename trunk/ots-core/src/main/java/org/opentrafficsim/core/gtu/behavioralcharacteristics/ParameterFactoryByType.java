@@ -150,20 +150,22 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param parameterType ParameterType; parameter type
      * @param value T; value
      * @param parameters Parameters; parameters to set in
-     * @param correlations Correlations; correlations
+     * @param correls Correlations; correlations
+     * @param <C> parameter value type of first parameter
+     * @param <T> parameter value type of then parameter
      */
     @SuppressWarnings("unchecked")
     private <C, T> void setParameter(final ParameterType<?> parameterType, final Object value, final Parameters parameters,
-            final Map<ParameterType<?>, Correlation<?, ?>> correlations)
+            final Map<ParameterType<?>, Correlation<?, ?>> correls)
     {
         T val = (T) value;
         try
         {
-            if (correlations != null)
+            if (correls != null)
             {
-                for (ParameterType<?> param : correlations.keySet())
+                for (ParameterType<?> param : correls.keySet())
                 {
-                    Correlation<C, T> correlation = (Correlation<C, T>) correlations.get(param);
+                    Correlation<C, T> correlation = (Correlation<C, T>) correls.get(param);
                     if (param == null)
                     {
                         val = correlation.correlate(null, val);
@@ -186,7 +188,7 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param gtuType the gtu type
      * @param parameterType the parameter type
      * @param value the value of the parameter
-     * @param <T> type
+     * @param <T> parameter value type
      */
     public <T extends DoubleScalarInterface> void addParameter(final GTUType gtuType, final ParameterType<T> parameterType,
             final T value)
@@ -210,6 +212,8 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param gtuType the gtu type
      * @param parameterType the parameter type
      * @param distribution the distribution of the parameter
+     * @param <U> unit type
+     * @param <T> parameter value type
      */
     public <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> void addParameter(final GTUType gtuType,
             final ParameterTypeNumeric<T> parameterType, final ContinuousDistDoubleScalar.Rel<T, U> distribution)
@@ -254,6 +258,8 @@ public class ParameterFactoryByType implements ParameterFactory
      * Add parameter for all GTU types.
      * @param parameterType the parameter type
      * @param distribution the distribution of the parameter
+     * @param <U> unit type
+     * @param <T> parameter value type
      */
     public <U extends Unit<U>, T extends AbstractDoubleScalarRel<U, T>> void addParameter(
             final ParameterTypeNumeric<T> parameterType, final ContinuousDistDoubleScalar.Rel<T, U> distribution)
@@ -278,6 +284,8 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param first ParameterType; independent parameter
      * @param then ParameterType; dependent parameter
      * @param correlation Correlation; correlation
+     * @param <C> parameter value type of first parameter
+     * @param <T> parameter value type of then parameter
      */
     public <C, T> void addCorrelation(final GTUType gtuType, final ParameterType<C> first, final ParameterType<T> then,
             final Correlation<C, T> correlation)
@@ -298,6 +306,8 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param first ParameterType; independent parameter
      * @param then ParameterType; dependent parameter
      * @param correlation Correlation; correlation
+     * @param <C> parameter value type of first parameter
+     * @param <T> parameter value type of then parameter
      */
     public <C, T> void addCorrelation(final ParameterType<C> first, final ParameterType<T> then,
             final Correlation<C, T> correlation)

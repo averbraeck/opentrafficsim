@@ -370,7 +370,8 @@ public class XmlNetworkLaneParser implements Serializable
                         gtuTag.maxSpeedDist));
             }
             GTUCharacteristicsGeneratorOD gtuTypeGenerator = new DefaultGTUCharacteristicsGeneratorOD(templates);
-            ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE, gtuTypeGenerator);
+            ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE, gtuTypeGenerator).set(ODOptions.GTU_COLORER,
+                    GTUColorerTag.defaultColorer);
             // TODO add chosen model in gtuTypeGenerator
             XmlOdParser xmlOdParser =
                     new XmlOdParser(this.simulator, this.network, new LinkedHashSet<>(this.gtuTypes.values()));

@@ -154,6 +154,7 @@ public interface Network extends Identifiable
      * Return an immutable map of all ObjectInterface implementing objects in the network that are of type objectType, or any
      * sub type thereof.
      * @param objectType ObjectInterface; the (sub-)type of ObjectInterface that the returned map is reduced to
+     * @param <T> type of object
      * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
      *         Network that are of the type objectType, or any sub type thereof
      */
@@ -318,7 +319,26 @@ public interface Network extends Identifiable
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo) throws NetworkException;
+    default CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo) throws NetworkException
+    {
+        return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, LinkWeight.LENGTH);
+    }
+
+    /**
+     * Calculate the shortest route between two nodes in the network. If no path exists from the start node to the end node in
+     * the network, null is returned. This method returns a CompleteRoute, which includes all nodes to get from start to end.
+     * This method recalculates the graph.
+     * @param gtuType the GTUType for which to calculate the shortest route
+     * @param nodeFrom the start node.
+     * @param nodeTo the end node.
+     * @param linkWeight link weight.
+     * @return the shortest route from the start Node to the end Node in the network. If no path exists from the start node to
+     *         the end node in the network, null is returned.
+     * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
+     *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
+     */
+    CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo, LinkWeight linkWeight)
+            throws NetworkException;
 
     /**
      * Calculate the shortest route between two nodes in the network, via a list of intermediate nodes. If no path exists from
@@ -334,8 +354,28 @@ public interface Network extends Identifiable
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia)
-            throws NetworkException;
+    default CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia)
+            throws NetworkException
+    {
+        return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, LinkWeight.LENGTH);
+    }
+
+    /**
+     * Calculate the shortest route between two nodes in the network, via a list of intermediate nodes. If no path exists from
+     * the start node to the end node via the intermediate nodes in the network, null is returned. This method returns a
+     * CompleteRoute, which includes all nodes to get from start to end. This method recalculates the graph.
+     * @param gtuType the GTUType for which to calculate the shortest route
+     * @param nodeFrom the start node.
+     * @param nodeTo the end node.
+     * @param nodesVia a number of nodes that the GTU has to pass between nodeFrom and nodeTo in the given order.
+     * @param linkWeight link weight.
+     * @return the shortest route between two nodes in the network, via the intermediate nodes. If no path exists from the start
+     *         node to the end node via the intermediate nodes in the network, null is returned.
+     * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
+     *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
+     */
+    CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia,
+            LinkWeight linkWeight) throws NetworkException;
 
     /***************************************************************************************/
     /*************************************** EVENTS ****************************************/

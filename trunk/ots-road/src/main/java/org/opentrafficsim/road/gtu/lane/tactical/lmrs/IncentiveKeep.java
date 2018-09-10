@@ -35,7 +35,7 @@ public class IncentiveKeep implements VoluntaryIncentive
             final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
     {
         if (mandatoryDesire.getRight() < 0 || voluntaryDesire.getRight() < 0
-                || !perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
+                || !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT))
         {
             // no desire to go right if more dominant incentives provide a negative desire to go right
             return new Desire(0, 0);

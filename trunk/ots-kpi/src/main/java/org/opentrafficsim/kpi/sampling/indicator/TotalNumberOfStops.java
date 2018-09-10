@@ -25,7 +25,7 @@ public class TotalNumberOfStops extends AbstractIndicator<Dimensionless>
 
     /** {@inheritDoc} */
     @Override
-    public final Dimensionless calculate(final Query query, final Time startTime, final Time endTime,
+    protected Dimensionless calculate(final Query query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup> trajectoryGroups)
     {
         int sum = 0;

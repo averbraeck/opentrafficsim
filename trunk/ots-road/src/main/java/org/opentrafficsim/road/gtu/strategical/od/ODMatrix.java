@@ -2,12 +2,14 @@ package org.opentrafficsim.road.gtu.strategical.od;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
@@ -63,7 +65,18 @@ public class ODMatrix implements Serializable, Identifiable
     private final Interpolation globalInterpolation;
 
     /** Demand data per origin and destination, and possibly further categorization. */
-    private final Map<Node, Map<Node, Map<Category, DemandPattern>>> demandData = new HashMap<>();
+    private final Map<Node, Map<Node, Map<Category, DemandPattern>>> demandData = new LinkedHashMap<>();
+
+    /** Node comparator. */
+    private static final Comparator<Node> COMPARATOR = new Comparator<Node>()
+    {
+        /** {@inheritDoc} */
+        @Override
+        public int compare(final Node o1, final Node o2)
+        {
+            return o1.getId().compareTo(o2.getId());
+        }
+    };
 
     /**
      * Constructs an OD matrix.
@@ -88,16 +101,34 @@ public class ODMatrix implements Serializable, Identifiable
         this.id = id;
         this.origins = new ArrayList<>(origins);
         this.destinations = new ArrayList<>(destinations);
+        Collections.sort(this.origins, COMPARATOR);
+        Collections.sort(this.destinations, COMPARATOR);
         this.categorization = categorization;
         this.globalTimeVector = globalTimeVector;
         this.globalInterpolation = globalInterpolation;
         // build empty OD
         for (Node origin : origins)
         {
-            Map<Node, Map<Category, DemandPattern>> map = new HashMap<>();
+            Map<Node, Map<Category, DemandPattern>> map = new LinkedHashMap<>();
             for (Node destination : destinations)
             {
-                map.put(destination, new LinkedHashMap<>());
+                map.put(destination, new TreeMap<>(new Comparator<Category>()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public int compare(final Category o1, final Category o2)
+                    {
+                        for (int i = 0; i < o1.getCategorization().size(); i++)
+                        {
+                            int order = Integer.compare(o1.get(i).hashCode(), o2.get(i).hashCode());
+                            if (order != 0)
+                            {
+                                return order;
+                            }
+                        }
+                        return 0;
+                    }
+                }));
             }
             this.demandData.put(origin, map);
         }

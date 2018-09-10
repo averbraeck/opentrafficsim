@@ -26,7 +26,7 @@ public class MeanTripLength extends AbstractIndicator<Length>
 
     /** {@inheritDoc} */
     @Override
-    public final Length calculate(final Query query, final Time startTime, final Time endTime,
+    protected Length calculate(final Query query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup> trajectoryGroups)
     {
         Length sum = Length.ZERO;

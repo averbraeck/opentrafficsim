@@ -135,7 +135,10 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     private Route previousRoute;
 
     /** Lane structure records of the cross section. */
-    private TreeMap<RelativeLane, LaneStructureRecord> crossSectionRecords = new TreeMap<>();
+    private TreeMap<RelativeLane, RollingLaneStructureRecord> crossSectionRecords = new TreeMap<>();
+
+    /** First lane structure records. */
+    private TreeMap<RelativeLane, RollingLaneStructureRecord> firstRecords = new TreeMap<>();
 
     /** Lane structure records grouped per relative lane. */
     private Map<RelativeLane, Set<RollingLaneStructureRecord>> relativeLaneMap = new HashMap<>();
@@ -186,7 +189,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         this.downSplit = downSplit;
         this.upMerge = upMerge;
         this.containingGtu = gtu;
-        // if (gtu.getId().equals("8"))
+        // if (gtu.getId().equals("1"))
         // {
         // visualize(gtu);
         // }
@@ -217,6 +220,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         Length position = pos.getPosition();
         double fracPos = direction.isPlus() ? position.si / lane.getLength().si : 1.0 - position.si / lane.getLength().si;
 
+        // TODO on complex networks, e.g. with sections connectors where lane changes are not possible, the update may fail
         if (this.previousRoute != route || this.root.get() == null)
         {
             // create new LaneStructure
@@ -232,8 +236,6 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             RollingLaneStructureRecord newRoot = constructRecord(lane, direction, null, RecordLink.CROSS, RelativeLane.CURRENT);
             this.root.set(newRoot);
             this.crossSectionRecords.put(RelativeLane.CURRENT, newRoot);
-            Set<RollingLaneStructureRecord> set = new LinkedHashSet<>();
-            set.add(newRoot);
             for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
                     LateralDirectionality.RIGHT })
             {
@@ -250,7 +252,6 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                     RollingLaneStructureRecord adjacentRecord =
                             constructRecord(adjacentLane, direction, current, RecordLink.CROSS, relativeLane);
                     this.crossSectionRecords.put(relativeLane, adjacentRecord);
-                    set.add(adjacentRecord);
                     if (latDirection.isLeft())
                     {
                         if (adjacentLane
@@ -276,14 +277,18 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                             current.getLane().accessibleAdjacentLanesPhysical(latDirection, gtuType, current.getDirection());
                 }
             }
-            this.upstreamEdge.addAll(set);
-            this.downstreamEdge.addAll(set);
+            this.upstreamEdge.addAll(this.crossSectionRecords.values());
+            this.downstreamEdge.addAll(this.crossSectionRecords.values());
+            this.firstRecords.putAll(this.crossSectionRecords);
 
             // set the start distances so the upstream expand can work
             newRoot.updateStartDistance(fracPos, this);
 
             // expand upstream edge
             expandUpstreamEdge(gtuType, fracPos);
+
+            // derive first records
+            deriveFirstRecords();
         }
         else
         {
@@ -310,6 +315,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                         }
                     }
                 }
+                // newRoot.getPrev().contains(newRoot.getStartDistanceSource())
                 this.root.set(newRoot);
 
                 // update start distance sources
@@ -320,15 +326,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                 {
                     RelativeLane delta =
                             new RelativeLane(lateralMove.getLateralDirectionality().flip(), lateralMove.getNumLanes());
-                    TreeMap<RelativeLane, LaneStructureRecord> newCrossSectionRecords = new TreeMap<>();
-                    for (RelativeLane relativeLane : this.crossSectionRecords.keySet())
-                    {
-                        RelativeLane newRelativeLane = relativeLane.add(delta);
-                        newCrossSectionRecords.put(newRelativeLane, this.crossSectionRecords.get(relativeLane));
-                    }
-                    this.crossSectionRecords = newCrossSectionRecords;
 
-                    Map<RelativeLane, Set<RollingLaneStructureRecord>> newRelativeLaneMap = new HashMap<>();
+                    TreeMap<RelativeLane, Set<RollingLaneStructureRecord>> newRelativeLaneMap = new TreeMap<>();
                     for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
                     {
                         RelativeLane newRelativeLane = relativeLane.add(delta);
@@ -343,28 +342,56 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                     }
                     this.relativeLanes = newRelativeLanes;
                 }
-            }
 
-            // set the start distances so the edge updates can work, first remove cross-section records not on the current link
-            Iterator<RelativeLane> iterator = this.crossSectionRecords.keySet().iterator();
-            while (iterator.hasNext())
-            {
-                RelativeLane relativeLane = iterator.next();
-                LaneStructureRecord record = this.crossSectionRecords.get(relativeLane);
-                if (!record.getLane().getParentLink().equals(newRoot.getLane().getParentLink()))
+                this.crossSectionRecords.clear();
+                this.crossSectionRecords.put(RelativeLane.CURRENT, newRoot);
+                for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
+                        LateralDirectionality.RIGHT })
                 {
-                    iterator.remove();
+                    RollingLaneStructureRecord record = newRoot;
+                    RollingLaneStructureRecord next = newRoot;
+                    RelativeLane delta = new RelativeLane(latDirection, 1);
+                    RelativeLane relLane = RelativeLane.CURRENT;
+                    while (next != null)
+                    {
+                        next = latDirection.isLeft() ? record.getLeft() : record.getRight();
+                        if (next != null)
+                        {
+                            next.changeStartDistanceSource(record, RecordLink.CROSS);
+                            relLane = relLane.add(delta);
+                            this.crossSectionRecords.put(relLane, next);
+                            record = next;
+                        }
+                    }
                 }
+
             }
             newRoot.updateStartDistance(fracPos, this);
 
             // update upstream edges
             retreatUpstreamEdge();
 
+            // derive first records
+            deriveFirstRecords();
+
         }
 
         // update downstream edges
         expandDownstreamEdge(gtuType, fracPos, route);
+
+    }
+
+    /**
+     * Derives the first downstream records so the extended cross-section can be returned.
+     */
+    private void deriveFirstRecords()
+    {
+        this.firstRecords.clear();
+        this.firstRecords.putAll(this.crossSectionRecords);
+        for (RelativeLane lane : this.relativeLaneMap.keySet())
+        {
+            getFirstRecord(lane); // store non-null values internally
+        }
     }
 
     /**
@@ -372,7 +399,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
      * records were downstream in the previous time step, but are now upstream. Hence, their start distance source should now
      * become their downstream record. This algorithm acts like an upstream tree, where each branch is stopped if there are no
      * upstream records, or the upstream records already have their downstream record as source (i.e. the record was already
-     * upstream in the previous time step.
+     * upstream in the previous time step).
      */
     private void updateStartDistanceSources()
     {
@@ -415,7 +442,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                     while (next != null && !set.contains(next))
                     {
                         next.changeStartDistanceSource(prev, RecordLink.LATERAL_END);
-                        removeDownstream(next); // split not taken can be thrown away
+                        removeDownstream(next, latDirection.flip()); // split not taken can be thrown away
                         newSet.add(next);
                         prev = next;
                         next = latDirection.isLeft() ? next.getLeft() : next.getRight();
@@ -434,11 +461,12 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                     while (it.hasNext())
                     {
                         RollingLaneStructureRecord otherDown = it.next();
-                        if (!otherDown.equals(record))
+                        if (!otherDown.getLane().getParentLink().equals(record.getLane().getParentLink()))
                         {
                             // split not taken can be thrown away
                             otherDown.changeStartDistanceSource(null, null);
-                            removeDownstream(otherDown);
+                            // this can throw away records that are laterally connected as they later merge... ??
+                            removeDownstream(otherDown, LateralDirectionality.NONE);
                             removeRecord(otherDown);
                             it.remove();
                         }
@@ -460,14 +488,19 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     /**
      * Removes all records downstream of the given record from underlying data structures.
      * @param record LaneStructureRecord; record, downstream of which to remove all records
+     * @param lat LateralDirectionality; records with an adjacent record at this side are not deleted
      */
-    private void removeDownstream(final RollingLaneStructureRecord record)
+    private void removeDownstream(final RollingLaneStructureRecord record, final LateralDirectionality lat)
     {
         for (RollingLaneStructureRecord next : record.getNext())
         {
-            next.changeStartDistanceSource(null, null);
-            removeDownstream(next);
-            removeRecord(next);
+            RollingLaneStructureRecord adj = lat.isLeft() ? next.getLeft() : lat.isRight() ? next.getRight() : null;
+            if (adj == null)
+            {
+                next.changeStartDistanceSource(null, null);
+                removeDownstream(next, lat);
+                removeRecord(next);
+            }
         }
         record.clearNextList();
     }
@@ -525,9 +558,9 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                 {
                     // upstream search goes further upstream
                     prev.clearCutOffStart();
+                    iterator.remove();
                     if (!nexts.isEmpty())
                     {
-                        iterator.remove();
                         for (Lane prevLane : nexts.keySet())
                         {
                             RelativeLane relativeLane = this.relativeLanes.get(prev);
@@ -535,7 +568,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                                     constructRecord(prevLane, nexts.get(prevLane), prev, RecordLink.UP, relativeLane);
                             this.ignoreSet.add(prevLane);
                             next.updateStartDistance(fractionalPosition, this);
-                            connectLaterally(next, gtuType);
+                            connectLaterally(next, gtuType, nextSet);
                             next.addNext(prev);
                             prev.addPrev(next);
                             nextSet.add(next);
@@ -598,6 +631,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                     {
                         RollingLaneStructureRecord next =
                                 constructRecord(nextLane, record.getDirection(), prev, recordLink, relativeLane);
+                        this.ignoreSet.add(nextLane);
                         next.updateStartDistance(fractionalPosition, this);
                         nextSet.add(next);
                         laneSet.add(nextLane);
@@ -610,6 +644,22 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                             {
                                 next.setRight(prev, gtuType);
                             }
+                            for (RollingLaneStructureRecord edgeRecord : edge)
+                            {
+                                if (!edgeRecord.equals(prev)
+                                        && edgeRecord.getLane().getParentLink().equals(next.getLane().getParentLink()))
+                                {
+                                    for (Lane adjLane : edgeRecord.getLane().accessibleAdjacentLanesPhysical(
+                                            LateralDirectionality.RIGHT, gtuType, edgeRecord.getDirection()))
+                                    {
+                                        if (adjLane.equals(next.getLane()))
+                                        {
+                                            edgeRecord.setRight(next, gtuType);
+                                            next.setLeft(edgeRecord, gtuType);
+                                        }
+                                    }
+                                }
+                            }
                         }
                         else
                         {
@@ -619,6 +669,22 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                                     .contains(prev.getLane()))
                             {
                                 next.setLeft(prev, gtuType);
+                            }
+                            for (RollingLaneStructureRecord edgeRecord : edge)
+                            {
+                                if (!edgeRecord.equals(prev)
+                                        && edgeRecord.getLane().getParentLink().equals(next.getLane().getParentLink()))
+                                {
+                                    for (Lane adjLane : edgeRecord.getLane().accessibleAdjacentLanesPhysical(
+                                            LateralDirectionality.LEFT, gtuType, edgeRecord.getDirection()))
+                                    {
+                                        if (adjLane.equals(next.getLane()))
+                                        {
+                                            edgeRecord.setLeft(next, gtuType);
+                                            next.setRight(edgeRecord, gtuType);
+                                        }
+                                    }
+                                }
                             }
                         }
                         prev = next;
@@ -809,7 +875,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                         next.updateStartDistance(fractionalPosition, this);
                         record.addNext(next);
                         next.addPrev(record);
-                        connectLaterally(next, gtuType);
+                        connectLaterally(next, gtuType, nextSet);
                         // check route
                         int from = route == null ? 0 : route.indexOf(next.getFromNode());
                         int to = route == null ? 1 : route.indexOf(next.getToNode());
@@ -889,7 +955,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                         next.updateStartDistance(fractionalPosition, this);
                         next.addPrev(prev);
                         prev.addNext(next);
-                        connectLaterally(next, gtuType);
+                        connectLaterally(next, gtuType, nexts.keySet());
                         Length downHere = prevs.get(prev);
                         if (next.getStartDistance().si > downHere.si)
                         {
@@ -950,7 +1016,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                         next.updateStartDistance(fractionalPosition, this);
                         next.addNext(prev);
                         prev.addPrev(next);
-                        connectLaterally(next, gtuType);
+                        connectLaterally(next, gtuType, nexts.keySet());
                         Length upHere = prevs.get(prev);
                         if (next.getStartDistance().si < upHere.si)
                         {
@@ -977,51 +1043,32 @@ public class RollingLaneStructure implements LaneStructure, Serializable
      * Helper method of various other methods that laterally couples lanes that have been longitudinally found.
      * @param record LaneStructureRecord; longitudinally found lane
      * @param gtuType GTUType; GTU type
+     * @param nextSet Set&lt;RollingLaneStructureRecord&gt;; set of records on current build edge
      */
-    private void connectLaterally(final RollingLaneStructureRecord record, final GTUType gtuType)
+    private void connectLaterally(final RollingLaneStructureRecord record, final GTUType gtuType,
+            final Set<RollingLaneStructureRecord> nextSet)
     {
-        for (GTUDirectionality longDirection : new GTUDirectionality[] { GTUDirectionality.DIR_PLUS,
-                GTUDirectionality.DIR_MINUS })
+        for (RollingLaneStructureRecord other : nextSet)
         {
-            List<RollingLaneStructureRecord> nexts = longDirection.isPlus() ? record.getNext() : record.getPrev();
-            for (RollingLaneStructureRecord next : nexts)
+            for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
+                    LateralDirectionality.RIGHT })
             {
-                for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                        LateralDirectionality.RIGHT })
+                if ((latDirection.isLeft() ? other.getLeft() : other.getRight()) == null)
                 {
-                    RollingLaneStructureRecord nextAdj = latDirection.isLeft() ? next.getLeft() : next.getRight();
-                    if (nextAdj != null)
+                    for (Lane otherLane : other.getLane().accessibleAdjacentLanesPhysical(latDirection, gtuType,
+                            other.getDirection()))
                     {
-                        List<RollingLaneStructureRecord> prevs = longDirection.isPlus() ? nextAdj.getPrev() : nextAdj.getNext();
-                        for (RollingLaneStructureRecord nextAdjPrev : prevs)
+                        if (otherLane.equals(record.getLane()))
                         {
-                            if (record.getLane().getParentLink().equals(nextAdjPrev.getLane().getParentLink()))
+                            if (latDirection.isLeft())
                             {
-                                if (record.getLane()
-                                        .accessibleAdjacentLanesPhysical(latDirection, gtuType, record.getDirection())
-                                        .contains(nextAdjPrev.getLane()))
-                                {
-                                    if (latDirection.isLeft())
-                                    {
-                                        record.setLeft(nextAdjPrev, gtuType);
-                                    }
-                                    else
-                                    {
-                                        record.setRight(nextAdjPrev, gtuType);
-                                    }
-                                }
-                                if (nextAdjPrev.getLane().accessibleAdjacentLanesPhysical(latDirection.flip(), gtuType,
-                                        nextAdjPrev.getDirection()).contains(record.getLane()))
-                                {
-                                    if (latDirection.isLeft())
-                                    {
-                                        nextAdjPrev.setRight(record, gtuType);
-                                    }
-                                    else
-                                    {
-                                        nextAdjPrev.setLeft(record, gtuType);
-                                    }
-                                }
+                                other.setLeft(record, gtuType);
+                                record.setRight(other, gtuType);
+                            }
+                            else
+                            {
+                                other.setRight(record, gtuType);
+                                record.setLeft(other, gtuType);
                             }
                         }
                     }
@@ -1052,80 +1099,27 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         return record;
     }
 
-    /**
-     * Adds a record to the current cross section. This method is called by {@code LaneStructureRecord.updateStartDistance()}
-     * when that recognizes that distance = 0.0 is on a particular record. This method will only add the record if there is no
-     * record in the cross section for the {@code RelativeLane} on which the record is registered.
-     * @param record LaneStructureRecord; record
-     */
-    final void addToCrossSection(final LaneStructureRecord record)
-    {
-        RelativeLane lane = this.relativeLanes.get(record);
-        if (!this.crossSectionRecords.containsKey(lane))
-        {
-            this.crossSectionRecords.put(lane, record);
-        }
-    }
-
-    /**
-     * @return rootLSR
-     */
-    public final LaneStructureRecord getRootLSR()
+    /** {@inheritDoc} */
+    @Override
+    public final LaneStructureRecord getRootRecord()
     {
         return this.root.get();
     }
 
     /**
      * @param time Time; time to obtain the root at
-     * @return rootLSR
+     * @return rootRecord
      */
-    public final LaneStructureRecord getRootLSR(final Time time)
+    public final LaneStructureRecord getRootRecord(final Time time)
     {
         return this.root.get(time);
     }
 
-    /**
-     * Returns the cross section.
-     * @return cross section
-     */
-    public final SortedSet<RelativeLane> getCrossSection()
+    /** {@inheritDoc} */
+    @Override
+    public final SortedSet<RelativeLane> getExtendedCrossSection()
     {
-        return this.crossSectionRecords.navigableKeySet();
-    }
-
-    /**
-     * @param lane lane to check
-     * @return record at given lane
-     * @throws GTUException if the lane is not in the cross section
-     */
-    public final LaneStructureRecord getLaneLSR(final RelativeLane lane) throws GTUException
-    {
-        LaneStructureRecord record = this.crossSectionRecords.get(lane);
-        Throw.when(record == null, GTUException.class, "The requested lane %s is not in the most recent cross section.", lane);
-        return record;
-    }
-
-    /**
-     * Adds a lane structure record in a mapping from relative lanes. The record is also added to the current cross section if
-     * the start distance is negative, and the start distance plus length is positive. If the relative lane is already in the
-     * current cross section, it is <b>not</b> overwritten.
-     * @param lsr lane structure record
-     * @param relativeLane relative lane
-     */
-    @Deprecated
-    final void addLaneStructureRecord(final RollingLaneStructureRecord lsr, final RelativeLane relativeLane)
-    {
-        if (!this.relativeLaneMap.containsKey(relativeLane))
-        {
-            this.relativeLaneMap.put(relativeLane, new LinkedHashSet<>());
-        }
-        this.relativeLaneMap.get(relativeLane).add(lsr);
-        if (lsr.getStartDistance().le0() && lsr.getStartDistance().plus(lsr.getLane().getLength()).gt0()
-                && (!this.crossSectionRecords.containsKey(relativeLane)
-                        || this.crossSectionRecords.get(relativeLane).getStartDistance().gt0() && lsr.getStartDistance().le0()))
-        {
-            this.crossSectionRecords.put(relativeLane, lsr);
-        }
+        return this.firstRecords.navigableKeySet();
     }
 
     /**
@@ -1134,27 +1128,74 @@ public class RollingLaneStructure implements LaneStructure, Serializable
      * @param lane RelativeLane; lane
      * @return first record on the given lane, or {@code null} if no such record
      */
-    public final LaneStructureRecord getFirstRecord(final RelativeLane lane)
+    public final RollingLaneStructureRecord getFirstRecord(final RelativeLane lane)
     {
-        LaneStructureRecord record = this.crossSectionRecords.get(lane);
-        double minLength;
-        if (record == null)
+        if (this.firstRecords.containsKey(lane))
         {
-            minLength = Double.MAX_VALUE;
-            // not in current cross section, get first downstream
-            for (LaneStructureRecord rec : this.relativeLaneMap.get(lane))
+            return this.firstRecords.get(lane);
+        }
+        // not in current cross section, get first via downstream
+        RelativeLane rel = RelativeLane.CURRENT;
+        int dMin = Integer.MAX_VALUE;
+        for (RelativeLane relLane : this.crossSectionRecords.keySet())
+        {
+            if (relLane.getLateralDirectionality().equals(lane.getLateralDirectionality()))
             {
-                double startDistance = rec.getStartDistance().si;
-                if (startDistance >= 0 && startDistance < minLength)
+                int d = lane.getNumLanes() - relLane.getNumLanes();
+                if (d < dMin)
                 {
-                    record = rec;
-                    minLength = rec.getStartDistance().si;
+                    rel = relLane;
+                    d = dMin;
                 }
             }
         }
-        else
+        RollingLaneStructureRecord record = this.crossSectionRecords.get(rel);
+        // move downstream until a lateral move is made to the right relative lane
+        while (rel.getNumLanes() < lane.getNumLanes())
         {
-            minLength = record.getStartDistance().si;
+            RollingLaneStructureRecord adj = lane.getLateralDirectionality().isLeft() ? record.getLeft() : record.getRight();
+            if (adj != null)
+            {
+                rel = lane.getLateralDirectionality().isLeft() ? rel.getLeft() : rel.getRight();
+                record = adj;
+            }
+            else if (!record.getNext().isEmpty())
+            {
+                LaneDirection laneDir =
+                        new LaneDirection(record.getLane(), record.getDirection()).getNextLaneDirection(this.containingGtu);
+                if (laneDir == null)
+                {
+                    record = null;
+                    break;
+                }
+                RollingLaneStructureRecord chosenNext = null;
+                for (RollingLaneStructureRecord next : record.getNext())
+                {
+                    if (next.getLane().equals(laneDir.getLane()))
+                    {
+                        chosenNext = next;
+                        break;
+                    }
+                }
+                Throw.when(chosenNext == null, RuntimeException.class,
+                        "Unexpected exception while deriving first record not on the cross-section.");
+                record = chosenNext;
+            }
+            else
+            {
+                // reached a dead-end
+                record = null;
+                break;
+            }
+        }
+        if (record != null)
+        {
+            // now move upstream until we are at x = 0
+            while (record.getPrev().size() == 1 && record.getStartDistance().gt0())
+            {
+                record = record.getPrev().get(0);
+            }
+            this.firstRecords.put(lane, record);
         }
         return record;
     }
@@ -1200,31 +1241,34 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         if (record != null)
         {
             double ds = gtu.getRelativePositions().get(pos).getDx().si - gtu.getReference().getDx().si;
-            // the list is ordered, but only for DIR_PLUS, need to do our own ordering
-            Length minimumPosition;
-            Length maximumPosition;
-            if (record.getDirection().isPlus())
+            if (record.isDownstreamBranch())
             {
-                minimumPosition = Length.createSI(ds - record.getStartDistance().si);
-                maximumPosition = Length.createSI(record.getLane().getLength().si);
-            }
-            else
-            {
-                minimumPosition = Length.ZERO;
-                maximumPosition = Length.createSI(record.getLane().getLength().si + record.getStartDistance().si - ds);
-            }
-
-            for (LaneBasedObject object : record.getLane().getLaneBasedObjects(minimumPosition, maximumPosition))
-            {
-                if (clazz.isAssignableFrom(object.getClass())
-                        && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
-                                || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
+                // the list is ordered, but only for DIR_PLUS, need to do our own ordering
+                Length minimumPosition;
+                Length maximumPosition;
+                if (record.getDirection().isPlus())
                 {
-                    // unchecked, but the above isAssignableFrom assures correctness
-                    double distance = record.getDistanceToPosition(object.getLongitudinalPosition()).si - ds;
-                    if (distance <= this.lookAhead.si)
+                    minimumPosition = Length.createSI(ds - record.getStartDistance().si);
+                    maximumPosition = Length.createSI(record.getLane().getLength().si);
+                }
+                else
+                {
+                    minimumPosition = Length.ZERO;
+                    maximumPosition = Length.createSI(record.getLane().getLength().si + record.getStartDistance().si - ds);
+                }
+
+                for (LaneBasedObject object : record.getLane().getLaneBasedObjects(minimumPosition, maximumPosition))
+                {
+                    if (clazz.isAssignableFrom(object.getClass())
+                            && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
+                                    || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
                     {
-                        set.add(new Entry<>(Length.createSI(distance), (T) object));
+                        // unchecked, but the above isAssignableFrom assures correctness
+                        double distance = record.getDistanceToPosition(object.getLongitudinalPosition()).si - ds;
+                        if (distance <= this.lookAhead.si)
+                        {
+                            set.add(new Entry<>(Length.createSI(distance), (T) object));
+                        }
                     }
                 }
             }
@@ -1285,34 +1329,37 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         }
         for (LaneStructureRecord next : record.getNext())
         {
-            List<LaneBasedObject> list = next.getLane().getLaneBasedObjects();
-            int iStart, di;
-            if (record.getDirection().isPlus())
+            if (next.isDownstreamBranch())
             {
-                iStart = 0;
-                di = 1;
-            }
-            else
-            {
-                iStart = list.size() - 1;
-                di = -1;
-            }
-            for (int i = iStart; i >= 0 & i < list.size(); i += di)
-            {
-                LaneBasedObject object = list.get(i);
-                if (clazz.isAssignableFrom(object.getClass())
-                        && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
-                                || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
+                List<LaneBasedObject> list = next.getLane().getLaneBasedObjects();
+                int iStart, di;
+                if (record.getDirection().isPlus())
                 {
-                    // unchecked, but the above isAssignableFrom assures correctness
-                    double distance = next.getDistanceToPosition(object.getLongitudinalPosition()).si - ds;
-                    if (distance <= this.lookAhead.si)
+                    iStart = 0;
+                    di = 1;
+                }
+                else
+                {
+                    iStart = list.size() - 1;
+                    di = -1;
+                }
+                for (int i = iStart; i >= 0 & i < list.size(); i += di)
+                {
+                    LaneBasedObject object = list.get(i);
+                    if (clazz.isAssignableFrom(object.getClass())
+                            && ((record.getDirection().isPlus() && object.getDirection().isForwardOrBoth())
+                                    || (record.getDirection().isMinus() && object.getDirection().isBackwardOrBoth())))
                     {
-                        set.add(new Entry<>(Length.createSI(distance), (T) object));
-                    }
-                    else
-                    {
-                        return;
+                        // unchecked, but the above isAssignableFrom assures correctness
+                        double distance = next.getDistanceToPosition(object.getLongitudinalPosition()).si - ds;
+                        if (distance <= this.lookAhead.si)
+                        {
+                            set.add(new Entry<>(Length.createSI(distance), (T) object));
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -1358,7 +1405,12 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(final RelativeLane lane,
             final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GTUException
     {
-        LaneStructureRecord record = this.getLaneLSR(lane);
+        SortedSet<Entry<T>> set = new TreeSet<>();
+        LaneStructureRecord record = this.getFirstRecord(lane);
+        if (record.getStartDistance().gt0())
+        {
+            return set; // this lane is only downstream
+        }
         Length ds = gtu.getReference().getDx().minus(gtu.getRelativePositions().get(pos).getDx());
         // the list is ordered, but only for DIR_PLUS, need to do our own ordering
         Length minimumPosition;
@@ -1373,7 +1425,6 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             minimumPosition = record.getLane().getLength().plus(record.getStartDistance()).plus(ds);
             maximumPosition = record.getLane().getLength();
         }
-        SortedSet<Entry<T>> set = new TreeSet<>();
         Length distance;
         for (LaneBasedObject object : record.getLane().getLaneBasedObjects(minimumPosition, maximumPosition))
         {
@@ -1442,7 +1493,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             @Override
             public DirectedPoint getLocation() throws RemoteException
             {
-                LaneStructureRecord rt = getRootLSR();
+                LaneStructureRecord rt = getRootRecord();
                 if (rt == null)
                 {
                     return gtu.getLocation();
@@ -1504,7 +1555,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                     }
                     else
                     {
-                        LaneStructureRecord rt = getRootLSR();
+                        LaneStructureRecord rt = getRootRecord();
                         if (rt != null)
                         {
                             paintRecord(rt, graphics);
@@ -1522,9 +1573,11 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             {
                 // line
                 DirectedPoint loc = Try.assign(() -> getSource().getLocation(), "Unable to return location.");
-                graphics.setStroke(new BasicStroke(0.5f));
-                graphics.setColor(RollingLaneStructure.this.upstreamEdge.contains(lsr) ? Color.MAGENTA
-                        : RollingLaneStructure.this.downstreamEdge.contains(lsr) ? Color.GREEN : Color.CYAN);
+                graphics.setStroke(
+                        new BasicStroke(RollingLaneStructure.this.crossSectionRecords.containsValue(lsr) ? 1.0f : 0.5f));
+                graphics.setColor(RollingLaneStructure.this.crossSectionRecords.containsValue(lsr) ? Color.PINK
+                        : RollingLaneStructure.this.upstreamEdge.contains(lsr) ? Color.MAGENTA
+                                : RollingLaneStructure.this.downstreamEdge.contains(lsr) ? Color.GREEN : Color.CYAN);
                 OTSLine3D line = Try.assign(() -> lsr.getLane().getCenterLine().extractFractional(0.1, 0.9),
                         "Exception while painting LaneStructures");
                 Path2D.Double path = new Path2D.Double();
@@ -1572,6 +1625,9 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                     graphics.setColor(Color.DARK_GRAY);
                     graphics.draw(path);
                 }
+                // left/right
+                paintLateralConnection(lsr, lsr.getLeft(), Color.RED, graphics, loc);
+                paintLateralConnection(lsr, lsr.getRight(), Color.BLUE, graphics, loc);
                 // recursion to depending records
                 Field dependentField = Try.assign(() -> RollingLaneStructureRecord.class.getDeclaredField("dependentRecords"),
                         "Exception while painting LaneStructure");
@@ -1585,6 +1641,36 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                         paintRecord(dependable, graphics);
                     }
                 }
+            }
+
+            /**
+             * Paint the connection to a lateral record.
+             * @param main LaneStructureRecord; main record
+             * @param adj LaneStructureRecord; adjacent record, can be {@code null}
+             * @param color Color; color
+             * @param graphics Graphics2D; graphics
+             * @param loc DirectedPoint; location
+             */
+            private void paintLateralConnection(final LaneStructureRecord main, final LaneStructureRecord adj,
+                    final Color color, final Graphics2D graphics, final DirectedPoint loc)
+            {
+                if (adj == null)
+                {
+                    return;
+                }
+                float f1 = main.getDirection().isPlus() ? 0.45f : 0.55f;
+                float f2 = adj.getDirection().isPlus() ? 0.55f : 0.45f;
+                DirectedPoint p1 = Try.assign(() -> main.getLane().getCenterLine().getLocationFraction(f1),
+                        "Exception while painting LaneStructure");
+                DirectedPoint p2 = Try.assign(() -> adj.getLane().getCenterLine().getLocationFraction(f2),
+                        "Exception while painting LaneStructure");
+                Path2D.Double path = new Path2D.Double();
+                path.moveTo(p1.x - loc.x, -(p1.y - loc.y));
+                path.lineTo(p2.x - loc.x, -(p2.y - loc.y));
+                graphics.setStroke(new BasicStroke(0.05f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10f,
+                        new float[] { .15f, 0.6f }, 0f));
+                graphics.setColor(color);
+                graphics.draw(path);
             }
         }
         Try.execute(() -> new LaneStructureAnimation(new LaneStructureLocatable()), "Could not create animation.");

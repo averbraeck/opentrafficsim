@@ -38,8 +38,6 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
-import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
@@ -70,9 +68,6 @@ public final class LmrsUtil implements LmrsParameters
 
     /** Headway relaxation time. */
     public static final ParameterTypeDuration TAU = ParameterTypes.TAU;
-
-    /** Maximum comfortable car-following deceleration. */
-    public static final ParameterTypeAcceleration B = ParameterTypes.B;
 
     /** Maximum critical deceleration, e.g. stop/go at traffic light. */
     public static final ParameterTypeAcceleration BCRIT = ParameterTypes.BCRIT;
@@ -130,7 +125,6 @@ public final class LmrsUtil implements LmrsParameters
         // during a lane change, both leaders are followed
         LateralDirectionality initiatedLaneChange;
         TurnIndicatorIntent turnIndicatorStatus = TurnIndicatorIntent.NONE;
-        IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
         if (laneChange.isChangingLane())
         {
             RelativeLane secondLane = laneChange.getSecondLane(gtu);
@@ -142,17 +136,6 @@ public final class LmrsUtil implements LmrsParameters
                 initHeadwayRelaxation(params, secondLeaders.first());
             }
             a = Acceleration.min(a, aSecond);
-            if (intersection != null)
-            {
-                // TODO should this be here? It seems an acceleration task that should respond during a lane change
-                ConflictPlans conflictPlan = new ConflictPlans(); // TODO acquire conflict plans
-                a = Acceleration.min(a,
-                        ConflictUtil.approachConflicts(params, intersection.getConflicts(secondLane), secondLeaders,
-                                carFollowingModel, ego.getLength(), ego.getWidth(), speed, ego.getAcceleration(), sli,
-                                conflictPlan, gtu));
-                // a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
-                // secondLane.getLateralDirectionality(), intersection));
-            }
         }
         else
         {
@@ -160,7 +143,7 @@ public final class LmrsUtil implements LmrsParameters
             // determine lane change desire based on incentives
             Desire desire = getLaneChangeDesire(params, perception, carFollowingModel, mandatoryIncentives, voluntaryIncentives,
                     lmrsData.desireMap);
-
+            
             // lane change decision
             double dFree = params.getParameter(DFREE);
             initiatedLaneChange = LateralDirectionality.NONE;
@@ -184,11 +167,6 @@ public final class LmrsUtil implements LmrsParameters
                     }
                     a = Acceleration.min(a, carFollowingModel.followingAcceleration(params, speed, sli,
                             neighbors.getLeaders(RelativeLane.LEFT)));
-                    if (intersection != null)
-                    {
-                        a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
-                                LateralDirectionality.LEFT, intersection));
-                    }
                 }
             }
             else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree)
@@ -210,11 +188,6 @@ public final class LmrsUtil implements LmrsParameters
                     }
                     a = Acceleration.min(a, carFollowingModel.followingAcceleration(params, speed, sli,
                             neighbors.getLeaders(RelativeLane.RIGHT)));
-                    if (intersection != null)
-                    {
-                        a = Acceleration.min(a, quickIntersectionScan(params, sli, carFollowingModel, speed,
-                                LateralDirectionality.RIGHT, intersection));
-                    }
                 }
             }
             if (!initiatedLaneChange.isNone())
@@ -485,6 +458,12 @@ public final class LmrsUtil implements LmrsParameters
 
         // legal?
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        if (Try.assign(() -> perception.getGtu(), "").getId().equals("1323") && lat.isLeft() && Try
+                .assign(() -> perception.getGtu().getReferencePosition(), "").getLane().getParentLink().getId().equals("929_0"))
+        {
+            double q = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).si;
+            System.out.println("Legal distance is " + q);
+        }
         if (infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).si <= 0.0)
         {
             return false;
@@ -500,7 +479,7 @@ public final class LmrsUtil implements LmrsParameters
             {
                 return false;
             }
-            if (quickIntersectionScan(params, sli, cfm, ownSpeed, lat, intersection).lt(params.getParameter(B).neg()))
+            if (quickIntersectionScan(params, sli, cfm, ownSpeed, lat, intersection).lt(params.getParameter(BCRIT).neg()))
             {
                 return false;
             }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import java.util.SortedSet;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -9,6 +11,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -45,31 +48,31 @@ public class IncentiveRoute implements MandatoryIncentive
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
+        Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
+        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+
         // desire to leave current lane
-        double dCurr = getDesireToLeave(parameters, perception, RelativeLane.CURRENT);
-        double dLeft;
-        if (perception.getLaneStructure().getCrossSection().contains(RelativeLane.LEFT))
+        SortedSet<InfrastructureLaneChangeInfo> currentInfo = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);
+        Length currentFirst = currentInfo.isEmpty() || currentInfo.first().getRequiredNumberOfLaneChanges() == 0
+                ? Length.POSITIVE_INFINITY : currentInfo.first().getRemainingDistance();
+        double dCurr = getDesireToLeave(parameters, infra, RelativeLane.CURRENT, speed);
+        double dLeft = 0;
+        if (perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT)
+                && infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).neg().lt(currentFirst))
         {
             // desire to leave left lane
-            dLeft = getDesireToLeave(parameters, perception, RelativeLane.LEFT);
+            dLeft = getDesireToLeave(parameters, infra, RelativeLane.LEFT, speed);
             // desire to leave from current to left lane
             dLeft = dLeft < dCurr ? dCurr : dLeft > dCurr ? -dLeft : 0;
         }
-        else
-        {
-            dLeft = 0;
-        }
-        double dRigh;
-        if (perception.getLaneStructure().getCrossSection().contains(RelativeLane.RIGHT))
+        double dRigh = 0;
+        if (perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT) && infra
+                .getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).neg().lt(currentFirst))
         {
             // desire to leave right lane
-            dRigh = getDesireToLeave(parameters, perception, RelativeLane.RIGHT);
+            dRigh = getDesireToLeave(parameters, infra, RelativeLane.RIGHT, speed);
             // desire to leave from current to right lane
             dRigh = dRigh < dCurr ? dCurr : dRigh > dCurr ? -dRigh : 0;
-        }
-        else
-        {
-            dRigh = 0;
         }
         return new Desire(dLeft, dRigh);
     }
@@ -77,23 +80,22 @@ public class IncentiveRoute implements MandatoryIncentive
     /**
      * Calculates desire to leave a lane.
      * @param params parameters
-     * @param perception perception
+     * @param infra infrastructure perception
      * @param lane relative lane to evaluate
+     * @param speed speed
      * @return desire to leave a lane
      * @throws ParameterException in case of a parameter exception
      * @throws OperationalPlanException in case of perception exceptions
      */
-    private static double getDesireToLeave(final Parameters params, final LanePerception perception, final RelativeLane lane)
-            throws ParameterException, OperationalPlanException
+    private static double getDesireToLeave(final Parameters params, final InfrastructurePerception infra,
+            final RelativeLane lane, final Speed speed) throws ParameterException, OperationalPlanException
     {
-        Speed v = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         double dOut = 0.0;
-        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         if (infra.getCrossSection().contains(lane))
         {
             for (InfrastructureLaneChangeInfo info : infra.getInfrastructureLaneChangeInfo(lane))
             {
-                double d = getDesireToLeave(params, info.getRemainingDistance(), info.getRequiredNumberOfLaneChanges(), v);
+                double d = getDesireToLeave(params, info.getRemainingDistance(), info.getRequiredNumberOfLaneChanges(), speed);
                 dOut = d > dOut ? d : dOut;
             }
         }

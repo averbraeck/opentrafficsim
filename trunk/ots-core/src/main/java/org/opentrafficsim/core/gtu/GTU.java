@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -134,13 +135,19 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     StrategicalPlanner getStrategicalPlanner(Time time);
 
     /** @return TacticalPlanner; the current tactical planner that can generate an operational plan */
-    TacticalPlanner<?, ?> getTacticalPlanner();
+    default TacticalPlanner<?, ?> getTacticalPlanner()
+    {
+        return getStrategicalPlanner().getTacticalPlanner();
+    }
 
     /**
      * @param time Time; time to obtain the tactical planner at
      * @return TacticalPlanner; the tactical planner that can generate an operational plan at the given time
      */
-    TacticalPlanner<?, ?> getTacticalPlanner(Time time);
+    default TacticalPlanner<?, ?> getTacticalPlanner(Time time)
+    {
+        return getStrategicalPlanner(time).getTacticalPlanner(time);
+    }
 
     /** @return the current operational plan for the GTU */
     OperationalPlan getOperationalPlan();
@@ -150,22 +157,6 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * @return the operational plan for the GTU at the given time.
      */
     OperationalPlan getOperationalPlan(Time time);
-
-    /** @return the status of the turn indicator */
-    TurnIndicatorStatus getTurnIndicatorStatus();
-
-    /**
-     * @param time Time; time to obtain the turn indicator status at
-     * @return the status of the turn indicator at the given time
-     */
-    TurnIndicatorStatus getTurnIndicatorStatus(Time time);
-
-    /**
-     * Set the status of the turn indicator.
-     * @param turnIndicatorStatus the new status of the turn indicator.
-     * @throws GTUException when GTUType does not have a turn indicator
-     */
-    void setTurnIndicatorStatus(TurnIndicatorStatus turnIndicatorStatus) throws GTUException;
 
     /** Destroy the GTU from the simulation and animation. */
     void destroy();
@@ -181,41 +172,38 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * @return Color; the base color of the GTU (not the state-based color)
      */
     Color getBaseColor();
+
+    /**
+     * Adds the provided GTU to this GTU, meaning it moves with this GTU.
+     * @param gtu GTU; gtu to enter this GTU
+     * @throws GTUException if the gtu already has a parent
+     */
+    void addGtu(GTU gtu) throws GTUException;
+
+    /**
+     * Removes the provided GTU from this GTU, meaning it no longer moves with this GTU.
+     * @param gtu GTU; gtu to exit this GTU
+     */
+    void removeGtu(GTU gtu);
+
+    /**
+     * Set the parent GTU.
+     * @param gtu GTU; parent GTU, may be {@code null}
+     * @throws GTUException if the gtu already has a parent
+     */
+    void setParent(GTU gtu) throws GTUException;
     
     /**
-     * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
-     * by:<br>
-     * <br>
-     * c0 * g(v) + c1 + c3*v^2<br>
-     * <br>
-     * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
-     * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
-     * @return boolean; whether the braking lights are on
+     * Returns the parent GTU, or {@code null} if this GTU has no parent.
+     * @return GTU; parent GTU, or {@code null} if this GTU has no parent
      */
-    default boolean isBrakingLightsOn()
-    {
-        double v = getSpeed().si;
-        double a = getAcceleration().si;
-        return a < (v < 6.944 ? 0.0 : -0.2) - 0.15 * v - 0.00025 * v * v;
-    }
-    
+    GTU getParent();
+
     /**
-     * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
-     * by:<br>
-     * <br>
-     * c0 * g(v) + c1 + c3*v^2<br>
-     * <br>
-     * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
-     * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
-     * @param when Time; time
-     * @return boolean; whether the braking lights are on
+     * Returns the children GTU's.
+     * @return Set&lt;GTU&gt;; children GTU's
      */
-    default boolean isBrakingLightsOn(final Time when)
-    {
-        double v = getSpeed(when).si;
-        double a = getAcceleration(when).si;
-        return a < (v < 6.944 ? 0.0 : -0.2) - 0.15 * v - 0.00025 * v * v;
-    }
+    Set<GTU> getChildren();
 
     /**
      * The event type for pub/sub indicating the initialization of a new GTU. <br>
@@ -225,8 +213,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
 
     /**
      * The event type for pub/sub indicating a move. <br>
-     * Payload: [String id, DirectedPoint position, Speed speed, Acceleration acceleration, TurnIndicatorStatus
-     * turnIndicatorStatus, Length odometer]
+     * Payload: [String id, DirectedPoint position, Speed speed, Acceleration acceleration, Length odometer]
      */
     EventType MOVE_EVENT = new EventType("GTU.MOVE");
 

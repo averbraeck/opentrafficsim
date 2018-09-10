@@ -13,8 +13,8 @@ import nl.tudelft.simulation.language.Throw;
 /**
  * Type class to define different types of data by which trajectories can be extended beyond the basic t, x, v, a. Extend this
  * class to define a new data type. Extended data types are defined with 3 generic types. {@code <T>} is the type of a single
- * scalar value, {@code <O>} is the output type of the whole trajectory, e.g. {@code List<O>} or {@code FloatLengthVector}, and
- * {@code <S>} is the storage type by which the data is gathered, e.g. {@code List<O>} or {@code float[]}.
+ * scalar value, {@code <O>} is the output type of the whole trajectory, e.g. {@code List<Double>} or {@code FloatLengthVector},
+ * and {@code <S>} is the storage type by which the data is gathered, e.g. {@code List<Double>} or {@code float[]}.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.

@@ -1,5 +1,6 @@
 package loadfromxml;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -16,9 +17,12 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.ValueException;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
@@ -29,11 +33,21 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.animation.BlockingColorer;
+import org.opentrafficsim.road.gtu.animation.DesiredSpeedColorer;
+import org.opentrafficsim.road.gtu.animation.FixedColor;
+import org.opentrafficsim.road.gtu.animation.GTUTypeColorer;
+import org.opentrafficsim.road.gtu.animation.SplitColorer;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -150,6 +164,14 @@ public class LoadXML extends AbstractWrappableAnimation
     /** Currently active XML model. */
     private XMLModel model = null;
 
+    /** GTU colorer. */
+    private GTUColorer colorer = SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
+            .addColorer(GTUTypeColorer.DEFAULT).addColorer(new IDGTUColorer())
+            .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
+            .addColorer(new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
+            .addColorer(new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)))
+            .addColorer(new SplitColorer()).addColorer(new BlockingColorer()).build();
+
     /** {@inheritDoc} */
     @Override
     protected final OTSModelInterface makeModel() throws OTSSimulationException
@@ -222,4 +244,12 @@ public class LoadXML extends AbstractWrappableAnimation
         }
 
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public GTUColorer getColorer()
+    {
+        return this.colorer;
+    }
+
 }

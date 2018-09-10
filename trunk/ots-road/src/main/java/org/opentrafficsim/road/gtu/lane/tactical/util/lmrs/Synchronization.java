@@ -1,5 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.canBeAhead;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.gentleUrgency;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getFollower;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getMergeDistance;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.removeAllUpstreamOfConflicts;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.requiredBufferSpace;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.stopForEnd;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.tagAlongAcceleration;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -13,6 +22,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -46,7 +56,7 @@ public interface Synchronization extends LmrsParameters
 {
 
     /** Synchronization that only includes stopping for a dead-end. */
-    public static Synchronization DEADEND = new Synchronization()
+    Synchronization DEADEND = new Synchronization()
     {
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
@@ -100,7 +110,7 @@ public interface Synchronization extends LmrsParameters
     };
 
     /** Synchronization where current leaders are taken. */
-    public static Synchronization PASSIVE = new Synchronization()
+    Synchronization PASSIVE = new Synchronization()
     {
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
@@ -133,9 +143,9 @@ public interface Synchronization extends LmrsParameters
                     }
                 }
             }
+            Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             if (leader != null)
             {
-                Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
                 Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,
                         params, sli, cfm);
                 a = Acceleration.min(a, aSingle);
@@ -144,13 +154,19 @@ public interface Synchronization extends LmrsParameters
                 a = Acceleration.min(a, DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData));
 
             }
+
+            // check merge distance
+            Length xMerge = getMergeDistance(perception, lat);
+            Acceleration aMerge = LmrsUtil.singleAcceleration(xMerge, ownSpeed, Speed.ZERO, desire, params, sli, cfm);
+            a = Acceleration.max(a, aMerge);
+
             return a;
         }
 
     };
 
     /** Synchronization where current leaders are taken. Synchronization is disabled for d_sync&lt;d&lt;d_coop at low speeds. */
-    public static Synchronization PASSIVE_MOVING = new Synchronization()
+    Synchronization PASSIVE_MOVING = new Synchronization()
     {
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
@@ -169,7 +185,7 @@ public interface Synchronization extends LmrsParameters
     };
 
     /** Synchronization where a suitable leader is actively targeted, in relation to infrastructure. */
-    public static Synchronization ACTIVE = new Synchronization()
+    Synchronization ACTIVE = new Synchronization()
     {
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
@@ -202,8 +218,9 @@ public interface Synchronization extends LmrsParameters
             // get xMergeSync, the distance within which a gap is pointless as the lane change is not possible
             InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
             SortedSet<InfrastructureLaneChangeInfo> info = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);
-            Length xMerge = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).minus(dx);
-            xMerge = xMerge.lt0() ? xMerge.neg() : Length.ZERO; // zero or positive value where lane change is not possible
+            // Length xMerge = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).minus(dx);
+            // xMerge = xMerge.lt0() ? xMerge.neg() : Length.ZERO; // zero or positive value where lane change is not possible
+            Length xMerge = getMergeDistance(perception, lat);
             int nCur = 0;
             Length xCur = Length.POSITIVE_INFINITY;
             for (InfrastructureLaneChangeInfo lcInfo : info)
@@ -373,6 +390,22 @@ public interface Synchronization extends LmrsParameters
     };
 
     /**
+     * Returns the distance to the next merge, stopping within this distance is futile for a lane change.
+     * @param perception LanePerception; perception
+     * @param lat LateralDirectionality; lateral direction
+     * @return Length; distance to the next merge
+     * @throws OperationalPlanException if there is no infrastructure perception
+     */
+    static Length getMergeDistance(final LanePerception perception, final LateralDirectionality lat)
+            throws OperationalPlanException
+    {
+        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        Length dx = Try.assign(() -> perception.getGtu().getFront().getDx(), "Could not obtain GTU.");
+        Length xMerge = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).minus(dx);
+        return xMerge.lt0() ? xMerge.neg() : Length.ZERO; // zero or positive value where lane change is not possible
+    }
+
+    /**
      * Determine acceleration for synchronization.
      * @param perception perception
      * @param params parameters
@@ -400,10 +433,10 @@ public interface Synchronization extends LmrsParameters
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> set, final LanePerception perception,
             final RelativeLane relativeLane) throws OperationalPlanException
     {
-        if (true)
-        {
-            return set;
-        }
+//        if (true)
+//        {
+//            return set;
+//        }
         // TODO find a better solution for this inefficient hack... when to ignore a vehicle for synchronization?
         SortedSetPerceptionIterable<HeadwayGTU, LaneBasedGTU> out = new SortedSetPerceptionIterable<>();
         if (set == null)

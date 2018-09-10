@@ -5,16 +5,16 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 import nl.tudelft.simulation.language.Throw;
 
 /**
- * Simplified plan containing only an acceleration value and possible lane change direction.
+ * Simplified plan containing an acceleration value and possible lane change direction.
  * <p>
  * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -42,7 +42,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /** Distance to object causing turn indicator intent. */
     private Length indicatorObjectDistance = null;
-    
+
     /** Duration of the plan. */
     private final Duration duration;
 
@@ -60,7 +60,8 @@ public class SimpleOperationalPlan implements Serializable
      * @param duration duration
      * @param laneChangeDirection lane change direction, may be {@code null}.
      */
-    public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration, final LateralDirectionality laneChangeDirection)
+    public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration,
+            final LateralDirectionality laneChangeDirection)
     {
         Throw.whenNull(acceleration, "Acceleration may not be null.");
         Throw.whenNull(duration, "Duration may not be null.");
@@ -78,7 +79,7 @@ public class SimpleOperationalPlan implements Serializable
     {
         return this.acceleration;
     }
-    
+
     /**
      * @return duration.
      */
@@ -112,7 +113,7 @@ public class SimpleOperationalPlan implements Serializable
         checkAcceleration(a);
         this.acceleration = Acceleration.min(this.acceleration, a);
     }
-
+    
     /**
      * Check acceleration level.
      * @param a acceleration
@@ -250,10 +251,10 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
-     * @param gtu GTU to set the indicator on
+     * @param gtu LaneBasedGTU to set the indicator on
      * @throws GTUException if GTU does not support the indicator
      */
-    public final void setTurnIndicator(final GTU gtu) throws GTUException
+    public final void setTurnIndicator(final LaneBasedGTU gtu) throws GTUException
     {
         if (this.indicatorIntent.isLeft())
         {
