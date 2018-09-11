@@ -677,7 +677,7 @@ final class Links
                     {
                         try
                         {
-                            new LaneAnimation(lane, simulator, color, true);
+                            new LaneAnimation(lane, simulator, color, false);
                         }
                         catch (RemoteException exception)
                         {
