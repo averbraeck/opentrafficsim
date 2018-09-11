@@ -55,20 +55,25 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     {
         GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
         NONE = new LinkType("NONE", null, compatibility);
+        //
         compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_BOTH);
         ROAD = new LinkType("ROAD", null, compatibility);
+        //
         compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
         compatibility.addAllowedGTUType(GTUType.PEDESTRIAN, LongitudinalDirectionality.DIR_NONE);
         compatibility.addAllowedGTUType(GTUType.BICYCLE, LongitudinalDirectionality.DIR_NONE);
         FREEWAY = new LinkType("FREEWAY", ROAD, compatibility);
+        //
         compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.WATER_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
         WATER_WAY = new LinkType("WATER_WAY", null, compatibility);
+        //
         compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
         RAIL_WAY = new LinkType("WATER_WAY", null, compatibility);
+        //
         compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
         compatibility.addAllowedGTUType(GTUType.WATER_WAY_USER, LongitudinalDirectionality.DIR_PLUS);
