@@ -11,7 +11,7 @@ package org.opentrafficsim.gui;
  * this interface when using default on screen items using a local class.
  * 
  * <pre>
- * class AppearanceControlComboBox<T> extends JComboBox<T> implements AppearanceControl
+ * class AppearanceControlComboBox&lt;T&gt; extends JComboBox&lt;T&gt; implements AppearanceControl
  * {
  *     public boolean isFont()
  *     {
