@@ -17,7 +17,6 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.junit.Test;
-import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -47,13 +46,11 @@ public class OTSNodeTest
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OTSGeometryException if that happens unchaught; this test has failed
      */
-    // TODO: TEST FAILS DUE TO CHANGES IN COMPATIBILITY @Test
+    // TODO: TEST FAILS DUE TO CHANGES IN COMPATIBILITY
+    @Test
     public final void testOTSNode() throws NetworkException, OTSGeometryException
     {
         Network network = new OTSNetwork("Node test network");
-        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
-        LinkType ONEWAYROAD = new LinkType("Oneway", null, compatibility);
         Direction direction = new Direction(2.3, DirectionUnit.NORTH_RADIAN);
         Angle slope = new Angle(10, AngleUnit.PERCENT);
         OTSPoint3D point1 = new OTSPoint3D(20, 40, 60);
@@ -89,19 +86,19 @@ public class OTSNodeTest
         }.getMockInstance();
 
         // Create a couple of links
-        Link link1 = new OTSLink(network, "link 1", node1, node2, ONEWAYROAD, new OTSLine3D(node1.getPoint(), node2.getPoint()),
-                simulator);
+        Link link1 = new OTSLink(network, "link 1", node1, node2, LinkType.ROAD,
+                new OTSLine3D(node1.getPoint(), node2.getPoint()), simulator);
         assertEquals("node 1 has one link", 1, node1.getLinks().size());
         assertEquals("node 2 has one link", 1, node2.getLinks().size());
         assertEquals("link at node 1 is link1", link1, node1.getLinks().iterator().next());
         assertEquals("link at node 2 is link1", link1, node2.getLinks().iterator().next());
         OTSNode node4 = new OTSNode(network, "node 3", new OTSPoint3D(10, 10, 10));
-        Link link2 = new OTSLink(network, "link 2", node1, node4, ONEWAYROAD, new OTSLine3D(node1.getPoint(), node4.getPoint()),
-                simulator);
-        Link link3 = new OTSLink(network, "link 3", node4, node2, ONEWAYROAD, new OTSLine3D(node4.getPoint(), node2.getPoint()),
-                simulator);
-        Link link4 = new OTSLink(network, "link 4", node2, node1, ONEWAYROAD, new OTSLine3D(node2.getPoint(), node1.getPoint()),
-                simulator);
+        Link link2 = new OTSLink(network, "link 2", node1, node4, LinkType.ROAD,
+                new OTSLine3D(node1.getPoint(), node4.getPoint()), simulator);
+        Link link3 = new OTSLink(network, "link 3", node4, node2, LinkType.ROAD,
+                new OTSLine3D(node4.getPoint(), node2.getPoint()), simulator);
+        Link link4 = new OTSLink(network, "link 4", node2, node1, LinkType.ROAD,
+                new OTSLine3D(node2.getPoint(), node1.getPoint()), simulator);
         assertEquals("node 1 has three links", 3, node1.getLinks().size());
         assertEquals("node 2 has three links", 3, node2.getLinks().size());
         assertEquals("node 4 has two links", 2, node4.getLinks().size());
@@ -125,8 +122,8 @@ public class OTSNodeTest
         assertTrue("node 1 has direct connection to node 2", node1.isDirectionallyConnectedTo(GTUType.VEHICLE, node2));
         Node node5 = new OTSNode(network, "node 5", new OTSPoint3D(1000, 0, 0));
         assertFalse("node 1 has no direct connection to node 5", node1.isDirectionallyConnectedTo(GTUType.VEHICLE, node5));
-        Link link5 = new OTSLink(network, "link 5", node5, node1, ONEWAYROAD, new OTSLine3D(node5.getPoint(), node1.getPoint()),
-                simulator);
+        Link link5 = new OTSLink(network, "link 5", node5, node1, LinkType.ROAD,
+                new OTSLine3D(node5.getPoint(), node1.getPoint()), simulator);
         assertFalse("node 1 still has no direct connection to node 5",
                 node1.isDirectionallyConnectedTo(GTUType.VEHICLE, node5));
         assertTrue("node 5 does have a direct connection to node 1", node5.isDirectionallyConnectedTo(GTUType.VEHICLE, node1));
@@ -148,7 +145,8 @@ public class OTSNodeTest
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OTSGeometryException if that happens uncaught; this test has failed
      */
-    // TODO: TEST FAILS DUE TO CHANGES IN COMPATIBILITY @Test
+    // TODO: TEST FAILS DUE TO CHANGES IN COMPATIBILITY
+    @Test
     public final void connectionTest() throws NetworkException, OTSGeometryException
     {
         Network network = new OTSNetwork("connection test network");
@@ -156,11 +154,6 @@ public class OTSNodeTest
         {
             // no implementation needed.
         }.getMockInstance();
-
-        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
-        LinkType ONEWAYROAD = new LinkType("Oneway", null, compatibility);
-
         OTSNode node = new OTSNode(network, "main", new OTSPoint3D(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
@@ -197,7 +190,7 @@ public class OTSNodeTest
         }
         Node n1 = network.getNode("neighbor node 1");
         Node n2 = network.getNode("neighbor node 2");
-        Link unrelatedLink = new OTSLink(network, "unrelated link", n1, n2, ONEWAYROAD,
+        Link unrelatedLink = new OTSLink(network, "unrelated link", n1, n2, LinkType.ROAD,
                 new OTSLine3D(n1.getPoint(), n2.getPoint()), simulator);
         try
         {
@@ -228,7 +221,7 @@ public class OTSNodeTest
             // Ignore expected exception
         }
         // Create a link that does not allow traffic TO the node
-        Link oneWay = new OTSLink(network, "one way toward reverse", n1, node, ONEWAYROAD,
+        Link oneWay = new OTSLink(network, "one way toward reverse", n1, node, LinkType.ROAD,
                 new OTSLine3D(n1.getPoint(), node.getPoint()), simulator);
         try
         {
@@ -240,7 +233,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        oneWay = new OTSLink(network, "one way away forward", node, n1, ONEWAYROAD,
+        oneWay = new OTSLink(network, "one way away forward", node, n1, LinkType.ROAD,
                 new OTSLine3D(node.getPoint(), n1.getPoint()), simulator);
         try
         {
@@ -252,7 +245,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        oneWay = new OTSLink(network, "one way toward forward", n1, node, ONEWAYROAD,
+        oneWay = new OTSLink(network, "one way toward forward", n1, node, LinkType.ROAD,
                 new OTSLine3D(n1.getPoint(), node.getPoint()), simulator);
         try
         {
@@ -263,7 +256,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        oneWay = new OTSLink(network, "one way away reverse", node, n1, ONEWAYROAD,
+        oneWay = new OTSLink(network, "one way away reverse", node, n1, LinkType.ROAD,
                 new OTSLine3D(node.getPoint(), n1.getPoint()), simulator);
         try
         {
@@ -274,7 +267,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, ONEWAYROAD,
+        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.ROAD,
                 new OTSLine3D(n2.getPoint(), node.getPoint()), simulator);
         try
         {
@@ -294,7 +287,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, ONEWAYROAD,
+        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.ROAD,
                 new OTSLine3D(node.getPoint(), n2.getPoint()), simulator);
         try
         {
@@ -321,7 +314,8 @@ public class OTSNodeTest
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OTSGeometryException if that happens uncaught; this test has failed
      */
-    // TODO: TEST FAILS DUE TO CHANGES IN COMPATIBILITY @Test
+    // TODO: TEST FAILS DUE TO CHANGES IN COMPATIBILITY
+    @Test
     public final void connectionSetTest() throws NetworkException, OTSGeometryException
     {
         Network network = new OTSNetwork("connectionSets test network");
@@ -329,17 +323,12 @@ public class OTSNodeTest
         {
             // no implementation needed.
         }.getMockInstance();
-
-        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
-        LinkType ONEWAYROAD = new LinkType("Oneway", null, compatibility);
-
         OTSNode node = new OTSNode(network, "main", new OTSPoint3D(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
         {
             Node neighborNode = new OTSNode(network, "neighbor node " + i, new OTSPoint3D(20 + 10 * i, 0, 10));
-            new OTSLink(network, "link from neighbor node " + i, neighborNode, node, ONEWAYROAD,
+            new OTSLink(network, "link from neighbor node " + i, neighborNode, node, LinkType.ROAD,
                     new OTSLine3D(neighborNode.getPoint(), node.getPoint()), simulator);
         }
         // Prove that we can go from any neighborNode to any OTHER neighborNode
@@ -370,7 +359,7 @@ public class OTSNodeTest
         }
         Node n1 = network.getNode("neighbor node 1");
         Node n2 = network.getNode("neighbor node 2");
-        Link unrelatedLink = new OTSLink(network, "unrelated link", n1, n2, ONEWAYROAD,
+        Link unrelatedLink = new OTSLink(network, "unrelated link", n1, n2, LinkType.ROAD,
                 new OTSLine3D(n1.getPoint(), n2.getPoint()), simulator);
         try
         {
@@ -401,7 +390,7 @@ public class OTSNodeTest
             // Ignore expected exception
         }
         // Create a link that does not allow traffic TO the node
-        Link oneWay = new OTSLink(network, "one way toward reverse", n1, node, ONEWAYROAD,
+        Link oneWay = new OTSLink(network, "one way toward reverse", n1, node, LinkType.ROAD,
                 new OTSLine3D(n1.getPoint(), node.getPoint()), simulator);
         try
         {
@@ -413,7 +402,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        oneWay = new OTSLink(network, "one way away forward", node, n1, ONEWAYROAD,
+        oneWay = new OTSLink(network, "one way away forward", node, n1, LinkType.ROAD,
                 new OTSLine3D(node.getPoint(), n1.getPoint()), simulator);
         try
         {
@@ -425,7 +414,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        oneWay = new OTSLink(network, "one way toward forward", n1, node, ONEWAYROAD,
+        oneWay = new OTSLink(network, "one way toward forward", n1, node, LinkType.ROAD,
                 new OTSLine3D(n1.getPoint(), node.getPoint()), simulator);
         try
         {
@@ -436,7 +425,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        oneWay = new OTSLink(network, "one way away reverse", node, n1, ONEWAYROAD,
+        oneWay = new OTSLink(network, "one way away reverse", node, n1, LinkType.ROAD,
                 new OTSLine3D(node.getPoint(), n1.getPoint()), simulator);
         try
         {
@@ -447,7 +436,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, ONEWAYROAD,
+        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.ROAD,
                 new OTSLine3D(n2.getPoint(), node.getPoint()), simulator);
         try
         {
@@ -467,7 +456,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, ONEWAYROAD,
+        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.ROAD,
                 new OTSLine3D(node.getPoint(), n2.getPoint()), simulator);
         try
         {
