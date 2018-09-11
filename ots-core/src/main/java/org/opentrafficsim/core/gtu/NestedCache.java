@@ -98,10 +98,10 @@ public class NestedCache<T>
      * Return branch for key.
      * @param key Object; key
      * @return NestedCache; branch for key
-     * @throws IllegalStateException; if this is not a branch level
+     * @throws IllegalStateException if this is not a branch level
      */
     @SuppressWarnings("unchecked")
-    public NestedCache<T> getChild(final Object key)
+    public NestedCache<T> getChild(final Object key) throws IllegalStateException
     {
         Throw.when(this.types.length < 2, IllegalStateException.class, "Children can only be obtained on branch levels.");
         return (NestedCache<T>) this.map.get(key);
@@ -111,10 +111,10 @@ public class NestedCache<T>
      * Return value for key.
      * @param key Object; key
      * @return T; value for key
-     * @throws IllegalStateException; if this is not a leaf level
+     * @throws IllegalStateException if this is not a leaf level
      */
     @SuppressWarnings("unchecked")
-    public T getValue(final Object key)
+    public T getValue(final Object key) throws IllegalStateException
     {
         Throw.when(this.types.length != 1, IllegalStateException.class, "Values can only be obtained on leaf levels.");
         return (T) this.map.get(key);
