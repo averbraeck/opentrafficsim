@@ -55,6 +55,8 @@
 
   <properties>
     <jdk.version>1.8</jdk.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <sonar.scm.disabled>true</sonar.scm.disabled>
@@ -77,7 +79,7 @@
     <findbugs.version>3.0.1u2</findbugs.version>
     <jmockit.version>1.27</jmockit.version>
 
-    <maven.compiler.version>3.3</maven.compiler.version>
+    <maven.compiler.version>3.8.0</maven.compiler.version>
     <maven.site.version>3.4</maven.site.version>
     <maven.deploy.version>2.8.2</maven.deploy.version>
     <maven.install.version>2.5.2</maven.install.version>
@@ -419,7 +421,7 @@
         </configuration>
       </plugin>
 
-      <plugin> 
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>${maven.project-info-reports.version}</version>
