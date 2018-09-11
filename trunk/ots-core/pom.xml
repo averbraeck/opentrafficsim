@@ -5,7 +5,7 @@
   <parent>
     <groupId>opentrafficsim</groupId>
     <artifactId>ots</artifactId>
-    <version>0.15.01-SNAPSHOT</version>
+    <version>0.15.01</version>
     <relativePath>../ots/pom.xml</relativePath>
   </parent>
 
@@ -84,6 +84,13 @@
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <optional>false</optional>
     </dependency>
 
    </dependencies>
