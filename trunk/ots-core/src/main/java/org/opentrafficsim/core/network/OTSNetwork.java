@@ -550,8 +550,9 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> buildGraph(final GTUType gtuType, final LinkWeight linkWeight)
     {
         // TODO: take connections into account, and possibly do node expansion to build the graph
-        @SuppressWarnings({ "unchecked" }) // TODO: the next line has problems compiling...
-        Class<? extends LinkEdge<Link>> linkEdgeClass = (Class<? extends LinkEdge<Link>>) LinkEdge.class;
+        @SuppressWarnings({ "unchecked" }) 
+        // TODO: the next line with .class has problems compiling... So used a dirty hack instead for now...
+        Class<LinkEdge<Link>> linkEdgeClass = (Class<LinkEdge<Link>>) new LinkEdge<OTSLink>(null).getClass();
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleDirectedWeightedGraph<>(linkEdgeClass);
         for (Node node : this.nodeMap.values())
         {
