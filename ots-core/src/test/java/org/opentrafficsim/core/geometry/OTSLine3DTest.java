@@ -845,7 +845,8 @@ public class OTSLine3DTest
      * Tests the fractional projection method.
      * @throws OTSGeometryException should not happen (if it does, this test has failed)
      */
-    // TODO: @Test FAILS
+    // TODO: FAILS
+    @Test
     public final void testFractionalProjection() throws OTSGeometryException
     {
         Direction zeroDir = Direction.ZERO;
