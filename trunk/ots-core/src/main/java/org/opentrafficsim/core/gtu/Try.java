@@ -37,9 +37,9 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
  * we can write:
  * 
  * <pre>
- * FileInputStream fis = Try.assign(() -> new FileInputStream(fileString), IllegalArgumentException.class,
+ * FileInputStream fis = Try.assign(() -&gt; new FileInputStream(fileString), IllegalArgumentException.class,
  *         "File %s is not a valid file.", fileString);
- * Try.execute(() -> fis.close(), "Could not close the file.");
+ * Try.execute(() -&gt; fis.close(), "Could not close the file.");
  * </pre>
  * 
  * The exception message can be formatted with additional arguments, such that the overhead of building the exception message
@@ -895,7 +895,7 @@ public final class Try
      * Functional interface for calls to Try.assign(...). For this a lambda expression can be used.
      * 
      * <pre>
-     * FileInputStream fis = Try.assign(() -> new FileInputStream(fileString), IllegalArgumentException.class,
+     * FileInputStream fis = Try.assign(() -&gt; new FileInputStream(fileString), IllegalArgumentException.class,
      *         "File %s is not a valid file.", fileString);
      * </pre>
      * <p>
@@ -924,7 +924,7 @@ public final class Try
      * Functional interface for calls to Try.execute(...). For this a lambda expression can be used.
      * 
      * <pre>
-     * Try.execute(() -> fis.close(), "Could not close the file.");
+     * Try.execute(() -&gt; fis.close(), "Could not close the file.");
      * </pre>
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
