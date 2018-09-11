@@ -51,7 +51,7 @@ public interface Parameters
     /**
      * Returns a parameter value, or {@code null} if not present. This can be used to prevent frequent calls to both
      * {@code contains()} and {@code getParameter()} in performance critical code.
-     * @param parameterType ParameterType<T>; parameter type
+     * @param parameterType ParameterType&lt;T&gt;; parameter type
      * @param <T> type of parameter value
      * @return parameter value, or {@code null} if not present
      */
