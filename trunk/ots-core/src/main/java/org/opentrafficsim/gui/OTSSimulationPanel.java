@@ -183,7 +183,7 @@ public class OTSSimulationPanel extends JPanel
         private static final long serialVersionUID = 20180206L;
 
         /**
-         * @param tabPlacement
+         * @param tabPlacement tabPlacement
          */
         public AppearanceControlTabbedContentPane(int tabPlacement)
         {
