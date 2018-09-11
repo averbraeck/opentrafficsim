@@ -12,13 +12,11 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
 
 import com.google.protobuf.CodedOutputStream;
 
-//import nl.tudelft.simulation.language.io.URLResource;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * Test client for AimsunController.

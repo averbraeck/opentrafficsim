@@ -14,6 +14,15 @@
   <description>OTS AIMSUN demo classes</description>
   
   <dependencies>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>3.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>dsol</groupId>
+      <artifactId>dsol-base</artifactId>
+    </dependency>
   </dependencies>
   
 </project>
