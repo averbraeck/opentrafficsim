@@ -136,9 +136,10 @@ public class XmlOdParserTest
         StringBuilder xml;
         ODMatrix od;
 
-        xml = new StringBuilder();
-        xml.append("<OD />");
-        shouldFail(xml.toString(), "Parser should fail without GLOBALINTERPOLATION.");
+        // WS chosen to default to LINEAR, so may have no global interpolation
+        // xml = new StringBuilder();
+        // xml.append("<OD />");
+        // shouldFail(xml.toString(), "Parser should fail without GLOBALINTERPOLATION.");
 
         xml = new StringBuilder();
         xml.append("<NOTOD GLOBALINTERPOLATION=\"LINEAR\">");
@@ -293,7 +294,7 @@ public class XmlOdParserTest
         xml.append("  </DEMAND>");
         xml.append("</OD>");
         shouldFail(xml.toString(), "Parser should fail if main DEMAND is defined multiple times.");
-        
+
         xml = new StringBuilder();
         xml.append("<OD GLOBALINTERPOLATION=\"LINEAR\">");
         xml.append("  <GLOBALTIME />");
@@ -301,14 +302,14 @@ public class XmlOdParserTest
         xml.append("  <CATEGORY NAME=\"TRUCK\" GTUTYPE=\"TRUCK\" ROUTE=\"AB\" />");
         xml.append("</OD>");
         shouldFail(xml.toString(), "Parser should fail if categories apply different categorizations.");
-        
+
         xml = new StringBuilder();
         xml.append("<OD GLOBALINTERPOLATION=\"LINEAR\">");
         xml.append("  <GLOBALTIME />");
         xml.append("  <DEMAND ORIGIN=\"A\" DESTINATION=\"B\" />");
         xml.append("</OD>");
         shouldFail(xml.toString(), "Parser should fail if DEMAND is without category and LEVEL data.");
-        
+
         xml = new StringBuilder();
         xml.append("<OD GLOBALINTERPOLATION=\"LINEAR\">");
         xml.append("  <GLOBALTIME />");
@@ -318,7 +319,7 @@ public class XmlOdParserTest
         xml.append("  </DEMAND>");
         xml.append("</OD>");
         shouldFail(xml.toString(), "Parser should fail if DEMAND is without category and LEVEL data.");
-        
+
         xml = new StringBuilder();
         xml.append("<OD GLOBALINTERPOLATION=\"LINEAR\">");
         xml.append("  <GLOBALTIME />");

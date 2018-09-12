@@ -887,16 +887,13 @@ public class OTSLine3DTest
                     new OTSPoint3D(6, 6 - e[i]), new OTSPoint3D(8, 8 - e[i]));
             for (int j = 0; j < d.length; j++)
             {
-                fraction = line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j], FractionalFallback.ORTHOGONAL); // on
-                                                                                                                        // outside
-                                                                                                                        // of
-                                                                                                                        // slight
-                                                                                                                        // bend
+                // on outside of slight bend
+                fraction = line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j], FractionalFallback.ENDPOINT);
                 if (Math.abs(fraction - 0.5) > 0.001)
                 {
-                    line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j], FractionalFallback.ORTHOGONAL);
+                    line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j], FractionalFallback.ENDPOINT);
                 }
-                if (e[i] >= 1e-6)
+                if (e[i] >= 1e-3)
                 {
                     assertTrue("Projection of point on outside of very slight bend was wrong with e=" + e[i] + " and d=" + d[j],
                             Math.abs(fraction - 0.5) < 0.001);

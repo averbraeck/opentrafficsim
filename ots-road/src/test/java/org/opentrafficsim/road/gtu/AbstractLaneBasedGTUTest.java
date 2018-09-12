@@ -152,15 +152,16 @@ public class AbstractLaneBasedGTUTest implements UNITS
         assertEquals("longitudinal speed is " + initialSpeed, initialSpeed.getSI(), car.getSpeed().getSI(), 0.00001);
         assertEquals("lastEvaluation time is 0", 0, car.getOperationalPlan().getStartTime().getSI(), 0.00001);
         // Test the position(Lane, RelativePosition) method
-        try
-        {
-            car.position(null, car.getFront());
-            fail("position on null lane should have thrown a NetworkException");
-        }
-        catch (GTUException ne)
-        {
-            // Ignore
-        }
+        // WS: Removed as null check has been removed from position(...)
+//        try
+//        {
+//            car.position(null, car.getFront());
+//            fail("position on null lane should have thrown a NetworkException");
+//        }
+//        catch (GTUException ne)
+//        {
+//            // Ignore
+//        }
         for (Lane[] laneGroup : new Lane[][] { lanesGroupA, lanesGroupB })
         {
             for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
-import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedHashMap;
@@ -20,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -68,7 +68,7 @@ public class LaneTest implements UNITS
         OTSPoint3D[] coordinates = new OTSPoint3D[2];
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
+        OTSDEVSSimulatorInterface simulator = new MockUp<OTSDEVSSimulatorInterface>()
         {
             // no implementation needed.
         }.getMockInstance();
@@ -86,7 +86,7 @@ public class LaneTest implements UNITS
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.VEHICLE, new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
-        // FIXME what overtaking conditions do we ant to test in this unit test?
+        // FIXME what overtaking conditions do we want to test in this unit test?
         Lane lane = new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, speedMap,
                 new OvertakingConditions.LeftAndRight());
         // Verify the easy bits
@@ -199,7 +199,7 @@ public class LaneTest implements UNITS
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
                     OTSLine3D line = new OTSLine3D(coordinates);
-                    OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
+                    OTSDEVSSimulatorInterface simulator = new MockUp<OTSDEVSSimulatorInterface>()
                     {
                         // no implementation needed.
                     }.getMockInstance();

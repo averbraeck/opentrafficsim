@@ -8,14 +8,6 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import mockit.MockUp;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Experiment;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.experiment.Treatment;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -26,9 +18,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -36,7 +28,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -56,6 +47,15 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import mockit.MockUp;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.Experiment;
+import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.experiment.Treatment;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -85,10 +85,10 @@ public class CarTest implements UNITS
         GTUType gtuType = CAR;
         LaneType laneType = LaneType.TWO_WAY_LANE;
         OTSNetwork network = new OTSNetwork("network");
-        Lane lane = makeLane(network, laneType);
+        OTSDEVSSimulator simulator = makeSimulator();
+        Lane lane = makeLane(network, laneType, simulator);
         Length initialPosition = new Length(12, METER);
         Speed initialSpeed = new Speed(34, KM_PER_HOUR);
-        OTSDEVSSimulator simulator = makeSimulator();
         GTUFollowingModelOld gtuFollowingModel =
                 new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(10, SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
@@ -169,16 +169,13 @@ public class CarTest implements UNITS
     /**
      * @param network Network; the network
      * @param laneType LaneType&lt;String&gt;; the type of the lane
+     * @param simulator OTSDEVSSimulatorInterface; simulator
      * @return a lane of 1000 m long.
      * @throws NetworkException on network error
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
-    public static Lane makeLane(final Network network, final LaneType laneType) throws NetworkException, OTSGeometryException
+    public static Lane makeLane(final Network network, final LaneType laneType, final OTSDEVSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
     {
-        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
         OTSNode n1 = new OTSNode(network, "n1", new OTSPoint3D(0, 0));
         OTSNode n2 = new OTSNode(network, "n2", new OTSPoint3D(100000.0, 0.0));
         OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0) };

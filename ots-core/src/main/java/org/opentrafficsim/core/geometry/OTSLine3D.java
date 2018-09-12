@@ -1528,10 +1528,10 @@ public class OTSLine3D implements Locatable, Serializable
 
         // use directions at start and end to get unit offset points to the left at a distance of 1
         double ang = (start == null ? Math.atan2(this.points[1].y - this.points[0].y, this.points[1].x - this.points[0].x)
-                : start.getInUnit(DirectionUnit.EAST_RADIAN)) + Math.PI / 2; // start.si + Math.PI / 2;
+                : start.getInUnit(DirectionUnit.BASE)) + Math.PI / 2; // start.si + Math.PI / 2;
         OTSPoint3D p1 = new OTSPoint3D(this.points[0].x + Math.cos(ang), this.points[0].y + Math.sin(ang));
         ang = (end == null ? Math.atan2(this.points[n].y - this.points[n - 1].y, this.points[n].x - this.points[n - 1].x)
-                : end.getInUnit(DirectionUnit.EAST_RADIAN)) + Math.PI / 2; // end.si + Math.PI / 2;
+                : end.getInUnit(DirectionUnit.BASE)) + Math.PI / 2; // end.si + Math.PI / 2;
         OTSPoint3D p2 = new OTSPoint3D(this.points[n].x + Math.cos(ang), this.points[n].y + Math.sin(ang));
 
         // calculate first and last center (i.e. intersection of unit offset segments), which depend on inputs 'start' and 'end'

@@ -75,28 +75,33 @@ public final class XMLParser
                                 "Tag %s cannot be sorted using it's value as tags without value are encountered.", tag);
                         return o1.getNodeValue().compareTo(o2.getNodeValue());
                     }
-                    String attr1 = o1.getAttributes().getNamedItem(attribute).getNodeValue();
-                    String attr2 = o2.getAttributes().getNamedItem(attribute).getNodeValue();
-                    int order;
-                    if (attr1 == null && attr2 != null)
+                    Node n1 = o1.getAttributes().getNamedItem(attribute);
+                    Node n2 = o2.getAttributes().getNamedItem(attribute);
+                    int order = 0;
+                    if (n1 != null && n2 != null)
                     {
-                        order = -1;
-                    }
-                    else if (attr1 == null)
-                    {
-                        order = 0;
-                    }
-                    else if (attr2 == null)
-                    {
-                        order = 1;
-                    }
-                    else
-                    {
-                        order = attr1.compareTo(attr2);
-                    }
-                    if (order != 0)
-                    {
-                        return order;
+                        String attr1 = n1.getNodeValue();
+                        String attr2 = n2.getNodeValue();
+                        if (attr1 == null && attr2 != null)
+                        {
+                            order = -1;
+                        }
+                        else if (attr1 == null)
+                        {
+                            order = 0;
+                        }
+                        else if (attr2 == null)
+                        {
+                            order = 1;
+                        }
+                        else
+                        {
+                            order = attr1.compareTo(attr2);
+                        }
+                        if (order != 0)
+                        {
+                            return order;
+                        }
                     }
                 }
                 return 0;

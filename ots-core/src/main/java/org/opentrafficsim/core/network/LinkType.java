@@ -206,6 +206,13 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
             return this.original.isCompatible(gtuType, directionality.flip());
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "ReversedLinkType [original=" + this.original + "]";
+        }
+
     }
 
 }

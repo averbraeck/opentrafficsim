@@ -51,10 +51,10 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
     private Map<RelativeLane, Double> antFromRight = new HashMap<>();
 
     /** Anticipated speed combined. */
-    private Map<RelativeLane, Speed> antSpeed = new HashMap<>();
+    private Map<RelativeLane, Speed> speed = new HashMap<>();
 
     /** Anticipated speed combined. */
-    private Map<RelativeLane, TimeStampedObject<LinearDensity>> antDensity = new HashMap<>();
+    private Map<RelativeLane, TimeStampedObject<LinearDensity>> density = new HashMap<>();
 
     /** Density collector. */
     private static final AnticipationDensity DENSITY = new AnticipationDensity();
@@ -79,10 +79,10 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
             this.antFromLeft.clear();
             this.antInLane.clear();
             this.antFromRight.clear();
-            this.antSpeed.clear();
+            this.speed.clear();
             this.lastSpeedTime = now;
         }
-        Speed vAnt = this.antSpeed.get(lane);
+        Speed vAnt = this.speed.get(lane);
         if (vAnt == null)
         {
             LaneBasedGTU gtu = Try.assign(() -> getPerception().getGtu(), "");
@@ -90,7 +90,7 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
             vAnt = anticipationSpeed(lane, gtu.getParameters(),
                     getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class),
                     getPerception().getPerceptionCategoryOrNull(InfrastructurePerception.class), desiredSpeed);
-            this.antSpeed.put(lane, vAnt);
+            this.speed.put(lane, vAnt);
         }
         return vAnt;
     }
@@ -158,12 +158,12 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
     public LinearDensity getDensity(final RelativeLane lane)
     {
         Time now = Try.assign(() -> getTimestamp(), "");
-        TimeStampedObject<LinearDensity> tK = this.antDensity.get(lane);
+        TimeStampedObject<LinearDensity> tK = this.density.get(lane);
         if (tK == null || tK.getTimestamp().si < now.si)
         {
             LinearDensity k =
                     getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(lane).collect(DENSITY);
-            this.antDensity.put(lane, new TimeStampedObject<>(k, now));
+            this.density.put(lane, new TimeStampedObject<>(k, now));
             return k;
         }
         else
