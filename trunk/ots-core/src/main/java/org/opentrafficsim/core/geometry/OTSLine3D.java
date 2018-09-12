@@ -1372,7 +1372,7 @@ public class OTSLine3D implements Locatable, Serializable
              * inside an area where numerical difficulties arise (i.e. far away outside of very slight bend which is considered
              * parallel).
              */
-            System.err.println("projectFractional failed to project " + point + " on " + this + "; using fallback approach");
+            // System.err.println("projectFractional failed to project " + point + " on " + this + "; using fallback approach");
             return fallback.getFraction(this, x, y);
         }
 
