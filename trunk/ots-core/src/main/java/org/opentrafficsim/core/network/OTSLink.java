@@ -90,7 +90,6 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         this.endNode.addLink(this);
         this.designLine = designLine;
         this.simulator = simulator;
-
         this.network.addLink(this);
     }
 
