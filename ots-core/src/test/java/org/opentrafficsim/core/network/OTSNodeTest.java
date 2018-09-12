@@ -122,8 +122,9 @@ public class OTSNodeTest
         assertTrue("node 1 has direct connection to node 2", node1.isDirectionallyConnectedTo(GTUType.VEHICLE, node2));
         Node node5 = new OTSNode(network, "node 5", new OTSPoint3D(1000, 0, 0));
         assertFalse("node 1 has no direct connection to node 5", node1.isDirectionallyConnectedTo(GTUType.VEHICLE, node5));
-        Link link5 = new OTSLink(network, "link 5", node5, node1, LinkType.ROAD,
-                new OTSLine3D(node5.getPoint(), node1.getPoint()), simulator);
+        Link link5 =
+                new OTSLink(network, "link 5", node5, node1, LinkType.FREEWAY,
+                        new OTSLine3D(node1.getPoint(), node5.getPoint()), simulator);
         assertFalse("node 1 still has no direct connection to node 5",
                 node1.isDirectionallyConnectedTo(GTUType.VEHICLE, node5));
         assertTrue("node 5 does have a direct connection to node 1", node5.isDirectionallyConnectedTo(GTUType.VEHICLE, node1));
@@ -221,11 +222,15 @@ public class OTSNodeTest
             // Ignore expected exception
         }
         // Create a link that does not allow traffic TO the node
-        Link oneWay = new OTSLink(network, "one way toward reverse", n1, node, LinkType.ROAD,
-                new OTSLine3D(n1.getPoint(), node.getPoint()), simulator);
+        Link oneWayFromNode =
+                new OTSLink(network, "one way from node", node, n1, LinkType.FREEWAY, new OTSLine3D(node.getPoint(),
+                        n1.getPoint()), simulator);
+        Link oneWayToNode =
+                new OTSLink(network, "one way towards node", n1, node, LinkType.FREEWAY, new OTSLine3D(n1.getPoint(),
+                        node.getPoint()), simulator);
         try
         {
-            node.addConnection(GTUType.VEHICLE, oneWay, network.getLink("link from neighbor node 1"));
+            node.addConnection(GTUType.VEHICLE, oneWayFromNode, network.getLink("link from neighbor node 1"));
             fail("attempt to connect from a link that does not allow traffic TO the node should have thrown a "
                     + "NetworkException");
         }
@@ -233,42 +238,18 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        oneWay = new OTSLink(network, "one way away forward", node, n1, LinkType.ROAD,
-                new OTSLine3D(node.getPoint(), n1.getPoint()), simulator);
         try
         {
-            node.addConnection(GTUType.VEHICLE, oneWay, network.getLink("link from neighbor node 1"));
-            fail("attempt to connect from a link that does not allow traffic TO the node should have thrown a "
-                    + "NetworkException");
-        }
-        catch (NetworkException ne)
-        {
-            // Ignore expected exception
-        }
-        oneWay = new OTSLink(network, "one way toward forward", n1, node, LinkType.ROAD,
-                new OTSLine3D(n1.getPoint(), node.getPoint()), simulator);
-        try
-        {
-            node.addConnection(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), oneWay);
+            node.addConnection(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), oneWayToNode);
             fail("attempt to connect to a link that does not allow outbound traffic should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
             // Ignore expected exception
         }
-        oneWay = new OTSLink(network, "one way away reverse", node, n1, LinkType.ROAD,
-                new OTSLine3D(node.getPoint(), n1.getPoint()), simulator);
-        try
-        {
-            node.addConnection(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), oneWay);
-            fail("attempt to connect to a link that does not allow outbound traffic should have thrown a NetworkException");
-        }
-        catch (NetworkException ne)
-        {
-            // Ignore expected exception
-        }
-        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.ROAD,
-                new OTSLine3D(n2.getPoint(), node.getPoint()), simulator);
+        Link noWay =
+                new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.RAIL_WAY, new OTSLine3D(n2.getPoint(),
+                        node.getPoint()), simulator);
         try
         {
             node.addConnection(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), noWay);
@@ -287,8 +268,9 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.ROAD,
-                new OTSLine3D(node.getPoint(), n2.getPoint()), simulator);
+        noWay =
+                new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.RAIL_WAY, new OTSLine3D(node.getPoint(),
+                        n2.getPoint()), simulator);
         try
         {
             node.addConnection(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), noWay);
@@ -390,11 +372,16 @@ public class OTSNodeTest
             // Ignore expected exception
         }
         // Create a link that does not allow traffic TO the node
-        Link oneWay = new OTSLink(network, "one way toward reverse", n1, node, LinkType.ROAD,
-                new OTSLine3D(n1.getPoint(), node.getPoint()), simulator);
+        Link oneWayFromNodeOnly =
+                new OTSLink(network, "one way away from node", node, n1, LinkType.FREEWAY, new OTSLine3D(node.getPoint(),
+                        n1.getPoint()), simulator);
+        // Create a link that does not allow traffic FROM the node
+        Link oneWayToNodeOnly =
+                new OTSLink(network, "one way towards node", n1, node, LinkType.FREEWAY, new OTSLine3D(n1.getPoint(),
+                        node.getPoint()), simulator);
         try
         {
-            node.addConnections(GTUType.VEHICLE, oneWay, wrap(network.getLink("link from neighbor node 1")));
+            node.addConnections(GTUType.VEHICLE, oneWayFromNodeOnly, wrap(network.getLink("link from neighbor node 1")));
             fail("attempt to connect from a link that does not allow traffic TO the node should have thrown a "
                     + "NetworkException");
         }
@@ -402,46 +389,22 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        oneWay = new OTSLink(network, "one way away forward", node, n1, LinkType.ROAD,
-                new OTSLine3D(node.getPoint(), n1.getPoint()), simulator);
         try
         {
-            node.addConnections(GTUType.VEHICLE, oneWay, wrap(network.getLink("link from neighbor node 1")));
-            fail("attempt to connect from a link that does not allow traffic TO the node should have thrown a "
-                    + "NetworkException");
-        }
-        catch (NetworkException ne)
-        {
-            // Ignore expected exception
-        }
-        oneWay = new OTSLink(network, "one way toward forward", n1, node, LinkType.ROAD,
-                new OTSLine3D(n1.getPoint(), node.getPoint()), simulator);
-        try
-        {
-            node.addConnections(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), wrap(oneWay));
+            node.addConnections(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), wrap(oneWayToNodeOnly));
             fail("attempt to connect to a link that does not allow outbound traffic should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
             // Ignore expected exception
         }
-        oneWay = new OTSLink(network, "one way away reverse", node, n1, LinkType.ROAD,
-                new OTSLine3D(node.getPoint(), n1.getPoint()), simulator);
-        try
-        {
-            node.addConnections(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), wrap(oneWay));
-            fail("attempt to connect to a link that does not allow outbound traffic should have thrown a NetworkException");
-        }
-        catch (NetworkException ne)
-        {
-            // Ignore expected exception
-        }
-        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.ROAD,
-                new OTSLine3D(n2.getPoint(), node.getPoint()), simulator);
+        Link noWay =
+                new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.RAIL_WAY, new OTSLine3D(n2.getPoint(),
+                        node.getPoint()), simulator);
         try
         {
             node.addConnections(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), wrap(noWay));
-            fail("attempt to connect to a no way link should have thrown a NetworkException");
+            fail("attempt to connect to a rail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
@@ -450,18 +413,19 @@ public class OTSNodeTest
         try
         {
             node.addConnections(GTUType.VEHICLE, noWay, wrap(network.getLink("link from neighbor node 1")));
-            fail("attempt to connect from a no way link should have thrown a NetworkException");
+            fail("attempt to connect from a tail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
             // Ignore expected exception
         }
-        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.ROAD,
-                new OTSLine3D(node.getPoint(), n2.getPoint()), simulator);
+        noWay =
+                new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.RAIL_WAY, new OTSLine3D(node.getPoint(),
+                        n2.getPoint()), simulator);
         try
         {
             node.addConnections(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), wrap(noWay));
-            fail("attempt to connect to a no way link should have thrown a NetworkException");
+            fail("attempt to connect to a rail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
@@ -470,7 +434,7 @@ public class OTSNodeTest
         try
         {
             node.addConnections(GTUType.VEHICLE, noWay, wrap(network.getLink("link from neighbor node 1")));
-            fail("attempt to connect from a no way link should have thrown a NetworkException");
+            fail("attempt to connect from a rail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
