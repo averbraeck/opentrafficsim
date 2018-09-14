@@ -90,7 +90,7 @@ public final class TestController
             System.err.println("Missing required argument(s) ip=<ip-number_or_hostname> port=<port-number>");
             System.exit(1);
         }
-        // Construct the create simulation command (inclusing the network description in XML
+        // Construct the create simulation command (including the network description in XML
         AimsunControlProtoBuf.CreateSimulation.Builder createSimulationBuilder =
                 AimsunControlProtoBuf.CreateSimulation.newBuilder();
         createSimulationBuilder.setRunTime(3600d);
