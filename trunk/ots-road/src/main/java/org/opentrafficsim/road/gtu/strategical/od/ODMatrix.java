@@ -666,8 +666,8 @@ public class ODMatrix implements Serializable, Identifiable
             double additionalDemand = trips / (time.get(periodIndex + 1).getInUnit(TimeUnit.BASE_HOUR)
                     - time.get(periodIndex).getInUnit(TimeUnit.BASE_HOUR));
             double[] dem = demand.getValuesInUnit(FrequencyUnit.PER_HOUR);
+            Throw.when(dem[periodIndex] < -additionalDemand, UnsupportedOperationException.class, "Demand may not become negative.");
             dem[periodIndex] += additionalDemand;
-            Throw.when(dem[periodIndex] < 0.0, UnsupportedOperationException.class, "Demand may not become negative.");
             putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR, StorageType.DENSE),
                     time, Interpolation.STEPWISE);
         }

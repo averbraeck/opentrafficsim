@@ -9,6 +9,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.NestedCache;
 import org.opentrafficsim.core.gtu.Try;
+import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -84,7 +85,7 @@ public interface RouteSupplier
             List<Node> viaNodes = new ArrayList<>();
             double cumulWeight = 0.0;
             List<Double> weights = new ArrayList<>();
-            List<Link> links = new ArrayList<>();
+            Map<Link, Double> links = new LinkedHashMap<>();
             for (Link link : destination.getLinks())
             {
                 GTUDirectionality direction =
@@ -94,25 +95,15 @@ public interface RouteSupplier
                 {
                     Double weight = ((CrossSectionLink) link).getDemandWeight();
                     weights.add(weight);
-                    links.add(link);
+                    links.put(link, weight);
                     cumulWeight += weight;
                 }
             }
-            double r = this.stream.nextDouble() * cumulWeight;
-            Link via = null;
-            for (int i = 0; i < weights.size() - 1; i++)
+            if (cumulWeight > 0.0)
             {
-                if (weights.get(i) <= r && weights.get(i + 1) < r)
-                {
-                    via = links.get(i);
-                    break;
-                }
+                Link via = Draw.drawWeighted(links, this.stream);
+                viaNodes.add(via.getStartNode().equals(destination) ? via.getEndNode() : via.getStartNode());
             }
-            if (via == null)
-            {
-                via = links.get(links.size() - 1); // due to rounding, r == cumulWeight or no weights
-            }
-            viaNodes.add(via.getStartNode().equals(destination) ? via.getEndNode() : via.getStartNode());
             return this.shortestRouteCache.getValue(
                     () -> Try.assign(() -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes),
                             "Could not determine the shortest route from %s to %s via %s.", origin, destination, viaNodes),

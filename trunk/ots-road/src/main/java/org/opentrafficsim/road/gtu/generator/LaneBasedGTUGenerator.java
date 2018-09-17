@@ -2,7 +2,9 @@ package org.opentrafficsim.road.gtu.generator;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -17,6 +19,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -106,6 +109,9 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
 
     /** Initial distance over which lane changes shouldn't be performed. */
     private Length noLaneChangeDistance = null;
+
+    /** Vehicle generation is ignored on these lanes. */
+    private Set<LaneDirection> disabled = new LinkedHashSet<>();
 
     /**
      * Construct a new lane base GTU generator.
@@ -232,6 +238,19 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
         TimeStampedObject<LaneBasedGTUCharacteristics> timedCharacteristics;
         Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue =
                 this.unplacedTemplates.get(position.getLink()).get(position);
+        
+        // skip if disabled at this lane-direction
+        Set<LaneDirection> lanes = new LinkedHashSet<>();
+        for (DirectedLanePosition pos : position.getPosition())
+        {
+            lanes.add(pos.getLaneDirection());
+        }
+        if (!Collections.disjoint(this.disabled, lanes))
+        {
+            queue.remove();
+            return;
+        }
+        
         synchronized (queue)
         {
             timedCharacteristics = queue.peek();
@@ -258,18 +277,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             {
                 queue.remove();
             }
-            String gtuId = this.idGenerator.nextId();
-            LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(),
-                    characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(),
-                    characteristics.getFront(), this.simulator, this.network);
-            gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
-            gtu.setMaximumDeceleration(characteristics.getMaximumDeceleration());
-            gtu.setVehicleModel(characteristics.getVehicleModel());
-            gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
-            gtu.initWithAnimation(
-                    characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
-                            characteristics.getOrigin(), characteristics.getDestination()),
-                    placement.getPosition(), placement.getSpeed(), DefaultCarAnimation.class, this.gtuColorer);
+            placeGtu(characteristics, placement.getPosition(), placement.getSpeed());
             if (queue.size() > 0)
             {
                 this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { position });
@@ -279,6 +287,33 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
         {
             this.simulator.scheduleEventRel(this.reTryInterval, this, this, "tryToPlaceGTU", new Object[] { position });
         }
+    }
+
+    /**
+     * @param characteristics LaneBasedGTUCharacteristics; characteristics
+     * @param position Set&lt;DirectedLanePosition&gt;; position
+     * @param speed Speed; speed
+     * @throws NamingException on exception
+     * @throws GTUException on exception
+     * @throws NetworkException on exception
+     * @throws SimRuntimeException on exception
+     * @throws OTSGeometryException on exception
+     */
+    final void placeGtu(final LaneBasedGTUCharacteristics characteristics, final Set<DirectedLanePosition> position,
+            final Speed speed) throws NamingException, GTUException, NetworkException, SimRuntimeException, OTSGeometryException
+    {
+        String gtuId = this.idGenerator.nextId();
+        LaneBasedIndividualGTU gtu = new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(),
+                characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumSpeed(),
+                characteristics.getFront(), this.simulator, this.network);
+        gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
+        gtu.setMaximumDeceleration(characteristics.getMaximumDeceleration());
+        gtu.setVehicleModel(characteristics.getVehicleModel());
+        gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
+        gtu.initWithAnimation(
+                characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
+                        characteristics.getOrigin(), characteristics.getDestination()),
+                position, speed, DefaultCarAnimation.class, this.gtuColorer);
     }
 
     /**
@@ -365,6 +400,40 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     public final GTUColorer getGtuColorer()
     {
         return this.gtuColorer;
+    }
+
+    /**
+     * Disable the vehicle generator during the specific time. Underlying processes such as drawing characteristics and headways
+     * are continued, but simply will not result in the actual generation of a GTU.
+     * @param start Time; start time
+     * @param end Time; end time
+     * @param laneDirections Set&lt;LaneDirection&gt;; lanes to disable generation on
+     * @throws SimRuntimeException if time is incorrect
+     */
+    public void disable(final Time start, final Time end, final Set<LaneDirection> laneDirections) throws SimRuntimeException
+    {
+        Throw.when(end.lt(start), SimRuntimeException.class, "End time %s is before start time %s.", end, start);
+        this.simulator.scheduleEventAbs(start, this, this, "disable", new Object[] { laneDirections });
+        this.simulator.scheduleEventAbs(end, this, this, "enable", new Object[0]);
+    }
+
+    /**
+     * Disables the generator.
+     * @param laneDirections Set&lt;LaneDirection&gt;; lanes to disable generation on
+     */
+    @SuppressWarnings("unused")
+    private void disable(final Set<LaneDirection> laneDirections)
+    {
+        this.disabled = laneDirections;
+    }
+
+    /**
+     * Enables the generator.
+     */
+    @SuppressWarnings("unused")
+    private void enable()
+    {
+        this.disabled = new LinkedHashSet<>();
     }
 
     /**

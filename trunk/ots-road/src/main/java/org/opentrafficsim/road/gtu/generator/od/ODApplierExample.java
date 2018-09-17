@@ -34,6 +34,8 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.LinkType;
@@ -50,6 +52,7 @@ import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
+import org.opentrafficsim.road.gtu.generator.Platoons;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
@@ -60,6 +63,7 @@ import org.opentrafficsim.road.network.animation.StripeAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation.TYPE;
 import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
@@ -92,7 +96,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
 {
 
     /** Lane based or not. */
-    static final boolean LANE_BASED = false;
+    static final boolean LANE_BASED = true;
 
     /** Simulation period. */
     static final Duration PERIOD = new Duration(60.0, DurationUnit.MINUTE);
@@ -299,9 +303,11 @@ public class ODApplierExample extends AbstractWrappableAnimation
                         new double[] { 0 * DEMAND, 1000 * DEMAND, 3000 * DEMAND, 7000 * DEMAND, 0 * DEMAND },
                         FrequencyUnit.PER_HOUR, StorageType.DENSE);
 
+                Category platoonCategory; 
                 if (ODApplierExample.LANE_BASED)
                 {
                     Category category = new Category(categorization, lane1, GTUType.CAR);
+                    platoonCategory = category;
                     od.putDemandVector(nodeA2, nodeB, category, demand, timeVector, Interpolation.LINEAR, .4);
                     category = new Category(categorization, lane2, GTUType.CAR);
                     od.putDemandVector(nodeA2, nodeB, category, demand, timeVector, Interpolation.LINEAR, .25);
@@ -315,6 +321,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 else
                 {
                     Category category = new Category(categorization, GTUType.CAR);
+                    platoonCategory = category;
                     od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .9);
                     category = new Category(categorization, GTUType.TRUCK);
                     od.putDemandVector(nodeA, nodeB, category, demand, timeVector, Interpolation.LINEAR, .1);
@@ -332,9 +339,31 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 {
                     new GTUGeneratorAnimation(generatedObjects.get(str).getGenerator(), this.simulator);
                 }
+                
+                // platoons
+                String id = LANE_BASED ? "A21" : "A";
+                Lane platoonLane = LANE_BASED ? lane1 : lane0;
+                Set<DirectedLanePosition> position = new HashSet<>();
+                position.add(new DirectedLanePosition(platoonLane, Length.ZERO, GTUDirectionality.DIR_PLUS));
+                Platoons platoons = new Platoons(generatedObjects.get(id).getGenerator(),
+                        odOptions.get(ODOptions.GTU_TYPE, null, null, null), this.simulator, streams.get("generation"),
+                        position);
+                platoons.addPlatoon(Time.createSI(60), Time.createSI(90));
+                platoons.fixInfo(nodeA, nodeB, platoonCategory, new Speed(90, SpeedUnit.KM_PER_HOUR));
+                for (double t = 62; t < 90; t += 2)
+                {
+                    platoons.addGtu(Time.createSI(t));
+                }
+                platoons.addPlatoon(Time.createSI(300), Time.createSI(330));
+                for (double t = 302; t < 330; t += 2)
+                {
+                    platoons.addGtu(Time.createSI(t));
+                }
+                platoons.start();
 
             }
-            catch (NetworkException | OTSGeometryException | NamingException | ValueException | ParameterException exception)
+            catch (NetworkException | OTSGeometryException | NamingException | ValueException | ParameterException
+                    | GTUException exception)
             {
                 exception.printStackTrace();
             }
