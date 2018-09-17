@@ -104,7 +104,8 @@ public class OTSLine3D implements Locatable, Serializable
     {
         if (pts.length < 2)
         {
-            throw new OTSGeometryException("Degenerate OTSLine3D; has " + pts.length + " point" + (pts.length != 1 ? "s" : ""));
+            throw new OTSGeometryException("Degenerate OTSLine3D; has " + pts.length + " point"
+                    + (pts.length != 1 ? "s" : ""));
         }
         this.lengthIndexedLine = new double[pts.length];
         this.lengthIndexedLine[0] = 0.0;
@@ -112,8 +113,8 @@ public class OTSLine3D implements Locatable, Serializable
         {
             if (pts[i - 1].x == pts[i].x && pts[i - 1].y == pts[i].y && pts[i - 1].z == pts[i].z)
             {
-                throw new OTSGeometryException(
-                        "Degenerate OTSLine3D; point " + (i - 1) + " has the same x, y and z as point " + i);
+                throw new OTSGeometryException("Degenerate OTSLine3D; point " + (i - 1)
+                        + " has the same x, y and z as point " + i);
             }
             this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + pts[i - 1].distanceSI(pts[i]);
         }
@@ -238,6 +239,7 @@ public class OTSLine3D implements Locatable, Serializable
      */
     public final OTSLine3D noiseFilterRamerDouglasPeuker(final double epsilon, final boolean useHorizontalDistance)
     {
+        // TODO rename this filter to noiseFilterRamerDouglasPeucker (with a c in Peucker). 
         try
         {
             // Apply the Ramer-Douglas-Peucker algorithm to the buffered points.
@@ -267,10 +269,12 @@ public class OTSLine3D implements Locatable, Serializable
             // The largest deviation is larger than epsilon.
             // Split the polyLine at the point with the maximum deviation. Process each sub list recursively and concatenate the
             // results
-            OTSLine3D first = new OTSLine3D(Arrays.copyOfRange(this.points, 0, splitIndex + 1))
-                    .noiseFilterRamerDouglasPeuker(epsilon, useHorizontalDistance);
-            OTSLine3D second = new OTSLine3D(Arrays.copyOfRange(this.points, splitIndex, this.points.length))
-                    .noiseFilterRamerDouglasPeuker(epsilon, useHorizontalDistance);
+            OTSLine3D first =
+                    new OTSLine3D(Arrays.copyOfRange(this.points, 0, splitIndex + 1)).noiseFilterRamerDouglasPeuker(epsilon,
+                            useHorizontalDistance);
+            OTSLine3D second =
+                    new OTSLine3D(Arrays.copyOfRange(this.points, splitIndex, this.points.length))
+                            .noiseFilterRamerDouglasPeuker(epsilon, useHorizontalDistance);
             return concatenate(epsilon, first, second);
         }
         catch (OTSGeometryException exception)
@@ -316,10 +320,12 @@ public class OTSLine3D implements Locatable, Serializable
         final double tooClose = 0.05; // 5 cm
         while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
         {
-            double firstRatio = firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
-                    : Double.MAX_VALUE;
-            double secondRatio = secondIndex < secondCoordinates.length
-                    ? second.indexOf(secondCoordinates[secondIndex]) / secondLength : Double.MAX_VALUE;
+            double firstRatio =
+                    firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
+                            : Double.MAX_VALUE;
+            double secondRatio =
+                    secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex]) / secondLength
+                            : Double.MAX_VALUE;
             double ratio;
             if (firstRatio < secondRatio)
             {
@@ -333,8 +339,9 @@ public class OTSLine3D implements Locatable, Serializable
             }
             Coordinate firstCoordinate = first.extractPoint(ratio * firstLength);
             Coordinate secondCoordinate = second.extractPoint(ratio * secondLength);
-            Coordinate resultCoordinate = new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x,
-                    (1 - ratio) * firstCoordinate.y + ratio * secondCoordinate.y);
+            Coordinate resultCoordinate =
+                    new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
+                            * firstCoordinate.y + ratio * secondCoordinate.y);
             if (null == prevCoordinate || resultCoordinate.distance(prevCoordinate) > tooClose)
             {
                 out.add(resultCoordinate);
@@ -387,10 +394,12 @@ public class OTSLine3D implements Locatable, Serializable
             int secondIndex = 0;
             while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
             {
-                double firstRatio = firstIndex < firstCoordinates.length
-                        ? first.indexOf(firstCoordinates[firstIndex]) / firstLength : Double.MAX_VALUE;
-                double secondRatio = secondIndex < secondCoordinates.length
-                        ? second.indexOf(secondCoordinates[secondIndex]) / secondLength : Double.MAX_VALUE;
+                double firstRatio =
+                        firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
+                                : Double.MAX_VALUE;
+                double secondRatio =
+                        secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex])
+                                / secondLength : Double.MAX_VALUE;
                 double ratio;
                 if (firstRatio < secondRatio)
                 {
@@ -404,8 +413,9 @@ public class OTSLine3D implements Locatable, Serializable
                 }
                 Coordinate firstCoordinate = first.extractPoint(ratio * firstLength);
                 Coordinate secondCoordinate = second.extractPoint(ratio * secondLength);
-                Coordinate resultCoordinate = new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x,
-                        (1 - ratio) * firstCoordinate.y + ratio * secondCoordinate.y);
+                Coordinate resultCoordinate =
+                        new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
+                                * firstCoordinate.y + ratio * secondCoordinate.y);
                 if (null == prevCoordinate || resultCoordinate.distance(prevCoordinate) > tooClose)
                 {
                     out.add(resultCoordinate);
@@ -435,7 +445,7 @@ public class OTSLine3D implements Locatable, Serializable
     }
 
     /**
-     * Concatenate two OTSLine3D instances. This method is seperate for efficiency reasons.
+     * Concatenate two OTSLine3D instances. This method is separate for efficiency reasons.
      * @param toleranceSI the tolerance between the end point of a line and the first point of the next line
      * @param line1 OTSLine3D; first line
      * @param line2 OTSLine3D; second line
@@ -488,9 +498,9 @@ public class OTSLine3D implements Locatable, Serializable
         {
             if (lines[i - 1].getLast().distance(lines[i].getFirst()).si > toleranceSI)
             {
-                throw new OTSGeometryException(
-                        "Lines are not connected: " + lines[i - 1].getLast() + " to " + lines[i].getFirst() + " distance is "
-                                + lines[i - 1].getLast().distance(lines[i].getFirst()).si + " > " + toleranceSI);
+                throw new OTSGeometryException("Lines are not connected: " + lines[i - 1].getLast() + " to "
+                        + lines[i].getFirst() + " distance is " + lines[i - 1].getLast().distance(lines[i].getFirst()).si
+                        + " > " + toleranceSI);
             }
             size += lines[i].size() - 1;
         }
@@ -573,8 +583,8 @@ public class OTSLine3D implements Locatable, Serializable
     {
         if (Double.isNaN(start) || Double.isNaN(end) || start < 0 || start >= end || end > getLengthSI())
         {
-            throw new OTSGeometryException(
-                    "Bad interval (" + start + ".." + end + "; length of this OTSLine3D is " + this.getLengthSI() + ")");
+            throw new OTSGeometryException("Bad interval (" + start + ".." + end + "; length of this OTSLine3D is "
+                    + this.getLengthSI() + ")");
         }
         double cumulativeLength = 0;
         double nextCumulativeLength = 0;
@@ -632,8 +642,9 @@ public class OTSLine3D implements Locatable, Serializable
         }
         else
         {
-            OTSPoint3D point = OTSPoint3D.interpolate((end - cumulativeLength) / segmentLength, this.points[index - 1],
-                    this.points[index]);
+            OTSPoint3D point =
+                    OTSPoint3D.interpolate((end - cumulativeLength) / segmentLength, this.points[index - 1],
+                            this.points[index]);
             // can be the same due to rounding
             if (!point.equals(pointList.get(pointList.size() - 1)))
             {
@@ -676,8 +687,8 @@ public class OTSLine3D implements Locatable, Serializable
     {
         if (points.length < 2)
         {
-            throw new OTSGeometryException(
-                    "Degenerate OTSLine3D; has " + points.length + " point" + (points.length != 1 ? "s" : ""));
+            throw new OTSGeometryException("Degenerate OTSLine3D; has " + points.length + " point"
+                    + (points.length != 1 ? "s" : ""));
         }
         return createAndCleanOTSLine3D(new ArrayList<>(Arrays.asList(points)));
     }
@@ -940,8 +951,8 @@ public class OTSLine3D implements Locatable, Serializable
             double fraction = len / (this.lengthIndexedLine[1] - this.lengthIndexedLine[0]);
             OTSPoint3D p1 = this.points[0];
             OTSPoint3D p2 = this.points[1];
-            return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y),
-                    p1.z + fraction * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+            return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
+                    * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
         }
 
         // position beyond end point -- extrapolate
@@ -951,8 +962,8 @@ public class OTSLine3D implements Locatable, Serializable
         double fraction = len / (this.lengthIndexedLine[n1] - this.lengthIndexedLine[n2]);
         OTSPoint3D p1 = this.points[n2];
         OTSPoint3D p2 = this.points[n1];
-        return new DirectedPoint(p2.x + fraction * (p2.x - p1.x), p2.y + fraction * (p2.y - p1.y),
-                p2.z + fraction * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        return new DirectedPoint(p2.x + fraction * (p2.x - p1.x), p2.y + fraction * (p2.y - p1.y), p2.z + fraction
+                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
     }
 
     /**
@@ -977,7 +988,8 @@ public class OTSLine3D implements Locatable, Serializable
      * @return a directed point
      * @throws OTSGeometryException when fraction less than 0.0 or more than 1.0.
      */
-    public final DirectedPoint getLocationFraction(final double fraction, final double tolerance) throws OTSGeometryException
+    public final DirectedPoint getLocationFraction(final double fraction, final double tolerance)
+            throws OTSGeometryException
     {
         if (fraction < -tolerance || fraction > 1.0 + tolerance)
         {
@@ -1044,8 +1056,8 @@ public class OTSLine3D implements Locatable, Serializable
                 return mid;
             }
         }
-        throw new OTSGeometryException(
-                "Could not find position " + pos + " on line with length indexes: " + Arrays.toString(this.lengthIndexedLine));
+        throw new OTSGeometryException("Could not find position " + pos + " on line with length indexes: "
+                + Arrays.toString(this.lengthIndexedLine));
     }
 
     /**
@@ -1059,8 +1071,8 @@ public class OTSLine3D implements Locatable, Serializable
         makeLengthIndexedLine();
         if (positionSI < 0.0 || positionSI > getLengthSI())
         {
-            throw new OTSGeometryException("getLocationSI for line: position < 0.0 or > line length. Position = " + positionSI
-                    + " m. Length = " + getLengthSI() + " m.");
+            throw new OTSGeometryException("getLocationSI for line: position < 0.0 or > line length. Position = "
+                    + positionSI + " m. Length = " + getLengthSI() + " m.");
         }
 
         // handle special cases: position == 0.0, or position == length
@@ -1083,8 +1095,8 @@ public class OTSLine3D implements Locatable, Serializable
         double fraction = remainder / (this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index]);
         OTSPoint3D p1 = this.points[index];
         OTSPoint3D p2 = this.points[index + 1];
-        return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y),
-                p1.z + fraction * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
+                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
     }
 
     /**
@@ -1114,8 +1126,9 @@ public class OTSLine3D implements Locatable, Serializable
         double fraction = remainder / (this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index]);
         OTSPoint3D p1 = this.points[index];
         OTSPoint3D p2 = this.points[index + 1];
-        OTSPoint3D newLastPoint = new OTSPoint3D(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y),
-                p1.z + fraction * (p2.z - p1.z));
+        OTSPoint3D newLastPoint =
+                new OTSPoint3D(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
+                        * (p2.z - p1.z));
         OTSPoint3D[] coords = new OTSPoint3D[index + 2];
         for (int i = 0; i <= index; i++)
         {
@@ -1379,15 +1392,14 @@ public class OTSLine3D implements Locatable, Serializable
         double segLen = this.lengthIndexedLine[minSegment + 1] - this.lengthIndexedLine[minSegment];
         return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) /
 
-                getLengthSI();
+        getLengthSI();
 
     }
 
     /**
      * Fallback method for when fractional projection fails as the point is beyond the line or from numerical limitations.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 18 apr. 2018 <br>
@@ -1472,13 +1484,17 @@ public class OTSLine3D implements Locatable, Serializable
                 OTSPoint3D parStartPoint;
                 try
                 {
-                    parStartPoint = OTSPoint3D.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
-                            nextOfsSeg.get(1));
-                    if (parStartPoint == null || prevOfsSeg.get(1).distanceSI(nextOfsSeg.get(0)) < Math
-                            .min(prevOfsSeg.get(1).distanceSI(parStartPoint), nextOfsSeg.get(0).distanceSI(parStartPoint)))
+                    parStartPoint =
+                            OTSPoint3D.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
+                                    nextOfsSeg.get(1));
+                    if (parStartPoint == null
+                            || prevOfsSeg.get(1).distanceSI(nextOfsSeg.get(0)) < Math
+                                    .min(prevOfsSeg.get(1).distanceSI(parStartPoint),
+                                            nextOfsSeg.get(0).distanceSI(parStartPoint)))
                     {
-                        parStartPoint = new OTSPoint3D((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
-                                (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
+                        parStartPoint =
+                                new OTSPoint3D((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
+                                        (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
                     }
                 }
                 catch (OTSGeometryException oge)
@@ -1496,13 +1512,17 @@ public class OTSLine3D implements Locatable, Serializable
                     OTSPoint3D parEndPoint;
                     try
                     {
-                        parEndPoint = OTSPoint3D.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
-                                nextOfsSeg.get(1));
-                        if (parEndPoint == null || prevOfsSeg.get(1).distanceSI(nextOfsSeg.get(0)) < Math
-                                .min(prevOfsSeg.get(1).distanceSI(parEndPoint), nextOfsSeg.get(0).distanceSI(parEndPoint)))
+                        parEndPoint =
+                                OTSPoint3D.intersectionOfLines(prevOfsSeg.get(0), prevOfsSeg.get(1), nextOfsSeg.get(0),
+                                        nextOfsSeg.get(1));
+                        if (parEndPoint == null
+                                || prevOfsSeg.get(1).distanceSI(nextOfsSeg.get(0)) < Math
+                                        .min(prevOfsSeg.get(1).distanceSI(parEndPoint),
+                                                nextOfsSeg.get(0).distanceSI(parEndPoint)))
                         {
-                            parEndPoint = new OTSPoint3D((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
-                                    (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
+                            parEndPoint =
+                                    new OTSPoint3D((prevOfsSeg.get(1).x + nextOfsSeg.get(0).x) / 2,
+                                            (prevOfsSeg.get(1).y + nextOfsSeg.get(0).y) / 2);
                         }
                     }
                     catch (OTSGeometryException oge)
@@ -1527,11 +1547,13 @@ public class OTSLine3D implements Locatable, Serializable
         }
 
         // use directions at start and end to get unit offset points to the left at a distance of 1
-        double ang = (start == null ? Math.atan2(this.points[1].y - this.points[0].y, this.points[1].x - this.points[0].x)
-                : start.getInUnit(DirectionUnit.BASE)) + Math.PI / 2; // start.si + Math.PI / 2;
+        double ang =
+                (start == null ? Math.atan2(this.points[1].y - this.points[0].y, this.points[1].x - this.points[0].x)
+                        : start.getInUnit(DirectionUnit.BASE)) + Math.PI / 2; // start.si + Math.PI / 2;
         OTSPoint3D p1 = new OTSPoint3D(this.points[0].x + Math.cos(ang), this.points[0].y + Math.sin(ang));
-        ang = (end == null ? Math.atan2(this.points[n].y - this.points[n - 1].y, this.points[n].x - this.points[n - 1].x)
-                : end.getInUnit(DirectionUnit.BASE)) + Math.PI / 2; // end.si + Math.PI / 2;
+        ang =
+                (end == null ? Math.atan2(this.points[n].y - this.points[n - 1].y, this.points[n].x - this.points[n - 1].x)
+                        : end.getInUnit(DirectionUnit.BASE)) + Math.PI / 2; // end.si + Math.PI / 2;
         OTSPoint3D p2 = new OTSPoint3D(this.points[n].x + Math.cos(ang), this.points[n].y + Math.sin(ang));
 
         // calculate first and last center (i.e. intersection of unit offset segments), which depend on inputs 'start' and 'end'
@@ -1544,7 +1566,8 @@ public class OTSLine3D implements Locatable, Serializable
             if (this.fractionalHelperCenters[n - 1] == null)
             {
                 // parallel helper lines, use direction for projection
-                this.fractionalHelperDirections[n - 1] = new Point2D.Double(p2.x - this.points[n].x, p2.y - this.points[n].y);
+                this.fractionalHelperDirections[n - 1] =
+                        new Point2D.Double(p2.x - this.points[n].x, p2.y - this.points[n].y);
             }
         }
         else
@@ -1631,8 +1654,9 @@ public class OTSLine3D implements Locatable, Serializable
         double deltaY = maxY - minY; // XXX: was Math.max(maxY - minY, 0.5);
         double deltaZ = maxZ - minZ; // XXX: was Math.max(maxZ - minZ, 0.5);
         // XXX: WRONG: this.bounds = new BoundingBox(deltaX, deltaY, deltaZ);
-        this.bounds = new BoundingBox(new Point3d(-deltaX / 2.0, -deltaY / 2.0, -deltaZ / 2.0),
-                new Point3d(deltaX / 2, deltaY / 2, deltaZ / 2));
+        this.bounds =
+                new BoundingBox(new Point3d(-deltaX / 2.0, -deltaY / 2.0, -deltaZ / 2.0), new Point3d(deltaX / 2,
+                        deltaY / 2, deltaZ / 2));
         this.envelope = new Envelope(minX, maxX, minY, maxY);
     }
 
@@ -1736,14 +1760,14 @@ public class OTSLine3D implements Locatable, Serializable
     }
 
     /**
-     * @return excel XY plottable output
+     * @return Peter's format plot output
      */
     public final String toPlot()
     {
         StringBuffer result = new StringBuffer();
         for (OTSPoint3D p : this.points)
         {
-            result.append(String.format(Locale.US, "%s%.3f,%.3f", result.length() == 0 ? "M" : " L", p.x, p.y));
+            result.append(String.format(Locale.US, "%s%.3f,%.3f", 0 == result.length() ? "M" : " L", p.x, p.y));
         }
         result.append("\n");
         return result.toString();
@@ -1785,69 +1809,70 @@ public class OTSLine3D implements Locatable, Serializable
         }
         else
         {
-            String lineStr = "@0   426333.939, 4581372.345@" + "1   426333.92109750526, 4581372.491581111@"
-                    + "2   426333.9016207722, 4581372.6364820665@" + "3   426333.8806181711, 4581372.7797264075@"
-                    + "4   426333.8581377007, 4581372.921337651@" + "5   426333.8342269785, 4581373.061339286@"
-                    + "6   426333.80893323367, 4581373.199754763@" + "7   426333.78230329906, 4581373.336607476@"
-                    + "8   426333.75438360614, 4581373.471920755@" + "9   426333.7252201801, 4581373.605717849@"
-                    + "10  426333.69485863775, 4581373.738021923@" + "11  426333.6633441839, 4581373.868856039@"
-                    + "12  426333.6307216125, 4581373.998243135@" + "13  426333.5970353065, 4581374.1262060385@"
-                    + "14  426333.56232923956, 4581374.252767426@" + "15  426333.54571270826, 4581374.331102062@"
-                    + "16  426333.53121128445, 4581374.399777128@" + "17  426333.51761287224, 4581374.46141805@"
-                    + "18  426333.5035609495, 4581374.524905452@" + "19  426333.4885681211, 4581374.590110448@"
-                    + "20  426333.4750534529, 4581374.648530791@" + "21  426333.4586325006, 4581374.71720738@"
-                    + "22  426333.44573716016, 4581374.770680802@" + "23  426333.4278589452, 4581374.84273674@"
-                    + "24  426333.41565935884, 4581374.891382747@" + "25  426333.39629928104, 4581374.966726161@"
-                    + "26  426333.3640042249, 4581375.089202983@" + "27  426333.3310233974, 4581375.210194213@"
-                    + "28  426333.2974053264, 4581375.329726505@" + "29  426333.26319745823, 4581375.44782613@"
-                    + "30  426333.2284461768, 4581375.564518943@" + "31  426333.1931968143, 4581375.679830365@"
-                    + "32  426333.15749366966, 4581375.793785359@" + "33  426333.12138002727, 4581375.9064084105@"
-                    + "34  426333.0848981781, 4581376.017723508@" + "35  426333.0526068902, 4581376.127395174@"
-                    + "36  426333.0222216131, 4581376.235573194@" + "37  426333.00835773064, 4581376.284013769@"
-                    + "38  426332.9916265083, 4581376.342442355@" + "39  426332.9771780217, 4581376.392075247@"
-                    + "40  426332.96085931134, 4581376.448026933@" + "41  426332.9448449097, 4581376.5021694945@"
-                    + "42  426332.9299564511, 4581376.552350422@" + "43  426332.9123899684, 4581376.610862428@"
-                    + "44  426332.87985284685, 4581376.718179138@" + "45  426332.8472718188, 4581376.824143872@"
-                    + "46  426332.81468381727, 4581376.92878003@" + "47  426332.78212446393, 4581377.032110168@"
-                    + "48  426332.7496281178, 4581377.134155947@" + "49  426332.71722788643, 4581377.234938197@"
-                    + "50  426332.68495568086, 4581377.3344768565@" + "51  426332.6528422234, 4581377.432791035@"
-                    + "52  426332.6209170973, 4581377.529898969@" + "53  426332.59026768577, 4581377.622609458@"
-                    + "54  426332.5618311538, 4581377.708242513@" + "55  426332.5292456913, 4581377.813700842@"
-                    + "56  426332.5007497582, 4581377.905735847@" + "57  426332.4725916431, 4581377.996633883@"
-                    + "58  426332.4447947076, 4581378.086409748@" + "59  426332.41739884845, 4581378.175020202@"
-                    + "60  426332.3904224847, 4581378.262486783@" + "61  426332.37513187295, 4581378.312218361@"
-                    + "62  426332.3474726438, 4581378.402429141@" + "63  426332.3203478011, 4581378.491354613@"
-                    + "64  426332.2937555201, 4581378.579078223@" + "65  426332.26771504263, 4581378.665610338@"
-                    + "66  426332.24224462465, 4581378.750960108@" + "67  426332.21736132156, 4581378.835136287@"
-                    + "68  426332.1930813682, 4581378.918146061@" + "69  426332.1694196611, 4581378.999996922@"
-                    + "70  426332.1468078785, 4581379.079234334@" + "71  426332.1253935003, 4581379.155326921@"
-                    + "72  426332.10456227185, 4581379.230438552@" + "73  426332.08413377195, 4581379.301777359@"
-                    + "74  426332.0575671712, 4581379.393246921@" + "75  426332.037751917, 4581379.463051603@"
-                    + "76  426332.01541074895, 4581379.543672992@" + "77  426331.9954696024, 4581379.617241848@"
-                    + "78  426331.9764488572, 4581379.689794578@" + "79  426331.9581173997, 4581379.761214821@"
-                    + "80  426331.9407607595, 4581379.831643043@" + "81  426331.92459788476, 4581379.898797621@"
-                    + "82  426331.89349001576, 4581380.036207511@" + "83  426331.8662295119, 4581380.167554456@"
-                    + "84  426331.84239882755, 4581380.294825263@" + "85  426331.8220095046, 4581380.41813201@"
-                    + "86  426331.80506772455, 4581380.537631294@" + "87  426331.79158302536, 4581380.653536015@"
-                    + "88  426331.78158027114, 4581380.766126917@" + "89  426331.7754554946, 4581380.838605414@"
-                    + "90  426331.76793314604, 4581380.909291444@" + "91  426331.7605002508, 4581381.016285149@"
-                    + "92  426331.75725734304, 4581381.119549306@" + "93  426331.75814653496, 4581381.219559045@"
-                    + "94  426331.76316353114, 4581381.316908372@" + "95  426331.7723867522, 4581381.412305131@"
-                    + "96  426331.7860053539, 4581381.506554079@" + "97  426331.80434182915, 4581381.600527881@"
-                    + "98  426331.82733581704, 4581381.692992337@" + "99  426331.8531803791, 4581381.777938947@"
-                    + "100 426331.884024255, 4581381.864352291@" + "101 426331.92063241004, 4581381.953224321@"
-                    + "102 426331.96390912175, 4581382.045434713@" + "103 426331.9901409878, 4581382.095566823@"
-                    + "104 426332.0148562894, 4581382.141714169@" + "105 426332.05172826024, 4581382.204388889@"
-                    + "106 426332.12722889386, 4581382.323121141@" + "107 426332.1628785428, 4581382.375872464@"
-                    + "108 426332.22007742553, 4581382.462661629@" + "109 426332.26023980865, 4581382.523784153@"
-                    + "110 426332.3033344728, 4581382.586422447@" + "111 426332.34946240357, 4581382.650580184@"
-                    + "112 426332.3987196004, 4581382.716255575@" + "113 426332.4511967281, 4581382.783441929@"
-                    + "114 426332.50697922776, 4581382.852128648@" + "115 426332.56614731904, 4581382.922301916@"
-                    + "116 426332.628776037, 4581382.993945288@" + "117 426332.6949354622, 4581383.067040358@"
-                    + "118 426332.76469110255, 4581383.141567508@" + "119 426332.8381037568, 4581383.217505949@"
-                    + "120 426332.91523022414, 4581383.294834619@" + "121 426332.9961233405, 4581383.373532268@"
-                    + "122 426333.0808322224, 4581383.453577724@" + "123 426333.1693585424, 4581383.534909724@"
-                    + "124 426333.26164044754, 4581383.61741792@" + "125 426333.3650128907, 4581383.707446191@";
+            String lineStr =
+                    "@0   426333.939, 4581372.345@" + "1   426333.92109750526, 4581372.491581111@"
+                            + "2   426333.9016207722, 4581372.6364820665@" + "3   426333.8806181711, 4581372.7797264075@"
+                            + "4   426333.8581377007, 4581372.921337651@" + "5   426333.8342269785, 4581373.061339286@"
+                            + "6   426333.80893323367, 4581373.199754763@" + "7   426333.78230329906, 4581373.336607476@"
+                            + "8   426333.75438360614, 4581373.471920755@" + "9   426333.7252201801, 4581373.605717849@"
+                            + "10  426333.69485863775, 4581373.738021923@" + "11  426333.6633441839, 4581373.868856039@"
+                            + "12  426333.6307216125, 4581373.998243135@" + "13  426333.5970353065, 4581374.1262060385@"
+                            + "14  426333.56232923956, 4581374.252767426@" + "15  426333.54571270826, 4581374.331102062@"
+                            + "16  426333.53121128445, 4581374.399777128@" + "17  426333.51761287224, 4581374.46141805@"
+                            + "18  426333.5035609495, 4581374.524905452@" + "19  426333.4885681211, 4581374.590110448@"
+                            + "20  426333.4750534529, 4581374.648530791@" + "21  426333.4586325006, 4581374.71720738@"
+                            + "22  426333.44573716016, 4581374.770680802@" + "23  426333.4278589452, 4581374.84273674@"
+                            + "24  426333.41565935884, 4581374.891382747@" + "25  426333.39629928104, 4581374.966726161@"
+                            + "26  426333.3640042249, 4581375.089202983@" + "27  426333.3310233974, 4581375.210194213@"
+                            + "28  426333.2974053264, 4581375.329726505@" + "29  426333.26319745823, 4581375.44782613@"
+                            + "30  426333.2284461768, 4581375.564518943@" + "31  426333.1931968143, 4581375.679830365@"
+                            + "32  426333.15749366966, 4581375.793785359@" + "33  426333.12138002727, 4581375.9064084105@"
+                            + "34  426333.0848981781, 4581376.017723508@" + "35  426333.0526068902, 4581376.127395174@"
+                            + "36  426333.0222216131, 4581376.235573194@" + "37  426333.00835773064, 4581376.284013769@"
+                            + "38  426332.9916265083, 4581376.342442355@" + "39  426332.9771780217, 4581376.392075247@"
+                            + "40  426332.96085931134, 4581376.448026933@" + "41  426332.9448449097, 4581376.5021694945@"
+                            + "42  426332.9299564511, 4581376.552350422@" + "43  426332.9123899684, 4581376.610862428@"
+                            + "44  426332.87985284685, 4581376.718179138@" + "45  426332.8472718188, 4581376.824143872@"
+                            + "46  426332.81468381727, 4581376.92878003@" + "47  426332.78212446393, 4581377.032110168@"
+                            + "48  426332.7496281178, 4581377.134155947@" + "49  426332.71722788643, 4581377.234938197@"
+                            + "50  426332.68495568086, 4581377.3344768565@" + "51  426332.6528422234, 4581377.432791035@"
+                            + "52  426332.6209170973, 4581377.529898969@" + "53  426332.59026768577, 4581377.622609458@"
+                            + "54  426332.5618311538, 4581377.708242513@" + "55  426332.5292456913, 4581377.813700842@"
+                            + "56  426332.5007497582, 4581377.905735847@" + "57  426332.4725916431, 4581377.996633883@"
+                            + "58  426332.4447947076, 4581378.086409748@" + "59  426332.41739884845, 4581378.175020202@"
+                            + "60  426332.3904224847, 4581378.262486783@" + "61  426332.37513187295, 4581378.312218361@"
+                            + "62  426332.3474726438, 4581378.402429141@" + "63  426332.3203478011, 4581378.491354613@"
+                            + "64  426332.2937555201, 4581378.579078223@" + "65  426332.26771504263, 4581378.665610338@"
+                            + "66  426332.24224462465, 4581378.750960108@" + "67  426332.21736132156, 4581378.835136287@"
+                            + "68  426332.1930813682, 4581378.918146061@" + "69  426332.1694196611, 4581378.999996922@"
+                            + "70  426332.1468078785, 4581379.079234334@" + "71  426332.1253935003, 4581379.155326921@"
+                            + "72  426332.10456227185, 4581379.230438552@" + "73  426332.08413377195, 4581379.301777359@"
+                            + "74  426332.0575671712, 4581379.393246921@" + "75  426332.037751917, 4581379.463051603@"
+                            + "76  426332.01541074895, 4581379.543672992@" + "77  426331.9954696024, 4581379.617241848@"
+                            + "78  426331.9764488572, 4581379.689794578@" + "79  426331.9581173997, 4581379.761214821@"
+                            + "80  426331.9407607595, 4581379.831643043@" + "81  426331.92459788476, 4581379.898797621@"
+                            + "82  426331.89349001576, 4581380.036207511@" + "83  426331.8662295119, 4581380.167554456@"
+                            + "84  426331.84239882755, 4581380.294825263@" + "85  426331.8220095046, 4581380.41813201@"
+                            + "86  426331.80506772455, 4581380.537631294@" + "87  426331.79158302536, 4581380.653536015@"
+                            + "88  426331.78158027114, 4581380.766126917@" + "89  426331.7754554946, 4581380.838605414@"
+                            + "90  426331.76793314604, 4581380.909291444@" + "91  426331.7605002508, 4581381.016285149@"
+                            + "92  426331.75725734304, 4581381.119549306@" + "93  426331.75814653496, 4581381.219559045@"
+                            + "94  426331.76316353114, 4581381.316908372@" + "95  426331.7723867522, 4581381.412305131@"
+                            + "96  426331.7860053539, 4581381.506554079@" + "97  426331.80434182915, 4581381.600527881@"
+                            + "98  426331.82733581704, 4581381.692992337@" + "99  426331.8531803791, 4581381.777938947@"
+                            + "100 426331.884024255, 4581381.864352291@" + "101 426331.92063241004, 4581381.953224321@"
+                            + "102 426331.96390912175, 4581382.045434713@" + "103 426331.9901409878, 4581382.095566823@"
+                            + "104 426332.0148562894, 4581382.141714169@" + "105 426332.05172826024, 4581382.204388889@"
+                            + "106 426332.12722889386, 4581382.323121141@" + "107 426332.1628785428, 4581382.375872464@"
+                            + "108 426332.22007742553, 4581382.462661629@" + "109 426332.26023980865, 4581382.523784153@"
+                            + "110 426332.3033344728, 4581382.586422447@" + "111 426332.34946240357, 4581382.650580184@"
+                            + "112 426332.3987196004, 4581382.716255575@" + "113 426332.4511967281, 4581382.783441929@"
+                            + "114 426332.50697922776, 4581382.852128648@" + "115 426332.56614731904, 4581382.922301916@"
+                            + "116 426332.628776037, 4581382.993945288@" + "117 426332.6949354622, 4581383.067040358@"
+                            + "118 426332.76469110255, 4581383.141567508@" + "119 426332.8381037568, 4581383.217505949@"
+                            + "120 426332.91523022414, 4581383.294834619@" + "121 426332.9961233405, 4581383.373532268@"
+                            + "122 426333.0808322224, 4581383.453577724@" + "123 426333.1693585424, 4581383.534909724@"
+                            + "124 426333.26164044754, 4581383.61741792@" + "125 426333.3650128907, 4581383.707446191@";
             int fromIndex = 0;
             while (true)
             {
@@ -1906,4 +1931,5 @@ public class OTSLine3D implements Locatable, Serializable
 
         System.out.print(str);
     }
+
 }
