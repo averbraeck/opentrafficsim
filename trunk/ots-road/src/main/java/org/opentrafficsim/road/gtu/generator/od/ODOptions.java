@@ -142,9 +142,9 @@ public class ODOptions
      * <li>Default option value</li>
      * </ul>
      * @param option Option&lt;K&gt;; option
-     * @param lane Lane; lane to obtain specific option value, may be {@null}
-     * @param node Node; node to obtain specific option value, may be {@null}
-     * @param linkType LinkType; link type to obtain specific option value, may be {@null}
+     * @param lane Lane; lane to obtain specific option value, may be null
+     * @param node Node; node to obtain specific option value, may be null
+     * @param linkType LinkType; link type to obtain specific option value, may be null
      * @param <K> value type
      * @return K; option value
      */

@@ -33,7 +33,7 @@ public class ToledoCFTester
     /**
      * @param args arguments for the run (should be empty at the moment)
      * @throws ParameterException when Toledo parameters cannot be found
-     * @throws GTUException
+     * @throws GTUException when CarFollowingHeadway cannot be calculated
      */
     public static void main(final String[] args) throws ParameterException, GTUException
     {

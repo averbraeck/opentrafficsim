@@ -17,9 +17,9 @@ import nl.tudelft.simulation.language.Throw;
  * Behavioral adaptation which sets parameters for situational awareness and reaction time.
  * 
  * <pre>
- *      / SA_MAX,                                                                         taskSaturation < TS_CRIT
- * SA = | SA_MAX - (SA_MAX - SA_MIN) * (taskSaturation - TS_CRIT) / (TS_MAX - TS_CRIT),   TS_CRIT <= taskSaturation < TS_MAX 
- *      \ SA_MIN,                                                                         taskSaturation >= TS_MAX
+ *      / SA_MAX,                                                                         taskSaturation &lt; TS_CRIT
+ * SA = | SA_MAX - (SA_MAX - SA_MIN) * (taskSaturation - TS_CRIT) / (TS_MAX - TS_CRIT),   TS_CRIT &lt;= taskSaturation &lt; TS_MAX 
+ *      \ SA_MIN,                                                                         taskSaturation &gt;= TS_MAX
  * 
  * TR = (S_MAX - SA) * TR_MAX   
  * </pre>
