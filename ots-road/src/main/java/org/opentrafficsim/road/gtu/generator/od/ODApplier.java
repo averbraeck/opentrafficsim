@@ -805,7 +805,7 @@ public final class ODApplier
         @Override
         public String toString()
         {
-            return "ODCharacteristicsGenerator [root=" + this.root + ", simulator=" + this.simulator
+            return "GTUCharacteristicsGeneratorODWrapper [root=" + this.root + ", simulator=" + this.simulator
                     + ", charachteristicsGenerator=" + this.charachteristicsGenerator + ", randomStream=" + this.randomStream
                     + "]";
         }
