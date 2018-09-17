@@ -79,8 +79,8 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
      * <li>Using integration we find that the surface of demand from 299s until 300s equals 0.5 veh for stepwise demand, and
      * 0.25 veh for linear demand. Consequently, the vehicle will not arrive until later slices integrate to an additional 0.5
      * veh or 0.75 veh respectively. This additional surface under the demand curve is only found after 400s.</li>
-     * <li>In case the exponential headway distribution would have resulted in {@code r} < 0.5 (stepwise demand) or 0.25 (linear
-     * demand), a vehicle will simply arrive between 299s and 300s.</li>
+     * <li>In case the exponential headway distribution would have resulted in {@code r} &lt; 0.5 (stepwise demand) or 0.25
+     * (linear demand), a vehicle will simply arrive between 299s and 300s.</li>
      * </ul>
      * <br>
      * @return Duration; new headway

@@ -365,7 +365,7 @@ public final class GeneratorPositions implements Locatable
 
         /**
          * Returns the contained position set, representing a single GTU position on the network.
-         * @return Set<DirectedLanePosition>; contained position set, representing a single GTU position on the network
+         * @return Set&lt;DirectedLanePosition&gt;; contained position set, representing a single GTU position on the network
          */
         Set<DirectedLanePosition> getPosition()
         {
@@ -793,7 +793,7 @@ public final class GeneratorPositions implements Locatable
          * @param roadPosition RoadPosition; lateral position on the road (0 = right, 0.5 = middle, 1 = left)
          * @param bias double; bias extent, lower values create more spread traffic, 0.0 causes no lane preference
          * @param stickyLanes double; number of lanes to consider in either direction, including the preferred lane
-         * @throws IllegalArgumentException if not 0 &le; roadPosition &le; 1 & bias &ge; 0 & stickyLanes &ge; 1
+         * throws IllegalArgumentException if not 0 &le; roadPosition &le; 1 & bias &ge; 0 & stickyLanes &ge; 1
          */
         public LaneBias(final RoadPosition roadPosition, final double bias, final double stickyLanes)
         {
@@ -808,7 +808,7 @@ public final class GeneratorPositions implements Locatable
          * Returns a random draw weight for given lane. The weight is calculated as:
          * 
          * <pre>
-         * weight = { 0,                               d >= number of sticky lanes
+         * weight = { 0,                               d &gt;= number of sticky lanes
          *          { 1 / ((d + 1)^bias * (m + 1)),    otherwise
          * 
          * where,

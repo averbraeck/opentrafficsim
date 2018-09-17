@@ -84,7 +84,7 @@ public class MarkovCorrelation<S, I extends Number>
      * column). Consequently, the values in each row must sum to 1, as each state will be followed by another state.<br>
      * <br>
      * It is important that the transition matrix <i>T</i> results in a steady-state as provided. In particular we have for
-     * steady state <i>S</i> that <b><i>S</i>*<i>T</i> &#61 <i>S</i></b> should hold. Suppose we have <i>S</i> &#61 [0.7, 0.2,
+     * steady state <i>S</i> that <b><i>S</i>*<i>T</i> &#61; <i>S</i></b> should hold. Suppose we have <i>S</i> &#61; [0.7, 0.2,
      * 0.1] for states A, B and C. Without any correlation this would give the base transition matrix:
      * 
      * <pre>
@@ -106,13 +106,13 @@ public class MarkovCorrelation<S, I extends Number>
      * 
      * <pre>
      *      | 0.70  0.20  0.10 |    | 0.70  0.20  0.10 |    | 0.70  0.20  0.06 |    | 0.74  0.20  0.06 |
-     * T => | 0.70  0.20  0.10 | => | 0.70  0.20  0.10 | => | 0.70  0.20  0.06 | => | 0.70  0.24  0.06 |
+     * T =&gt; | 0.70  0.20  0.10 | =&gt; | 0.70  0.20  0.10 | =&gt; | 0.70  0.20  0.06 | =&gt; | 0.70  0.24  0.06 |
      *      | 0.70  0.20  0.10 |    | 0.70  0.20  0.46 |    | 0.42  0.12  0.46 |    | 0.42  0.12  0.46 |
      * </pre>
      * 
      * As we reduce <i>p_13</i> and <i>p_23</i>, we also reduce the probability sums of rows 1 and 2. These reductions can be
      * compensated by increasing the values on the diagonals, as is done in the fourth matrix. Note that changing the diagonal
-     * values does not affect reversibility. For example, 0.7*0.74 + 0.2*0.70 + 0.1*0.42 &#61 0.7 for the first column.<br>
+     * values does not affect reversibility. For example, 0.7*0.74 + 0.2*0.70 + 0.1*0.42 &#61; 0.7 for the first column.<br>
      * <br>
      * Changing the diagonal values <i>p_11</i> and <i>p_22</i> as the result of correlation for state C, shows that correlation
      * of one state automatically introduces correlation at other states, as should also intuitively occur from the A-B example.
@@ -160,7 +160,7 @@ public class MarkovCorrelation<S, I extends Number>
      * <pre>
      *       s_1   s_2   s_3             s_1   S_2   s_3
      * s_1 | p_11  p_12  p_13 |    s_1 | p_11  p_12  p_13 |
-     * s_2 | p_21  p_22  p_23 | => S_2 | p_21  p_22  p_23 |
+     * s_2 | p_21  p_22  p_23 | =&gt; S_2 | p_21  p_22  p_23 |
      * s_3 | p_31  p_32  p_33 |    s_3 | p_31  p_32  p_33 |
      * </pre>
      * 
@@ -250,7 +250,7 @@ public class MarkovCorrelation<S, I extends Number>
      * @param stream StreamInterface; to draw random numbers
      * @return S; next state
      * @throws IllegalArgumentException if number of states is not the same as the stead-state length
-     * @throw NullPointerException if states, steadyState or stream is null
+     * @throws NullPointerException if states, steadyState or stream is null
      */
     public synchronized S drawState(final S previousState, final S[] states, final I[] steadyState,
             final StreamInterface stream)

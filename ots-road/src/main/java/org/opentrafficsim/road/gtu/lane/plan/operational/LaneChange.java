@@ -183,7 +183,7 @@ public class LaneChange implements Serializable
      * @param planDistance Length; absolute distance that will be covered during the time step
      * @param laneChangeDirection LateralDirectionality; lane change direction
      * @return OTSLine3D; path
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException on path or shape error
      */
     public final OTSLine3D getPath(final Duration timeStep, final LaneBasedGTU gtu, final DirectedLanePosition from,
             final DirectedPoint startPosition, final Length planDistance, final LateralDirectionality laneChangeDirection)
