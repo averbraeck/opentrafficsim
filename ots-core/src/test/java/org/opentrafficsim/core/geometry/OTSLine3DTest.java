@@ -538,6 +538,136 @@ public class OTSLine3DTest
         {
             // Ignore expected exception
         }
+
+        // Test concatenate methods with tolerance
+        OTSLine3D thirdLine = new OTSLine3D(p4, p5);
+        for (double tolerance : new double[] { 0.1, 0.01, 0.001, 0.0001, 0.00001 })
+        {
+            for (double actualError : new double[] { tolerance * 0.9, tolerance * 1.1 })
+            {
+                int maxDirection = 10;
+                for (int direction = 0; direction < maxDirection; direction++)
+                {
+                    double dx = actualError * Math.cos(Math.PI * 2 * direction / maxDirection);
+                    double dy = actualError * Math.sin(Math.PI * 2 * direction / maxDirection);
+                    OTSLine3D otherLine = new OTSLine3D(new OTSPoint3D(p2.x + dx, p2.y + dy, p2.z), p3, p4);
+                    if (actualError < tolerance)
+                    {
+                        try
+                        {
+                            OTSLine3D.concatenate(tolerance, l0, otherLine);
+                        }
+                        catch (OTSGeometryException oge)
+                        {
+                            OTSLine3D.concatenate(tolerance, l0, otherLine);
+                            fail("concatenation with error " + actualError + " and tolerance " + tolerance
+                                    + " should not have failed");
+                        }
+                        try
+                        {
+                            OTSLine3D.concatenate(tolerance, l0, otherLine, thirdLine);
+                        }
+                        catch (OTSGeometryException oge)
+                        {
+                            fail("concatenation with error " + actualError + " and tolerance " + tolerance
+                                    + " should not have failed");
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            OTSLine3D.concatenate(tolerance, l0, otherLine);
+                        }
+                        catch (OTSGeometryException oge)
+                        {
+                            // Ignore expected exception
+                        }
+                        try
+                        {
+                            OTSLine3D.concatenate(tolerance, l0, otherLine, thirdLine);
+                        }
+                        catch (OTSGeometryException oge)
+                        {
+                            // Ignore expected exception
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Test the noiseFilterRamerDouglasPeuker filter method.
+     * @throws OTSGeometryException if that happens uncaught, this test has failed
+     */
+    @Test
+    public final void noiseFilterRamerDouglasPeuckerTest() throws OTSGeometryException
+    {
+        OTSPoint3D start = new OTSPoint3D(1, 2, 3);
+        int maxDirection = 20; // 20 means every step of 18 degrees is tested
+        double length = 100;
+        for (boolean useHorizontalDistance : new boolean[] { true, false })
+        {
+            for (int direction = 0; direction < maxDirection; direction++)
+            {
+                double angle = Math.PI * 2 * direction / maxDirection;
+                double dx = length * Math.cos(angle);
+                double dy = length * Math.sin(angle);
+                OTSPoint3D end = new OTSPoint3D(start.x + dx, start.y + dy, start.z);
+                OTSLine3D straightLine = new OTSLine3D(start, end);
+                int intermediatePointCount = 5;
+                for (double tolerance : new double[] { 0.1, 0.01, 0.001 })
+                {
+                    double error = tolerance * 0.9;
+                    List<OTSPoint3D> pointsOnTestLine = new ArrayList<>();
+                    pointsOnTestLine.add(start);
+                    for (int intermediatePoint = 0; intermediatePoint < intermediatePointCount; intermediatePoint++)
+                    {
+                        double iAngle = Math.PI * 2 * intermediatePoint / intermediatePointCount;
+                        double idx = error * Math.cos(iAngle);
+                        double idy = error * Math.sin(iAngle);
+                        double idz = useHorizontalDistance ? (intermediatePoint % 2 * 2 - 1) * 10 : 0;
+                        DirectedPoint exactPoint =
+                                straightLine.getLocationFraction((intermediatePoint + 0.5) / intermediatePointCount);
+                        OTSPoint3D additionalPoint =
+                                new OTSPoint3D(exactPoint.x + idx, exactPoint.y + idy, exactPoint.z + idz);
+                        pointsOnTestLine.add(additionalPoint);
+                    }
+                    pointsOnTestLine.add(end);
+                    OTSLine3D testLine = new OTSLine3D(pointsOnTestLine);
+                    OTSLine3D filteredLine = testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
+                    assertEquals("RamerDouglasPeuker filter should have removed all intermediate points", 2,
+                            filteredLine.size());
+                    // Now add a couple of points that should not be removed and will not cause the current start and end point
+                    // to be removed
+                    OTSPoint3D newStart =
+                            new OTSPoint3D(start.x + 10 * tolerance * dy / length, start.y - 10 * tolerance * dx / length,
+                                    start.z);
+                    pointsOnTestLine.add(0, newStart);
+                    // This filter does not find optimal solutions in many cases. Only case where one serious (really far)
+                    // "outlier" is added on only one end work most of the time.
+                    testLine = new OTSLine3D(pointsOnTestLine);
+                    filteredLine = testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
+                    // if (3 != filteredLine.size())
+                    // {
+                    // testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
+                    // }
+                    assertEquals("RamerDouglasPeuker filter should have left three points", 3, filteredLine.size());
+                    pointsOnTestLine.remove(0);
+                    OTSPoint3D newEnd =
+                            new OTSPoint3D(end.x + 10 * tolerance * dy / length, end.y - 10 * tolerance * dx / length, end.z);
+                    pointsOnTestLine.add(newEnd);
+                    testLine = new OTSLine3D(pointsOnTestLine);
+                    filteredLine = testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
+                    // if (3 != filteredLine.size())
+                    // {
+                    // testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
+                    // }
+                    assertEquals("RamerDouglasPeuker filter should have left three points", 3, filteredLine.size());
+                }
+            }
+        }
     }
 
     /**
@@ -1018,4 +1148,5 @@ public class OTSLine3DTest
         }
         assertEquals("pos 0 returns index 0", 0, (int) findMethod.invoke(line, 0.0));
     }
+
 }
