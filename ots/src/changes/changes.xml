@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="0.15.01" date="2017-xx-xx" description="Release 0.15.01">
+    <release version="0.16.00" date="2018-09-17" description="Release 0.16.00">
       <action issue="OTS-331" type="update">
         OTS-331. Change ParameterTypes to referenced Types.
       </action>
