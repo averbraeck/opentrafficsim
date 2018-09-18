@@ -396,11 +396,11 @@ public class XmlNetworkLaneParser implements Serializable
      * @param otsNetwork OTSNetwork; the network
      * @throws NetworkException should never happen (of course)
      * @throws OTSGeometryException might happen if a centroid is positioned on top of the entry exit point of a link
-     * @throws NamingException
-     * @throws RemoteException
-     * @throws ValueException
-     * @throws SimRuntimeException
-     * @throws ParameterException
+     * @throws NamingException on error
+     * @throws RemoteException on error
+     * @throws ValueException on error
+     * @throws SimRuntimeException on error
+     * @throws ParameterException on error
      */
     private void fixOD(final OTSNetwork otsNetwork) throws NetworkException, OTSGeometryException, RemoteException,
             NamingException, ValueException, ParameterException, SimRuntimeException
@@ -625,7 +625,7 @@ public class XmlNetworkLaneParser implements Serializable
 
     /**
      * Obtain an immutable copy of the collected XML comments.
-     * @return List<String>; a list of the XML comments
+     * @return List&lt;String&gt;; a list of the XML comments
      */
     public ImmutableList<String> getXMLComments()
     {
