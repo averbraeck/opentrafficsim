@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -180,7 +180,7 @@ public class DefaultConflictRule implements ConflictRule
 
     /** {@inheritDoc} */
     @Override
-    public final ConflictRule clone(final OTSSimulatorInterface newSimulator)
+    public final ConflictRule clone(final SimulatorInterface.TimeDoubleUnit newSimulator)
     {
         return new DefaultConflictRule();
     }

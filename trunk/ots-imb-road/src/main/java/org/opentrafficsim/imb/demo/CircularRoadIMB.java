@@ -34,10 +34,7 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -99,6 +96,8 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -383,7 +382,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
     private static final long serialVersionUID = 20141121L;
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** Number of cars created. */
     private int carsCreated = 0;
@@ -463,8 +462,8 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+            throws SimRuntimeException
     {
         System.out.println("CircularRoadIMB: constructModel called; Connecting to IMB");
         SimpleAnimator imbAnimator = (SimpleAnimator) theSimulator;
@@ -498,7 +497,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         {
             this.paths.add(new ArrayList<Lane>());
         }
-        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+        this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
         double radius = 6000 / 2 / Math.PI;
         double headway = 40;
         double headwayVariability = 0;
@@ -745,7 +744,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         try
         {
             this.simulator.scheduleEventAbs(
-                    new Time(this.simulator.getSimulatorTime().get().getSI() + 10, TimeUnit.BASE_SECOND), this, this,
+                    new Time(this.simulator.getSimulatorTime().getSI() + 10, TimeUnit.BASE_SECOND), this, this,
                     "drawGraphs", null);
         }
         catch (SimRuntimeException exception)
@@ -797,7 +796,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
     {
         return this.simulator;
     }
@@ -820,10 +819,10 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
 
     /**
      * Stop simulation and throw an Error.
-     * @param theSimulator OTSDEVSSimulatorInterface; the simulator
+     * @param theSimulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @param errorMessage String; the error message
      */
-    public void stopSimulator(final OTSDEVSSimulatorInterface theSimulator, final String errorMessage)
+    public void stopSimulator(final DEVSSimulatorInterface.TimeDoubleUnit theSimulator, final String errorMessage)
     {
         System.out.println("Error: " + errorMessage);
         try
@@ -870,7 +869,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
          *             or the position is beyond or before the lane length
          */
         public SimpleSilentSensor(final String id, final Lane lane, final Length position,
-                final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator)
+                final RelativePosition.TYPE triggerPosition, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
                 throws NetworkException, OTSGeometryException
         {
             super(id, lane, position, triggerPosition, simulator, LaneBasedObject.makeGeometry(lane, position),
@@ -902,16 +901,16 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public SimpleSilentSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+        public SimpleSilentSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
                 final boolean animation) throws NetworkException
         {
             Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-            Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+            Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
                     "simulator should be a DEVSSimulator");
             try
             {
                 return new SimpleSilentSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
-                        (OTSDEVSSimulatorInterface) newSimulator);
+                        (DEVSSimulatorInterface.TimeDoubleUnit) newSimulator);
             }
             catch (OTSGeometryException exception)
             {

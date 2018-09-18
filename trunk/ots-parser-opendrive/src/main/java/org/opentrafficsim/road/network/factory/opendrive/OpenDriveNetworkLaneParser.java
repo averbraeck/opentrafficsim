@@ -14,7 +14,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -29,6 +28,7 @@ import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -70,7 +70,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
 
     /** The simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
-    protected OTSDEVSSimulatorInterface simulator;
+    protected DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** OTS network */
     @SuppressWarnings("visibilitymodifier")
@@ -95,7 +95,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
-    public OpenDriveNetworkLaneParser(final OTSDEVSSimulatorInterface simulator)
+    public OpenDriveNetworkLaneParser(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         this.simulator = simulator;
     }

@@ -23,9 +23,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -55,6 +53,8 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -75,11 +75,11 @@ public class TrafficLightSensorTest implements EventListenerInterface
 
     /**
      * Make a simulator.
-     * @return OTSDEVSSimulator; the new simulator
+     * @return DEVSSimulator.TimeDoubleUnit; the new simulator
      * @throws SimRuntimeException ...
      * @throws NamingException ...
      */
-    private static OTSDEVSSimulator makeSimulator() throws SimRuntimeException, NamingException
+    private static DEVSSimulator.TimeDoubleUnit makeSimulator() throws SimRuntimeException, NamingException
     {
         return new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), new OTSModelInterface()
         {
@@ -88,17 +88,17 @@ public class TrafficLightSensorTest implements EventListenerInterface
             private static final long serialVersionUID = 1L;
 
             /** Store the simulator. */
-            private SimulatorInterface<Time, Duration, OTSSimTimeDouble> sim;
+            private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim;
 
             @Override
-            public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                    throws SimRuntimeException, RemoteException
+            public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+                    throws SimRuntimeException
             {
                 this.sim = theSimulator;
             }
 
             @Override
-            public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+            public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
             {
                 return this.sim;
             }
@@ -116,14 +116,14 @@ public class TrafficLightSensorTest implements EventListenerInterface
      * Build the test network.
      * @param lengths double[]; The lengths of the subsequent lanes to construct; negative lengths indicate that the design
      *            direction must be reversed
-     * @param simulator OTSDEVSSimulator; the simulator
+     * @param simulator DEVSSimulator.TimeDoubleUnit; the simulator
      * @return Lane[]; an array of linearly connected (single) lanes
      * @throws NetworkException ...
      * @throws OTSGeometryException ...
      * @throws NamingException ...
      * @throws SimRuntimeException ...
      */
-    private static Lane[] buildNetwork(final double[] lengths, final OTSDEVSSimulator simulator)
+    private static Lane[] buildNetwork(final double[] lengths, final DEVSSimulator.TimeDoubleUnit simulator)
             throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException
     {
         OTSNetwork network = new OTSNetwork("network");
@@ -207,7 +207,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
             for (int pos = 50; pos < 130; pos++)
             {
                 System.out.println("Number of lanes is " + lengthList.length + " pos is " + pos);
-                OTSDEVSSimulator simulator = makeSimulator();
+                DEVSSimulator.TimeDoubleUnit simulator = makeSimulator();
                 Lane[] lanes = buildNetwork(lengthList, simulator);
                 OTSNetwork network = (OTSNetwork) lanes[0].getParentLink().getNetwork();
                 Length a = new Length(100, LengthUnit.METER);
@@ -286,7 +286,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
                     }
                 }
                 Time stopTime = new Time(100, TimeUnit.BASE_SECOND);
-                while (simulator.getSimulatorTime().get().lt(stopTime))
+                while (simulator.getSimulatorTime().lt(stopTime))
                 {
                     // System.out.println("simulation time is now " + simulator);
                     simulator.step();

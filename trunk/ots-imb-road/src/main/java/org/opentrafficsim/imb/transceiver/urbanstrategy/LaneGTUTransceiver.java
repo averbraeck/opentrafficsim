@@ -4,8 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Link;
@@ -19,6 +18,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventType;
@@ -210,13 +210,13 @@ public class LaneGTUTransceiver extends AbstractTransceiver
     /**
      * Construct a new LaneGTUTransceiver.
      * @param connector Connector; the IMB connector through which this transceiver communicates
-     * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule the incoming notifications on
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the incoming notifications on
      * @param network OTSNetwork; the OTS network on which Links for Lanes are registered
      * @throws IMBException when the registration of one of the channels fails
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public LaneGTUTransceiver(final Connector connector, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
-            throws IMBException
+    public LaneGTUTransceiver(final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final OTSNetwork network) throws IMBException
     {
         super("Lane_GTU", connector, simulator);
         this.network = network;
@@ -240,7 +240,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
         {
             try
             {
-                this.notify(new TimedEvent<OTSSimTimeDouble>(Network.LINK_ADD_EVENT, this.network, link.getId(),
+                this.notify(new TimedEvent<Time>(Network.LINK_ADD_EVENT, this.network, link.getId(),
                         getSimulator().getSimulatorTime()));
             }
             catch (RemoteException exception)
@@ -309,8 +309,8 @@ public class LaneGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane,
-                            new Object[] { gtu.getId(), gtu, gtuCount }, getSimulator().getSimulatorTime()));
+                    this.notify(new TimedEvent<Time>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu, gtuCount },
+                            getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
                 {
@@ -402,7 +402,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
             Object[] content = (Object[]) event.getContent();
             Lane lane = (Lane) content[3];
             int laneNumber = (Integer) content[4];
-            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            double timestamp = getSimulator().getSimulatorTime().si;
             List<Object> resultList = new ArrayList<>();
             resultList.add(timestamp);
             resultList.add(this.network.getId());
@@ -444,7 +444,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
         String gtuId = (String) gtuInfo[0];
         int countAfterEvent = (Integer) gtuInfo[2];
         Lane lane = (Lane) event.getSource();
-        double timestamp = getSimulator().getSimulatorTime().getTime().si;
+        double timestamp = getSimulator().getSimulatorTime().si;
         if (Lane.GTU_ADD_EVENT.equals(event.getType()))
         {
             return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), true, gtuId,
@@ -472,7 +472,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
             String networkId = (String) content[0];
             String linkId = (String) content[1];
             String laneId = (String) content[2];
-            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            double timestamp = getSimulator().getSimulatorTime().si;
             return new Object[] { timestamp, networkId, linkId, laneId };
         }
         System.err.println("LaneGTUTransceiver.transformDelete: Don't know how to transform event " + event);

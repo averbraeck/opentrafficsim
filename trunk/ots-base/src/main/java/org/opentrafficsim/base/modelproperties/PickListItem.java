@@ -6,8 +6,7 @@ package org.opentrafficsim.base.modelproperties;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Aug 14, 2017 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Aug 14, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -20,7 +19,7 @@ public class PickListItem<T>
 
     /** Display text of this pick list item. */
     private final String displayText;
-    
+
     /** Description (may use HTML formatting tags). */
     private final String description;
 
@@ -28,7 +27,7 @@ public class PickListItem<T>
      * Construct a new PickListItem.
      * @param id T; the id of the new PickListItem
      * @param displayText String; the text to show to the user in the pick list
-     * @param description String; the description of this pick list item (may use HTML formatting) 
+     * @param description String; the description of this pick list item (may use HTML formatting)
      */
     public PickListItem(final T id, final String displayText, final String description)
     {
@@ -79,8 +78,7 @@ public class PickListItem<T>
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "PickListItem [id=" + this.id + ", displayText=" + this.displayText + ", description=" + this.description
-                + "]";
+        return "PickListItem [id=" + this.id + ", displayText=" + this.displayText + ", description=" + this.description + "]";
     }
-   
+
 }

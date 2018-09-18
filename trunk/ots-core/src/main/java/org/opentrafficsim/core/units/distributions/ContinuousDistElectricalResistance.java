@@ -15,7 +15,7 @@ import nl.tudelft.simulation.jstats.distributions.DistContinuous;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // This class was automatically generated
-public class ContinuousDistElectricalResistance 
+public class ContinuousDistElectricalResistance
         extends ContinuousDistDoubleScalar.Rel<ElectricalResistance, ElectricalResistanceUnit>
 {
 
@@ -29,7 +29,7 @@ public class ContinuousDistElectricalResistance
     public ContinuousDistElectricalResistance(final DistContinuous distribution, final ElectricalResistanceUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -38,7 +38,7 @@ public class ContinuousDistElectricalResistance
     {
         return new ElectricalResistance(getDistribution().draw(), (ElectricalResistanceUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

@@ -6,7 +6,6 @@ package org.opentrafficsim.water.demand;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.water.role.Company;
 import org.opentrafficsim.water.role.ShippingLine;
 import org.opentrafficsim.water.statistics.ContainerTransportCO2BreakdownEnum;
@@ -15,6 +14,8 @@ import org.opentrafficsim.water.statistics.ContainerTransportFeeBreakdownEnum;
 import org.opentrafficsim.water.statistics.ContainerTransportTimeBreakdownEnum;
 import org.opentrafficsim.water.statistics.FullEmptyEnum;
 import org.opentrafficsim.water.transfer.Terminal;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * A container is exactly 1 TEU. It collects statistics along the way, which are reported to the statistics objects just before
@@ -38,7 +39,7 @@ public class Container implements Serializable
     private static final long serialVersionUID = 1L;
 
     /** the simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** origin terminal. */
     private Terminal terminalFrom;
@@ -83,7 +84,7 @@ public class Container implements Serializable
      * @param empty empty or full
      * @param shippingLine shipping line of the container
      */
-    public Container(final OTSDEVSSimulatorInterface simulator, final Terminal terminalFrom, final Terminal terminalTo,
+    public Container(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Terminal terminalFrom, final Terminal terminalTo,
             final boolean empty, final ShippingLine shippingLine)
     {
         super();
@@ -93,7 +94,7 @@ public class Container implements Serializable
         this.terminalTo = terminalTo;
         this.empty = empty;
         this.shippingLine = shippingLine;
-        this.creationTime = this.simulator.getSimulatorTime().getTime();
+        this.creationTime = this.simulator.getSimulatorTime();
         for (int i = 0; i < ContainerTransportCostBreakdownEnum.values().length; i++)
         {
             this.transportCosts[i] = 0.0f;
@@ -408,7 +409,7 @@ public class Container implements Serializable
      */
     public final void setStackArrivalTime()
     {
-        this.stackArrivalTime = this.simulator.getSimulatorTime().getTime();
+        this.stackArrivalTime = this.simulator.getSimulatorTime();
     }
 
     /**
@@ -432,7 +433,7 @@ public class Container implements Serializable
      */
     public final void setOnShipTime()
     {
-        this.onShipTime = this.simulator.getSimulatorTime().getTime()   ;
+        this.onShipTime = this.simulator.getSimulatorTime()   ;
     }
 
 }

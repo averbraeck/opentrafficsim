@@ -39,8 +39,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.locale.DefaultLocale;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -64,6 +62,8 @@ import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
  * Several demos in one application.

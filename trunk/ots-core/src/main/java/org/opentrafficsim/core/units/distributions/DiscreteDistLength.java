@@ -28,7 +28,7 @@ public class DiscreteDistLength extends DiscreteDistDoubleScalar.Rel<Length, Len
     public DiscreteDistLength(final DistDiscrete distribution, final LengthUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistLength extends DiscreteDistDoubleScalar.Rel<Length, Len
     {
         return new Length(getDistribution().draw(), (LengthUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

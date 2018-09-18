@@ -1,20 +1,12 @@
 package org.opentrafficsim.road.gtu.strategical;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
@@ -24,8 +16,9 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.mock.MockSimulator;
 
-import mockit.MockUp;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test the LaneBasedStrategicalRoutePlanner class.
@@ -54,10 +47,7 @@ public class LaneBasedStrategicalRoutePlannerTest
         OTSNode fromNode = new OTSNode(network, "from", new OTSPoint3D(0, 0, 0));
         OTSNode toNode = new OTSNode(network, "to", new OTSPoint3D(100, 0, 0));
         OTSLine3D designLine = new OTSLine3D(fromNode.getPoint(), toNode.getPoint());
-        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
         OTSLink link = new OTSLink(network, "link", fromNode, toNode, LinkType.ROAD, designLine, simulator);
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);

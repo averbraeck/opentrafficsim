@@ -176,16 +176,14 @@ public class OTSPoint3D implements Locatable, Serializable
         {
             return null; // lines are parallel (they might even be on top of each other, but we don't check that)
         }
-        double uA =
-                ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
-                        / denominator;
+        double uA = ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
+                / denominator;
         if ((uA < 0f) || (uA > 1f))
         {
             return null; // intersection outside line 1
         }
-        double uB =
-                ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
-                        / denominator;
+        double uB = ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
+                / denominator;
         if (uB < 0 || uB > 1)
         {
             return null; // intersection outside line 2
@@ -253,12 +251,10 @@ public class OTSPoint3D implements Locatable, Serializable
             return null;
         }
         return new OTSPoint3D(
-                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.x - line2P2.x) - (line1P1.x - line1P2.x)
-                        * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
-                        / determinant,
-                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y)
-                        * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
-                        / determinant);
+                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.x - line2P2.x)
+                        - (line1P1.x - line1P2.x) * (line2P1.x * line2P2.y - line2P1.y * line2P2.x)) / determinant,
+                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.y - line2P2.y)
+                        - (line1P1.y - line1P2.y) * (line2P1.x * line2P2.y - line2P1.y * line2P2.x)) / determinant);
     }
 
     /**
@@ -270,8 +266,8 @@ public class OTSPoint3D implements Locatable, Serializable
      * @param line2P2 OTSPoint3D; second point of line 2
      * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel
      */
-    public static OTSPoint3D intersectionOfLines(final OTSPoint3D line1P1, final OTSPoint3D line1P2,
-            final OTSPoint3D line2P1, final OTSPoint3D line2P2)
+    public static OTSPoint3D intersectionOfLines(final OTSPoint3D line1P1, final OTSPoint3D line1P2, final OTSPoint3D line2P1,
+            final OTSPoint3D line2P2)
     {
         double l1p1x = line1P1.x;
         double l1p1y = line1P1.y;
@@ -286,8 +282,8 @@ public class OTSPoint3D implements Locatable, Serializable
         {
             return null;
         }
-        return new OTSPoint3D(l1p1x + (l1p2x * (l2p1x * l2p2y - l2p1y * l2p2x)) / determinant, l1p1y
-                + (l1p2y * (l2p1x * l2p2y - l2p1y * l2p2x)) / determinant);
+        return new OTSPoint3D(l1p1x + (l1p2x * (l2p1x * l2p2y - l2p1y * l2p2x)) / determinant,
+                l1p1y + (l1p2y * (l2p1x * l2p2y - l2p1y * l2p2x)) / determinant);
     }
 
     /**

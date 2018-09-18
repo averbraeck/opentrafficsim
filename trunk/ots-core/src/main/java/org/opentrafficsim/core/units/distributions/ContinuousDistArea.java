@@ -28,7 +28,7 @@ public class ContinuousDistArea extends ContinuousDistDoubleScalar.Rel<Area, Are
     public ContinuousDistArea(final DistContinuous distribution, final AreaUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistArea extends ContinuousDistDoubleScalar.Rel<Area, Are
     {
         return new Area(getDistribution().draw(), (AreaUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

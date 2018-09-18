@@ -3,13 +3,13 @@ package org.opentrafficsim.core.compatibility;
 import java.util.HashMap;
 import java.util.Map;
 
-import nl.tudelft.simulation.language.Throw;
-
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Directional GTUType dependent compatibility.
@@ -23,8 +23,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <I> infrastructure type, e.g. LinkType or LaneType, or water way type
  */
-public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUType, I>> implements
-        Compatibility<GTUType, I>
+public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUType, I>> implements Compatibility<GTUType, I>
 {
     /** The map of GTUTypes to permitted directions of movement. */
     private final Map<GTUType, LongitudinalDirectionality> allowanceMap = new HashMap<>();
@@ -177,8 +176,8 @@ public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
             LongitudinalDirectionality parentLD = parentCompatibility.getDirectionality(gtuType, true);
             if (!parentLD.contains(ourLD))
             {
-                throw new GTUException(String.format(
-                        "GTUType %s has LongitudinalDirectionality %s on child, but %s on parent", ourLD, parentLD));
+                throw new GTUException(String.format("GTUType %s has LongitudinalDirectionality %s on child, but %s on parent",
+                        ourLD, parentLD));
             }
         }
         // TODO cleverly check only those in the parent(s) that do not conflict with ours.

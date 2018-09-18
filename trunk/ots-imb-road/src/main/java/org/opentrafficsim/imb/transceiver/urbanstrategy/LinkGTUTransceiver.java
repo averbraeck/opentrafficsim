@@ -4,8 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
@@ -18,6 +17,7 @@ import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.event.TimedEvent;
@@ -198,13 +198,13 @@ public class LinkGTUTransceiver extends AbstractTransceiver
     /**
      * Construct a new LinkGTUTransceiver.
      * @param connector Connector; the IMB connector through which this transceiver communicates
-     * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule the incoming notifications on
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the incoming notifications on
      * @param network OTSNetwork; the OTS network on which Links are registered
      * @throws IMBException when the registration of one of the channels fails
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public LinkGTUTransceiver(final Connector connector, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
-            throws IMBException
+    public LinkGTUTransceiver(final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final OTSNetwork network) throws IMBException
     {
         super("Link_GTU", connector, simulator);
         this.network = network;
@@ -228,7 +228,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
         {
             try
             {
-                this.notify(new TimedEvent<OTSSimTimeDouble>(Network.LINK_ADD_EVENT, this.network, link.getId(),
+                this.notify(new TimedEvent<Time>(Network.LINK_ADD_EVENT, this.network, link.getId(),
                         getSimulator().getSimulatorTime()));
             }
             catch (RemoteException exception)
@@ -273,8 +273,8 @@ public class LinkGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new TimedEvent<OTSSimTimeDouble>(Link.GTU_ADD_EVENT, link,
-                            new Object[] { gtu.getId(), gtu, gtuCount }, getSimulator().getSimulatorTime()));
+                    this.notify(new TimedEvent<Time>(Link.GTU_ADD_EVENT, link, new Object[] { gtu.getId(), gtu, gtuCount },
+                            getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
                 {
@@ -338,7 +338,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
         {
             String linkId = (String) event.getContent();
             Link link = this.network.getLink(linkId);
-            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            double timestamp = getSimulator().getSimulatorTime().si;
             List<Object> resultList = new ArrayList<>();
             resultList.add(timestamp);
             resultList.add(this.network.getId());
@@ -380,7 +380,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
         String gtuId = (String) gtuInfo[0];
         int countAfterEvent = (Integer) gtuInfo[2];
         Link link = (Link) event.getSource();
-        double timestamp = getSimulator().getSimulatorTime().getTime().si;
+        double timestamp = getSimulator().getSimulatorTime().si;
         if (Link.GTU_ADD_EVENT.equals(event.getType()))
         {
             return new Object[] { timestamp, link.getNetwork().getId(), link.getId(), true, gtuId, countAfterEvent };
@@ -403,7 +403,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
         if (Network.LINK_REMOVE_EVENT.equals(event.getType()))
         {
             String linkId = (String) event.getContent();
-            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            double timestamp = getSimulator().getSimulatorTime().si;
             return new Object[] { timestamp, this.network.getId(), linkId };
         }
         System.err.println("LinkGTUTransceiver.transformDelete: Don't know how to transform event " + event);

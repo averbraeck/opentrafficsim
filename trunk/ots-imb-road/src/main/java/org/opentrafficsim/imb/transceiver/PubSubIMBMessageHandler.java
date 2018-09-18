@@ -1,10 +1,10 @@
 package org.opentrafficsim.imb.transceiver;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.imb.IMBException;
 
 import nl.tno.imb.TByteBuffer;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventType;
@@ -26,7 +26,7 @@ import nl.tudelft.simulation.event.EventType;
 public class PubSubIMBMessageHandler implements IMBMessageHandler
 {
     /** The simulator to schedule the incoming notifications on. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The IMB event name (String). */
     private final String imbEventName;
@@ -44,11 +44,11 @@ public class PubSubIMBMessageHandler implements IMBMessageHandler
      * @param eventType EventType; the event type that the listener subscribes to
      * @param imbToOTSTransformer IMBToOTSTransformer; the transformer that creates the event content and identifies the exact
      *            listener on the basis of the IBM event payload, e.g., on the basis of an id within the payload
-     * @param simulator OTSDEVSSimulatorInterface; The simulator to schedule the incoming notifications on
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; The simulator to schedule the incoming notifications on
      * @throws IMBException in case the construction fails
      */
     public PubSubIMBMessageHandler(final String imbEventName, final EventType eventType,
-            final IMBToOTSTransformer imbToOTSTransformer, final OTSDEVSSimulatorInterface simulator) throws IMBException
+            final IMBToOTSTransformer imbToOTSTransformer, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws IMBException
     {
         this.imbEventName = imbEventName;
         this.eventType = eventType;

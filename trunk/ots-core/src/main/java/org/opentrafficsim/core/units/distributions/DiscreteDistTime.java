@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
@@ -29,7 +29,7 @@ public class DiscreteDistTime extends DiscreteDistDoubleScalar.Abs<Time, TimeUni
     public DiscreteDistTime(final DistDiscrete distribution, final TimeUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -38,7 +38,7 @@ public class DiscreteDistTime extends DiscreteDistDoubleScalar.Abs<Time, TimeUni
     {
         return new Time(getDistribution().draw(), (TimeUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

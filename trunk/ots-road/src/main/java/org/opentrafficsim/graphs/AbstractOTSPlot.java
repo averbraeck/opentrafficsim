@@ -9,7 +9,7 @@ import java.util.UUID;
 import javax.swing.JFrame;
 import javax.swing.event.EventListenerList;
 
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DatasetChangeEvent;
@@ -189,7 +189,7 @@ public abstract class AbstractOTSPlot extends JFrame
     public final byte[] generatePNG(final int width, final int height) throws IOException
     {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        ChartUtilities.writeChartAsPNG(result, this.chart, width, height);
+        ChartUtils.writeChartAsPNG(result, this.chart, width, height);
         return result.toByteArray();
     }
 

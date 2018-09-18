@@ -28,7 +28,7 @@ public class ContinuousDistEnergy extends ContinuousDistDoubleScalar.Rel<Energy,
     public ContinuousDistEnergy(final DistContinuous distribution, final EnergyUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistEnergy extends ContinuousDistDoubleScalar.Rel<Energy,
     {
         return new Energy(getDistribution().draw(), (EnergyUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

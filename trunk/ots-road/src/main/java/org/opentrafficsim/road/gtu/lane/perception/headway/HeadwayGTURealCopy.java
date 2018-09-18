@@ -129,7 +129,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     {
         super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getWidth(), gtu.getSpeed(),
                 gtu.getAcceleration(), gtu.getDesiredSpeed(),
-                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime().getTime()));
+                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime()));
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.parameters = new ParameterSet(gtu.getParameters());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
@@ -149,7 +149,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     {
         super(gtu.getId(), gtu.getGTUType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getWidth(),
                 gtu.getSpeed(), gtu.getAcceleration(), gtu.getDesiredSpeed(),
-                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime().getTime()));
+                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime()));
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.parameters = new ParameterSet(gtu.getParameters());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);

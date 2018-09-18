@@ -28,7 +28,7 @@ public class DiscreteDistFlowMass extends DiscreteDistDoubleScalar.Rel<FlowMass,
     public DiscreteDistFlowMass(final DistDiscrete distribution, final FlowMassUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistFlowMass extends DiscreteDistDoubleScalar.Rel<FlowMass,
     {
         return new FlowMass(getDistribution().draw(), (FlowMassUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

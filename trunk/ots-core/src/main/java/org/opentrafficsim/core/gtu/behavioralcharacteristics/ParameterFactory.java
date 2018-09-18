@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu.behavioralcharacteristics;
 
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUType;
 
 /**

@@ -56,8 +56,7 @@ public class AccelerationGTUColorer implements GTUColorer, Serializable
             double ratio = index * 1.0 / (decelerationColors.length - 1);
             Acceleration acceleration = Acceleration.interpolate(this.maximumDeceleration, Acceleration.ZERO, ratio);
             String label = acceleration.toString().replaceFirst("\\.0*", ".0");
-            this.legend.add(new LegendEntry(decelerationColors[index], label,
-                    "deceleration" + label));
+            this.legend.add(new LegendEntry(decelerationColors[index], label, "deceleration" + label));
         }
         for (int index = 0; index < accelerationColors.length; index++)
         {

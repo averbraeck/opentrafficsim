@@ -4,11 +4,11 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 
 import nl.tno.imb.TByteBuffer;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventProducerInterface;
@@ -38,7 +38,7 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
     private final Connector connector;
 
     /** The simulator to schedule the incoming notifications on. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The map to indicate which IMB message handler to use for a given IMB message type. */
     private Map<String, IMBMessageHandler> imbMessageHandlerMap = new HashMap<>();
@@ -53,10 +53,10 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
      * Construct a new AbstractTranceiver.
      * @param id String; an id to identify the channel, e.g., "GTU" or "Simulator Control"
      * @param connector Connector; the IMB connector through which this transceiver communicates
-     * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule the incoming notifications on
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the incoming notifications on
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public AbstractTransceiver(final String id, final Connector connector, final OTSDEVSSimulatorInterface simulator)
+    public AbstractTransceiver(final String id, final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         Throw.whenNull(connector, "Connector can not be null");
         Throw.whenNull(id, "id can not be null");
@@ -234,9 +234,9 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
 
     /**
      * Retrieve the simulator.
-     * @return OTSDEVSSimulatorInterface simulator
+     * @return DEVSSimulatorInterface.TimeDoubleUnit simulator
      */
-    public OTSDEVSSimulatorInterface getSimulator()
+    public DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return this.simulator;
     }

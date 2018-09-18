@@ -38,9 +38,7 @@ import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -89,6 +87,8 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
@@ -363,7 +363,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
         private static final long serialVersionUID = 20140815L;
 
         /** The simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** The network. */
         private OTSNetwork network = new OTSNetwork("network");
@@ -436,10 +436,10 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+                throws SimRuntimeException
         {
-            this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
             try
             {
                 OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
@@ -656,7 +656,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
 
         /** {@inheritDoc} */
         @Override
-        public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return this.simulator;
         }
@@ -717,7 +717,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
              * @param length Length; the maximum length of the GTU (parallel with driving direction)
              * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
              * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
-             * @param simulator OTSDEVSSimulatorInterface; the simulator
+             * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
              * @param network the network that the GTU is initially registered in
              * @throws NamingException if an error occurs when adding the animation handler
              * @throws NetworkException when the GTU cannot be placed on the given lane
@@ -727,7 +727,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
              * @throws ParameterException in case of a parameter problem.
              */
             LaneBasedPerceivingCar(final String id, final GTUType gtuType, final Length length, final Length width,
-                    final Speed maximumSpeed, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
+                    final Speed maximumSpeed, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSNetwork network)
                     throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
                     ParameterException
             {

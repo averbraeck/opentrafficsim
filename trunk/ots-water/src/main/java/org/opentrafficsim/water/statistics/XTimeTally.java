@@ -3,9 +3,9 @@
  */
 package org.opentrafficsim.water.statistics;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <br>
@@ -26,13 +26,13 @@ public class XTimeTally extends XTally
 
     /** */
     @XStreamOmitField
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /**
      * @param description description of the statistic
      * @param simulator the simulator
      */
-    public XTimeTally(String description, OTSDEVSSimulatorInterface simulator)
+    public XTimeTally(String description, DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         super(description);
         this.simulator = simulator;
@@ -45,7 +45,7 @@ public class XTimeTally extends XTally
      */
     public void tally(final double t)
     {
-        super.tally(this.simulator.getSimulatorTime().getTime().si - t);
+        super.tally(this.simulator.getSimulatorTime().si - t);
     }
 
 }

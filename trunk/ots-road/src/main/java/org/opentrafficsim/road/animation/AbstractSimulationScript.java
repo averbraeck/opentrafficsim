@@ -11,9 +11,7 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.Try;
@@ -44,6 +42,8 @@ import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -72,7 +72,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     private final String description;
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The network. */
     private OTSNetwork network;
@@ -209,15 +209,15 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             ScriptSimulation scriptSimulation = this.new ScriptSimulation();
             try
             {
-                OTSDEVSSimulatorInterface sim =
+                DEVSSimulatorInterface.TimeDoubleUnit sim =
                         scriptSimulation.buildSimulator(startTime, warmupTime, simulationTime, new ArrayList<Property<?>>());
                 sim.addListener(this, SimulatorInterface.END_OF_REPLICATION_EVENT);
                 double tReport = 60.0;
-                Time t = sim.getSimulatorTime().getTime();
+                Time t = sim.getSimulatorTime();
                 while (t.si < simulationTime.si)
                 {
                     sim.step();
-                    t = sim.getSimulatorTime().getTime();
+                    t = sim.getSimulatorTime();
                     if (t.si >= tReport)
                     {
                         System.out.println("Simulation time is " + t);
@@ -253,9 +253,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /**
      * Returns the simulator.
-     * @return OTSDEVSSimulatorInterface; simulator
+     * @return DEVSSimulatorInterface.TimeDoubleUnit; simulator
      */
-    public final OTSDEVSSimulatorInterface getSimulator()
+    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return AbstractSimulationScript.this.simulator;
     }
@@ -378,11 +378,11 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     /**
      * Sets up the simulation based on provided properties. Properties can be obtained with {@code getProperty()}. Setting up a
      * simulation should at least create a network and some demand. Additionally this may setup traffic control, sampling, etc.
-     * @param sim OTSDEVSSimulatorInterface; simulator
+     * @param sim DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @return OTSNetwork; network
      * @throws Exception on any exception
      */
-    protected abstract OTSNetwork setupSimulation(OTSDEVSSimulatorInterface sim) throws Exception;
+    protected abstract OTSNetwork setupSimulation(DEVSSimulatorInterface.TimeDoubleUnit sim) throws Exception;
 
     // Nested classes
 
@@ -525,25 +525,32 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> sim)
-                throws SimRuntimeException, RemoteException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim)
+                throws SimRuntimeException
         {
-            AbstractSimulationScript.this.simulator = (OTSDEVSSimulatorInterface) sim;
+            AbstractSimulationScript.this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) sim;
             Map<String, StreamInterface> streams = new HashMap<>();
             StreamInterface stream = new MersenneTwister(Long.valueOf(getProperty("seed")));
             streams.put("generation", stream);
             sim.getReplication().setStreams(streams);
             AbstractSimulationScript.this.network =
-                    Try.assign(() -> AbstractSimulationScript.this.setupSimulation((OTSDEVSSimulatorInterface) sim),
+                    Try.assign(() -> AbstractSimulationScript.this.setupSimulation((DEVSSimulatorInterface.TimeDoubleUnit) sim),
                             RuntimeException.class, "Exception while setting up simulation.");
-            AbstractSimulationScript.this.simulator.addListener(AbstractSimulationScript.this,
-                    SimulatorInterface.END_OF_REPLICATION_EVENT);
+            try
+            {
+                AbstractSimulationScript.this.simulator.addListener(AbstractSimulationScript.this,
+                        SimulatorInterface.END_OF_REPLICATION_EVENT);
+            }
+            catch (RemoteException exception)
+            {
+                throw new SimRuntimeException(exception);
+            }
         }
 
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return AbstractSimulationScript.this.simulator;
         }

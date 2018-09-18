@@ -12,11 +12,11 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.animation.TextAnimation;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Node;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -41,7 +41,8 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communication failure
      */
-    public NodeAnimation(final Node node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public NodeAnimation(final Node node, final SimulatorInterface.TimeDoubleUnit simulator)
+            throws NamingException, RemoteException
     {
         super(node, simulator);
         this.text = new Text(node, node.getId(), 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, simulator);
@@ -66,7 +67,7 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+    public ClonableRenderable2DInterface clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
             throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
@@ -110,7 +111,7 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator)
+                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator);
@@ -121,7 +122,7 @@ public class NodeAnimation extends Renderable2D implements ClonableRenderable2DI
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+        public TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
                 throws RemoteException, NamingException
         {
             return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);

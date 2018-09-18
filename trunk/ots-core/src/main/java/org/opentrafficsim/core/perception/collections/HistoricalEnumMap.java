@@ -37,7 +37,7 @@ public class HistoricalEnumMap<K extends Enum<K>, V> extends AbstractHistoricalM
         super(historyManager, new EnumMap<>(clazz));
         this.clazz = clazz;
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager

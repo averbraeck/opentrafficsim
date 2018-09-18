@@ -22,7 +22,7 @@ public interface Parameters
      * @throws ParameterException If the value does not comply with value type constraints.
      */
     <T> void setParameter(ParameterType<T> parameterType, T value) throws ParameterException;
-    
+
     /**
      * Set parameter value of given parameter type, store old value to allow a reset.
      * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
@@ -31,14 +31,14 @@ public interface Parameters
      * @throws ParameterException If the value does not comply with value type constraints.
      */
     <T> void setParameterResettable(ParameterType<T> parameterType, T value) throws ParameterException;
-    
+
     /**
      * Resets the parameter value to the value from before the last set. This goes only a single value back.
      * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
      * @throws ParameterException If the parameter was never set.
      */
     void resetParameter(ParameterType<?> parameterType) throws ParameterException;
-    
+
     /**
      * Get parameter of given type.
      * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
@@ -47,7 +47,7 @@ public interface Parameters
      * @throws ParameterException If the parameter was never set.
      */
     <T> T getParameter(ParameterType<T> parameterType) throws ParameterException;
-    
+
     /**
      * Returns a parameter value, or {@code null} if not present. This can be used to prevent frequent calls to both
      * {@code contains()} and {@code getParameter()} in performance critical code.
@@ -56,18 +56,18 @@ public interface Parameters
      * @return parameter value, or {@code null} if not present
      */
     <T> T getParameterOrNull(ParameterType<T> parameterType);
-    
+
     /**
      * Indicate whether the given parameter type has been set.
      * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type to check
      * @return boolean; true if <code>parameterType</code> has been set; false if <code>parameterType</code> has not been set
      */
     boolean contains(ParameterType<?> parameterType);
-    
+
     /**
      * Sets the parameters of this set in the given set.
      * @param parameters Parameters; parameters to set the values in
      */
     void setAllIn(Parameters parameters);
-    
+
 }

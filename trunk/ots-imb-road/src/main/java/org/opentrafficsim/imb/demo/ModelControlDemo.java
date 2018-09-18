@@ -35,11 +35,7 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -97,7 +93,10 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.Simulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
@@ -278,9 +277,9 @@ public class ModelControlDemo extends ModelStarter
             System.out.println("IMBConnector for simulation is " + simulationIMBConnector);
             this.model = new CircularRoadIMB(new DefaultSwitchableGTUColorer(), new OTSNetwork(""), properties,
                     simulationIMBConnector);
-            Replication<Time, Duration, OTSSimTimeDouble> replication = new Replication<Time, Duration, OTSSimTimeDouble>(
-                    "rep1", new OTSSimTimeDouble(Time.ZERO), Duration.ZERO, new Duration(1, DurationUnit.HOUR), this.model);
-            OTSDEVSRealTimeClock simulator = new OTSDEVSRealTimeClock();
+            Replication<Time, Duration, SimTimeDoubleUnit> replication = new Replication<Time, Duration, SimTimeDoubleUnit>(
+                    "rep1", new SimTimeDoubleUnit(Time.ZERO), Duration.ZERO, new Duration(1, DurationUnit.HOUR), this.model);
+            DEVSRealTimeClock.TimeDoubleUnit simulator = new DEVSRealTimeClock.TimeDoubleUnit();
             simulator.initialize(replication, ReplicationMode.TERMINATING);
             signalModelState(ModelState.READY);
             System.out.println("Reported ModelState.READY");
@@ -298,16 +297,9 @@ public class ModelControlDemo extends ModelStarter
         System.out.println("stopModel called");
         if (null != this.model)
         {
-            try
-            {
-                ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
-                this.model.closeWindow();
-                this.model = null;
-            }
-            catch (RemoteException exception)
-            {
-                exception.printStackTrace();
-            }
+            ((Simulator<Time, Duration, SimTimeDoubleUnit>) this.model.getSimulator()).cleanUp();
+            this.model.closeWindow();
+            this.model = null;
         }
         else
         {
@@ -324,7 +316,7 @@ public class ModelControlDemo extends ModelStarter
             try
             {
                 // clean up; even if stopModel was not called before quitApplication
-                ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
+                ((Simulator<Time, Duration, SimTimeDoubleUnit>) this.model.getSimulator()).cleanUp();
             }
             catch (Exception exception)
             {
@@ -438,7 +430,7 @@ public class ModelControlDemo extends ModelStarter
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** Number of cars created. */
         private int carsCreated = 0;
@@ -592,22 +584,29 @@ public class ModelControlDemo extends ModelStarter
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+                throws SimRuntimeException
         {
             AnimationPanel panel = null;
-            if (theSimulator instanceof AnimatorInterface)
+            try
             {
-                this.frame = new JFrame("Circular Road Simulation with IMB Model Control");
-                panel = new AnimationPanel(new Rectangle2D.Double(-1000, -1000, 2000, 2000), new Dimension(1000, 1000),
-                        theSimulator);
-                this.frame.add(panel);
-                this.frame.setSize(new Dimension(1000, 1000));
-                this.frame.setVisible(true);
-                // Tell the animation to build the list of animation objects.
-                panel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, theSimulator, null));
+                if (theSimulator instanceof AnimatorInterface)
+                {
+                    this.frame = new JFrame("Circular Road Simulation with IMB Model Control");
+                    panel = new AnimationPanel(new Rectangle2D.Double(-1000, -1000, 2000, 2000), new Dimension(1000, 1000),
+                            theSimulator);
+                    this.frame.add(panel);
+                    this.frame.setSize(new Dimension(1000, 1000));
+                    this.frame.setVisible(true);
+                    // Tell the animation to build the list of animation objects.
+                    panel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, theSimulator, null));
+                }
             }
-            OTSDEVSSimulatorInterface imbAnimator = (OTSDEVSSimulatorInterface) theSimulator;
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
+            }
+            DEVSSimulatorInterface.TimeDoubleUnit imbAnimator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
             if (null != this.imbConnector)
             {
                 try
@@ -631,7 +630,7 @@ public class ModelControlDemo extends ModelStarter
             {
                 this.paths.add(new ArrayList<Lane>());
             }
-            this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
             double radius = 6000 / 2 / Math.PI;
             double headway = 40;
             double headwayVariability = 0;
@@ -881,7 +880,7 @@ public class ModelControlDemo extends ModelStarter
         {
             try
             {
-                ((Simulator<Time, Duration, OTSSimTimeDouble>) this.simulator).cleanUp();
+                ((Simulator<Time, Duration, SimTimeDoubleUnit>) this.simulator).cleanUp();
             }
             catch (Exception exception)
             {
@@ -902,9 +901,8 @@ public class ModelControlDemo extends ModelStarter
             // Re schedule this method
             try
             {
-                this.simulator.scheduleEventAbs(
-                        new Time(this.simulator.getSimulatorTime().get().getSI() + 10, TimeUnit.BASE_SECOND), this, this,
-                        "drawGraphs", null);
+                this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 10, TimeUnit.BASE_SECOND),
+                        this, this, "drawGraphs", null);
             }
             catch (SimRuntimeException exception)
             {
@@ -956,7 +954,7 @@ public class ModelControlDemo extends ModelStarter
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return this.simulator;
         }
@@ -979,10 +977,10 @@ public class ModelControlDemo extends ModelStarter
 
         /**
          * Stop simulation and throw an Error.
-         * @param theSimulator OTSDEVSSimulatorInterface; the simulator
+         * @param theSimulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
          * @param errorMessage String; the error message
          */
-        public void stopSimulator(final OTSDEVSSimulatorInterface theSimulator, final String errorMessage)
+        public void stopSimulator(final DEVSSimulatorInterface.TimeDoubleUnit theSimulator, final String errorMessage)
         {
             System.out.println("Error: " + errorMessage);
             try
@@ -1029,7 +1027,7 @@ public class ModelControlDemo extends ModelStarter
              *             zero, or the position is beyond or before the lane length
              */
             public SimpleSilentSensor(final String id, final Lane lane, final Length position,
-                    final RelativePosition.TYPE triggerPosition, final OTSDEVSSimulatorInterface simulator)
+                    final RelativePosition.TYPE triggerPosition, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
                     throws NetworkException, OTSGeometryException
             {
                 super(id, lane, position, triggerPosition, simulator, LaneBasedObject.makeGeometry(lane, position),
@@ -1060,7 +1058,7 @@ public class ModelControlDemo extends ModelStarter
 
             /** {@inheritDoc} */
             @Override
-            public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+            public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
                     final boolean animation) throws NetworkException
             {
                 // not important in this class.

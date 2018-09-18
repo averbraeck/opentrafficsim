@@ -28,7 +28,7 @@ public class ContinuousDistTorque extends ContinuousDistDoubleScalar.Rel<Torque,
     public ContinuousDistTorque(final DistContinuous distribution, final TorqueUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistTorque extends ContinuousDistDoubleScalar.Rel<Torque,
     {
         return new Torque(getDistribution().draw(), (TorqueUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

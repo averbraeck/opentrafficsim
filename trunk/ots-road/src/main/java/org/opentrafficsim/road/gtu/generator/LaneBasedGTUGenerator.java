@@ -25,7 +25,6 @@ import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -49,6 +48,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -96,7 +96,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     private final OTSNetwork network;
 
     /** Simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The way that this generator checks if it is safe to construct and place the next lane based GTU. */
     private final RoomChecker roomChecker;
@@ -122,7 +122,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
      *            each GTU
      * @param generatorPositions GeneratorPositions; location and initial direction provider for all generated GTUs
      * @param network OTSNetwork; the OTS network that owns the generated GTUs
-     * @param simulator OTSDEVSSimulatorInterface; simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @param roomChecker LaneBasedGTUGenerator.RoomChecker; the way that this generator checks that there is sufficient room to
      *            place a new GTU
      * @param idGenerator IdGenerator; id generator
@@ -132,7 +132,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
      */
     public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final GTUColorer gtuColorer, final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
-            final GeneratorPositions generatorPositions, final OTSNetwork network, final OTSDEVSSimulatorInterface simulator,
+            final GeneratorPositions generatorPositions, final OTSNetwork network, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
             final RoomChecker roomChecker, final IdGenerator idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException
     {
@@ -208,7 +208,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             }
             Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue = linkMap.get(lanePosition);
             queue.add(new TimeStampedObject<LaneBasedGTUCharacteristics>(characteristics,
-                    this.simulator.getSimulatorTime().getTime()));
+                    this.simulator.getSimulatorTime()));
             if (queue.size() == 1)
             {
                 this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { lanePosition });
@@ -268,7 +268,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             getFirstLeaders(dirPos.getLaneDirection(),
                     dirPos.getPosition().neg().minus(characteristics.getLength().divideBy(2.0)), dirPos.getPosition(), leaders);
         }
-        Duration since = this.simulator.getSimulatorTime().getTime().minus(timedCharacteristics.getTimestamp());
+        Duration since = this.simulator.getSimulatorTime().minus(timedCharacteristics.getTimestamp());
         Placement placement = this.roomChecker.canPlace(leaders, characteristics, since, position.getPosition());
         if (placement.canPlace())
         {
@@ -328,7 +328,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             final Set<HeadwayGTU> set) throws GTUException
     {
         LaneBasedGTU next = lane.getLane().getGtuAhead(beyond, lane.getDirection(), RelativePosition.FRONT,
-                this.simulator.getSimulatorTime().getTime());
+                this.simulator.getSimulatorTime());
         if (next != null)
         {
             Length headway;

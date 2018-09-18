@@ -15,10 +15,10 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.event.EventContext;
 
-import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -30,6 +30,7 @@ import org.opentrafficsim.core.perception.PerceivableContext;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.immutablecollections.Immutable;
 import nl.tudelft.simulation.immutablecollections.ImmutableHashMap;
@@ -550,7 +551,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> buildGraph(final GTUType gtuType, final LinkWeight linkWeight)
     {
         // TODO: take connections into account, and possibly do node expansion to build the graph
-        @SuppressWarnings({ "unchecked" }) 
+        @SuppressWarnings({ "unchecked" })
         // TODO: the next line with .class has problems compiling... So used a dirty hack instead for now...
         Class<LinkEdge<Link>> linkEdgeClass = (Class<LinkEdge<Link>>) new LinkEdge<OTSLink>(null).getClass();
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleDirectedWeightedGraph<>(linkEdgeClass);
@@ -585,13 +586,15 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     {
         CompleteRoute route = new CompleteRoute("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo, gtuType);
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = getGraph(gtuType, linkWeight);
-        DijkstraShortestPath<Node, LinkEdge<Link>> path = new DijkstraShortestPath<>(graph, nodeFrom, nodeTo);
-        if (path.getPath() == null)
+        // DijkstraShortestPath<Node, LinkEdge<Link>> dijkstra = new DijkstraShortestPath<>(graph);
+        // GraphPath<Node, LinkEdge<Link>> path = dijkstra.getPath(nodeFrom, nodeTo);
+        GraphPath<Node, LinkEdge<Link>> path = DijkstraShortestPath.findPathBetween(graph, nodeFrom, nodeTo);
+        if (path == null)
         {
             return null;
         }
         route.addNode(nodeFrom);
-        for (LinkEdge<Link> link : path.getPathEdgeList())
+        for (LinkEdge<Link> link : path.getEdgeList())
         {
             if (!link.getLink().getEndNode().equals(route.destinationNode())
                     && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
@@ -618,7 +621,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     {
         return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, LinkWeight.LENGTH);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
@@ -636,12 +639,13 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         for (int i = 1; i < nodes.size(); i++)
         {
             Node to = nodes.get(i);
-            DijkstraShortestPath<Node, LinkEdge<Link>> path = new DijkstraShortestPath<>(graph, from, to);
-            if (path.getPath() == null)
+            DijkstraShortestPath<Node, LinkEdge<Link>> dijkstra = new DijkstraShortestPath<>(graph);
+            GraphPath<Node, LinkEdge<Link>> path = dijkstra.getPath(from, to);
+            if (path == null)
             {
                 return null;
             }
-            for (LinkEdge<Link> link : path.getPathEdgeList())
+            for (LinkEdge<Link> link : path.getEdgeList())
             {
                 if (!link.getLink().getEndNode().equals(route.destinationNode())
                         && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
@@ -663,7 +667,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         return route;
     }
-    
+
     /**
      * Returns the graph, possibly a stored one.
      * @param gtuType GTUType; GTU type
@@ -761,8 +765,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSNetwork clone(final String newId, final OTSSimulatorInterface oldSimulator,
-            final OTSSimulatorInterface newSimulator, final boolean animation) throws NetworkException
+    public OTSNetwork clone(final String newId, final SimulatorInterface.TimeDoubleUnit oldSimulator,
+            final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation) throws NetworkException
     {
         OTSNetwork newNetwork = new OTSNetwork(newId);
 
@@ -832,7 +836,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      */
     @SuppressWarnings("checkstyle:designforextension")
     public static <T extends Locatable> void cloneAnimation(final Locatable oldSource, final T newSource,
-            final OTSSimulatorInterface oldSimulator, final OTSSimulatorInterface newSimulator)
+            final SimulatorInterface.TimeDoubleUnit oldSimulator, final SimulatorInterface.TimeDoubleUnit newSimulator)
     {
         if (!(oldSimulator instanceof AnimatorInterface) || !(newSimulator instanceof AnimatorInterface))
         {
@@ -867,7 +871,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      * @param simulator the simulator of the old network
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public void destroy(final OTSSimulatorInterface simulator)
+    public void destroy(final SimulatorInterface.TimeDoubleUnit simulator)
     {
         for (GTU gtu : this.getGTUs())
         {
@@ -892,13 +896,13 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
                 {
                     ao.destroy();
                 }
-                catch (@SuppressWarnings("unused") Exception e)
+                catch (Exception e)
                 {
                     //
                 }
             }
         }
-        catch (@SuppressWarnings("unused") NamingException | RemoteException exception)
+        catch (NamingException exception)
         {
             System.err.println("Error when destroying animation objects");
         }
@@ -915,7 +919,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      * @param oldSimulator the old simulator
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public void removeAnimation(final Class<?> clazz, final OTSSimulatorInterface oldSimulator)
+    public void removeAnimation(final Class<?> clazz, final SimulatorInterface.TimeDoubleUnit oldSimulator)
     {
         if (!(oldSimulator instanceof AnimatorInterface))
         {

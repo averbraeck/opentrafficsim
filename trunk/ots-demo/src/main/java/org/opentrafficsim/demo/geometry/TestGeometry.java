@@ -9,16 +9,16 @@ import javax.naming.NamingException;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 
@@ -40,7 +40,7 @@ public class TestGeometry extends DSOLApplication implements UNITS
      * @param title t
      * @param panel p
      */
-    public TestGeometry(final String title, final DSOLPanel<Time, Duration, OTSSimTimeDouble> panel)
+    public TestGeometry(final String title, final DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {
         super(title, panel);
     }
@@ -54,11 +54,11 @@ public class TestGeometry extends DSOLApplication implements UNITS
     public static void main(final String[] args) throws SimRuntimeException, NamingException, RemoteException
     {
         OTSModelInterface model = new TestModel();
-        OTSDEVSAnimator simulator = new OTSDEVSAnimator();
-        OTSReplication replication = new OTSReplication("rep1", new OTSSimTimeDouble(Time.ZERO),
+        DEVSAnimator simulator = new DEVSAnimator();
+        OTSReplication replication = new OTSReplication("rep1", new SimTimeDoubleUnit(Time.ZERO),
                 Duration.ZERO, new Duration(1800.0, SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
-        DSOLPanel<Time, Duration, OTSSimTimeDouble> panel = new DSOLPanel<Time, Duration, OTSSimTimeDouble>(model, simulator);
+        DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel = new DSOLPanel<Time, Duration, SimTimeDoubleUnit>(model, simulator);
 
         Rectangle2D extent = new Rectangle2D.Double(-50, -50, 300, 100);
         Dimension size = new Dimension(1024, 768);

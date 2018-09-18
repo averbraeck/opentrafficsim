@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.dsol;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -11,11 +10,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -28,8 +25,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTSSimTimeDouble>
-        implements OTSDEVSSimulatorInterface, OTSAnimatorInterface
+public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, SimTimeDoubleUnit>
 {
     /** */
     private static final long serialVersionUID = 20140909L;
@@ -77,28 +73,6 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTS
 
     /** {@inheritDoc} */
     @Override
-    public final void initialize(final Replication<Time, Duration, OTSSimTimeDouble> initReplication,
-            final ReplicationMode replicationMode) throws SimRuntimeException
-    {
-        try
-        {
-            super.initialize(initReplication, replicationMode);
-        }
-        catch (RemoteException exception)
-        {
-            throw new SimRuntimeException(exception);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void runUpTo(final Time when) throws SimRuntimeException
-    {
-        super.runUpTo(when);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected final Duration relativeMillis(final double factor)
     {
         return new Duration(factor, DurationUnit.MILLISECOND);
@@ -108,7 +82,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTS
     @Override
     public final String toString()
     {
-        return "OTSDEVSRealTimeClock [time=" + getSimulatorTime().getTime() + "]";
+        return "DEVSRealTimeClock.TimeDoubleUnit [time=" + getSimulatorTime() + "]";
     }
 
     /** {@inheritDoc} */
@@ -120,13 +94,13 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTS
         animationThread.start();
 
         long clockTime0 = System.currentTimeMillis(); // _________ current zero for the wall clock
-        OTSSimTimeDouble simTime0 = this.simulatorTime; // _______ current zero for the sim clock
+        SimTimeDoubleUnit simTime0 = this.simulatorTime; // _______ current zero for the sim clock
         double factor = getSpeedFactor(); // _____________________ local copy of speed factor to detect change
         double msec1 = relativeMillis(1.0).doubleValue(); // _____ translation factor for 1 msec for sim clock
         Duration rSim = this.relativeMillis(getUpdateMsec() * factor); // sim clock change for 'updateMsec' wall clock
 
         while (this.isRunning() && !this.eventList.isEmpty()
-                && this.simulatorTime.le(this.replication.getTreatment().getEndTime()))
+                && this.getSimulatorTime().le(this.replication.getTreatment().getEndTime()))
         {
             // check if speedFactor has changed. If yes: re-baseline.
             if (factor != getSpeedFactor())
@@ -158,8 +132,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTS
                     synchronized (super.semaphore)
                     {
                         Duration delta = relativeMillis((syncTime - simTime) / msec1);
-                        OTSSimTimeDouble absSyncTime = this.simulatorTime.plus(delta);
-                        OTSSimTimeDouble eventTime = this.eventList.first().getAbsoluteExecutionTime();
+                        SimTimeDoubleUnit absSyncTime = this.simulatorTime.plus(delta);
+                        SimTimeDoubleUnit eventTime = this.eventList.first().getAbsoluteExecutionTime();
                         if (absSyncTime.lt(eventTime))
                         {
                             this.simulatorTime = absSyncTime;
@@ -174,7 +148,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTS
 
             // peek at the first event and determine the time difference relative to RT speed; that determines
             // how long we have to wait.
-            SimEventInterface<OTSSimTimeDouble> event = this.eventList.first();
+            SimEventInterface<SimTimeDoubleUnit> event = this.eventList.first();
             double simTimeDiffMillis = (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
 
             /*
@@ -263,14 +237,14 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTS
             {
                 // parallel execution of the move method
                 // first carry out all the non-move events and make a list of move events to be carried out in parallel
-                List<SimEventInterface<OTSSimTimeDouble>> moveEvents = new ArrayList<>();
+                List<SimEventInterface<SimTimeDoubleUnit>> moveEvents = new ArrayList<>();
                 synchronized (super.semaphore)
                 {
                     while (this.isRunning() && !this.eventList.isEmpty()
                             && event.getAbsoluteExecutionTime().eq(this.simulatorTime))
                     {
                         event = this.eventList.removeFirst();
-                        SimEvent<OTSSimTimeDouble> se = (SimEvent<OTSSimTimeDouble>) event;
+                        SimEvent<SimTimeDoubleUnit> se = (SimEvent<SimTimeDoubleUnit>) event;
                         if (se.getTarget() instanceof GTU && se.getMethod().equals("move"))
                         {
                             moveEvents.add(event);
@@ -303,8 +277,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTS
                 this.executor = Executors.newFixedThreadPool(1);
                 for (int i = 0; i < moveEvents.size(); i++)
                 {
-                    SimEvent<OTSSimTimeDouble> se = (SimEvent<OTSSimTimeDouble>) moveEvents.get(i);
-                    final SimEventInterface<OTSSimTimeDouble> moveEvent =
+                    SimEvent<SimTimeDoubleUnit> se = (SimEvent<SimTimeDoubleUnit>) moveEvents.get(i);
+                    final SimEventInterface<SimTimeDoubleUnit> moveEvent =
                             new SimEvent<>(this.simulatorTime, se.getSource(), se.getTarget(), "movePrep", se.getArgs());
                     this.executor.execute(new Runnable()
                     {
@@ -339,8 +313,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTS
                 this.executor = Executors.newFixedThreadPool(1);
                 for (int i = 0; i < moveEvents.size(); i++)
                 {
-                    SimEvent<OTSSimTimeDouble> se = (SimEvent<OTSSimTimeDouble>) moveEvents.get(i);
-                    final SimEventInterface<OTSSimTimeDouble> moveEvent =
+                    SimEvent<SimTimeDoubleUnit> se = (SimEvent<SimTimeDoubleUnit>) moveEvents.get(i);
+                    final SimEventInterface<SimTimeDoubleUnit> moveEvent =
                             new SimEvent<>(this.simulatorTime, se.getSource(), se.getTarget(), "moveGenerate", se.getArgs());
                     this.executor.execute(new Runnable()
                     {
@@ -375,8 +349,8 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, OTS
                 this.executor = Executors.newFixedThreadPool(1);
                 for (int i = 0; i < moveEvents.size(); i++)
                 {
-                    SimEvent<OTSSimTimeDouble> se = (SimEvent<OTSSimTimeDouble>) moveEvents.get(i);
-                    final SimEventInterface<OTSSimTimeDouble> moveEvent =
+                    SimEvent<SimTimeDoubleUnit> se = (SimEvent<SimTimeDoubleUnit>) moveEvents.get(i);
+                    final SimEventInterface<SimTimeDoubleUnit> moveEvent =
                             new SimEvent<>(this.simulatorTime, se.getSource(), se.getTarget(), "moveFinish", se.getArgs());
                     this.executor.execute(new Runnable()
                     {

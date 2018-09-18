@@ -26,9 +26,7 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -60,6 +58,8 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -166,13 +166,13 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 int xs = (int) lane.getParentLink().getStartNode().getPoint().x;
                 int xe = (int) lane.getParentLink().getEndNode().getPoint().x;
                 fd = new FundamentalDiagramLane("Fundamental Diagram for [" + xs + ", " + xe + "] m", new Duration(1.0, SECOND),
-                        lane, Compatible.EVERYTHING, (OTSDEVSSimulatorInterface) this.model.getSimulator());
+                        lane, Compatible.EVERYTHING, (DEVSSimulatorInterface.TimeDoubleUnit) this.model.getSimulator());
                 fd.setTitle("Fundamental Diagram Graph");
                 fd.setExtendedState(Frame.MAXIMIZED_BOTH);
                 this.model.getFundamentalDiagrams().add(fd);
                 charts.setCell(fd.getContentPane(), plotNumber / panelsPerRow, plotNumber % panelsPerRow);
             }
-            catch (NetworkException | RemoteException | SimRuntimeException exception)
+            catch (NetworkException | SimRuntimeException exception)
             {
                 exception.printStackTrace();
             }
@@ -223,7 +223,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         private OTSNetwork network = new OTSNetwork("network");
 
         /** The simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** The headway (inter-vehicle time). */
         private Duration headway;
@@ -277,10 +277,10 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+                throws SimRuntimeException
         {
-            this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
             try
             {
                 LaneType laneType = LaneType.TWO_WAY_LANE;
@@ -474,7 +474,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
 
         /** {@inheritDoc} */
         @Override
-        public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return this.simulator;
         }

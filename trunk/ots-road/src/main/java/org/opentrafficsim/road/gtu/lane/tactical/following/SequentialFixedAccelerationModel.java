@@ -13,10 +13,11 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Extended version of FixedAccelerationModel. The addition is that this GTUFollowingModel stores a series of acceleration and
@@ -39,7 +40,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     private final List<FixedAccelerationModel> steps = new ArrayList<>();
 
     /** The simulator engine. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The maximum safe deceleration. */
     private final Acceleration maximumSafeDeceleration;
@@ -49,7 +50,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
      * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
      * @param maximumSafeDeceleration specified maximum safe deceleration
      */
-    public SequentialFixedAccelerationModel(final OTSDEVSSimulatorInterface simulator,
+    public SequentialFixedAccelerationModel(final DEVSSimulatorInterface.TimeDoubleUnit simulator,
             final Acceleration maximumSafeDeceleration)
     {
         this.simulator = simulator;
@@ -62,7 +63,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
      * @param maximumSafeDeceleration specified maximum safe deceleration
      * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
      */
-    public SequentialFixedAccelerationModel(final OTSDEVSSimulatorInterface simulator,
+    public SequentialFixedAccelerationModel(final DEVSSimulatorInterface.TimeDoubleUnit simulator,
             final Acceleration maximumSafeDeceleration, final Set<FixedAccelerationModel> steps)
     {
         this(simulator, maximumSafeDeceleration);
@@ -123,7 +124,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
      */
     private FixedAccelerationModel getAccelerationModel()
     {
-        Time when = this.simulator.getSimulatorTime().getTime();
+        Time when = this.simulator.getSimulatorTime();
         double remainingTime = when.getSI();
         for (FixedAccelerationModel step : this.steps)
         {

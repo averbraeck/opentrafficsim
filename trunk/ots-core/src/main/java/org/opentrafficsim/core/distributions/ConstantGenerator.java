@@ -33,7 +33,7 @@ public class ConstantGenerator<O> implements Generator<O>
     {
         return this.value;
     }
-    
+
     /**
      * Returns the value.
      * @return O; value

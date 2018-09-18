@@ -28,7 +28,7 @@ public class DiscreteDistElectricalPotential extends DiscreteDistDoubleScalar.Re
     public DiscreteDistElectricalPotential(final DistDiscrete distribution, final ElectricalPotentialUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistElectricalPotential extends DiscreteDistDoubleScalar.Re
     {
         return new ElectricalPotential(getDistribution().draw(), (ElectricalPotentialUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

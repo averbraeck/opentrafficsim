@@ -9,7 +9,6 @@ import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -18,6 +17,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -193,7 +193,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected CrossSectionElement(final CrossSectionLink newCrossSectionLink, final OTSSimulatorInterface newSimulator,
+    protected CrossSectionElement(final CrossSectionLink newCrossSectionLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
             final boolean animation, final CrossSectionElement cse) throws NetworkException
     {
         this.id = cse.id;
@@ -598,5 +598,5 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      */
     @SuppressWarnings("checkstyle:designforextension")
     public abstract CrossSectionElement clone(final CrossSectionLink newParentLink,
-            final OTSSimulatorInterface newSimulator, final boolean animation) throws NetworkException;
+            final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation) throws NetworkException;
 }

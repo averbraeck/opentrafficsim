@@ -23,8 +23,6 @@ import javax.imageio.ImageIO;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -38,6 +36,7 @@ import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
@@ -134,7 +133,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
     private int currentTime10 = 0;
 
     /** The simulation engine. */
-    private final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator;
+    private final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator;
 
     /** Space-separated list of the traffic streams in the currently active conflict group. */
     private String currentConflictGroup = "";
@@ -147,13 +146,13 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
      *            that match the stream numbers as used in the traffic control program
      * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic sensors. The ids of the traffic sensors must end with three
      *            digits; the first two of those must match the stream and sensor numbers used in the traffic control program
-     * @param simulator DEVSSimulator&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulation engine
+     * @param simulator DEVSSimulator&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulation engine
      * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
     public TrafCOD(String controllerName, final URL trafCodURL, final Set<TrafficLight> trafficLights,
-            final Set<TrafficLightSensor> sensors, final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator,
+            final Set<TrafficLightSensor> sensors, final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator,
             Container display) throws TrafficControlException, SimRuntimeException
     {
         this(controllerName, simulator, display);
@@ -222,12 +221,12 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
 
     /**
      * @param controllerName String; name of this TrafCOD traffic light controller
-     * @param simulator DEVSSimulator&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulation engine
+     * @param simulator DEVSSimulator&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulation engine
      * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
-    private TrafCOD(String controllerName, final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator, Container display)
+    private TrafCOD(String controllerName, final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator, Container display)
             throws TrafficControlException, SimRuntimeException
     {
         Throw.whenNull(controllerName, "controllerName may not be null");
@@ -701,7 +700,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
     {
         fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING, new Object[] { this.controllerName },
                 this.simulator.getSimulatorTime());
-        // System.out.println("evalExprs: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().get().si));
+        // System.out.println("evalExprs: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().si));
         // insert some delay for testing; without this the simulation runs too fast
         // try
         // {
@@ -715,7 +714,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
         // Contrary to the C++ builder version; this implementation decrements the times at the start of evalExprs
         // By doing it before updating this.currentTime10; the debugging output should be very similar
         decrementTimers();
-        this.currentTime10 = (int) (this.simulator.getSimulatorTime().get().si * 10);
+        this.currentTime10 = (int) (this.simulator.getSimulatorTime().si * 10);
         int loop;
         for (loop = 0; loop < this.maxLoopCount; loop++)
         {
@@ -1720,9 +1719,9 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
 
     /**
      * Retrieve the simulator.
-     * @return SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;
+     * @return SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;
      */
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
     {
         return this.simulator;
     }
@@ -1871,14 +1870,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
      */
     void fireTrafCODEvent(final EventType eventType, final Object[] payload)
     {
-        try
-        {
-            fireTimedEvent(eventType, payload, getSimulator().getSimulatorTime());
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
+        fireTimedEvent(eventType, payload, getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
@@ -1897,14 +1889,14 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
 
     /** {@inheritDoc} */
     @Override
-    public final InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork)
+    public final InvisibleObjectInterface clone(final SimulatorInterface.TimeDoubleUnit newSimulator, final Network newNetwork)
             throws NetworkException
     {
         try
         {
             // TODO figure out how to provide a display for the clone
             @SuppressWarnings("unchecked")
-            TrafCOD result = new TrafCOD(getId(), (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) newSimulator, null);
+            TrafCOD result = new TrafCOD(getId(), (DEVSSimulator<Time, Duration, SimTimeDoubleUnit>) newSimulator, null);
             result.fireTimedEvent(TRAFFICCONTROL_CONTROLLER_CREATED,
                     new Object[] { this.controllerName, TrafficController.BEING_CLONED }, newSimulator.getSimulatorTime());
             // Clone the variables

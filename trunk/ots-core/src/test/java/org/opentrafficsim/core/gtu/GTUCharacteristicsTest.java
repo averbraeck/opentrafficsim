@@ -3,8 +3,6 @@ package org.opentrafficsim.core.gtu;
 import static org.junit.Assert.assertEquals;
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
-import java.rmi.RemoteException;
-
 import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
@@ -16,10 +14,10 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -68,19 +66,19 @@ public class GTUCharacteristicsTest implements OTSModelInterface
     }
 
     /** ... */
-    private SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator;
+    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+            throws SimRuntimeException
     {
         this.simulator = theSimulator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
     {
         return this.simulator;
     }

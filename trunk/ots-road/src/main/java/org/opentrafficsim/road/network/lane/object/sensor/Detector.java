@@ -21,8 +21,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -34,6 +32,8 @@ import org.opentrafficsim.road.network.animation.SensorAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.Throw;
 
@@ -241,7 +241,7 @@ public class Detector extends AbstractSensor
                 public List<Double> accumulateEntry(final List<Double> cumulative, final LaneBasedGTU gtu,
                         final Detector loopDetector)
                 {
-                    cumulative.add(gtu.getSimulator().getSimulatorTime().getTime().si);
+                    cumulative.add(gtu.getSimulator().getSimulatorTime().si);
                     return cumulative;
                 }
 
@@ -312,11 +312,11 @@ public class Detector extends AbstractSensor
      * @param id String; detector id
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
-     * @param simulator OTSDEVSSimulatorInterface; simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @throws NetworkException on network exception
      */
     public Detector(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSDEVSSimulatorInterface simulator) throws NetworkException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         // Note: length not important for flow and mean speed
         this(id, lane, longitudinalPosition, Length.ZERO, simulator, Duration.createSI(60.0), MEAN_SPEED);
@@ -328,13 +328,13 @@ public class Detector extends AbstractSensor
      * @param lane Lane; lane
      * @param longitudinalPosition Length; position
      * @param length Length; length
-     * @param simulator OTSDEVSSimulatorInterface; simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @param aggregation Duration; aggregation period
      * @param measurements DetectorMeasurement...; measurements to obtain
      * @throws NetworkException on network exception
      */
     public Detector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
-            final OTSDEVSSimulatorInterface simulator, final Duration aggregation,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Duration aggregation,
             final DetectorMeasurement<?, ?>... measurements) throws NetworkException
     {
         super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, compatible);
@@ -365,12 +365,12 @@ public class Detector extends AbstractSensor
              * @param idRear String; id
              * @param laneRear Lane; lane
              * @param longitudinalPositionRear Length; position
-             * @param simulatorRear OTSDEVSSimulatorInterface; simulator
+             * @param simulatorRear DEVSSimulatorInterface.TimeDoubleUnit; simulator
              * @throws NetworkException on network exception
              */
             @SuppressWarnings("synthetic-access")
             RearDetector(final String idRear, final Lane laneRear, final Length longitudinalPositionRear,
-                    final OTSDEVSSimulatorInterface simulatorRear) throws NetworkException
+                    final DEVSSimulatorInterface.TimeDoubleUnit simulatorRear) throws NetworkException
             {
                 super(idRear, laneRear, longitudinalPositionRear, RelativePosition.REAR, simulatorRear, compatible);
             }
@@ -388,7 +388,7 @@ public class Detector extends AbstractSensor
 
             /** {@inheritDoc} */
             @Override
-            public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+            public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
                     final boolean animation) throws NetworkException
             {
                 return null; // Detector constructor creates new clone
@@ -421,7 +421,7 @@ public class Detector extends AbstractSensor
         }
         if (this.listeners.containsKey(DETECTOR_TRIGGERED))
         {
-            this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] { gtu }, getSimulator().getSimulatorTime().getTime());
+            this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] { gtu }, getSimulator().getSimulatorTime());
         }
     }
 
@@ -470,7 +470,7 @@ public class Detector extends AbstractSensor
                 data[i] = list.get(list.size() - 1);
                 i++;
             }
-            this.fireTimedEvent(DETECTOR_AGGREGATE, data, getSimulator().getSimulatorTime().getTime());
+            this.fireTimedEvent(DETECTOR_AGGREGATE, data, getSimulator().getSimulatorTime());
         }
         this.period++;
         double t = this.aggregation.si * this.period;
@@ -519,7 +519,7 @@ public class Detector extends AbstractSensor
             if (!measurement.isPeriodic())
             {
                 map.put(measurement, getAggregateValue(measurement, this.overallCount,
-                        this.getSimulator().getSimulatorTime().getTime().minus(Time.ZERO)));
+                        this.getSimulator().getSimulatorTime().minus(Time.ZERO)));
             }
         }
         return map;
@@ -527,7 +527,7 @@ public class Detector extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+    public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
             final boolean animation) throws NetworkException
     {
         return null;
@@ -823,7 +823,7 @@ public class Detector extends AbstractSensor
         public PlatoonMeasurement accumulateEntry(final PlatoonMeasurement cumulative, final LaneBasedGTU gtu,
                 final Detector loopDetector)
         {
-            Time now = gtu.getSimulator().getSimulatorTime().getTime();
+            Time now = gtu.getSimulator().getSimulatorTime();
             if (now.si - cumulative.lastExitTime.si < this.threshold.si)
             {
                 cumulative.count++;
@@ -850,7 +850,7 @@ public class Detector extends AbstractSensor
             int index = cumulative.enteredGTUs.indexOf(gtu);
             if (index >= 0)
             {
-                cumulative.lastExitTime = gtu.getSimulator().getSimulatorTime().getTime();
+                cumulative.lastExitTime = gtu.getSimulator().getSimulatorTime();
                 // gtu is likely the oldest gtu in the list at index 0, but sometimes an older gtu may have left the detector by
                 // changing lane, by clearing up to this gtu, older gtu's are automatically removed
                 cumulative.enteredGTUs.subList(0, index).clear();

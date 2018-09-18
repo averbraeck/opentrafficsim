@@ -58,7 +58,7 @@ public final class Break
     public static void onSuper(final GTU gtu, final String id, final double time, final boolean additionalCondition)
     {
         superCondition =
-                gtu.getId().equals(id) && gtu.getSimulator().getSimulatorTime().getTime().si >= time && additionalCondition;
+                gtu.getId().equals(id) && gtu.getSimulator().getSimulatorTime().si >= time && additionalCondition;
     }
 
     /**
@@ -108,7 +108,7 @@ public final class Break
      */
     public static void on(final GTU gtu, final String id, final double time, final boolean additionalCondition)
     {
-        if (gtu.getId().equals(id) && gtu.getSimulator().getSimulatorTime().getTime().si >= time && additionalCondition)
+        if (gtu.getId().equals(id) && gtu.getSimulator().getSimulatorTime().si >= time && additionalCondition)
         {
             trigger();
         }

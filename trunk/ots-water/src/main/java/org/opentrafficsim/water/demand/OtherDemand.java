@@ -7,10 +7,11 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.water.Dynamic;
 import org.opentrafficsim.water.network.WaterwayLocation;
 import org.opentrafficsim.water.transport.ShipType;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Describes the demand from locations along waterways to other locations. 
@@ -33,7 +34,7 @@ public class OtherDemand implements Dynamic, Serializable
     private static final long serialVersionUID = 1L;
 
     /** the simulator to schedule on. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** the demand from and to locations. */
     private Set<OtherDemandCell> otherDemandSet = new HashSet<OtherDemandCell>();
@@ -41,7 +42,7 @@ public class OtherDemand implements Dynamic, Serializable
     /**
      * @param simulator the finulator
      */
-    public OtherDemand(final OTSDEVSSimulatorInterface simulator)
+    public OtherDemand(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         super();
         this.simulator = simulator;
@@ -151,7 +152,7 @@ public class OtherDemand implements Dynamic, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final OTSDEVSSimulatorInterface getSimulator()
+    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return this.simulator;
     }

@@ -28,7 +28,7 @@ public class ContinuousDistTemperature extends ContinuousDistDoubleScalar.Rel<Te
     public ContinuousDistTemperature(final DistContinuous distribution, final TemperatureUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistTemperature extends ContinuousDistDoubleScalar.Rel<Te
     {
         return new Temperature(getDistribution().draw(), (TemperatureUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

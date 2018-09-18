@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Longitudinal road stripes; simple constructors.
@@ -97,7 +98,7 @@ public class Stripe extends RoadMarkerAlong
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Stripe(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final boolean animation,
+    protected Stripe(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation,
             final Stripe cse) throws NetworkException
     {
         super(newParentLink, newSimulator, animation, cse);
@@ -147,7 +148,7 @@ public class Stripe extends RoadMarkerAlong
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Stripe clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final boolean animation)
+    public Stripe clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation)
             throws NetworkException
     {
         return new Stripe(newParentLink, newSimulator, animation, this);

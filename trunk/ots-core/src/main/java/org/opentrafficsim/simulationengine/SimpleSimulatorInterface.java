@@ -1,11 +1,11 @@
 package org.opentrafficsim.simulationengine;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -17,7 +17,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface SimpleSimulatorInterface extends OTSDEVSSimulatorInterface
+public interface SimpleSimulatorInterface extends DEVSSimulatorInterface.TimeDoubleUnit
 {
     /**
      * Construct and schedule a SimEvent using a Time to specify the execution time.
@@ -29,11 +29,11 @@ public interface SimpleSimulatorInterface extends OTSDEVSSimulatorInterface
      * @param target Object; the object that must execute the event
      * @param method String; the name of the method of <code>target</code> that must execute the event
      * @param args Object[]; the arguments of the <code>method</code> that must execute the event
-     * @return SimEvent&lt;OTSSimTimeDouble&gt;; the event that was scheduled (the caller should save this if a need to cancel
+     * @return SimEvent&lt;SimTimeDoubleUnit&gt;; the event that was scheduled (the caller should save this if a need to cancel
      *         the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    SimEvent<OTSSimTimeDouble> scheduleEvent(Time executionTime, short priority, Object source, Object target, String method,
+    SimEvent<SimTimeDoubleUnit> scheduleEvent(Time executionTime, short priority, Object source, Object target, String method,
             Object[] args) throws SimRuntimeException;
 
 }

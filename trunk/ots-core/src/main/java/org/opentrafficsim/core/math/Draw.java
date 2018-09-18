@@ -20,13 +20,13 @@ import nl.tudelft.simulation.language.Throw;
  */
 public final class Draw
 {
-    
+
     /** Constructor. */
     private Draw()
     {
         // no instance
     }
-    
+
     /**
      * Returns a randomly drawn element using draw weights.
      * @param map Map&lt;E, Double&gt;; map of elements and respective weights
@@ -47,7 +47,7 @@ public final class Draw
             sumProb += w;
         }
         Throw.when(sumProb == 0.0, IllegalArgumentException.class, "Probabilities should not add to 0.0.");
-        
+
         if (map.size() == 1)
         {
             return map.keySet().iterator().next();
@@ -67,7 +67,7 @@ public final class Draw
         }
         return last; // rounding error
     }
-    
+
     /**
      * Returns a randomly drawn element using uniform weights.
      * @param collection Collection&lt;E&gt;; collection of elements
@@ -90,5 +90,5 @@ public final class Draw
         }
         return it.next();
     }
-    
+
 }

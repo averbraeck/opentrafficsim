@@ -11,7 +11,6 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.animation.TextAnimation;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -19,6 +18,7 @@ import org.opentrafficsim.core.network.Link;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -50,8 +50,8 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
-    public LinkAnimation(final Link link, final OTSSimulatorInterface simulator, final float width) throws NamingException,
-            RemoteException
+    public LinkAnimation(final Link link, final SimulatorInterface.TimeDoubleUnit simulator, final float width)
+            throws NamingException, RemoteException
     {
         super(link, simulator);
         this.width = width;
@@ -96,9 +96,8 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         dy *= this.width / length;
         try
         {
-            OTSLine3D line =
-                    new OTSLine3D(new OTSPoint3D(endPoint.x - dy, endPoint.y + dx, endPoint.z), new OTSPoint3D(endPoint.x
-                            + dy, endPoint.y - dx, endPoint.z));
+            OTSLine3D line = new OTSLine3D(new OTSPoint3D(endPoint.x - dy, endPoint.y + dx, endPoint.z),
+                    new OTSPoint3D(endPoint.x + dy, endPoint.y - dx, endPoint.z));
             PaintLine.paintLine(graphics, getSource().getLinkType().isConnector() ? Color.BLUE : Color.RED, this.width / 30,
                     getSource().getLocation(), line);
         }
@@ -123,7 +122,7 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<Link> clone(final Link newSource, final OTSSimulatorInterface newSimulator)
+    public ClonableRenderable2DInterface<Link> clone(final Link newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
             throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
@@ -140,7 +139,8 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
     /**
      * Text animation for the Link. Separate class to be able to turn it on and off...
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
      * </p>
      * $LastChangedDate$, @version $Revision$, by $Author$,
@@ -166,7 +166,7 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator)
+                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator);
@@ -190,7 +190,7 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+        public TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
                 throws RemoteException, NamingException
         {
             return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);

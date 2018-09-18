@@ -5,12 +5,12 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventType;
 
 /**
@@ -49,7 +49,7 @@ public interface Link extends Locatable, Serializable, Identifiable
     OTSLine3D getDesignLine();
 
     /** @return the simulator. */
-    OTSSimulatorInterface getSimulator();
+    SimulatorInterface.TimeDoubleUnit getSimulator();
 
     /** @return length of the link. */
     Length getLength();

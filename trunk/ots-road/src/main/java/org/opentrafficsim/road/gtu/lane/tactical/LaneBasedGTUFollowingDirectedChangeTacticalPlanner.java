@@ -143,7 +143,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
     public final void setNoLaneChange(final Duration noLaneChangeDuration)
     {
         Throw.when(noLaneChangeDuration.lt0(), RuntimeException.class, "noLaneChangeDuration should be >= 0");
-        this.earliestNextLaneChangeTime = getGtu().getSimulator().getSimulatorTime().getTime().plus(noLaneChangeDuration);
+        this.earliestNextLaneChangeTime = getGtu().getSimulator().getSimulatorTime().plus(noLaneChangeDuration);
     }
 
     /**
@@ -274,7 +274,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             }
 
             // Condition, if we have just changed lane, let's not change immediately again.
-            if (getGtu().getSimulator().getSimulatorTime().getTime().lt(this.earliestNextLaneChangeTime))
+            if (getGtu().getSimulator().getSimulatorTime().lt(this.earliestNextLaneChangeTime))
             {
                 return currentLanePlan(laneBasedGTU, startTime, locationAtStartTime, lanePathInfo);
             }
@@ -375,7 +375,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             }
 
             if (this.deadLock != null
-                    && getGtu().getSimulator().getSimulatorTime().getTime().minus(this.deadLock).ge(this.deadLockThreshold)
+                    && getGtu().getSimulator().getSimulatorTime().minus(this.deadLock).ge(this.deadLockThreshold)
                     && isDestroyGtuOnFailure())
             {
                 System.err.println("Deleting gtu " + getGtu().getId() + " to prevent dead-lock.");
@@ -595,7 +595,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
         // stay at a certain number of seconds in the current lane (unless we HAVE to change lanes)
         this.earliestNextLaneChangeTime =
-                gtu.getSimulator().getSimulatorTime().getTime().plus(this.durationInLaneAfterLaneChange);
+                gtu.getSimulator().getSimulatorTime().plus(this.durationInLaneAfterLaneChange);
 
         // make sure out turn indicator is on!
         gtu.setTurnIndicatorStatus(direction.isLeft() ? TurnIndicatorStatus.LEFT : TurnIndicatorStatus.RIGHT);
@@ -722,7 +722,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
             {
                 if (this.deadLock == null)
                 {
-                    this.deadLock = getGtu().getSimulator().getSimulatorTime().getTime();
+                    this.deadLock = getGtu().getSimulator().getSimulatorTime();
                 }
             }
             else

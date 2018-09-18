@@ -11,7 +11,6 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 import javax.vecmath.Point2d;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -21,6 +20,7 @@ import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -47,7 +47,7 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */
-    public LaneAnimationOD(final Lane source, final OTSSimulatorInterface simulator, final Color color)
+    public LaneAnimationOD(final Lane source, final SimulatorInterface.TimeDoubleUnit simulator, final Color color)
             throws NamingException, RemoteException
     {
         super(source, simulator);

@@ -13,11 +13,11 @@ package org.opentrafficsim.base;
  */
 public interface Identifiable
 {
-    
+
     /**
      * Returns the Id.
      * @return Id.
      */
     String getId();
-    
+
 }

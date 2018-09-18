@@ -8,7 +8,6 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
@@ -24,6 +23,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -242,7 +242,7 @@ class FillTag implements Serializable
      * @throws NetworkException when route generator cannot be instantiated
      */
     static void makeFill(final FillTag fillTag, final VissimNetworkLaneParser parser, final LinkTag linkTag,
-            final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws SimRuntimeException, NetworkException
     {
         Lane lane = linkTag.lanes.get(fillTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualGTU.class;

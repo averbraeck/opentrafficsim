@@ -36,7 +36,7 @@ public class HistoricalVector<E> extends AbstractHistoricalList<E, Vector<E>>
     {
         super(historyManager, new Vector<>());
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -64,7 +64,7 @@ public class HistoricalVector<E> extends AbstractHistoricalList<E, Vector<E>>
         }
         return fill(time, new Vector<>());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

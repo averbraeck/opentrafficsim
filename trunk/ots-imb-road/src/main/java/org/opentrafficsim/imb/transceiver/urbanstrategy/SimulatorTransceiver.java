@@ -1,7 +1,5 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
-import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
@@ -11,6 +9,7 @@ import org.opentrafficsim.imb.transceiver.OTSToIMBTransformer;
 import nl.tno.imb.TByteBuffer;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 
@@ -48,16 +47,16 @@ public class SimulatorTransceiver extends AbstractTransceiver
     /**
      * Construct a new SimulatorTransceiver.
      * @param connector Connector; the IMB connector through which this transceiver communicates
-     * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule the incoming notifications on
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the incoming notifications on
      * @throws IMBException when the registration of one of the channels fails
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public SimulatorTransceiver(final Connector connector, final OTSDEVSSimulatorInterface simulator) throws IMBException
+    public SimulatorTransceiver(final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws IMBException
     {
         super("Simulator Control", connector, simulator);
 
         // register the OTS to IMB updates for the simulator
-        final OTSDEVSRealTimeClock animator = (OTSDEVSRealTimeClock) simulator;
+        final DEVSRealTimeClock.TimeDoubleUnit animator = (DEVSRealTimeClock.TimeDoubleUnit) simulator;
         addOTSToIMBChannel(animator, SimulatorInterface.START_EVENT, "Sim_Start", new Object[] {}, this.emptyTransformer);
         addOTSToIMBChannel(animator, SimulatorInterface.STOP_EVENT, "Sim_Stop", new Object[] {}, this.emptyTransformer);
         addOTSToIMBChannel(animator, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT, "Sim_Speed", new Object[] { new Double(1.0) },

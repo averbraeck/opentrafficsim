@@ -22,6 +22,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class DistNormalTrunc extends DistContinuous
 {
+    /** */
+    private static final long serialVersionUID = 1L;
 
     /** mu refers to the mean of the normal distribution. */
     private final double mu;

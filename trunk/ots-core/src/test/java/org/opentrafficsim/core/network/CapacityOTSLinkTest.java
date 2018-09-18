@@ -8,14 +8,14 @@ import java.util.Map;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.mock.MockSimulator;
 
-import mockit.MockUp;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test the CapacityOTSLink class.
@@ -30,7 +30,6 @@ import mockit.MockUp;
  */
 public class CapacityOTSLinkTest
 {
-
     /**
      * Test the constructor and all getters.
      * @throws NetworkException this test has failed if this exception occurs uncaught
@@ -46,16 +45,13 @@ public class CapacityOTSLinkTest
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = LinkType.ROAD;
         OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
-        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
         Frequency initialCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Frequency finalCapacity = new Frequency(1234, FrequencyUnit.PER_HOUR);
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
         directionalityMap.put(GTUType.VEHICLE, LongitudinalDirectionality.DIR_PLUS);
-        CapacityOTSLink link = new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator,
-                initialCapacity);
+        CapacityOTSLink link =
+                new CapacityOTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator, initialCapacity);
         assertTrue("from point matches", fromPoint.equals(link.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(link.getDesignLine().get(1)));
         assertTrue("from node matches", fromNode.equals(link.getStartNode()));
@@ -68,7 +64,7 @@ public class CapacityOTSLinkTest
         // Create nodes with matching IDs in the new network
         new OTSNode(newNetwork, fromNode.getId(), fromPoint);
         new OTSNode(newNetwork, toNode.getId(), toPoint);
-        OTSSimulatorInterface newSimulator = new OTSDEVSSimulator();
+        SimulatorInterface.TimeDoubleUnit newSimulator = new DEVSSimulator.TimeDoubleUnit();
         CapacityOTSLink clonedLink = new CapacityOTSLink(newNetwork, newSimulator, true, link);
         assertTrue("from point matches", fromPoint.equals(clonedLink.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(clonedLink.getDesignLine().get(1)));

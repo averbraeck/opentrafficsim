@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
-import org.djunits.unit.PositionUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.PositionUnit;
 import org.djunits.value.vdouble.scalar.Position;
 
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
@@ -29,7 +29,7 @@ public class DiscreteDistPosition extends DiscreteDistDoubleScalar.Abs<Position,
     public DiscreteDistPosition(final DistDiscrete distribution, final PositionUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -38,7 +38,7 @@ public class DiscreteDistPosition extends DiscreteDistDoubleScalar.Abs<Position,
     {
         return new Position(getDistribution().draw(), (PositionUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

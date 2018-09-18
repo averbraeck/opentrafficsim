@@ -28,7 +28,7 @@ public class DiscreteDistDuration extends DiscreteDistDoubleScalar.Rel<Duration,
     public DiscreteDistDuration(final DistDiscrete distribution, final DurationUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistDuration extends DiscreteDistDoubleScalar.Rel<Duration,
     {
         return new Duration(getDistribution().draw(), (DurationUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

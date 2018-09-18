@@ -31,5 +31,5 @@ public interface HistoricalSortedSet<E> extends HistoricalSet<E>, SortedSet<E>
      * @return SortedSet; past sorted set
      */
     SortedSet<E> get(Time time);
-    
+
 }

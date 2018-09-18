@@ -138,7 +138,7 @@ public interface HeadwayGtuType
         public HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
                 final Length distance, final boolean downstream) throws GTUException, ParameterException
         {
-            Time now = perceivedGtu.getSimulator().getSimulatorTime().getTime();
+            Time now = perceivedGtu.getSimulator().getSimulatorTime();
             if (this.updateTime == null || now.si > this.updateTime.si)
             {
                 this.updateTime = now;

@@ -31,5 +31,5 @@ public interface HistoricalNavigableSet<E> extends HistoricalSortedSet<E>, Navig
      * @return NavigableSet; past navigable set
      */
     NavigableSet<E> get(Time time);
-    
+
 }

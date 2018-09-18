@@ -343,7 +343,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         // demo
         this.demoPanel = null;
         setupDemo(this, this.model.getNetwork());
-        
+
         return simulator;
     }
 
@@ -514,7 +514,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     {
         // overridable placeholder to place animation buttons or to show/hide classes on the animation.
     }
-    
+
     /**
      * Method that is called when the animation has been created, to add components for a demo.
      * @param animation AbstractWrappableAnimation; animation

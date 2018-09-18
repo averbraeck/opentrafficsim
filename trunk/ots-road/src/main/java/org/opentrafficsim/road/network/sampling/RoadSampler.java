@@ -13,8 +13,6 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -27,6 +25,8 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.TimedEvent;
@@ -47,13 +47,13 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 {
 
     /** Simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** Sampling interval. */
     private final Duration samplingInterval;
 
     /** Registration of sampling events of each GTU per lane, if interval based. */
-    private final Map<String, Map<LaneDirection, SimEventInterface<OTSSimTimeDouble>>> eventPerGtu = new HashMap<>();
+    private final Map<String, Map<LaneDirection, SimEventInterface<SimTimeDoubleUnit>>> eventPerGtu = new HashMap<>();
 
     /** List of lane the sampler is listening to for each GTU. Usually 1, could be 2 during a trajectory transition. */
     private final Map<String, Set<LaneDirection>> listenersPerGtu = new HashMap<>();
@@ -63,7 +63,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      * @param simulator simulator
      * @throws NullPointerException if the simulator is {@code null}
      */
-    public RoadSampler(final OTSDEVSSimulatorInterface simulator)
+    public RoadSampler(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         Throw.whenNull(simulator, "Simulator may not be null.");
         this.simulator = simulator;
@@ -77,7 +77,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
      */
-    public RoadSampler(final OTSDEVSSimulatorInterface simulator, final Frequency frequency)
+    public RoadSampler(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Frequency frequency)
     {
         Throw.whenNull(simulator, "Simulator may not be null.");
         Throw.whenNull(frequency, "Frequency may not be null.");
@@ -91,7 +91,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     @Override
     public final Time now()
     {
-        return this.simulator.getSimulatorTime().getTime();
+        return this.simulator.getSimulatorTime();
     }
 
     /** {@inheritDoc} */
@@ -313,7 +313,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
      */
     private void scheduleSamplingEvent(final LaneBasedGTU gtu, final LaneDirection laneDirection)
     {
-        SimEventInterface<OTSSimTimeDouble> simEvent;
+        SimEventInterface<SimTimeDoubleUnit> simEvent;
         try
         {
             // this.simulator.scheduleEvent(simEvent);
@@ -328,7 +328,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
         String gtuId = gtu.getId();
         if (!this.eventPerGtu.containsKey(gtuId))
         {
-            Map<LaneDirection, SimEventInterface<OTSSimTimeDouble>> map = new HashMap<>();
+            Map<LaneDirection, SimEventInterface<SimTimeDoubleUnit>> map = new HashMap<>();
             this.eventPerGtu.put(gtuId, map);
         }
         this.eventPerGtu.get(gtuId).put(laneDirection, simEvent);

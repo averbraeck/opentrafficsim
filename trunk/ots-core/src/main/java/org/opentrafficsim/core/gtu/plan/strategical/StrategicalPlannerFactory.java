@@ -27,15 +27,13 @@ public interface StrategicalPlannerFactory<T extends StrategicalPlanner>
     Parameters getDefaultParameters();
 
     /**
-     * Set parameters to use with the next creation of a strategical planner. Only the next planner will use
-     * this.
+     * Set parameters to use with the next creation of a strategical planner. Only the next planner will use this.
      * @param parameters parameters to use with the next creation of a strategical planner
      */
     void setParameters(Parameters parameters);
 
     /**
-     * Creates a new strategical planner for the given GTU. If no default parameters are set, the default values
-     * will be used.
+     * Creates a new strategical planner for the given GTU. If no default parameters are set, the default values will be used.
      * @param gtu GTU
      * @return strategical planner for the given GTU
      * @throws GTUException if the gtu is not suitable in any way for the creation of the strategical planner

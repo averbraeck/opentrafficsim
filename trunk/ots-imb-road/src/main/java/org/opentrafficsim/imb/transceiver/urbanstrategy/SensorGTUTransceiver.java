@@ -2,8 +2,7 @@ package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
 import java.rmi.RemoteException;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
@@ -17,6 +16,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventType;
@@ -210,13 +210,13 @@ public class SensorGTUTransceiver extends AbstractTransceiver
     /**
      * Construct a new SensorGTUTransceiver.
      * @param connector Connector; the IMB connector through which this transceiver communicates
-     * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule the incoming notifications on
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the incoming notifications on
      * @param network OTSNetwork; the OTS network on which Links for Lanes are registered
      * @throws IMBException when the registration of one of the channels fails
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public SensorGTUTransceiver(final Connector connector, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
-            throws IMBException
+    public SensorGTUTransceiver(final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final OTSNetwork network) throws IMBException
     {
         super("Sensor_GTU", connector, simulator);
         this.network = network;
@@ -240,7 +240,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
         {
             try
             {
-                this.notify(new TimedEvent<OTSSimTimeDouble>(Network.LINK_ADD_EVENT, this.network, link.getId(),
+                this.notify(new TimedEvent<Time>(Network.LINK_ADD_EVENT, this.network, link.getId(),
                         getSimulator().getSimulatorTime()));
             }
             catch (RemoteException exception)
@@ -297,8 +297,8 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new TimedEvent<OTSSimTimeDouble>(Lane.SENSOR_ADD_EVENT, lane,
-                            new Object[] { sensor.getId(), sensor }, getSimulator().getSimulatorTime()));
+                    this.notify(new TimedEvent<Time>(Lane.SENSOR_ADD_EVENT, lane, new Object[] { sensor.getId(), sensor },
+                            getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
                 {
@@ -383,8 +383,8 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new TimedEvent<OTSSimTimeDouble>(Lane.SENSOR_REMOVE_EVENT, lane,
-                            new Object[] { sensor.getId(), sensor }, getSimulator().getSimulatorTime()));
+                    this.notify(new TimedEvent<Time>(Lane.SENSOR_REMOVE_EVENT, lane, new Object[] { sensor.getId(), sensor },
+                            getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
                 {
@@ -446,7 +446,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             double length = 0.0; // sensor has zero length right now
             DirectedPoint pos = sensor.getLocation();
             String triggerPosition = sensor.getPositionType().toString();
-            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            double timestamp = getSimulator().getSimulatorTime().si;
             return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), sensorId,
                     longitudinalPosition, length, pos.x, pos.y, pos.z, triggerPosition };
         }
@@ -472,7 +472,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             String gtuId = gtu.getId();
             double gtuSpeed = gtu.getSpeed().si;
             String triggerPosition = ((RelativePosition.TYPE) content[3]).toString();
-            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            double timestamp = getSimulator().getSimulatorTime().si;
             return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), sensorId, gtuId,
                     gtuSpeed, triggerPosition };
         }
@@ -494,7 +494,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             String sensorId = (String) content[0];
             SingleSensor sensor = (SingleSensor) content[1];
             Lane lane = sensor.getLane();
-            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            double timestamp = getSimulator().getSimulatorTime().si;
             return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), sensorId };
         }
         System.err.println("SensorGTUTransceiver.transformDelete: Don't know how to transform event " + event);

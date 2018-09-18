@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.lane.object;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
@@ -11,6 +10,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -166,7 +166,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /** {@inheritDoc} */
     @Override
-    public final StaticObject clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+    public final StaticObject clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation)
             throws NetworkException
     {
         throw new NetworkException("LaneBasedObjects should be cloned with the clone(lane, simulator, animation) method");
@@ -183,13 +183,13 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     /**
      * Clone the LaneBasedObject for e.g., copying a network.
      * @param newCSE CrossSectionElement; the new cross section element to which the clone belongs
-     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
      * @param animation boolean; whether to (re)create animation or not
      * @return AbstractLaneBasedObject; a clone of this object
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public abstract AbstractLaneBasedObject clone(CrossSectionElement newCSE, OTSSimulatorInterface newSimulator,
+    public abstract AbstractLaneBasedObject clone(CrossSectionElement newCSE, SimulatorInterface.TimeDoubleUnit newSimulator,
             boolean animation) throws NetworkException;
 
 }

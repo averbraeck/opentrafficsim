@@ -37,9 +37,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -158,6 +156,8 @@ import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -236,7 +236,7 @@ public class LmrsStrategies implements EventListenerInterface
     private final Map<GTUType, LaneBasedStrategicalPlannerFactory<?>> factories = new HashMap<>();
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The network. */
     private OTSNetwork network;
@@ -403,14 +403,14 @@ public class LmrsStrategies implements EventListenerInterface
             try
             {
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
-                OTSDEVSSimulatorInterface sim = lmrsStrategiesSimulation.buildSimulator(Time.ZERO, Duration.ZERO,
+                DEVSSimulatorInterface.TimeDoubleUnit sim = lmrsStrategiesSimulation.buildSimulator(Time.ZERO, Duration.ZERO,
                         Duration.createSI(SIMTIME.si + 1e-9), new ArrayList<Property<?>>());
                 double tReport = 60.0;
-                Time t = sim.getSimulatorTime().getTime();
+                Time t = sim.getSimulatorTime();
                 while (t.le(SIMTIME))
                 {
                     sim.step();
-                    t = sim.getSimulatorTime().getTime();
+                    t = sim.getSimulatorTime();
                     if (t.si >= tReport)
                     {
                         System.out.println("Simulation time is " + t);
@@ -563,13 +563,20 @@ public class LmrsStrategies implements EventListenerInterface
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simul)
-                throws SimRuntimeException, RemoteException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simul)
+                throws SimRuntimeException
         {
-            OTSDEVSSimulatorInterface sim = (OTSDEVSSimulatorInterface) simul;
+            DEVSSimulatorInterface.TimeDoubleUnit sim = (DEVSSimulatorInterface.TimeDoubleUnit) simul;
             LmrsStrategies.this.simulator = sim;
             OTSNetwork net = new OTSNetwork("LMRS strategies");
-            LmrsStrategies.this.simulator.addListener(LmrsStrategies.this, SimulatorInterface.END_OF_REPLICATION_EVENT);
+            try
+            {
+                LmrsStrategies.this.simulator.addListener(LmrsStrategies.this, SimulatorInterface.END_OF_REPLICATION_EVENT);
+            }
+            catch (RemoteException exception1)
+            {
+                exception1.printStackTrace();
+            }
             LmrsStrategies.this.network = net;
             net.addListener(LmrsStrategies.this, Network.GTU_ADD_EVENT);
             net.addListener(LmrsStrategies.this, Network.GTU_REMOVE_EVENT);
@@ -903,7 +910,7 @@ public class LmrsStrategies implements EventListenerInterface
                 }
             }
             catch (NetworkException | OTSGeometryException | NamingException | ValueException | ParameterException
-                    | GTUException exception)
+                    | GTUException | RemoteException exception)
             {
                 exception.printStackTrace();
             }
@@ -924,7 +931,7 @@ public class LmrsStrategies implements EventListenerInterface
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return LmrsStrategies.this.simulator;
         }
@@ -964,7 +971,7 @@ public class LmrsStrategies implements EventListenerInterface
                     dMax = d;
                 }
             }
-            this.laneChanges.add(String.format("%.3f,%s,%.3f,%s,%s", this.simulator.getSimulatorTime().get().si,
+            this.laneChanges.add(String.format("%.3f,%s,%.3f,%s,%s", this.simulator.getSimulatorTime().si,
                     from.getLane().getFullId(), from.getPosition().si, dir, cause));
         }
         else if (event.getType().equals(Network.GTU_ADD_EVENT))

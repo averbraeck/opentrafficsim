@@ -33,7 +33,7 @@ public class HistoricalTreeMap<K, V> extends AbstractHistoricalNavigableMap<K, V
     {
         super(historyManager, new TreeMap<>());
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -61,7 +61,7 @@ public class HistoricalTreeMap<K, V> extends AbstractHistoricalNavigableMap<K, V
         }
         return fill(time, new TreeMap<>());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

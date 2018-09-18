@@ -26,8 +26,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
-import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -57,6 +55,8 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -119,14 +119,14 @@ public final class Convert
      * This method converts an OSM link to an OTS link.
      * @param network the network
      * @param link OSM Link to be converted
-     * @param simulator OTSDEVSSimulatorInterface; the simulator that will animate the generates lanes (if it happens to be an
-     *            instance of OTSAnimatorInterface)
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator that will animate the generates lanes (if it happens to be an
+     *            instance of AnimatorInterface)
      * @return OTS Link
      * @throws OTSGeometryException on failure
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public CrossSectionLink convertLink(final Network network, final OSMLink link, final OTSDEVSSimulatorInterface simulator)
+    public CrossSectionLink convertLink(final Network network, final OSMLink link, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws OTSGeometryException, NetworkException
     {
         if (null == link.getStart().getOtsNode())
@@ -612,15 +612,15 @@ public final class Convert
      * (2.55m) + 25cm each side.
      * @param network the network
      * @param osmlink Link OSMLink; the OSM link to make lanes for
-     * @param simulator OTSDEVSSimulatorInterface; the simulator that will animate the generates lanes (if it happens to be an
-     *            instance of OTSAnimatorInterface)
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator that will animate the generates lanes (if it happens to be an
+     *            instance of AnimatorInterface)
      * @param warningListener WarningListener; the warning listener that will receive warning events
      * @return List&lt;Lane&gt;
      * @throws NetworkException on network inconsistency
      * @throws NamingException on naming problems (in the animator)
      * @throws OTSGeometryException when lane contour or center line cannot be instantiated
      */
-    public List<Lane> makeLanes(final Network network, final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
+    public List<Lane> makeLanes(final Network network, final OSMLink osmlink, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
             final WarningListener warningListener) throws NetworkException, NamingException, OTSGeometryException
     {
         CrossSectionLink otslink = convertLink(network, osmlink, simulator);
@@ -665,7 +665,7 @@ public final class Convert
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
                         laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
             }
-            if (simulator instanceof OTSAnimatorInterface)
+            if (simulator instanceof AnimatorInterface)
             {
                 try
                 {

@@ -19,18 +19,16 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.mock.MockDEVSSimulator;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
@@ -38,7 +36,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import mockit.MockUp;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -68,10 +66,7 @@ public class LaneTest implements UNITS
         OTSPoint3D[] coordinates = new OTSPoint3D[2];
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        OTSDEVSSimulatorInterface simulator = new MockUp<OTSDEVSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        DEVSSimulatorInterface.TimeDoubleUnit simulator = MockDEVSSimulator.createMock();
         CrossSectionLink link = new CrossSectionLink(network, "A to B", nodeFrom, nodeTo, LinkType.ROAD,
                 new OTSLine3D(coordinates), simulator, LaneKeepingPolicy.KEEP_RIGHT);
         Length startLateralPos = new Length(2, METER);
@@ -202,10 +197,7 @@ public class LaneTest implements UNITS
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
                     OTSLine3D line = new OTSLine3D(coordinates);
-                    OTSDEVSSimulatorInterface simulator = new MockUp<OTSDEVSSimulatorInterface>()
-                    {
-                        // no implementation needed.
-                    }.getMockInstance();
+                    DEVSSimulatorInterface.TimeDoubleUnit simulator = MockDEVSSimulator.createMock();
                     CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, LinkType.ROAD, line, simulator,
                             LaneKeepingPolicy.KEEP_RIGHT);
                     final int[] lateralOffsets = { -10, -3, -1, 0, 1, 3, 10 };

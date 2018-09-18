@@ -4,18 +4,18 @@ import java.io.Serializable;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimulatorInterface, Serializable
+public class SimpleAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements SimpleSimulatorInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150511L;
@@ -51,7 +51,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
-        initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod, runLength,
+        initialize(new OTSReplication("rep" + ++this.lastReplication, new SimTimeDoubleUnit(startTime), warmupPeriod, runLength,
                 model), ReplicationMode.TERMINATING);
     }
 
@@ -72,17 +72,17 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
-        initialize(new OTSReplication("rep" + replication, new OTSSimTimeDouble(startTime), warmupPeriod, runLength, model),
+        initialize(new OTSReplication("rep" + replication, new SimTimeDoubleUnit(startTime), warmupPeriod, runLength, model),
                 ReplicationMode.TERMINATING);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority, final Object source,
+    public final SimEvent<SimTimeDoubleUnit> scheduleEvent(final Time executionTime, final short priority, final Object source,
             final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
-        SimEvent<OTSSimTimeDouble> result = new SimEvent<OTSSimTimeDouble>(
-                new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source, target, method, args);
+        SimEvent<SimTimeDoubleUnit> result = new SimEvent<SimTimeDoubleUnit>(
+                new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;
     }

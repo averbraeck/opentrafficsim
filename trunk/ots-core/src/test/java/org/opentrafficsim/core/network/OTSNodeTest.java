@@ -17,14 +17,13 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.mock.MockSimulator;
 
-import mockit.MockUp;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -46,7 +45,6 @@ public class OTSNodeTest
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OTSGeometryException if that happens unchaught; this test has failed
      */
-    // TODO: TEST FAILS DUE TO CHANGES IN COMPATIBILITY
     @Test
     public final void testOTSNode() throws NetworkException, OTSGeometryException
     {
@@ -80,10 +78,7 @@ public class OTSNodeTest
 
         assertEquals("node 1 has no links", 0, node1.getLinks().size());
 
-        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
 
         // Create a couple of links
         Link link1 = new OTSLink(network, "link 1", node1, node2, LinkType.ROAD,
@@ -122,9 +117,8 @@ public class OTSNodeTest
         assertTrue("node 1 has direct connection to node 2", node1.isDirectionallyConnectedTo(GTUType.VEHICLE, node2));
         Node node5 = new OTSNode(network, "node 5", new OTSPoint3D(1000, 0, 0));
         assertFalse("node 1 has no direct connection to node 5", node1.isDirectionallyConnectedTo(GTUType.VEHICLE, node5));
-        Link link5 =
-                new OTSLink(network, "link 5", node5, node1, LinkType.FREEWAY,
-                        new OTSLine3D(node1.getPoint(), node5.getPoint()), simulator);
+        Link link5 = new OTSLink(network, "link 5", node5, node1, LinkType.FREEWAY,
+                new OTSLine3D(node1.getPoint(), node5.getPoint()), simulator);
         assertFalse("node 1 still has no direct connection to node 5",
                 node1.isDirectionallyConnectedTo(GTUType.VEHICLE, node5));
         assertTrue("node 5 does have a direct connection to node 1", node5.isDirectionallyConnectedTo(GTUType.VEHICLE, node1));
@@ -146,15 +140,11 @@ public class OTSNodeTest
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OTSGeometryException if that happens uncaught; this test has failed
      */
-    // TODO: TEST FAILS DUE TO CHANGES IN COMPATIBILITY
     @Test
     public final void connectionTest() throws NetworkException, OTSGeometryException
     {
         Network network = new OTSNetwork("connection test network");
-        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
         OTSNode node = new OTSNode(network, "main", new OTSPoint3D(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
@@ -222,12 +212,10 @@ public class OTSNodeTest
             // Ignore expected exception
         }
         // Create a link that does not allow traffic TO the node
-        Link oneWayFromNode =
-                new OTSLink(network, "one way from node", node, n1, LinkType.FREEWAY, new OTSLine3D(node.getPoint(),
-                        n1.getPoint()), simulator);
-        Link oneWayToNode =
-                new OTSLink(network, "one way towards node", n1, node, LinkType.FREEWAY, new OTSLine3D(n1.getPoint(),
-                        node.getPoint()), simulator);
+        Link oneWayFromNode = new OTSLink(network, "one way from node", node, n1, LinkType.FREEWAY,
+                new OTSLine3D(node.getPoint(), n1.getPoint()), simulator);
+        Link oneWayToNode = new OTSLink(network, "one way towards node", n1, node, LinkType.FREEWAY,
+                new OTSLine3D(n1.getPoint(), node.getPoint()), simulator);
         try
         {
             node.addConnection(GTUType.VEHICLE, oneWayFromNode, network.getLink("link from neighbor node 1"));
@@ -247,9 +235,8 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        Link noWay =
-                new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.RAIL_WAY, new OTSLine3D(n2.getPoint(),
-                        node.getPoint()), simulator);
+        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.RAIL_WAY,
+                new OTSLine3D(n2.getPoint(), node.getPoint()), simulator);
         try
         {
             node.addConnection(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), noWay);
@@ -268,9 +255,8 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        noWay =
-                new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.RAIL_WAY, new OTSLine3D(node.getPoint(),
-                        n2.getPoint()), simulator);
+        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.RAIL_WAY,
+                new OTSLine3D(node.getPoint(), n2.getPoint()), simulator);
         try
         {
             node.addConnection(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), noWay);
@@ -296,15 +282,11 @@ public class OTSNodeTest
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OTSGeometryException if that happens uncaught; this test has failed
      */
-    // TODO: TEST FAILS DUE TO CHANGES IN COMPATIBILITY
     @Test
     public final void connectionSetTest() throws NetworkException, OTSGeometryException
     {
         Network network = new OTSNetwork("connectionSets test network");
-        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
         OTSNode node = new OTSNode(network, "main", new OTSPoint3D(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
@@ -372,13 +354,11 @@ public class OTSNodeTest
             // Ignore expected exception
         }
         // Create a link that does not allow traffic TO the node
-        Link oneWayFromNodeOnly =
-                new OTSLink(network, "one way away from node", node, n1, LinkType.FREEWAY, new OTSLine3D(node.getPoint(),
-                        n1.getPoint()), simulator);
+        Link oneWayFromNodeOnly = new OTSLink(network, "one way away from node", node, n1, LinkType.FREEWAY,
+                new OTSLine3D(node.getPoint(), n1.getPoint()), simulator);
         // Create a link that does not allow traffic FROM the node
-        Link oneWayToNodeOnly =
-                new OTSLink(network, "one way towards node", n1, node, LinkType.FREEWAY, new OTSLine3D(n1.getPoint(),
-                        node.getPoint()), simulator);
+        Link oneWayToNodeOnly = new OTSLink(network, "one way towards node", n1, node, LinkType.FREEWAY,
+                new OTSLine3D(n1.getPoint(), node.getPoint()), simulator);
         try
         {
             node.addConnections(GTUType.VEHICLE, oneWayFromNodeOnly, wrap(network.getLink("link from neighbor node 1")));
@@ -398,9 +378,8 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        Link noWay =
-                new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.RAIL_WAY, new OTSLine3D(n2.getPoint(),
-                        node.getPoint()), simulator);
+        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.RAIL_WAY,
+                new OTSLine3D(n2.getPoint(), node.getPoint()), simulator);
         try
         {
             node.addConnections(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), wrap(noWay));
@@ -419,9 +398,8 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        noWay =
-                new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.RAIL_WAY, new OTSLine3D(node.getPoint(),
-                        n2.getPoint()), simulator);
+        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.RAIL_WAY,
+                new OTSLine3D(node.getPoint(), n2.getPoint()), simulator);
         try
         {
             node.addConnections(GTUType.VEHICLE, network.getLink("link from neighbor node 1"), wrap(noWay));
@@ -465,14 +443,8 @@ public class OTSNodeTest
      */
     private void checkClone(final OTSNetwork network) throws NetworkException
     {
-        OTSDEVSSimulatorInterface oldSimulator = new MockUp<OTSDEVSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
-        OTSDEVSSimulatorInterface newSimulator = new MockUp<OTSDEVSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit oldSimulator = MockSimulator.createMock();
+        SimulatorInterface.TimeDoubleUnit newSimulator = MockSimulator.createMock();
         OTSNetwork clonedNetwork = network.clone("clonedNetwork", oldSimulator, newSimulator, false);
         assertEquals("Number of nodes should be same", network.getNodeMap().size(), clonedNetwork.getNodeMap().size());
         assertTrue("Node map should be equal", network.getNodeMap().equals(clonedNetwork.getNodeMap()));

@@ -23,7 +23,7 @@ public interface LinkWeight
         {
             return link.getLength().si;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()

@@ -6,8 +6,7 @@ import java.rmi.RemoteException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -23,6 +22,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.TimedEvent;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -317,13 +317,13 @@ public class GTUTransceiver extends AbstractTransceiver
     /**
      * Construct a new GTUTransceiver.
      * @param connector Connector; the IMB connector through which this transceiver communicates
-     * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule the incoming notifications on
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the incoming notifications on
      * @param network OTSNetwork; the OTS network on which GTUs are registered
      * @throws IMBException when the registration of one of the channels fails
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public GTUTransceiver(final Connector connector, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
-            throws IMBException
+    public GTUTransceiver(final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final OTSNetwork network) throws IMBException
     {
         super("GTU", connector, simulator);
         this.network = network;
@@ -347,11 +347,11 @@ public class GTUTransceiver extends AbstractTransceiver
         {
             try
             {
-                this.notify(new TimedEvent<OTSSimTimeDouble>(Network.GTU_ADD_EVENT, this.network, gtu.getId(),
+                this.notify(new TimedEvent<Time>(Network.GTU_ADD_EVENT, this.network, gtu.getId(),
                         gtu.getSimulator().getSimulatorTime()));
                 LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
                 DirectedLanePosition dlp = laneBasedGTU.getReferencePosition();
-                this.notify(new TimedEvent<OTSSimTimeDouble>(LaneBasedGTU.LANEBASED_INIT_EVENT, gtu,
+                this.notify(new TimedEvent<Time>(LaneBasedGTU.LANEBASED_INIT_EVENT, gtu,
                         new Object[] { gtu.getId(), gtu.getLocation(), gtu.getLength(), gtu.getWidth(), gtu.getBaseColor(),
                                 dlp.getLane(), dlp.getGtuDirection(), gtu.getGTUType() },
                         gtu.getSimulator().getSimulatorTime()));
@@ -428,7 +428,7 @@ public class GTUTransceiver extends AbstractTransceiver
             // content contains: [String gtuId, DirectedPoint initialPosition, Length length, Length width, Color
             // gtuBaseColor, Lane referenceLane, Length positionOnReferenceLane, GTUDirectionality direction, GTUType gtuType]
             Object[] content = (Object[]) event.getContent();
-            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            double timestamp = getSimulator().getSimulatorTime().si;
             String gtuId = content[0].toString();
             DirectedPoint location = (DirectedPoint) content[1];
             Lane lane = (Lane) content[5];
@@ -458,7 +458,7 @@ public class GTUTransceiver extends AbstractTransceiver
             // content contains: [String gtuId, DirectedPoint lastPosition, Length odometer, Lane referenceLane,
             // Length positionOnReferenceLane]
             Object[] content = (Object[]) event.getContent();
-            double timestamp = getSimulator().getSimulatorTime().getTime().si;
+            double timestamp = getSimulator().getSimulatorTime().si;
             String gtuId = content[0].toString();
             DirectedPoint location = (DirectedPoint) content[1];
             double odometer = ((Length) content[2]).si;
@@ -489,7 +489,7 @@ public class GTUTransceiver extends AbstractTransceiver
         double longitudinalPosition = ((Length) moveInfo[7]).si;
         double speed = ((Speed) moveInfo[2]).si;
         double acceleration = ((Acceleration) moveInfo[3]).si;
-        double timestamp = gtu.getSimulator().getSimulatorTime().getTime().si;
+        double timestamp = gtu.getSimulator().getSimulatorTime().si;
         String turnIndicatorStatus = ((TurnIndicatorStatus) moveInfo[4]).toString();
         double odometer = ((Length) moveInfo[5]).si;
         boolean brakingLights = acceleration < 0.0; // TODO proper function for isBraking()
@@ -527,7 +527,7 @@ public class GTUTransceiver extends AbstractTransceiver
             double longitudinalPosition = ((Length) moveInfo[7]).si;
             double speed = ((Speed) moveInfo[2]).si;
             double acceleration = ((Acceleration) moveInfo[3]).si;
-            double timestamp = gtu.getSimulator().getSimulatorTime().getTime().si;
+            double timestamp = gtu.getSimulator().getSimulatorTime().si;
             String turnIndicatorStatus = ((TurnIndicatorStatus) moveInfo[4]).toString();
             double odometer = ((Length) moveInfo[5]).si;
             boolean brakingLights = acceleration < 0.0; // TODO proper function for isBraking()

@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventType;
 
 /**
@@ -46,7 +46,7 @@ public interface NonDirectionalOccupancySensor extends Serializable, Identifiabl
     String getId();
 
     /** @return The simulator. */
-    OTSDEVSSimulatorInterface getSimulator();
+    DEVSSimulatorInterface.TimeDoubleUnit getSimulator();
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of a NonDirectionalOccupancySensor. <br>

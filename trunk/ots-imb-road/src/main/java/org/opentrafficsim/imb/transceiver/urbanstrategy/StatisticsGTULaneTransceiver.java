@@ -322,7 +322,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         this.transmissionInterval = transmissionInterval;
 
         List<Object> newMessage = new ArrayList<>();
-        newMessage.add(getSimulator().getSimulatorTime().getTime().si);
+        newMessage.add(getSimulator().getSimulatorTime().si);
         newMessage.add(query.getId());
         newMessage.add(query.toString());
         newMessage.add(this.networkId);
@@ -350,7 +350,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
      */
     public void sendStatisticsUpdate() throws IMBException, SimRuntimeException
     {
-        double time = getSimulator().getSimulatorTime().getTime().si;
+        double time = getSimulator().getSimulatorTime().si;
         Query q = StatisticsGTULaneTransceiver.this.query;
         Time timeObject = new Time(time, TimeUnit.BASE_SECOND);
         List<TrajectoryGroup> groups = q.getTrajectoryGroups(timeObject);

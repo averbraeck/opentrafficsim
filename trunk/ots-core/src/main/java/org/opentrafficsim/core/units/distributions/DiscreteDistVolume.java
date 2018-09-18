@@ -28,7 +28,7 @@ public class DiscreteDistVolume extends DiscreteDistDoubleScalar.Rel<Volume, Vol
     public DiscreteDistVolume(final DistDiscrete distribution, final VolumeUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistVolume extends DiscreteDistDoubleScalar.Rel<Volume, Vol
     {
         return new Volume(getDistribution().draw(), (VolumeUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

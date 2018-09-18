@@ -74,7 +74,7 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
             {
                 Length searchPos = (plus ? position.plus(this.margin) : position.minus(this.margin));
                 next = record.getLane().getGtuBehind(searchPos, record.getDirection(), RelativePosition.FRONT,
-                        record.getLane().getParentLink().getSimulator().getSimulatorTime().getTime());
+                        record.getLane().getParentLink().getSimulator().getSimulatorTime());
             }
             if (next == null)
             {

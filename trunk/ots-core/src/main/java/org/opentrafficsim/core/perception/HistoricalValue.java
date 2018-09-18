@@ -22,10 +22,10 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
 
     /** Store last value for quick access. */
     private T lastValue;
-    
+
     /** Store last time for quick access. */
     private double lastTime;
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -34,7 +34,7 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
     {
         super(historyManager);
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -86,5 +86,5 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
     {
         return "HistoricalValue [current=" + get() + "]";
     }
-    
+
 }

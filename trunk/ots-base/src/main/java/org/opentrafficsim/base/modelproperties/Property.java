@@ -1,6 +1,5 @@
 package org.opentrafficsim.base.modelproperties;
 
-
 /**
  * User readable and settable properties.
  * <p>
@@ -82,8 +81,8 @@ public interface Property<T> extends Iterable<Property<?>>
 
     /**
      * Retrieve the parent property.
-     * @return Property&lt;?&gt;; the CompoundProperty that is the parent of this AbstractProperty (result is null if
-     *         this property is not contained in a CompoundProperty)
+     * @return Property&lt;?&gt;; the CompoundProperty that is the parent of this AbstractProperty (result is null if this
+     *         property is not contained in a CompoundProperty)
      */
     CompoundProperty getParent();
 

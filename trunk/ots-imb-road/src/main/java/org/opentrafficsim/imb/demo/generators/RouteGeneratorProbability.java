@@ -2,7 +2,6 @@ package org.opentrafficsim.imb.demo.generators;
 
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,13 +9,13 @@ import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -42,7 +41,7 @@ public class RouteGeneratorProbability implements RouteGenerator
     private final OTSNode from;
 
     /** Simulator. */
-    private final OTSSimulatorInterface simulator;
+    private final SimulatorInterface.TimeDoubleUnit simulator;
 
     /** Stream name of GTU class generation. */
     private final static String GTU_ROUTE_STREAM = "gtuRoute";
@@ -60,21 +59,14 @@ public class RouteGeneratorProbability implements RouteGenerator
      * @param simulator the simulator
      */
     public RouteGeneratorProbability(final OTSNetwork network, final TimeVector timeVector, final OTSNode from,
-            final OTSSimulatorInterface simulator)
+            final SimulatorInterface.TimeDoubleUnit simulator)
     {
         Throw.whenNull(network, "Network may not be null.");
         Throw.whenNull(timeVector, "Time vector may not be null.");
         Throw.whenNull(from, "From node may not be null.");
         Throw.whenNull(simulator, "Simulator may not be null.");
-        try
-        {
-            Throw.whenNull(simulator.getReplication().getStream(GTU_ROUTE_STREAM),
-                    "Could not obtain random stream '" + GTU_ROUTE_STREAM + "'.");
-        }
-        catch (RemoteException exception)
-        {
-            throw new RuntimeException("Could not obtain replication.", exception);
-        }
+        Throw.whenNull(simulator.getReplication().getStream(GTU_ROUTE_STREAM),
+                "Could not obtain random stream '" + GTU_ROUTE_STREAM + "'.");
         this.network = network;
         this.timeVector = timeVector;
         this.from = from;
@@ -103,7 +95,7 @@ public class RouteGeneratorProbability implements RouteGenerator
     @Override
     public Route draw() throws ProbabilityException
     {
-        Time time = this.simulator.getSimulatorTime().getTime();
+        Time time = this.simulator.getSimulatorTime();
         try
         {
             Throw.when(time.lt(this.timeVector.get(0)), IllegalArgumentException.class,
@@ -134,14 +126,7 @@ public class RouteGeneratorProbability implements RouteGenerator
             Throw.when(sum == 0.0, RuntimeException.class, "Trying to draw route while no route has demand.");
             double cumul = 0.0;
             double r;
-            try
-            {
-                r = this.simulator.getReplication().getStream(GTU_ROUTE_STREAM).nextDouble() * sum;
-            }
-            catch (RemoteException exception)
-            {
-                throw new RuntimeException("Could not obtain replication.", exception);
-            }
+            r = this.simulator.getReplication().getStream(GTU_ROUTE_STREAM).nextDouble() * sum;
             for (OTSNode to : this.demandMap.keySet())
             {
                 double p = probMap.get(to);

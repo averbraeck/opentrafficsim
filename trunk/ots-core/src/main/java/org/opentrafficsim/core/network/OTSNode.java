@@ -13,11 +13,11 @@ import javax.vecmath.Point3d;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
 import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 import nl.tudelft.simulation.language.Throw;
@@ -430,7 +430,8 @@ public class OTSNode implements Node, Locatable, Serializable
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSNode clone1(final Network newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
+    public OTSNode clone1(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
         return new OTSNode(newNetwork, this.id, this.point, this.direction, this.slope);
     }
@@ -445,8 +446,8 @@ public class OTSNode implements Node, Locatable, Serializable
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSNode clone2(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
-            throws NetworkException
+    public OTSNode clone2(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator,
+            final boolean animation) throws NetworkException
     {
         @SuppressWarnings("unchecked")
         OTSNode clone = (OTSNode) newNetwork.getNode(this.id);

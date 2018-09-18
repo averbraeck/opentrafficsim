@@ -28,7 +28,7 @@ public class DiscreteDistForce extends DiscreteDistDoubleScalar.Rel<Force, Force
     public DiscreteDistForce(final DistDiscrete distribution, final ForceUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistForce extends DiscreteDistDoubleScalar.Rel<Force, Force
     {
         return new Force(getDistribution().draw(), (ForceUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

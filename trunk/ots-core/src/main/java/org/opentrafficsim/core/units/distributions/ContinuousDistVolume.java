@@ -28,7 +28,7 @@ public class ContinuousDistVolume extends ContinuousDistDoubleScalar.Rel<Volume,
     public ContinuousDistVolume(final DistContinuous distribution, final VolumeUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistVolume extends ContinuousDistDoubleScalar.Rel<Volume,
     {
         return new Volume(getDistribution().draw(), (VolumeUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

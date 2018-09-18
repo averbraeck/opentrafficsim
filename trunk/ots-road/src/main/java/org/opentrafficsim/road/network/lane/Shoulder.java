@@ -3,10 +3,11 @@ package org.opentrafficsim.road.network.lane;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -80,7 +81,7 @@ public class Shoulder extends CrossSectionElement
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Shoulder(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator, final boolean animation,
+    protected Shoulder(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation,
             final Shoulder cse) throws NetworkException
     {
         super(newParentLink, newSimulator, animation, cse);
@@ -110,7 +111,7 @@ public class Shoulder extends CrossSectionElement
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Shoulder clone(final CrossSectionLink newParentLink, final OTSSimulatorInterface newSimulator,
+    public Shoulder clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
             final boolean animation) throws NetworkException
     {
         return new Shoulder(newParentLink, newSimulator, animation, this);

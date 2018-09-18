@@ -28,7 +28,7 @@ public class ContinuousDistDuration extends ContinuousDistDoubleScalar.Rel<Durat
     public ContinuousDistDuration(final DistContinuous distribution, final DurationUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistDuration extends ContinuousDistDoubleScalar.Rel<Durat
     {
         return new Duration(getDistribution().draw(), (DurationUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

@@ -55,7 +55,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
             map.put(ref.getLane(), ref.getGtuDirection());
             Length pos = ref.getPosition();
             Length cumulDist = Length.ZERO; // from start of lane
-            Time now = gtuObj.getSimulator().getSimulatorTime().getTime();
+            Time now = gtuObj.getSimulator().getSimulatorTime();
             LaneBasedGTU next = null;
             while (map.size() == 1)
             {

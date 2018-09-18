@@ -33,7 +33,7 @@ public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, HashMap
     {
         super(historyManager, new HashMap<>());
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -61,7 +61,7 @@ public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, HashMap
         }
         return fill(time, new HashMap<>());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

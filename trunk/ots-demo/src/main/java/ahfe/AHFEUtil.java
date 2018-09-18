@@ -35,8 +35,6 @@ import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -92,6 +90,8 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -144,7 +144,7 @@ public final class AHFEUtil
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void createDemand(final OTSNetwork network, final GTUColorer gtuColorer,
-            final OTSDEVSSimulatorInterface simulator, final int replication, final String anticipationStrategy,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final int replication, final String anticipationStrategy,
             final Duration reactionTime, final Duration anticipationTime, final double truckFraction, final Time simulationTime,
             final Frequency leftDemand, final Frequency rightDemand, final double leftFraction, final double distanceError,
             final double speedError, final double accelerationError)
@@ -351,7 +351,7 @@ public final class AHFEUtil
      * @throws ParameterException in case a parameter for the perception is missing
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
-            final IdGenerator idGenerator, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network,
+            final IdGenerator idGenerator, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSNetwork network,
             final Distribution<LaneBasedTemplateGTUType> distribution, final HeadwayGeneratorDemand headwayGenerator,
             final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)
@@ -567,7 +567,7 @@ public final class AHFEUtil
         private final FrequencyVector demandVector;
 
         /** Simulator. */
-        private final OTSSimulatorInterface simulator;
+        private final SimulatorInterface.TimeDoubleUnit simulator;
 
         /** Stream name of headway generation. */
         private static final String HEADWAY_STREAM = "headwayGeneration";
@@ -578,7 +578,7 @@ public final class AHFEUtil
          * @param simulator the simulator
          */
         public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
-                final OTSSimulatorInterface simulator)
+                final SimulatorInterface.TimeDoubleUnit simulator)
         {
             this(timeVector, demandVector, simulator, Interpolation.STEPWISE);
         }
@@ -590,21 +590,14 @@ public final class AHFEUtil
          * @param interpolation interpolation type
          */
         public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
-                final OTSSimulatorInterface simulator, final Interpolation interpolation)
+                final SimulatorInterface.TimeDoubleUnit simulator, final Interpolation interpolation)
         {
             Throw.whenNull(timeVector, "Time vector may not be null.");
             Throw.whenNull(demandVector, "Demand vector may not be null.");
             Throw.whenNull(simulator, "Simulator may not be null.");
             Throw.whenNull(interpolation, "Interpolation may not be null.");
-            try
-            {
-                Throw.whenNull(simulator.getReplication().getStream(HEADWAY_STREAM),
-                        "Could not obtain random stream '" + HEADWAY_STREAM + "'.");
-            }
-            catch (RemoteException exception)
-            {
-                throw new RuntimeException("Could not obtain replication.", exception);
-            }
+            Throw.whenNull(simulator.getReplication().getStream(HEADWAY_STREAM),
+                    "Could not obtain random stream '" + HEADWAY_STREAM + "'.");
             for (int i = 0; i < timeVector.size() - 1; i++)
             {
                 try
@@ -633,7 +626,7 @@ public final class AHFEUtil
         @Override
         public final Duration draw() throws ProbabilityException, ParameterException
         {
-            Time time = this.simulator.getSimulatorTime().getTime();
+            Time time = this.simulator.getSimulatorTime();
             try
             {
                 Throw.when(time.lt(this.timeVector.get(0)), IllegalArgumentException.class,

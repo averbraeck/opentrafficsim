@@ -2,12 +2,12 @@ package org.opentrafficsim.road.network.lane.object.trafficlight;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -30,7 +30,7 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
     private TrafficLightColor trafficLightColor;
 
     /** The simulator to schedule events on. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** Default elevation of a traffic light (above zero; don't use this for lanes at non-zero elevation). */
     public static final Length DEFAULT_TRAFFICLIGHT_ELEVATION = new Length(1, LengthUnit.METER);
@@ -45,7 +45,7 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
      * @throws NetworkException on failure to place the object
      */
     public AbstractTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSDEVSSimulatorInterface simulator, final Length height) throws NetworkException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Length height) throws NetworkException
     {
         super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), height);
 
@@ -64,7 +64,7 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
      * @throws NetworkException on failure to place the object
      */
     public AbstractTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSDEVSSimulatorInterface simulator) throws NetworkException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         this(id, lane, longitudinalPosition, simulator, DEFAULT_TRAFFICLIGHT_ELEVATION);
     }
@@ -82,7 +82,7 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
     {
         this.trafficLightColor = trafficLightColor;
         fireTimedEvent(TRAFFICLIGHT_CHANGE_EVENT, new Object[] { getId(), this, trafficLightColor },
-                this.simulator.getSimulatorTime().get());
+                this.simulator.getSimulatorTime());
     }
 
 }

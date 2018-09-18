@@ -16,7 +16,7 @@ import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // This class was automatically generated
-public class DiscreteDistAbsoluteTemperature 
+public class DiscreteDistAbsoluteTemperature
         extends DiscreteDistDoubleScalar.Abs<AbsoluteTemperature, AbsoluteTemperatureUnit, TemperatureUnit>
 {
 
@@ -30,7 +30,7 @@ public class DiscreteDistAbsoluteTemperature
     public DiscreteDistAbsoluteTemperature(final DistDiscrete distribution, final AbsoluteTemperatureUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -39,7 +39,7 @@ public class DiscreteDistAbsoluteTemperature
     {
         return new AbsoluteTemperature(getDistribution().draw(), (AbsoluteTemperatureUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

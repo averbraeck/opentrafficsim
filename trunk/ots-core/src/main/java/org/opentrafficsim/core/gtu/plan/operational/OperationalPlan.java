@@ -405,8 +405,7 @@ public class OperationalPlan implements Serializable
             double distanceOfSegment = segment.distanceSI();
             if (distanceOfSegment > remainingDistanceSI)
             {
-                return new Time(
-                        timeAtStartOfSegment + segment.timeAtDistance(Length.createSI(remainingDistanceSI)).si,
+                return new Time(timeAtStartOfSegment + segment.timeAtDistance(Length.createSI(remainingDistanceSI)).si,
                         TimeUnit.BASE);
             }
             remainingDistanceSI -= distanceOfSegment;

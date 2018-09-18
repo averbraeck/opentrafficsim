@@ -28,7 +28,7 @@ public class DiscreteDistAcceleration extends DiscreteDistDoubleScalar.Rel<Accel
     public DiscreteDistAcceleration(final DistDiscrete distribution, final AccelerationUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistAcceleration extends DiscreteDistDoubleScalar.Rel<Accel
     {
         return new Acceleration(getDistribution().draw(), (AccelerationUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

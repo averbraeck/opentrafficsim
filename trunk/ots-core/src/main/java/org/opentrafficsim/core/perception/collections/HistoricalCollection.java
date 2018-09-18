@@ -49,7 +49,7 @@ public interface HistoricalCollection<E> extends Collection<E>
             E next = each.next();
             if (filter.test(next))
             {
-                // super uses Iterator.remove() which is not supported, can't use remove() due to concurrency 
+                // super uses Iterator.remove() which is not supported, can't use remove() due to concurrency
                 removes.add(next);
                 removed = true;
             }

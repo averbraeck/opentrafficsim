@@ -28,7 +28,7 @@ public class DiscreteDistMass extends DiscreteDistDoubleScalar.Rel<Mass, MassUni
     public DiscreteDistMass(final DistDiscrete distribution, final MassUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistMass extends DiscreteDistDoubleScalar.Rel<Mass, MassUni
     {
         return new Mass(getDistribution().draw(), (MassUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

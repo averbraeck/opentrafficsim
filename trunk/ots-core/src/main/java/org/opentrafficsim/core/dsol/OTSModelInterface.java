@@ -5,6 +5,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.DSOLModel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 
 /**
  * <p>
@@ -15,7 +16,7 @@ import nl.tudelft.simulation.dsol.DSOLModel;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public interface OTSModelInterface extends DSOLModel<Time, Duration, OTSSimTimeDouble>
+public interface OTSModelInterface extends DSOLModel<Time, Duration, SimTimeDoubleUnit>
 {
     /** @return the network. */
     OTSNetwork getNetwork();

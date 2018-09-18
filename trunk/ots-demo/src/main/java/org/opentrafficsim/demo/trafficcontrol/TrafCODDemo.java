@@ -20,9 +20,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.animation.AnimationToggles;
@@ -39,7 +37,9 @@ import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -147,38 +147,38 @@ public class TrafCODDemo extends AbstractWrappableAnimation
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+                throws SimRuntimeException
         {
             try
             {
                 URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
                 this.network = nlp.build(url, true);
 
                 Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "X")).getCrossSectionElement("FORWARD");
                 Lane laneWX = (Lane) ((CrossSectionLink) this.network.getLink("W", "X")).getCrossSectionElement("FORWARD");
                 Set<TrafficLight> trafficLights = new HashSet<>();
                 trafficLights.add(new SimpleTrafficLight("TL08", laneWX, new Length(296, LengthUnit.METER),
-                        (OTSDEVSSimulatorInterface) theSimulator));
+                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator));
                 trafficLights.add(new SimpleTrafficLight("TL11", laneNX, new Length(296, LengthUnit.METER),
-                        (OTSDEVSSimulatorInterface) theSimulator));
+                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator));
                 Set<TrafficLightSensor> sensors = new HashSet<>();
                 sensors.add(new TrafficLightSensor("D081", laneWX, new Length(292, LengthUnit.METER), laneWX,
                         new Length(294, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator, Compatible.EVERYTHING));
+                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, Compatible.EVERYTHING));
                 sensors.add(new TrafficLightSensor("D082", laneWX, new Length(260, LengthUnit.METER), laneWX,
                         new Length(285, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator, Compatible.EVERYTHING));
+                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, Compatible.EVERYTHING));
                 sensors.add(new TrafficLightSensor("D111", laneNX, new Length(292, LengthUnit.METER), laneNX,
                         new Length(294, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator, Compatible.EVERYTHING));
+                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, Compatible.EVERYTHING));
                 sensors.add(new TrafficLightSensor("D112", laneNX, new Length(260, LengthUnit.METER), laneNX,
                         new Length(285, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,
-                        (OTSDEVSSimulatorInterface) theSimulator, Compatible.EVERYTHING));
+                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, Compatible.EVERYTHING));
                 String controllerName = "Simple TrafCOD controller";
                 TrafCODDemo.this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
-                        trafficLights, sensors, (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
+                        trafficLights, sensors, (DEVSSimulator<Time, Duration, SimTimeDoubleUnit>) theSimulator,
                         TrafCODDemo.this.controllerDisplayPanel);
                 TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 TrafCODDemo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
@@ -208,7 +208,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return TrafCODDemo.this.trafCOD.getSimulator();
         }
@@ -228,7 +228,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
             Object[] payload = (Object[]) event.getContent();
             if (TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING.equals(type))
             {
-                // System.out.println("Evalution starts at " + getSimulator().getSimulatorTime().getTime());
+                // System.out.println("Evalution starts at " + getSimulator().getSimulatorTime());
                 return;
             }
             else if (TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED.equals(type))

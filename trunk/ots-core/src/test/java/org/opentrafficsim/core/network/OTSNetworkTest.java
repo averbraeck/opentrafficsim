@@ -10,23 +10,22 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import mockit.Mock;
-import mockit.MockUp;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
-
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.mock.MockGTU;
+import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
+
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventType;
 
 /**
  * <p>
@@ -72,10 +71,7 @@ public class OTSNetworkTest implements EventListenerInterface
     {
         String networkId = "testOTSNetwork";
         OTSNetwork network = new OTSNetwork(networkId);
-        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
         assertTrue("Id must match", networkId.equals(network.getId()));
         network.addListener(this, Network.LINK_ADD_EVENT);
         network.addListener(this, Network.LINK_REMOVE_EVENT);
@@ -191,9 +187,8 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("GTU add event count is 0", 0, this.gtuAddedCount);
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         assertEquals("other event count is 0", 0, this.otherEventCount);
-        Link link1 =
-                new OTSLink(network, "link1", node1, node3, LinkType.ROAD,
-                        new OTSLine3D(node1.getPoint(), node3.getPoint()), simulator);
+        Link link1 = new OTSLink(network, "link1", node1, node3, LinkType.ROAD,
+                new OTSLine3D(node1.getPoint(), node3.getPoint()), simulator);
         assertEquals("LinkMap now contains 1 link", 1, network.getLinkMap().size());
         assertTrue("LinkMap contains link1", network.containsLink(link1));
         assertTrue("LinkMap.contain link with name link1", network.containsLink("link1"));
@@ -217,9 +212,8 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("link1 is the link connecting node named node1 to node named node3", link1,
                 network.getLink("node1", "node3"));
         Node node4 = new OTSNode(otherNetwork, "node4", new OTSPoint3D(-2, -3, -4));
-        Link otherLink =
-                new OTSLink(otherNetwork, "otherLink", node2, node4, LinkType.ROAD, new OTSLine3D(node2.getPoint(),
-                        node4.getPoint()), simulator);
+        Link otherLink = new OTSLink(otherNetwork, "otherLink", node2, node4, LinkType.ROAD,
+                new OTSLine3D(node2.getPoint(), node4.getPoint()), simulator);
         try
         {
             network.removeLink(otherLink);
@@ -245,9 +239,8 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("GTU add event count is 0", 0, this.gtuAddedCount);
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         assertEquals("other event count is 0", 0, this.otherEventCount);
-        Link secondLink =
-                new OTSLink(network, "reverseLink", node3, node1, LinkType.ROAD, new OTSLine3D(node3.getPoint(),
-                        node1.getPoint()), simulator);
+        Link secondLink = new OTSLink(network, "reverseLink", node3, node1, LinkType.ROAD,
+                new OTSLine3D(node3.getPoint(), node1.getPoint()), simulator);
         assertEquals("link add event count is 2", 2, this.linkAddedCount);
         assertEquals("link removed event count is 0", 0, this.linkRemovedCount);
         assertEquals("node add event count is 3", 3, this.nodeAddedCount);
@@ -296,24 +289,8 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
         assertEquals("other event count is 0", 0, this.otherEventCount);
         assertEquals("network now contains one link", 1, network.getLinkMap().size());
-        GTU gtu1 = new MockUp<GTU>()
-        {
-            @Mock
-            public String getId()
-            {
-                return "gtu1";
-            }
-
-            @Mock
-            public OTSDEVSSimulatorInterface getSimulator()
-            {
-                return new MockUp<OTSDEVSSimulatorInterface>()
-                {
-                    // no implementation needed.
-                }.getMockInstance();
-            }
-
-        }.getMockInstance();
+        MockGTU mockGtu1 = new MockGTU("gtu1");
+        GTU gtu1 = mockGtu1.getMock();
         network.addGTU(gtu1);
         assertEquals("link add event count is 2", 2, this.linkAddedCount);
         assertEquals("link removed event count is 1", 1, this.linkRemovedCount);
@@ -321,24 +298,8 @@ public class OTSNetworkTest implements EventListenerInterface
         assertEquals("node removed event count is 1", 1, this.nodeRemovedCount);
         assertEquals("GTU add event count is 1", 1, this.gtuAddedCount);
         assertEquals("GTU removed event count is 0", 0, this.gtuRemovedCount);
-        GTU gtu2 = new MockUp<GTU>()
-        {
-            @Mock
-            public String getId()
-            {
-                return "gtu2";
-            }
-
-            @Mock
-            public OTSDEVSSimulatorInterface getSimulator()
-            {
-                return new MockUp<OTSDEVSSimulatorInterface>()
-                {
-                    // no implementation needed.
-                }.getMockInstance();
-            }
-
-        }.getMockInstance();
+        MockGTU mockGtu2 = new MockGTU("gtu2");
+        GTU gtu2 = mockGtu2.getMock();
         network.addGTU(gtu2);
         assertEquals("link add event count is 2", 2, this.linkAddedCount);
         assertEquals("link removed event count is 1", 1, this.linkRemovedCount);
@@ -374,14 +335,8 @@ public class OTSNetworkTest implements EventListenerInterface
      */
     private void compareNetworkWithClone(final OTSNetwork network) throws NetworkException
     {
-        OTSDEVSSimulatorInterface oldSimulator = new MockUp<OTSDEVSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
-        OTSDEVSSimulatorInterface newSimulator = new MockUp<OTSDEVSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit oldSimulator = MockSimulator.createMock();
+        SimulatorInterface.TimeDoubleUnit newSimulator = MockSimulator.createMock();
         OTSNetwork clone = network.clone("cloned network", oldSimulator, newSimulator, false);
         assertTrue("nodes match", network.getNodeMap().equals(clone.getNodeMap()));
         assertTrue("links match", network.getLinkMap().equals(clone.getLinkMap()));
@@ -490,10 +445,10 @@ public class OTSNetworkTest implements EventListenerInterface
         {
             // Ignore expected exception
         }
-        assertEquals("there is one route from node1 to node2 for carType", 1, network
-                .getRoutesBetween(carType, node1, node2).size());
-        assertEquals("the one route from node1 to node2 is route1", route1, network.getRoutesBetween(carType, node1, node2)
-                .iterator().next());
+        assertEquals("there is one route from node1 to node2 for carType", 1,
+                network.getRoutesBetween(carType, node1, node2).size());
+        assertEquals("the one route from node1 to node2 is route1", route1,
+                network.getRoutesBetween(carType, node1, node2).iterator().next());
         assertEquals("there are no routes from node1 to node2 for bicycleType", 0,
                 network.getRoutesBetween(bicycleType, node1, node2).size());
         assertEquals("there are no routes from node2 to node1 for carTypecleType", 0,
@@ -514,8 +469,7 @@ public class OTSNetworkTest implements EventListenerInterface
         assertFalse("network does not contain route1 for carType", network.containsRoute(carType, route1));
         assertTrue("network contains route with name route2 for carType", network.containsRoute(carType, "route2"));
         assertFalse("network does not contain route with name route1 for carType", network.containsRoute(carType, "route1"));
-        assertFalse("network does not contain route with name route1 for junkType",
-                network.containsRoute(junkType, "route1"));
+        assertFalse("network does not contain route with name route1 for junkType", network.containsRoute(junkType, "route1"));
     }
 
     /**
@@ -591,8 +545,8 @@ public class OTSNetworkTest implements EventListenerInterface
                 assertEquals("route size is maxNode - skip + 1", maxNode - skip + 1, route.size());
                 for (int i = 0; i < route.size(); i++)
                 {
-                    assertEquals("node in route at position i should match",
-                            nodes.get((fromNodeIndex + skip + i) % maxNode), route.getNode(i));
+                    assertEquals("node in route at position i should match", nodes.get((fromNodeIndex + skip + i) % maxNode),
+                            route.getNode(i));
                 }
             }
         }
@@ -620,8 +574,8 @@ public class OTSNetworkTest implements EventListenerInterface
                 assertEquals("route size is maxNode - skip + 1", maxNode - skip + 1, route.size());
                 for (int i = 0; i < route.size(); i++)
                 {
-                    assertEquals("node in route at position i should match",
-                            nodes.get((fromNodeIndex + maxNode - i) % maxNode), route.getNode(i));
+                    assertEquals("node in route at position i should match", nodes.get((fromNodeIndex + maxNode - i) % maxNode),
+                            route.getNode(i));
                 }
                 // reverse direction
                 route = network.getShortestRouteBetween(GTUType.VEHICLE, toNode, fromNode);
@@ -756,10 +710,7 @@ public class OTSNetworkTest implements EventListenerInterface
     private List<Node> createRingNodesAndLinks(final Network network, final LongitudinalDirectionality ld, final int maxNode)
             throws NetworkException, OTSGeometryException
     {
-        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
         GTUCompatibility<LinkType> compatibility =
                 new GTUCompatibility<>((LinkType) null).addAllowedGTUType(GTUType.ROAD_USER, ld);
         LinkType linkType = new LinkType("linkType", null, compatibility);
@@ -770,8 +721,8 @@ public class OTSNetworkTest implements EventListenerInterface
         for (int i = 0; i < maxNode; i++)
         {
             double angle = i * Math.PI * 2 / maxNode;
-            nodes.add(new OTSNode(network, "node" + i, new OTSPoint3D(centerX + radius * Math.cos(angle), centerY + radius
-                    * Math.sin(angle), 20)));
+            nodes.add(new OTSNode(network, "node" + i,
+                    new OTSPoint3D(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle), 20)));
         }
         // Create bi-directional links between all adjacent nodes
         Node prevNode = nodes.get(maxNode - 1);

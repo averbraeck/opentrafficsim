@@ -14,11 +14,10 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 /**
  * <br>
  * Copyright (c) 2011-2013 TU Delft, Faculty of TBM, Systems and Simulation <br>
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk
- * Onderzoek TNO (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten
- * Binnenvaart, Ab Ovo Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en
- * Leefomgeving, including the right to sub-license sources and derived products to third parties. <br>
- * 
+ * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
+ * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
+ * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
+ * right to sub-license sources and derived products to third parties. <br>
  * @version Apr 1, 2013 <br>
  * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
  */
@@ -29,22 +28,21 @@ public class XCounter implements Serializable
     @XStreamOmitField
     private static final long serialVersionUID = 1L;
 
-    /** count represents the value of the counter */
+    /** count represents the value of the counter. */
     protected long count = Long.MIN_VALUE;
 
-    /** n represents the number of measurements */
+    /** n represents the number of measurements. */
     protected long n = Long.MIN_VALUE;
 
-    /** description refers to the title of this counter */
+    /** description refers to the title of this counter. */
     protected String description;
 
-    /** the semaphore */
+    /** the semaphore. */
     @XStreamOmitField
     private Object semaphore = new Object();
 
     /**
-     * constructs a new CounterTest
-     * 
+     * constructs a new CounterTest.
      * @param description the description for this counter
      */
     public XCounter(final String description)
@@ -54,8 +52,7 @@ public class XCounter implements Serializable
     }
 
     /**
-     * Returns the current counter value
-     * 
+     * Returns the current counter value.
      * @return long the counter value
      */
     public long getCount()
@@ -64,8 +61,7 @@ public class XCounter implements Serializable
     }
 
     /**
-     * Returns the current number of observations
-     * 
+     * Returns the current number of observations.
      * @return long the number of observations
      */
     public long getN()
@@ -95,7 +91,7 @@ public class XCounter implements Serializable
     }
 
     /**
-     * initializes the counter
+     * initializes the counter.
      */
     public void initialize()
     {
@@ -108,7 +104,6 @@ public class XCounter implements Serializable
 
     /**
      * is the counter initialized?
-     * 
      * @return returns whether the counter is initialized
      */
     public boolean isInitialized()
@@ -117,8 +112,7 @@ public class XCounter implements Serializable
     }
 
     /**
-     * sets the count
-     * 
+     * sets the count.
      * @param count the value
      */
     private void setCount(final long count)
@@ -128,8 +122,7 @@ public class XCounter implements Serializable
 
     /**
      * sets n
-     * 
-     * @param n the number of measurements
+     * @param n the number of measurements.
      */
     private void setN(final long n)
     {
@@ -137,8 +130,7 @@ public class XCounter implements Serializable
     }
 
     /**
-     * returns the description of the counter
-     * 
+     * returns the description of the counter.
      * @return String the description
      */
     public String getDescription()
@@ -147,7 +139,7 @@ public class XCounter implements Serializable
     }
 
     /**
-     * Write statistics to an excel spreadsheet, starting on row "startRow"
+     * Write statistics to an excel spreadsheet, starting on row "startRow".
      * @param sheet the sheet
      * @param startRow the first row
      * @return first free row after writing

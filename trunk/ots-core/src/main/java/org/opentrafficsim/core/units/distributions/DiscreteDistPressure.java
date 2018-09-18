@@ -28,7 +28,7 @@ public class DiscreteDistPressure extends DiscreteDistDoubleScalar.Rel<Pressure,
     public DiscreteDistPressure(final DistDiscrete distribution, final PressureUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistPressure extends DiscreteDistDoubleScalar.Rel<Pressure,
     {
         return new Pressure(getDistribution().draw(), (PressureUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

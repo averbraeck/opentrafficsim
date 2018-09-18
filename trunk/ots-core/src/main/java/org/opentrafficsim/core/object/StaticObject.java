@@ -6,11 +6,11 @@ import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -96,7 +96,7 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     {
         return this.id;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -130,8 +130,8 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public StaticObject clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
-            throws NetworkException
+    public StaticObject clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator,
+            final boolean animation) throws NetworkException
     {
         return new StaticObject(this.id, this.geometry, this.height);
     }

@@ -28,7 +28,7 @@ public class ContinuousDistFlowMass extends ContinuousDistDoubleScalar.Rel<FlowM
     public ContinuousDistFlowMass(final DistContinuous distribution, final FlowMassUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistFlowMass extends ContinuousDistDoubleScalar.Rel<FlowM
     {
         return new FlowMass(getDistribution().draw(), (FlowMassUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

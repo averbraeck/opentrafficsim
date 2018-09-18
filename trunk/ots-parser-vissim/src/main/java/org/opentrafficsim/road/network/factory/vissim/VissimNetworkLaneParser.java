@@ -13,7 +13,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -28,6 +27,7 @@ import org.xml.sax.SAXException;
 import com.vividsolutions.jts.geom.LineString;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -98,7 +98,7 @@ public class VissimNetworkLaneParser implements Serializable
     private Map<String, LaneType> laneTypes = new HashMap<>();
 
     /** The simulator for creating the animation. Null if no animation needed. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The network to register the GTUs in. */
     @SuppressWarnings("visibilitymodifier")
@@ -117,7 +117,7 @@ public class VissimNetworkLaneParser implements Serializable
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
-    public VissimNetworkLaneParser(final OTSDEVSSimulatorInterface simulator)
+    public VissimNetworkLaneParser(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         this.simulator = simulator;
     }
@@ -763,12 +763,12 @@ public class VissimNetworkLaneParser implements Serializable
         this.laneTypes = laneTypes;
     }
 
-    public OTSDEVSSimulatorInterface getSimulator()
+    public DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return simulator;
     }
 
-    public void setSimulator(OTSDEVSSimulatorInterface simulator)
+    public void setSimulator(DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         this.simulator = simulator;
     }

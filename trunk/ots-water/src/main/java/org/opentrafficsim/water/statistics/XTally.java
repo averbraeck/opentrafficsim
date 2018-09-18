@@ -4,7 +4,6 @@
 package org.opentrafficsim.water.statistics;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;

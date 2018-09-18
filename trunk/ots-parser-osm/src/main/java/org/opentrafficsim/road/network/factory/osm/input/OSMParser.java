@@ -176,7 +176,7 @@ public class OSMParser implements Sink, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public void release()
+    public void close()
     {
         // Nothing needs to be done after the entire network has been parsed
     }

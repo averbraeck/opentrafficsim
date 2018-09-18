@@ -172,7 +172,8 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     /**
      * Reversed version of an original and wrapped link type.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 aug. 2018 <br>
@@ -185,10 +186,10 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
 
         /** */
         private static final long serialVersionUID = 20180824L;
-        
+
         /** Original link type. */
         private final LinkType original;
-        
+
         /**
          * Constructor.
          * @param original LinkType; the original type (may not be null)

@@ -23,8 +23,8 @@ import org.opentrafficsim.core.perception.HistoryManager;
  * @param <V> value type
  * @param <M> navigable map type
  */
-public abstract class AbstractHistoricalNavigableMap<K, V, M extends NavigableMap<K, V>> extends AbstractHistoricalSortedMap<K, V, M>
-        implements HistoricalNavigableMap<K, V>
+public abstract class AbstractHistoricalNavigableMap<K, V, M extends NavigableMap<K, V>>
+        extends AbstractHistoricalSortedMap<K, V, M> implements HistoricalNavigableMap<K, V>
 {
 
     /**

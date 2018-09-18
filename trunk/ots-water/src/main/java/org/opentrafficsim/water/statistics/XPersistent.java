@@ -7,10 +7,11 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <br>
@@ -32,7 +33,7 @@ public class XPersistent extends XTally
 
     /** */
     @XStreamOmitField
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** startTime defines the time of the first event */
     @XStreamOmitField
@@ -49,7 +50,7 @@ public class XPersistent extends XTally
      * @param description description of the statistic
      * @param simulator the simulator
      */
-    public XPersistent(String description, OTSDEVSSimulatorInterface simulator)
+    public XPersistent(String description, DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         super(description);
         this.simulator = simulator;
@@ -116,7 +117,7 @@ public class XPersistent extends XTally
         {
             synchronized (this.semaphore)
             {
-                double simTime = this.simulator.getSimulatorTime().getTime().si;
+                double simTime = this.simulator.getSimulatorTime().si;
                 super.n++;
                 if (value < super.min)
                     super.min = value;

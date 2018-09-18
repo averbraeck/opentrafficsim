@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
@@ -14,6 +13,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
@@ -98,14 +98,14 @@ class SensorTag implements Serializable
             try
             {
                 ClassUtil.resolveConstructor(clazz, new Class[] { String.class, Lane.class, Length.class,
-                        RelativePosition.TYPE.class, OTSDEVSSimulatorInterface.class });
+                        RelativePosition.TYPE.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
             }
             catch (NoSuchMethodException nsme)
             {
                 throw new SAXException(
                         "SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name + " on lane " + laneName
                                 + " -- no constructor with arguments (String, Lane, Length, RelativePosition.TYPE,"
-                                + " OTSSimulatorInterface, Length, OTSLine3D)");
+                                + " SimulatorInterface.TimeDoubleUnit, Length, OTSLine3D)");
             }
         }
         catch (ClassNotFoundException cnfe)

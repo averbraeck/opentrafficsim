@@ -33,10 +33,7 @@ import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -95,6 +92,8 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
@@ -149,7 +148,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     private GTUColorer colorer = new LmrsSwitchableColorer();
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** {@inheritDoc} */
     @Override
@@ -192,7 +191,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     /**
      * @return simulator.
      */
-    public final OTSDEVSSimulatorInterface getSimulator()
+    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return this.simulator;
     }
@@ -200,7 +199,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     /**
      * @param simulator set simulator.
      */
-    public final void setSimulator(final OTSDEVSSimulatorInterface simulator)
+    public final void setSimulator(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         this.simulator = simulator;
     }
@@ -255,15 +254,15 @@ public class ShortMerge extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+                throws SimRuntimeException
         {
-            ShortMerge.this.setSimulator((OTSDEVSSimulatorInterface) theSimulator);
+            ShortMerge.this.setSimulator((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
 
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
                 this.network = new OTSNetwork("ShortMerge");
                 nlp.build(stream, this.network, false);
 
@@ -278,7 +277,7 @@ public class ShortMerge extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return ShortMerge.this.getSimulator();
         }
@@ -432,7 +431,7 @@ public class ShortMerge extends AbstractWrappableAnimation
                     bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
 
             new SpeedSign("sign1", getLane(linkA, "FORWARD1"), LongitudinalDirectionality.DIR_PLUS, Length.createSI(10),
-                    (OTSSimulatorInterface) this.getSimulator(), new Speed(130.0, SpeedUnit.KM_PER_HOUR));
+                    (SimulatorInterface.TimeDoubleUnit) this.getSimulator(), new Speed(130.0, SpeedUnit.KM_PER_HOUR));
 
         }
 

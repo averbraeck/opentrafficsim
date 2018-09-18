@@ -15,7 +15,7 @@ import nl.tudelft.simulation.jstats.distributions.DistContinuous;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // This class was automatically generated
-public class ContinuousDistElectricalPotential 
+public class ContinuousDistElectricalPotential
         extends ContinuousDistDoubleScalar.Rel<ElectricalPotential, ElectricalPotentialUnit>
 {
 
@@ -29,7 +29,7 @@ public class ContinuousDistElectricalPotential
     public ContinuousDistElectricalPotential(final DistContinuous distribution, final ElectricalPotentialUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -38,7 +38,7 @@ public class ContinuousDistElectricalPotential
     {
         return new ElectricalPotential(getDistribution().draw(), (ElectricalPotentialUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

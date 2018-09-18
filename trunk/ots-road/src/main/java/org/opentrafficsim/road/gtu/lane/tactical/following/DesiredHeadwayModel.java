@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
 import org.djunits.value.vdouble.scalar.Length;
-
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;

@@ -15,8 +15,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
-import nl.tudelft.simulation.language.Throw;
-
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
@@ -42,8 +40,6 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -53,6 +49,9 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow"> Wikipedia:
@@ -174,7 +173,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @throws NetworkException on network inconsistency
      */
     public FundamentalDiagram(final String caption, final Duration aggregationTime, final Lane lane, final Length position,
-            final Compatible detectedGTUTypes, final OTSDEVSSimulatorInterface simulator) throws NetworkException
+            final Compatible detectedGTUTypes, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         if (aggregationTime.getSI() <= 0)
         {
@@ -188,9 +187,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
                 ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
         FixCaption.fixCaption(this.chartPanel);
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
-        renderer.setBaseLinesVisible(true);
-        renderer.setBaseShapesVisible(true);
-        renderer.setBaseItemLabelGenerator(new XYItemLabelGenerator()
+        renderer.setDefaultLinesVisible(true);
+        renderer.setDefaultShapesVisible(true);
+        renderer.setDefaultItemLabelGenerator(new XYItemLabelGenerator()
         {
             @Override
             public String generateLabel(final XYDataset dataset, final int series, final int item)
@@ -198,7 +197,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
                 return String.format("%.0fs", item * aggregationTime.getSI());
             }
         });
-        renderer.setBaseItemLabelsVisible(true);
+        renderer.setDefaultItemLabelsVisible(true);
         final ChartPanel cp = new ChartPanel(this.chartPanel);
         PointerHandler ph = new PointerHandler()
         {
@@ -283,7 +282,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      */
     public final void addData(final LaneBasedGTU gtu) throws GTUException
     {
-        Time detectionTime = gtu.getSimulator().getSimulatorTime().getTime();
+        Time detectionTime = gtu.getSimulator().getSimulatorTime();
         // Figure out the time bin
         final int timeBin = (int) Math.floor(detectionTime.getSI() / this.aggregationTime.getSI());
         // Extend storage if needed
@@ -603,7 +602,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * @throws NetworkException on network inconsistency
          */
         FundamentalDiagramSensor(final Lane lane, final Length longitudinalPosition, final Compatible detectedGTUTypes,
-                final OTSDEVSSimulatorInterface simulator) throws NetworkException
+                final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
         {
             super("FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(), lane, longitudinalPosition, RelativePosition.REFERENCE,
                     simulator, detectedGTUTypes);
@@ -632,14 +631,14 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
         /** {@inheritDoc} */
         @Override
-        public FundamentalDiagramSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+        public FundamentalDiagramSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
                 final boolean animation) throws NetworkException
         {
             Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-            Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+            Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
                     "simulator should be a DEVSSimulator");
             return new FundamentalDiagramSensor((Lane) newCSE, getLongitudinalPosition(), getDetectedGTUTypes(),
-                    (OTSDEVSSimulatorInterface) newSimulator);
+                    (DEVSSimulatorInterface.TimeDoubleUnit) newSimulator);
         }
 
     }

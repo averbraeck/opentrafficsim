@@ -38,7 +38,7 @@ public enum GTUDirectionality
     {
         return this.equals(DIR_MINUS);
     }
-    
+
     /**
      * Returns the flipped direction.
      * @return GTUDirectionality; flipped direction.

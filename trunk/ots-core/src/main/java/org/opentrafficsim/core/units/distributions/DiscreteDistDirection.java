@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
-import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.AngleUnit;
+import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
@@ -29,7 +29,7 @@ public class DiscreteDistDirection extends DiscreteDistDoubleScalar.Abs<Directio
     public DiscreteDistDirection(final DistDiscrete distribution, final DirectionUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -38,7 +38,7 @@ public class DiscreteDistDirection extends DiscreteDistDoubleScalar.Abs<Directio
     {
         return new Direction(getDistribution().draw(), (DirectionUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

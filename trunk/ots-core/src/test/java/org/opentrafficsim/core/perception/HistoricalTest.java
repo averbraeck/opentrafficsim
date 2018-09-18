@@ -13,8 +13,9 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.perception.collections.HistoricalHashMap;
 import org.opentrafficsim.core.perception.collections.HistoricalLinkedHashSet;
@@ -22,8 +23,7 @@ import org.opentrafficsim.core.perception.collections.HistoricalLinkedList;
 import org.opentrafficsim.core.perception.collections.HistoricalMap;
 import org.opentrafficsim.core.perception.collections.HistoricalSet;
 
-import mockit.Mock;
-import mockit.MockUp;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Test of subclasses of Historical.
@@ -38,37 +38,46 @@ import mockit.MockUp;
  */
 public class HistoricalTest
 {
-
     /** Local time object used in simulator MockUp. Can be set for testing at different simulation times. */
-    private Time time;
+    Time time;
 
     /** Clean-up time. */
     private Duration cleanUp = Duration.createSI(10.0);
 
     /** MockUp simulator. */
-    private OTSDEVSSimulatorInterface simulator = new MockUp<OTSDEVSSimulatorInterface>()
-    {
-        @Mock
-        OTSSimTimeDouble getSimulatorTime()
-        {
-            return new OTSSimTimeDouble(HistoricalTest.this.getTime());
-        }
-    }.getMockInstance();
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** History manager. */
-    private HistoryManagerDEVS historyManager = new HistoryManagerDEVS(this.simulator, this.cleanUp, this.cleanUp);
+    private HistoryManagerDEVS historyManager;
 
-    /**
-     * Returns the set simulation time.
-     * @return set simulation time
-     */
-    final Time getTime()
+    /** */
+    public HistoricalTest()
     {
-        return this.time;
+        this.simulator = createSimulatorMock();
+        this.historyManager = new HistoryManagerDEVS(this.simulator, this.cleanUp, this.cleanUp);
     }
 
     /**
-     * Tests HistoricalValue
+     * @return a mock of the simulator that uses this.time as the time for getSimulatorTime()
+     */
+    private DEVSSimulatorInterface.TimeDoubleUnit createSimulatorMock()
+    {
+        DEVSSimulatorInterface.TimeDoubleUnit simulatorMock = Mockito.mock(DEVSSimulatorInterface.TimeDoubleUnit.class);
+        Answer<Time> answerTime = new Answer<Time>()
+        {
+            @Override
+            public Time answer(final InvocationOnMock invocation) throws Throwable
+            {
+                return HistoricalTest.this.time;
+            }
+            
+        };
+        Mockito.when(simulatorMock.getSimulatorTime()).then(answerTime);
+        return simulatorMock;
+    }
+
+    /**
+     * Tests HistoricalValue.
      */
     @Test
     public void valueTest()
@@ -98,7 +107,7 @@ public class HistoricalTest
     }
 
     /**
-     * Tests HistoricalCollection
+     * Tests HistoricalCollection.
      */
     @Test
     public void collectionTest()
@@ -158,7 +167,7 @@ public class HistoricalTest
     }
 
     /**
-     * Tests HistoricalLinkedList
+     * Tests HistoricalLinkedList.
      */
     @Test
     public void listTest()
@@ -204,7 +213,7 @@ public class HistoricalTest
     }
 
     /**
-     * Tests HistoricalMap
+     * Tests HistoricalMap.
      */
     @Test
     public void mapTest()

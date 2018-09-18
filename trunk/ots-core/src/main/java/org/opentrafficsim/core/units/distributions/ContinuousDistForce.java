@@ -28,7 +28,7 @@ public class ContinuousDistForce extends ContinuousDistDoubleScalar.Rel<Force, F
     public ContinuousDistForce(final DistContinuous distribution, final ForceUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistForce extends ContinuousDistDoubleScalar.Rel<Force, F
     {
         return new Force(getDistribution().draw(), (ForceUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

@@ -215,7 +215,7 @@ public final class Profile
             System.out.print(statistics());
         }
     }
-    
+
     /**
      * Sets a print interval.
      * @param printInterval long; print interval in ms

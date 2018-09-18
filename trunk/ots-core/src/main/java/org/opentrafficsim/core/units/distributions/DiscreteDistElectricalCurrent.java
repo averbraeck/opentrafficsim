@@ -28,7 +28,7 @@ public class DiscreteDistElectricalCurrent extends DiscreteDistDoubleScalar.Rel<
     public DiscreteDistElectricalCurrent(final DistDiscrete distribution, final ElectricalCurrentUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistElectricalCurrent extends DiscreteDistDoubleScalar.Rel<
     {
         return new ElectricalCurrent(getDistribution().draw(), (ElectricalCurrentUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

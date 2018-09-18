@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -21,6 +20,7 @@ import org.opentrafficsim.road.network.factory.rti.data.RTIToOTSData;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /** */
@@ -37,7 +37,7 @@ public class ReceiverThread extends Thread
     private SubjectiveCar car;
 
     /** */
-    OTSDEVSSimulatorInterface simulator;
+    DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** */
     GTUType carType;
@@ -56,7 +56,7 @@ public class ReceiverThread extends Thread
      * @throws SocketException when communication fails
      */
     @SuppressFBWarnings("IL_INFINITE_LOOP")
-    public ReceiverThread(OTSDEVSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars,
+    public ReceiverThread(DEVSSimulatorInterface.TimeDoubleUnit simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars,
             final OTSNetwork network) throws SocketException
     {
         super();

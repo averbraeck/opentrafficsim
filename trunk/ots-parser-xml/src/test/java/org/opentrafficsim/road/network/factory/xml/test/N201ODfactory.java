@@ -23,7 +23,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Network;
@@ -57,6 +56,7 @@ import org.opentrafficsim.road.network.sampling.GtuTypeData;
 import org.opentrafficsim.road.network.sampling.LinkData;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 /**
@@ -137,7 +137,7 @@ public class N201ODfactory
      * @param simulator simulator
      */
     public static void makeGeneratorsFromOD(final OTSNetwork network, final ODMatrix matrix,
-            final OTSDEVSSimulatorInterface simulator)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
 
         // fixed generator input

@@ -14,10 +14,9 @@ import java.rmi.RemoteException;
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -76,14 +75,14 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @param textAlignment TextAlignment; where to place the text
      * @param color Color; the color of the text
      * @param fontSize float; the size of the font; default = 2.0 (meters)
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
-            final TextAlignment textAlignment, final Color color, final float fontSize, final OTSSimulatorInterface simulator)
-            throws RemoteException, NamingException
+            final TextAlignment textAlignment, final Color color, final float fontSize,
+            final SimulatorInterface.TimeDoubleUnit simulator) throws RemoteException, NamingException
     {
         this.source = source;
         this.text = text;
@@ -109,12 +108,12 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @param dy float; the vertical movement of the text, in meters
      * @param textAlignment TextAlignment; where to place the text
      * @param color Color; the color of the text
-     * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
-            final TextAlignment textAlignment, final Color color, final OTSSimulatorInterface simulator)
+            final TextAlignment textAlignment, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
             throws RemoteException, NamingException
     {
         this(source, text, dx, dy, textAlignment, color, 2.0f, simulator);
@@ -180,12 +179,12 @@ public abstract class TextAnimation implements Locatable, Serializable
     /**
      * Clone the TextAnimation and return a copy for the new source on the new simulator.
      * @param newSource Locatable; the new source to link to the text animation
-     * @param newSimulator OTSSimulatorInterface; the new simulator to register the animation on
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator to register the animation on
      * @return TextAnimation; a copy of this TextAnimation
      * @throws RemoteException when remote animation cannot be reached
      * @throws NamingException when animation name cannot be found or bound in the Context
      */
-    public abstract TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+    public abstract TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
             throws RemoteException, NamingException;
 
     /**
@@ -376,11 +375,12 @@ public abstract class TextAnimation implements Locatable, Serializable
         /**
          * Construct a new AnimationImpl.
          * @param source Locatable; the source
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
-        AnimationImpl(final Locatable source, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
+        AnimationImpl(final Locatable source, final SimulatorInterface.TimeDoubleUnit simulator)
+                throws NamingException, RemoteException
         {
             super(source, simulator);
         }

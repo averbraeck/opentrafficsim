@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -13,6 +12,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
@@ -94,13 +94,13 @@ class TrafficLightTag implements Serializable
             try
             {
                 ClassUtil.resolveConstructor(clazz,
-                        new Class[] { String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
+                        new Class[] { String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
             }
             catch (NoSuchMethodException nsme)
             {
                 throw new SAXException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className + " for trafficLight "
                         + trafficLightTag.name + " on lane " + laneName
-                        + " -- no constructor with arguments (String, Lane, Length, OTSDEVSSimulatorInterface)");
+                        + " -- no constructor with arguments (String, Lane, Length, DEVSSimulatorInterface.TimeDoubleUnit)");
             }
         }
         catch (ClassNotFoundException cnfe)
