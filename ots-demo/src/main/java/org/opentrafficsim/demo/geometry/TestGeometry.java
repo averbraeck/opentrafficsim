@@ -54,7 +54,7 @@ public class TestGeometry extends DSOLApplication implements UNITS
     public static void main(final String[] args) throws SimRuntimeException, NamingException, RemoteException
     {
         OTSModelInterface model = new TestModel();
-        DEVSAnimator simulator = new DEVSAnimator();
+        DEVSAnimator.TimeDoubleUnit simulator = new DEVSAnimator.TimeDoubleUnit();
         OTSReplication replication = new OTSReplication("rep1", new SimTimeDoubleUnit(Time.ZERO),
                 Duration.ZERO, new Duration(1800.0, SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
