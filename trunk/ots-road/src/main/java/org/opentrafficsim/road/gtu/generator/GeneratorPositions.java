@@ -793,7 +793,6 @@ public final class GeneratorPositions implements Locatable
          * @param roadPosition RoadPosition; lateral position on the road (0 = right, 0.5 = middle, 1 = left)
          * @param bias double; bias extent, lower values create more spread traffic, 0.0 causes no lane preference
          * @param stickyLanes double; number of lanes to consider in either direction, including the preferred lane
-         * throws IllegalArgumentException if not 0 &le; roadPosition &le; 1 & bias &ge; 0 & stickyLanes &ge; 1
          */
         public LaneBias(final RoadPosition roadPosition, final double bias, final double stickyLanes)
         {
