@@ -250,7 +250,7 @@ public class DemandTag implements Serializable
 
         /**
          * Returns the demand type based on a LEVEL tag. This does not work on FACTOR, as no LEVEL tag should be defined then.
-         * @param level
+         * @param level level of the node
          * @return demand type
          * @throws XmlParserException if the VALUE attribute is missing
          */
