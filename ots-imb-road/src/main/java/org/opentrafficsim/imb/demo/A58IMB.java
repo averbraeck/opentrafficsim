@@ -14,13 +14,6 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.javel.gisbeans.io.esri.CoordinateTransform;
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.io.URLResource;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -30,9 +23,7 @@ import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.TransformWGS84DutchRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -54,6 +45,15 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.xml.sax.SAXException;
+
+import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>
@@ -179,7 +179,7 @@ public class A58IMB extends AbstractWrappableAnimation
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** User settable properties. */
         private List<Property<?>> modelProperties = null;
@@ -206,11 +206,11 @@ public class A58IMB extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
                 throws SimRuntimeException
         {
             System.out.println("A58IMB: constructModel called; Connecting to IMB");
-            this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
+            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
             SimpleAnimator imbAnimator = (SimpleAnimator) pSimulator;
             try
             {
@@ -284,7 +284,7 @@ public class A58IMB extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return this.simulator;
         }

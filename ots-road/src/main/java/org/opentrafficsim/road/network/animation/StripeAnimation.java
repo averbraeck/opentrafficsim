@@ -12,7 +12,6 @@ import java.util.Arrays;
 import javax.naming.NamingException;
 
 import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -25,6 +24,7 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Draw road stripes.
@@ -196,7 +196,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
      * @throws RemoteException on communication failure
      * @throws OTSGeometryException when something is very wrong with the geometry of the line
      */
-    public StripeAnimation(final Stripe source, final OTSSimulatorInterface simulator, final TYPE type)
+    public StripeAnimation(final Stripe source, final SimulatorInterface.TimeDoubleUnit simulator, final TYPE type)
             throws NamingException, RemoteException, OTSGeometryException
     {
         super(source, simulator);
@@ -255,7 +255,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<Stripe> clone(final Stripe newSource, final OTSSimulatorInterface newSimulator)
+    public ClonableRenderable2DInterface<Stripe> clone(final Stripe newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
             throws NamingException, RemoteException
     {
         try

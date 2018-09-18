@@ -28,7 +28,7 @@ public class ContinuousDistAcceleration extends ContinuousDistDoubleScalar.Rel<A
     public ContinuousDistAcceleration(final DistContinuous distribution, final AccelerationUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistAcceleration extends ContinuousDistDoubleScalar.Rel<A
     {
         return new Acceleration(getDistribution().draw(), (AccelerationUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

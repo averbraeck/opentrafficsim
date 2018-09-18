@@ -33,7 +33,7 @@ public class HistoricalLinkedHashMap<K, V> extends AbstractHistoricalMap<K, V, L
     {
         super(historyManager, new LinkedHashMap<>());
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -61,7 +61,7 @@ public class HistoricalLinkedHashMap<K, V> extends AbstractHistoricalMap<K, V, L
         }
         return fill(time, new LinkedHashMap<>());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

@@ -28,7 +28,7 @@ public class ContinuousDistAngle extends ContinuousDistDoubleScalar.Rel<Angle, A
     public ContinuousDistAngle(final DistContinuous distribution, final AngleUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistAngle extends ContinuousDistDoubleScalar.Rel<Angle, A
     {
         return new Angle(getDistribution().draw(), (AngleUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

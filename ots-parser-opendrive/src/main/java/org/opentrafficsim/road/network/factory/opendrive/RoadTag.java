@@ -18,7 +18,6 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -50,6 +49,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
@@ -192,7 +192,7 @@ class RoadTag implements Serializable
      * @throws OTSGeometryException on geometry or position error
      * @throws NamingException on error registering the animation
      */
-    static void buildSubLinks(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
+    static void buildSubLinks(RoadTag roadTag, DEVSSimulatorInterface.TimeDoubleUnit simulator,
             OpenDriveNetworkLaneParser openDriveNetworkLaneParser)
             throws OTSGeometryException, NetworkException, NamingException
     {
@@ -398,7 +398,7 @@ class RoadTag implements Serializable
      * @throws NamingException on error registering the animation
      * @throws RemoteException on error reaching the animation or simulator
      */
-    static void generateRegularRoads(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
+    static void generateRegularRoads(RoadTag roadTag, DEVSSimulatorInterface.TimeDoubleUnit simulator,
             OpenDriveNetworkLaneParser openDriveNetworkLaneParser)
             throws OTSGeometryException, NetworkException, NamingException, RemoteException
     {
@@ -904,7 +904,7 @@ class RoadTag implements Serializable
      * @param openDriveNetworkLaneParser the parser
      * @throws NetworkException on network error
      */
-    public static void generateTrafficLightsbySignal(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
+    public static void generateTrafficLightsbySignal(RoadTag roadTag, DEVSSimulatorInterface.TimeDoubleUnit simulator,
             OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
     {
         for (SignalTag signalTag : roadTag.signalsTag.signalTags)
@@ -930,7 +930,7 @@ class RoadTag implements Serializable
 
                     Class<?> clazz = Class.forName(SimpleTrafficLight.class.getName());
                     Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz,
-                            new Class[] { String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
+                            new Class[] { String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
 
                     SimpleTrafficLight trafficLight = (SimpleTrafficLight) trafficLightConstructor
                             .newInstance(new Object[] { signalTag.id, lane, sOffset, simulator });
@@ -975,7 +975,7 @@ class RoadTag implements Serializable
      * @param openDriveNetworkLaneParser the parser
      * @throws NetworkException on network error
      */
-    public static void generateTrafficLightsbySignalReference(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
+    public static void generateTrafficLightsbySignalReference(RoadTag roadTag, DEVSSimulatorInterface.TimeDoubleUnit simulator,
             OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
     {
         for (SignalReferenceTag signalReferenceTag : roadTag.signalsTag.signalReferenceTag)
@@ -998,7 +998,7 @@ class RoadTag implements Serializable
 
                     Class<?> clazz = Class.forName(SimpleTrafficLight.class.getName());
                     Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz,
-                            new Class[] { String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
+                            new Class[] { String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
 
                     SimpleTrafficLight trafficLight = (SimpleTrafficLight) trafficLightConstructor
                             .newInstance(new Object[] { signalTag.id + ".ref", lane, sOffset, simulator });

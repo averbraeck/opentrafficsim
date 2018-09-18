@@ -124,8 +124,8 @@ public class ContinuousProperty extends AbstractProperty<Double> implements Seri
                 && (!this.includesUpperBound))
         // @formatter:on
         {
-            throw new PropertyException("new value " + newValue + " is out of valid range (" + this.minimumValue + ".."
-                    + this.maximumValue + ")");
+            throw new PropertyException(
+                    "new value " + newValue + " is out of valid range (" + this.minimumValue + ".." + this.maximumValue + ")");
         }
         this.value = newValue;
     }

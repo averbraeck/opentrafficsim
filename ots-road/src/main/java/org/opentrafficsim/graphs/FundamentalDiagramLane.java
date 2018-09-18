@@ -37,8 +37,6 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -48,6 +46,8 @@ import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -133,7 +133,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     private final Lane lane;
 
     /** The simulator to schedule sampling. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** Flow counter. */
     int flow = 0;
@@ -168,7 +168,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
      * @throws SimRuntimeException in case scheduling of the sampler fails
      */
     public FundamentalDiagramLane(final String caption, final Duration aggregationTime, final Lane lane,
-            final Compatible detectedGTUTypes, final OTSDEVSSimulatorInterface simulator) throws NetworkException,
+            final Compatible detectedGTUTypes, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException,
             SimRuntimeException
     {
         if (aggregationTime.getSI() <= 0)
@@ -184,7 +184,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
                 ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
         FixCaption.fixCaption(this.chartPanel);
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) this.chartPanel.getXYPlot().getRenderer();
-        renderer.setBaseShapesVisible(true);
+        renderer.setDefaultShapesVisible(true);
 
         final ChartPanel cp = new ChartPanel(this.chartPanel);
         PointerHandler ph = new PointerHandler()
@@ -602,7 +602,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
         /** {@inheritDoc} */
         @Override
-        public FlowSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+        public FlowSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
                 final boolean animation) throws NetworkException
         {
             Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");

@@ -33,7 +33,7 @@ public class HistoricalTreeSet<E> extends AbstractHistoricalNavigableSet<E, Tree
     {
         super(historyManager, new TreeSet<>());
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -61,7 +61,7 @@ public class HistoricalTreeSet<E> extends AbstractHistoricalNavigableSet<E, Tree
         }
         return fill(time, new TreeSet<>());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

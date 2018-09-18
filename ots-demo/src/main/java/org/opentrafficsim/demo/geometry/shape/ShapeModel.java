@@ -4,17 +4,17 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -32,7 +32,7 @@ public class ShapeModel implements OTSModelInterface
     private static final long serialVersionUID = 20140815L;
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** Nodes from shape file. */
     private Map<String, OTSNode> nodes;
@@ -45,10 +45,10 @@ public class ShapeModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+            throws SimRuntimeException
     {
-        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+        this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
         try
         {
             // Read the shape files with the function:
@@ -66,7 +66,7 @@ public class ShapeModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
     {
         return this.simulator;
     }

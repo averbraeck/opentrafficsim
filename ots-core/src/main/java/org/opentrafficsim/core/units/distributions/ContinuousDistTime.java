@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Time;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -29,7 +29,7 @@ public class ContinuousDistTime extends ContinuousDistDoubleScalar.Abs<Time, Tim
     public ContinuousDistTime(final DistContinuous distribution, final TimeUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -38,7 +38,7 @@ public class ContinuousDistTime extends ContinuousDistDoubleScalar.Abs<Time, Tim
     {
         return new Time(getDistribution().draw(), (TimeUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

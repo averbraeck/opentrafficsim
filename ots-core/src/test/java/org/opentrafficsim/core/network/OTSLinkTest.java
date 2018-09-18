@@ -9,22 +9,21 @@ import java.rmi.RemoteException;
 
 import javax.media.j3d.Bounds;
 
-import mockit.Mock;
-import mockit.MockUp;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.mock.MockGTU;
+import org.opentrafficsim.core.mock.MockSimulator;
+
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventType;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Test the OTSLink class.
@@ -59,15 +58,11 @@ public class OTSLinkTest implements EventListenerInterface
         Network network = new OTSNetwork("OTSLinkTestNetwork");
         Node startNode = new OTSNode(network, "start", new OTSPoint3D(10, 20, 0));
         Node endNode = new OTSNode(network, "end", new OTSPoint3D(1000, 2000, 10));
-        GTUCompatibility<LinkType> compatibility =
-                new GTUCompatibility<LinkType>((LinkType) null).addAllowedGTUType(GTUType.VEHICLE,
-                        LongitudinalDirectionality.DIR_NONE);
+        GTUCompatibility<LinkType> compatibility = new GTUCompatibility<LinkType>((LinkType) null)
+                .addAllowedGTUType(GTUType.VEHICLE, LongitudinalDirectionality.DIR_NONE);
         LinkType linkType = new LinkType("myLinkType", LinkType.ROAD, compatibility);
         OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
-        OTSSimulatorInterface simulator = new MockUp<OTSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
         // Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
         OTSLink link = new OTSLink(network, "link1", startNode, endNode, linkType, designLine, simulator);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
@@ -103,44 +98,10 @@ public class OTSLinkTest implements EventListenerInterface
         assertEquals("add counter is 0", 0, this.gtuAddedCount);
         assertEquals("remove counter is 0", 0, this.gtuRemovedCount);
         assertEquals("other event counter is 0", 0, this.otherEventCount);
-        // GTU gtu1 = new MyGTU("gtu1");
-        // GTU gtu2 = new MyGTU("gtu2");
-        GTU gtu1 = new MockUp<GTU>()
-        {
-            @Mock
-            public String getId()
-            {
-                return "gtu1";
-            }
-
-            @Mock
-            public OTSDEVSSimulatorInterface getSimulator()
-            {
-                return new MockUp<OTSDEVSSimulatorInterface>()
-                {
-                    // no implementation needed.
-                }.getMockInstance();
-            }
-
-        }.getMockInstance();
-        GTU gtu2 = new MockUp<GTU>()
-        {
-            @Mock
-            public String getId()
-            {
-                return "gtu2";
-            }
-
-            @Mock
-            public OTSDEVSSimulatorInterface getSimulator()
-            {
-                return new MockUp<OTSDEVSSimulatorInterface>()
-                {
-                    // no implementation needed.
-                }.getMockInstance();
-            }
-
-        }.getMockInstance();
+        MockGTU mockGtu1 = new MockGTU("gtu1");
+        GTU gtu1 = mockGtu1.getMock();
+        MockGTU mockGtu2 = new MockGTU("gtu2");
+        GTU gtu2 = mockGtu2.getMock();
         link.addGTU(gtu1);
         assertEquals("add counter is now 1", 1, this.gtuAddedCount);
         assertEquals("remove counter is 0", 0, this.gtuRemovedCount);
@@ -195,15 +156,11 @@ public class OTSLinkTest implements EventListenerInterface
         // make a link with the same name in another network
         Network otherNetwork = new OTSNetwork("other");
         linkType = new LinkType("myLinkType4", LinkType.ROAD, compatibility);
-        otherLink =
-                new OTSLink(otherNetwork, "link4", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)),
-                        new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, simulator);
+        otherLink = new OTSLink(otherNetwork, "link4", new OTSNode(otherNetwork, "start", new OTSPoint3D(10, 20, 0)),
+                new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, simulator);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
         otherNetwork.removeLink(otherLink);
-        OTSSimulatorInterface simulator2 = new MockUp<OTSSimulatorInterface>()
-        {
-            // no implementation needed.
-        }.getMockInstance();
+        SimulatorInterface.TimeDoubleUnit simulator2 = MockSimulator.createMock();
         otherLink = link.clone(otherNetwork, simulator2, false);
         assertTrue("link is equal to clone in different network", link.equals(otherLink));
     }

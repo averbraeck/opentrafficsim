@@ -2,9 +2,10 @@ package org.opentrafficsim.water.network.infra;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.water.network.Waterway;
 import org.opentrafficsim.water.network.WaterwayLocation;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Movable bridge which can cause delay.
@@ -27,7 +28,7 @@ public class MovableBridge extends FixedBridge implements OperatedObstacle
     private static final long serialVersionUID = 1L;
 
     /** the simulator to schedule on. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** hours per day. */
     private int operationHoursPerDay;
@@ -53,7 +54,7 @@ public class MovableBridge extends FixedBridge implements OperatedObstacle
      * @param maxHeightClosed max height when bridge is closed
      * @param maxHeightOpened max height when bridge is opened
      */
-    public MovableBridge(final OTSDEVSSimulatorInterface simulator, final String name, final WaterwayLocation waterwayLocation,
+    public MovableBridge(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final String name, final WaterwayLocation waterwayLocation,
             final int operationHoursPerDay, final int operationDaysPerWeek, final Length maxHeightClosed,
             final Length maxHeightOpened)
     {
@@ -82,7 +83,7 @@ public class MovableBridge extends FixedBridge implements OperatedObstacle
      * @param maxHeightOpened max height when bridge is opened
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public MovableBridge(final OTSDEVSSimulatorInterface simulator, final String name, final Waterway waterway,
+    public MovableBridge(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final String name, final Waterway waterway,
             final Length distance, final int operationHoursPerDay, final int operationDaysPerWeek, final Length maxHeightClosed,
             final Length maxHeightOpened)
     {
@@ -138,7 +139,7 @@ public class MovableBridge extends FixedBridge implements OperatedObstacle
 
     /** {@inheritDoc} */
     @Override
-    public final OTSDEVSSimulatorInterface getSimulator()
+    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return this.simulator;
     }

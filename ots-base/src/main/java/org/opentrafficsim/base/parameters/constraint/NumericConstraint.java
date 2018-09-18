@@ -91,13 +91,11 @@ public enum NumericConstraint implements Constraint<Number>
      * Constructor with message for value failure, pointing to a parameter using '%s'.
      * @param failMessage Message for value failure, pointing to a parameter using '%s'.
      */
-    //@SuppressFBWarnings("RV_RETURN_VALUE_IGNORED")
+    // @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED")
     NumericConstraint(final String failMessage)
     {
-        Throw.whenNull(failMessage,
-                "Default parameter constraint '%s' has null as fail message as given to the constructor,"
-                        + " which is not allowed.",
-                this);
+        Throw.whenNull(failMessage, "Default parameter constraint '%s' has null as fail message as given to the constructor,"
+                + " which is not allowed.", this);
         try
         {
             // return value can be ignored

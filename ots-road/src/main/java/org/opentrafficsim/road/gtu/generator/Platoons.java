@@ -11,7 +11,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -23,6 +22,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.Throw;
 
@@ -55,7 +55,7 @@ public class Platoons
     private final GTUCharacteristicsGeneratorOD characteristicsOD;
 
     /** Simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** Random number stream. */
     private final StreamInterface stream;
@@ -91,11 +91,11 @@ public class Platoons
      * Constructor.
      * @param generator LaneBasedGTUGenerator; GTU generator
      * @param characteristics LaneBasedGTUCharacteristicsGenerator; characteristics generator
-     * @param simulator OTSDEVSSimulatorInterface; simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @param position Set&lt;DirectedLanePosition&gt;; position
      */
     public Platoons(final LaneBasedGTUGenerator generator, final LaneBasedGTUCharacteristicsGenerator characteristics,
-            final OTSDEVSSimulatorInterface simulator, final Set<DirectedLanePosition> position)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Set<DirectedLanePosition> position)
     {
         this.generator = generator;
         this.characteristics = characteristics;
@@ -109,12 +109,12 @@ public class Platoons
      * Constructor.
      * @param generator LaneBasedGTUGenerator; GTU generator
      * @param characteristics GTUCharacteristicsGeneratorOD; characteristics generator
-     * @param simulator OTSDEVSSimulatorInterface; simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @param stream StreamInterface; random number stream
      * @param position Set&lt;DirectedLanePosition&gt;; position
      */
     public Platoons(final LaneBasedGTUGenerator generator, final GTUCharacteristicsGeneratorOD characteristics,
-            final OTSDEVSSimulatorInterface simulator, final StreamInterface stream, final Set<DirectedLanePosition> position)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final StreamInterface stream, final Set<DirectedLanePosition> position)
     {
         this.generator = generator;
         this.characteristics = null;

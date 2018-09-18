@@ -6,7 +6,6 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.geom.Line2D;
 import java.lang.reflect.InvocationTargetException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -42,7 +41,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -74,6 +72,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -430,23 +429,23 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         chartPanel.getXYPlot().setDomainAxis(xAxis);
         chartPanel.getXYPlot().setRangeAxis(yAxis);
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chartPanel.getXYPlot().getRenderer();
-        renderer.setBaseLinesVisible(true);
-        renderer.setBaseShapesVisible(false);
-        renderer.setBaseShape(new Line2D.Float(0, 0, 0, 0));
+        renderer.setDefaultLinesVisible(true);
+        renderer.setDefaultShapesVisible(false);
+        renderer.setDefaultShape(new Line2D.Float(0, 0, 0, 0));
         return chartPanel;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
-            throws SimRuntimeException, RemoteException
+    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator)
+            throws SimRuntimeException
     {
         // Do nothing
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
     {
         return null;
     }

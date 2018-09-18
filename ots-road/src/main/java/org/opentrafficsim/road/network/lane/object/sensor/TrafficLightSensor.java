@@ -11,18 +11,8 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.event.EventProducerInterface;
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -36,6 +26,16 @@ import org.opentrafficsim.road.network.animation.SensorAnimation;
 import org.opentrafficsim.road.network.animation.TrafficLightSensorAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.event.EventProducerInterface;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * This traffic light sensor reports whether it whether any GTUs are within its area. The area is a sub-section of a Lane. This
@@ -96,14 +96,14 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
      * @param intermediateLanes List&lt;Lane&gt;; list of intermediate lanes
      * @param entryPosition RelativePosition; the position on the GTUs that trigger the entry events
      * @param exitPosition RelativePosition; the position on the GTUs that trigger the exit events
-     * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @param compatible Compatible; object that checks that the detector detects a GTU.
      * @throws NetworkException when the network is inconsistent.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TrafficLightSensor(final String id, final Lane laneA, final Length positionA, final Lane laneB,
             final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
-            final OTSDEVSSimulatorInterface simulator, final Compatible compatible) throws NetworkException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Compatible compatible) throws NetworkException
     {
         Throw.whenNull(id, "id may not be null");
         this.id = id;
@@ -506,7 +506,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
         // String source =
         // this.entryA == sensor ? "entryA" : this.entryB == sensor ? "entryB" : this.exitA == sensor ? "exitA"
         // : this.exitB == sensor ? "exitB" : "???";
-        // System.out.println("Time " + sensor.getSimulator().getSimulatorTime().get() + ": " + this.id + " " + source
+        // System.out.println("Time " + sensor.getSimulator().getSimulatorTime() + ": " + this.id + " " + source
         // + " triggered on " + gtu + " driving direction is " + gtuDirection);
         if (this.entryA == sensor && gtuDirection == this.directionalityA || this.entryB == sensor
                 && gtuDirection != this.directionalityB)
@@ -534,7 +534,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
 
     /** {@inheritDoc} */
     @Override
-    public final OTSDEVSSimulatorInterface getSimulator()
+    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return this.entryA.getSimulator();
     }
@@ -600,13 +600,13 @@ class FlankSensor extends AbstractSensor
      * @param lane Lane; the lane of the new FlankSensor
      * @param longitudinalPosition Length; the longitudinal position of the new FlankSensor
      * @param positionType TYPE; the position on the GTUs that triggers the new FlankSensor
-     * @param simulator OTSDEVSSimulatorInterface; the simulator engine
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator engine
      * @param parent TrafficLightSensor; the traffic light sensor that deploys this FlankSensor
      * @param compatible Compatible; object that determines if a GTU is detectable by the new FlankSensor
      * @throws NetworkException when the network is inconsistent
      */
     FlankSensor(final String id, final Lane lane, final Length longitudinalPosition, final TYPE positionType,
-            final OTSDEVSSimulatorInterface simulator, final TrafficLightSensor parent, final Compatible compatible)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final TrafficLightSensor parent, final Compatible compatible)
             throws NetworkException
     {
         super(id, lane, longitudinalPosition, positionType, simulator, compatible);
@@ -630,16 +630,16 @@ class FlankSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public FlankSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+    public FlankSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
             final boolean animation) throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+        Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         // XXX should the parent of the clone be our parent??? And should the (cloned) parent not construct its own flank
         // sensors?
         return new FlankSensor(getId(), (Lane) newCSE, getLongitudinalPosition(), getPositionType(),
-                (OTSDEVSSimulatorInterface) newSimulator, this.parent, super.getDetectedGTUTypes());
+                (DEVSSimulatorInterface.TimeDoubleUnit) newSimulator, this.parent, super.getDetectedGTUTypes());
     }
 
     /** {@inheritDoc} */

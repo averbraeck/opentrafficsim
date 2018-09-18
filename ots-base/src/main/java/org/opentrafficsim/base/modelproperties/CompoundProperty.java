@@ -41,8 +41,7 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
      * @throws PropertyException if <cite>key</cite> is already in use
      */
     public CompoundProperty(final String key, final String shortName, final String description,
-            final List<Property<?>> initialValue, final boolean readOnly, final int displayPriority)
-            throws PropertyException
+            final List<Property<?>> initialValue, final boolean readOnly, final int displayPriority) throws PropertyException
     {
         super(key, displayPriority, shortName, description);
         if (null != initialValue)
@@ -80,8 +79,8 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
      * Find an embedded Property that has a specified shortName. <br>
      * Return the first matching one, or null if none of the embedded AbstractProperties has the specified name.
      * @param key String; the key of the sought embedded Property
-     * @return Property&lt;?&gt;; the first matching embedded AbstractProperty or null if there is no embedded
-     *         Property with the specified name
+     * @return Property&lt;?&gt;; the first matching embedded AbstractProperty or null if there is no embedded Property with the
+     *         specified name
      */
     public final Property<?> findSubPropertyByKey(final String key)
     {
@@ -124,8 +123,8 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
         {
             if (this.propertyGroup.containsKey(subProperty.getKey()))
             {
-                throw new PropertyException("A property with key " + subProperty.getKey()
-                        + " is already known in this property group");
+                throw new PropertyException(
+                        "A property with key " + subProperty.getKey() + " is already known in this property group");
             }
         }
         // Add all sub-properties to this property group
@@ -187,8 +186,8 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
         int i = this.value.indexOf(removeMe);
         if (i < 0)
         {
-            throw new PropertyException("Cannot remove property " + removeMe
-                    + " because it is not part of this compound property");
+            throw new PropertyException(
+                    "Cannot remove property " + removeMe + " because it is not part of this compound property");
         }
         remove(i);
     }

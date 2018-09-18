@@ -28,7 +28,7 @@ public class ContinuousDistMass extends ContinuousDistDoubleScalar.Rel<Mass, Mas
     public ContinuousDistMass(final DistContinuous distribution, final MassUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistMass extends ContinuousDistDoubleScalar.Rel<Mass, Mas
     {
         return new Mass(getDistribution().draw(), (MassUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

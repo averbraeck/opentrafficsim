@@ -70,7 +70,7 @@ package org.opentrafficsim.base.parameters.constraint;
 @SuppressWarnings({ "checkstyle:interfaceistype", "checkstyle:javadoctype", "checkstyle:javadocvariable", "javadoc" })
 public interface ConstraintInterface
 {
-    
+
     // @formatter:off
     Constraint<Number> POSITIVE     = NumericConstraint.POSITIVE;
     Constraint<Number> NEGATIVE     = NumericConstraint.NEGATIVE;

@@ -11,12 +11,12 @@ import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -49,7 +49,7 @@ public class GeneratorAnimation extends Renderable2D implements Serializable
      * @throws RemoteException in case of remote registration failure of the animation
      * @throws OTSGeometryException if position out of bounds
      */
-    public GeneratorAnimation(final Lane lane, final Length position, final OTSSimulatorInterface simulator)
+    public GeneratorAnimation(final Lane lane, final Length position, final SimulatorInterface.TimeDoubleUnit simulator)
             throws NamingException, RemoteException, OTSGeometryException
     {
         super(new GenPos(lane, position), simulator);

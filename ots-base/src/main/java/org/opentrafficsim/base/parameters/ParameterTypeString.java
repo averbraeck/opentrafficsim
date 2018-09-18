@@ -48,7 +48,7 @@ public class ParameterTypeString extends ParameterType<String>
     {
         super(id, description, String.class, constraint);
     }
-    
+
     /**
      * @param id String; short name of the new ParameterTypeString
      * @param description String; description or full name of the new ParameterTypeString
@@ -75,5 +75,5 @@ public class ParameterTypeString extends ParameterType<String>
     {
         return "ParameterTypeString [id=" + getId() + ", description=" + getDescription() + "]";
     }
-    
+
 }

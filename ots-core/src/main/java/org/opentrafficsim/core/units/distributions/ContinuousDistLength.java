@@ -28,7 +28,7 @@ public class ContinuousDistLength extends ContinuousDistDoubleScalar.Rel<Length,
     public ContinuousDistLength(final DistContinuous distribution, final LengthUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistLength extends ContinuousDistDoubleScalar.Rel<Length,
     {
         return new Length(getDistribution().draw(), (LengthUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

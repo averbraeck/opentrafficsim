@@ -28,7 +28,7 @@ public class ContinuousDistFrequency extends ContinuousDistDoubleScalar.Rel<Freq
     public ContinuousDistFrequency(final DistContinuous distribution, final FrequencyUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistFrequency extends ContinuousDistDoubleScalar.Rel<Freq
     {
         return new Frequency(getDistribution().draw(), (FrequencyUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

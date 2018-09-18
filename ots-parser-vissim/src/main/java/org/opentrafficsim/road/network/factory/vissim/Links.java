@@ -3,7 +3,6 @@ package org.opentrafficsim.road.network.factory.vissim;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,13 +19,11 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -45,6 +42,7 @@ import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.CartesianPoint;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -345,7 +343,7 @@ final class Links
      * @throws NetworkException when tag type not filled
      */
     static void buildLink(final LinkTag linkTag, final VissimNetworkLaneParser parser,
-            final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NamingException, NetworkException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws OTSGeometryException, NamingException, NetworkException
     {
         NodeTag from = linkTag.nodeStartTag;
         OTSPoint3D startPoint = new OTSPoint3D(from.coordinate);
@@ -482,7 +480,7 @@ final class Links
      */
     @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:methodlength" })
     static void applyRoadTypeToLink(final LinkTag linkTag, final VissimNetworkLaneParser parser,
-            final OTSDEVSSimulatorInterface simulator)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws NetworkException, NamingException, SAXException, GTUException, OTSGeometryException, SimRuntimeException
     {
         CrossSectionLink csl = linkTag.link;
@@ -600,7 +598,7 @@ final class Links
      */
     @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:methodlength" })
     static void applyRoadTypeToConnector(final LinkTag linkTag, final VissimNetworkLaneParser parser,
-            final OTSDEVSSimulatorInterface simulator)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws NetworkException, NamingException, SAXException, GTUException, OTSGeometryException, SimRuntimeException
     {
         CrossSectionLink csl = linkTag.link;
@@ -706,7 +704,7 @@ final class Links
      * @throws NetworkException
      */
     public static void createSinkSensor(LinkTag realLinkTag, VissimNetworkLaneParser vissimNetworkLaneParser,
-            OTSDEVSSimulatorInterface simulator) throws NetworkException
+            DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         if (!realLinkTag.connector)
         {

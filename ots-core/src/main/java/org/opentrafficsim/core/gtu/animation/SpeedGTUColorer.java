@@ -46,8 +46,7 @@ public class SpeedGTUColorer implements GTUColorer, Serializable
             double ratio = index * 1.0 / (colorTable.length - 1);
             Speed speed = Speed.interpolate(zeroValue, maximumSpeed, ratio);
             String label = speed.toString().replaceFirst("\\.0*|,0*", ".0");
-            this.legend.add(new LegendEntry(colorTable[index], label,
-                    index == 0 ? "stationary" : "driving " + label));
+            this.legend.add(new LegendEntry(colorTable[index], label, index == 0 ? "stationary" : "driving " + label));
         }
     }
 

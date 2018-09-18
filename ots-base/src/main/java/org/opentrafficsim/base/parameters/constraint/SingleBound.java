@@ -22,7 +22,7 @@ import nl.tudelft.simulation.language.Throw;
  */
 public class SingleBound<T extends Number> implements Constraint<T>
 {
-    
+
     /** The bound. */
     private final Bound bound;
 

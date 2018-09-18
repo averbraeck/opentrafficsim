@@ -2,8 +2,9 @@ package org.opentrafficsim.water.network.infra;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.water.network.WaterwayLocation;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <br>
@@ -22,7 +23,7 @@ public class Lock extends Obstacle implements OperatedObstacle
     private static final long serialVersionUID = 1L;
 
     /** the simulator to schedule on. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** hours per day. */
     private int operationHoursPerDay;
@@ -57,7 +58,7 @@ public class Lock extends Obstacle implements OperatedObstacle
      * @param cargoPriority does cargo have priority?
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Lock(final OTSDEVSSimulatorInterface simulator, final String name, final WaterwayLocation waterwayLocation,
+    public Lock(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final String name, final WaterwayLocation waterwayLocation,
             final int numberChambers, final int operationHoursPerDay, final int operationDaysPerWeek, final Length length,
             final Length width, final boolean cargoPriority)
     {
@@ -134,7 +135,7 @@ public class Lock extends Obstacle implements OperatedObstacle
 
     /** {@inheritDoc} */
     @Override
-    public final OTSDEVSSimulatorInterface getSimulator()
+    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return this.simulator;
     }

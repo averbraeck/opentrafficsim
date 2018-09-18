@@ -10,14 +10,14 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Traffic Light Controller
@@ -37,7 +37,7 @@ public class Controller implements Serializable
     private static final long serialVersionUID = 20150715L;
 
     /** */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** */
     private String id;
@@ -52,7 +52,7 @@ public class Controller implements Serializable
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
-    public Controller(final String name, final OTSDEVSSimulatorInterface simulator)
+    public Controller(final String name, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws GTUException, NetworkException, NamingException
     {
         this.id = name;
@@ -62,7 +62,7 @@ public class Controller implements Serializable
         {
             // new DefaultBlockOnOffAnimation(this, getSimulator());
             // animation
-            if (simulator instanceof OTSAnimatorInterface)
+            if (simulator instanceof AnimatorInterface)
             {
                 // TODO
             }

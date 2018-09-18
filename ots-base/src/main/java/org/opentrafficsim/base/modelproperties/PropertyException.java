@@ -1,6 +1,5 @@
 package org.opentrafficsim.base.modelproperties;
 
-
 /**
  * Exception thrown when an operation is attempted that is not compatible with the indicated property.
  * <p>

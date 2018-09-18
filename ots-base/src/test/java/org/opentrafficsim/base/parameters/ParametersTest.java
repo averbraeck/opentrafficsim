@@ -382,7 +382,7 @@ public class ParametersTest implements ConstraintInterface
         params.setParameterResettable(a, 2);
         params.resetParameter(a);
         assertEquals("Value after reset should be the same as before last set.", 1.0, (double) params.getParameter(a), 0.0);
-        
+
         // no reset after (none resettable) set
         params = new ParameterSet();
         params.setParameter(a, 1);
@@ -395,7 +395,7 @@ public class ParametersTest implements ConstraintInterface
         {
             // should fail
         }
-        
+
         // no reset after (none resettable) set, even with resettable set before
         params = new ParameterSet();
         params.setParameterResettable(a, 1);
@@ -409,7 +409,7 @@ public class ParametersTest implements ConstraintInterface
         {
             // should fail
         }
-        
+
         // same value: regular set(1) -> set(2) -> reset -> get(1?)
         params = new ParameterSet();
         params.setParameter(a, 1);

@@ -28,7 +28,7 @@ public class ContinuousDistPower extends ContinuousDistDoubleScalar.Rel<Power, P
     public ContinuousDistPower(final DistContinuous distribution, final PowerUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistPower extends ContinuousDistDoubleScalar.Rel<Power, P
     {
         return new Power(getDistribution().draw(), (PowerUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

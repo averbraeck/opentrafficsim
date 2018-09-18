@@ -17,7 +17,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -31,6 +30,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 
 /**
  * <p>
@@ -53,7 +54,7 @@ public class TrajectoryPlotTest implements UNITS
     @Test
     public final void trajectoryTest() throws Exception
     {
-        OTSDEVSSimulator simulator = CarTest.makeSimulator();
+        DEVSSimulator.TimeDoubleUnit simulator = CarTest.makeSimulator();
         LaneType laneType = LaneType.TWO_WAY_LANE;
         OTSNetwork network = new OTSNetwork("trajectory plot test network");
         OTSNode node1 = new OTSNode(network, "node 1", new OTSPoint3D(100, 100, 0));
@@ -92,7 +93,7 @@ public class TrajectoryPlotTest implements UNITS
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 400 seconds
         Duration duration = new Duration(400, SECOND);
         
-        Time endTime = simulator.getSimulatorTime().getTime().plus(duration);
+        Time endTime = simulator.getSimulatorTime().plus(duration);
         car.setState(new GTUFollowingModelResult(new Acceleration(0.05, METER_PER_SECOND_2), endTime));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
         tp.addData(car);

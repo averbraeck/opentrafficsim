@@ -3,10 +3,10 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 import java.io.Serializable;
 
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventType;
 
 /**
@@ -46,7 +46,7 @@ public interface DirectionalOccupancySensor extends Serializable, Identifiable
     String getId();
 
     /** @return The simulator. */
-    OTSDEVSSimulatorInterface getSimulator();
+    DEVSSimulatorInterface.TimeDoubleUnit getSimulator();
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of an OccupancySensor. <br>

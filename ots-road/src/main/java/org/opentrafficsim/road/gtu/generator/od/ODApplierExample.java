@@ -28,9 +28,7 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -78,6 +76,8 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -183,14 +183,13 @@ public class ODApplierExample extends AbstractWrappableAnimation
         private OTSNetwork network;
 
         /** Simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> sim)
-                throws SimRuntimeException, RemoteException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim) throws SimRuntimeException
         {
-            this.simulator = (OTSDEVSSimulatorInterface) sim;
+            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) sim;
             Map<String, StreamInterface> streams = new HashMap<>();
             streams.put("generation", new MersenneTwister(1L));
             this.simulator.getReplication().setStreams(streams);
@@ -237,6 +236,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
                         gtuTypes, Permeable.BOTH);
                 Stripe stripe23 = new Stripe(linkA2B, Length.createSI(-1.75), Length.createSI(-1.75), Length.createSI(0.2),
                         gtuTypes, Permeable.BOTH);
+
                 // animation
                 new NodeAnimation(nodeA, this.simulator);
                 new NodeAnimation(nodeA1, this.simulator);
@@ -303,7 +303,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
                         new double[] { 0 * DEMAND, 1000 * DEMAND, 3000 * DEMAND, 7000 * DEMAND, 0 * DEMAND },
                         FrequencyUnit.PER_HOUR, StorageType.DENSE);
 
-                Category platoonCategory; 
+                Category platoonCategory;
                 if (ODApplierExample.LANE_BASED)
                 {
                     Category category = new Category(categorization, lane1, GTUType.CAR);
@@ -339,7 +339,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 {
                     new GTUGeneratorAnimation(generatedObjects.get(str).getGenerator(), this.simulator);
                 }
-                
+
                 // platoons
                 String id = LANE_BASED ? "A21" : "A";
                 Lane platoonLane = LANE_BASED ? lane1 : lane0;
@@ -363,7 +363,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
 
             }
             catch (NetworkException | OTSGeometryException | NamingException | ValueException | ParameterException
-                    | GTUException exception)
+                    | GTUException | RemoteException exception)
             {
                 exception.printStackTrace();
             }
@@ -371,7 +371,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return this.simulator;
         }

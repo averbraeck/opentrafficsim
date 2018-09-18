@@ -35,7 +35,6 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -45,6 +44,8 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Trajectory plot.
@@ -65,7 +66,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
     private final Duration sampleInterval;
 
     /** The simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /**
      * @return sampleInterval if this TrajectoryPlot samples at a fixed rate, or null if this TrajectoryPlot samples on the GTU
@@ -131,10 +132,10 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
      * @param sampleInterval DoubleScalarRel&lt;TimeUnit&gt;; the time between samples of this TrajectoryPlot, or null in which
      *            case the GTUs are sampled whenever they fire a MOVE_EVENT
      * @param path ArrayList&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
-     * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      */
     public TrajectoryPlot(final String caption, final Duration sampleInterval, final List<Lane> path,
-            final OTSDEVSSimulatorInterface simulator)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         super(caption, path);
         this.roadSampler = null == sampleInterval ? new RoadSampler(simulator)
@@ -246,9 +247,9 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
         // final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) result.getXYPlot().getRenderer();
         MyRenderer renderer = new MyRenderer(false, true);
         result.getXYPlot().setRenderer(renderer);
-        renderer.setBaseLinesVisible(true);
-        renderer.setBaseShapesVisible(false);
-        renderer.setBaseShape(new Line2D.Float(0, 0, 0, 0));
+        renderer.setDefaultLinesVisible(true);
+        renderer.setDefaultShapesVisible(false);
+        renderer.setDefaultShape(new Line2D.Float(0, 0, 0, 0));
         final ChartPanel cp = new ChartPanel(result);
         cp.setMouseWheelEnabled(true);
         final PointerHandler ph = new PointerHandler()
@@ -353,7 +354,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
                 {
                     if (dcl instanceof XYPlot)
                     {
-                        Time simulatorTime = simulator.getSimulatorTime().getTime();
+                        Time simulatorTime = simulator.getSimulatorTime();
                         if (getMaximumTime().lt(simulatorTime))
                         {
                             setMaximumTime(simulatorTime);

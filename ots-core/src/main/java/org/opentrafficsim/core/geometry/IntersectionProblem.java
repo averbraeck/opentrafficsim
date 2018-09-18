@@ -27,20 +27,18 @@ public final class IntersectionProblem
      */
     public static void main(final String[] args) throws OTSGeometryException
     {
-        final OTSLine3D lineA =
-                new OTSLine3D(new OTSPoint3D(426330.98352154676, 4581381.654110057), new OTSPoint3D(426330.99232492544,
-                        4581381.6609363835));
-//        final OTSLine3D lineB =
-//                new OTSLine3D(new OTSPoint3D(426330.9891418501, 4581381.65846816), new OTSPoint3D(426330.3763622642,
-//                        4581382.44872203));
-        final OTSLine3D lineB =
-                new OTSLine3D(new OTSPoint3D(426330.98915, 4581381.65846816), new OTSPoint3D(426330.3763622642,
-                        4581382.44872203));
+        final OTSLine3D lineA = new OTSLine3D(new OTSPoint3D(426330.98352154676, 4581381.654110057),
+                new OTSPoint3D(426330.99232492544, 4581381.6609363835));
+        // final OTSLine3D lineB =
+        // new OTSLine3D(new OTSPoint3D(426330.9891418501, 4581381.65846816), new OTSPoint3D(426330.3763622642,
+        // 4581382.44872203));
+        final OTSLine3D lineB = new OTSLine3D(new OTSPoint3D(426330.98915, 4581381.65846816),
+                new OTSPoint3D(426330.3763622642, 4581382.44872203));
         OTSPoint3D intersection =
                 OTSPoint3D.intersectionOfLines(lineA.getFirst(), lineA.getLast(), lineB.getFirst(), lineB.getLast());
-        System.out.println("Determinant values are " + (lineA.getFirst().x - lineA.getLast().x)
-                * (lineB.getFirst().y - lineB.getLast().y) + " - " + (lineA.getFirst().y - lineA.getLast().y)
-                * (lineB.getFirst().x - lineB.getLast().x));
+        System.out.println(
+                "Determinant values are " + (lineA.getFirst().x - lineA.getLast().x) * (lineB.getFirst().y - lineB.getLast().y)
+                        + " - " + (lineA.getFirst().y - lineA.getLast().y) * (lineB.getFirst().x - lineB.getLast().x));
         System.out.println("Determinant values are (" + lineA.getFirst().x + " - " + lineA.getLast().x + ") * ("
                 + lineB.getFirst().y + " - " + lineB.getLast().y + ") \n\t\t- (" + lineA.getFirst().y + " - "
                 + lineA.getLast().y + ") * (" + lineB.getFirst().x + " - " + lineB.getLast().x + "0");

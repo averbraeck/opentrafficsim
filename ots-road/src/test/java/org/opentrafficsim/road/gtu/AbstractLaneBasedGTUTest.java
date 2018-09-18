@@ -22,7 +22,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -49,6 +48,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -401,13 +401,13 @@ class DummyModel implements OTSModelInterface
     private static final long serialVersionUID = 20150114L;
 
     /** The simulator. */
-    private SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator;
+    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
 
     /**
      * Register the simulator.
-     * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
+     * @param simulator SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulator
      */
-    public void setSimulator(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
+    public void setSimulator(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator)
     {
         this.simulator = simulator;
     }
@@ -421,14 +421,14 @@ class DummyModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
     {
         // Nothing happens here
     }
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
 
     {
         if (null == this.simulator)

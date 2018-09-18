@@ -28,7 +28,7 @@ public class ContinuousDistElectricalCurrent extends ContinuousDistDoubleScalar.
     public ContinuousDistElectricalCurrent(final DistContinuous distribution, final ElectricalCurrentUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistElectricalCurrent extends ContinuousDistDoubleScalar.
     {
         return new ElectricalCurrent(getDistribution().draw(), (ElectricalCurrentUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

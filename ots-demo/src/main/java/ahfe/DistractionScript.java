@@ -25,7 +25,6 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -111,6 +110,7 @@ import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
@@ -198,7 +198,7 @@ public final class DistractionScript extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSNetwork setupSimulation(final OTSDEVSSimulatorInterface sim) throws Exception
+    protected OTSNetwork setupSimulation(final DEVSSimulatorInterface.TimeDoubleUnit sim) throws Exception
     {
         AbstractGTU.ALIGNED = false;
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;

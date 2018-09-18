@@ -28,7 +28,7 @@ public class ContinuousDistSpeed extends ContinuousDistDoubleScalar.Rel<Speed, S
     public ContinuousDistSpeed(final DistContinuous distribution, final SpeedUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistSpeed extends ContinuousDistDoubleScalar.Rel<Speed, S
     {
         return new Speed(getDistribution().draw(), (SpeedUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

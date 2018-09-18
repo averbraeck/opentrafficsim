@@ -73,7 +73,7 @@ public class PickList<T> extends ParameterType<T>
             addItem(item);
         }
     }
-    
+
     /**
      * @param items2 List&lt;PickListItem&lt;?&gt;&gt;; a non-empty list of pick list items.
      * @return Object; item 0 in the list

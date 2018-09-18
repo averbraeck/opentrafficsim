@@ -28,7 +28,7 @@ public class ContinuousDistElectricalCharge extends ContinuousDistDoubleScalar.R
     public ContinuousDistElectricalCharge(final DistContinuous distribution, final ElectricalChargeUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistElectricalCharge extends ContinuousDistDoubleScalar.R
     {
         return new ElectricalCharge(getDistribution().draw(), (ElectricalChargeUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

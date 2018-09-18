@@ -13,10 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -38,7 +34,6 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -53,6 +48,11 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -244,8 +244,8 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
         chartPanel.getXYPlot().setDomainAxis(distanceAxis);
         chartPanel.getXYPlot().setRangeAxis(yAxis);
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chartPanel.getXYPlot().getRenderer();
-        renderer.setBaseLinesVisible(true);
-        renderer.setBaseShapesVisible(false);
+        renderer.setDefaultLinesVisible(true);
+        renderer.setDefaultShapesVisible(false);
         // Set paint color and stroke for each series
         for (int index = 0; index < LANECOUNT; index++)
         {
@@ -267,15 +267,15 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
-            throws SimRuntimeException, RemoteException
+    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator)
+            throws SimRuntimeException
     {
         // Do nothing
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
     {
         return null;
     }

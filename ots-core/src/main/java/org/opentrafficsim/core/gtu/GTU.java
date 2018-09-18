@@ -10,12 +10,12 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
@@ -66,7 +66,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     GTUType getGTUType();
 
     /** @return the simulator of the GTU. */
-    OTSDEVSSimulatorInterface getSimulator();
+    DEVSSimulatorInterface.TimeDoubleUnit getSimulator();
 
     /** @return the reference position of the GTU, by definition (0, 0, 0). */
     RelativePosition getReference();
@@ -192,7 +192,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
      * @throws GTUException if the gtu already has a parent
      */
     void setParent(GTU gtu) throws GTUException;
-    
+
     /**
      * Returns the parent GTU, or {@code null} if this GTU has no parent.
      * @return GTU; parent GTU, or {@code null} if this GTU has no parent

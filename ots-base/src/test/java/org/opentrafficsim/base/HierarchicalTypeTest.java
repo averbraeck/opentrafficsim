@@ -13,8 +13,7 @@ import org.junit.Test;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Aug 17, 2017 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Aug 17, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -48,8 +47,7 @@ public class HierarchicalTypeTest
         assertFalse("other subtype with same name but no parent is not equal", st2.equals(st3));
         assertFalse("other subtype with same name but no parent is not equal", st3.equals(st2));
     }
-    
-    
+
     /**
      * Extend class so we can access anything.
      */
@@ -76,6 +74,6 @@ public class HierarchicalTypeTest
         {
             super(id);
         }
-        
+
     }
 }

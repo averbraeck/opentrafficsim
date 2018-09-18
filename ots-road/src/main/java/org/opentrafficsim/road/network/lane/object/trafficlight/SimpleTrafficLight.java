@@ -5,13 +5,13 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -38,7 +38,7 @@ public class SimpleTrafficLight extends AbstractTrafficLight
      * @throws NetworkException on failure to place the object
      */
     public SimpleTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
-            final OTSDEVSSimulatorInterface simulator) throws NetworkException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         super(id, lane, longitudinalPosition, simulator);
 
@@ -63,14 +63,14 @@ public class SimpleTrafficLight extends AbstractTrafficLight
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public SimpleTrafficLight clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+    public SimpleTrafficLight clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
             final boolean animation) throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "traffic lights can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+        Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         return new SimpleTrafficLight(getId(), (Lane) newCSE, getLongitudinalPosition(),
-                (OTSDEVSSimulatorInterface) newSimulator);
+                (DEVSSimulatorInterface.TimeDoubleUnit) newSimulator);
 
         // the traffic light creates its own animation (for now)
     }

@@ -6,13 +6,14 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -92,7 +93,7 @@ class JunctionTag implements Serializable
      * @throws NetworkException when the network is inconsistent
      * @throws GTUException when the traffic light (a GTU at the moment) has an error
      */
-    public static void createController(JunctionTag juncTag, OTSDEVSSimulatorInterface simulator,
+    public static void createController(JunctionTag juncTag, DEVSSimulatorInterface.TimeDoubleUnit simulator,
             OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws GTUException, NetworkException, NamingException
     {
         if (juncTag.controllerTags.size() > 0)

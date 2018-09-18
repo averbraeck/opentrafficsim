@@ -819,9 +819,10 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
          * @param size Dimension; size
          * @param simulator SimulatorInterface; simulator
          * @param network OTSNetwork; network
+         * @throws RemoteException on remote animation error
          */
         AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final SimulatorInterface<?, ?, ?> simulator,
-                final OTSNetwork network)
+                final OTSNetwork network) throws RemoteException
         {
             super(extent, size, simulator);
             this.network = network;

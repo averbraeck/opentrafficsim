@@ -33,7 +33,7 @@ public class HistoricalArrayList<E> extends AbstractHistoricalList<E, ArrayList<
     {
         super(historyManager, new ArrayList<>());
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager

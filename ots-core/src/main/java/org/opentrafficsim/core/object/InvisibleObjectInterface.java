@@ -1,9 +1,10 @@
 package org.opentrafficsim.core.object;
 
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
+
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Interface for objects that live in a Network, but cannot be drawn and which do not have a specific location. These objects do
@@ -20,15 +21,15 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public interface InvisibleObjectInterface extends Identifiable
 {
-    
+
     /**
      * Duplicate the invisibleObject in a new simulator and network.
-     * @param newSimulator OTSSimulatorInterface; the new simulator
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator
      * @param newNetwork Network; the new network
      * @return InvisibleObjectInterface; clone of this, but living in the new network and simulator
      * @throws NetworkException when the new Network is not compatible
      */
-    InvisibleObjectInterface clone(OTSSimulatorInterface newSimulator, Network newNetwork) throws NetworkException;
+    InvisibleObjectInterface clone(SimulatorInterface.TimeDoubleUnit newSimulator, Network newNetwork) throws NetworkException;
 
     /** @return the full id that makes the id unique in the network. */
     String getFullId();

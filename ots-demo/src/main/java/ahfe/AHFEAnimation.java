@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -22,9 +21,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
@@ -43,6 +40,8 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.Throw;
@@ -452,11 +451,11 @@ public class AHFEAnimation extends AbstractWrappableAnimation
                         int reportTimeClick = 60;
                         while (true)
                         {
-                            int currentTime = (int) model.getSimulator().getSimulatorTime().getTime().si;
+                            int currentTime = (int) model.getSimulator().getSimulatorTime().si;
                             if (currentTime >= lastReportedTime + reportTimeClick)
                             {
                                 lastReportedTime = currentTime / reportTimeClick * reportTimeClick;
-                                System.out.println("time is " + model.getSimulator().getSimulatorTime().getTime());
+                                System.out.println("time is " + model.getSimulator().getSimulatorTime());
                             }
                             try
                             {
@@ -482,7 +481,7 @@ public class AHFEAnimation extends AbstractWrappableAnimation
                                         osw = new OutputStreamWriter(zos);
                                         bw = new BufferedWriter(osw);
                                         bw.write("Collision");
-                                        bw.write(model.getSimulator().getSimulatorTime().getTime().toString());
+                                        bw.write(model.getSimulator().getSimulatorTime().toString());
                                     }
                                     catch (IOException exception2)
                                     {
@@ -518,8 +517,7 @@ public class AHFEAnimation extends AbstractWrappableAnimation
                                 }
                                 else
                                 {
-                                    System.out.println(
-                                            "Simulation ends; time is " + model.getSimulator().getSimulatorTime().getTime());
+                                    System.out.println("Simulation ends; time is " + model.getSimulator().getSimulatorTime());
                                     if (model.sampler != null)
                                     {
                                         model.sampler.writeToFile(finalScenario + ".csv");
@@ -534,8 +532,7 @@ public class AHFEAnimation extends AbstractWrappableAnimation
 
                     }
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException
-                        | RemoteException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -544,7 +541,7 @@ public class AHFEAnimation extends AbstractWrappableAnimation
     }
 
     /** The simulator. */
-    private SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator;
+    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
 
     /** {@inheritDoc} */
     @Override
@@ -596,17 +593,17 @@ public class AHFEAnimation extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+                throws SimRuntimeException
         {
             AHFEAnimation.this.simulator = theSimulator;
 
-            AHFEAnimation.this.sampler = new RoadSampler((OTSDEVSSimulatorInterface) theSimulator);
+            AHFEAnimation.this.sampler = new RoadSampler((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
             AHFEAnimation.this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
                 this.network = new OTSNetwork("AHFE");
                 nlp.build(stream, this.network, true);
 
@@ -623,10 +620,10 @@ public class AHFEAnimation extends AbstractWrappableAnimation
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, AHFEAnimation.this.getColorer(), (OTSDEVSSimulatorInterface) theSimulator,
-                        getReplication(), getAnticipationStrategy(), getReactionTime(), getAnticipationTime(),
-                        getTruckFraction(), SIMEND, getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(),
-                        getSpeedError(), getAccelerationError());
+                AHFEUtil.createDemand(this.network, AHFEAnimation.this.getColorer(),
+                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, getReplication(), getAnticipationStrategy(),
+                        getReactionTime(), getAnticipationTime(), getTruckFraction(), SIMEND, getLeftDemand(), getRightDemand(),
+                        getLeftFraction(), getDistanceError(), getSpeedError(), getAccelerationError());
 
             }
             catch (Exception exception)
@@ -655,7 +652,7 @@ public class AHFEAnimation extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return AHFEAnimation.this.simulator;
         }
@@ -671,9 +668,9 @@ public class AHFEAnimation extends AbstractWrappableAnimation
 
     /**
      * Retrieve the simulator.
-     * @return SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator.
+     * @return SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulator.
      */
-    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
     {
         return this.simulator;
     }

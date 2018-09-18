@@ -28,7 +28,7 @@ public class ContinuousDistPressure extends ContinuousDistDoubleScalar.Rel<Press
     public ContinuousDistPressure(final DistContinuous distribution, final PressureUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistPressure extends ContinuousDistDoubleScalar.Rel<Press
     {
         return new Pressure(getDistribution().draw(), (PressureUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

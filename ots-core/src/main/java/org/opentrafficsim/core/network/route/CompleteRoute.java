@@ -2,12 +2,13 @@ package org.opentrafficsim.core.network.route;
 
 import java.util.List;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * A CompleteRoute is a Route with directly connected Nodes.
@@ -105,8 +106,8 @@ public class CompleteRoute extends Route
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CompleteRoute clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
-            throws NetworkException
+    public CompleteRoute clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator,
+            final boolean animation) throws NetworkException
     {
         CompleteRoute newRoute = new CompleteRoute(getId(), this.gtuType);
         for (Node node : getNodes())

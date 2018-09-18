@@ -103,8 +103,8 @@ public class SelectionProperty extends AbstractProperty<String> implements Seria
     @Override
     public final AbstractProperty<String> deepCopy()
     {
-        return new SelectionProperty(getKey(), getShortName(), getDescription(), this.options, this.currentOption,
-                isReadOnly(), getDisplayPriority());
+        return new SelectionProperty(getKey(), getShortName(), getDescription(), this.options, this.currentOption, isReadOnly(),
+                getDisplayPriority());
     }
 
 }

@@ -2,16 +2,16 @@ package org.opentrafficsim.road.network.factory.rti.communication;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /** */
 public class RTICars extends LaneBasedIndividualGTU
@@ -36,11 +36,11 @@ public class RTICars extends LaneBasedIndividualGTU
      * @throws OperationalPlanException when plan retrieval fails
      */
     public RTICars(final String valueOf, final GTUType carType, final Length carLength, final Length width,
-            final Speed maxSpeed, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
+            final Speed maxSpeed, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSNetwork network)
             throws NamingException, GTUException, OperationalPlanException
     {
         super(valueOf, carType, carLength, width, maxSpeed, carLength.multiplyBy(0.5), simulator, network);
-        this.current = this.getOperationalPlan().getLocation(simulator.getSimulatorTime().getTime());
+        this.current = this.getOperationalPlan().getLocation(simulator.getSimulatorTime());
     }
 
     /** {@inheritDoc} */

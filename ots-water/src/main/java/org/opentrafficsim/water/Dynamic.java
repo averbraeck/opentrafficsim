@@ -5,7 +5,7 @@ package org.opentrafficsim.water;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Interface for a dynamic object. A dynamic object can locate the simulator.
@@ -25,5 +25,5 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 public interface Dynamic extends Serializable
 {
     /** @return the simulator we can schedule stuff on */
-    OTSDEVSSimulatorInterface getSimulator();
+    DEVSSimulatorInterface.TimeDoubleUnit getSimulator();
 }

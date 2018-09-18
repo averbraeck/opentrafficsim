@@ -6,7 +6,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -19,6 +18,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -219,9 +219,9 @@ public interface LaneBasedGTU extends GTU
     /**
      * Add an event to the list of lane triggers scheduled for this GTU.
      * @param lane Lane; the lane on which the event occurs
-     * @param event SimeEvent&lt;OTSSimTimeDouble&gt; the event
+     * @param event SimeEvent&lt;SimTimeDoubleUnit&gt; the event
      */
-    void addTrigger(Lane lane, SimEventInterface<OTSSimTimeDouble> event);
+    void addTrigger(Lane lane, SimEventInterface<SimTimeDoubleUnit> event);
 
     /**
      * Set distance over which the GTU should not change lane after being created.
@@ -269,7 +269,7 @@ public interface LaneBasedGTU extends GTU
      */
     default boolean isBrakingLightsOn()
     {
-        return isBrakingLightsOn(getSimulator().getSimulatorTime().get());
+        return isBrakingLightsOn(getSimulator().getSimulatorTime());
     }
     
     /**

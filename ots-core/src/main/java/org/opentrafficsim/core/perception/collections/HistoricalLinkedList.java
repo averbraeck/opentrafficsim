@@ -37,7 +37,7 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
     {
         super(historyManager, new LinkedList<>());
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -65,7 +65,7 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
         }
         return fill(time, new LinkedList<>());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

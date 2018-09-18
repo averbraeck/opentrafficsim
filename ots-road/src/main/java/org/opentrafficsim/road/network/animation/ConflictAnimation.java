@@ -12,10 +12,11 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.conflict.ConflictType;
+
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -40,7 +41,7 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public ConflictAnimation(final Conflict source, final OTSSimulatorInterface simulator)
+    public ConflictAnimation(final Conflict source, final SimulatorInterface.TimeDoubleUnit simulator)
             throws NamingException, RemoteException
     {
         super(source, simulator, .9, new Length(0.5, LengthUnit.SI));

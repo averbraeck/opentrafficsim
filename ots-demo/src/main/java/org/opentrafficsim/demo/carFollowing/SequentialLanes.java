@@ -34,9 +34,7 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -78,6 +76,8 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -338,7 +338,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
         private static final long serialVersionUID = 20150130L;
 
         /** The simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** The network. */
         private final OTSNetwork network = new OTSNetwork("network");
@@ -406,10 +406,10 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+                throws SimRuntimeException
         {
-            this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
             this.speedLimit = new Speed(100, KM_PER_HOUR);
 
             // TODO Bezier curves make 180 degree mistake when minus is true
@@ -560,7 +560,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return this.simulator;
         }

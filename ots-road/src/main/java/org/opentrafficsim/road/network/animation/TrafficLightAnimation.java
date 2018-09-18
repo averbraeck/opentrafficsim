@@ -13,10 +13,10 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.animation.TextAnimation;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Draw a traffic light on the road at th place where the cars are expected to stop.
@@ -45,7 +45,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public TrafficLightAnimation(final TrafficLight trafficLight, final OTSSimulatorInterface simulator)
+    public TrafficLightAnimation(final TrafficLight trafficLight, final SimulatorInterface.TimeDoubleUnit simulator)
             throws NamingException, RemoteException
     {
         super(trafficLight, simulator, 0.9, new Length(0.5, LengthUnit.SI));
@@ -107,7 +107,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public ClonableRenderable2DInterface<TrafficLight> clone(final TrafficLight newSource,
-            final OTSSimulatorInterface newSimulator) throws NamingException, RemoteException
+            final SimulatorInterface.TimeDoubleUnit newSimulator) throws NamingException, RemoteException
     {
         // the constructor also constructs the corresponding Text object
         return new TrafficLightAnimation(newSource, newSimulator);
@@ -145,12 +145,12 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text
          * @param color Color; the color of the text
-         * @param simulator OTSSimulatorInterface; the simulator
+         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
         public Text(final Locatable source, final String text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final OTSSimulatorInterface simulator)
+                final TextAlignment textPlacement, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
                 throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, simulator);
@@ -159,7 +159,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
         /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
-        public TextAnimation clone(final Locatable newSource, final OTSSimulatorInterface newSimulator)
+        public TextAnimation clone(final Locatable newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
                 throws RemoteException, NamingException
         {
             return new Text(newSource, getText(), getDx(), getDy(), getTextAlignment(), getColor(), newSimulator);

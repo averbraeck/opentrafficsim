@@ -9,9 +9,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.water.role.Company;
 import org.opentrafficsim.water.transfer.Terminal;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Demand the between terminals in an operating area (region) and other terminals.
@@ -34,7 +35,7 @@ public class TransportDemand implements Serializable
     private static final long serialVersionUID = 1L;
 
     /** the simulator to schedule on. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** the operating area for the demand. */
     private Region operatingArea;
@@ -46,7 +47,7 @@ public class TransportDemand implements Serializable
      * @param simulator the simulator for scheduling the demand
      * @param operatingArea the region for which this demand holds
      */
-    public TransportDemand(final OTSDEVSSimulatorInterface simulator, final Region operatingArea)
+    public TransportDemand(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Region operatingArea)
     {
         this.simulator = simulator;
         this.operatingArea = operatingArea;
@@ -175,7 +176,7 @@ public class TransportDemand implements Serializable
     /**
      * @return the simulator
      */
-    public final OTSDEVSSimulatorInterface getSimulator()
+    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return this.simulator;
     }

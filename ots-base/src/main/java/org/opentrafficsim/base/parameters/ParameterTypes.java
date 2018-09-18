@@ -1,7 +1,5 @@
 package org.opentrafficsim.base.parameters;
 
-import nl.tudelft.simulation.language.Throw;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -11,6 +9,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
+
+import nl.tudelft.simulation.language.Throw;
 
 /**
  * Predefined list of common parameter types.

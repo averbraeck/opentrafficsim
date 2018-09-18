@@ -28,7 +28,7 @@ public class DiscreteDistDimensionless extends DiscreteDistDoubleScalar.Rel<Dime
     public DiscreteDistDimensionless(final DistDiscrete distribution, final DimensionlessUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistDimensionless extends DiscreteDistDoubleScalar.Rel<Dime
     {
         return new Dimensionless(getDistribution().draw(), (DimensionlessUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

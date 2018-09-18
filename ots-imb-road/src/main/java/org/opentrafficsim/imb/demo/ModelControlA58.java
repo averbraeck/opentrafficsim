@@ -33,9 +33,7 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.TransformWGS84DutchRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -79,6 +77,8 @@ import nl.tno.imb.mc.ModelState;
 import nl.tno.imb.mc.Parameter;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.Simulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -238,7 +238,7 @@ public class ModelControlA58 extends ModelStarter
         }
         if (null != this.model)
         {
-            ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
+            ((Simulator<Time, Duration, SimTimeDoubleUnit>) this.model.getSimulator()).cleanUp();
             this.model.closeWindow();
             this.model = null;
         }
@@ -257,7 +257,7 @@ public class ModelControlA58 extends ModelStarter
             try
             {
                 // clean up; even if stopModel was not called before quitApplication
-                ((Simulator<Time, Duration, OTSSimTimeDouble>) this.model.getSimulator()).cleanUp();
+                ((Simulator<Time, Duration, SimTimeDoubleUnit>) this.model.getSimulator()).cleanUp();
             }
             catch (Exception exception)
             {
@@ -398,7 +398,7 @@ public class ModelControlA58 extends ModelStarter
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        OTSDEVSSimulatorInterface simulator;
+        DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** IMB connection. */
         TConnection imbConnection;
@@ -426,10 +426,10 @@ public class ModelControlA58 extends ModelStarter
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> pSimulator)
+        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
+            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
             SimpleAnimator imbAnimator = (SimpleAnimator) pSimulator;
             try
             {
@@ -562,7 +562,7 @@ public class ModelControlA58 extends ModelStarter
         {
             try
             {
-                ((Simulator<Time, Duration, OTSSimTimeDouble>) this.simulator).cleanUp();
+                ((Simulator<Time, Duration, SimTimeDoubleUnit>) this.simulator).cleanUp();
             }
             catch (Exception exception)
             {
@@ -573,7 +573,7 @@ public class ModelControlA58 extends ModelStarter
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return this.simulator;
         }

@@ -190,7 +190,7 @@ public final class ConflictUtil
             {
                 BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
                 Time actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());
-                if (actualDeparture != null && actualDeparture.si < gtu.getSimulator().getSimulatorTime().getTime().si
+                if (actualDeparture != null && actualDeparture.si < gtu.getSimulator().getSimulatorTime().si
                         + parameters.getParameter(TI).si)
                 {
                     // TODO depending on left/right-hand traffic

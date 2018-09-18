@@ -1,8 +1,9 @@
 package org.opentrafficsim.core.gtu;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -30,7 +31,7 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
      * @throws GTUException when the construction of the original waiting path fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLinkBasedGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
+    public AbstractLinkBasedGTU(final String id, final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
             final OTSNetwork network) throws GTUException
     {
         super(id, gtuType, simulator, network);

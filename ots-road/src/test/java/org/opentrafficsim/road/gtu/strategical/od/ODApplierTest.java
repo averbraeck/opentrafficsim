@@ -24,11 +24,13 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -49,11 +51,14 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import mockit.Mock;
-import mockit.MockUp;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -67,42 +72,22 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ Replication.class, DEVSSimulatorInterface.class })
 public class ODApplierTest
 {
 
     /** Local time object used in simulator MockUp. Can be set for testing at different simulation times. */
-    private Time time;
+    Time time;
 
     /** Random number stream. */
     private StreamInterface stream = new MersenneTwister(1L);
 
     /** MockUp replication. */
-    private Replication<Time, Duration, OTSSimTimeDouble> replication =
-            new MockUp<Replication<Time, Duration, OTSSimTimeDouble>>()
-            {
-                @Mock
-                StreamInterface getStream(@SuppressWarnings("unused") final String name)
-                {
-                    return ODApplierTest.this.getStream();
-                }
-            }.getMockInstance();
+    private Replication.TimeDoubleUnit replication;
 
     /** MockUp simulator. */
-    private OTSDEVSSimulatorInterface simulator = new MockUp<OTSDEVSSimulatorInterface>()
-    {
-        @Mock
-        OTSSimTimeDouble getSimulatorTime()
-        {
-            return new OTSSimTimeDouble(ODApplierTest.this.getTime());
-        }
-
-        @Mock
-        Replication<Time, Duration, OTSSimTimeDouble> getReplication()
-        {
-            return ODApplierTest.this.getReplication();
-        }
-    }.getMockInstance();
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** Network. */
     private OTSNetwork network;
@@ -111,12 +96,44 @@ public class ODApplierTest
     private final Map<String, Lane> lanes = new HashMap<>();
 
     /**
+     * @return a mock of the simulator that uses this.time as the time for getSimulatorTime()
+     */
+    @SuppressWarnings("static-access")
+    private Replication.TimeDoubleUnit createReplicationMock()
+    {
+        Replication.TimeDoubleUnit replicationMock = PowerMockito.mock(Replication.TimeDoubleUnit.class);
+        PowerMockito.when(replicationMock.getStream(Mockito.anyString())).thenReturn(this.stream);
+        return replicationMock;
+    }
+
+    /**
+     * @return a mock of the simulator that uses this.time as the time for getSimulatorTime()
+     */
+    private DEVSSimulatorInterface.TimeDoubleUnit createSimulatorMock()
+    {
+        DEVSSimulatorInterface.TimeDoubleUnit simulatorMock = PowerMockito.mock(DEVSSimulatorInterface.TimeDoubleUnit.class);
+        Answer<Time> answerTime = new Answer<Time>()
+        {
+            @Override
+            public Time answer(final InvocationOnMock invocation) throws Throwable
+            {
+                return ODApplierTest.this.time;
+            }
+        };
+        PowerMockito.when(simulatorMock.getSimulatorTime()).then(answerTime);
+        PowerMockito.when(simulatorMock.getReplication()).thenReturn(this.replication);
+        return simulatorMock;
+    }
+
+    /**
      * Constructor.
      * @throws OTSGeometryException on exception
      * @throws NetworkException on exception
      */
     public ODApplierTest() throws NetworkException, OTSGeometryException
     {
+        this.replication = createReplicationMock();
+        this.simulator = createSimulatorMock();
         this.network = new OTSNetwork("ODApplierExample");
         OTSPoint3D pointA = new OTSPoint3D(0, 0, 0);
         OTSPoint3D pointB = new OTSPoint3D(1000, 0, 0);
@@ -154,7 +171,7 @@ public class ODApplierTest
      * Returns the replication.
      * @return replication
      */
-    final Replication<Time, Duration, OTSSimTimeDouble> getReplication()
+    final Replication<Time, Duration, SimTimeDoubleUnit> getReplication()
     {
         return this.replication;
     }
@@ -163,7 +180,7 @@ public class ODApplierTest
      * Returns the simulator.
      * @return simulator
      */
-    final OTSDEVSSimulatorInterface getSimulator()
+    final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return this.simulator;
     }

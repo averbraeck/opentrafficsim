@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
 import org.opentrafficsim.base.modelproperties.PickList;
 import org.opentrafficsim.base.modelproperties.PickListItem;
 
@@ -17,8 +16,7 @@ import org.opentrafficsim.base.modelproperties.PickListItem;
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Aug 16, 2017 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Aug 16, 2017 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
@@ -60,7 +58,7 @@ public class PickTest
         assertNotNull("constraint toString may not be null", constraintDescription);
         assertTrue("constraint toString contains id1", constraintDescription.indexOf("id1") >= 0);
         assertTrue("constraint toString contains id2", constraintDescription.indexOf("id2") >= 0);
-        
+
         pl = new PickList<>("id", "description", item1, item2);
         List<PickListItem<String>> list = new ArrayList<>();
         try

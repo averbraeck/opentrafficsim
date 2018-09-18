@@ -28,7 +28,7 @@ public class DiscreteDistFrequency extends DiscreteDistDoubleScalar.Rel<Frequenc
     public DiscreteDistFrequency(final DistDiscrete distribution, final FrequencyUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistFrequency extends DiscreteDistDoubleScalar.Rel<Frequenc
     {
         return new Frequency(getDistribution().draw(), (FrequencyUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

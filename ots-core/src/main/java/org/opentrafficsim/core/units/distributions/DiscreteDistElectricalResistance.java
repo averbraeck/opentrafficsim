@@ -15,7 +15,7 @@ import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // This class was automatically generated
-public class DiscreteDistElectricalResistance 
+public class DiscreteDistElectricalResistance
         extends DiscreteDistDoubleScalar.Rel<ElectricalResistance, ElectricalResistanceUnit>
 {
 
@@ -29,7 +29,7 @@ public class DiscreteDistElectricalResistance
     public DiscreteDistElectricalResistance(final DistDiscrete distribution, final ElectricalResistanceUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -38,7 +38,7 @@ public class DiscreteDistElectricalResistance
     {
         return new ElectricalResistance(getDistribution().draw(), (ElectricalResistanceUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

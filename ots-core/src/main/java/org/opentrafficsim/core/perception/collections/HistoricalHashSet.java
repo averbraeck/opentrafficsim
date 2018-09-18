@@ -33,7 +33,7 @@ public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, HashSe
     {
         super(historyManager, new HashSet<>());
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -61,7 +61,7 @@ public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, HashSe
         }
         return fill(time, new HashSet<>());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

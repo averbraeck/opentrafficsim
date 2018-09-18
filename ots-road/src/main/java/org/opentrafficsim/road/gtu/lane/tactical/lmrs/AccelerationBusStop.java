@@ -55,7 +55,7 @@ public class AccelerationBusStop implements AccelerationIncentive
             return;
         }
         BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
-        Time now = gtu.getSimulator().getSimulatorTime().getTime();
+        Time now = gtu.getSimulator().getSimulatorTime();
         for (HeadwayBusStop stop : stops)
         {
             String busStopId = stop.getId();

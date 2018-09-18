@@ -23,7 +23,6 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -48,6 +47,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
+
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -175,7 +176,7 @@ public final class ShapeFileReader implements UNITS
      * @throws IOException on error
      */
     public static void readLinks(final Network network, final String shapeFileName, final Map<String, Link> links,
-            final Map<String, OTSNode> nodes, final OTSSimulatorInterface simulator) throws IOException
+            final Map<String, OTSNode> nodes, final SimulatorInterface.TimeDoubleUnit simulator) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -355,7 +356,7 @@ public final class ShapeFileReader implements UNITS
      * @throws RemoteException in case of context error
      * @throws NetworkException on network inconsistency
      */
-    private static void animate(final CrossSectionLink link, final String wegType, final OTSSimulatorInterface simulator)
+    private static void animate(final CrossSectionLink link, final String wegType, final SimulatorInterface.TimeDoubleUnit simulator)
             throws NamingException, NetworkException, RemoteException
     {
         // leave out if center line not needed.
@@ -418,7 +419,7 @@ public final class ShapeFileReader implements UNITS
      * @throws NetworkException on network inconsistency
      */
     private static void addNLanes(final int n, final int spits, final CrossSectionLink link,
-            final OTSSimulatorInterface simulator) throws NetworkException
+            final SimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         // 2 x n lanes, grass underneath, lines between lanes, barrier in center
         // lane is 3.5 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
@@ -482,7 +483,7 @@ public final class ShapeFileReader implements UNITS
      * @throws NetworkException on network inconsistency
      */
     private static void addCityStreetLanes(final int n, final boolean middenberm, final CrossSectionLink link,
-            final OTSSimulatorInterface simulator) throws NetworkException
+            final SimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         // 2 x n lanes, grass underneath, lines between lanes, barrier in center
         // lane is 3.0 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
@@ -525,7 +526,7 @@ public final class ShapeFileReader implements UNITS
      * @param simulator animator
      * @throws NetworkException on network inconsistency
      */
-    private static void addCityStreet(final CrossSectionLink link, final OTSSimulatorInterface simulator)
+    private static void addCityStreet(final CrossSectionLink link, final SimulatorInterface.TimeDoubleUnit simulator)
             throws NetworkException
     {
         Length m60 = new Length(6.0, METER);

@@ -9,8 +9,6 @@ import javax.vecmath.Point3d;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -19,6 +17,7 @@ import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
 import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 import nl.tudelft.simulation.language.d3.BoundingBox;
@@ -51,7 +50,7 @@ public class SubjectiveCar extends AbstractGTU
      * @throws NamingException when animation cannot be registered
      * @throws RemoteException when animation context or simulator cannot be reached
      */
-    public SubjectiveCar(final String id, final GTUType type, final OTSDEVSSimulatorInterface simulator,
+    public SubjectiveCar(final String id, final GTUType type, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
             final DirectedPoint initialLocation, final OTSNetwork network)
             throws SimRuntimeException, GTUException, RemoteException, NamingException
     {

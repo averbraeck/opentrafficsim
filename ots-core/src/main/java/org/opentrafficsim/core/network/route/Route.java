@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * A Route consists of a list of Nodes. A route does not have to be complete. As long as all 'splitting' nodes are part of the
@@ -178,7 +179,7 @@ public class Route implements Serializable, Identifiable
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public Route clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+    public Route clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation)
             throws NetworkException
     {
         Route newRoute = new Route(this.id);

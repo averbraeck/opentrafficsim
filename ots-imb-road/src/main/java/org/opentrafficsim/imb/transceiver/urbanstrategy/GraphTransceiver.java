@@ -244,7 +244,7 @@ public class GraphTransceiver extends AbstractTransceiver
         this.transmissionInterval = transmissionInterval;
 
         List<Object> newMessage = new ArrayList<>();
-        newMessage.add(getSimulator().getSimulatorTime().getTime().si);
+        newMessage.add(getSimulator().getSimulatorTime().si);
         newMessage.add(plot.getId());
         newMessage.add(width);
         newMessage.add(height);
@@ -295,7 +295,7 @@ public class GraphTransceiver extends AbstractTransceiver
     {
         byte[] png = plot.generatePNG(this.width, this.height);
         getConnector().postIMBMessage("Graph", IMBEventType.CHANGE,
-                new Object[] { getSimulator().getSimulatorTime().getTime().si, plot.getId(), this.width, this.height, png });
+                new Object[] { getSimulator().getSimulatorTime().si, plot.getId(), this.width, this.height, png });
         getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "makePNG", new Object[] { plot });
     }
 }

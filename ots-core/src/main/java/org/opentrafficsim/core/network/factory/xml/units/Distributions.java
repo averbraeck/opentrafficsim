@@ -93,10 +93,10 @@ public final class Distributions
                 case "NORM":
                 case "NORMAL":
                     return new DistNormal(STREAM, args[0], args[1]);
-                    
+
                 case "NORMBOUNDED":
                 case "NORMALBOUNDED":
-                    return new DistNormal(STREAM, args[0], args[1]); //TODO Bounded version , args[2], args[3]) 
+                    return new DistNormal(STREAM, args[0], args[1]); // TODO Bounded version , args[2], args[3])
 
                 case "BETA":
                     return new DistBeta(STREAM, args[0], args[1]);

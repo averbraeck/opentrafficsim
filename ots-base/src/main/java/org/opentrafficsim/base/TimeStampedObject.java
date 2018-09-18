@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Time;
  * initial version Jan 29, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <C> the time stamped object class. 
+ * @param <C> the time stamped object class.
  */
 public class TimeStampedObject<C> implements Serializable
 {
@@ -23,10 +23,10 @@ public class TimeStampedObject<C> implements Serializable
 
     /** The object. */
     private final C object;
-    
+
     /** The time stamp. */
     private final Time timestamp;
-    
+
     /**
      * Construct a new TimeStampedObject.
      * @param object C; the object.

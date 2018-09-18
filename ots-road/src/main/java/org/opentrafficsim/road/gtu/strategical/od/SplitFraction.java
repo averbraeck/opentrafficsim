@@ -11,13 +11,13 @@ import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.vector.DurationVector;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.Throw;
 
@@ -45,7 +45,7 @@ public class SplitFraction
     private final StreamInterface random;
 
     /** Simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** Map of fractions by GTUType and Link. */
     private final Map<GTUType, Map<Link, Map<Duration, Double>>> fractions = new HashMap<>();
@@ -58,7 +58,7 @@ public class SplitFraction
      * @param simulator simulator
      */
     public SplitFraction(final Node node, final Interpolation interpolation, final StreamInterface random,
-            final OTSDEVSSimulatorInterface simulator)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         this.node = node;
         this.interpolation = interpolation;
@@ -162,7 +162,7 @@ public class SplitFraction
             if (gtuType.isOfType(gtu))
             {
                 Map<Link, Double> currentFractions = new LinkedHashMap<>();
-                double t = this.simulator.getSimulatorTime().getTime().si;
+                double t = this.simulator.getSimulatorTime().si;
                 for (Link link : this.fractions.get(gtu).keySet())
                 {
                     Iterator<Duration> iterator = this.fractions.get(gtu).get(link).keySet().iterator();

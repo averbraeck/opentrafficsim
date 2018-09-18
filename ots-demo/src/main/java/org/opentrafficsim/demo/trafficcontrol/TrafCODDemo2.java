@@ -22,9 +22,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.animation.AnimationToggles;
@@ -41,7 +39,9 @@ import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -156,13 +156,13 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+                throws SimRuntimeException
         {
             try
             {
                 URL url = URLResource.getResource("/TrafCODDemo2/Network.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
                 this.network = nlp.build(url, true);
                 String[] directions = { "E", "S", "W", "N" };
                 // Add the traffic lights and the detectors
@@ -181,16 +181,16 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                         Lane lane = (Lane) ((CrossSectionLink) this.network.getLink(direction, direction + "C"))
                                 .getCrossSectionElement("FORWARD" + laneNumber);
                         trafficLights.add(new SimpleTrafficLight(String.format("TL%02d", stream), lane,
-                                lane.getLength().minus(stopLineMargin), (OTSDEVSSimulatorInterface) theSimulator));
+                                lane.getLength().minus(stopLineMargin), (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator));
                         sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                 lane.getLength().minus(headDetectorMargin), lane,
                                 lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
-                                RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator,
+                                RelativePosition.FRONT, RelativePosition.REAR, (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator,
                                 Compatible.EVERYTHING));
                         sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
                                 lane.getLength().minus(longDetectorMargin), lane,
                                 lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
-                                RelativePosition.FRONT, RelativePosition.REAR, (OTSDEVSSimulatorInterface) theSimulator,
+                                RelativePosition.FRONT, RelativePosition.REAR, (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator,
                                 Compatible.EVERYTHING));
                         stream++;
                     }
@@ -198,7 +198,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                 String controllerName = "Not so simple TrafCOD controller";
                 TrafCODDemo2.this.trafCOD =
                         new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo2/Intersection12Dir.tfc"),
-                                trafficLights, sensors, (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) theSimulator,
+                                trafficLights, sensors, (DEVSSimulator<Time, Duration, SimTimeDoubleUnit>) theSimulator,
                                 TrafCODDemo2.this.controllerDisplayPanel);
                 TrafCODDemo2.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 TrafCODDemo2.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
@@ -228,7 +228,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return TrafCODDemo2.this.trafCOD.getSimulator();
         }
@@ -248,7 +248,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
             Object[] payload = (Object[]) event.getContent();
             if (TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING.equals(type))
             {
-                // System.out.println("Evaluation starts at " + getSimulator().getSimulatorTime().getTime());
+                // System.out.println("Evaluation starts at " + getSimulator().getSimulatorTime());
                 return;
             }
             else if (TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED.equals(type))

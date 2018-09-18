@@ -282,7 +282,7 @@ public class ParameterSet implements Parameters, Serializable
             setAllOneByOne(params);
         }
     }
-    
+
     /**
      * Sets the parameters of this set in the given set.
      * @param params Parameters; parameters to set the values in

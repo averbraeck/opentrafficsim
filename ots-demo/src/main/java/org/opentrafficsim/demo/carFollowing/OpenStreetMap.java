@@ -23,9 +23,7 @@ import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -48,6 +46,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -292,7 +292,7 @@ class OSMModel implements OTSModelInterface
     private static final long serialVersionUID = 20150227L;
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
@@ -330,8 +330,8 @@ class OSMModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+            throws SimRuntimeException
     {
         OTSNetwork otsNetwork = new OTSNetwork(this.osmNetwork.getName());
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
@@ -366,7 +366,7 @@ class OSMModel implements OTSModelInterface
         {
             try
             {
-                this.lanes.addAll(this.converter.makeLanes(otsNetwork, link, (OTSDEVSSimulatorInterface) theSimulator,
+                this.lanes.addAll(this.converter.makeLanes(otsNetwork, link, (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator,
                         this.warningListener));
             }
             catch (Exception e)
@@ -389,7 +389,7 @@ class OSMModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
     {
         return this.simulator;
     }

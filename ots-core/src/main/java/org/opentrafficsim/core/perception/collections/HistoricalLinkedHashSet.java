@@ -33,7 +33,7 @@ public class HistoricalLinkedHashSet<E> extends AbstractHistoricalCollection<E, 
     {
         super(historyManager, new LinkedHashSet<>());
     }
-    
+
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
@@ -61,7 +61,7 @@ public class HistoricalLinkedHashSet<E> extends AbstractHistoricalCollection<E, 
         }
         return fill(time, new LinkedHashSet<>());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

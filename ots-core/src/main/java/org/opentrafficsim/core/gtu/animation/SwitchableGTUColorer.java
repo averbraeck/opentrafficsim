@@ -39,7 +39,7 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     {
         //
     }
-    
+
     /**
      * Construct a new Switchable GTUColorer based on a list of colorers.
      * @param activeIndex the index of the initially active colorer in the list (0-based).
@@ -92,7 +92,7 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     {
         return this.colorers;
     }
-    
+
     /**
      * Returns a builder for SwitchableGTUColorer.
      * @return Builder; builder for SwitchableGTUColorer
@@ -105,7 +105,8 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     /**
      * Builder for SwitchableGTUColorer.
      * <p>
-     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$,
@@ -118,25 +119,25 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
     {
         /** The list of included colorers. */
         private List<GTUColorer> preColorers = new ArrayList<>();
-        
+
         /** The currently active GTUColorer. */
         private GTUColorer preActiveColorer;
 
         /**
          * Adds a colorer.
          * @param colorer GTUColorer; colorer
-         * @return Builder; this builder for method chaining 
+         * @return Builder; this builder for method chaining
          */
         public Builder addColorer(final GTUColorer colorer)
         {
             this.preColorers.add(colorer);
             return this;
         }
-        
+
         /**
          * Adds a colorer, make it selected.
          * @param colorer GTUColorer; colorer
-         * @return Builder; this builder for method chaining 
+         * @return Builder; this builder for method chaining
          */
         public Builder addActiveColorer(final GTUColorer colorer)
         {
@@ -144,7 +145,7 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
             this.preActiveColorer = colorer;
             return this;
         }
-        
+
         /**
          * Builds the colorer.
          * @return SwitchableGTUColorer; colorer
@@ -165,7 +166,7 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
         {
             return "Builder [preColorers=" + this.preColorers + ", preActiveColorer=" + this.preActiveColorer + "]";
         }
-        
+
     }
-    
+
 }

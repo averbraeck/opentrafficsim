@@ -29,8 +29,7 @@ public class LinkTypeTest
     public final void testLinkType()
     {
         GTUCompatibility<LinkType> roadCompatibility =
-                new GTUCompatibility<>((LinkType) null).addAllowedGTUType(GTUType.VEHICLE,
-                        LongitudinalDirectionality.DIR_BOTH);
+                new GTUCompatibility<>((LinkType) null).addAllowedGTUType(GTUType.VEHICLE, LongitudinalDirectionality.DIR_BOTH);
         try
         {
             new LinkType("name", null, null);
@@ -58,7 +57,7 @@ public class LinkTypeTest
         assertFalse("not equal to the other", roadLinkType.equals(waterwayType));
         assertEquals("Car is compatible with roadLinkType", LongitudinalDirectionality.DIR_BOTH,
                 roadLinkType.getDirectionality(carType, true));
-        assertEquals("Truck is compatible with roadLinkType",  LongitudinalDirectionality.DIR_BOTH,
+        assertEquals("Truck is compatible with roadLinkType", LongitudinalDirectionality.DIR_BOTH,
                 roadLinkType.getDirectionality(truckType, true));
         assertEquals("Catamaran is not compatible with roadLinkType", LongitudinalDirectionality.DIR_NONE,
                 roadLinkType.getDirectionality(catamaran, true));

@@ -17,7 +17,6 @@ import org.djunits.value.AngleUtil;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -47,6 +46,7 @@ import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.CartesianPoint;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
@@ -324,7 +324,7 @@ final class Links
      * @throws NetworkException when tag type not filled
      */
     static void buildConnector(final ConnectorTag connectorTag, final XmlNetworkLaneParser parser,
-            final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NamingException, NetworkException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws OTSGeometryException, NamingException, NetworkException
     {
         OTSLine3D designLine =
                 new OTSLine3D(connectorTag.nodeStartTag.node.getPoint(), connectorTag.nodeEndTag.node.getPoint());
@@ -355,7 +355,7 @@ final class Links
      * @throws NamingException when node animation cannot link to the animation context.
      * @throws NetworkException when tag type not filled
      */
-    static void buildLink(final LinkTag linkTag, final XmlNetworkLaneParser parser, final OTSDEVSSimulatorInterface simulator)
+    static void buildLink(final LinkTag linkTag, final XmlNetworkLaneParser parser, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws OTSGeometryException, NamingException, NetworkException
     {
         NodeTag from = linkTag.nodeStartTag;
@@ -518,7 +518,7 @@ final class Links
      */
     @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:methodlength" })
     static void applyRoadTypeToLink(final LinkTag linkTag, final XmlNetworkLaneParser parser,
-            final OTSDEVSSimulatorInterface simulator)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws NetworkException, NamingException, SAXException, GTUException, OTSGeometryException, SimRuntimeException
     {
         CrossSectionLink csl = linkTag.link;
@@ -702,7 +702,7 @@ final class Links
                             {
                                 Class<?> clazz = Class.forName(trafficLightTag.className);
                                 Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz, new Class[] {
-                                        String.class, Lane.class, Length.class, OTSDEVSSimulatorInterface.class });
+                                        String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
                                 Length position = LinkTag.parseBeginEndPosition(trafficLightTag.positionStr, lane);
                                 trafficLightConstructor
                                         .newInstance(new Object[] { trafficLightTag.name, lane, position, simulator });
@@ -737,10 +737,10 @@ final class Links
                                 Class<?> clazz = Class.forName(sensorTag.className);
                                 Constructor<?> sensorConstructor =
                                         ClassUtil.resolveConstructor(clazz, new Class[] { String.class, Lane.class,
-                                                Length.class, RelativePosition.TYPE.class, OTSDEVSSimulatorInterface.class });
+                                                Length.class, RelativePosition.TYPE.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
                                 Length position = LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
                                 // { String.class, Lane.class, Length.class, RelativePosition.TYPE.class,
-                                // OTSDEVSSimulatorInterface.class }
+                                // DEVSSimulatorInterface.TimeDoubleUnit.class }
                                 sensorConstructor.newInstance(
                                         new Object[] { sensorTag.name, lane, position, sensorTag.triggerPosition, simulator });
                             }

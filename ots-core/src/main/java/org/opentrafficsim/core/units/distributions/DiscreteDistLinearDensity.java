@@ -28,7 +28,7 @@ public class DiscreteDistLinearDensity extends DiscreteDistDoubleScalar.Rel<Line
     public DiscreteDistLinearDensity(final DistDiscrete distribution, final LinearDensityUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistLinearDensity extends DiscreteDistDoubleScalar.Rel<Line
     {
         return new LinearDensity(getDistribution().draw(), (LinearDensityUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

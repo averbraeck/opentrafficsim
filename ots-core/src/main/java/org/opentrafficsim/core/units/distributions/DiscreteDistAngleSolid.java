@@ -28,7 +28,7 @@ public class DiscreteDistAngleSolid extends DiscreteDistDoubleScalar.Rel<AngleSo
     public DiscreteDistAngleSolid(final DistDiscrete distribution, final AngleSolidUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class DiscreteDistAngleSolid extends DiscreteDistDoubleScalar.Rel<AngleSo
     {
         return new AngleSolid(getDistribution().draw(), (AngleSolidUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

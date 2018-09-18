@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -21,6 +20,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.immutablecollections.Immutable;
 import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
 import nl.tudelft.simulation.immutablecollections.ImmutableSet;
@@ -64,7 +64,7 @@ public class BusStop extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final String name,
-            final OTSSimulatorInterface simulator) throws NetworkException
+            final SimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         super(id, lane, LongitudinalDirectionality.DIR_PLUS, longitudinalPosition,
                 LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
@@ -201,7 +201,7 @@ public class BusStop extends AbstractLaneBasedObject
 
     /** {@inheritDoc} */
     @Override
-    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
             final boolean animation) throws NetworkException
     {
         BusStop busStop = new BusStop(getId(), (Lane) newCSE, getLongitudinalPosition(), this.name, newSimulator);

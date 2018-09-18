@@ -20,13 +20,13 @@ public class MultiConstraint<T> implements Constraint<T>
 
     /** Set of constraints. */
     private final Set<Constraint<T>> constraints;
-    
+
     /** Message of the latest failed constrained. */
     private String failedConstraintMessage = null;
-    
+
     /** String representation. */
     private final String stringRepresentation;
-    
+
     /**
      * Creates a {@code MultiConstraint} from given constraints.
      * @param constraints constraints
@@ -43,7 +43,7 @@ public class MultiConstraint<T> implements Constraint<T>
         }
         return new MultiConstraint<>(set);
     }
-    
+
     /**
      * Constructor.
      * @param constraints constraints
@@ -53,7 +53,7 @@ public class MultiConstraint<T> implements Constraint<T>
         this.constraints = constraints;
         this.stringRepresentation = String.format("MultiConstraint [contains %d constraints]", this.constraints.size());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public boolean accept(final T value)
@@ -87,5 +87,5 @@ public class MultiConstraint<T> implements Constraint<T>
     {
         return this.stringRepresentation;
     }
-    
+
 }

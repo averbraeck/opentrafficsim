@@ -3,13 +3,11 @@ package org.opentrafficsim.road.network.factory.xml;
 import java.awt.Color;
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Colors;
 import org.opentrafficsim.core.network.factory.xml.units.Directions;
-import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.road.network.factory.xml.units.LaneAttributes;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;

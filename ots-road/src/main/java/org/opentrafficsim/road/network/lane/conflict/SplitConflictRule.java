@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Conflict rule for split conflicts.
@@ -25,7 +25,7 @@ public class SplitConflictRule implements ConflictRule
 
     /** {@inheritDoc} */
     @Override
-    public ConflictRule clone(final OTSSimulatorInterface newSimulator)
+    public ConflictRule clone(final SimulatorInterface.TimeDoubleUnit newSimulator)
     {
         // stateless so no copy required
         return this;

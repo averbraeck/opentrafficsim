@@ -1,22 +1,19 @@
 package org.opentrafficsim.water.network;
 
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.water.network.infra.Obstacle;
 import org.opentrafficsim.water.transfer.Terminal;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * A waterway, i.e. a river, canal or sailable route on a lake or sea.
@@ -64,7 +61,7 @@ public class Waterway extends OTSLink
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Waterway(final Network network, final String id, final String name, final OTSNode startNode, final OTSNode endNode,
-            final LinkType linkType, final OTSLine3D designLine, final OTSDEVSSimulatorInterface simulator)
+            final LinkType linkType, final OTSLine3D designLine, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine, simulator);

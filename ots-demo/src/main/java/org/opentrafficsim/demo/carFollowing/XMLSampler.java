@@ -37,9 +37,7 @@ import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
@@ -99,6 +97,8 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -228,7 +228,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         private static final long serialVersionUID = 20150304L;
 
         /** The simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** The network. */
         private final OTSNetwork network = new OTSNetwork("network");
@@ -329,12 +329,12 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+                throws SimRuntimeException
         {
             this.network.addListener(this, Network.GTU_ADD_EVENT);
             this.network.addListener(this, Network.GTU_REMOVE_EVENT);
-            this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
             try
             {
                 OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(0, 0, 0));
@@ -906,7 +906,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
             try
             {
                 this.simulator.scheduleEventAbs(
-                        new Time(this.simulator.getSimulatorTime().get().getSI() + 1, TimeUnit.BASE_SECOND), this, this,
+                        new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND), this, this,
                         "drawGraphs", null);
             }
             catch (SimRuntimeException exception)
@@ -928,7 +928,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         // // Check if there is sufficient room
         // // Find the first vehicle on the lane
         // LaneBasedGTU leader = null;
-        // Time when = new Time(this.simulator.getSimulatorTime().get().si, TimeUnit.SI);
+        // Time when = new Time(this.simulator.getSimulatorTime().si, TimeUnit.SI);
         // try
         // {
         // leader = lane.getGtuAhead(initialPosition, GTUDirectionality.DIR_PLUS, RelativePosition.REAR, when);
@@ -995,7 +995,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return this.simulator;
         }
@@ -1087,7 +1087,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         @SuppressWarnings("unused")
         private void sampleGTUs()
         {
-            System.out.println("sampleGTUs called, the time is " + this.simulator.getSimulatorTime().get()
+            System.out.println("sampleGTUs called, the time is " + this.simulator.getSimulatorTime()
                     + ", the network contains " + this.knownGTUs.size() + " GTUs");
             // TODO sample the GTU positions and figure out the TTC etc.
             // This will make use of this.knownGTUs

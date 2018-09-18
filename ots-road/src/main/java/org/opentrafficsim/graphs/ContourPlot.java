@@ -42,7 +42,6 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYZDataset;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -138,7 +137,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
                 // register the current GTUs on the lanes (if any) for statistics sampling.
                 for (LaneBasedGTU gtu : lane.getGtuList())
                 {
-                    notify(new TimedEvent<OTSSimTimeDouble>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu },
+                    notify(new TimedEvent<Time>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu },
                             gtu.getSimulator().getSimulatorTime()));
                 }
             }
@@ -185,7 +184,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
             LaneBasedGTU gtu = (LaneBasedGTU) content[1];
             if (!this.gtusOfInterest.contains(gtu))
             {
-                //System.out.println("Adding " + gtu.getId() + " to lane " + event.getSource());
+                // System.out.println("Adding " + gtu.getId() + " to lane " + event.getSource());
                 this.gtusOfInterest.add(gtu);
                 gtu.addListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
             }
@@ -194,12 +193,12 @@ public abstract class ContourPlot extends AbstractOTSPlot
         {
             Object[] content = (Object[]) event.getContent();
             LaneBasedGTU gtu = (LaneBasedGTU) content[1];
-//            if (getPath().contains(event.getSource()))
-//            {
-//                //System.out.println("Removing " + gtu.getId() + " from lane " + event.getSource());
-//                this.gtusOfInterest.remove(gtu);
-//                gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
-//            }
+            // if (getPath().contains(event.getSource()))
+            // {
+            // //System.out.println("Removing " + gtu.getId() + " from lane " + event.getSource());
+            // this.gtusOfInterest.remove(gtu);
+            // gtu.removeListener(this, LaneBasedGTU.LANEBASED_MOVE_EVENT);
+            // }
             Lane lane = null;
             try
             {
@@ -220,7 +219,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
             Object[] content = (Object[]) event.getContent();
             Lane lane = (Lane) content[6];
             LaneBasedGTU gtu = (LaneBasedGTU) event.getSource();
-            //System.out.println("Moving GTU " + gtu.getId());
+            // System.out.println("Moving GTU " + gtu.getId());
             addData(gtu, lane);
         }
     }

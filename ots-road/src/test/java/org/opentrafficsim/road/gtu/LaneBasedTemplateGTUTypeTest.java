@@ -20,7 +20,6 @@ import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
@@ -38,6 +37,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.network.lane.LaneType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -298,27 +298,27 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
     private static final long serialVersionUID = 20150114L;
 
     /** The simulator. */
-    private SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator;
+    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
 
     /**
      * Register the simulator.
-     * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
+     * @param simulator SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulator
      */
-    public void setSimulator(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
+    public void setSimulator(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator)
     {
         this.simulator = simulator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
     {
         // Nothing happens here
     }
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
 
     {
         if (null == this.simulator)

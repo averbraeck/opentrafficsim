@@ -7,10 +7,10 @@ import java.util.WeakHashMap;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 
 import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * History manager with automatic garbage collection by the java garbage collector using weak references to the
@@ -30,14 +30,14 @@ public abstract class HistoryManager
     // HACK ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // TODO remove this hack and obtain manager from somewhere else, OTSReplication?
     /** Centrally stored manager. */
-    private static Map<Replication<Time, Duration, OTSSimTimeDouble>, HistoryManagerDEVS> managers = new WeakHashMap<>();
+    private static Map<Replication<Time, Duration, SimTimeDoubleUnit>, HistoryManagerDEVS> managers = new WeakHashMap<>();
 
     /**
      * Get central manager.
-     * @param simulator OTSDEVSSimulatorInterface; simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @return HistoryManagerDEVS; central manager
      */
-    public static HistoryManagerDEVS get(final OTSDEVSSimulatorInterface simulator)
+    public static HistoryManagerDEVS get(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         HistoryManagerDEVS manager = managers.get(simulator.getReplication());
         if (manager == null)
@@ -47,22 +47,22 @@ public abstract class HistoryManager
         }
         return manager;
     }
-    
+
     /**
      * Set central manager.
      * @param manager HistoryManagerDEVS; manager
-     * @param simulator OTSDEVSSimulatorInterface; simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      */
-    public static void set(final HistoryManagerDEVS manager, final OTSDEVSSimulatorInterface simulator)
+    public static void set(final HistoryManagerDEVS manager, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         managers.put(simulator.getReplication(), manager);
     }
-    
+
     /**
-     * Clear central manager. If this is not done in batch simulations, this forms a memory leak. 
-     * @param simulator OTSDEVSSimulatorInterface; simulator
+     * Clear central manager. If this is not done in batch simulations, this forms a memory leak.
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      */
-    public static void clear(final OTSDEVSSimulatorInterface simulator)
+    public static void clear(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         managers.remove(simulator.getReplication());
     }
@@ -70,8 +70,7 @@ public abstract class HistoryManager
 
     /** Set of all {@code Historical}s. */
     // There's no WeakSet, but this is effectively the same. Iterating over this is safe, only alive objects are returned.
-    private final Set<HistoricalElement> historicals =
-            Collections.newSetFromMap(new WeakHashMap<HistoricalElement, Boolean>());
+    private final Set<HistoricalElement> historicals = Collections.newSetFromMap(new WeakHashMap<HistoricalElement, Boolean>());
 
     /**
      * Registers a historical.
@@ -99,11 +98,12 @@ public abstract class HistoryManager
      * @return Time; current simulation time.
      */
     abstract Time now();
-    
+
     /**
      * Historical view for the history manager.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 1 feb. 2018 <br>
@@ -119,7 +119,7 @@ public abstract class HistoryManager
          */
         void cleanUpHistory(Duration history);
     }
-    
+
     /**
      * Method that clears the entire memory at simulation end.
      */

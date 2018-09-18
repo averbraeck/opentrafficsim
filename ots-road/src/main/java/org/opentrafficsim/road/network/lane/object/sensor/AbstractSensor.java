@@ -1,12 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
-import nl.tudelft.simulation.language.Throw;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -18,6 +13,11 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
+
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.Throw;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -38,7 +38,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     private final RelativePosition.TYPE positionType;
 
     /** The simulator for being able to generate an animation. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The GTU types and driving directions that this sensor will trigger on. */
     private final Compatible detectedGTUTypes;
@@ -51,7 +51,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      *            line of the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
-     * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator (needed to generate the animation).
      * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
      * @param elevation Length; elevation of the sensor
      * @param detectedGTUTypes Compatible; The GTU types will trigger this sensor
@@ -59,7 +59,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final OTSLine3D geometry,
+            final RelativePosition.TYPE positionType, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSLine3D geometry,
             final Length elevation, final Compatible detectedGTUTypes) throws NetworkException
     {
         super(id, lane, longitudinalPosition, geometry, elevation);
@@ -80,13 +80,13 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      *            line of the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
-     * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator (needed to generate the animation).
      * @param geometry OTSLine3D; the geometry of the object, which provides its location and bounds as well
      * @param detectedGTUTypes Compatible; The GTU types will trigger this sensor
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator, final OTSLine3D geometry,
+            final RelativePosition.TYPE positionType, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSLine3D geometry,
             final Compatible detectedGTUTypes) throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, geometry, DEFAULT_SENSOR_ELEVATION, detectedGTUTypes);
@@ -101,12 +101,12 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      *            line of the lane
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
-     * @param simulator OTSDEVSSimulatorInterface; the simulator (needed to generate the animation).
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator (needed to generate the animation).
      * @param detectedGTUTypes Compatible; The GTU types will trigger this sensor
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OTSDEVSSimulatorInterface simulator,
+            final RelativePosition.TYPE positionType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
             final Compatible detectedGTUTypes) throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, makeGeometry(lane, longitudinalPosition),
@@ -161,7 +161,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /** {@inheritDoc} */
     @Override
-    public final OTSDEVSSimulatorInterface getSimulator()
+    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return this.simulator;
     }
@@ -247,7 +247,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /** {@inheritDoc} */
     @Override
-    public abstract AbstractSensor clone(CrossSectionElement newCSE, OTSSimulatorInterface newSimulator, boolean animation)
+    public abstract AbstractSensor clone(CrossSectionElement newCSE, SimulatorInterface.TimeDoubleUnit newSimulator, boolean animation)
             throws NetworkException;
 
     /** {@inheritDoc} */

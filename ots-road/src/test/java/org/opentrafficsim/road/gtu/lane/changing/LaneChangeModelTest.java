@@ -22,9 +22,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -59,6 +57,8 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -86,14 +86,14 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param from Node; start node of the new Link
      * @param to Node; end node of the new Link
      * @param width Length; the width of the new Link
-     * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @return Link
      * @throws OTSGeometryException when coordinates cannot be calculated
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network
      */
     private static CrossSectionLink makeLink(final Network network, final String name, final OTSNode from, final OTSNode to,
-            final Length width, final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NetworkException
+            final Length width, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws OTSGeometryException, NetworkException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
@@ -136,12 +136,12 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param to Node; ending node of the new Lane
      * @param laneType LaneType&lt;String&gt;; the type of GTU that can use the lanes
      * @param laneCount int; number of lanes in the road
-     * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
     public static Lane[] makeMultiLane(final Network network, final String name, final OTSNode from, final OTSNode to,
-            final LaneType laneType, final int laneCount, final OTSDEVSSimulatorInterface simulator) throws Exception
+            final LaneType laneType, final int laneCount, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws Exception
     {
         Length width = new Length(laneCount * 4.0, METER);
         final CrossSectionLink link = makeLink(network, name, from, to, width, simulator);
@@ -306,14 +306,14 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator) throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator) throws SimRuntimeException
     {
         // DO NOTHING
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
 
     {
         return null;

@@ -21,11 +21,11 @@ public interface Constraint<T>
      * @return Whether the value complies with constraints.
      */
     boolean accept(T value);
-    
+
     /**
      * Returns a message for value failure, pointing to a parameter using '%s'.
      * @return Message for value failure, pointing to a parameter using '%s'.
      */
     String failMessage();
-    
+
 }

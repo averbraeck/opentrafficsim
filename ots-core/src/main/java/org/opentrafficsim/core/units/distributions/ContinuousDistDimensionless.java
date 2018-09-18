@@ -28,7 +28,7 @@ public class ContinuousDistDimensionless extends ContinuousDistDoubleScalar.Rel<
     public ContinuousDistDimensionless(final DistContinuous distribution, final DimensionlessUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistDimensionless extends ContinuousDistDoubleScalar.Rel<
     {
         return new Dimensionless(getDistribution().draw(), (DimensionlessUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

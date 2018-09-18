@@ -18,7 +18,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.animation.Blockable;
 import org.opentrafficsim.road.gtu.animation.DesireBased;
 import org.opentrafficsim.road.gtu.animation.Synchronizable;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;

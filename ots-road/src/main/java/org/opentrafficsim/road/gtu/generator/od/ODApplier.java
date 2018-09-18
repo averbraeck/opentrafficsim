@@ -22,7 +22,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -53,6 +52,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.Throw;
@@ -114,20 +114,20 @@ public final class ODApplier
      * </table>
      * @param network OTSNetwork; network
      * @param od ODMatrix; OD matrix
-     * @param simulator OTSDEVSSimulatorInterface; simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @param odOptions ODOptions; options for vehicle generation
      * @return Map&lt;String, GeneratorObjects&gt; map of generator id's and created generator objects mainly for testing
      * @throws ParameterException if a parameter is missing
      * @throws SimRuntimeException if this method is called after simulation time 0
      */
     public static Map<String, GeneratorObjects> applyOD(final OTSNetwork network, final ODMatrix od,
-            final OTSDEVSSimulatorInterface simulator, final ODOptions odOptions) throws ParameterException, SimRuntimeException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final ODOptions odOptions) throws ParameterException, SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null.");
         Throw.whenNull(od, "OD matrix may not be null.");
         Throw.whenNull(simulator, "Simulator may not be null.");
         Throw.whenNull(odOptions, "OD options may not be null.");
-        Throw.when(!simulator.getSimulatorTime().getTime().eq0(), SimRuntimeException.class,
+        Throw.when(!simulator.getSimulatorTime().eq0(), SimRuntimeException.class,
                 "Method ODApplier.applyOD() should be invoked at simulation time 0.");
 
         // TODO sinks? white extension links?
@@ -763,7 +763,7 @@ public final class ODApplier
         private final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root;
 
         /** Simulator. */
-        private final OTSDEVSSimulatorInterface simulator;
+        private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** Characteristics generator based on OD information. */
         private final GTUCharacteristicsGeneratorOD charachteristicsGenerator;
@@ -773,12 +773,12 @@ public final class ODApplier
 
         /**
          * @param root DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;; root node with origin
-         * @param simulator OTSDEVSSimulatorInterface; simulator
+         * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
          * @param charachteristicsGenerator GTUCharacteristicsGeneratorOD; characteristics generator based on OD information
          * @param randomStream StreamInterface; stream for random numbers
          */
         GTUCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final OTSDEVSSimulatorInterface simulator, final GTUCharacteristicsGeneratorOD charachteristicsGenerator,
+                final DEVSSimulatorInterface.TimeDoubleUnit simulator, final GTUCharacteristicsGeneratorOD charachteristicsGenerator,
                 final StreamInterface randomStream)
         {
             this.root = root;
@@ -792,7 +792,7 @@ public final class ODApplier
         public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException, GTUException
         {
             // obtain node objects
-            Time time = this.simulator.getSimulatorTime().getTime();
+            Time time = this.simulator.getSimulatorTime();
             Node origin = this.root.getObject();
             DemandNode<Node, DemandNode<Category, ?>> destinationNode = this.root.draw(time);
             Node destination = destinationNode.getObject();

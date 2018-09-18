@@ -32,9 +32,7 @@ import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -78,6 +76,8 @@ import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistErlang;
@@ -200,7 +200,7 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
     private static final long serialVersionUID = 20150304L;
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The network. */
     private final OTSNetwork network = new OTSNetwork("network");
@@ -298,10 +298,10 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+            throws SimRuntimeException
     {
-        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+        this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
         try
         {
             CompoundProperty cp = new CompoundProperty("", "", "", this.properties, false, 0);
@@ -730,7 +730,7 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
             // }
             // }
             xmlCode.append("</NETWORK>\n");
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSDEVSSimulatorInterface) theSimulator);
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
 
             System.out.println("Building network from XML description\n" + xmlCode.toString());
             nlp.build(new ByteArrayInputStream(xmlCode.toString().getBytes()), this.network, true);
@@ -843,7 +843,7 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().get().getSI() + 1, TimeUnit.BASE_SECOND),
+            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND),
                     this, this, "drawGraphs", null);
         }
         catch (SimRuntimeException exception)
@@ -865,7 +865,7 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
     // // Check if there is sufficient room
     // // Find the first vehicle on the lane
     // LaneBasedGTU leader = null;
-    // Time when = new Time(this.simulator.getSimulatorTime().get().si, TimeUnit.SI);
+    // Time when = new Time(this.simulator.getSimulatorTime().si, TimeUnit.SI);
     // try
     // {
     // leader = lane.getGtuAhead(initialPosition, GTUDirectionality.DIR_PLUS, RelativePosition.REAR, when);
@@ -932,7 +932,7 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
     {
         return this.simulator;
     }

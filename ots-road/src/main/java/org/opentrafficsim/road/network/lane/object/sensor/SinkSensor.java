@@ -6,8 +6,6 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -15,6 +13,8 @@ import org.opentrafficsim.road.network.animation.SinkAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -40,7 +40,7 @@ public class SinkSensor extends AbstractSensor
      * @param simulator the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkSensor(final Lane lane, final Length position, final OTSDEVSSimulatorInterface simulator) throws NetworkException
+    public SinkSensor(final Lane lane, final Length position, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator, Compatible.EVERYTHING);
         try
@@ -62,7 +62,7 @@ public class SinkSensor extends AbstractSensor
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public SinkSensor(final String dummy1, final Lane lane, final Length position, final RelativePosition.TYPE dummy2,
-            final OTSDEVSSimulatorInterface simulator) throws NetworkException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator, Compatible.EVERYTHING);
         try
@@ -92,13 +92,13 @@ public class SinkSensor extends AbstractSensor
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public SinkSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator, final boolean animation)
+    public SinkSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation)
             throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
-        Throw.when(!(newSimulator instanceof OTSDEVSSimulatorInterface), NetworkException.class,
+        Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
                 "simulator should be a DEVSSimulator");
-        return new SinkSensor((Lane) newCSE, getLongitudinalPosition(), (OTSDEVSSimulatorInterface) newSimulator);
+        return new SinkSensor((Lane) newCSE, getLongitudinalPosition(), (DEVSSimulatorInterface.TimeDoubleUnit) newSimulator);
     }
 
 }

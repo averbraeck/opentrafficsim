@@ -60,8 +60,7 @@ public interface Perception<G extends GTU> extends Serializable
      * @return given perception category
      * @throws OperationalPlanException if the perception category is not present
      */
-    <T extends PerceptionCategory<?, ?>> T getPerceptionCategory(Class<T> category)
-            throws OperationalPlanException;
+    <T extends PerceptionCategory<?, ?>> T getPerceptionCategory(Class<T> category) throws OperationalPlanException;
 
     /**
      * Returns the given perception category, or {@code null} if not present.

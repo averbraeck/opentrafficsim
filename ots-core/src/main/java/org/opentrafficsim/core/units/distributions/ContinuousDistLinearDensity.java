@@ -28,7 +28,7 @@ public class ContinuousDistLinearDensity extends ContinuousDistDoubleScalar.Rel<
     public ContinuousDistLinearDensity(final DistContinuous distribution, final LinearDensityUnit unit)
     {
         super(distribution, unit);
-        
+
     }
 
     /** {@inheritDoc} */
@@ -37,7 +37,7 @@ public class ContinuousDistLinearDensity extends ContinuousDistDoubleScalar.Rel<
     {
         return new LinearDensity(getDistribution().draw(), (LinearDensityUnit) getUnit());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

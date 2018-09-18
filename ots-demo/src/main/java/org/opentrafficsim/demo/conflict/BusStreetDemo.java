@@ -31,10 +31,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -83,6 +80,8 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -147,14 +146,13 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         private OTSNetwork network;
 
         /** Simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0)
-                throws SimRuntimeException, RemoteException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
         {
-            this.simulator = (OTSDEVSSimulatorInterface) arg0;
+            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) arg0;
             Map<String, StreamInterface> streams = new HashMap<>();
             streams.put("generation", new MersenneTwister(100L));
             this.simulator.getReplication().setStreams(streams);
@@ -215,7 +213,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return this.simulator;
         }
@@ -301,13 +299,13 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         private final Frequency demand;
 
         /** Simulator. */
-        private final OTSSimulatorInterface simulator;
+        private final SimulatorInterface.TimeDoubleUnit simulator;
 
         /**
          * @param demand demand
          * @param simulator simulator
          */
-        HeadwayGenerator(final Frequency demand, final OTSSimulatorInterface simulator)
+        HeadwayGenerator(final Frequency demand, final SimulatorInterface.TimeDoubleUnit simulator)
         {
             this.demand = demand;
             this.simulator = simulator;
@@ -317,16 +315,9 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         @Override
         public Duration draw() throws ProbabilityException, ParameterException
         {
-            try
-            {
-                return new Duration(
-                        -Math.log(this.simulator.getReplication().getStream("generation").nextDouble()) / this.demand.si,
-                        DurationUnit.SI);
-            }
-            catch (RemoteException exception)
-            {
-                throw new ProbabilityException("Could not draw for Probability.", exception);
-            }
+            return new Duration(
+                    -Math.log(this.simulator.getReplication().getStream("generation").nextDouble()) / this.demand.si,
+                    DurationUnit.SI);
         }
 
     }
@@ -346,7 +337,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
     {
 
         /** Simulator. */
-        private final OTSDEVSSimulatorInterface simulator;
+        private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** Probabilities. */
         private final double[] probabilities;
@@ -377,7 +368,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
          * @param probabilities probabilities
          * @param network network
          */
-        public CharacteristicsGenerator(final OTSDEVSSimulatorInterface simulator, final double[] probabilities,
+        public CharacteristicsGenerator(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final double[] probabilities,
                 final OTSNetwork network)
         {
             this.simulator = simulator;
@@ -476,9 +467,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     length = new Length(8.0, LengthUnit.SI);
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
-                    BusSchedule schedule =
-                            new BusSchedule("bus1." + this.simulator.getSimulatorTime().getTime(), this.busNodes1, "1");
-                    Time now = this.simulator.getSimulatorTime().getTime();
+                    BusSchedule schedule = new BusSchedule("bus1." + this.simulator.getSimulatorTime(), this.busNodes1, "1");
+                    Time now = this.simulator.getSimulatorTime();
                     schedule.addBusStop("Cafe Boszicht.1", now.plus(new Duration(70.0, DurationUnit.SI)), this.longDwellTime,
                             true);
                     schedule.addBusStop("Herberg De Deugd", now.plus(new Duration(100.0, DurationUnit.SI)), this.shortDwellTime,
@@ -497,9 +487,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
                     length = new Length(12.0, LengthUnit.SI);
                     width = new Length(2.0, LengthUnit.SI);
                     maximumSpeed = new Speed(100.0, SpeedUnit.KM_PER_HOUR);
-                    BusSchedule schedule =
-                            new BusSchedule("bus2." + this.simulator.getSimulatorTime().getTime(), this.busNodes2, "2");
-                    Time now = this.simulator.getSimulatorTime().getTime();
+                    BusSchedule schedule = new BusSchedule("bus2." + this.simulator.getSimulatorTime(), this.busNodes2, "2");
+                    Time now = this.simulator.getSimulatorTime();
                     schedule.addBusStop("Cafe Boszicht.2", now.plus(new Duration(80.0, DurationUnit.SI)), this.longDwellTime,
                             true);
                     schedule.addBusStop("De Vleeshoeve", now.plus(new Duration(110.0, DurationUnit.SI)), this.shortDwellTime,

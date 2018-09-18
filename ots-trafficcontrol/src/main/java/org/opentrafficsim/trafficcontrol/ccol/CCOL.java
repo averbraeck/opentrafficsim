@@ -12,8 +12,6 @@ import java.util.Set;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
@@ -23,6 +21,7 @@ import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
@@ -49,7 +48,7 @@ public class CCOL extends EventProducer implements TrafficController
     final String id;
 
     /** The simulator. */
-    final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator;
+    final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator;
 
     /** TCP port for incoming connection. */
     static int PORT = 4321;
@@ -80,12 +79,12 @@ public class CCOL extends EventProducer implements TrafficController
      *            that match the stream numbers as used in the traffic control program
      * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic sensors. The ids of the traffic sensors must end with three
      *            digits; the first two of those must match the stream and sensor numbers used in the traffic control program
-     * @param simulator DEVSSimulator&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulation engine
+     * @param simulator DEVSSimulator&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulation engine
      * @throws TrafficControlException on failure to initialize the connection to the external CCOL program
      * @throws SimRuntimeException on failure to schedule the first evaluation event
      */
     public CCOL(final String id, final String controlProgram, final Set<TrafficLight> trafficLights,
-            final Set<TrafficLightSensor> sensors, final DEVSSimulator<Time, Duration, OTSSimTimeDouble> simulator)
+            final Set<TrafficLightSensor> sensors, final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator)
             throws TrafficControlException, SimRuntimeException
     {
         this.id = id;
@@ -172,7 +171,7 @@ public class CCOL extends EventProducer implements TrafficController
     private void step() throws TrafficControlException, SimRuntimeException
     {
         // TODO time should be formatted as date, hour, etc.
-        String message = String.format("STEP %s", this.simulator.getSimulatorTime().get());
+        String message = String.format("STEP %s", this.simulator.getSimulatorTime());
         this.ccolWriter.print(message);
         try
         {
@@ -248,7 +247,7 @@ public class CCOL extends EventProducer implements TrafficController
 
     /** {@inheritDoc} */
     @Override
-    public InvisibleObjectInterface clone(OTSSimulatorInterface newSimulator, Network newNetwork) throws NetworkException
+    public InvisibleObjectInterface clone(SimulatorInterface.TimeDoubleUnit newSimulator, Network newNetwork) throws NetworkException
     {
         // FIXME: implement the clone() for CCOL
         return null;

@@ -137,7 +137,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
         try
         {
             params = getPerception().getGtu().getParameters();
-            now = getPerception().getGtu().getSimulator().getSimulatorTime().getTime();
+            now = getPerception().getGtu().getSimulator().getSimulatorTime();
         }
         catch (GTUException exception)
         {

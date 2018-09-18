@@ -15,15 +15,11 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -41,6 +37,8 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -131,9 +129,9 @@ public class SensorTest implements UNITS
             }
         }
         // Construction of the car scheduled a car move event at t=0
-        Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getEventList();
-        SimEventInterface<OTSSimTimeDouble> triggerEvent = null;
-        for (SimEventInterface<OTSSimTimeDouble> event : eventList)
+        Set<SimEventInterface<SimTimeDoubleUnit>> eventList = simulator.getEventList();
+        SimEventInterface<SimTimeDoubleUnit> triggerEvent = null;
+        for (SimEventInterface<SimTimeDoubleUnit> event : eventList)
         {
             System.out.println("Scheduled Event " + event);
             if (event.toString().contains("trigger"))
@@ -168,7 +166,7 @@ class TriggerSensor extends AbstractSensor
      * @throws NetworkException in case position is out of bounds
      */
     TriggerSensor(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
-            final String name, final OTSDEVSSimulatorInterface simulator) throws NetworkException
+            final String name, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         super(name, lane, longitudinalPosition, positionType, simulator, Compatible.EVERYTHING);
     }
@@ -182,7 +180,7 @@ class TriggerSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public AbstractSensor clone(final CrossSectionElement newCSE, final OTSSimulatorInterface newSimulator,
+    public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
             final boolean animation) throws NetworkException
     {
         return null;
@@ -206,27 +204,27 @@ class DummyModelForSensorTest implements OTSModelInterface
     private static final long serialVersionUID = 20150114L;
 
     /** The simulator. */
-    private SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator;
+    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
 
     /**
      * Register the simulator.
-     * @param simulator SimulatorInterface&lt;Time, Duration, OTSSimTimeDouble&gt;; the simulator
+     * @param simulator SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulator
      */
-    public final void setSimulator(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator)
+    public final void setSimulator(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator)
     {
         this.simulator = simulator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> arg0) throws SimRuntimeException
+    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
     {
         // Nothing happens here
     }
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
 
     {
         if (null == this.simulator)

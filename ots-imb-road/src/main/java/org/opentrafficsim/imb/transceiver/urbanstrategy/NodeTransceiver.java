@@ -2,8 +2,7 @@ package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
 import java.rmi.RemoteException;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -12,6 +11,7 @@ import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.event.TimedEvent;
@@ -116,13 +116,13 @@ public class NodeTransceiver extends AbstractTransceiver
     /**
      * Construct a new NodeTransceiver.
      * @param connector Connector; the IMB connector through which this transceiver communicates
-     * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule the incoming notifications on
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the incoming notifications on
      * @param network OTSNetwork; the OTS network on which Nodes are registered
      * @throws IMBException when the registration of one of the channels fails
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public NodeTransceiver(final Connector connector, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
-            throws IMBException
+    public NodeTransceiver(final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final OTSNetwork network) throws IMBException
     {
         super("Node", connector, simulator);
         this.network = network;
@@ -146,7 +146,7 @@ public class NodeTransceiver extends AbstractTransceiver
         {
             try
             {
-                this.notify(new TimedEvent<OTSSimTimeDouble>(Network.NODE_ADD_EVENT, this.network, node.getId(),
+                this.notify(new TimedEvent<Time>(Network.NODE_ADD_EVENT, this.network, node.getId(),
                         getSimulator().getSimulatorTime()));
             }
             catch (RemoteException exception)
@@ -166,9 +166,8 @@ public class NodeTransceiver extends AbstractTransceiver
             Node node = this.network.getNode((String) event.getContent());
             try
             {
-                getConnector().postIMBMessage("Node", IMBEventType.NEW,
-                        new Object[] { getSimulator().getSimulatorTime().getTime().si, this.network.getId(), node.getId(),
-                                node.getPoint().x, node.getPoint().y, node.getPoint().z });
+                getConnector().postIMBMessage("Node", IMBEventType.NEW, new Object[] { getSimulator().getSimulatorTime().si,
+                        this.network.getId(), node.getId(), node.getPoint().x, node.getPoint().y, node.getPoint().z });
             }
             catch (IMBException exception)
             {
@@ -181,7 +180,7 @@ public class NodeTransceiver extends AbstractTransceiver
             try
             {
                 getConnector().postIMBMessage("Node", IMBEventType.DELETE,
-                        new Object[] { getSimulator().getSimulatorTime().getTime().si, this.network.getId(), node.getId() });
+                        new Object[] { getSimulator().getSimulatorTime().si, this.network.getId(), node.getId() });
             }
             catch (IMBException exception)
             {

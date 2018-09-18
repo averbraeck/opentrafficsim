@@ -9,9 +9,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * A traffic light controller with fixed durations. Red, yellow and green times of each phase can be set, as well as the time
@@ -32,7 +32,7 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
     private final String id;
 
     /** the simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** the phases with a number identifying them to create a sorted map. */
     private final SortedMap<Integer, Set<TrafficLight>> phases = new TreeMap<>();
@@ -55,10 +55,10 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
     /**
      * Create a fixed time controller.
      * @param id String; the controller id
-     * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @throws TrafficLightException when scheduling of thhe start event fails
      */
-    public TrafficLightControllerFixedDuration(final String id, final OTSDEVSSimulatorInterface simulator)
+    public TrafficLightControllerFixedDuration(final String id, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws TrafficLightException
     {
         this.id = id;

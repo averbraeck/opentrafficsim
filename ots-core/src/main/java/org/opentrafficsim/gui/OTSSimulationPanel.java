@@ -14,12 +14,12 @@ import javax.swing.UIManager;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 import nl.tudelft.simulation.dsol.gui.swing.Console;
 import nl.tudelft.simulation.dsol.gui.swing.StatusBar;
 import nl.tudelft.simulation.dsol.gui.swing.TabbedContentPane;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * GUI with simulator, console, control panel, status bar, etc.
@@ -38,7 +38,7 @@ public class OTSSimulationPanel extends JPanel
     private static final long serialVersionUID = 20150617L;
 
     /** The simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The console to log messages. */
     private final Console console = new Console();
@@ -68,8 +68,8 @@ public class OTSSimulationPanel extends JPanel
      * @throws RemoteException when communications to a remote machine fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    public OTSSimulationPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation)
-            throws RemoteException, PropertyException
+    public OTSSimulationPanel(final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final WrappableAnimation wrappableAnimation) throws RemoteException, PropertyException
     {
 
         this.simulator = simulator;
@@ -135,7 +135,7 @@ public class OTSSimulationPanel extends JPanel
     /**
      * @return simulator.
      */
-    public final OTSDEVSSimulatorInterface getSimulator()
+    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
     {
         return this.simulator;
     }
@@ -161,7 +161,7 @@ public class OTSSimulationPanel extends JPanel
     @Override
     public final String toString()
     {
-        return "OTSSimulationPanel [simulatorTime=" + this.simulator.getSimulatorTime().getTime() + "]";
+        return "OTSSimulationPanel [simulatorTime=" + this.simulator.getSimulatorTime() + "]";
     }
 
     /**

@@ -12,8 +12,7 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Draw a car.
@@ -39,7 +38,7 @@ public class SubjectiveCarAnimation extends Renderable2D implements Serializable
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public SubjectiveCarAnimation(final SubjectiveCar source, final OTSDEVSSimulatorInterface simulator)
+    public SubjectiveCarAnimation(final SubjectiveCar source, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
         throws NamingException, RemoteException
     {
         super(source, simulator);

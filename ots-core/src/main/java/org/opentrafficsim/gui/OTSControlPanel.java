@@ -50,14 +50,13 @@ import javax.swing.text.MaskFormatter;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.simulationengine.Resource;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -83,7 +82,7 @@ public class OTSControlPanel extends JPanel
     private static final long serialVersionUID = 20150617L;
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
+    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The WrappableAnimation (needed for restart operation). */
     private final WrappableAnimation wrappableAnimation;
@@ -107,7 +106,7 @@ public class OTSControlPanel extends JPanel
     private final TimeEdit timeEdit;
 
     /** The currently registered stop at event. */
-    private SimEvent<OTSSimTimeDouble> stopAtEvent = null;
+    private SimEvent<SimTimeDoubleUnit> stopAtEvent = null;
 
     /** Has the window close handler been registered? */
     protected boolean closeHandlerRegistered = false;
@@ -121,7 +120,7 @@ public class OTSControlPanel extends JPanel
      * @param wrappableAnimation WrappableAnimation; if non-null, the restart button should work
      * @throws RemoteException when simulator cannot be accessed for listener attachment
      */
-    public OTSControlPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation)
+    public OTSControlPanel(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WrappableAnimation wrappableAnimation)
             throws RemoteException
     {
         this.simulator = simulator;
@@ -280,15 +279,15 @@ public class OTSControlPanel extends JPanel
      * @param eventTarget Object; the object that must execute the event
      * @param method String; the name of the method of <code>target</code> that must execute the event
      * @param args Object[]; the arguments of the <code>method</code> that must execute the event
-     * @return SimEvent&lt;OTSSimTimeDouble&gt;; the event that was scheduled (the caller should save this if a need to cancel
+     * @return SimEvent&lt;SimTimeDoubleUnit&gt;; the event that was scheduled (the caller should save this if a need to cancel
      *         the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    private SimEvent<OTSSimTimeDouble> scheduleEvent(final Time executionTime, final short priority, final Object source,
+    private SimEvent<SimTimeDoubleUnit> scheduleEvent(final Time executionTime, final short priority, final Object source,
             final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
     {
-        SimEvent<OTSSimTimeDouble> simEvent =
-                new SimEvent<>(new OTSSimTimeDouble(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source,
+        SimEvent<SimTimeDoubleUnit> simEvent =
+                new SimEvent<>(new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source,
                         eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
@@ -393,7 +392,7 @@ public class OTSControlPanel extends JPanel
                 {
                     getSimulator().stop();
                 }
-                double now = getSimulator().getSimulatorTime().getTime().getSI();
+                double now = getSimulator().getSimulatorTime().getSI();
                 // System.out.println("now is " + now);
                 try
                 {
@@ -539,7 +538,7 @@ public class OTSControlPanel extends JPanel
         if (getSimulator().isRunning())
         {
             getSimulator().stop();
-            double currentTick = getSimulator().getSimulatorTime().getTime().getSI();
+            double currentTick = getSimulator().getSimulatorTime().getSI();
             double nextTick = getSimulator().getEventList().first().getAbsoluteExecutionTime().get().getSI();
             // System.out.println("currentTick is " + currentTick);
             // System.out.println("nextTick is " + nextTick);
@@ -619,7 +618,7 @@ public class OTSControlPanel extends JPanel
         int seconds = Integer.parseInt(fields[2]);
         int fraction = Integer.parseInt(fields[3]);
         double stopTime = hours * 3600 + minutes * 60 + seconds + fraction / 1000d;
-        if (stopTime < getSimulator().getSimulatorTime().getTime().getSI())
+        if (stopTime < getSimulator().getSimulatorTime().getSI())
         {
             return;
         }
@@ -642,9 +641,9 @@ public class OTSControlPanel extends JPanel
      * @return simulator.
      */
     @SuppressWarnings("unchecked")
-    public final DEVSSimulator<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> getSimulator()
     {
-        return (DEVSSimulator<Time, Duration, OTSSimTimeDouble>) this.simulator;
+        return (DEVSSimulator<Time, Duration, SimTimeDoubleUnit>) this.simulator;
     }
 
     /** {@inheritDoc} */
@@ -981,7 +980,7 @@ public class OTSControlPanel extends JPanel
             @Override
             public void run()
             {
-                double now = Math.round(getSimulator().getSimulatorTime().getTime().getSI() * 1000) / 1000d;
+                double now = Math.round(getSimulator().getSimulatorTime().getSI() * 1000) / 1000d;
                 int seconds = (int) Math.floor(now);
                 int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
                 ClockLabel.this.setText(String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60,
@@ -1164,7 +1163,7 @@ public class OTSControlPanel extends JPanel
     @Override
     public final String toString()
     {
-        return "OTSControlPanel [simulatorTime=" + this.simulator.getSimulatorTime().getTime() + ", timeWarp="
+        return "OTSControlPanel [simulatorTime=" + this.simulator.getSimulatorTime() + ", timeWarp="
                 + this.timeWarpPanel.getFactor() + ", stopAtEvent=" + this.stopAtEvent + "]";
     }
 

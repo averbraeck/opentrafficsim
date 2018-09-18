@@ -37,5 +37,5 @@ public interface Historical<T>
      * @throws NullPointerException when time is null
      */
     T get(Time time);
-    
+
 }

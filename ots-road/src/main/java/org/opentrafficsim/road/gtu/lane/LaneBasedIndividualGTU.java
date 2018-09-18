@@ -13,8 +13,6 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -31,6 +29,8 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.immutablecollections.Immutable;
 import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
 import nl.tudelft.simulation.immutablecollections.ImmutableLinkedHashMap;
@@ -77,14 +77,14 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
      * @param front Length; front distance relative to the reference position
-     * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @param network the network that the GTU is initially registered in
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final Length front, final OTSDEVSSimulatorInterface simulator, final OTSNetwork network)
+            final Speed maximumSpeed, final Length front, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSNetwork network)
             throws NamingException, GTUException
     {
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
@@ -131,7 +131,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         super.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
 
         // animation
-        if (getSimulator() instanceof OTSAnimatorInterface && animationClass != null)
+        if (getSimulator() instanceof AnimatorInterface && animationClass != null)
         {
             try
             {
@@ -281,7 +281,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         private Length front = null;
 
         /** The simulator. */
-        private OTSDEVSSimulatorInterface simulator = null;
+        private DEVSSimulatorInterface.TimeDoubleUnit simulator = null;
 
         /** Animation. */
         private Class<? extends Renderable2D<? super LaneBasedIndividualGTU>> animationClass = null;
@@ -387,7 +387,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @param simulator set simulator
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setSimulator(final OTSDEVSSimulatorInterface simulator)
+        public final LaneBasedIndividualCarBuilder setSimulator(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
         {
             this.simulator = simulator;
             return this;
@@ -493,7 +493,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         /**
          * @return simulator.
          */
-        public final OTSDEVSSimulatorInterface getSimulator()
+        public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
         {
             return this.simulator;
         }

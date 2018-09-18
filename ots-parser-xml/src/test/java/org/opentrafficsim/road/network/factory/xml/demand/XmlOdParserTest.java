@@ -5,7 +5,6 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,10 +15,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -41,6 +37,9 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -63,7 +62,7 @@ public class XmlOdParserTest
     private Set<GTUType> gtuTypes = new HashSet<>();
 
     /** Simulator. */
-    OTSDEVSSimulatorInterface simulator = new OTSDEVSSimulator();
+    DEVSSimulatorInterface.TimeDoubleUnit simulator = new DEVSSimulator.TimeDoubleUnit();
 
     /** Parser. */
     private XmlOdParser parser;
@@ -84,14 +83,14 @@ public class XmlOdParserTest
             private static final long serialVersionUID = 20180528L;
 
             @Override
-            public void constructModel(SimulatorInterface<Time, Duration, OTSSimTimeDouble> sim)
-                    throws SimRuntimeException, RemoteException
+            public void constructModel(SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim)
+                    throws SimRuntimeException
             {
                 //
             }
 
             @Override
-            public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator() throws RemoteException
+            public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
             {
                 return XmlOdParserTest.this.simulator;
             }

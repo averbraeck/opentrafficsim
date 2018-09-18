@@ -16,9 +16,6 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
@@ -33,10 +30,8 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -50,6 +45,10 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test the non-GUI part of the ContourPlot class.
@@ -423,7 +422,7 @@ public class ContourPlotTest implements UNITS
                 gtuFollowingModel, laneChangeModel, network);
         car.getParameters().setParameter(ParameterTypes.LOOKAHEAD, new Length(10, LengthUnit.KILOMETER));
 
-        // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
+        // System.out.println("Running simulator from " + simulator.getSimulatorTime() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(0));
         double stopTime = gtuFollowingModel.timeAfterCompletionOfStep(0).si;
         simulator.runUpToAndIncluding(new Time(stopTime, TimeUnit.BASE_SECOND));
@@ -438,10 +437,10 @@ public class ContourPlotTest implements UNITS
                 ie = null; // ignore
             }
         }
-        // System.out.println("Simulator is now at " + simulator.getSimulatorTime().get());
+        // System.out.println("Simulator is now at " + simulator.getSimulatorTime());
         // System.out.println("Car at start time " + car.getOperationalPlan().getStartTime() + " is at "
         // + car.getPosition(car.getOperationalPlan().getStartTime()));
-        // System.out.println("At time " + simulator.getSimulator().getSimulatorTime().getTime() + " car is at " + car);
+        // System.out.println("At time " + simulator.getSimulator().getSimulatorTime() + " car is at " + car);
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
@@ -484,7 +483,7 @@ public class ContourPlotTest implements UNITS
             // System.out.println(String.format(
             // "hit=%s, t=%.3f, x=%.3f z=%f, exp=%.3f, carLastEval=%s, carNextEval=%s, simulatortime=%s", hit, x, y, z,
             // expectedZValue, car.getOperationalPlan().getStartTime().getSI(), car.getOperationalPlan().getEndTime()
-            // .getSI(), car.getSimulator().getSimulatorTime().get()));
+            // .getSI(), car.getSimulator().getSimulatorTime()));
             Number alternateZ = cp.getZ(0, item);
             if (hit)
             {
@@ -546,7 +545,7 @@ public class ContourPlotTest implements UNITS
                 }
             }
         }
-        // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
+        // System.out.println("Running simulator from " + simulator.getSimulatorTime() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(1));
         stopTime = gtuFollowingModel.timeAfterCompletionOfStep(1).si;
         simulator.runUpToAndIncluding(new Time(stopTime, TimeUnit.BASE_SECOND));
@@ -561,7 +560,7 @@ public class ContourPlotTest implements UNITS
                 ie = null; // ignore
             }
         }
-        // System.out.println("Simulator is now at " + simulator.getSimulatorTime().get());
+        // System.out.println("Simulator is now at " + simulator.getSimulatorTime());
         // Check that the time range has expanded
         xBins = cp.xAxisBins();
         bins = cp.getItemCount(0);
@@ -575,7 +574,7 @@ public class ContourPlotTest implements UNITS
             }
         }
         double expectedHighestTime =
-                Math.floor((car.getSimulator().getSimulatorTime().get().si - 0.001) / useTimeGranularity) * useTimeGranularity;
+                Math.floor((car.getSimulator().getSimulatorTime().si - 0.001) / useTimeGranularity) * useTimeGranularity;
         assertEquals("Time range should run up to " + expectedHighestTime, expectedHighestTime, observedHighestTime, 0.0001);
         // Check the updateHint method in the PointerHandler
         // First get the panel that stores the result of updateHint (this is ugly)
@@ -692,14 +691,14 @@ class ContourPlotModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, OTSSimTimeDouble> simulator) throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator) throws SimRuntimeException
     {
         // NOT USED
     }
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, OTSSimTimeDouble> getSimulator()
+    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
 
     {
         return null;

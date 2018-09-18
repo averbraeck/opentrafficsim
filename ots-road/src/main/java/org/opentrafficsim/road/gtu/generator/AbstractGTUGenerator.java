@@ -21,8 +21,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -48,6 +46,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -148,7 +147,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
+    public AbstractGTUGenerator(final String name, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final GTUType gtuType,
             final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist, final long maxGTUs,
             final Time startTime, final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
@@ -192,7 +191,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
     protected final void generate() throws Exception
     {
         // check if we are after the end time
-        if (getSimulator().getSimulatorTime().getTime().gt(this.endTime))
+        if (getSimulator().getSimulatorTime().gt(this.endTime))
         {
             return;
         }
@@ -253,8 +252,8 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
         }
 
         // reschedule next arrival
-        OTSSimTimeDouble nextTime = getSimulator().getSimulatorTime().plus(this.interarrivelTimeDist.draw());
-        if (nextTime.get().le(this.endTime))
+        Time nextTime = getSimulator().getSimulatorTime().plus(this.interarrivelTimeDist.draw());
+        if (nextTime.le(this.endTime))
         {
             getSimulator().scheduleEventAbs(nextTime, this, this, "generate", null);
         }
@@ -450,7 +449,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
      */
     private Headway headwayGTUSIForward(final double maxDistanceSI, final Lane generatorLane) throws GTUException
     {
-        Time when = getSimulator().getSimulatorTime().getTime();
+        Time when = getSimulator().getSimulatorTime();
         Headway foundMaxGTUDistanceSI = new HeadwayDistance(Double.MAX_VALUE);
         // search for the closest GTU on all current lanes we are registered on.
         Headway closest;
@@ -505,7 +504,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
     }
 
     /** @return simulator. */
-    public abstract OTSDEVSSimulatorInterface getSimulator();
+    public abstract DEVSSimulatorInterface.TimeDoubleUnit getSimulator();
 
     /** @return lengthDist. */
     public abstract ContinuousDistDoubleScalar.Rel<Length, LengthUnit> getLengthDist();

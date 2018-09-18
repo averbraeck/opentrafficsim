@@ -136,7 +136,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
         }
 
         // direct perception in first few time steps; build up history
-        Time now = getPerception().getGtu().getSimulator().getSimulatorTime().getTime();
+        Time now = getPerception().getGtu().getSimulator().getSimulatorTime();
         if (this.initialTime == null)
         {
             this.initialTime = now;
