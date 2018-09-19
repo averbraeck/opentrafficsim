@@ -1069,6 +1069,15 @@
       <url>http://repo.boundlessgeo.com/main/</url>
     </repository>
 
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>osgeo</id>
+      <name>osgeo</name>
+      <url>>http://download.osgeo.org/webdav/geotools/</url>
+    </repository>
+    
   </repositories>
 
   <licenses>
