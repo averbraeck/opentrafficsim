@@ -37,7 +37,7 @@ import nl.tudelft.simulation.language.Throw;
 /**
  * Perception of surrounding traffic on the own road, i.e. without crossing traffic.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 22, 2016 <br>
@@ -527,7 +527,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /**
      * GTU at a distance, as preliminary info towards perceiving it. For instance, as a set from a search algorithm.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -586,7 +586,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * Translation from a set of {@code DistanceGTU}'s, to a sorted set of {@code HeadwayGTU}'s. This bridges the gap between a
      * raw network search, and the perceived result.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

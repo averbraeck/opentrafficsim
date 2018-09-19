@@ -25,7 +25,7 @@ import nl.tudelft.simulation.immutablecollections.ImmutableList;
 /**
  * Basics of all plots in the Open Traffic Simulator.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 16, 2016 <br>

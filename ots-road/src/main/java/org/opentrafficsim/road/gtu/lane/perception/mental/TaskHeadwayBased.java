@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
 /**
  * Task class that translates a (composite) headway in to a task demand.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 25 jun. 2018 <br>
@@ -78,7 +78,7 @@ public abstract class TaskHeadwayBased implements Task
     /**
      * Simple collector implementation to obtain time headway.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

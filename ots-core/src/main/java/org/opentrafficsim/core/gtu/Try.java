@@ -50,7 +50,7 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
  * <br>
  * Try also has a few methods to aid JUNIT tests: {@code testFail(...)} and {@code testNotFail(...)}.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 31 jan. 2018 <br>
@@ -899,7 +899,7 @@ public final class Try
      *         "File %s is not a valid file.", fileString);
      * </pre>
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -927,7 +927,7 @@ public final class Try
      * Try.execute(() -&gt; fis.close(), "Could not close the file.");
      * </pre>
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

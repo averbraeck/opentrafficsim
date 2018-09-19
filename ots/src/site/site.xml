@@ -35,11 +35,10 @@
       <item name="ots-aimsun-demo" href="http://opentrafficsim.org/docs/${version}/ots-aimsun-demo/index.html" />
     </menu>
      
-    <menu name="PROJECT INFO">
+    <menu name="PROJECT INFO" inherit="bottom">
       <item name="About" href="index.html" />
-      <item name="Project Summary" href="project-summary.html" />
-      <item name="Dependencies" href="dependencies.html" />
-      <item name="Project Team" href="team-list.html" />
+      <item name="Project Summary" href="summary.html" />
+      <item name="Project Team" href="team.html" />
       <item name="Project License" href="license.html" />
       <item name="Versions + Changes" href="changes-report.html" />
     </menu>

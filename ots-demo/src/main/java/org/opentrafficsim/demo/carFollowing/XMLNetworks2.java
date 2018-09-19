@@ -86,7 +86,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * <p>
- * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2016-12-13 02:02:22 +0100 (Tue, 13 Dec 2016) $, @version $Revision: 2930 $, by $Author: wjschakel $,
@@ -186,7 +186,7 @@ public class XMLNetworks2 extends AbstractWrappableAnimation implements UNITS
 
 /**
  * <p>
- * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2016-12-13 02:02:22 +0100 (Tue, 13 Dec 2016) $, @version $Revision: 2930 $, by $Author: wjschakel $,
@@ -947,7 +947,7 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
     /**
      * The route colorer to show whether GTUs stay on the main route or go right at the split.
      * <p>
-     * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>

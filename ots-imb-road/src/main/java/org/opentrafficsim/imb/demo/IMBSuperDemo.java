@@ -68,7 +68,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 /**
  * Several demos in one application.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2016-09-06 11:41:50 +0200 (Tue, 06 Sep 2016) $, @version $Revision: 2230 $, by $Author: pknoppers $,

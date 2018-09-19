@@ -16,8 +16,9 @@
 
     <menu name="PROJECT REPORTS">
       <item name="Reports" href="project-reports.html" />
+      <item name="Dependencies" href="dependencies.html" />
       <item name="Source Xref" href="xref/index.html" target="_blank" />
-      <item name="Test JavaDocs" href="test-apidocs/index.html" target="_blank" />
+      <item name="Test JavaDocs" href="testapidocs/index.html" target="_blank" />
       <item name="Test Xref" href="xref-test/index.html" target="_blank" />
       <item name="Checkstyle" href="checkstyle.html" />
       <item name="Surefire report" href="surefire-report.html" />
@@ -26,16 +27,6 @@
       <item name="FindBugs" href="findbugs.html" />
       <item name="CPD" href="cpd.html" />
       <item name="PMD" href="pmd.html" />
-      <item name="JDepend" href="jdepend-report.html" />
-    </menu>
-
-    <menu name="PROJECT INFO">
-      <item name="About" href="index.html" />
-      <item name="Project Summary" href="project-summary.html" />
-      <item name="Dependencies" href="dependencies.html" />
-      <item name="Project Team" href="team-list.html" />
-      <item name="Project License" href="license.html" />
-      <item name="Versions + Changes" href="changes-report.html" />
     </menu>
 
   </body>

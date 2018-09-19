@@ -58,7 +58,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * sufficient room to construct a GTU at the specified lane locations. The speed of a construction GTU may be reduced to ensure
  * it does not run into its immediate leader GTU.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 8, 2016 <br>
@@ -462,7 +462,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     /**
      * Placement contains the information that a {@code RoomChecker} returns.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
