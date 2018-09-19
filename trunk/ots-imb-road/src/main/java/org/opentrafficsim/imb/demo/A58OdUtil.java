@@ -114,7 +114,7 @@ public class A58OdUtil
      * @param gtuColorer the GTU colorer
      * @param simulator the simulator
      * @param penetrationRate the penetration rate parameter
-     * @throws ProbabilityException
+     * @throws ProbabilityException on error with the lane-based distributions
      */
     public static void createDemand(final OTSNetwork network, final GTUColorer gtuColorer,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator, double penetrationRate) throws ProbabilityException
