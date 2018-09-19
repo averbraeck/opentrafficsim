@@ -98,7 +98,8 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </tr>
  * <tr>
  * <td>metadataId_n</td>
- * <td>String</td> <tdid of the last metadata entry</td>
+ * <td>String</td>
+ * <td>id of the last metadata entry</td>
  * </tr>
  * <tr>
  * <td>metadataType_n</td>
