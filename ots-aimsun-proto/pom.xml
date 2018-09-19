@@ -5,7 +5,7 @@
   <parent>
     <groupId>opentrafficsim</groupId>
     <artifactId>ots</artifactId>
-    <version>0.15.01-SNAPSHOT</version>
+    <version>1.00.01</version>
     <relativePath>../ots/pom.xml</relativePath>
   </parent>
 
@@ -13,11 +13,15 @@
   <name>OTS AIMSUN protobuf classes</name>
   <description>OTS AIMSUN protobuf and generated Java classes</description>
 
+  <!-- Don't make javadoc crash on the missing HTML tags for generated classes -->
+  <properties>
+    <doclint>none</doclint>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
-      <version>3.2.0</version>
     </dependency>
   </dependencies>
   
@@ -28,7 +32,7 @@
       <extension>
         <groupId>kr.motd.maven</groupId>
         <artifactId>os-maven-plugin</artifactId>
-        <version>1.4.0.Final</version>
+        <version>1.5.0.Final</version>
       </extension>
     </extensions>
 
@@ -46,7 +50,7 @@
       <plugin>
         <groupId>org.xolstice.maven.plugins</groupId>
         <artifactId>protobuf-maven-plugin</artifactId>
-        <version>0.5.0</version>
+        <version>0.5.1</version>
         <extensions>true</extensions>
         <executions>
           <execution>
@@ -55,8 +59,10 @@
               <goal>test-compile</goal>
             </goals>
             <configuration>
-              <protocArtifact>com.google.protobuf:protoc:3.2.0:exe:${os.detected.classifier}</protocArtifact>
+              <protocArtifact>com.google.protobuf:protoc:3.4.0:exe:${os.detected.classifier}</protocArtifact>
               <outputDirectory>${basedir}/src/main/java</outputDirectory>
+              <checkStaleness>true</checkStaleness>
+              <includeDependenciesInDescriptorSet>true</includeDependenciesInDescriptorSet>
             </configuration>
           </execution>
         </executions>

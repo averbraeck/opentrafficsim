@@ -1255,6 +1255,20 @@ public final class AimsunControlProtoBuf {
      */
     org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPositionOrBuilder getGtuPosOrBuilder(
         int index);
+
+    /**
+     * <code>required string status = 2;</code>
+     */
+    boolean hasStatus();
+    /**
+     * <code>required string status = 2;</code>
+     */
+    java.lang.String getStatus();
+    /**
+     * <code>required string status = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getStatusBytes();
   }
   /**
    * Protobuf type {@code org.opentrafficsim.aimsun.proto.GTUPositions}
@@ -1269,6 +1283,7 @@ public final class AimsunControlProtoBuf {
     }
     private GTUPositions() {
       gtuPos_ = java.util.Collections.emptyList();
+      status_ = "";
     }
 
     @java.lang.Override
@@ -1306,6 +1321,12 @@ public final class AimsunControlProtoBuf {
               }
               gtuPos_.add(
                   input.readMessage(org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition.PARSER, extensionRegistry));
+              break;
+            }
+            case 18: {
+              com.google.protobuf.ByteString bs = input.readBytes();
+              bitField0_ |= 0x00000001;
+              status_ = bs;
               break;
             }
           }
@@ -1388,6 +1409,42 @@ public final class AimsunControlProtoBuf {
        * <code>required double angle = 5;</code>
        */
       double getAngle();
+
+      /**
+       * <code>required double width = 6;</code>
+       */
+      boolean hasWidth();
+      /**
+       * <code>required double width = 6;</code>
+       */
+      double getWidth();
+
+      /**
+       * <code>required double length = 7;</code>
+       */
+      boolean hasLength();
+      /**
+       * <code>required double length = 7;</code>
+       */
+      double getLength();
+
+      /**
+       * <code>required int32 gtuTypeId = 8;</code>
+       */
+      boolean hasGtuTypeId();
+      /**
+       * <code>required int32 gtuTypeId = 8;</code>
+       */
+      int getGtuTypeId();
+
+      /**
+       * <code>required double speed = 9;</code>
+       */
+      boolean hasSpeed();
+      /**
+       * <code>required double speed = 9;</code>
+       */
+      double getSpeed();
     }
     /**
      * Protobuf type {@code org.opentrafficsim.aimsun.proto.GTUPositions.GTUPosition}
@@ -1406,6 +1463,10 @@ public final class AimsunControlProtoBuf {
         y_ = 0D;
         z_ = 0D;
         angle_ = 0D;
+        width_ = 0D;
+        length_ = 0D;
+        gtuTypeId_ = 0;
+        speed_ = 0D;
       }
 
       @java.lang.Override
@@ -1460,6 +1521,26 @@ public final class AimsunControlProtoBuf {
               case 41: {
                 bitField0_ |= 0x00000010;
                 angle_ = input.readDouble();
+                break;
+              }
+              case 49: {
+                bitField0_ |= 0x00000020;
+                width_ = input.readDouble();
+                break;
+              }
+              case 57: {
+                bitField0_ |= 0x00000040;
+                length_ = input.readDouble();
+                break;
+              }
+              case 64: {
+                bitField0_ |= 0x00000080;
+                gtuTypeId_ = input.readInt32();
+                break;
+              }
+              case 73: {
+                bitField0_ |= 0x00000100;
+                speed_ = input.readDouble();
                 break;
               }
             }
@@ -1589,6 +1670,66 @@ public final class AimsunControlProtoBuf {
         return angle_;
       }
 
+      public static final int WIDTH_FIELD_NUMBER = 6;
+      private double width_;
+      /**
+       * <code>required double width = 6;</code>
+       */
+      public boolean hasWidth() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>required double width = 6;</code>
+       */
+      public double getWidth() {
+        return width_;
+      }
+
+      public static final int LENGTH_FIELD_NUMBER = 7;
+      private double length_;
+      /**
+       * <code>required double length = 7;</code>
+       */
+      public boolean hasLength() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      /**
+       * <code>required double length = 7;</code>
+       */
+      public double getLength() {
+        return length_;
+      }
+
+      public static final int GTUTYPEID_FIELD_NUMBER = 8;
+      private int gtuTypeId_;
+      /**
+       * <code>required int32 gtuTypeId = 8;</code>
+       */
+      public boolean hasGtuTypeId() {
+        return ((bitField0_ & 0x00000080) == 0x00000080);
+      }
+      /**
+       * <code>required int32 gtuTypeId = 8;</code>
+       */
+      public int getGtuTypeId() {
+        return gtuTypeId_;
+      }
+
+      public static final int SPEED_FIELD_NUMBER = 9;
+      private double speed_;
+      /**
+       * <code>required double speed = 9;</code>
+       */
+      public boolean hasSpeed() {
+        return ((bitField0_ & 0x00000100) == 0x00000100);
+      }
+      /**
+       * <code>required double speed = 9;</code>
+       */
+      public double getSpeed() {
+        return speed_;
+      }
+
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
@@ -1608,6 +1749,22 @@ public final class AimsunControlProtoBuf {
           return false;
         }
         if (!hasAngle()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasWidth()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasLength()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasGtuTypeId()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasSpeed()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -1631,6 +1788,18 @@ public final class AimsunControlProtoBuf {
         }
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
           output.writeDouble(5, angle_);
+        }
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+          output.writeDouble(6, width_);
+        }
+        if (((bitField0_ & 0x00000040) == 0x00000040)) {
+          output.writeDouble(7, length_);
+        }
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          output.writeInt32(8, gtuTypeId_);
+        }
+        if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          output.writeDouble(9, speed_);
         }
         unknownFields.writeTo(output);
       }
@@ -1658,6 +1827,22 @@ public final class AimsunControlProtoBuf {
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
           size += com.google.protobuf.CodedOutputStream
             .computeDoubleSize(5, angle_);
+        }
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeDoubleSize(6, width_);
+        }
+        if (((bitField0_ & 0x00000040) == 0x00000040)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeDoubleSize(7, length_);
+        }
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(8, gtuTypeId_);
+        }
+        if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeDoubleSize(9, speed_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -1709,6 +1894,32 @@ public final class AimsunControlProtoBuf {
               == java.lang.Double.doubleToLongBits(
                   other.getAngle()));
         }
+        result = result && (hasWidth() == other.hasWidth());
+        if (hasWidth()) {
+          result = result && (
+              java.lang.Double.doubleToLongBits(getWidth())
+              == java.lang.Double.doubleToLongBits(
+                  other.getWidth()));
+        }
+        result = result && (hasLength() == other.hasLength());
+        if (hasLength()) {
+          result = result && (
+              java.lang.Double.doubleToLongBits(getLength())
+              == java.lang.Double.doubleToLongBits(
+                  other.getLength()));
+        }
+        result = result && (hasGtuTypeId() == other.hasGtuTypeId());
+        if (hasGtuTypeId()) {
+          result = result && (getGtuTypeId()
+              == other.getGtuTypeId());
+        }
+        result = result && (hasSpeed() == other.hasSpeed());
+        if (hasSpeed()) {
+          result = result && (
+              java.lang.Double.doubleToLongBits(getSpeed())
+              == java.lang.Double.doubleToLongBits(
+                  other.getSpeed()));
+        }
         result = result && unknownFields.equals(other.unknownFields);
         return result;
       }
@@ -1743,6 +1954,25 @@ public final class AimsunControlProtoBuf {
           hash = (37 * hash) + ANGLE_FIELD_NUMBER;
           hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
               java.lang.Double.doubleToLongBits(getAngle()));
+        }
+        if (hasWidth()) {
+          hash = (37 * hash) + WIDTH_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+              java.lang.Double.doubleToLongBits(getWidth()));
+        }
+        if (hasLength()) {
+          hash = (37 * hash) + LENGTH_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+              java.lang.Double.doubleToLongBits(getLength()));
+        }
+        if (hasGtuTypeId()) {
+          hash = (37 * hash) + GTUTYPEID_FIELD_NUMBER;
+          hash = (53 * hash) + getGtuTypeId();
+        }
+        if (hasSpeed()) {
+          hash = (37 * hash) + SPEED_FIELD_NUMBER;
+          hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+              java.lang.Double.doubleToLongBits(getSpeed()));
         }
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
@@ -1872,6 +2102,14 @@ public final class AimsunControlProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000008);
           angle_ = 0D;
           bitField0_ = (bitField0_ & ~0x00000010);
+          width_ = 0D;
+          bitField0_ = (bitField0_ & ~0x00000020);
+          length_ = 0D;
+          bitField0_ = (bitField0_ & ~0x00000040);
+          gtuTypeId_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000080);
+          speed_ = 0D;
+          bitField0_ = (bitField0_ & ~0x00000100);
           return this;
         }
 
@@ -1916,6 +2154,22 @@ public final class AimsunControlProtoBuf {
             to_bitField0_ |= 0x00000010;
           }
           result.angle_ = angle_;
+          if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+            to_bitField0_ |= 0x00000020;
+          }
+          result.width_ = width_;
+          if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+            to_bitField0_ |= 0x00000040;
+          }
+          result.length_ = length_;
+          if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+            to_bitField0_ |= 0x00000080;
+          }
+          result.gtuTypeId_ = gtuTypeId_;
+          if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+            to_bitField0_ |= 0x00000100;
+          }
+          result.speed_ = speed_;
           result.bitField0_ = to_bitField0_;
           onBuilt();
           return result;
@@ -1975,6 +2229,18 @@ public final class AimsunControlProtoBuf {
           if (other.hasAngle()) {
             setAngle(other.getAngle());
           }
+          if (other.hasWidth()) {
+            setWidth(other.getWidth());
+          }
+          if (other.hasLength()) {
+            setLength(other.getLength());
+          }
+          if (other.hasGtuTypeId()) {
+            setGtuTypeId(other.getGtuTypeId());
+          }
+          if (other.hasSpeed()) {
+            setSpeed(other.getSpeed());
+          }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
           return this;
@@ -1991,6 +2257,18 @@ public final class AimsunControlProtoBuf {
             return false;
           }
           if (!hasAngle()) {
+            return false;
+          }
+          if (!hasWidth()) {
+            return false;
+          }
+          if (!hasLength()) {
+            return false;
+          }
+          if (!hasGtuTypeId()) {
+            return false;
+          }
+          if (!hasSpeed()) {
             return false;
           }
           return true;
@@ -2218,6 +2496,134 @@ public final class AimsunControlProtoBuf {
           onChanged();
           return this;
         }
+
+        private double width_ ;
+        /**
+         * <code>required double width = 6;</code>
+         */
+        public boolean hasWidth() {
+          return ((bitField0_ & 0x00000020) == 0x00000020);
+        }
+        /**
+         * <code>required double width = 6;</code>
+         */
+        public double getWidth() {
+          return width_;
+        }
+        /**
+         * <code>required double width = 6;</code>
+         */
+        public Builder setWidth(double value) {
+          bitField0_ |= 0x00000020;
+          width_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required double width = 6;</code>
+         */
+        public Builder clearWidth() {
+          bitField0_ = (bitField0_ & ~0x00000020);
+          width_ = 0D;
+          onChanged();
+          return this;
+        }
+
+        private double length_ ;
+        /**
+         * <code>required double length = 7;</code>
+         */
+        public boolean hasLength() {
+          return ((bitField0_ & 0x00000040) == 0x00000040);
+        }
+        /**
+         * <code>required double length = 7;</code>
+         */
+        public double getLength() {
+          return length_;
+        }
+        /**
+         * <code>required double length = 7;</code>
+         */
+        public Builder setLength(double value) {
+          bitField0_ |= 0x00000040;
+          length_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required double length = 7;</code>
+         */
+        public Builder clearLength() {
+          bitField0_ = (bitField0_ & ~0x00000040);
+          length_ = 0D;
+          onChanged();
+          return this;
+        }
+
+        private int gtuTypeId_ ;
+        /**
+         * <code>required int32 gtuTypeId = 8;</code>
+         */
+        public boolean hasGtuTypeId() {
+          return ((bitField0_ & 0x00000080) == 0x00000080);
+        }
+        /**
+         * <code>required int32 gtuTypeId = 8;</code>
+         */
+        public int getGtuTypeId() {
+          return gtuTypeId_;
+        }
+        /**
+         * <code>required int32 gtuTypeId = 8;</code>
+         */
+        public Builder setGtuTypeId(int value) {
+          bitField0_ |= 0x00000080;
+          gtuTypeId_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required int32 gtuTypeId = 8;</code>
+         */
+        public Builder clearGtuTypeId() {
+          bitField0_ = (bitField0_ & ~0x00000080);
+          gtuTypeId_ = 0;
+          onChanged();
+          return this;
+        }
+
+        private double speed_ ;
+        /**
+         * <code>required double speed = 9;</code>
+         */
+        public boolean hasSpeed() {
+          return ((bitField0_ & 0x00000100) == 0x00000100);
+        }
+        /**
+         * <code>required double speed = 9;</code>
+         */
+        public double getSpeed() {
+          return speed_;
+        }
+        /**
+         * <code>required double speed = 9;</code>
+         */
+        public Builder setSpeed(double value) {
+          bitField0_ |= 0x00000100;
+          speed_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required double speed = 9;</code>
+         */
+        public Builder clearSpeed() {
+          bitField0_ = (bitField0_ & ~0x00000100);
+          speed_ = 0D;
+          onChanged();
+          return this;
+        }
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
           return super.setUnknownFields(unknownFields);
@@ -2267,6 +2673,7 @@ public final class AimsunControlProtoBuf {
 
     }
 
+    private int bitField0_;
     public static final int GTUPOS_FIELD_NUMBER = 1;
     private java.util.List<org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition> gtuPos_;
     /**
@@ -2302,12 +2709,58 @@ public final class AimsunControlProtoBuf {
       return gtuPos_.get(index);
     }
 
+    public static final int STATUS_FIELD_NUMBER = 2;
+    private volatile java.lang.Object status_;
+    /**
+     * <code>required string status = 2;</code>
+     */
+    public boolean hasStatus() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required string status = 2;</code>
+     */
+    public java.lang.String getStatus() {
+      java.lang.Object ref = status_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          status_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string status = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getStatusBytes() {
+      java.lang.Object ref = status_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        status_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
+      if (!hasStatus()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       for (int i = 0; i < getGtuPosCount(); i++) {
         if (!getGtuPos(i).isInitialized()) {
           memoizedIsInitialized = 0;
@@ -2323,6 +2776,9 @@ public final class AimsunControlProtoBuf {
       for (int i = 0; i < gtuPos_.size(); i++) {
         output.writeMessage(1, gtuPos_.get(i));
       }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, status_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -2334,6 +2790,9 @@ public final class AimsunControlProtoBuf {
       for (int i = 0; i < gtuPos_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, gtuPos_.get(i));
+      }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, status_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -2354,6 +2813,11 @@ public final class AimsunControlProtoBuf {
       boolean result = true;
       result = result && getGtuPosList()
           .equals(other.getGtuPosList());
+      result = result && (hasStatus() == other.hasStatus());
+      if (hasStatus()) {
+        result = result && getStatus()
+            .equals(other.getStatus());
+      }
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -2368,6 +2832,10 @@ public final class AimsunControlProtoBuf {
       if (getGtuPosCount() > 0) {
         hash = (37 * hash) + GTUPOS_FIELD_NUMBER;
         hash = (53 * hash) + getGtuPosList().hashCode();
+      }
+      if (hasStatus()) {
+        hash = (37 * hash) + STATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getStatus().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -2494,6 +2962,8 @@ public final class AimsunControlProtoBuf {
         } else {
           gtuPosBuilder_.clear();
         }
+        status_ = "";
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -2517,6 +2987,7 @@ public final class AimsunControlProtoBuf {
       public org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions buildPartial() {
         org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions result = new org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         if (gtuPosBuilder_ == null) {
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
             gtuPos_ = java.util.Collections.unmodifiableList(gtuPos_);
@@ -2526,6 +2997,11 @@ public final class AimsunControlProtoBuf {
         } else {
           result.gtuPos_ = gtuPosBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.status_ = status_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -2593,12 +3069,20 @@ public final class AimsunControlProtoBuf {
             }
           }
         }
+        if (other.hasStatus()) {
+          bitField0_ |= 0x00000002;
+          status_ = other.status_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
+        if (!hasStatus()) {
+          return false;
+        }
         for (int i = 0; i < getGtuPosCount(); i++) {
           if (!getGtuPos(i).isInitialized()) {
             return false;
@@ -2864,6 +3348,82 @@ public final class AimsunControlProtoBuf {
           gtuPos_ = null;
         }
         return gtuPosBuilder_;
+      }
+
+      private java.lang.Object status_ = "";
+      /**
+       * <code>required string status = 2;</code>
+       */
+      public boolean hasStatus() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required string status = 2;</code>
+       */
+      public java.lang.String getStatus() {
+        java.lang.Object ref = status_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            status_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string status = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getStatusBytes() {
+        java.lang.Object ref = status_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          status_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string status = 2;</code>
+       */
+      public Builder setStatus(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        status_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string status = 2;</code>
+       */
+      public Builder clearStatus() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        status_ = getDefaultInstance().getStatus();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string status = 2;</code>
+       */
+      public Builder setStatusBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        status_ = value;
+        onChanged();
+        return this;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -4085,17 +4645,20 @@ public final class AimsunControlProtoBuf {
       "imsun.proto\"K\n\020CreateSimulation\022\017\n\007runTi" +
       "me\030\001 \002(\001\022\022\n\nwarmUpTime\030\002 \002(\001\022\022\n\nnetworkX" +
       "ML\030\003 \001(\t\"\035\n\rSimulateUntil\022\014\n\004time\030\001 \002(\001\"" +
-      "\247\001\n\014GTUPositions\022I\n\006gtuPos\030\001 \003(\01329.org.o" +
+      "\371\001\n\014GTUPositions\022I\n\006gtuPos\030\001 \003(\01329.org.o" +
       "pentrafficsim.aimsun.proto.GTUPositions." +
-      "GTUPosition\032L\n\013GTUPosition\022\r\n\005gtuId\030\001 \002(" +
-      "\t\022\t\n\001x\030\002 \002(\001\022\t\n\001y\030\003 \002(\001\022\t\n\001z\030\004 \001(\001\022\r\n\005an" +
-      "gle\030\005 \002(\001\"\362\001\n\nOTSMessage\022M\n\020createSimula" +
-      "tion\030\001 \001(\01321.org.opentrafficsim.aimsun.p",
-      "roto.CreateSimulationH\000\022G\n\rsimulateUntil" +
-      "\030\002 \001(\0132..org.opentrafficsim.aimsun.proto" +
-      ".SimulateUntilH\000\022E\n\014gtuPositions\030\003 \001(\0132-" +
-      ".org.opentrafficsim.aimsun.proto.GTUPosi" +
-      "tionsH\000B\005\n\003msgB\027B\025AimsunControlProtoBuf"
+      "GTUPosition\022\016\n\006status\030\002 \002(\t\032\215\001\n\013GTUPosit" +
+      "ion\022\r\n\005gtuId\030\001 \002(\t\022\t\n\001x\030\002 \002(\001\022\t\n\001y\030\003 \002(\001" +
+      "\022\t\n\001z\030\004 \001(\001\022\r\n\005angle\030\005 \002(\001\022\r\n\005width\030\006 \002(" +
+      "\001\022\016\n\006length\030\007 \002(\001\022\021\n\tgtuTypeId\030\010 \002(\005\022\r\n\005",
+      "speed\030\t \002(\001\"\362\001\n\nOTSMessage\022M\n\020createSimu" +
+      "lation\030\001 \001(\01321.org.opentrafficsim.aimsun" +
+      ".proto.CreateSimulationH\000\022G\n\rsimulateUnt" +
+      "il\030\002 \001(\0132..org.opentrafficsim.aimsun.pro" +
+      "to.SimulateUntilH\000\022E\n\014gtuPositions\030\003 \001(\013" +
+      "2-.org.opentrafficsim.aimsun.proto.GTUPo" +
+      "sitionsH\000B\005\n\003msgB\027B\025AimsunControlProtoBu" +
+      "f"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4126,13 +4689,13 @@ public final class AimsunControlProtoBuf {
     internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_descriptor,
-        new java.lang.String[] { "GtuPos", });
+        new java.lang.String[] { "GtuPos", "Status", });
     internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_descriptor =
       internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_descriptor.getNestedTypes().get(0);
     internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_opentrafficsim_aimsun_proto_GTUPositions_GTUPosition_descriptor,
-        new java.lang.String[] { "GtuId", "X", "Y", "Z", "Angle", });
+        new java.lang.String[] { "GtuId", "X", "Y", "Z", "Angle", "Width", "Length", "GtuTypeId", "Speed", });
     internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_org_opentrafficsim_aimsun_proto_OTSMessage_fieldAccessorTable = new
