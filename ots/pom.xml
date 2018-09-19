@@ -1211,7 +1211,7 @@
     </snapshotRepository>
     <site>
       <id>ots-deployment</id>
-      <name>open trafffic sim website</name>
+      <name>open traffic sim website</name>
       <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots.version}</url>
     </site>
   </distributionManagement>
