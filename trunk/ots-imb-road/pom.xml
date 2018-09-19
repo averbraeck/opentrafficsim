@@ -13,9 +13,9 @@
   <name>The code to link ots-road to IMB</name>
   <description>The code to link ots-road to IMB</description>
 
-  <!-- Don't make javadoc crash on the HTML tags for the IMB table such as STYLE  -->
+  <!-- Don't make javadoc crash on the missing HTML tags for generated classes -->
   <properties>
-    <additionalparam>-Xdoclint:accessibility,reference,syntax</additionalparam>
+    <javadoc.opts>-Xdoclint:accessibility,reference,syntax</javadoc.opts>
   </properties>
 
   <dependencies>

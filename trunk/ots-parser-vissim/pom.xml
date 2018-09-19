@@ -13,9 +13,9 @@
   <name>Open Traffic Sim VISSIM parser classes</name>
   <description>Open Traffic Sim parser classes for VISSIM export files (ANM XML-format)</description>
 
-  <!-- Don't make javadoc crash on the HTML tags for the IMB table such as STYLE, or missing comments in the nl.tno package  -->
+  <!-- Don't make javadoc crash on the missing HTML tags for generated classes -->
   <properties>
-    <additionalparam>-Xdoclint:accessibility,reference,syntax</additionalparam>
+    <javadoc.opts>-Xdoclint:accessibility,reference,syntax</javadoc.opts>
   </properties>
 
   <dependencies>
