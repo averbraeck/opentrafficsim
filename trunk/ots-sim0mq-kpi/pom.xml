@@ -15,7 +15,7 @@
 
   <!-- Don't make javadoc crash on the HTML tags for the Sim0MQ tables such as STYLE  -->
   <properties>
-    <doclint>-Xdoclint:accessibility,reference,syntax</doclint>
+    <doclint>accessibility,reference,syntax</doclint>
   </properties>
 
   <dependencies>
