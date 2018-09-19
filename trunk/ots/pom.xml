@@ -9,11 +9,11 @@
 
   <name>OpenTrafficSim base project</name>
   <description>Settings and base definitions for the OpenTrafficSim project</description>
-  <url>www.opentrafficsim.org</url>
+  <url>https://opentrafficsim.org</url>
 
   <organization>
     <name>Delft University of Technology</name>
-    <url>www.opentrafficsim.org</url>
+    <url>https://opentrafficsim.org</url>
   </organization>
 
   <inceptionYear>2014</inceptionYear>
@@ -163,6 +163,7 @@
         <version>${maven.site.version}</version>
         <configuration>
           <chmod>true</chmod>
+          <relativizeDecorationLinks>false</relativizeDecorationLinks>
           <inputEncoding>UTF-8</inputEncoding>
           <outputEncoding>UTF-8</outputEncoding>
           <templateDirectory>src/site</templateDirectory>
@@ -1064,7 +1065,7 @@
       </snapshots>
       <id>apache</id>
       <name>apache</name>
-      <url>http://repo.maven.apache.org/maven2</url>
+      <url>https://repo.maven.apache.org/maven2</url>
     </repository>
     
     <repository>
@@ -1073,7 +1074,7 @@
       </snapshots>
       <id>boundless</id>
       <name>boundless</name>
-      <url>http://repo.boundlessgeo.com/main/</url>
+      <url>https://repo.boundlessgeo.com/main/</url>
     </repository>
 
     <repository>
@@ -1082,7 +1083,7 @@
       </snapshots>
       <id>osgeo</id>
       <name>osgeo</name>
-      <url>>http://download.osgeo.org/webdav/geotools/</url>
+      <url>>https://download.osgeo.org/webdav/geotools/</url>
     </repository>
     
   </repositories>
@@ -1090,7 +1091,7 @@
   <licenses>
     <license>
       <name>BSD-style license</name>
-      <url>http://opentrafficsim.org/docs/license.html</url>
+      <url>https://opentrafficsim.org/docs/license.html</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -1100,9 +1101,9 @@
       <id>averbraeck</id>
       <name>Alexander Verbraeck</name>
       <email>a.verbraeck@tudelft.nl</email>
-      <url>http://www.tbm.tudelft.nl/averbraeck</url>
+      <url>https://www.tbm.tudelft.nl/averbraeck</url>
       <organization>Delft University of Technology, the Netherlands</organization>
-      <organizationUrl>http://www.simulation.tudelft.nl</organizationUrl>
+      <organizationUrl>https://simulation.tudelft.nl</organizationUrl>
       <timezone>1</timezone>
       <roles>
         <role>architect</role>
@@ -1115,9 +1116,9 @@
       <id>hvanlint</id>
       <name>Hans van Lint</name>
       <email>a.verbraeck@tudelft.nl</email>
-      <url>http://hansvanlint.weblog.tudelft.nl/</url>
+      <url>https://hansvanlint.weblog.tudelft.nl/</url>
       <organization>Delft University of Technology, the Netherlands</organization>
-      <organizationUrl>http://www.citg.tudelft.nl</organizationUrl>
+      <organizationUrl>https://www.citg.tudelft.nl</organizationUrl>
       <timezone>1</timezone>
       <roles>
         <role>architect</role>
@@ -1128,9 +1129,9 @@
       <id>pknoppers</id>
       <name>Peter Knoppers</name>
       <email>p.knoppers@tudelft.nl</email>
-      <url>http://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/staff-information/ir-peter-knoppers/</url>
+      <url>https://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/staff-information/ir-peter-knoppers/</url>
       <organization>Delft University of Technology, the Netherlands</organization>
-      <organizationUrl>http://www.citg.tudelft.nl</organizationUrl>
+      <organizationUrl>https://www.citg.tudelft.nl</organizationUrl>
       <timezone>1</timezone>
       <roles>
         <role>architect</role>
@@ -1143,9 +1144,9 @@
       <id>wschakel</id>
       <name>Wouter Schakel</name>
       <email>w.schakel@tudelft.nl</email>
-      <url>http://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/</url>
+      <url>https://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/</url>
       <organization>Delft University of Technology, the Netherlands</organization>
-      <organizationUrl>http://www.citg.tudelft.nl</organizationUrl>
+      <organizationUrl>https://www.citg.tudelft.nl</organizationUrl>
       <timezone>1</timezone>
       <roles>
         <role>architect</role>
@@ -1161,9 +1162,9 @@
     <contributor>
       <name>Guus Tamminga</name>
       <email>g.f.tamminga@tudelft.nl</email>
-      <url>http://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/staff-information/drs-guus-tamminga-msc/</url>
+      <url>https://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/staff-information/drs-guus-tamminga-msc/</url>
       <organization>Delft University of Technology, the Netherlands</organization>
-      <organizationUrl>http://www.citg.tudelft.nl</organizationUrl>
+      <organizationUrl>https://www.citg.tudelft.nl</organizationUrl>
       <timezone>1</timezone>
       <roles>
         <role>architect</role>
@@ -1194,7 +1195,7 @@
   
   
   <distributionManagement>
-    <downloadUrl>http://opentrafficsim.org/maven</downloadUrl>
+    <downloadUrl>https://opentrafficsim.org/maven</downloadUrl>
     <repository>
       <uniqueVersion>false</uniqueVersion>
       <id>ots-deployment</id>
