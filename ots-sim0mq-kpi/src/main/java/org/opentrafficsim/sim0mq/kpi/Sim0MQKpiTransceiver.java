@@ -82,7 +82,8 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * </tr>
  * <tr>
  * <td>metadataId_n</td>
- * <td>String</td> <tdid of the last metadata entry</td>
+ * <td>String</td>
+ * <td>id of the last metadata entry</td>
  * </tr>
  * <tr>
  * <td>metadataType_n</td>
@@ -281,81 +282,81 @@ public class Sim0MQKpiTransceiver implements Serializable
 
     // TODO implement DELETE message
 
-//    /**
-//     * Construct a new ImbKpiTransceiver.
-//     * @param connector Connector; the IMB connector
-//     * @param time Time; time of creation
-//     * @param networkId String; the network id
-//     * @param query Query; the statistics query
-//     * @param transmissionInterval Duration; the interval between generation of graphs
-//     * @throws IMBException when the post of the IMB message fails
-//     */
-//    public Sim0MQKpiTransceiver(final Connector connector, Time time, String networkId, final Query query,
-//            final Duration transmissionInterval) throws IMBException
-//    {
-//        this.connector = connector;
-//        this.query = query;
-//        this.networkId = networkId;
-//        this.transmissionInterval = transmissionInterval;
-//
-//        List<Object> newMessage = new ArrayList<>();
-//        newMessage.add(time.si);
-//        newMessage.add(query.getId());
-//        newMessage.add(query.toString());
-//        newMessage.add(this.networkId);
-//        newMessage.add((int) 0); // TODO numberMetadataEntries
-//        newMessage.add((int) 0); // TODO numberSpaceTimeRegions
-//        newMessage.add(false); // TODO "connected" not part of query anymore
-//        newMessage.add(true); // TODO totalTrajectory
-//        newMessage.add(transmissionInterval.si);
-//
-//        this.connector.postIMBMessage("StatisticsGTULane", IMBEventType.NEW, newMessage.toArray());
-//        sendStatisticsUpdate();
-//    }
-//
-//    /**
-//     * Notifies about time, such that statistics over some period (very recently ended) can be gathered and published.
-//     * @param time the time to be used in the notification (usually the current time)
-//     */
-//    public void notifyTime(Time time)
-//    {
-//        if (time.gt(this.updateTime))
-//        {
-//            try
-//            {
-//                sendStatisticsUpdate();
-//            }
-//            catch (IMBException exception)
-//            {
-//                throw new RuntimeException("Cannot send statistics update.", exception);
-//            }
-//        }
-//    }
-//
-//    /**
-//     * @throws IMBException when the transmission of the IMB message fails
-//     */
-//    public void sendStatisticsUpdate() throws IMBException
-//    {
-//        Length tdist = this.totalTravelDistance.getValue(this.query, this.updateTime);
-//        Duration ttt = this.totalTravelTime.getValue(this.query, this.updateTime);
-//        Speed ms = this.meanSpeed.getValue(this.query, this.updateTime);
-//        Duration mttpkm = this.meanTravelTimePerKm.getValue(this.query, this.updateTime);
-//        Length mtl = this.meanTripLength.getValue(this.query, this.updateTime);
-//        Duration tdel = this.totalDelay.getValue(this.query, this.updateTime);
-//        Dimensionless nos = this.totalNumberOfStops.getValue(this.query, this.updateTime);
-//        double time = this.updateTime.si;
-//        System.out.println("===== @time " + time + " s =====");
-//        System.out.println("Total distance " + tdist);
-//        System.out.println("Total travel time " + ttt);
-//        System.out.println("Mean speed " + ms);
-//        System.out.println("Mean travel time " + mttpkm + " (per km)");
-//        System.out.println("Mean trip length " + mtl);
-//        System.out.println("Total delay " + tdel);
-//        System.out.println("Number of stops " + nos);
-//        this.connector.postIMBMessage("StatisticsGTULane", IMBEventType.CHANGE,
-//                new Object[] { time, this.query.getId(), tdist.si, ttt.si, ms.si, mttpkm.si, tdel.si, mtl.si, nos.si });
-//        this.updateTime = this.updateTime.plus(this.transmissionInterval);
-//    }
+    // /**
+    // * Construct a new ImbKpiTransceiver.
+    // * @param connector Connector; the IMB connector
+    // * @param time Time; time of creation
+    // * @param networkId String; the network id
+    // * @param query Query; the statistics query
+    // * @param transmissionInterval Duration; the interval between generation of graphs
+    // * @throws IMBException when the post of the IMB message fails
+    // */
+    // public Sim0MQKpiTransceiver(final Connector connector, Time time, String networkId, final Query query,
+    // final Duration transmissionInterval) throws IMBException
+    // {
+    // this.connector = connector;
+    // this.query = query;
+    // this.networkId = networkId;
+    // this.transmissionInterval = transmissionInterval;
+    //
+    // List<Object> newMessage = new ArrayList<>();
+    // newMessage.add(time.si);
+    // newMessage.add(query.getId());
+    // newMessage.add(query.toString());
+    // newMessage.add(this.networkId);
+    // newMessage.add((int) 0); // TODO numberMetadataEntries
+    // newMessage.add((int) 0); // TODO numberSpaceTimeRegions
+    // newMessage.add(false); // TODO "connected" not part of query anymore
+    // newMessage.add(true); // TODO totalTrajectory
+    // newMessage.add(transmissionInterval.si);
+    //
+    // this.connector.postIMBMessage("StatisticsGTULane", IMBEventType.NEW, newMessage.toArray());
+    // sendStatisticsUpdate();
+    // }
+    //
+    // /**
+    // * Notifies about time, such that statistics over some period (very recently ended) can be gathered and published.
+    // * @param time the time to be used in the notification (usually the current time)
+    // */
+    // public void notifyTime(Time time)
+    // {
+    // if (time.gt(this.updateTime))
+    // {
+    // try
+    // {
+    // sendStatisticsUpdate();
+    // }
+    // catch (IMBException exception)
+    // {
+    // throw new RuntimeException("Cannot send statistics update.", exception);
+    // }
+    // }
+    // }
+    //
+    // /**
+    // * @throws IMBException when the transmission of the IMB message fails
+    // */
+    // public void sendStatisticsUpdate() throws IMBException
+    // {
+    // Length tdist = this.totalTravelDistance.getValue(this.query, this.updateTime);
+    // Duration ttt = this.totalTravelTime.getValue(this.query, this.updateTime);
+    // Speed ms = this.meanSpeed.getValue(this.query, this.updateTime);
+    // Duration mttpkm = this.meanTravelTimePerKm.getValue(this.query, this.updateTime);
+    // Length mtl = this.meanTripLength.getValue(this.query, this.updateTime);
+    // Duration tdel = this.totalDelay.getValue(this.query, this.updateTime);
+    // Dimensionless nos = this.totalNumberOfStops.getValue(this.query, this.updateTime);
+    // double time = this.updateTime.si;
+    // System.out.println("===== @time " + time + " s =====");
+    // System.out.println("Total distance " + tdist);
+    // System.out.println("Total travel time " + ttt);
+    // System.out.println("Mean speed " + ms);
+    // System.out.println("Mean travel time " + mttpkm + " (per km)");
+    // System.out.println("Mean trip length " + mtl);
+    // System.out.println("Total delay " + tdel);
+    // System.out.println("Number of stops " + nos);
+    // this.connector.postIMBMessage("StatisticsGTULane", IMBEventType.CHANGE,
+    // new Object[] { time, this.query.getId(), tdist.si, ttt.si, ms.si, mttpkm.si, tdel.si, mtl.si, nos.si });
+    // this.updateTime = this.updateTime.plus(this.transmissionInterval);
+    // }
 
 }
