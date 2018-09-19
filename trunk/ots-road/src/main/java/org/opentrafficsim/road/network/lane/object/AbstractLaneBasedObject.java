@@ -18,7 +18,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * An abstract implementation of the LaneBasedObject interface with the required fields being initialized and getters for those
  * fields. All StaticObjects are EventProducers, allowing them to provide state changes to subscribers.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,

@@ -111,7 +111,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2017-01-30 18:25:56 +0100 (Mon, 30 Jan 2017) $, @version $Revision: 3409 $, by $Author: averbraeck $,
@@ -213,7 +213,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
 
     /**
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
@@ -1010,7 +1010,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         /**
          * The route colorer to show whether GTUs stay on the main route or go right at the split.
          * <p>
-         * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
+         * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
          * All rights reserved. <br>
          * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
          * </p>

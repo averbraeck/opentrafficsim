@@ -1,7 +1,7 @@
                    -----------------------
                    OTS-AIMSUN-PROTO
                    -----------------------
-                   April, 2017
+                   September, 2018
                    -----------------------
                    
 OTS - Open Traffic Simulation connection to AIMSUN. This project contains the protobuf classes for linking AIMSUN to OTS. 

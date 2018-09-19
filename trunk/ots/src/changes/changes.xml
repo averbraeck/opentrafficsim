@@ -2,7 +2,34 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="1.00.01" date="2018-09-19" description="Major upgrade">
+      <action dev="averbraeck" type="update">
+        Using newest version of DSOL. Removing several classes for OTSSimulator as these
+        are perfectly covered using DJUNITS by DSOL 3.02 and up.  
+      </action>
+      <action dev="averbraeck" type="update">
+        Updating all used jars to the latest version. Updating all Maven packages to the latest version.
+      </action>
+      <action dev="averbraeck" type="update">
+        The mocking package jmockit meeds to set agent-injections for junit tests in the latest version.
+        Therefore  jmockit has been replaced by Mockito + Powermock (also known as PowerMockito). 
+        The mocking structure for the tests had to be adapted to this new structure.
+      </action>
+      <action dev="averbraeck" type="update">
+        As log4j2 is quite complicated to configure, it has been replaced by the faster 
+        and smaller tinylog package. 
+      </action>
+      <action dev="averbraeck" type="update">
+        As a result of the above updates, around 3000 smaller and larger changes had to be made to
+        the code base. 
+      </action>
+      <action dev="averbraeck" type="update">
+        Site structure and Velocity files changed to comply with the latest maven-site plugin. 
+      </action>
+    </release>
+
     <release version="0.16.00" date="2018-09-17" description="Release 0.16.00">
+    
       <action issue="OTS-331" type="update">
         OTS-331. Change ParameterTypes to referenced Types.
       </action>
