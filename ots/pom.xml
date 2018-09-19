@@ -61,6 +61,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <sonar.scm.disabled>true</sonar.scm.disabled>
+    
+    <javadoc.opts></javadoc.opts>
 
     <tinylog.version>1.3.5</tinylog.version>
     <ots.version>${project.version}</ots.version>
@@ -300,6 +302,7 @@
             <link>http://javadoc.scijava.org/ojAlgo/</link>
           </links>
           <additionalJOption>-J-Xmx1024m</additionalJOption>
+          <additionalparam>${javadoc.opts}</additionalparam>
           <detectJavaApiLink>true</detectJavaApiLink>
           <detectLinks>false</detectLinks>
           <detectOfflineLinks>true</detectOfflineLinks>
@@ -487,6 +490,7 @@
             <link>http://javadoc.scijava.org/ojAlgo/</link>
           </links>
           <additionalJOption>-J-Xmx1024m</additionalJOption>
+          <additionalparam>${javadoc.opts}</additionalparam>
           <detectJavaApiLink>true</detectJavaApiLink>
           <detectLinks>false</detectLinks>
           <detectOfflineLinks>true</detectOfflineLinks>
