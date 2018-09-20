@@ -95,15 +95,18 @@ public class OSMParser implements Sink, Serializable
         }
         else if (entity instanceof Way)
         {
-            boolean wanted = false;
-            checkTags: for (Tag wayTag : entity.getTags())
+            boolean wanted = this.wantedTags.size() == 0;
+            if (!wanted)
             {
-                for (Tag wantedTag : this.wantedTags)
+                checkTags: for (Tag wayTag : entity.getTags())
                 {
-                    if (wayTag.getKey().equals(wantedTag.getKey()) && wayTag.getValue().equals(wantedTag.getValue()))
+                    for (Tag wantedTag : this.wantedTags)
                     {
-                        wanted = true;
-                        break checkTags;
+                        if (wayTag.getKey().equals(wantedTag.getKey()) && wayTag.getValue().equals(wantedTag.getValue()))
+                        {
+                            wanted = true;
+                            break checkTags;
+                        }
                     }
                 }
             }
