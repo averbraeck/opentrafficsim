@@ -4,7 +4,7 @@
 
   <groupId>opentrafficsim</groupId>
   <artifactId>ots</artifactId>
-  <version>1.00.01-SNAPSHOT</version>
+  <version>1.00.01</version>
   <packaging>pom</packaging>
 
   <name>OpenTrafficSim base project</name>
@@ -1084,6 +1084,15 @@
       <id>osgeo</id>
       <name>osgeo</name>
       <url>>https://download.osgeo.org/webdav/geotools/</url>
+    </repository>
+    
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>jboss</id>
+      <name>jboss</name>
+      <url>https://repository.jboss.org/maven2/</url>
     </repository>
     
   </repositories>
