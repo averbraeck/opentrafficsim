@@ -153,9 +153,18 @@ public final class Convert
         OTSLine3D designLine = new OTSLine3D(coordinates);
         // XXX How to figure out whether to keep left, right or keep lane?
         // XXX How to figure out if this is a lane in one or two directions? For now, two is assumed...
-        result = new CrossSectionLink(network, link.getId(), start, end, LinkType.ROAD, designLine, simulator,
-                LaneKeepingPolicy.KEEP_RIGHT);
-        return result;
+        for (int subId = 0;; subId++)
+        {
+            String linkId = String.format("%s_%d", link.getId(), subId);
+            if (network.containsLink(linkId))
+            {
+                continue;
+            }
+            result =
+                    new CrossSectionLink(network, linkId, start, end, LinkType.ROAD, designLine, simulator,
+                            LaneKeepingPolicy.KEEP_RIGHT);
+            return result;
+        }
     }
 
     /**
@@ -214,7 +223,13 @@ public final class Convert
         Coordinate coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), 0d);
         try
         {
-            return new OTSNode(network, Objects.toString(node.getId()), new OTSPoint3D(Convert.transform(coordWGS84)));
+            String nodeName = Objects.toString(node.getId());
+            OTSNode otsNode = (OTSNode) network.getNode(nodeName);
+            if (null == otsNode)
+            {
+                otsNode = new OTSNode(network, nodeName, new OTSPoint3D(Convert.transform(coordWGS84)));
+            }
+            return otsNode;
         }
         catch (FactoryException | TransformException exception)
         {
@@ -261,14 +276,15 @@ public final class Convert
         }
         for (OSMTag tag : osmLink.getTags())
         {
-            if (tag.getKey().equals("highway") && (tag.getValue().equals("primary") || tag.getValue().equals("secondary")
-                    || tag.getValue().equals("tertiary") || tag.getValue().equals("residential")
-                    || tag.getValue().equals("trunk") || tag.getValue().equals("motorway") || tag.getValue().equals("service")
-                    || tag.getValue().equals("unclassified") || tag.getValue().equals("motorway_link")
-                    || tag.getValue().equals("primary_link") || tag.getValue().equals("secondary_link")
-                    || tag.getValue().equals("tertiary_link") || tag.getValue().equals("trunk_link")
-                    || tag.getValue().equals("road") || tag.getValue().equals("track")
-                    || tag.getValue().equals("living_street")))
+            if (tag.getKey().equals("highway")
+                    && (tag.getValue().equals("primary") || tag.getValue().equals("secondary")
+                            || tag.getValue().equals("tertiary") || tag.getValue().equals("residential")
+                            || tag.getValue().equals("trunk") || tag.getValue().equals("motorway")
+                            || tag.getValue().equals("service") || tag.getValue().equals("unclassified")
+                            || tag.getValue().equals("motorway_link") || tag.getValue().equals("primary_link")
+                            || tag.getValue().equals("secondary_link") || tag.getValue().equals("tertiary_link")
+                            || tag.getValue().equals("trunk_link") || tag.getValue().equals("road")
+                            || tag.getValue().equals("track") || tag.getValue().equals("living_street")))
             {
                 laneType = makeLaneType(CAR);
                 if (osmLink.getLanes() == 1 && !osmLink.isOneway())
@@ -330,7 +346,8 @@ public final class Convert
                             }
                             if (i >= 0)
                             {
-                                laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
+                                laneAttributes =
+                                        new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
                                 structure.put(i, laneAttributes);
                             }
                         }
@@ -409,10 +426,12 @@ public final class Convert
         }
         for (OSMTag tag : osmLink.getTags())
         {
-            if (tag.getKey().equals("highway") && (tag.getValue().equals("cycleway") || tag.getValue().equals("footway")
-                    || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps")))
+            if (tag.getKey().equals("highway")
+                    && (tag.getValue().equals("cycleway") || tag.getValue().equals("footway")
+                            || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps")))
             {
-                if (tag.getValue().equals("footway") || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps"))
+                if (tag.getValue().equals("footway") || tag.getValue().equals("pedestrian")
+                        || tag.getValue().equals("steps"))
                 {
                     laneType = makeLaneType(PEDESTRIAN);
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
@@ -432,7 +451,8 @@ public final class Convert
                             }
                             if (i >= 0)
                             {
-                                laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
+                                laneAttributes =
+                                        new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
                                 structure.put(i, laneAttributes);
                             }
                         }
@@ -564,7 +584,8 @@ public final class Convert
             }
         }
         LaneType laneType = laneAttributes.getLaneType();
-        if (laneType.isCompatible(CAR, GTUDirectionality.DIR_PLUS) || laneType.isCompatible(CAR, GTUDirectionality.DIR_MINUS))
+        if (laneType.isCompatible(CAR, GTUDirectionality.DIR_PLUS)
+                || laneType.isCompatible(CAR, GTUDirectionality.DIR_MINUS))
         {
             return defaultLaneWidth;
         }
@@ -601,7 +622,8 @@ public final class Convert
         }
         if (!widthOverride)
         {
-            warningListener.warning(new WarningEvent(link, "No width given; using default laneWidth for Link " + link.getId()));
+            warningListener.warning(new WarningEvent(link, "No width given; using default laneWidth for Link "
+                    + link.getId()));
         }
         return defaultLaneWidth;
     }
@@ -647,23 +669,26 @@ public final class Convert
             {
                 color = Color.RED;
                 // FIXME overtaking conditions per country and/or type of road?
-                newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
+                newLane =
+                        new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
+                                laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
                 new SinkSensor(newLane, new Length(0.25, LengthUnit.METER), simulator);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
             {
                 color = Color.BLUE;
                 // FIXME overtaking conditions per country and/or type of road?
-                newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
+                newLane =
+                        new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
+                                laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
             }
             else
             {
                 color = laneAttributes.getColor();
                 // FIXME overtaking conditions per country and/or type of road?
-                newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
-                        laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
+                newLane =
+                        new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
+                                laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
             }
             if (simulator instanceof AnimatorInterface)
             {
@@ -742,8 +767,8 @@ public final class Convert
         ArrayList<OSMNode> foundEndNodes = new ArrayList<OSMNode>();
         for (OSMNode node : nodes)
         {
-            if (0 == node.linksOriginating && node.linksTerminating > 0
-                    || 0 == node.linksTerminating && node.linksOriginating > 0)
+            if (0 == node.linksOriginating && node.linksTerminating > 0 || 0 == node.linksTerminating
+                    && node.linksOriginating > 0)
             {
                 foundEndNodes.add(node);
             }
@@ -791,8 +816,9 @@ public final class Convert
             }
             if (0 == ++progress % progressReportStep)
             {
-                progressListener.progress(new ProgressEvent(net, String.format(Locale.US, "%d of %d links processed (%.1f%%)",
-                        progress, net.getLinks().size(), 100.0 * progress / net.getLinks().size())));
+                progressListener.progress(new ProgressEvent(net, String.format(Locale.US,
+                        "%d of %d links processed (%.1f%%)", progress, net.getLinks().size(), 100.0 * progress
+                                / net.getLinks().size())));
             }
         }
         progressListener.progress(new ProgressEvent(net, "Found " + foundEndpoints.size() + " Sinks and Sources."));
