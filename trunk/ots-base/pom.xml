@@ -4,12 +4,12 @@
   <parent>
     <groupId>opentrafficsim</groupId>
     <artifactId>ots</artifactId>
-    <version>1.00.01-SNAPSHOT</version>
+    <version>1.00.01</version>
     <relativePath>../ots/pom.xml</relativePath>
   </parent>
   <artifactId>ots-base</artifactId>
-  <name>Open Traffic Sim demo classes</name>
-  <description>Demo classes for the Open Traffic Sim project</description>
+  <name>Open Traffic Sim base classes</name>
+  <description>Base classes for the Open Traffic Sim project</description>
 
   <dependencies>
     <dependency>
