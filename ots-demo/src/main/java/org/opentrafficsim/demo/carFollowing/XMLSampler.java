@@ -2,7 +2,6 @@ package org.opentrafficsim.demo.carFollowing;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
 import java.rmi.RemoteException;
@@ -44,7 +43,6 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -60,11 +58,11 @@ import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
@@ -237,7 +235,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         private List<LaneBasedGTUSampler> plots = new ArrayList<>();
 
         /** User settable properties. */
-        private List<Property<?>> properties = null;
+        private List<Property<?>> props = null;
 
         /** The sequence of Lanes that all vehicles will follow. */
         private List<List<Lane>> paths = new ArrayList<>();
@@ -249,7 +247,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         private Duration minimumHeadway;
 
         /** The probability distribution for the variable part of the headway. */
-        DistContinuous headwayGenerator;
+        private DistContinuous headwayGenerator;
 
         /** The speed limit. */
         private Speed speedLimit = new Speed(60, KM_PER_HOUR);
@@ -258,7 +256,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         // private int carsCreated = 0;
 
         /** Type of all GTUs (required to permit lane changing). */
-        GTUType gtuType = CAR;
+        private GTUType gtuType = CAR;
 
         /** The car following model, e.g. IDM Plus for cars. */
         private GTUFollowingModelOld carFollowingModelCars;
@@ -298,7 +296,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
          */
         XMLSamplerModel(final List<Property<?>> userModifiedProperties)
         {
-            this.properties = userModifiedProperties;
+            this.props = userModifiedProperties;
         }
 
         /**
@@ -348,7 +346,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                 CompoundProperty cp = null;
                 try
                 {
-                    cp = new CompoundProperty("", "", "", this.properties, false, 0);
+                    cp = new CompoundProperty("", "", "", this.props, false, 0);
                 }
                 catch (PropertyException exception2)
                 {
@@ -364,7 +362,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                 LaneType laneType = LaneType.TWO_WAY_LANE;
                 // Get car-following model name
                 String carFollowingModelName = null;
-                CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
+                CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.props, false, 0);
                 Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
@@ -380,7 +378,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                 }
 
                 // Get car-following model parameter
-                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
                     if (ap instanceof CompoundProperty)
                     {
@@ -488,7 +486,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                 }
 
                 // Get remaining properties
-                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
                     if (ap instanceof SelectionProperty)
                     {
@@ -733,9 +731,10 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
             // System.out.println("Constructed template " + template);
             distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
             LaneBasedTemplateGTUTypeDistribution templateDistribution = new LaneBasedTemplateGTUTypeDistribution(distribution);
-            LaneBasedGTUGenerator.RoomChecker roomChecker = new CanPlaceDemoCode();
+            LaneBasedGTUGenerator.RoomChecker roomChecker = new CFRoomChecker();
             return new LaneBasedGTUGenerator(lane.getId(), new Generator<Duration>()
             {
+                @SuppressWarnings("synthetic-access")
                 @Override
                 public Duration draw()
                 {
@@ -771,7 +770,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         }
 
         /**
-         * @param stream the random stream to use
+         * @param randStream the random stream to use
          * @param lane reference lane to generate GTUs on
          * @param lengthDistribution distribution of the GTU length
          * @param widthDistribution distribution of the GTU width
@@ -781,7 +780,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
          * @return template for a GTU
          * @throws GTUException when characteristics cannot be initialized
          */
-        LaneBasedTemplateGTUType makeTemplate(final StreamInterface stream, final Lane lane,
+        LaneBasedTemplateGTUType makeTemplate(final StreamInterface randStream, final Lane lane,
                 final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDistribution,
                 final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDistribution,
                 final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
@@ -1007,62 +1006,8 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
             return this.network;
         }
 
-        /**
-         * The route colorer to show whether GTUs stay on the main route or go right at the split.
-         * <p>
-         * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
-         * All rights reserved. <br>
-         * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-         * </p>
-         * $LastChangedDate: 2017-01-30 18:25:56 +0100 (Mon, 30 Jan 2017) $, @version $Revision: 3409 $, by $Author: averbraeck
-         * $, initial version Jan 3, 2016 <br>
-         * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-         * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-         */
-        private class DirectionGTUColorer implements GTUColorer
-        {
-            /** The legend. */
-            private List<LegendEntry> legend = new ArrayList<>();
-
-            /** ... */
-            DirectionGTUColorer()
-            {
-                super();
-                this.legend.add(new LegendEntry(Color.RED, "Right", "Go right"));
-                this.legend.add(new LegendEntry(Color.BLUE, "Main", "Main route"));
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Color getColor(final GTU gtu)
-            {
-                AbstractLaneBasedGTU laneBasedGTU = (AbstractLaneBasedGTU) gtu;
-                Route route = ((LaneBasedStrategicalRoutePlanner) laneBasedGTU.getStrategicalPlanner()).getRoute();
-                if (route == null)
-                {
-                    return Color.black;
-                }
-                if (route.toString().toLowerCase().contains("end2"))
-                {
-                    return Color.red;
-                }
-                if (route.toString().toLowerCase().contains("end"))
-                {
-                    return Color.blue;
-                }
-                return Color.black;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public List<LegendEntry> getLegend()
-            {
-                return this.legend;
-            }
-        }
-
         /** The set of GTUs that we want to sample regularly. */
-        private Set<GTU> knownGTUs = new HashSet<GTU>();
+        private Set<GTU> knownGTUs = new HashSet<>();
 
         /** {@inheritDoc} */
         @Override

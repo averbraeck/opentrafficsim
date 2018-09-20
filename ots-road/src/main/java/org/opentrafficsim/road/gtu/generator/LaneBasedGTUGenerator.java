@@ -132,8 +132,8 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
      */
     public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final GTUColorer gtuColorer, final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
-            final GeneratorPositions generatorPositions, final OTSNetwork network, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
-            final RoomChecker roomChecker, final IdGenerator idGenerator)
+            final GeneratorPositions generatorPositions, final OTSNetwork network,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final RoomChecker roomChecker, final IdGenerator idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException
     {
         this.id = id;
@@ -207,8 +207,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
                 linkMap.put(lanePosition, new LinkedList<>());
             }
             Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue = linkMap.get(lanePosition);
-            queue.add(new TimeStampedObject<LaneBasedGTUCharacteristics>(characteristics,
-                    this.simulator.getSimulatorTime()));
+            queue.add(new TimeStampedObject<LaneBasedGTUCharacteristics>(characteristics, this.simulator.getSimulatorTime()));
             if (queue.size() == 1)
             {
                 this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { lanePosition });
@@ -238,7 +237,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
         TimeStampedObject<LaneBasedGTUCharacteristics> timedCharacteristics;
         Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue =
                 this.unplacedTemplates.get(position.getLink()).get(position);
-        
+
         // skip if disabled at this lane-direction
         Set<LaneDirection> lanes = new LinkedHashSet<>();
         for (DirectedLanePosition pos : position.getPosition())
@@ -250,7 +249,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
             queue.remove();
             return;
         }
-        
+
         synchronized (queue)
         {
             timedCharacteristics = queue.peek();
@@ -264,9 +263,8 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
         SortedSet<HeadwayGTU> leaders = new TreeSet<>();
         for (DirectedLanePosition dirPos : position.getPosition())
         {
-            // TODO subtracting halve the vehicle length as a hack, reference position can be different
-            getFirstLeaders(dirPos.getLaneDirection(),
-                    dirPos.getPosition().neg().minus(characteristics.getLength().divideBy(2.0)), dirPos.getPosition(), leaders);
+            getFirstLeaders(dirPos.getLaneDirection(), dirPos.getPosition().neg().minus(characteristics.getFront()),
+                    dirPos.getPosition(), leaders);
         }
         Duration since = this.simulator.getSimulatorTime().minus(timedCharacteristics.getTimestamp());
         Placement placement = this.roomChecker.canPlace(leaders, characteristics, since, position.getPosition());

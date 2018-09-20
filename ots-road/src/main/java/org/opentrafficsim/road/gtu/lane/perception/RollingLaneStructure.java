@@ -122,6 +122,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public class RollingLaneStructure implements LaneStructure, Serializable
 {
+
     /** */
     private static final long serialVersionUID = 20160400L;
 
@@ -189,7 +190,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         this.downSplit = downSplit;
         this.upMerge = upMerge;
         this.containingGtu = gtu;
-        // if (gtu.getId().equals("1"))
+        // if (gtu.getId().equals("922"))
         // {
         // visualize(gtu);
         // }
@@ -292,26 +293,27 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         }
         else
         {
+
             // update LaneStructure
             RollingLaneStructureRecord newRoot = this.root.get();
             if (!lane.equals(newRoot.getLane()))
             {
+
                 // find the root, and possible lateral shift if changed lane
                 newRoot = null;
                 RelativeLane lateralMove = null;
+                double closest = Double.POSITIVE_INFINITY;
                 for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
                 {
-                    if (newRoot != null)
-                    {
-                        break;
-                    }
                     for (RollingLaneStructureRecord record : this.relativeLaneMap.get(relativeLane))
                     {
-                        if (record.getLane().equals(lane))
+                        if (record.getLane().equals(lane) && record.getStartDistance().si < closest
+                                && record.getStartDistance().si + record.getLength().si > 0.0)
                         {
                             newRoot = record;
                             lateralMove = relativeLane;
-                            break;
+                            // multiple records may be present for the current lane due to a loop
+                            closest = record.getStartDistance().si;
                         }
                     }
                 }
@@ -541,6 +543,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
             // longitudinal
             Iterator<RollingLaneStructureRecord> iterator = this.upstreamEdge.iterator();
+            Set<RollingLaneStructureRecord> modifiedEdge = new LinkedHashSet<>(this.upstreamEdge);
             while (iterator.hasNext())
             {
                 RollingLaneStructureRecord prev = iterator.next();
@@ -568,10 +571,11 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                                     constructRecord(prevLane, nexts.get(prevLane), prev, RecordLink.UP, relativeLane);
                             this.ignoreSet.add(prevLane);
                             next.updateStartDistance(fractionalPosition, this);
-                            connectLaterally(next, gtuType, nextSet);
+                            connectLaterally(next, gtuType, modifiedEdge);
                             next.addNext(prev);
                             prev.addPrev(next);
                             nextSet.add(next);
+                            modifiedEdge.add(next);
                         }
                     }
                 }
@@ -836,6 +840,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
             // longitudinal
             Iterator<RollingLaneStructureRecord> iterator = this.downstreamEdge.iterator();
+            Set<RollingLaneStructureRecord> modifiedEdge = new LinkedHashSet<>(this.downstreamEdge);
             while (iterator.hasNext())
             {
                 RollingLaneStructureRecord record = iterator.next();
@@ -875,7 +880,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                         next.updateStartDistance(fractionalPosition, this);
                         record.addNext(next);
                         next.addPrev(record);
-                        connectLaterally(next, gtuType, nextSet);
+                        connectLaterally(next, gtuType, modifiedEdge);
                         // check route
                         int from = route == null ? 0 : route.indexOf(next.getFromNode());
                         int to = route == null ? 1 : route.indexOf(next.getToNode());
@@ -889,6 +894,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
                             // regular edge
                             nextSet.add(next);
                         }
+                        modifiedEdge.add(next);
                         // expand upstream over any possible other lane that merges in to this
                         Set<RollingLaneStructureRecord> set = new HashSet<>();
                         set.add(next);

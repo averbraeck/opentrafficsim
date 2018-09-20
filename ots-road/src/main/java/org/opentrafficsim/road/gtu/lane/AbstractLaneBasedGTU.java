@@ -449,10 +449,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         Lane adjLane = adjLanes.iterator().next();
         Length position = adjLane.position(from.getLane().fraction(from.getPosition()));
         GTUDirectionality direction = getDirection(from.getLane());
-        Length planLength =
-                Try.assign(() -> getOperationalPlan().getTraveledDistance(getSimulator().getSimulatorTime()),
-                        "Exception while determining plan length.");
-        enterLaneRecursive(new LaneDirection(adjLane, direction), position, newLinkPositionsLC, planLength, lanesToBeRemoved);
+        Length planLength = Try.assign(() -> getOperationalPlan().getTraveledDistance(getSimulator().getSimulatorTime()),
+                "Exception while determining plan length.");
+        enterLaneRecursive(new LaneDirection(adjLane, direction), position, newLinkPositionsLC, planLength, lanesToBeRemoved,
+                0);
 
         // update the positions on the lanes we are registered on
         this.fractionalLinkPositions.clear();
@@ -481,32 +481,84 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @param newLinkPositionsLC Map; new link fractions to store
      * @param planLength Length; length of plan, to consider fractions at start
      * @param lanesToBeRemoved Set; lanes to leave, from which lanes are removed when entered (such that they arent then left)
+     * @param dir int; below 0 for upstream, above 0 for downstream, 0 for both
      * @throws GTUException on exception
      */
     private void enterLaneRecursive(final LaneDirection lane, final Length position, final Map<Link, Double> newLinkPositionsLC,
-            final Length planLength, final Set<Lane> lanesToBeRemoved) throws GTUException
+            final Length planLength, final Set<Lane> lanesToBeRemoved, final int dir) throws GTUException
     {
-        // TODO also upstream
         enterLane(lane.getLane(), position, lane.getDirection());
         lanesToBeRemoved.remove(lane);
         Length adjusted = lane.getDirection().isPlus() ? position.minus(planLength) : position.plus(planLength);
         newLinkPositionsLC.put(lane.getLane().getParentLink(), adjusted.si / lane.getLength().si);
-        Length front = lane.getDirection().isPlus() ? position.plus(getFront().getDx()) : position.minus(getFront().getDx());
-        Length passed = null;
-        if (lane.getDirection().isPlus() && front.si > lane.getLength().si)
+
+        // upstream
+        if (dir < 1)
         {
-            passed = front.minus(lane.getLength());
+            Length rear = lane.getDirection().isPlus() ? position.plus(getRear().getDx()) : position.minus(getRear().getDx());
+            Length before = null;
+            if (lane.getDirection().isPlus() && rear.si < 0.0)
+            {
+                before = rear.neg();
+            }
+            else if (lane.getDirection().isMinus() && rear.si > lane.getLength().si)
+            {
+                before = rear.minus(lane.getLength());
+            }
+            if (before != null)
+            {
+                GTUDirectionality upDir = lane.getDirection();
+                Map<Lane, GTUDirectionality> upstream = lane.getLane().upstreamLanes(upDir, getGTUType());
+                if (!upstream.isEmpty())
+                {
+                    Lane upLane = null;
+                    for (Lane nextUp : upstream.keySet())
+                    {
+                        if (newLinkPositionsLC.containsKey(nextUp.getParentLink()))
+                        {
+                            // multiple upstream lanes could belong to the same link, we pick an arbitrary lane
+                            // (a conflict should solve this)
+                            upLane = nextUp;
+                            break;
+                        }
+                    }
+                    if (upLane == null)
+                    {
+                        // the rear is on an upstream section we weren't before the lane change, due to curvature, we pick an
+                        // arbitrary
+                        // lane (a conflict should solve this)
+                        upLane = upstream.keySet().iterator().next();
+                    }
+                    upDir = upstream.get(upLane);
+                    LaneDirection next = new LaneDirection(upLane, upDir);
+                    Length nextPos = upDir.isPlus() ? next.getLength().minus(before).minus(getRear().getDx())
+                            : before.plus(getRear().getDx());
+                    enterLaneRecursive(next, nextPos, newLinkPositionsLC, planLength, lanesToBeRemoved, -1);
+                }
+            }
         }
-        else if (lane.getDirection().isMinus() && front.si < 0.0)
+
+        // downstream
+        if (dir > -1)
         {
-            passed = front.neg();
-        }
-        if (passed != null)
-        {
-            LaneDirection next = lane.getNextLaneDirection(this);
-            Length nextPos = next.getDirection().isPlus() ? passed.minus(getFront().getDx())
-                    : next.getLength().minus(passed).plus(getFront().getDx());
-            enterLaneRecursive(next, nextPos, newLinkPositionsLC, planLength, lanesToBeRemoved);
+            Length front =
+                    lane.getDirection().isPlus() ? position.plus(getFront().getDx()) : position.minus(getFront().getDx());
+            Length passed = null;
+            if (lane.getDirection().isPlus() && front.si > lane.getLength().si)
+            {
+                passed = front.minus(lane.getLength());
+            }
+            else if (lane.getDirection().isMinus() && front.si < 0.0)
+            {
+                passed = front.neg();
+            }
+            if (passed != null)
+            {
+                LaneDirection next = lane.getNextLaneDirection(this);
+                Length nextPos = next.getDirection().isPlus() ? passed.minus(getFront().getDx())
+                        : next.getLength().minus(passed).plus(getFront().getDx());
+                enterLaneRecursive(next, nextPos, newLinkPositionsLC, planLength, lanesToBeRemoved, 1);
+            }
         }
     }
 
@@ -641,7 +693,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             return; // Done; do not re-schedule execution of this move method.
         }
 
-        // remove enter events 
+        // remove enter events
         // WS: why?
         // for (Lane lane : this.pendingEnterTriggers.keySet())
         // {
@@ -1087,11 +1139,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (laneDir.isPlus() ? nextFrontPosSI > lane.getLength().si : nextFrontPosSI < 0.0)
             {
                 LaneDirection next = new LaneDirection(lane, laneDir).getNextLaneDirection(this);
-//                if (next == null)
-//                {
-//                    LaneDirection tmp = new LaneDirection(lane, laneDir);
-//                    tmp.getNextLaneDirection(this);
-//                }
+                // if (next == null)
+                // {
+                // LaneDirection tmp = new LaneDirection(lane, laneDir);
+                // tmp.getNextLaneDirection(this);
+                // }
                 nextLane = next.getLane();
                 nextDirection = next.getDirection();
                 double endPos = laneDir.isPlus() ? lane.getLength().si - getFront().getDx().si : getFront().getDx().si;

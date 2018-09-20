@@ -458,12 +458,6 @@ public final class LmrsUtil implements LmrsParameters
 
         // legal?
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
-        if (Try.assign(() -> perception.getGtu(), "").getId().equals("1323") && lat.isLeft() && Try
-                .assign(() -> perception.getGtu().getReferencePosition(), "").getLane().getParentLink().getId().equals("929_0"))
-        {
-            double q = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).si;
-            System.out.println("Legal distance is " + q);
-        }
         if (infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).si <= 0.0)
         {
             return false;
