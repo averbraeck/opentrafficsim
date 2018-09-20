@@ -2,10 +2,8 @@ package org.opentrafficsim.demo.carFollowing;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,11 +36,9 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -56,11 +52,11 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUTypeDistribution;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
@@ -76,7 +72,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.toledo.ToledoFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.road.network.factory.LaneFactory;
@@ -224,7 +219,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         private List<LaneBasedGTUSampler> plots = new ArrayList<>();
 
         /** User settable properties. */
-        private List<Property<?>> properties = null;
+        private List<Property<?>> props = null;
 
         /** The sequence of Lanes that all vehicles will follow. */
         private List<List<Lane>> paths = new ArrayList<>();
@@ -236,7 +231,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         private Duration minimumHeadway;
 
         /** The probability distribution for the variable part of the headway. */
-        DistContinuous headwayGenerator;
+        private DistContinuous headwayGenerator;
 
         /** The speed limit. */
         private Speed speedLimit = new Speed(60, KM_PER_HOUR);
@@ -245,7 +240,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         // private int carsCreated = 0;
 
         /** Type of all GTUs (required to permit lane changing). */
-        GTUType gtuType = CAR;
+        private GTUType gtuType = CAR;
 
         /** The car following model, e.g. IDM Plus for cars. */
         private GTUFollowingModelOld carFollowingModelCars;
@@ -254,7 +249,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         private GTUFollowingModelOld carFollowingModelTrucks;
 
         /** The lane change model. */
-        AbstractLaneChangeModel laneChangeModel = new Egoistic();
+        private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
         /** The probability that the next generated GTU is a passenger car. */
         private double carProbability;
@@ -285,7 +280,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
          */
         XMLNetworkModel(final List<Property<?>> userModifiedProperties)
         {
-            this.properties = userModifiedProperties;
+            this.props = userModifiedProperties;
         }
 
         /**
@@ -333,7 +328,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
                 CompoundProperty cp = null;
                 try
                 {
-                    cp = new CompoundProperty("", "", "", this.properties, false, 0);
+                    cp = new CompoundProperty("", "", "", this.props, false, 0);
                 }
                 catch (PropertyException exception2)
                 {
@@ -349,7 +344,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
                 LaneType laneType = LaneType.TWO_WAY_LANE;
                 // Get car-following model name
                 String carFollowingModelName = null;
-                CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
+                CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.props, false, 0);
                 Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
@@ -365,7 +360,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
                 }
 
                 // Get car-following model parameter
-                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
                     if (ap instanceof CompoundProperty)
                     {
@@ -473,7 +468,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
                 }
 
                 // Get remaining properties
-                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
                     if (ap instanceof SelectionProperty)
                     {
@@ -697,7 +692,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         private LaneBasedGTUGenerator makeGenerator(final Lane lane)
                 throws GTUException, SimRuntimeException, ProbabilityException, ParameterException
         {
-            Distribution<LaneBasedTemplateGTUType> distribution = new Distribution<>(stream);
+            Distribution<LaneBasedTemplateGTUType> distribution = new Distribution<>(this.stream);
             Length initialPosition = new Length(16, METER);
             Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
             initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
@@ -717,15 +712,16 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
             // System.out.println("Constructed template " + template);
             distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
             LaneBasedTemplateGTUTypeDistribution templateDistribution = new LaneBasedTemplateGTUTypeDistribution(distribution);
-            LaneBasedGTUGenerator.RoomChecker roomChecker = new CanPlaceDemoCode();
+            LaneBasedGTUGenerator.RoomChecker roomChecker = new CFRoomChecker();
             return new LaneBasedGTUGenerator(lane.getId(), new Generator<Duration>()
             {
+                @SuppressWarnings("synthetic-access")
                 @Override
                 public Duration draw()
                 {
                     return new Duration(XMLNetworkModel.this.headwayGenerator.draw(), DurationUnit.SECOND);
                 }
-            }, XMLNetworks.this.getColorer(), templateDistribution, GeneratorPositions.create(initialPositions, stream),
+            }, XMLNetworks.this.getColorer(), templateDistribution, GeneratorPositions.create(initialPositions, this.stream),
                     this.network, this.simulator,
                     /*-
                     new LaneBasedGTUGenerator.RoomChecker()
@@ -755,7 +751,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         }
 
         /**
-         * @param stream the random stream to use
+         * @param randStream the random stream to use
          * @param lane reference lane to generate GTUs on
          * @param lengthDistribution distribution of the GTU length
          * @param widthDistribution distribution of the GTU width
@@ -765,7 +761,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
          * @return template for a GTU
          * @throws GTUException when characteristics cannot be initialized
          */
-        LaneBasedTemplateGTUType makeTemplate(final StreamInterface stream, final Lane lane,
+        LaneBasedTemplateGTUType makeTemplate(final StreamInterface randStream, final Lane lane,
                 final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDistribution,
                 final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDistribution,
                 final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDistribution,
@@ -859,21 +855,21 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         private Lane setupBlock(final Lane lane)
                 throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
         {
-//            Length initialPosition = lane.getLength();
-//            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-//            initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-//            // GTUFollowingModelOld gfm =
-//            // new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(java.lang.Double.MAX_VALUE,
-//            // TimeUnit.SI));
-//            // LaneChangeModel lcm = new FixedLaneChangeModel(null);
-//            Parameters parameters = DefaultsFactory.getDefaultParameters();
-//            LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", this.gtuType, Length.ZERO,
-//                    lane.getWidth(1), Speed.ZERO, Length.ZERO, this.simulator, this.network);
-//            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-//                    new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
-//            block.setParameters(parameters);
-//            block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
-//                    XMLNetworks.this.getColorer());
+            // Length initialPosition = lane.getLength();
+            // Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+            // initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
+            // // GTUFollowingModelOld gfm =
+            // // new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(java.lang.Double.MAX_VALUE,
+            // // TimeUnit.SI));
+            // // LaneChangeModel lcm = new FixedLaneChangeModel(null);
+            // Parameters parameters = DefaultsFactory.getDefaultParameters();
+            // LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", this.gtuType, Length.ZERO,
+            // lane.getWidth(1), Speed.ZERO, Length.ZERO, this.simulator, this.network);
+            // LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
+            // new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
+            // block.setParameters(parameters);
+            // block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
+            // XMLNetworks.this.getColorer());
             return lane;
         }
 
@@ -889,9 +885,8 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
             // Re schedule this method
             try
             {
-                this.simulator.scheduleEventAbs(
-                        new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND), this, this,
-                        "drawGraphs", null);
+                this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND),
+                        this, this, "drawGraphs", null);
             }
             catch (SimRuntimeException exception)
             {
@@ -989,60 +984,6 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         public OTSNetwork getNetwork()
         {
             return this.network;
-        }
-
-        /**
-         * The route colorer to show whether GTUs stay on the main route or go right at the split.
-         * <p>
-         * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
-         * All rights reserved. <br>
-         * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-         * </p>
-         * $LastChangedDate$, @version $Revision$, by $Author: wjschakel
-         * $, initial version Jan 3, 2016 <br>
-         * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-         * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-         */
-        private class DirectionGTUColorer implements GTUColorer
-        {
-            /** The legend. */
-            private List<LegendEntry> legend = new ArrayList<>();
-
-            /** ... */
-            DirectionGTUColorer()
-            {
-                super();
-                this.legend.add(new LegendEntry(Color.RED, "Right", "Go right"));
-                this.legend.add(new LegendEntry(Color.BLUE, "Main", "Main route"));
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Color getColor(final GTU gtu)
-            {
-                AbstractLaneBasedGTU laneBasedGTU = (AbstractLaneBasedGTU) gtu;
-                Route route = ((LaneBasedStrategicalRoutePlanner) laneBasedGTU.getStrategicalPlanner()).getRoute();
-                if (route == null)
-                {
-                    return Color.black;
-                }
-                if (route.toString().toLowerCase().contains("end2"))
-                {
-                    return Color.red;
-                }
-                if (route.toString().toLowerCase().contains("end"))
-                {
-                    return Color.blue;
-                }
-                return Color.black;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public List<LegendEntry> getLegend()
-            {
-                return this.legend;
-            }
         }
     }
 }
