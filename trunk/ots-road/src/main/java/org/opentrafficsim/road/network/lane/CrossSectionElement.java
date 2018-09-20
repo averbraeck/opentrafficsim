@@ -176,7 +176,8 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
             Length offsetAtFraction = Length.interpolate(lateralOffsetAtBegin, lateralOffsetAtEnd, relativeOffsetAtFraction);
             result.add(new CrossSectionSlice(lengthAtCrossSection, offsetAtFraction, Length.interpolate(beginWidth,
                     endWidth, fraction)));
-            System.out.println("fraction " + fraction + ", " + result.get(result.size() - 1));
+            System.out.println("fraction " + fraction + ", angle " + Math.toDegrees((fraction - 0.5) * Math.PI)
+                    + ", fraction " + relativeOffsetAtFraction + ", " + result.get(result.size() - 1));
         }
 
         // Arrays.asList(new CrossSectionSlice[] { new CrossSectionSlice(Length.ZERO, lateralOffsetAtBegin, beginWidth),
