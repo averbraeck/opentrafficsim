@@ -23,28 +23,28 @@ import org.pmw.tinylog.writers.Writer;
 @SuppressWarnings({ "checkstyle:visibilitymodifier", "checkstyle:finalclass", "checkstyle:needbraces" })
 public class CategoryLogger
 {
-    /** default message format. */
+    /** The default message format. */
     public static final String DEFAULT_MESSAGE_FORMAT = "{class_name}.{method}:{line} {message|indent=4}";
 
-    /** current message format. */
+    /** The current message format. */
     private static String defaultMessageFormat = DEFAULT_MESSAGE_FORMAT;
 
-    /** the current logging level. */
+    /** The current logging level. */
     private static Level defaultLevel = Level.INFO;
 
-    /** the writers registered with this CategoryLogger. */
+    /** The writers registered with this CategoryLogger. */
     private static Set<Writer> writers = new HashSet<>();
 
-    /** the log level per Writer. */
+    /** The log level per Writer. */
     private static Map<Writer, Level> writerLevels = new HashMap<>();
 
-    /** the message format per Writer. */
+    /** The message format per Writer. */
     private static Map<Writer, String> writerFormats = new HashMap<>();
 
-    /** the categories to log. */
+    /** The categories to log. */
     private static Set<LogCategory> categories = new HashSet<>(256);
 
-    /** the console writer, replacing the default one. */
+    /** The console writer, replacing the default one. */
     private static Writer consoleWriter;
 
     /** */
@@ -137,7 +137,8 @@ public class CategoryLogger
     }
 
     /**
-     * Set a new logging level for all registered writers.
+     * Set a new logging level for all registered writers. 
+     * FIXME: Either this javadoc is wrong or why does this method have a writer argument
      * @param writer the writer to change the message format for
      * @param newLevel the new log level for all registered writers
      */
