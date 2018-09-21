@@ -281,7 +281,7 @@ public final class OTSBufferingJTS
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.error(exception, "Exception in offsetLine - should never happen");
+            SimLogger.always().error(exception, "Exception in offsetLine - should never happen");
             return null;
         }
     }
@@ -389,7 +389,7 @@ public final class OTSBufferingJTS
         }
         if (dS > 0.01)
         {
-            SimLogger.trace(Cat.CORE, referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
+            SimLogger.filter(Cat.CORE).trace(referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
                     + "\n\n\n\n" + sExpected + "\n" + eExpected);
             throw new OTSGeometryException("offsetGeometry: startDistance too big (" + dS + ") for line " + referenceLine);
         }
@@ -487,10 +487,10 @@ public final class OTSBufferingJTS
         {
             return offsetLineAtStart; // offset does not change
         }
-        // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at start: \nc0,0,0\n#", offsetLineAtStart, 
+        // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at start: \nc0,0,0\n#", offsetLineAtStart,
         // "\n"));
         OTSLine3D offsetLineAtEnd = offsetLine(referenceLine, offsetAtEnd);
-        // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at end: \nc0.7,0.7,0.7\n#", offsetLineAtEnd, 
+        // SimLogger.trace(Cat.CORE, OTSGeometry.printCoordinates("#offset line at end: \nc0.7,0.7,0.7\n#", offsetLineAtEnd,
         // "\n"));
         Geometry startGeometry = offsetLineAtStart.getLineString();
         Geometry endGeometry = offsetLineAtEnd.getLineString();

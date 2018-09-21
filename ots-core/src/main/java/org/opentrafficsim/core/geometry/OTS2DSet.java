@@ -122,7 +122,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
         }
         if (!this.quadTree.add(e))
         {
-            SimLogger.error("add: ERROR object could not be added to the quad tree");
+            SimLogger.always().error("add: ERROR object could not be added to the quad tree");
         }
         return this.allShapes.add(e);
     }
@@ -137,7 +137,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
         }
         if (!this.quadTree.remove((OTSShape) o))
         {
-            SimLogger.error("remove: ERROR object could not be removed from the quad tree");
+            SimLogger.always().error("remove: ERROR object could not be removed from the quad tree");
         }
         return true;
     }
@@ -309,7 +309,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
             this.theIterator.remove();
             if (!OTS2DSet.this.quadTree.remove(this.lastResult))
             {
-                SimLogger.error("iterator.remove: ERROR: could not remove {} from the quad tree", this.lastResult);
+                SimLogger.always().error("iterator.remove: ERROR: could not remove {} from the quad tree", this.lastResult);
             }
         }
 
@@ -504,7 +504,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
             }
             catch (OTSGeometryException exception)
             {
-                SimLogger.error(exception);
+                SimLogger.always().error(exception);
                 return null;
             }
         }

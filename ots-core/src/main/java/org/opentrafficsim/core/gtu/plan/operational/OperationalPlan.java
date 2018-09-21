@@ -436,7 +436,7 @@ public class OperationalPlan implements Serializable
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.error("OperationalPlan.getLocation(): " + exception.getMessage());
+            SimLogger.always().error("OperationalPlan.getLocation(): " + exception.getMessage());
             p = this.path.getLocationFractionExtended(fraction);
         }
         p.setZ(p.getZ() + 0.001);
@@ -621,7 +621,7 @@ public class OperationalPlan implements Serializable
         {
             throw new RuntimeException("Index out of bounds on projection of point to path of operational plan", exception);
         }
-        SimLogger.error("timeAtPoint failed");
+        SimLogger.always().error("timeAtPoint failed");
         return null;
     }
 
@@ -956,7 +956,7 @@ public class OperationalPlan implements Serializable
                     return new Duration(solution, DurationUnit.SI);
                 }
             }
-            SimLogger.error("AccelerationSegment " + this + " timeAtDistance( " + distance + ") failed");
+            SimLogger.always().error("AccelerationSegment " + this + " timeAtDistance( " + distance + ") failed");
             return null; // No valid solution
         }
 
@@ -1039,7 +1039,7 @@ public class OperationalPlan implements Serializable
             {
                 return new Duration(solution[0], DurationUnit.SI);
             }
-            SimLogger.error("SpeedSegment " + this + " timeAtDistance( " + distance + ") failed");
+            SimLogger.always().error("SpeedSegment " + this + " timeAtDistance( " + distance + ") failed");
             return null; // No valid solution
         }
 

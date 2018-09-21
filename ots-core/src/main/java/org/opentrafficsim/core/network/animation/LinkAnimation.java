@@ -75,7 +75,7 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         catch (OTSGeometryException exception)
         {
             // Cannot happen
-            SimLogger.error(exception);
+            SimLogger.always().error(exception);
         }
     }
 
@@ -104,11 +104,11 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.error(exception);
+            SimLogger.always().error(exception);
         }
         catch (RemoteException exception)
         {
-            SimLogger.error(exception);
+            SimLogger.always().error(exception);
         }
     }
 

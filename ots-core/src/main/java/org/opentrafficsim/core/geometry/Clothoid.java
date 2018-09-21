@@ -335,7 +335,7 @@ public final class Clothoid
             catch (OTSGeometryException ge)
             {
                 // cannot happen
-                SimLogger.error(ge, "CANNOT HAPPEN; if you see this; let us know what you did.");
+                SimLogger.always().error(ge, "CANNOT HAPPEN; if you see this; let us know what you did.");
             }
         }
         return new OTSLine3D(list);

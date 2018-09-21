@@ -76,7 +76,7 @@ public class BooleanProperty extends AbstractProperty<Boolean> implements Serial
         }
         catch (PropertyException exception)
         {
-            CategoryLogger.error(exception, "Create deep copy of BooleanProperty. Should never happen");
+            CategoryLogger.always().error(exception, "Create deep copy of BooleanProperty. Should never happen");
         }
         return null; // NOTREACHED
     }

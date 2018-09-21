@@ -243,14 +243,14 @@ public final class TransformWGS84DutchRDNew
      */
     private static void forwardReverseCompare(final String description, final Point2D rdIn)
     {
-        SimLogger.trace(Cat.CORE, description + ":");
-        SimLogger.trace(Cat.CORE, String.format(Locale.US, "in:         (%9.2f,%9.2f)", rdIn.getX(), rdIn.getY()));
+        SimLogger.filter(Cat.CORE).trace(description + ":");
+        SimLogger.filter(Cat.CORE).trace(String.format(Locale.US, "in:         (%9.2f,%9.2f)", rdIn.getX(), rdIn.getY()));
         Point2D wgs = toWGS84(rdIn);
-        SimLogger.trace(Cat.CORE, String.format(Locale.US, "wgs84:      (%9.6f,%9.6f)", wgs.getX(), wgs.getY()));
+        SimLogger.filter(Cat.CORE).trace(String.format(Locale.US, "wgs84:      (%9.6f,%9.6f)", wgs.getX(), wgs.getY()));
         Point2D back = fromWGS84(wgs);
-        SimLogger.trace(Cat.CORE, String.format(Locale.US, "back:       (%9.2f,%9.2f)", back.getX(), back.getY()));
+        SimLogger.filter(Cat.CORE).trace(String.format(Locale.US, "back:       (%9.2f,%9.2f)", back.getX(), back.getY()));
         double distance = rdIn.distance(back);
-        SimLogger.trace(Cat.CORE, String.format("difference: %8.6fm", distance));
+        SimLogger.filter(Cat.CORE).trace(String.format("difference: %8.6fm", distance));
     }
 
     /**

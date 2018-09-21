@@ -325,7 +325,7 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
         }
         catch (PropertyException exception)
         {
-            CategoryLogger.error(exception, "PropertyException in deepCopy. Cannot happen");
+            CategoryLogger.always().error(exception, "PropertyException in deepCopy. Cannot happen");
         }
         return null; // NOTREACHED
     }
