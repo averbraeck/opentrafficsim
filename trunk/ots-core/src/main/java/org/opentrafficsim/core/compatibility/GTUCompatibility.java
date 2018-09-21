@@ -7,6 +7,7 @@ import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.logger.SimLogger;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 
 import nl.tudelft.simulation.language.Throw;
@@ -78,7 +79,7 @@ public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
             case DIR_PLUS:
                 return GTUDirectionality.DIR_PLUS == directionality;
             default:
-                System.err.println("Cannot happen");
+                SimLogger.warn("Unknown type in isCompatible - Cannot happen");
                 return null;
         }
     }

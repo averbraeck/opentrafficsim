@@ -4,6 +4,9 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Locale;
 
+import org.opentrafficsim.base.logger.Cat;
+import org.opentrafficsim.core.logger.SimLogger;
+
 /**
  * Convert geographical coordinates between WGS84 and the Dutch RD (Rijksdriehoek) system. <br>
  * Specific MathTransform for WGS84 (EPSG:4326) to RD_new (EPSG:28992) conversions. Code based on C code by Peter Knoppers as
@@ -240,14 +243,14 @@ public final class TransformWGS84DutchRDNew
      */
     private static void forwardReverseCompare(final String description, final Point2D rdIn)
     {
-        System.out.println(description + ":");
-        System.out.println(String.format(Locale.US, "in:         (%9.2f,%9.2f)", rdIn.getX(), rdIn.getY()));
+        SimLogger.trace(Cat.CORE, description + ":");
+        SimLogger.trace(Cat.CORE, String.format(Locale.US, "in:         (%9.2f,%9.2f)", rdIn.getX(), rdIn.getY()));
         Point2D wgs = toWGS84(rdIn);
-        System.out.println(String.format(Locale.US, "wgs84:      (%9.6f,%9.6f)", wgs.getX(), wgs.getY()));
+        SimLogger.trace(Cat.CORE, String.format(Locale.US, "wgs84:      (%9.6f,%9.6f)", wgs.getX(), wgs.getY()));
         Point2D back = fromWGS84(wgs);
-        System.out.println(String.format(Locale.US, "back:       (%9.2f,%9.2f)", back.getX(), back.getY()));
+        SimLogger.trace(Cat.CORE, String.format(Locale.US, "back:       (%9.2f,%9.2f)", back.getX(), back.getY()));
         double distance = rdIn.distance(back);
-        System.out.println(String.format("difference: %8.6fm", distance));
+        SimLogger.trace(Cat.CORE, String.format("difference: %8.6fm", distance));
     }
 
     /**

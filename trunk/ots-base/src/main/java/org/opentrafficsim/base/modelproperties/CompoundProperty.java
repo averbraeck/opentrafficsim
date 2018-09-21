@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.opentrafficsim.base.logger.CategoryLogger;
+
 /**
  * Compound property.
  * <p>
@@ -84,12 +86,12 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
      */
     public final Property<?> findSubPropertyByKey(final String key)
     {
-        // System.out.println("Searching property " + name);
+        // CategoryLogger.trace(Cat.BASE, "Searching property {}", key);
         Iterator<Property<?>> i = this.iterator();
         while (i.hasNext())
         {
             Property<?> ap = i.next();
-            // System.out.println("Inspecting " + ap.getKey());
+            // CategoryLogger.trace(Cat.BASE, "Inspecting {}", ap.getKey());
             if (ap.getKey().equals(key))
             {
                 return ap;
@@ -282,11 +284,11 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
 
         });
         /*-
-        System.out.println("Sorted " + getShortName());
+        CategoryLogger.trace(Cat.BASE, "Sorted {}", getShortName());
         int pos = 0;
         for (AbstractProperty<?> ap : result)
         {
-            System.out.println(++pos + " - " + ap.getDisplayPriority() + ": " + ap.getShortName());
+            CategoryLogger.trace(Cat.BASE, ++pos + " - " + ap.getDisplayPriority() + ": " + ap.getShortName());
         }
          */
         return result;
@@ -323,8 +325,7 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
         }
         catch (PropertyException exception)
         {
-            System.err.println("Cannot happen");
-            exception.printStackTrace();
+            CategoryLogger.error(exception, "PropertyException in deepCopy. Cannot happen");
         }
         return null; // NOTREACHED
     }

@@ -9,6 +9,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.logger.SimLogger;
 
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -217,7 +218,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                         }
                         catch (Exception exception)
                         {
-                            exception.printStackTrace();
+                            SimLogger.error(exception);
                             if (this.isPauseOnError())
                             {
                                 this.stop();
@@ -257,7 +258,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                exception.printStackTrace();
+                                SimLogger.error(exception);
                                 if (this.isPauseOnError())
                                 {
                                     this.stop();
@@ -291,7 +292,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                exception.printStackTrace();
+                                SimLogger.error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
                                     OTSDEVSRTParallelMove.this.stop();
@@ -327,7 +328,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                exception.printStackTrace();
+                                SimLogger.error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
                                     OTSDEVSRTParallelMove.this.stop();
@@ -363,7 +364,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                exception.printStackTrace();
+                                SimLogger.error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
                                     OTSDEVSRTParallelMove.this.stop();

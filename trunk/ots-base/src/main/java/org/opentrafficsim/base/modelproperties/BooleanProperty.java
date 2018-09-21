@@ -2,6 +2,8 @@ package org.opentrafficsim.base.modelproperties;
 
 import java.io.Serializable;
 
+import org.opentrafficsim.base.logger.CategoryLogger;
+
 /**
  * Boolean property.
  * <p>
@@ -74,8 +76,7 @@ public class BooleanProperty extends AbstractProperty<Boolean> implements Serial
         }
         catch (PropertyException exception)
         {
-            System.err.println("Cannot happen");
-            exception.printStackTrace();
+            CategoryLogger.error(exception, "Create deep copy of BooleanProperty. Should never happen");
         }
         return null; // NOTREACHED
     }

@@ -2,6 +2,33 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="1.00.02" date="2018-09-20" description="Demo repairs, ots-aimsun integrated, Logger">
+      <action dev="wschakel" type="fix">
+        Demo CircularRoad + LMRS fixed; dynamic extension of the LaneStructure was not correct.   
+      </action>
+      <action dev="wschakel" type="fix">
+        Demo Merge 1 plus 1 into 1: CanPlaceDemoCode replaced by CFRoomChecker; 
+        CanPlaceDemoCode still used IDMOld.   
+      </action>
+      <action dev="wschakel" type="fix">
+        Demo LoadXML with an aimsun network has been repaired.
+      </action>
+      <action dev="averbraeck" type="add">
+        ots-aimsun-proto, ots-aimsun-demo and ots-aimsun projects are now part of ots. The proto-compiler
+        is loaded dynamically based on the OS version and protobuf-version. protobuf compiles
+        into src/main/java so other projects can use the generated code.    
+      </action>
+      <action dev="averbraeck" type="add">
+        ots-base now has a logger package, where proper logging using tinylog will be developed. 
+        Instead of system.out.println, system.err.println, DEBUG messages, and other output that cannot
+        be sent to file or a Console will be removed step-by-step and replaced by calls to the Logger.    
+      </action>
+      <action dev="averbraeck" type="add">
+        A CategoryLogger has been added to the logger package in ots-base. For the CategoryLogger it is
+        possible to turn categories on and off for display, enabling fine-grained debugging and reporting.    
+      </action>
+    </release>
+    
     <release version="1.00.01" date="2018-09-19" description="Major upgrade">
       <action dev="averbraeck" type="update">
         Using newest version of DSOL. Removing several classes for OTSSimulator as these

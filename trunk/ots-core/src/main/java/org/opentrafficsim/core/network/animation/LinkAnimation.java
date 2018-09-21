@@ -14,6 +14,7 @@ import org.opentrafficsim.core.animation.TextAnimation;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.logger.SimLogger;
 import org.opentrafficsim.core.network.Link;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -74,7 +75,7 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         catch (OTSGeometryException exception)
         {
             // Cannot happen
-            exception.printStackTrace();
+            SimLogger.error(exception);
         }
     }
 
@@ -103,11 +104,11 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         }
         catch (OTSGeometryException exception)
         {
-            exception.printStackTrace();
+            SimLogger.error(exception);
         }
         catch (RemoteException exception)
         {
-            exception.printStackTrace();
+            SimLogger.error(exception);
         }
     }
 

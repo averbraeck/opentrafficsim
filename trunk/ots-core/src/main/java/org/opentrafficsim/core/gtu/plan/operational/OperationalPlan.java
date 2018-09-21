@@ -21,6 +21,7 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.logger.SimLogger;
 import org.opentrafficsim.core.math.Solver;
 
 import nl.tudelft.simulation.language.Throw;
@@ -435,7 +436,7 @@ public class OperationalPlan implements Serializable
         }
         catch (OTSGeometryException exception)
         {
-            System.err.println("OperationalPlan.getLocation(): " + exception.getMessage());
+            SimLogger.error("OperationalPlan.getLocation(): " + exception.getMessage());
             p = this.path.getLocationFractionExtended(fraction);
         }
         p.setZ(p.getZ() + 0.001);
@@ -620,7 +621,7 @@ public class OperationalPlan implements Serializable
         {
             throw new RuntimeException("Index out of bounds on projection of point to path of operational plan", exception);
         }
-        System.err.println("timeAtPoint failed");
+        SimLogger.error("timeAtPoint failed");
         return null;
     }
 
@@ -955,7 +956,7 @@ public class OperationalPlan implements Serializable
                     return new Duration(solution, DurationUnit.SI);
                 }
             }
-            System.err.println("AccelerationSegment " + this + " timeAtDistance( " + distance + ") failed");
+            SimLogger.error("AccelerationSegment " + this + " timeAtDistance( " + distance + ") failed");
             return null; // No valid solution
         }
 
@@ -1038,7 +1039,7 @@ public class OperationalPlan implements Serializable
             {
                 return new Duration(solution[0], DurationUnit.SI);
             }
-            System.err.println("SpeedSegment " + this + " timeAtDistance( " + distance + ") failed");
+            SimLogger.error("SpeedSegment " + this + " timeAtDistance( " + distance + ") failed");
             return null; // No valid solution
         }
 
