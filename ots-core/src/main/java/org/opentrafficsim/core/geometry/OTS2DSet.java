@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.opentrafficsim.core.logger.SimLogger;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 import nl.tudelft.simulation.language.Throw;
@@ -120,7 +122,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
         }
         if (!this.quadTree.add(e))
         {
-            System.err.println("add: ERROR object could not be added to the quad tree");
+            SimLogger.error("add: ERROR object could not be added to the quad tree");
         }
         return this.allShapes.add(e);
     }
@@ -135,7 +137,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
         }
         if (!this.quadTree.remove((OTSShape) o))
         {
-            System.err.println("remove: ERROR object could not be removed from the quad tree");
+            SimLogger.error("remove: ERROR object could not be removed from the quad tree");
         }
         return true;
     }
@@ -307,7 +309,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
             this.theIterator.remove();
             if (!OTS2DSet.this.quadTree.remove(this.lastResult))
             {
-                System.err.println("iterator.remove: ERROR: could not remove " + this.lastResult + " from the quad tree");
+                SimLogger.error("iterator.remove: ERROR: could not remove {} from the quad tree", this.lastResult);
             }
         }
 
@@ -502,7 +504,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
             }
             catch (OTSGeometryException exception)
             {
-                exception.printStackTrace();
+                SimLogger.error(exception);
                 return null;
             }
         }

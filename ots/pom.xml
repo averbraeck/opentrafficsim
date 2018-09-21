@@ -223,7 +223,7 @@
               <fromDir>${basedir}/src/main/resources</fromDir>
               <includes>license.html</includes>
               <url>scp://opentrafficsim.org/home/web/opentrafficsim.org</url>
-              <toDir>docs</toDir>
+              <toDir>${project.version}</toDir>
               <serverId>ots-deployment</serverId>
             </configuration>
           </execution>

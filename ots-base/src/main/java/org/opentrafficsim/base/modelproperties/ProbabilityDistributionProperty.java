@@ -173,7 +173,7 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]> 
     @Override
     public final AbstractProperty<Double[]> deepCopy()
     {
-        // System.out.println("copying probabilitydistribution " + getShortName() + ", " + this.getValue(0));
+        // CategoryLogger.trace(Cat.BASE, "copying probabilitydistribution " + getShortName() + ", " + this.getValue(0));
         try
         {
             return new ProbabilityDistributionProperty(getKey(), getShortName(), getDescription(), this.names, this.value,

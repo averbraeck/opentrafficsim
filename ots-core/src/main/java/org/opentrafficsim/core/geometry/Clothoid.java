@@ -6,6 +6,7 @@ import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.opentrafficsim.core.logger.SimLogger;
 
 /**
  * Generate an OTSLine3D for a clothoid. <br>
@@ -334,7 +335,7 @@ public final class Clothoid
             catch (OTSGeometryException ge)
             {
                 // cannot happen
-                System.err.println("CANNOT HAPPEN; if you see this; let us know what you did.");
+                SimLogger.error(ge, "CANNOT HAPPEN; if you see this; let us know what you did.");
             }
         }
         return new OTSLine3D(list);

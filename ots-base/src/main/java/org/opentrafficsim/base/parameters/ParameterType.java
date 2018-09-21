@@ -35,7 +35,6 @@ public class ParameterType<T> extends Type<ParameterType<T>> implements Serializ
     private final Constraint<? super T> constraint;
 
     /** Class of the value. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
     private final Class<T> valueClass;
 
     /** Default value. */

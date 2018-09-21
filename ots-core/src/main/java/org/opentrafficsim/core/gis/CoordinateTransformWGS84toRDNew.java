@@ -3,6 +3,8 @@ package org.opentrafficsim.core.gis;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 
+import org.opentrafficsim.core.logger.SimLogger;
+
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 
 /**
@@ -58,7 +60,7 @@ public class CoordinateTransformWGS84toRDNew implements CoordinateTransform, Ser
         }
         catch (Exception exception)
         {
-            System.err.println(exception.getMessage());
+            SimLogger.error(exception);
             return new double[] { 0, 0 };
         }
     }

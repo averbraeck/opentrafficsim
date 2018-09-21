@@ -14,14 +14,17 @@
   <description>OTS AIMSUN demo classes</description>
   
   <dependencies>
+  
     <dependency>
-      <groupId>com.google.protobuf</groupId>
-      <artifactId>protobuf-java</artifactId>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-aimsun</artifactId>
     </dependency>
+  
     <dependency>
       <groupId>dsol</groupId>
       <artifactId>dsol-base</artifactId>
     </dependency>
+  
   </dependencies>
   
 </project>
