@@ -137,10 +137,9 @@ public class CategoryLogger
     }
 
     /**
-     * Set a new logging level for all registered writers. 
-     * FIXME: Either this javadoc is wrong or why does this method have a writer argument
-     * @param writer the writer to change the message format for
-     * @param newLevel the new log level for all registered writers
+     * Set a new logging level for one of the registered writers. 
+     * @param writer the writer to change the log level for
+     * @param newLevel the new log level for the writer
      */
     public static void setAllLogLevel(final Writer writer, final Level newLevel)
     {
