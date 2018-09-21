@@ -66,6 +66,7 @@ public class CategoryLogger
     protected static void create()
     {
         consoleWriter = new ConsoleWriter();
+        writers.add(consoleWriter);
         Configurator.currentConfig().writer(consoleWriter, defaultLevel, defaultMessageFormat).activate();
         categories.add(LogCategory.ALL);
     }
@@ -141,7 +142,7 @@ public class CategoryLogger
      * @param writer the writer to change the log level for
      * @param newLevel the new log level for the writer
      */
-    public static void setAllLogLevel(final Writer writer, final Level newLevel)
+    public static void setLogLevel(final Writer writer, final Level newLevel)
     {
         Configurator.currentConfig().removeWriter(writer).activate();
         writerLevels.put(writer, newLevel);
