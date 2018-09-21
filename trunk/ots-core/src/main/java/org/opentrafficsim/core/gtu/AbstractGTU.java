@@ -292,7 +292,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
                 && getOperationalPlan().getSpeed(Duration.ZERO).si > 2.5)
         {
-            SimLogger.error("(getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)");
+            SimLogger.always().error("(getOperationalPlan().getAcceleration(Duration.ZERO).si < -10)");
             // this.tacticalPlanner.generateOperationalPlan(now, fromLocation);
         }
 
@@ -563,7 +563,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     {
         if (this.operationalPlan.get() == null)
         {
-            SimLogger.error(
+            SimLogger.always().error(
                     "No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime());
             return new DirectedPoint(0, 0, 0);
         }

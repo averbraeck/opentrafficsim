@@ -20,9 +20,9 @@ public final class TestCategoryLogger
     {
         // Utility class
     }
-    
-    /** 
-     * Avoid err and out messages to be mixed. 
+
+    /**
+     * Avoid err and out messages to be mixed.
      */
     private static void delay()
     {
@@ -35,6 +35,7 @@ public final class TestCategoryLogger
             // ok
         }
     }
+
     /**
      * Test the CategoryLogger.
      * @param args not used
@@ -42,72 +43,74 @@ public final class TestCategoryLogger
     public static void main(final String[] args)
     {
         CategoryLogger.setAllLogLevel(Level.INFO);
-        CategoryLogger.trace("TRACE - this should NOT be logged");
+        CategoryLogger.always().trace("TRACE - this should NOT be logged");
         delay();
-        CategoryLogger.debug("DEBUG - this should NOT be logged");
+        CategoryLogger.always().debug("DEBUG - this should NOT be logged");
         delay();
-        CategoryLogger.info("INFO - this should be logged");
+        CategoryLogger.always().info("INFO - this should be logged");
         delay();
-        CategoryLogger.warn("WARN - this should be logged");
+        CategoryLogger.always().warn("WARN - this should be logged");
         delay();
-        CategoryLogger.error("ERROR - this should be logged");
+        CategoryLogger.always().error("ERROR - this should be logged");
         delay();
-        CategoryLogger.error(new Exception("this exception should be logged!"), "message for the exception to be logged");
+        CategoryLogger.always().error(new Exception("this exception should be logged!"),
+                "message for the exception to be logged");
         delay();
-        
+
         System.out.println("\nBASE...");
         delay();
         CategoryLogger.setLogCategories(Cat.BASE);
         delay();
-        CategoryLogger.trace(Cat.BASE, "TRACE Cat.BASE - this should NOT be logged");
+        CategoryLogger.filter(Cat.BASE).trace("TRACE Cat.BASE - this should NOT be logged");
         delay();
-        CategoryLogger.debug(Cat.BASE, "DEBUG Cat.BASE - this should NOT be logged");
+        CategoryLogger.filter(Cat.BASE).debug("DEBUG Cat.BASE - this should NOT be logged");
         delay();
-        CategoryLogger.info(Cat.BASE, "INFO Cat.BASE - this should be logged");
+        CategoryLogger.filter(Cat.BASE).info("INFO Cat.BASE - this should be logged");
         delay();
-        CategoryLogger.warn(Cat.BASE, "WARN Cat.BASE - this should be logged");
+        CategoryLogger.filter(Cat.BASE).warn("WARN Cat.BASE - this should be logged");
         delay();
-        CategoryLogger.error(Cat.BASE, "ERROR Cat.BASE - this should be logged");
+        CategoryLogger.filter(Cat.BASE).error("ERROR Cat.BASE - this should be logged");
         delay();
-        CategoryLogger.error(new Exception("this exception should be logged!"), "message for the exception to be logged");
+        CategoryLogger.filter(Cat.BASE).error(new Exception("this exception should be logged!"),
+                "message for the exception to be logged");
         delay();
-        
+
         System.out.println("\nCORE... NOTHING should be logged");
         delay();
-        CategoryLogger.trace(Cat.CORE, "TRACE Cat.CORE - this should NOT be logged");
+        CategoryLogger.filter(Cat.CORE).trace("TRACE Cat.CORE - this should NOT be logged");
         delay();
-        CategoryLogger.debug(Cat.CORE, "DEBUG Cat.CORE - this should NOT be logged");
+        CategoryLogger.filter(Cat.CORE).debug("DEBUG Cat.CORE - this should NOT be logged");
         delay();
-        CategoryLogger.info(Cat.CORE, "INFO Cat.CORE - this should NOT be logged");
+        CategoryLogger.filter(Cat.CORE).info("INFO Cat.CORE - this should NOT be logged");
         delay();
-        CategoryLogger.warn(Cat.CORE, "WARN Cat.CORE - this should NOT be logged");
+        CategoryLogger.filter(Cat.CORE).warn("WARN Cat.CORE - this should NOT be logged");
         delay();
-        CategoryLogger.error(Cat.CORE, "ERROR Cat.CORE - this should NOT be logged");
+        CategoryLogger.filter(Cat.CORE).error("ERROR Cat.CORE - this should NOT be logged");
         delay();
-        CategoryLogger.error(new Exception("should all exceptions be logged?"), "should all exceptions be logged?");
+        CategoryLogger.filter(Cat.CORE).error(new Exception("should all exceptions be logged?"),
+                "should all exceptions be logged?");
         delay();
-        
-        LogCategory[] cats = new LogCategory[] {Cat.BASE, Cat.CORE, Cat.ROAD};
+
+        LogCategory[] cats = new LogCategory[] { Cat.BASE, Cat.CORE, Cat.ROAD };
         System.out.println("\nBASE + CORE + ROAD...");
         delay();
-        CategoryLogger.trace(cats, "TRACE cats - this should NOT be logged");
+        CategoryLogger.filter(cats).trace("TRACE cats - this should NOT be logged");
         delay();
-        CategoryLogger.debug(cats, "DEBUG cats - this should NOT be logged");
+        CategoryLogger.filter(cats).debug("DEBUG cats - this should NOT be logged");
         delay();
-        CategoryLogger.info(cats, "INFO cats - this should be logged");
+        CategoryLogger.filter(cats).info("INFO cats - this should be logged");
         delay();
-        CategoryLogger.warn(cats, "WARN cats - this should be logged");
+        CategoryLogger.filter(cats).warn("WARN cats - this should be logged");
         delay();
-        CategoryLogger.error(cats, "ERROR cats - this should be logged");
+        CategoryLogger.filter(cats).error("ERROR cats - this should be logged");
         delay();
-        CategoryLogger.error(new Exception("this exception should be logged!"), "message for the exception to be logged");
+        CategoryLogger.filter(Cat.BASE, Cat.CORE, Cat.ROAD).error(new Exception("this exception should be logged!"),
+                "called with filter(Cat.BASE, Cat.CORE, Cat.ROAD) -- message for the exception to be logged");
         delay();
 
         System.out.println("\nArguments...");
-        CategoryLogger.info(Cat.BASE, "INFO Cat.BASE with args {}, {} and {} - this should be logged", 1, 2, "[TEST]");
+        CategoryLogger.filter(Cat.BASE).info("INFO Cat.BASE with args {}, {} and {} - this should be logged", 1, 2, "[TEST]");
         delay();
-
     }
 
 }
-

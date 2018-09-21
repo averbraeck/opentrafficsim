@@ -174,7 +174,7 @@ public abstract class TextAnimation implements Locatable, Serializable
         }
         catch (NamingException exception)
         {
-            SimLogger.warn(exception, "Tried to destroy Text for GTU animation of GTU {}", this.source.toString());
+            SimLogger.always().warn(exception, "Tried to destroy Text for GTU animation of GTU {}", this.source.toString());
         }
     }
 

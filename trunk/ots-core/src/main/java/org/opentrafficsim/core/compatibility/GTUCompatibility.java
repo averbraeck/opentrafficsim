@@ -79,7 +79,7 @@ public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
             case DIR_PLUS:
                 return GTUDirectionality.DIR_PLUS == directionality;
             default:
-                SimLogger.warn("Unknown type in isCompatible - Cannot happen");
+                SimLogger.always().warn("Unknown type in isCompatible - Cannot happen");
                 return null;
         }
     }

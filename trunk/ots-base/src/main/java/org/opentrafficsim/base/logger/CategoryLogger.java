@@ -13,8 +13,21 @@ import org.pmw.tinylog.writers.ConsoleWriter;
 import org.pmw.tinylog.writers.Writer;
 
 /**
- * The CategoryLogger can log for specific Categories. <br>
- * <br>
+ * The CategoryLogger can log for specific Categories. The way to call the logger for messages that always need to be logged,
+ * such as an error with an exception is:
+ * 
+ * <pre>
+ * CategoryLogger.always().error(exception, "Parameter {} did not initialize correctly", param1.toString());
+ * </pre>
+ * 
+ * It is also possible to indicate the category / categories for the message, which will only be logged if at least one of the
+ * indicated categories is turned on with addLogCategory() or setLogCategories(), or if one of the added or set LogCategories is
+ * LogCategory.ALL:
+ * 
+ * <pre>
+ * CategoryLogger.filter(Cat.BASE).debug("Parameter {} initialized correctly", param1.toString());
+ * </pre>
+ * 
  * Copyright (c) 2003-2018 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
  * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
  * source code and binary code of this software is proprietary information of Delft University of Technology.
@@ -42,10 +55,16 @@ public class CategoryLogger
     private static Map<Writer, String> writerFormats = new HashMap<>();
 
     /** The categories to log. */
-    private static Set<LogCategory> categories = new HashSet<>(256);
+    protected static Set<LogCategory> categories = new HashSet<>(256);
 
     /** The console writer, replacing the default one. */
     private static Writer consoleWriter;
+
+    /** The delegate logger instance that does the actual logging work, after a positive filter outcome. */
+    protected static DelegateLogger delegateLogger = new DelegateLogger(true);
+
+    /** The delegate logger that returns immediately after a negative filter outcome. */
+    protected static DelegateLogger noLogger = new DelegateLogger(false);
 
     /** */
     protected CategoryLogger()
@@ -138,7 +157,7 @@ public class CategoryLogger
     }
 
     /**
-     * Set a new logging level for one of the registered writers. 
+     * Set a new logging level for one of the registered writers.
      * @param writer the writer to change the log level for
      * @param newLevel the new log level for the writer
      */
@@ -177,1420 +196,418 @@ public class CategoryLogger
         categories.addAll(Arrays.asList(newLogCategories));
     }
 
+    /* ****************************************** FILTER ******************************************/
+
+    /**
+     * The "pass" filter that will result in always trying to log.
+     * @return the logger that tries to execute logging (delegateLogger)
+     */
+    public static DelegateLogger always()
+    {
+        return delegateLogger;
+    }
+
     /**
      * Check whether the provided category needs to be logged. Note that when LogCategory.ALL is contained in the categories,
-     * checkCategories will return true.
+     * filter will return true.
      * @param logCategory the category to check for.
-     * @return whether the provided category needs to be logged
+     * @return the logger that either tries to log (delegateLogger), or returns without logging (noLogger)
      */
-    protected static boolean checkCategories(final LogCategory logCategory)
+    public static DelegateLogger filter(final LogCategory logCategory)
     {
         if (categories.contains(LogCategory.ALL))
-            return true;
+            return delegateLogger;
         if (categories.contains(logCategory))
-            return true;
-        return false;
+            return delegateLogger;
+        return noLogger;
     }
 
     /**
      * Check whether the provided categories contain one or more categories that need to be logged. Note that when
-     * LogCategory.ALL is contained in the categories, checkCategories will return true.
-     * @param logCategories LogCategory[]; array with the categories to check for
-     * @return boolean whether the provided category needs to be logged
+     * LogCategory.ALL is contained in the categories, filter will return true.
+     * @param logCategories LogCategory...; elements or array with the categories to check for
+     * @return the logger that either tries to log (delegateLogger), or returns without logging (noLogger)
      */
-    protected static boolean checkCategories(final LogCategory[] logCategories)
+    public static DelegateLogger filter(final LogCategory... logCategories)
     {
         if (categories.contains(LogCategory.ALL))
-            return true;
+            return delegateLogger;
         for (LogCategory logCategory : logCategories)
         {
             if (categories.contains(logCategory))
-                return true;
+                return delegateLogger;
         }
-        return false;
+        return noLogger;
     }
 
     /**
      * Check whether the provided categories contain one or more categories that need to be logged. Note that when
-     * LogCategory.ALL is contained in the categories, checkCategories will return true.
+     * LogCategory.ALL is contained in the categories, filter will return true.
      * @param logCategories Set&lt;LogCategory&gt;; the categories to check for
-     * @return boolean; whether the provided category needs to be logged
+     * @return the logger that either tries to log (delegateLogger), or returns without logging (noLogger)
      */
-    protected static boolean checkCategories(final Set<LogCategory> logCategories)
+    public static DelegateLogger filter(final Set<LogCategory> logCategories)
     {
         if (categories.contains(LogCategory.ALL))
-            return true;
+            return delegateLogger;
         for (LogCategory logCategory : logCategories)
         {
             if (categories.contains(logCategory))
-                return true;
+                return delegateLogger;
         }
-        return false;
+        return noLogger;
+    }
+
+    /**
+     * DelegateLogger class that takes care of actually logging the message and/or exception. <br>
+     * <br>
+     * Copyright (c) 2003-2018 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+     * See for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>.
+     * The source code and binary code of this software is proprietary information of Delft University of Technology.
+     * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
+     */
+    public static class DelegateLogger
+    {
+        /** Should we try to log or not? */
+        private final boolean log;
+
+        /**
+         * @param log indicate whether we should log or not.
+         */
+        public DelegateLogger(final boolean log)
+        {
+            super();
+            this.log = log;
+        }
+
+        /* ****************************************** TRACE ******************************************/
+
+        /**
+         * Create a trace log entry that will always be output, independent of LogCategory settings.
+         * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
+         */
+        public void trace(final Object object)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.TRACE, object);
+        }
+
+        /**
+         * Create a trace log entry that will always be output, independent of LogCategory settings.
+         * @param message String; the message to log
+         */
+        public void trace(final String message)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.TRACE, message);
+        }
+
+        /**
+         * Create a trace log entry that will always be output, independent of LogCategory settings.
+         * @param message String; the message to be logged, where {} entries will be replaced by arguments
+         * @param arguments Object...; the arguments to substitute for the {} entries in the message string
+         */
+        public void trace(final String message, final Object... arguments)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.TRACE, message, arguments);
+        }
+
+        /**
+         * Create a trace log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         */
+        public void trace(final Throwable exception)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.TRACE, exception);
+        }
+
+        /**
+         * Create a trace log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         * @param message String; the message to log
+         */
+        public void trace(final Throwable exception, final String message)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.TRACE, exception, message);
+        }
+
+        /**
+         * Create a trace log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         * @param message String; the message to log, where {} entries will be replaced by arguments
+         * @param arguments Object...; the arguments to substitute for the {} entries in the message string
+         */
+        public void trace(final Throwable exception, final String message, final Object... arguments)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.TRACE, exception, message, arguments);
+        }
+
+        /* ****************************************** DEBUG ******************************************/
+
+        /**
+         * Create a debug log entry that will always be output, independent of LogCategory settings.
+         * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
+         */
+        public void debug(final Object object)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.DEBUG, object);
+        }
+
+        /**
+         * Create a debug log entry that will always be output, independent of LogCategory settings.
+         * @param message String; the message to log
+         */
+        public void debug(final String message)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.DEBUG, message);
+        }
+
+        /**
+         * Create a debug log entry that will always be output, independent of LogCategory settings.
+         * @param message String; the message to be logged, where {} entries will be replaced by arguments
+         * @param arguments Object...; the arguments to substitute for the {} entries in the message string
+         */
+        public void debug(final String message, final Object... arguments)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.DEBUG, message, arguments);
+        }
+
+        /**
+         * Create a debug log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         */
+        public void debug(final Throwable exception)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.DEBUG, exception);
+        }
+
+        /**
+         * Create a debug log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         * @param message String; the message to log
+         */
+        public void debug(final Throwable exception, final String message)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.DEBUG, exception, message);
+        }
+
+        /**
+         * Create a debug log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         * @param message String; the message to log, where {} entries will be replaced by arguments
+         * @param arguments Object...; the arguments to substitute for the {} entries in the message string
+         */
+        public void debug(final Throwable exception, final String message, final Object... arguments)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.DEBUG, exception, message, arguments);
+        }
+
+        /* ****************************************** INFO ******************************************/
+
+        /**
+         * Create a info log entry that will always be output, independent of LogCategory settings.
+         * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
+         */
+        public void info(final Object object)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.INFO, object);
+        }
+
+        /**
+         * Create a info log entry that will always be output, independent of LogCategory settings.
+         * @param message String; the message to log
+         */
+        public void info(final String message)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.INFO, message);
+        }
+
+        /**
+         * Create a info log entry that will always be output, independent of LogCategory settings.
+         * @param message String; the message to be logged, where {} entries will be replaced by arguments
+         * @param arguments Object...; the arguments to substitute for the {} entries in the message string
+         */
+        public void info(final String message, final Object... arguments)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.INFO, message, arguments);
+        }
+
+        /**
+         * Create a info log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         */
+        public void info(final Throwable exception)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.INFO, exception);
+        }
+
+        /**
+         * Create a info log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         * @param message String; the message to log
+         */
+        public void info(final Throwable exception, final String message)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.INFO, exception, message);
+        }
+
+        /**
+         * Create a info log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         * @param message String; the message to log, where {} entries will be replaced by arguments
+         * @param arguments Object...; the arguments to substitute for the {} entries in the message string
+         */
+        public void info(final Throwable exception, final String message, final Object... arguments)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.INFO, exception, message, arguments);
+        }
+
+        /* ****************************************** WARN ******************************************/
+
+        /**
+         * Create a warn log entry that will always be output, independent of LogCategory settings.
+         * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
+         */
+        public void warn(final Object object)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.WARNING, object);
+        }
+
+        /**
+         * Create a warn log entry that will always be output, independent of LogCategory settings.
+         * @param message String; the message to log
+         */
+        public void warn(final String message)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.WARNING, message);
+        }
+
+        /**
+         * Create a warn log entry that will always be output, independent of LogCategory settings.
+         * @param message String; the message to be logged, where {} entries will be replaced by arguments
+         * @param arguments Object...; the arguments to substitute for the {} entries in the message string
+         */
+        public void warn(final String message, final Object... arguments)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.WARNING, message, arguments);
+        }
+
+        /**
+         * Create a warn log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         */
+        public void warn(final Throwable exception)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.WARNING, exception);
+        }
+
+        /**
+         * Create a warn log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         * @param message String; the message to log
+         */
+        public void warn(final Throwable exception, final String message)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.WARNING, exception, message);
+        }
+
+        /**
+         * Create a warn log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         * @param message String; the message to log, where {} entries will be replaced by arguments
+         * @param arguments Object...; the arguments to substitute for the {} entries in the message string
+         */
+        public void warn(final Throwable exception, final String message, final Object... arguments)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.WARNING, exception, message, arguments);
+        }
+
+        /* ****************************************** ERROR ******************************************/
+
+        /**
+         * Create a error log entry that will always be output, independent of LogCategory settings.
+         * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
+         */
+        public void error(final Object object)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.ERROR, object);
+        }
+
+        /**
+         * Create a error log entry that will always be output, independent of LogCategory settings.
+         * @param message String; the message to log
+         */
+        public void error(final String message)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.ERROR, message);
+        }
+
+        /**
+         * Create a error log entry that will always be output, independent of LogCategory settings.
+         * @param message String; the message to be logged, where {} entries will be replaced by arguments
+         * @param arguments Object...; the arguments to substitute for the {} entries in the message string
+         */
+        public void error(final String message, final Object... arguments)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.ERROR, message, arguments);
+        }
+
+        /**
+         * Create a error log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         */
+        public void error(final Throwable exception)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.ERROR, exception);
+        }
+
+        /**
+         * Create a error log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         * @param message String; the message to log
+         */
+        public void error(final Throwable exception, final String message)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.ERROR, exception, message);
+        }
+
+        /**
+         * Create a error log entry that will always be output, independent of LogCategory settings.
+         * @param exception Throwable; the exception to log
+         * @param message String; the message to log, where {} entries will be replaced by arguments
+         * @param arguments Object...; the arguments to substitute for the {} entries in the message string
+         */
+        public void error(final Throwable exception, final String message, final Object... arguments)
+        {
+            if (this.log)
+                LogEntryForwarder.forward(1, Level.ERROR, exception, message, arguments);
+        }
     }
-
-    /* ****************************************** TRACE ******************************************/
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void trace(final Object object)
-    {
-        LogEntryForwarder.forward(1, Level.TRACE, object);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param message String; the message to log
-     */
-    public static void trace(final String message)
-    {
-        LogEntryForwarder.forward(1, Level.TRACE, message);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void trace(final String message, final Object... arguments)
-    {
-        LogEntryForwarder.forward(1, Level.TRACE, message, arguments);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     */
-    public static void trace(final Throwable exception)
-    {
-        LogEntryForwarder.forward(1, Level.TRACE, exception);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void trace(final Throwable exception, final String message)
-    {
-        LogEntryForwarder.forward(1, Level.TRACE, exception, message);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void trace(final Throwable exception, final String message, final Object... arguments)
-    {
-        LogEntryForwarder.forward(1, Level.TRACE, exception, message, arguments);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void trace(final LogCategory logCategory, final Object object)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.TRACE, object);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void trace(final LogCategory logCategory, final String message)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.TRACE, message);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void trace(final LogCategory logCategory, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.TRACE, message, arguments);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void trace(final LogCategory logCategory, final Throwable exception)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.TRACE, exception);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void trace(final LogCategory logCategory, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.TRACE, exception, message);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void trace(final LogCategory logCategory, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.TRACE, exception, message, arguments);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategories[]; array of the categories of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void trace(final LogCategory[] logCategories, final Object object)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, object);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void trace(final LogCategory[] logCategories, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, message);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategories[]; array of the categories of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void trace(final LogCategory[] logCategories, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, message, arguments);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void trace(final LogCategory[] logCategories, final Throwable exception)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, exception);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void trace(final LogCategory[] logCategories, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, exception, message);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void trace(final LogCategory[] logCategories, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, exception, message, arguments);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void trace(final Set<LogCategory> logCategories, final Object object)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, object);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void trace(final Set<LogCategory> logCategories, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, message);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void trace(final Set<LogCategory> logCategories, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, message, arguments);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void trace(final Set<LogCategory> logCategories, final Throwable exception)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, exception);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void trace(final Set<LogCategory> logCategories, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, exception, message);
-    }
-
-    /**
-     * Create a trace log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void trace(final Set<LogCategory> logCategories, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.TRACE, exception, message, arguments);
-    }
-
-    /* ****************************************** DEBUG ******************************************/
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void debug(final Object object)
-    {
-        LogEntryForwarder.forward(1, Level.DEBUG, object);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param message String; the message to log
-     */
-    public static void debug(final String message)
-    {
-        LogEntryForwarder.forward(1, Level.DEBUG, message);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void debug(final String message, final Object... arguments)
-    {
-        LogEntryForwarder.forward(1, Level.DEBUG, message, arguments);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     */
-    public static void debug(final Throwable exception)
-    {
-        LogEntryForwarder.forward(1, Level.DEBUG, exception);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void debug(final Throwable exception, final String message)
-    {
-        LogEntryForwarder.forward(1, Level.DEBUG, exception, message);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void debug(final Throwable exception, final String message, final Object... arguments)
-    {
-        LogEntryForwarder.forward(1, Level.DEBUG, exception, message, arguments);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void debug(final LogCategory logCategory, final Object object)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.DEBUG, object);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void debug(final LogCategory logCategory, final String message)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.DEBUG, message);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void debug(final LogCategory logCategory, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.DEBUG, message, arguments);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void debug(final LogCategory logCategory, final Throwable exception)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.DEBUG, exception);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void debug(final LogCategory logCategory, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.DEBUG, exception, message);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void debug(final LogCategory logCategory, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.DEBUG, exception, message, arguments);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void debug(final LogCategory[] logCategories, final Object object)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, object);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void debug(final LogCategory[] logCategories, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, message);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void debug(final LogCategory[] logCategories, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, message, arguments);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void debug(final LogCategory[] logCategories, final Throwable exception)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, exception);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void debug(final LogCategory[] logCategories, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, exception, message);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void debug(final LogCategory[] logCategories, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, exception, message, arguments);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set<LogCategory>; the categories of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void debug(final Set<LogCategory> logCategories, final Object object)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, object);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set<LogCategory>; the categories of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void debug(final Set<LogCategory> logCategories, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, message);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set<LogCategory>; the categories of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void debug(final Set<LogCategory> logCategories, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, message, arguments);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set<LogCategory>; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void debug(final Set<LogCategory> logCategories, final Throwable exception)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, exception);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set<LogCategory>; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message The message to log
-     */
-    public static void debug(final Set<LogCategory> logCategories, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, exception, message);
-    }
-
-    /**
-     * Create a debug log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set<LogCategory>; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void debug(final Set<LogCategory> logCategories, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.DEBUG, exception, message, arguments);
-    }
-
-    /* ****************************************** INFO ******************************************/
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void info(final Object object)
-    {
-        LogEntryForwarder.forward(1, Level.INFO, object);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param message String; the message to log
-     */
-    public static void info(final String message)
-    {
-        LogEntryForwarder.forward(1, Level.INFO, message);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void info(final String message, final Object... arguments)
-    {
-        LogEntryForwarder.forward(1, Level.INFO, message, arguments);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     */
-    public static void info(final Throwable exception)
-    {
-        LogEntryForwarder.forward(1, Level.INFO, exception);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void info(final Throwable exception, final String message)
-    {
-        LogEntryForwarder.forward(1, Level.INFO, exception, message);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void info(final Throwable exception, final String message, final Object... arguments)
-    {
-        LogEntryForwarder.forward(1, Level.INFO, exception, message, arguments);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void info(final LogCategory logCategory, final Object object)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.INFO, object);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void info(final LogCategory logCategory, final String message)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.INFO, message);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void info(final LogCategory logCategory, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.INFO, message, arguments);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void info(final LogCategory logCategory, final Throwable exception)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.INFO, exception);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void info(final LogCategory logCategory, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.INFO, exception, message);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory Logcategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void info(final LogCategory logCategory, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.INFO, exception, message, arguments);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void info(final LogCategory[] logCategories, final Object object)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, object);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void info(final LogCategory[] logCategories, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, message);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void info(final LogCategory[] logCategories, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, message, arguments);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void info(final LogCategory[] logCategories, final Throwable exception)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, exception);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void info(final LogCategory[] logCategories, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, exception, message);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void info(final LogCategory[] logCategories, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, exception, message, arguments);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void info(final Set<LogCategory> logCategories, final Object object)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, object);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void info(final Set<LogCategory> logCategories, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, message);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void info(final Set<LogCategory> logCategories, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, message, arguments);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void info(final Set<LogCategory> logCategories, final Throwable exception)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, exception);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void info(final Set<LogCategory> logCategories, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, exception, message);
-    }
-
-    /**
-     * Create a info log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void info(final Set<LogCategory> logCategories, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.INFO, exception, message, arguments);
-    }
-
-    /* ****************************************** WARN ******************************************/
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void warn(final Object object)
-    {
-        LogEntryForwarder.forward(1, Level.WARNING, object);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param message String; the message to log
-     */
-    public static void warn(final String message)
-    {
-        LogEntryForwarder.forward(1, Level.WARNING, message);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void warn(final String message, final Object... arguments)
-    {
-        LogEntryForwarder.forward(1, Level.WARNING, message, arguments);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     */
-    public static void warn(final Throwable exception)
-    {
-        LogEntryForwarder.forward(1, Level.WARNING, exception);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void warn(final Throwable exception, final String message)
-    {
-        LogEntryForwarder.forward(1, Level.WARNING, exception, message);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void warn(final Throwable exception, final String message, final Object... arguments)
-    {
-        LogEntryForwarder.forward(1, Level.WARNING, exception, message, arguments);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void warn(final LogCategory logCategory, final Object object)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.WARNING, object);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void warn(final LogCategory logCategory, final String message)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.WARNING, message);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void warn(final LogCategory logCategory, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.WARNING, message, arguments);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void warn(final LogCategory logCategory, final Throwable exception)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.WARNING, exception);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void warn(final LogCategory logCategory, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.WARNING, exception, message);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void warn(final LogCategory logCategory, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.WARNING, exception, message, arguments);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void warn(final LogCategory[] logCategories, final Object object)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, object);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void warn(final LogCategory[] logCategories, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, message);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void warn(final LogCategory[] logCategories, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, message, arguments);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void warn(final LogCategory[] logCategories, final Throwable exception)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, exception);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void warn(final LogCategory[] logCategories, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, exception, message);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception the exception to log
-     * @param message The message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void warn(final LogCategory[] logCategories, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, exception, message, arguments);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void warn(final Set<LogCategory> logCategories, final Object object)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, object);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void warn(final Set<LogCategory> logCategories, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, message);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void warn(final Set<LogCategory> logCategories, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, message, arguments);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void warn(final Set<LogCategory> logCategories, final Throwable exception)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, exception);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void warn(final Set<LogCategory> logCategories, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, exception, message);
-    }
-
-    /**
-     * Create a warn log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void warn(final Set<LogCategory> logCategories, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.WARNING, exception, message, arguments);
-    }
-
-    /* ****************************************** ERROR ******************************************/
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void error(final Object object)
-    {
-        LogEntryForwarder.forward(1, Level.ERROR, object);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param message String; the message to log
-     */
-    public static void error(final String message)
-    {
-        LogEntryForwarder.forward(1, Level.ERROR, message);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void error(final String message, final Object... arguments)
-    {
-        LogEntryForwarder.forward(1, Level.ERROR, message, arguments);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     */
-    public static void error(final Throwable exception)
-    {
-        LogEntryForwarder.forward(1, Level.ERROR, exception);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void error(final Throwable exception, final String message)
-    {
-        LogEntryForwarder.forward(1, Level.ERROR, exception, message);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void error(final Throwable exception, final String message, final Object... arguments)
-    {
-        LogEntryForwarder.forward(1, Level.ERROR, exception, message, arguments);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void error(final LogCategory logCategory, final Object object)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.ERROR, object);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void error(final LogCategory logCategory, final String message)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.ERROR, message);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void error(final LogCategory logCategory, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.ERROR, message, arguments);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void error(final LogCategory logCategory, final Throwable exception)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.ERROR, exception);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void error(final LogCategory logCategory, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.ERROR, exception, message);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategory LogCategory; the category of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void error(final LogCategory logCategory, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategory))
-            LogEntryForwarder.forward(1, Level.ERROR, exception, message, arguments);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void error(final LogCategory[] logCategories, final Object object)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, object);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void error(final LogCategory[] logCategories, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, message);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void error(final LogCategory[] logCategories, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, message, arguments);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void error(final LogCategory[] logCategories, final Throwable exception)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, exception);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void error(final LogCategory[] logCategories, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, exception, message);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories LogCategory[]; array of the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void error(final LogCategory[] logCategories, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, exception, message, arguments);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param object Object; the result of the <code>toString()</code> method of <code>object</code> will be logged
-     */
-    public static void error(final Set<LogCategory> logCategories, final Object object)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, object);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param message String; the message to log
-     */
-    public static void error(final Set<LogCategory> logCategories, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, message);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param message String; the message to be logged, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void error(final Set<LogCategory> logCategories, final String message, final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, message, arguments);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     */
-    public static void error(final Set<LogCategory> logCategories, final Throwable exception)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, exception);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log
-     */
-    public static void error(final Set<LogCategory> logCategories, final Throwable exception, final String message)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, exception, message);
-    }
-
-    /**
-     * Create a error log entry that will always be output, independent of LogCategory settings.
-     * @param logCategories Set&lt;LogCategory&gt;; the categories of the log message; will be logged if set or added
-     * @param exception Throwable; the exception to log
-     * @param message String; the message to log, where {} entries will be replaced by arguments
-     * @param arguments Object...; the arguments to substitute for the {} entries in the message string
-     */
-    public static void error(final Set<LogCategory> logCategories, final Throwable exception, final String message,
-            final Object... arguments)
-    {
-        if (checkCategories(logCategories))
-            LogEntryForwarder.forward(1, Level.ERROR, exception, message, arguments);
-    }
-
 }

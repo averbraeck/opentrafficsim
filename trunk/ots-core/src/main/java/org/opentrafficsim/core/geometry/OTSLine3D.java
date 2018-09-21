@@ -158,7 +158,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.error(exception);
+            SimLogger.always().error(exception);
             return null;
         }
     }
@@ -223,7 +223,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.error(exception);
+            SimLogger.always().error(exception);
             throw new Error(exception);
         }
     }
@@ -276,7 +276,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         catch (OTSGeometryException exception)
         {
-            SimLogger.error(exception); // Peter thinks this cannot happen ...
+            SimLogger.always().error(exception); // Peter thinks this cannot happen ...
             return null;
         }
     }
@@ -648,7 +648,7 @@ public class OTSLine3D implements Locatable, Serializable
         }
         catch (@SuppressWarnings("unused") OTSGeometryException exception)
         {
-            SimLogger.error(exception, "interval " + start + ".." + end + " too short");
+            SimLogger.always().error(exception, "interval " + start + ".." + end + " too short");
             throw new OTSGeometryException("interval " + start + ".." + end + "too short");
         }
     }

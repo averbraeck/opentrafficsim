@@ -60,7 +60,7 @@ public class CoordinateTransformWGS84toRDNew implements CoordinateTransform, Ser
         }
         catch (Exception exception)
         {
-            SimLogger.error(exception);
+            SimLogger.always().error(exception);
             return new double[] { 0, 0 };
         }
     }

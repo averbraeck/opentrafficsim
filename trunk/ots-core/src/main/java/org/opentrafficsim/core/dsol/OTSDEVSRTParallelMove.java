@@ -218,7 +218,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                         }
                         catch (Exception exception)
                         {
-                            SimLogger.error(exception);
+                            SimLogger.always().error(exception);
                             if (this.isPauseOnError())
                             {
                                 this.stop();
@@ -258,7 +258,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                SimLogger.error(exception);
+                                SimLogger.always().error(exception);
                                 if (this.isPauseOnError())
                                 {
                                     this.stop();
@@ -292,7 +292,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                SimLogger.error(exception);
+                                SimLogger.always().error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
                                     OTSDEVSRTParallelMove.this.stop();
@@ -328,7 +328,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                SimLogger.error(exception);
+                                SimLogger.always().error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
                                     OTSDEVSRTParallelMove.this.stop();
@@ -364,7 +364,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             }
                             catch (Exception exception)
                             {
-                                SimLogger.error(exception);
+                                SimLogger.always().error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
                                     OTSDEVSRTParallelMove.this.stop();
