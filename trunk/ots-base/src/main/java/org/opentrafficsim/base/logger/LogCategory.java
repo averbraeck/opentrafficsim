@@ -12,16 +12,16 @@ import java.util.Random;
  */
 public class LogCategory
 {
-    /** the category name; can be blank. */
+    /** The category name; can be blank. */
     private final String name;
 
-    /** cached hashcode for very quick retrieval. */
+    /** Cached hashcode for very quick retrieval. */
     private final int hashCode;
 
-    /** random number to generate fast hashCode. */
+    /** Random number to generate fast hashCode. */
     private static Random random = new Random(1L);
 
-    /** the category to indicate that ALL messages need to be logged. */
+    /** The category to indicate that ALL messages need to be logged. */
     public static final LogCategory ALL = new LogCategory("ALL");
     
     /**
