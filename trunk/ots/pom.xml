@@ -207,7 +207,7 @@
             <configuration>
               <fromDir>${basedir}/target/site/jacoco-ut</fromDir>
               <includes>.*, .resources/*</includes>
-              <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots.version}/${project.artifactId}</url>
+              <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${project.version}/${project.artifactId}</url>
               <toDir>jacoco-ut</toDir>
               <serverId>ots-deployment</serverId>
             </configuration>
@@ -325,7 +325,7 @@
           <dependency>
             <groupId>opentrafficsim</groupId>
             <artifactId>ots-build-tools</artifactId>
-            <version>${ots.version}</version>
+            <version>${project.version}</version>
           </dependency>
         </dependencies>
       </plugin>
