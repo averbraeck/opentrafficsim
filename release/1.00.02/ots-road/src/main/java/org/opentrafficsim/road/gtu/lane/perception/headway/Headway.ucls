@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.10" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadway" 
+    project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/headway/AbstractHeadway.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1149" y="-135"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <operations public="true" package="true" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayCopy" 
+    project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/headway/AbstractHeadwayCopy.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1257" y="342"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <operations public="true" package="true" protected="true" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadwayGTU" 
+    project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/headway/AbstractHeadwayGTU.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="205" y="343"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <operations public="true" package="true" protected="true" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal" 
+    project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/headway/HeadwayGTUReal.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="759" y="111"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <operations public="true" package="true" protected="true" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTURealCopy" 
+    project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/headway/HeadwayGTURealCopy.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="686" y="640"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <operations public="true" package="false" protected="true" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple" 
+    project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/headway/HeadwayGTUSimple.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="176" y="659"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <operations public="true" package="true" protected="true" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <interface id="7" language="java" name="org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU" 
+    project="ots-road" 
+    file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/headway/HeadwayGTU.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="343" y="-127"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <operations public="true" package="true" protected="true" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <interface id="8" language="java" name="org.opentrafficsim.road.gtu.lane.perception.headway.Headway" 
+    project="ots-road" file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/headway/Headway.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="768" y="-258"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <operations public="true" package="true" protected="true" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <generalization id="9">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="10">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <realization id="11">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="7"/>  
+  </realization>  
+  <generalization id="12">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <realization id="13">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="8"/>  
+  </realization>  
+  <realization id="14">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="7"/>  
+  </realization>  
+  <generalization id="15">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="8"/>  
+  </generalization>  
+  <generalization id="16">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="17">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="false" static="false"/>    
+    <operations public="true" package="false" protected="false" private="false" static="false"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
