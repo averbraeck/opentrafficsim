@@ -301,91 +301,11 @@
             <link>https://jgrapht.org/javadoc/</link>
             <link>http://javadoc.scijava.org/ojAlgo/</link>
           </links>
-          <offlineLinks>
-            <offlineLink>
-              <url>https://docs.oracle.com/javase/8/docs/api/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://www.jfree.org/jcommon/api/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://www.jfree.org/jfreechart/api/javadoc/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://junit.org/junit4/javadoc/4.12/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://xerces.apache.org/xerces2-j/javadocs/api/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-fx/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://tinylog.org/javadoc/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://djunits.orgs/current/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://www.jdom.orgs/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://dst.lbl.gov/ACSSoftware/colt/api/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://sim0mq.org/docs/current/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://docs.geotools.org/stable/javadocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://osm2world.org/docs/javadoc/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://poi.apache.org/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://jgrapht.org/javadoc/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://javadoc.scijava.org/ojAlgo/</url>
-            </offlineLink>
-            <offlineLink>
-              <location>http://javadoc.scijava.org/ojAlgo/</location>
-            </offlineLink>
-          </offlineLinks>
           <minmemory>256m</minmemory>
           <maxmemory>1g</maxmemory>
           <detectJavaApiLink>true</detectJavaApiLink>
-          <detectLinks>true</detectLinks>
-          <detectOfflineLinks>true</detectOfflineLinks>
+          <includeDependencySources>true</includeDependencySources>
+          <includeTransitiveDependencySources>true</includeTransitiveDependencySources>
           <show>package</show>
         </configuration>
         <executions>
@@ -569,91 +489,11 @@
             <link>https://jgrapht.org/javadoc/</link>
             <link>http://javadoc.scijava.org/ojAlgo/</link>
           </links>
-          <offlineLinks>
-            <offlineLink>
-              <url>https://docs.oracle.com/javase/8/docs/api/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://www.jfree.org/jcommon/api/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://www.jfree.org/jfreechart/api/javadoc/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://junit.org/junit4/javadoc/4.12/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://xerces.apache.org/xerces2-j/javadocs/api/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-fx/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://tinylog.org/javadoc/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://djunits.orgs/current/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://www.jdom.orgs/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://dst.lbl.gov/ACSSoftware/colt/api/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://sim0mq.org/docs/current/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://docs.geotools.org/stable/javadocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://osm2world.org/docs/javadoc/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://poi.apache.org/apidocs/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>https://jgrapht.org/javadoc/</url>
-            </offlineLink>
-            <offlineLink>
-              <url>http://javadoc.scijava.org/ojAlgo/</url>
-            </offlineLink>
-            <offlineLink>
-              <location>http://javadoc.scijava.org/ojAlgo/</location>
-            </offlineLink>
-          </offlineLinks>
           <minmemory>256m</minmemory>
           <maxmemory>1g</maxmemory>
           <detectJavaApiLink>true</detectJavaApiLink>
-          <detectLinks>true</detectLinks>
-          <detectOfflineLinks>true</detectOfflineLinks>
+          <includeDependencySources>true</includeDependencySources>
+          <includeTransitiveDependencySources>true</includeTransitiveDependencySources>
           <show>package</show>
           <!-- stylesheetfile>${basedir}/src/main/resources/development/javadoc/stylesheet.css</stylesheetfile -->
         </configuration>
