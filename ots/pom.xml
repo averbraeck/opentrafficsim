@@ -54,14 +54,14 @@
   </profiles>
 
   <properties>
-  
+
     <jdk.version>1.8</jdk.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <sonar.scm.disabled>true</sonar.scm.disabled>
-    
+
     <tinylog.version>1.3.5</tinylog.version>
     <ots.version>${project.version}</ots.version>
     <djunits.version>3.00.07</djunits.version>
@@ -240,7 +240,8 @@
               <commands>
                 <command>rm -r -f /home/web/opentrafficsim.org/docs/current</command>
                 <command>mkdir -p /home/web/opentrafficsim.org/docs/current</command>
-                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/. /home/web/opentrafficsim.org/docs/current</command>
+                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/.
+                  /home/web/opentrafficsim.org/docs/current</command>
               </commands>
             </configuration>
           </execution>
@@ -301,9 +302,90 @@
             <link>https://jgrapht.org/javadoc/</link>
             <link>http://javadoc.scijava.org/ojAlgo/</link>
           </links>
-          <additionalJOption>-J-Xmx1024m</additionalJOption>
+          <offlineLinks>
+            <offlineLink>
+              <url>https://docs.oracle.com/javase/8/docs/api/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://www.jfree.org/jcommon/api/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://www.jfree.org/jfreechart/api/javadoc/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://junit.org/junit4/javadoc/4.12/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://xerces.apache.org/xerces2-j/javadocs/api/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-fx/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://tinylog.org/javadoc/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djunits.orgs/current/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://www.jdom.orgs/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://dst.lbl.gov/ACSSoftware/colt/api/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://sim0mq.org/docs/current/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://docs.geotools.org/stable/javadocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://osm2world.org/docs/javadoc/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://poi.apache.org/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://jgrapht.org/javadoc/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://javadoc.scijava.org/ojAlgo/</url>
+            </offlineLink>
+            <offlineLink>
+              <location>http://javadoc.scijava.org/ojAlgo/</location>
+            </offlineLink>
+          </offlineLinks>
+          <minmemory>256m</minmemory>
+          <maxmemory>1g</maxmemory>
           <detectJavaApiLink>true</detectJavaApiLink>
-          <detectLinks>false</detectLinks>
+          <detectLinks>true</detectLinks>
           <detectOfflineLinks>true</detectOfflineLinks>
           <show>package</show>
         </configuration>
@@ -488,9 +570,90 @@
             <link>https://jgrapht.org/javadoc/</link>
             <link>http://javadoc.scijava.org/ojAlgo/</link>
           </links>
-          <additionalJOption>-J-Xmx1024m</additionalJOption>
+          <offlineLinks>
+            <offlineLink>
+              <url>https://docs.oracle.com/javase/8/docs/api/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://www.jfree.org/jcommon/api/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://www.jfree.org/jfreechart/api/javadoc/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://junit.org/junit4/javadoc/4.12/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://xerces.apache.org/xerces2-j/javadocs/api/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-fx/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://tinylog.org/javadoc/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djunits.orgs/current/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://www.jdom.orgs/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://dst.lbl.gov/ACSSoftware/colt/api/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://sim0mq.org/docs/current/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://docs.geotools.org/stable/javadocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://osm2world.org/docs/javadoc/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://poi.apache.org/apidocs/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>https://jgrapht.org/javadoc/</url>
+            </offlineLink>
+            <offlineLink>
+              <url>http://javadoc.scijava.org/ojAlgo/</url>
+            </offlineLink>
+            <offlineLink>
+              <location>http://javadoc.scijava.org/ojAlgo/</location>
+            </offlineLink>
+          </offlineLinks>
+          <minmemory>256m</minmemory>
+          <maxmemory>1g</maxmemory>
           <detectJavaApiLink>true</detectJavaApiLink>
-          <detectLinks>false</detectLinks>
+          <detectLinks>true</detectLinks>
           <detectOfflineLinks>true</detectOfflineLinks>
           <show>package</show>
           <!-- stylesheetfile>${basedir}/src/main/resources/development/javadoc/stylesheet.css</stylesheetfile -->
@@ -670,27 +833,27 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
       <version>${powermock.version}</version>
       <scope>test</scope>
     </dependency>
-   
+
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito2</artifactId>
       <version>${powermock.version}</version>
       <scope>test</scope>
     </dependency>
-   
+
     <dependency>
       <groupId>org.tinylog</groupId>
       <artifactId>tinylog</artifactId>
       <version>${tinylog.version}</version>
     </dependency>
-    
+
   </dependencies>
 
 
@@ -1067,7 +1230,7 @@
       <name>apache</name>
       <url>https://repo.maven.apache.org/maven2</url>
     </repository>
-    
+
     <repository>
       <snapshots>
         <enabled>false</enabled>
@@ -1085,7 +1248,7 @@
       <name>osgeo</name>
       <url>>https://download.osgeo.org/webdav/geotools/</url>
     </repository>
-    
+
     <repository>
       <snapshots>
         <enabled>false</enabled>
@@ -1094,7 +1257,7 @@
       <name>jboss</name>
       <url>https://repository.jboss.org/maven2/</url>
     </repository>
-    
+
   </repositories>
 
   <licenses>
@@ -1201,8 +1364,8 @@
       </server>
     </servers>
   -->
-  
-  
+
+
   <distributionManagement>
     <downloadUrl>https://opentrafficsim.org/maven</downloadUrl>
     <repository>
