@@ -62,10 +62,6 @@
 
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
-    <maven.wagon.http.ssl.insecure>true</maven.wagon.http.ssl.insecure>
-    <maven.wagon.http.ssl.allowall>true</maven.wagon.http.ssl.allowall>
-    <maven.wagon.http.ssl.ignore.validity.dates>true</maven.wagon.http.ssl.ignore.validity.dates>
-
     <tinylog.version>1.3.5</tinylog.version>
     <ots.version>${project.version}</ots.version>
     <djunits.version>3.00.07</djunits.version>
@@ -244,8 +240,7 @@
               <commands>
                 <command>rm -r -f /home/web/opentrafficsim.org/docs/current</command>
                 <command>mkdir -p /home/web/opentrafficsim.org/docs/current</command>
-                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/.
-                  /home/web/opentrafficsim.org/docs/current</command>
+                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/. /home/web/opentrafficsim.org/docs/current</command>
               </commands>
             </configuration>
           </execution>
