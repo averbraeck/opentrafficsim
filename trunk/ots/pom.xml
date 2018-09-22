@@ -60,6 +60,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <doclint>none</doclint>
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
     <tinylog.version>1.3.5</tinylog.version>
@@ -272,42 +273,63 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven.javadoc.version}</version>
+
         <configuration>
           <links>
-            <link>https://docs.oracle.com/javase/8/docs/api/</link>
-            <!-- link>https://download.java.net/media/java3d/javadoc/1.5.1/</link (No package-list) -->
-            <link>http://www.jfree.org/jcommon/api/</link>
-            <link>http://www.jfree.org/jfreechart/api/javadoc/</link>
-            <link>https://junit.org/junit4/javadoc/4.12/</link>
-            <link>https://xerces.apache.org/xerces2-j/javadocs/api/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-fx/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</link>
-            <link>https://tinylog.org/javadoc/</link>
-            <link>https://djunits.orgs/current/apidocs/</link>
-            <link>http://www.jdom.orgs/apidocs/</link>
-            <link>https://dst.lbl.gov/ACSSoftware/colt/api/</link>
-            <link>https://sim0mq.org/docs/current/apidocs/</link>
-            <link>http://docs.geotools.org/stable/javadocs/</link>
-            <link>http://osm2world.org/docs/javadoc/</link>
-            <link>https://poi.apache.org/apidocs/</link>
-            <link>https://jgrapht.org/javadoc/</link>
-            <link>http://javadoc.scijava.org/ojAlgo/</link>
+            <link>http://www.jfree.org/jcommon/api</link>
+            <link>http://www.jfree.org/jfreechart/api/javadoc</link>
+            <link>https://junit.org/junit4/javadoc/4.12</link>
+            <link>https://xerces.apache.org/xerces2-j/javadocs/api</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-fx/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs</link>
+            <link>https://tinylog.org/javadoc</link>
+            <link>https://djunits.org/docs/current/apidocs</link>
+            <link>http://www.jdom.orgs/apidocs</link>
+            <link>https://dst.lbl.gov/ACSSoftware/colt/api</link>
+            <link>https://sim0mq.org/docs/current/apidocs</link>
+            <link>http://docs.geotools.org/stable/javadocs</link>
+            <link>http://osm2world.org/docs/javadoc</link>
+            <link>https://poi.apache.org/apidocs</link>
+            <link>https://jgrapht.org/javadoc</link>
+            <link>http://javadoc.scijava.org/ojAlgo</link>
+            <link>https://opentrafficsim.org/docs/current/ots-base/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-core/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-road/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-rail/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-water/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-multimodal/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-demo/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-kpi/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-kpi/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-multimodal/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-road/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-trafficcontrol/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun-proto/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun-demo/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-xml/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-opendrive/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-osm/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-shape/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-vissim/apidocs</link>
           </links>
+          
           <minmemory>256m</minmemory>
           <maxmemory>1g</maxmemory>
+          
           <detectJavaApiLink>true</detectJavaApiLink>
-          <includeDependencySources>true</includeDependencySources>
-          <includeTransitiveDependencySources>true</includeTransitiveDependencySources>
-          <show>package</show>
+          
         </configuration>
+        
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -316,8 +338,10 @@
             </goals>
           </execution>
         </executions>
+        
       </plugin>
-
+      
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -462,42 +486,60 @@
 
         <configuration>
           <links>
-            <link>https://docs.oracle.com/javase/8/docs/api/</link>
-            <!-- link>https://download.java.net/media/java3d/javadoc/1.5.1/</link (No package-list) -->
-            <link>http://www.jfree.org/jcommon/api/</link>
-            <link>http://www.jfree.org/jfreechart/api/javadoc/</link>
-            <link>https://junit.org/junit4/javadoc/4.12/</link>
-            <link>https://xerces.apache.org/xerces2-j/javadocs/api/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-fx/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs/</link>
-            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs/</link>
-            <link>https://tinylog.org/javadoc/</link>
-            <link>https://djunits.orgs/current/apidocs/</link>
-            <link>http://www.jdom.orgs/apidocs/</link>
-            <link>https://dst.lbl.gov/ACSSoftware/colt/api/</link>
-            <link>https://sim0mq.org/docs/current/apidocs/</link>
-            <link>http://docs.geotools.org/stable/javadocs/</link>
-            <link>http://osm2world.org/docs/javadoc/</link>
-            <link>https://poi.apache.org/apidocs/</link>
-            <link>https://jgrapht.org/javadoc/</link>
-            <link>http://javadoc.scijava.org/ojAlgo/</link>
+            <link>http://www.jfree.org/jcommon/api</link>
+            <link>http://www.jfree.org/jfreechart/api/javadoc</link>
+            <link>https://junit.org/junit4/javadoc/4.12</link>
+            <link>https://xerces.apache.org/xerces2-j/javadocs/api</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-naming/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-event/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-introspection/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-fx/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-web/apidocs</link>
+            <link>https://simulation.tudelft.nl/dsol/3.0/dsol-demo/apidocs</link>
+            <link>https://tinylog.org/javadoc</link>
+            <link>https://djunits.org/docs/current/apidocs</link>
+            <link>http://www.jdom.orgs/apidocs</link>
+            <link>https://dst.lbl.gov/ACSSoftware/colt/api</link>
+            <link>https://sim0mq.org/docs/current/apidocs</link>
+            <link>http://docs.geotools.org/stable/javadocs</link>
+            <link>http://osm2world.org/docs/javadoc</link>
+            <link>https://poi.apache.org/apidocs</link>
+            <link>https://jgrapht.org/javadoc</link>
+            <link>http://javadoc.scijava.org/ojAlgo</link>
+            <link>https://opentrafficsim.org/docs/current/ots-base/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-core/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-road/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-rail/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-water/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-multimodal/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-demo/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-kpi/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-kpi/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-multimodal/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-sim0mq-road/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-trafficcontrol/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun-proto/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-aimsun-demo/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-xml/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-opendrive/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-osm/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-shape/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-parser-vissim/apidocs</link>
           </links>
+          
           <minmemory>256m</minmemory>
           <maxmemory>1g</maxmemory>
+          
           <detectJavaApiLink>true</detectJavaApiLink>
-          <includeDependencySources>true</includeDependencySources>
-          <includeTransitiveDependencySources>true</includeTransitiveDependencySources>
-          <show>package</show>
-          <!-- stylesheetfile>${basedir}/src/main/resources/development/javadoc/stylesheet.css</stylesheetfile -->
+          
         </configuration>
-
+        
         <reportSets>
           <reportSet>
             <reports>
@@ -511,6 +553,7 @@
             </reports>
           </reportSet>
         </reportSets>
+                
       </plugin>
 
       <plugin>
