@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.base.logger.Cat;
-import org.opentrafficsim.core.logger.SimLogger;
 import org.opentrafficsim.core.network.NetworkException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
+
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * <p>

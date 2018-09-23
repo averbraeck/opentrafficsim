@@ -2,7 +2,7 @@ package org.opentrafficsim.base.modelproperties;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.base.logger.CategoryLogger;
+import nl.tudelft.simulation.logger.CategoryLogger;
 
 /**
  * Boolean property.

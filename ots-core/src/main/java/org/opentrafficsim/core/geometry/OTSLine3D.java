@@ -17,7 +17,6 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.logger.SimLogger;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
@@ -29,6 +28,7 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 

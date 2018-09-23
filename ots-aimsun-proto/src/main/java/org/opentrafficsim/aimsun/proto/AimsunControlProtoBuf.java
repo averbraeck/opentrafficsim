@@ -57,6 +57,7 @@ public final class AimsunControlProtoBuf {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.CreateSimulation)
       CreateSimulationOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use CreateSimulation.newBuilder() to construct.
     private CreateSimulation(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -89,8 +90,8 @@ public final class AimsunControlProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -261,7 +262,6 @@ public final class AimsunControlProtoBuf {
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -322,6 +322,17 @@ public final class AimsunControlProtoBuf {
       return hash;
     }
 
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.CreateSimulation parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -487,7 +498,7 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.setField(field, value);
       }
       public Builder clearField(
@@ -500,12 +511,12 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
@@ -772,6 +783,7 @@ public final class AimsunControlProtoBuf {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.SimulateUntil)
       SimulateUntilOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use SimulateUntil.newBuilder() to construct.
     private SimulateUntil(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -802,8 +814,8 @@ public final class AimsunControlProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -889,7 +901,6 @@ public final class AimsunControlProtoBuf {
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -929,6 +940,17 @@ public final class AimsunControlProtoBuf {
       return hash;
     }
 
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.SimulateUntil parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1082,7 +1104,7 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.setField(field, value);
       }
       public Builder clearField(
@@ -1095,12 +1117,12 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
@@ -1277,6 +1299,7 @@ public final class AimsunControlProtoBuf {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.GTUPositions)
       GTUPositionsOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use GTUPositions.newBuilder() to construct.
     private GTUPositions(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -1308,8 +1331,8 @@ public final class AimsunControlProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -1453,6 +1476,7 @@ public final class AimsunControlProtoBuf {
         com.google.protobuf.GeneratedMessageV3 implements
         // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.GTUPositions.GTUPosition)
         GTUPositionOrBuilder {
+    private static final long serialVersionUID = 0L;
       // Use GTUPosition.newBuilder() to construct.
       private GTUPosition(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -1491,8 +1515,8 @@ public final class AimsunControlProtoBuf {
                 done = true;
                 break;
               default: {
-                if (!parseUnknownField(input, unknownFields,
-                                       extensionRegistry, tag)) {
+                if (!parseUnknownField(
+                    input, unknownFields, extensionRegistry, tag)) {
                   done = true;
                 }
                 break;
@@ -1849,7 +1873,6 @@ public final class AimsunControlProtoBuf {
         return size;
       }
 
-      private static final long serialVersionUID = 0L;
       @java.lang.Override
       public boolean equals(final java.lang.Object obj) {
         if (obj == this) {
@@ -1979,6 +2002,17 @@ public final class AimsunControlProtoBuf {
         return hash;
       }
 
+      public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition parseFrom(
+          java.nio.ByteBuffer data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition parseFrom(
+          java.nio.ByteBuffer data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
       public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions.GTUPosition parseFrom(
           com.google.protobuf.ByteString data)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -2180,7 +2214,7 @@ public final class AimsunControlProtoBuf {
         }
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
           return (Builder) super.setField(field, value);
         }
         public Builder clearField(
@@ -2193,12 +2227,12 @@ public final class AimsunControlProtoBuf {
         }
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, Object value) {
+            int index, java.lang.Object value) {
           return (Builder) super.setRepeatedField(field, index, value);
         }
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
           return (Builder) super.addRepeatedField(field, value);
         }
         public Builder mergeFrom(com.google.protobuf.Message other) {
@@ -2799,7 +2833,6 @@ public final class AimsunControlProtoBuf {
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -2842,6 +2875,17 @@ public final class AimsunControlProtoBuf {
       return hash;
     }
 
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -3011,7 +3055,7 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.setField(field, value);
       }
       public Builder clearField(
@@ -3024,12 +3068,12 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
@@ -3526,6 +3570,7 @@ public final class AimsunControlProtoBuf {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.opentrafficsim.aimsun.proto.OTSMessage)
       OTSMessageOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use OTSMessage.newBuilder() to construct.
     private OTSMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -3555,8 +3600,8 @@ public final class AimsunControlProtoBuf {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -3810,7 +3855,6 @@ public final class AimsunControlProtoBuf {
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -3873,6 +3917,17 @@ public final class AimsunControlProtoBuf {
       return hash;
     }
 
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.OTSMessage parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -4044,7 +4099,7 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.setField(field, value);
       }
       public Builder clearField(
@@ -4057,12 +4112,12 @@ public final class AimsunControlProtoBuf {
       }
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {

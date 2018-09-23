@@ -7,10 +7,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.opentrafficsim.core.logger.SimLogger;
-
 import com.vividsolutions.jts.geom.Envelope;
 
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.language.Throw;
 
 /**
