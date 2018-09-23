@@ -3,9 +3,8 @@ package org.opentrafficsim.core.gis;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 
-import org.opentrafficsim.core.logger.SimLogger;
-
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * Convert coordinates from WGS84 to the Dutch RD system. The coordinate transform can be offered to the gisbeans package when

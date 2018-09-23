@@ -21,9 +21,9 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.logger.SimLogger;
 import org.opentrafficsim.core.math.Solver;
 
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 

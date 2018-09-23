@@ -5,7 +5,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.Locale;
 
 import org.opentrafficsim.base.logger.Cat;
-import org.opentrafficsim.core.logger.SimLogger;
+
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * Convert geographical coordinates between WGS84 and the Dutch RD (Rijksdriehoek) system. <br>

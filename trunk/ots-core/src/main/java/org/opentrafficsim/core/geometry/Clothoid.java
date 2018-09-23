@@ -6,7 +6,8 @@ import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
-import org.opentrafficsim.core.logger.SimLogger;
+
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 
 /**
  * Generate an OTSLine3D for a clothoid. <br>
