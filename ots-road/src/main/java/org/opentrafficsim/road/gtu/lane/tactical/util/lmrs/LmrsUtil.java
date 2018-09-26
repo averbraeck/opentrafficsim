@@ -143,7 +143,7 @@ public final class LmrsUtil implements LmrsParameters
             // determine lane change desire based on incentives
             Desire desire = getLaneChangeDesire(params, perception, carFollowingModel, mandatoryIncentives, voluntaryIncentives,
                     lmrsData.desireMap);
-            
+
             // lane change decision
             double dFree = params.getParameter(DFREE);
             initiatedLaneChange = LateralDirectionality.NONE;
@@ -219,58 +219,49 @@ public final class LmrsUtil implements LmrsParameters
 
             // take action if we cannot change lane
             Acceleration aSync;
-            if (initiatedLaneChange.equals(LateralDirectionality.NONE))
-            {
 
-                // synchronize
-                double dSync = params.getParameter(DSYNC);
-                if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dSync)
+            // synchronize
+            double dSync = params.getParameter(DSYNC);
+            if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dSync)
+            {
+                State state;
+                if (desire.getLeft() >= params.getParameter(DCOOP))
                 {
-                    State state;
-                    if (desire.getLeft() >= params.getParameter(DCOOP))
-                    {
-                        // switch on left indicator
-                        turnIndicatorStatus = TurnIndicatorIntent.LEFT;
-                        state = State.INDICATING;
-                    }
-                    else
-                    {
-                        state = State.SYNCHRONIZING;
-                    }
-                    aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel,
-                            desire.getLeft(), LateralDirectionality.LEFT, lmrsData);
-                    a = applyAcceleration(a, aSync, lmrsData, state);
-                }
-                else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dSync)
-                {
-                    State state;
-                    if (desire.getRight() >= params.getParameter(DCOOP))
-                    {
-                        // switch on right indicator
-                        turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
-                        state = State.INDICATING;
-                    }
-                    else
-                    {
-                        state = State.SYNCHRONIZING;
-                    }
-                    aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel,
-                            desire.getRight(), LateralDirectionality.RIGHT, lmrsData);
-                    a = applyAcceleration(a, aSync, lmrsData, state);
+                    // switch on left indicator
+                    turnIndicatorStatus = TurnIndicatorIntent.LEFT;
+                    state = State.INDICATING;
                 }
                 else
                 {
-                    lmrsData.synchronizationState = State.NONE;
+                    state = State.SYNCHRONIZING;
                 }
-                params.setParameter(DLEFT, desire.getLeft());
-                params.setParameter(DRIGHT, desire.getRight());
+                aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.getLeft(),
+                        LateralDirectionality.LEFT, lmrsData);
+                a = applyAcceleration(a, aSync, lmrsData, state);
+            }
+            else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dSync)
+            {
+                State state;
+                if (desire.getRight() >= params.getParameter(DCOOP))
+                {
+                    // switch on right indicator
+                    turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
+                    state = State.INDICATING;
+                }
+                else
+                {
+                    state = State.SYNCHRONIZING;
+                }
+                aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.getRight(),
+                        LateralDirectionality.RIGHT, lmrsData);
+                a = applyAcceleration(a, aSync, lmrsData, state);
             }
             else
             {
-                params.setParameter(DLEFT, 0.0);
-                params.setParameter(DRIGHT, 0.0);
                 lmrsData.synchronizationState = State.NONE;
             }
+            params.setParameter(DLEFT, desire.getLeft());
+            params.setParameter(DRIGHT, desire.getRight());
 
             // cooperate
             aSync = lmrsData.getCooperation().cooperate(perception, params, sli, carFollowingModel, LateralDirectionality.LEFT,

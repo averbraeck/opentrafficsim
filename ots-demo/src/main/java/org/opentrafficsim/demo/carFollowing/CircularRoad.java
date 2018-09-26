@@ -4,7 +4,6 @@ import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
 import java.awt.Container;
 import java.awt.Frame;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -120,7 +119,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 "Density %.1f veh/km", false, 11));
         this.properties.add(new ContinuousProperty("DensityVariability", "Density variability",
                 "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
-        List<Property<?>> outputProperties = new ArrayList<Property<?>>();
+        List<Property<?>> outputProperties = new ArrayList<>();
         for (int lane = 1; lane <= 2; lane++)
         {
             String laneId = String.format("Lane %d ", lane);
@@ -233,7 +232,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
         {
             throw new Error("Cannot find output properties");
         }
-        ArrayList<BooleanProperty> graphs = new ArrayList<BooleanProperty>();
+        ArrayList<BooleanProperty> graphs = new ArrayList<>();
         if (output instanceof CompoundProperty)
         {
             CompoundProperty outputProperties = (CompoundProperty) output;
@@ -375,7 +374,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
         private List<LaneBasedGTUSampler> plots = new ArrayList<>();
 
         /** User settable properties. */
-        private List<Property<?>> properties = null;
+        private List<Property<?>> props = null;
 
         /** The sequence of Lanes that all vehicles will follow. */
         private List<List<Lane>> paths = new ArrayList<>();
@@ -397,7 +396,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
          */
         RoadSimulationModel(final List<Property<?>> properties)
         {
-            this.properties = properties;
+            this.props = properties;
         }
 
         /**
@@ -428,7 +427,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
 
                 // Get car-following model name
                 String carFollowingModelName = null;
-                CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
+                CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.props, false, 0);
                 Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
@@ -444,7 +443,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 }
 
                 // Get car-following model parameter
-                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
                     if (ap instanceof CompoundProperty)
                     {
@@ -514,7 +513,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 }
 
                 // Get remaining properties
-                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
                     if (ap instanceof SelectionProperty)
                     {
@@ -664,9 +663,8 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
             // Re schedule this method
             try
             {
-                this.simulator.scheduleEventAbs(
-                        new Time(this.simulator.getSimulatorTime().getSI() + 10, TimeUnit.BASE_SECOND), this, this,
-                        "drawGraphs", null);
+                this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 10, TimeUnit.BASE_SECOND),
+                        this, this, "drawGraphs", null);
             }
             catch (SimRuntimeException exception)
             {
@@ -697,6 +695,8 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                     new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER),
                             new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
             gtu.setNoLaneChangeDistance(Length.ZERO);
+            gtu.setMaximumAcceleration(Acceleration.createSI(3.0));
+            gtu.setMaximumDeceleration(Acceleration.createSI(-8.0));
 
             // strategical planner
             LaneBasedStrategicalPlanner strategicalPlanner;

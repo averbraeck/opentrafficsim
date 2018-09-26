@@ -244,7 +244,8 @@ public class Lane extends CrossSectionElement implements Serializable
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(
+                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
     }
 
     /**
@@ -275,7 +276,8 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.CAR, speedLimit);
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(
+                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
     }
 
     /**
@@ -301,7 +303,8 @@ public class Lane extends CrossSectionElement implements Serializable
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(
+                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
     }
 
     /**
@@ -328,7 +331,8 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.VEHICLE, speedLimit);
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(
+                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
     }
 
     /**
@@ -355,7 +359,8 @@ public class Lane extends CrossSectionElement implements Serializable
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(
+                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
     }
 
     /**
@@ -383,7 +388,8 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.CAR, speedLimit);
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(
+                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
     }
 
     /**
@@ -395,14 +401,15 @@ public class Lane extends CrossSectionElement implements Serializable
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Lane(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation,
-            final Lane cse) throws NetworkException
+    protected Lane(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
+            final boolean animation, final Lane cse) throws NetworkException
     {
         super(newParentLink, newSimulator, animation, cse);
         this.laneType = cse.laneType;
         this.speedLimitMap = new HashMap<>(cse.speedLimitMap);
         this.overtakingConditions = cse.overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) newParentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(
+                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) newParentLink.getSimulator()));
         if (animation)
         {
             OTSNetwork.cloneAnimation(cse, this, cse.getParentLink().getSimulator(), newSimulator);
@@ -989,8 +996,7 @@ public class Lane extends CrossSectionElement implements Serializable
                     {
                         throw new GTUException(gtu + " already registered on Lane " + this + " [registered lanes: "
                                 + gtu.positions(gtu.getFront()).keySet() + "] locations: "
-                                + gtu.positions(gtu.getFront()).values() + " time: "
-                                + gtu.getSimulator().getSimulatorTime());
+                                + gtu.positions(gtu.getFront()).values() + " time: " + gtu.getSimulator().getSimulatorTime());
                     }
                     if (otherGTU.fractionalPosition(this, otherGTU.getFront()) >= fractionalPosition)
                     {
@@ -1027,9 +1033,12 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final void removeGTU(final LaneBasedGTU gtu, final boolean removeFromParentLink, final Length position)
     {
-        this.gtuList.remove(gtu);
-        fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size(), position },
-                gtu.getSimulator().getSimulatorTime());
+        boolean contained = this.gtuList.remove(gtu);
+        if (contained)
+        {
+            fireTimedEvent(Lane.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size(), position },
+                    gtu.getSimulator().getSimulatorTime());
+        }
         if (removeFromParentLink)
         {
             this.parentLink.removeGTU(gtu);
@@ -1865,8 +1874,8 @@ public class Lane extends CrossSectionElement implements Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Lane clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation)
-            throws NetworkException
+    public Lane clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
+            final boolean animation) throws NetworkException
     {
         Lane newLane = new Lane(newParentLink, newSimulator, animation, this);
         // nextLanes, prevLanes, nextNeighbors, rightNeighbors are filled at first request

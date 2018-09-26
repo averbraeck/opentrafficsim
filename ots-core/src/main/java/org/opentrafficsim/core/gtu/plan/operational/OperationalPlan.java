@@ -607,7 +607,7 @@ public class OperationalPlan implements Serializable
                     traveledDistanceAlongPath += this.path.get(i).distance(p).si;
                     if (traveledDistanceAlongPath > this.path.getLengthSI())
                     {
-                        return Time.createSI(getEndTime().si - 1e-9); // -13-9 prevents that next move() reschedules enter
+                        return Time.createSI(getEndTime().si - 1e-9); // -1e-9 prevents that next move() reschedules enter
                     }
                     return timeAtDistance(Length.createSI(traveledDistanceAlongPath));
                 }

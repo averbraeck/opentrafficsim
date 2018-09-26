@@ -646,7 +646,7 @@ public class OTSLine3D implements Locatable, Serializable
         {
             return new OTSLine3D(pointList);
         }
-        catch (@SuppressWarnings("unused") OTSGeometryException exception)
+        catch (OTSGeometryException exception)
         {
             SimLogger.always().error(exception, "interval " + start + ".." + end + " too short");
             throw new OTSGeometryException("interval " + start + ".." + end + "too short");
@@ -1552,7 +1552,6 @@ public class OTSLine3D implements Locatable, Serializable
         {
             // only a single segment
             this.fractionalHelperCenters[0] = OTSPoint3D.intersectionOfLines(this.points[0], p1, this.points[1], p2);
-            this.fractionalHelperCenters[n - 1] = null;
         }
         if (this.fractionalHelperCenters[0] == null)
         {

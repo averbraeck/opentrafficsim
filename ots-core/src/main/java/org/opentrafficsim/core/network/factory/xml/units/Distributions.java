@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Position;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.DistNormalTrunc;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 
@@ -94,9 +95,9 @@ public final class Distributions
                 case "NORMAL":
                     return new DistNormal(STREAM, args[0], args[1]);
 
-                case "NORMBOUNDED":
-                case "NORMALBOUNDED":
-                    return new DistNormal(STREAM, args[0], args[1]); // TODO Bounded version , args[2], args[3])
+                case "NORMTRUNC":
+                case "NORMALTRUNCATED":
+                    return new DistNormalTrunc(STREAM, args[0], args[1], args[2], args[3]);
 
                 case "BETA":
                     return new DistBeta(STREAM, args[0], args[1]);
