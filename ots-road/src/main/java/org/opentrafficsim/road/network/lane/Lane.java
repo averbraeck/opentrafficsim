@@ -20,6 +20,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -244,8 +245,7 @@ public class Lane extends CrossSectionElement implements Serializable
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(
-                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
     /**
@@ -276,8 +276,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.CAR, speedLimit);
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(
-                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
     /**
@@ -303,8 +302,7 @@ public class Lane extends CrossSectionElement implements Serializable
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(
-                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
     /**
@@ -331,8 +329,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.VEHICLE, speedLimit);
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(
-                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
     /**
@@ -359,8 +356,7 @@ public class Lane extends CrossSectionElement implements Serializable
         checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(
-                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
     /**
@@ -388,8 +384,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.CAR, speedLimit);
         this.overtakingConditions = overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(
-                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) parentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(getManager(parentLink));
     }
 
     /**
@@ -408,12 +403,22 @@ public class Lane extends CrossSectionElement implements Serializable
         this.laneType = cse.laneType;
         this.speedLimitMap = new HashMap<>(cse.speedLimitMap);
         this.overtakingConditions = cse.overtakingConditions;
-        this.gtuList = new HistoricalArrayList<>(
-                HistoryManager.get((DEVSSimulatorInterface.TimeDoubleUnit) newParentLink.getSimulator()));
+        this.gtuList = new HistoricalArrayList<>(getManager(newParentLink));
         if (animation)
         {
             OTSNetwork.cloneAnimation(cse, this, cse.getParentLink().getSimulator(), newSimulator);
         }
+    }
+    
+    /**
+     * Obtains the history manager from the parent link.
+     * @param parLink CrossSectionLink; parent link
+     * @return HistoryManager; history manager
+     */
+    private HistoryManager getManager(final CrossSectionLink parLink)
+    {
+        return ((OTSReplication) parLink.getSimulator().getReplication())
+                .getHistoryManager((DEVSSimulatorInterface.TimeDoubleUnit) parLink.getSimulator());
     }
 
     // TODO constructor calls with this(...)

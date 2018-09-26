@@ -418,7 +418,6 @@ public class LmrsStrategies implements EventListenerInterface
                     }
                 }
                 sim.stop(); // end of simulation event
-                HistoryManager.clear(sim);
             }
             catch (Exception exception)
             {

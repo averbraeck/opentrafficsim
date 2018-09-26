@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -146,16 +147,17 @@ public abstract class AbstractGTU extends EventProducer implements GTU
                 "GTU with id %s already registered in perceivableContext %s", id, perceivableContext.getId());
         Throw.when(simulator == null, GTUException.class, "simulator is null for GTU with id %s", id);
 
+        HistoryManager historyManager = ((OTSReplication) simulator.getReplication()).getHistoryManager(simulator);
         this.id = id;
         this.uniqueNumber = ++staticUNIQUENUMBER;
         this.gtuType = gtuType;
         this.simulator = simulator;
-        this.odometer = new HistoricalValue<>(HistoryManager.get(simulator), Length.ZERO);
+        this.odometer = new HistoricalValue<>(historyManager, Length.ZERO);
         this.perceivableContext = perceivableContext;
         this.perceivableContext.addGTU(this);
-        this.strategicalPlanner = new HistoricalValue<>(HistoryManager.get(simulator));
-        this.tacticalPlanner = new HistoricalValue<>(HistoryManager.get(simulator), null);
-        this.operationalPlan = new HistoricalValue<>(HistoryManager.get(simulator), null);
+        this.strategicalPlanner = new HistoricalValue<>(historyManager);
+        this.tacticalPlanner = new HistoricalValue<>(historyManager, null);
+        this.operationalPlan = new HistoricalValue<>(historyManager, null);
     }
 
     /**

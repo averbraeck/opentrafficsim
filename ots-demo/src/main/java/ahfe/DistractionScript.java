@@ -25,6 +25,7 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -37,7 +38,6 @@ import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
@@ -247,7 +247,8 @@ public final class DistractionScript extends AbstractSimulationScript
         ODApplier.applyOD(network, od, sim, odOptions);
 
         // History
-        HistoryManager.set(new HistoryManagerDEVS(sim, Duration.createSI(2.0), Duration.createSI(1.0)), sim);
+        ((OTSReplication) sim.getReplication())
+                .setHistoryManager(new HistoryManagerDEVS(sim, Duration.createSI(2.0), Duration.createSI(1.0)));
 
         // Sampler
         this.sampler = new RoadSampler(sim);

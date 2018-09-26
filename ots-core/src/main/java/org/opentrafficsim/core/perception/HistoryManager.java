@@ -1,16 +1,11 @@
 package org.opentrafficsim.core.perception;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * History manager with automatic garbage collection by the java garbage collector using weak references to the
@@ -26,47 +21,6 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
  */
 public abstract class HistoryManager
 {
-
-    // HACK ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // TODO remove this hack and obtain manager from somewhere else, OTSReplication?
-    /** Centrally stored manager. */
-    private static Map<Replication<Time, Duration, SimTimeDoubleUnit>, HistoryManagerDEVS> managers = new WeakHashMap<>();
-
-    /**
-     * Get central manager.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
-     * @return HistoryManagerDEVS; central manager
-     */
-    public static HistoryManagerDEVS get(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
-    {
-        HistoryManagerDEVS manager = managers.get(simulator.getReplication());
-        if (manager == null)
-        {
-            manager = new HistoryManagerDEVS(simulator, Duration.createSI(0.0), Duration.createSI(10.0));
-            managers.put(simulator.getReplication(), manager);
-        }
-        return manager;
-    }
-
-    /**
-     * Set central manager.
-     * @param manager HistoryManagerDEVS; manager
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
-     */
-    public static void set(final HistoryManagerDEVS manager, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
-    {
-        managers.put(simulator.getReplication(), manager);
-    }
-
-    /**
-     * Clear central manager. If this is not done in batch simulations, this forms a memory leak.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
-     */
-    public static void clear(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
-    {
-        managers.remove(simulator.getReplication());
-    }
-    // END OF HACK /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Set of all {@code Historical}s. */
     // There's no WeakSet, but this is effectively the same. Iterating over this is safe, only alive objects are returned.
