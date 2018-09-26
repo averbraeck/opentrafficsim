@@ -22,6 +22,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
@@ -177,9 +178,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             final OTSNetwork network) throws GTUException
     {
         super(id, gtuType, simulator, network);
-        this.fractionalLinkPositions = new HistoricalLinkedHashMap<>(HistoryManager.get(simulator));
-        this.currentLanes = new HistoricalLinkedHashMap<>(HistoryManager.get(simulator));
-        this.turnIndicatorStatus = new HistoricalValue<>(HistoryManager.get(simulator), TurnIndicatorStatus.NOTPRESENT);
+        HistoryManager historyManager = ((OTSReplication) simulator.getReplication()).getHistoryManager(simulator);
+        this.fractionalLinkPositions = new HistoricalLinkedHashMap<>(historyManager);
+        this.currentLanes = new HistoricalLinkedHashMap<>(historyManager);
+        this.turnIndicatorStatus = new HistoricalValue<>(historyManager, TurnIndicatorStatus.NOTPRESENT);
     }
 
     /**

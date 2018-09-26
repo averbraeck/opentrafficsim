@@ -4,10 +4,13 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.perception.HistoryManager;
+import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 
 import nl.tudelft.simulation.dsol.experiment.Experiment;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -20,6 +23,10 @@ import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
  */
 public class OTSReplication extends Replication<Time, Duration, SimTimeDoubleUnit>
 {
+
+    /** History manager. */
+    private HistoryManager historyManager;
+
     /**
      * @param experiment Experiment
      * @throws NamingException when the context for the replication cannot be created
@@ -42,6 +49,30 @@ public class OTSReplication extends Replication<Time, Duration, SimTimeDoubleUni
             final Duration runLength, final OTSModelInterface model) throws NamingException
     {
         super(id, startTime, warmupPeriod, runLength, model);
+    }
+
+    /**
+     * Returns the history manager. If none was set, one is created coupled to the simulator using 0s of history and 10s
+     * clean-up time.
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @return HistoryManager; history manager
+     */
+    public HistoryManager getHistoryManager(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    {
+        if (this.historyManager == null)
+        {
+            this.historyManager = new HistoryManagerDEVS(simulator, Duration.createSI(0.0), Duration.createSI(10.0));
+        }
+        return this.historyManager;
+    }
+
+    /**
+     * Set history manager.
+     * @param historyManager HistoryManager; history manager to set
+     */
+    public void setHistoryManager(final HistoryManager historyManager)
+    {
+        this.historyManager = historyManager;
     }
 
     /** */
