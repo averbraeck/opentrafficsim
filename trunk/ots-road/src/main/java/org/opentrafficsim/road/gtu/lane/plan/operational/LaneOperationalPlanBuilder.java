@@ -32,6 +32,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -307,7 +309,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                     path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getDirection().isPlus()
                             ? from.getLane().getCenterLine() : from.getLane().getCenterLine().reverse());
                 }
-                catch (NullPointerException nas)
+                catch (@SuppressWarnings("unused") NullPointerException nas)
                 {
                     prevFrom.getNextLaneDirection(gtu);
                     ref.getLaneDirection().getNextLaneDirection(gtu);
@@ -527,8 +529,9 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             // rounding...
             time = gtu.getOperationalPlan().getEndTime();
         }
-        gtu.getSimulator().scheduleEventAbs(time, (short) 6, gtu, gtu, "finalizeLaneChange",
-                new Object[] { laneChangeDirection });
+        SimEventInterface<SimTimeDoubleUnit> event = gtu.getSimulator().scheduleEventAbs(time, (short) 6, gtu, gtu,
+                "finalizeLaneChange", new Object[] { laneChangeDirection });
+        gtu.setFinalizeLaneChangeEvent(event);
     }
 
     /**

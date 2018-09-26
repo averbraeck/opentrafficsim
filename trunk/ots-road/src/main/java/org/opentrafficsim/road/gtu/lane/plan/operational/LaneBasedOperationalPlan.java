@@ -2,13 +2,21 @@ package org.opentrafficsim.road.gtu.lane.plan.operational;
 
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSLine3D.FractionalFallback;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -75,6 +83,123 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     public final boolean isDeviative()
     {
         return this.deviative;
+    }
+
+    /**
+     * Returns the total length along the reference lane that the GTU travels. In case of a deviative plan this involves
+     * projection of the actual path to the lane center lines.
+     * @param gtu LaneBasedGTU; GTU
+     * @return Length; total length along the path
+     * @throws GTUException if the GTU has not reference position
+     */
+    public final Length getTotalLengthAlongLane(final LaneBasedGTU gtu) throws GTUException
+    {
+        if (!this.deviative)
+        {
+            // along the lane center lines
+            return getTotalLength();
+        }
+
+        // let's project the end position of the plan
+        return getDistanceAlongLane(gtu, getEndLocation());
+    }
+
+    /**
+     * Helper method to get rotation at start or end of lane.
+     * @param lane LaneDirection; lane
+     * @param start boolean; start (or end)
+     * @return rotation at start or end of lane
+     */
+    private double getRotZAtFraction(final LaneDirection lane, final boolean start)
+    {
+        double f = start ? 0.0 : 1.0;
+        try
+        {
+            return (lane.getDirection().isPlus() ? lane.getLane().getCenterLine().getLocationFraction(f)
+                    : lane.getLane().getCenterLine().getLocationFraction(1.0 - f)).getRotZ();
+        }
+        catch (OTSGeometryException exception)
+        {
+            // should not occur, we use 0.0 and 1.0
+            throw new RuntimeException("Unexpected exception while assessing if a GTU is between lanes.", exception);
+        }
+    }
+
+    /**
+     * Returns the distance along the reference lane that the GTU travels from the current location up to the point.
+     * @param gtu LaneBasedGTU; GTU
+     * @param point DirectedPoint; point where the GTU is or will be
+     * @return Length; total length along the path
+     * @throws GTUException if the GTU has not reference position
+     */
+    public final Length getDistanceAlongLane(final LaneBasedGTU gtu, final DirectedPoint point) throws GTUException
+    {
+
+        // start lane center lines at current reference lane
+        DirectedLanePosition pos = gtu.getReferencePosition();
+        LaneDirection lane = pos.getLaneDirection();
+
+        // initialize loop data
+        double length = -lane.coveredDistance(pos.getPosition().si / pos.getLane().getLength().si).si;
+        double f = Double.NaN;
+        Direction prevDir = Direction.createSI(getRotZAtFraction(lane, true));
+
+        // move to next lane while projection fails
+        while (Double.isNaN(f))
+        {
+            LaneDirection nextLane = lane.getNextLaneDirection(gtu);
+            Direction nextDir = Direction.createSI(nextLane == null ? getRotZAtFraction(lane, false)
+                    : .5 * getRotZAtFraction(lane, false) + .5 * getRotZAtFraction(nextLane, true));
+            f = lane.getLane().getCenterLine().projectFractional(prevDir, nextDir, point.x, point.y, FractionalFallback.NaN);
+
+            // check if the GTU is adjacent to the bit between the lanes (if there is such a bit)
+            if (Double.isNaN(f))
+            {
+                try
+                {
+                    // compose gap line
+                    OTSPoint3D last = lane.getDirection().isPlus() ? lane.getLane().getCenterLine().getLast()
+                            : lane.getLane().getCenterLine().get(0);
+                    OTSPoint3D first = nextLane.getDirection().isPlus() ? nextLane.getLane().getCenterLine().get(0)
+                            : nextLane.getLane().getCenterLine().getLast();
+                    if (!(last).equals(first))
+                    {
+                        OTSLine3D gap = new OTSLine3D(last, first);
+                        double fGap = gap.projectFractional(null, null, point.x, point.y, FractionalFallback.NaN);
+                        if (!Double.isNaN(fGap))
+                        {
+                            f = (lane.getLength().si + fGap * gap.getLengthSI()) / lane.getLength().si;
+                        }
+                        else
+                        {
+                            // gap, but no successful projection, use next lane in next loop, increase length so far
+                            length += lane.getLength().si;
+                            lane = nextLane;
+                            prevDir = nextDir;
+                        }
+                    }
+                    else
+                    {
+                        // no gap, use next lane in next loop, increase length so far
+                        length += lane.getLength().si;
+                        lane = nextLane;
+                        prevDir = nextDir;
+                    }
+                }
+                catch (OTSGeometryException exception)
+                {
+                    // should not occur, we use get(0) and getLast()
+                    throw new RuntimeException("Unexpected exception while assessing if a GTU is between lanes.", exception);
+                }
+            }
+            else
+            {
+                // projection is ok on lane, increase length so far
+                length += lane.coveredDistance(f).si;
+            }
+        }
+        // add length on lane where the reference position was projected to (or to it's consecutive gap between lanes)
+        return Length.createSI(length);
     }
 
     /** {@inheritDoc} */

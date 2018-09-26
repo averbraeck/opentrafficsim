@@ -53,7 +53,7 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
     /** Anticipated speed combined. */
     private Map<RelativeLane, Speed> speed = new HashMap<>();
 
-    /** Anticipated speed combined. */
+    /** Anticipated density combined. */
     private Map<RelativeLane, TimeStampedObject<LinearDensity>> density = new HashMap<>();
 
     /** Density collector. */
@@ -170,6 +170,14 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
         {
             return tK.getObject();
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "AnticipationTrafficPerception [lastSpeedTime=" + this.lastSpeedTime + ", speed=" + this.speed + ", density="
+                + this.density + "]";
     }
 
 }

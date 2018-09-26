@@ -258,7 +258,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
         {
             // Payload: Object[] {String gtuId, LaneBasedGTU gtu, int count_after_removal, Length position}
             Lane lane = (Lane) event.getSource();
-            // TODO GTUDirectionality from Lane.GTU_ADD_EVENT
+            // TODO GTUDirectionality from Lane.GTU_REMOVE_EVENT
             KpiLaneDirection kpiLaneDirection = new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS);
             Object[] payload = (Object[]) event.getContent();
             LaneBasedGTU gtu = (LaneBasedGTU) payload[1];
@@ -425,7 +425,8 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
     @Override
     public final String toString()
     {
-        return "RoadSampler [samplingInterval=" + this.samplingInterval + ", eventPerGtu=" + this.eventPerGtu + "]";
+        return "RoadSampler [samplingInterval=" + this.samplingInterval + "]";
+        // do not use "this.eventPerGtu", it creates circular toString and hence stack overflow
     }
 
 }
