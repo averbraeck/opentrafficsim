@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.dsol;
 
-import static nl.tudelft.simulation.jstats.distributions.DistNormal.CUMULATIVE_NORMAL_PROPABILITIES;
+import static nl.tudelft.simulation.jstats.distributions.DistNormal.CUMULATIVE_NORMAL_PROBABILITIES;
 
 import java.util.Locale;
 
@@ -130,9 +130,9 @@ public class DistNormalTrunc extends DistContinuous
         }
         if (z >= 0)
         {
-            return (1 - f) * CUMULATIVE_NORMAL_PROPABILITIES[intZ] + f * CUMULATIVE_NORMAL_PROPABILITIES[intZ + 1];
+            return (1 - f) * CUMULATIVE_NORMAL_PROBABILITIES[intZ] + f * CUMULATIVE_NORMAL_PROBABILITIES[intZ + 1];
         }
-        return 1 - ((1 - f) * CUMULATIVE_NORMAL_PROPABILITIES[intZ] + f * CUMULATIVE_NORMAL_PROPABILITIES[intZ + 1]);
+        return 1 - ((1 - f) * CUMULATIVE_NORMAL_PROBABILITIES[intZ] + f * CUMULATIVE_NORMAL_PROBABILITIES[intZ + 1]);
     }
 
     /**
@@ -252,13 +252,13 @@ public class DistNormalTrunc extends DistContinuous
         double f = 0.0;
         while (!located)
         {
-            if (CUMULATIVE_NORMAL_PROPABILITIES[i] < prob && CUMULATIVE_NORMAL_PROPABILITIES[i + 1] >= prob)
+            if (CUMULATIVE_NORMAL_PROBABILITIES[i] < prob && CUMULATIVE_NORMAL_PROBABILITIES[i + 1] >= prob)
             {
                 located = true;
-                if (CUMULATIVE_NORMAL_PROPABILITIES[i] < CUMULATIVE_NORMAL_PROPABILITIES[i + 1])
+                if (CUMULATIVE_NORMAL_PROBABILITIES[i] < CUMULATIVE_NORMAL_PROBABILITIES[i + 1])
                 {
-                    f = (prob - CUMULATIVE_NORMAL_PROPABILITIES[i])
-                            / (CUMULATIVE_NORMAL_PROPABILITIES[i + 1] - CUMULATIVE_NORMAL_PROPABILITIES[i]);
+                    f = (prob - CUMULATIVE_NORMAL_PROBABILITIES[i])
+                            / (CUMULATIVE_NORMAL_PROBABILITIES[i + 1] - CUMULATIVE_NORMAL_PROBABILITIES[i]);
                 }
             }
             else

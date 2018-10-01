@@ -14,7 +14,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.constraint.ClassConstraint;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -57,7 +56,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
     {
         Class<LaneBasedTacticalPlanner> type = LaneBasedTacticalPlanner.class;
         TACTICAL_PLANNER = new ParameterTypeClass<>("tactical planner", "Tactical planner class.",
-                OTSClassUtil.getTypedClass(type), LMRS.class, ClassConstraint.newInstance(type, LMRS.class));
+                OTSClassUtil.getTypedClass(type), LMRS.class);
     }
 
     /** */

@@ -118,7 +118,7 @@ public class CCOL extends EventProducer implements TrafficController
             e.printStackTrace();
         }
         this.simulator.scheduleEventRel(Duration.ZERO, this, this, "step", null);
-        this.simulator.addListener(this, SimulatorInterface.END_OF_REPLICATION_EVENT);
+        this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
     }
 
     /**
@@ -192,7 +192,7 @@ public class CCOL extends EventProducer implements TrafficController
     public void notify(EventInterface event) throws RemoteException
     {
         EventType eventType = event.getType();
-        if (eventType.equals(SimulatorInterface.END_OF_REPLICATION_EVENT))
+        if (eventType.equals(SimulatorInterface.END_REPLICATION_EVENT))
         {
             if (null != this.serverSocket)
             {

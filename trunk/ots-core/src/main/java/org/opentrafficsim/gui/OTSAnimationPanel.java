@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Point2D;
@@ -45,7 +47,9 @@ import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.dsol.animation.D2.GridPanel;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
+import nl.tudelft.simulation.dsol.animation.D2.mouse.InputListener;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.event.EventInterface;
@@ -836,7 +840,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 /** {@inheritDoc} */
                 @SuppressWarnings("synthetic-access")
                 @Override
-                public void mouseReleased(final MouseEvent e)
+                public void mouseClicked(final MouseEvent e)
                 {
                     if (e.isControlDown())
                     {
@@ -858,6 +862,86 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             {
                 addMouseListener(listener);
             }
+            // mouse wheel
+            MouseWheelListener[] wheelListeners = getMouseWheelListeners();
+            for (MouseWheelListener wheelListener : wheelListeners)
+            {
+                removeMouseWheelListener(wheelListener);
+            }
+            this.addMouseWheelListener(new InputListener(this)
+            {
+                /** {@inheritDoc} */
+                @Override
+                public void mouseWheelMoved(final MouseWheelEvent e)
+                {
+                    if (e.isShiftDown())
+                    {
+                        int amount = e.getUnitsToScroll();
+                        if (amount > 0)
+                        {
+                            zoomVertical(GridPanel.ZOOMFACTOR, e.getX(), e.getY());
+                        }
+                        else
+                        {
+                            zoomVertical(1.0 / GridPanel.ZOOMFACTOR, e.getX(), e.getY());
+                        }
+                    }
+                    else if (e.isAltDown())
+                    {
+                        int amount = e.getUnitsToScroll();
+                        if (amount > 0)
+                        {
+                            zoomHorizontal(GridPanel.ZOOMFACTOR, e.getX(), e.getY());
+                        }
+                        else
+                        {
+                            zoomHorizontal(1.0 / GridPanel.ZOOMFACTOR, e.getX(), e.getY());
+                        }
+                    }
+                    else
+                    {
+                        super.mouseWheelMoved(e);
+                    }
+                }
+            });
+        }
+
+        /**
+         * Zoom vertical.
+         * @param factor The zoom factor
+         * @param mouseX x-position of the mouse around which we zoom
+         * @param mouseY y-position of the mouse around which we zoom
+         */
+        final synchronized void zoomVertical(final double factor, final int mouseX, final int mouseY)
+        {
+            double minX = this.extent.getMinX();
+            Point2D mwc = Renderable2DInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
+                    this.getSize());
+            double minY = mwc.getY() - (mwc.getY() - this.extent.getMinY()) * factor;
+            double w = this.extent.getWidth();
+            double h = this.extent.getHeight() * factor;
+
+            this.extent.setRect(minX, minY, w, h);
+            this.repaint();
+        }
+
+        /**
+         * Zoom horizontal.
+         * @param factor The zoom factor
+         * @param mouseX x-position of the mouse around which we zoom
+         * @param mouseY y-position of the mouse around which we zoom
+         */
+        final synchronized void zoomHorizontal(final double factor, final int mouseX, final int mouseY)
+        {
+            double minY = this.extent.getMinY();
+            Point2D mwc = Renderable2DInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
+                    this.getSize());
+            double minX = mwc.getX() - (mwc.getX() - this.extent.getMinX()) * factor;
+            double w = this.extent.getWidth() * factor;
+            double h = this.extent.getHeight();
+
+            this.extent.setRect(minX, minY, w, h);
+            this.repaint();
         }
 
         /**
