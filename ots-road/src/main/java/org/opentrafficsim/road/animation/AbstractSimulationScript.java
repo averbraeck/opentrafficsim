@@ -211,7 +211,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             {
                 DEVSSimulatorInterface.TimeDoubleUnit sim =
                         scriptSimulation.buildSimulator(startTime, warmupTime, simulationTime, new ArrayList<Property<?>>());
-                sim.addListener(this, SimulatorInterface.END_OF_REPLICATION_EVENT);
+                sim.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
                 double tReport = 60.0;
                 Time t = sim.getSimulatorTime();
                 while (t.si < simulationTime.si)
@@ -242,12 +242,12 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     @Override
     public final void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(SimulatorInterface.END_OF_REPLICATION_EVENT))
+        if (event.getType().equals(SimulatorInterface.END_REPLICATION_EVENT))
         {
             onSimulationEnd();
             // solve bug that event is fired twice
             AbstractSimulationScript.this.simulator.removeListener(AbstractSimulationScript.this,
-                    SimulatorInterface.END_OF_REPLICATION_EVENT);
+                    SimulatorInterface.END_REPLICATION_EVENT);
         }
     }
 
@@ -539,7 +539,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             try
             {
                 AbstractSimulationScript.this.simulator.addListener(AbstractSimulationScript.this,
-                        SimulatorInterface.END_OF_REPLICATION_EVENT);
+                        SimulatorInterface.END_REPLICATION_EVENT);
             }
             catch (RemoteException exception)
             {

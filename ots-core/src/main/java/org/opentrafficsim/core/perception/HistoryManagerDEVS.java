@@ -51,7 +51,7 @@ public class HistoryManagerDEVS extends HistoryManager implements EventListenerI
         this.history = history;
         this.cleanUpInterval = cleanUpInterval;
         cleanUpHistory(); // start clean-up event chain
-        Try.execute(() -> this.simulator.addListener(this, SimulatorInterface.END_OF_REPLICATION_EVENT),
+        Try.execute(() -> this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT),
                 "Unable to add listener.");
     }
 
@@ -85,7 +85,7 @@ public class HistoryManagerDEVS extends HistoryManager implements EventListenerI
     @Override
     public void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(SimulatorInterface.END_OF_REPLICATION_EVENT))
+        if (event.getType().equals(SimulatorInterface.END_REPLICATION_EVENT))
         {
             endOfSimulation();
         }

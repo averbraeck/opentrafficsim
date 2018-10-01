@@ -177,7 +177,7 @@ public class OTSControlPanel extends JPanel
         this.add(buttonPanel);
         fixButtons();
         installWindowCloseHandler();
-        this.simulator.addListener(this, SimulatorInterface.END_OF_REPLICATION_EVENT);
+        this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
         this.simulator.addListener(this, SimulatorInterface.START_EVENT);
         this.simulator.addListener(this, SimulatorInterface.STOP_EVENT);
         this.simulator.addListener(this, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT);
@@ -537,7 +537,14 @@ public class OTSControlPanel extends JPanel
     {
         if (getSimulator().isRunning())
         {
-            getSimulator().stop();
+            try
+            {
+                getSimulator().stop();
+            }
+            catch (SimRuntimeException exception1)
+            {
+                exception1.printStackTrace();
+            }
             double currentTick = getSimulator().getSimulatorTime().getSI();
             double nextTick = getSimulator().getEventList().first().getAbsoluteExecutionTime().get().getSI();
             // System.out.println("currentTick is " + currentTick);
@@ -1146,7 +1153,7 @@ public class OTSControlPanel extends JPanel
     @Override
     public final void notify(final EventInterface event) throws RemoteException
     {
-        if (event.getType().equals(SimulatorInterface.END_OF_REPLICATION_EVENT)
+        if (event.getType().equals(SimulatorInterface.END_REPLICATION_EVENT)
                 || event.getType().equals(SimulatorInterface.START_EVENT)
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)
                 || event.getType().equals(DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT))

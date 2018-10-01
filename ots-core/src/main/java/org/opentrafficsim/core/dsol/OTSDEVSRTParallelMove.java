@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.logger.SimLogger;
@@ -115,7 +116,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
             // check if we are behind; syncTime is the needed current time on the wall-clock
             double syncTime = (System.currentTimeMillis() - clockTime0) * msec1 * factor;
             // delta is the time we might be behind
-            double simTime = this.simulatorTime.minus(simTime0).doubleValue();
+            double simTime = this.simulatorTime.diff(simTime0).doubleValue();
 
             if (syncTime > simTime)
             {
@@ -150,7 +151,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
             // peek at the first event and determine the time difference relative to RT speed; that determines
             // how long we have to wait.
             SimEventInterface<SimTimeDoubleUnit> event = this.eventList.first();
-            double simTimeDiffMillis = (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
+            double simTimeDiffMillis = (event.getAbsoluteExecutionTime().diff(simTime0)).doubleValue() / (msec1 * factor);
 
             /*
              * simTimeDiff gives the number of milliseconds between the last event and this event. if speed == 1, this is the
@@ -183,7 +184,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                     if (!event.equals(this.eventList.first())) // event inserted by a thread...
                     {
                         event = this.eventList.first();
-                        simTimeDiffMillis = (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
+                        simTimeDiffMillis = (event.getAbsoluteExecutionTime().diff(simTime0)).doubleValue() / (msec1 * factor);
                     }
                     else
                     {
@@ -221,7 +222,14 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                             SimLogger.always().error(exception);
                             if (this.isPauseOnError())
                             {
-                                this.stop();
+                                try
+                                {
+                                    this.stop();
+                                }
+                                catch (SimRuntimeException exception1)
+                                {
+                                    SimLogger.always().error(exception1);
+                                }
                             }
                         }
                         if (!this.eventList.isEmpty())
@@ -261,7 +269,14 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                                 SimLogger.always().error(exception);
                                 if (this.isPauseOnError())
                                 {
-                                    this.stop();
+                                    try
+                                    {
+                                        this.stop();
+                                    }
+                                    catch (SimRuntimeException exception1)
+                                    {
+                                        SimLogger.always().error(exception1);
+                                    }
                                 }
                             }
                         }
@@ -295,7 +310,14 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                                 SimLogger.always().error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
-                                    OTSDEVSRTParallelMove.this.stop();
+                                    try
+                                    {
+                                        OTSDEVSRTParallelMove.this.stop();
+                                    }
+                                    catch (SimRuntimeException exception1)
+                                    {
+                                        SimLogger.always().error(exception1);
+                                    }
                                 }
                             }
                         }
@@ -331,7 +353,14 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                                 SimLogger.always().error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
-                                    OTSDEVSRTParallelMove.this.stop();
+                                    try
+                                    {
+                                        OTSDEVSRTParallelMove.this.stop();
+                                    }
+                                    catch (SimRuntimeException exception1)
+                                    {
+                                        SimLogger.always().error(exception1);
+                                    }
                                 }
                             }
                         }
@@ -367,7 +396,14 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
                                 SimLogger.always().error(exception);
                                 if (OTSDEVSRTParallelMove.this.isPauseOnError())
                                 {
-                                    OTSDEVSRTParallelMove.this.stop();
+                                    try
+                                    {
+                                        OTSDEVSRTParallelMove.this.stop();
+                                    }
+                                    catch (SimRuntimeException exception1)
+                                    {
+                                        SimLogger.always().error(exception1);
+                                    }
                                 }
                             }
                         }
