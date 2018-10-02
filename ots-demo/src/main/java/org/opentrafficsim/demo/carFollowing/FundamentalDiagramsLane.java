@@ -54,7 +54,7 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
@@ -153,7 +153,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(3, panelsPerRow);
@@ -223,7 +223,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         private OTSNetwork network = new OTSNetwork("network");
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** The headway (inter-vehicle time). */
         private Duration headway;
@@ -280,7 +280,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
+            this.simulator = (OTSSimulatorInterface) theSimulator;
             try
             {
                 LaneType laneType = LaneType.TWO_WAY_LANE;

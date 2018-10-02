@@ -45,6 +45,7 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.SpeedLimit;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -158,7 +159,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** the network. */
         private OTSNetwork network;
@@ -168,7 +169,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
         public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
+            this.simulator = (OTSSimulatorInterface) pSimulator;
             // URL url = URLResource.getResource("/PNH1.xml");
             // URL url = URLResource.getResource("/offset-example.xml");
             // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");

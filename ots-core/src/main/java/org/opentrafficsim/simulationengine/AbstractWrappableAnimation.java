@@ -497,11 +497,11 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /**
      * Make additional tabs in the main simulation window.
-     * @param simulator SimpleSimulatorInterface; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @throws OTSSimulationException in case the chart, axes or legend cannot be generated
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    protected void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
         // Override this method to add custom tabs
     }
@@ -693,7 +693,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** {@inheritDoc} */
     @Override
-    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect)
+    public final OTSSimulatorInterface rebuildSimulator(final Rectangle rect)
             throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException
     {
         return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength, this.savedUserModifiedProperties,

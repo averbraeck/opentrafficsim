@@ -67,6 +67,7 @@ import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -78,7 +79,6 @@ import nl.tno.imb.mc.Parameter;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.Simulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -398,7 +398,7 @@ public class ModelControlA58 extends ModelStarter
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        OTSSimulatorInterface simulator;
 
         /** IMB connection. */
         TConnection imbConnection;
@@ -429,7 +429,7 @@ public class ModelControlA58 extends ModelStarter
         public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
+            this.simulator = (OTSSimulatorInterface) pSimulator;
             SimpleAnimator imbAnimator = (SimpleAnimator) pSimulator;
             try
             {

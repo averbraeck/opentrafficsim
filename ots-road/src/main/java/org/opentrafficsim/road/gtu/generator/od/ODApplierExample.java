@@ -74,10 +74,10 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -183,13 +183,13 @@ public class ODApplierExample extends AbstractWrappableAnimation
         private OTSNetwork network;
 
         /** Simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** {@inheritDoc} */
         @Override
         public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim) throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) sim;
+            this.simulator = (OTSSimulatorInterface) sim;
             Map<String, StreamInterface> streams = new HashMap<>();
             streams.put("generation", new MersenneTwister(1L));
             this.simulator.getReplication().setStreams(streams);

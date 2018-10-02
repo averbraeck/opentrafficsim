@@ -38,12 +38,12 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.factory.vissim.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -330,7 +330,7 @@ class GeneratorTag implements Serializable
      * @throws GTUException when construction of the Strategical Planner failed
      */
     static void makeGenerators(final LinkTag linkTag, final VissimNetworkLaneParser parser,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws SimRuntimeException, NetworkException, GTUException
+            final OTSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException
     {
         for (GeneratorTag generatorTag : linkTag.generatorTags.values())
         {
@@ -349,7 +349,7 @@ class GeneratorTag implements Serializable
      * @throws GTUException when construction of the Strategical Planner failed
      */
     static void makeGenerator(final GeneratorTag generatorTag, final VissimNetworkLaneParser parser, final LinkTag linkTag,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws SimRuntimeException, NetworkException, GTUException
+            final OTSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException
     {
         Lane lane = linkTag.lanes.get(generatorTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualGTU.class;

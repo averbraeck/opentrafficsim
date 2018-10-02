@@ -13,9 +13,9 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
@@ -66,7 +66,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     GTUType getGTUType();
 
     /** @return the simulator of the GTU. */
-    DEVSSimulatorInterface.TimeDoubleUnit getSimulator();
+    OTSSimulatorInterface getSimulator();
 
     /** @return the reference position of the GTU, by definition (0, 0, 0). */
     RelativePosition getReference();

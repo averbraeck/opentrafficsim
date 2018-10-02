@@ -41,7 +41,7 @@ public interface WrappableSimulation
      *             fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    SimpleSimulatorInterface buildSimulator(Time startTime, Duration warmupPeriod, Duration runLength,
+    OTSSimulatorInterface buildSimulator(Time startTime, Duration warmupPeriod, Duration runLength,
             ArrayList<Property<?>> properties)
             throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException;
 

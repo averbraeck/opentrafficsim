@@ -18,8 +18,8 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.mock.MockGTU;
 import org.opentrafficsim.core.mock.MockSimulator;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventType;
@@ -62,7 +62,7 @@ public class OTSLinkTest implements EventListenerInterface
                 .addAllowedGTUType(GTUType.VEHICLE, LongitudinalDirectionality.DIR_NONE);
         LinkType linkType = new LinkType("myLinkType", LinkType.ROAD, compatibility);
         OTSLine3D designLine = new OTSLine3D(startNode.getPoint(), endNode.getPoint());
-        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
         // Map<GTUType, LongitudinalDirectionality> directionalityMap = new HashMap<>();
         OTSLink link = new OTSLink(network, "link1", startNode, endNode, linkType, designLine, simulator);
         assertTrue("network contains the newly constructed link", network.containsLink(link));
@@ -160,7 +160,7 @@ public class OTSLinkTest implements EventListenerInterface
                 new OTSNode(otherNetwork, "end", new OTSPoint3D(1000, 2000, 10)), linkType, designLine, simulator);
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
         otherNetwork.removeLink(otherLink);
-        SimulatorInterface.TimeDoubleUnit simulator2 = MockSimulator.createMock();
+        OTSSimulatorInterface simulator2 = MockSimulator.createMock();
         otherLink = link.clone(otherNetwork, simulator2, false);
         assertTrue("link is equal to clone in different network", link.equals(otherLink));
     }

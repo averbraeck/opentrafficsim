@@ -54,9 +54,9 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.GtuTypeData;
 import org.opentrafficsim.road.network.sampling.LinkData;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 /**
@@ -137,7 +137,7 @@ public class N201ODfactory
      * @param simulator simulator
      */
     public static void makeGeneratorsFromOD(final OTSNetwork network, final ODMatrix matrix,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            final OTSSimulatorInterface simulator)
     {
 
         // fixed generator input

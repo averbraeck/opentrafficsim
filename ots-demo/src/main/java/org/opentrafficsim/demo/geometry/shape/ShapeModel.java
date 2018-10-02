@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo.geometry.shape;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,10 +9,10 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -32,14 +31,14 @@ public class ShapeModel implements OTSModelInterface
     private static final long serialVersionUID = 20140815L;
 
     /** The simulator. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private OTSSimulatorInterface simulator;
 
     /** Nodes from shape file. */
     private Map<String, OTSNode> nodes;
 
     /** Links from shape file. */
     private Map<String, Link> shpLinks;
-    
+
     /** the network. */
     private OTSNetwork network = new OTSNetwork("shape model network");
 
@@ -48,7 +47,7 @@ public class ShapeModel implements OTSModelInterface
     public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
             throws SimRuntimeException
     {
-        this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
+        this.simulator = (OTSSimulatorInterface) theSimulator;
         try
         {
             // Read the shape files with the function:
@@ -77,5 +76,5 @@ public class ShapeModel implements OTSModelInterface
     {
         return this.network;
     }
-    
+
 }

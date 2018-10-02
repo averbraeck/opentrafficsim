@@ -18,9 +18,9 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * Generate GTUs.
@@ -39,7 +39,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
     private static final long serialVersionUID = 20160000L;
 
     /** Simulator to schedule next arrival events. */
-    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** Distribution of the length of the GTU. */
     private final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist;
@@ -73,8 +73,9 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public GTUGeneratorIndividual(final String name, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final GTUType gtuType,
-            final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
+    public GTUGeneratorIndividual(final String name, final OTSSimulatorInterface simulator,
+            final GTUType gtuType, final Class<?> gtuClass,
+            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist,
@@ -94,7 +95,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
 
     /** {@inheritDoc} */
     @Override
-    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
+    public final OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

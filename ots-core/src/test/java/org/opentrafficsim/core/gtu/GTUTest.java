@@ -35,10 +35,10 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
 import nl.tudelft.simulation.immutablecollections.ImmutableSet;
@@ -82,8 +82,8 @@ public class GTUTest<S extends StrategicalPlanner, T extends TacticalPlanner> im
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
         OTSNetwork perceivableContext = new OTSNetwork("network");
-        DEVSSimulatorInterface.TimeDoubleUnit simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE),
-                new Duration(0, DurationUnit.SI), new Duration(9999, DurationUnit.SI), this);
+        OTSSimulatorInterface simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE), new Duration(0, DurationUnit.SI),
+                new Duration(9999, DurationUnit.SI), this);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {
 
@@ -356,12 +356,12 @@ class TestGTU extends AbstractGTU
     /**
      * @param id String; id of the new GTU
      * @param gtuType GTUType; type of the new GTU
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator that controls the new GTU
+     * @param simulator OTSSimulatorInterface; simulator that controls the new GTU
      * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
      * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
      * @throws GTUException when something goes wrong during GTU instantiation
      */
-    TestGTU(final String id, final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+    TestGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,
 
             final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {
@@ -371,12 +371,12 @@ class TestGTU extends AbstractGTU
     /**
      * @param idGenerator IdGenerator; id generator that will generate the id of the new GTU
      * @param gtuType GTUType; type of the new GTU
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator that controls the new GTU
+     * @param simulator OTSSimulatorInterface; simulator that controls the new GTU
      * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
      * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
      * @throws GTUException when something goes wrong during GTU instantiation
      */
-    TestGTU(final IdGenerator idGenerator, final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+    TestGTU(final IdGenerator idGenerator, final GTUType gtuType, final OTSSimulatorInterface simulator,
 
             final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {

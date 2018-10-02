@@ -3,7 +3,6 @@ package org.opentrafficsim.demo.conflict;
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
@@ -25,10 +24,10 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
@@ -89,14 +88,13 @@ public class TestNetworkDemo extends AbstractWrappableAnimation
         private OTSNetwork network;
 
         /** Simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0)
-                throws SimRuntimeException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) arg0;
+            this.simulator = (OTSSimulatorInterface) arg0;
             try
             {
                 URL url = URLResource.getResource("/conflict/Test-Network-14.xml");

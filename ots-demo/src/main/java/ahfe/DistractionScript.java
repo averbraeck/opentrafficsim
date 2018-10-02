@@ -107,10 +107,10 @@ import org.opentrafficsim.road.network.lane.object.Distraction.TrapezoidProfile;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
@@ -198,7 +198,7 @@ public final class DistractionScript extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSNetwork setupSimulation(final DEVSSimulatorInterface.TimeDoubleUnit sim) throws Exception
+    protected OTSNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         AbstractGTU.ALIGNED = false;
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
@@ -247,8 +247,7 @@ public final class DistractionScript extends AbstractSimulationScript
         ODApplier.applyOD(network, od, sim, odOptions);
 
         // History
-        ((OTSReplication) sim.getReplication())
-                .setHistoryManager(new HistoryManagerDEVS(sim, Duration.createSI(2.0), Duration.createSI(1.0)));
+        sim.getReplication().setHistoryManager(new HistoryManagerDEVS(sim, Duration.createSI(2.0), Duration.createSI(1.0)));
 
         // Sampler
         this.sampler = new RoadSampler(sim);

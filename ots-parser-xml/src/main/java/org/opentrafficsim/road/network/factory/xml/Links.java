@@ -42,6 +42,7 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -324,7 +325,7 @@ final class Links
      * @throws NetworkException when tag type not filled
      */
     static void buildConnector(final ConnectorTag connectorTag, final XmlNetworkLaneParser parser,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws OTSGeometryException, NamingException, NetworkException
+            final OTSSimulatorInterface simulator) throws OTSGeometryException, NamingException, NetworkException
     {
         OTSLine3D designLine =
                 new OTSLine3D(connectorTag.nodeStartTag.node.getPoint(), connectorTag.nodeEndTag.node.getPoint());
@@ -355,7 +356,7 @@ final class Links
      * @throws NamingException when node animation cannot link to the animation context.
      * @throws NetworkException when tag type not filled
      */
-    static void buildLink(final LinkTag linkTag, final XmlNetworkLaneParser parser, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    static void buildLink(final LinkTag linkTag, final XmlNetworkLaneParser parser, final OTSSimulatorInterface simulator)
             throws OTSGeometryException, NamingException, NetworkException
     {
         NodeTag from = linkTag.nodeStartTag;
@@ -518,7 +519,7 @@ final class Links
      */
     @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:methodlength" })
     static void applyRoadTypeToLink(final LinkTag linkTag, final XmlNetworkLaneParser parser,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            final OTSSimulatorInterface simulator)
             throws NetworkException, NamingException, SAXException, GTUException, OTSGeometryException, SimRuntimeException
     {
         CrossSectionLink csl = linkTag.link;
@@ -735,9 +736,9 @@ final class Links
                             try
                             {
                                 Class<?> clazz = Class.forName(sensorTag.className);
-                                Constructor<?> sensorConstructor =
-                                        ClassUtil.resolveConstructor(clazz, new Class[] { String.class, Lane.class,
-                                                Length.class, RelativePosition.TYPE.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
+                                Constructor<?> sensorConstructor = ClassUtil.resolveConstructor(clazz,
+                                        new Class[] { String.class, Lane.class, Length.class, RelativePosition.TYPE.class,
+                                                DEVSSimulatorInterface.TimeDoubleUnit.class });
                                 Length position = LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
                                 // { String.class, Lane.class, Length.class, RelativePosition.TYPE.class,
                                 // DEVSSimulatorInterface.TimeDoubleUnit.class }

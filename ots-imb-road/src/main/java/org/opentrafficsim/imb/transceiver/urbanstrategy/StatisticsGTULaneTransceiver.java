@@ -25,7 +25,7 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelDistance;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
 import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
 import org.opentrafficsim.road.network.sampling.indicator.TotalDelayReference;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -308,13 +308,13 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
     /**
      * Construct a new StatisticsGTULaneTransceiver.
      * @param connector Connector; the IMB connector
-     * @param simulator SimpleSimulatorInterface; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param networkId String; the network id
      * @param query Query; the statistics query
      * @param transmissionInterval Duration; the interval between generation of graphs
      * @throws IMBException when the message cannot be posted, or the scheduling of the publish event fails
      */
-    public StatisticsGTULaneTransceiver(final Connector connector, SimpleSimulatorInterface simulator, String networkId,
+    public StatisticsGTULaneTransceiver(final Connector connector, OTSSimulatorInterface simulator, String networkId,
             final Query query, final Duration transmissionInterval) throws IMBException
     {
         super("StatisticsGTULane", connector, simulator);

@@ -88,9 +88,9 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
@@ -144,7 +144,7 @@ public final class AHFEUtil
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void createDemand(final OTSNetwork network, final GTUColorer gtuColorer,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final int replication, final String anticipationStrategy,
+            final OTSSimulatorInterface simulator, final int replication, final String anticipationStrategy,
             final Duration reactionTime, final Duration anticipationTime, final double truckFraction, final Time simulationTime,
             final Frequency leftDemand, final Frequency rightDemand, final double leftFraction, final double distanceError,
             final double speedError, final double accelerationError)
@@ -351,7 +351,7 @@ public final class AHFEUtil
      * @throws ParameterException in case a parameter for the perception is missing
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
-            final IdGenerator idGenerator, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSNetwork network,
+            final IdGenerator idGenerator, final OTSSimulatorInterface simulator, final OTSNetwork network,
             final Distribution<LaneBasedTemplateGTUType> distribution, final HeadwayGeneratorDemand headwayGenerator,
             final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime, final StreamInterface stream)

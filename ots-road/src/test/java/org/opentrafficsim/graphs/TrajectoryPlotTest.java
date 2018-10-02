@@ -30,8 +30,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * <p>
@@ -54,7 +53,7 @@ public class TrajectoryPlotTest implements UNITS
     @Test
     public final void trajectoryTest() throws Exception
     {
-        DEVSSimulator.TimeDoubleUnit simulator = CarTest.makeSimulator();
+        OTSSimulatorInterface simulator = CarTest.makeSimulator();
         LaneType laneType = LaneType.TWO_WAY_LANE;
         OTSNetwork network = new OTSNetwork("trajectory plot test network");
         OTSNode node1 = new OTSNode(network, "node 1", new OTSPoint3D(100, 100, 0));

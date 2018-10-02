@@ -16,7 +16,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.Field;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -36,7 +35,6 @@ import javax.swing.JToggleButton;
 
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -55,7 +53,6 @@ import nl.tudelft.simulation.event.Event;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
-import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * Animation panel with various controls.
@@ -561,19 +558,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         {
             return;
         }
-        // TODO complete hack, but everything is final...
-        Field field = Try.assign(() -> ClassUtil.resolveField(AnimationPanel.class, "visibilityMap"), "No field visibilityMap");
-        field.setAccessible(true);
-        @SuppressWarnings("unchecked")
-        Map<Class<? extends Locatable>, Boolean> map =
-                Try.assign(() -> (Map<Class<? extends Locatable>, Boolean>) field.get(this.getAnimationPanel()),
-                        "visibilityMap not a map?");
-        Boolean show = map.get(locatableClass);
-        if (show == null)
-        {
-            return;
-        }
-        button.setSelected(show);
+        button.setSelected(getAnimationPanel().isShowClass(locatableClass));
     }
 
     /**
@@ -976,7 +961,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void paint(final Graphics g)
+        public void paintComponent(final Graphics g)
         {
             if (OTSAnimationPanel.this.autoPan)
             {
@@ -1002,7 +987,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                     this.extent = new Rectangle2D.Double(point.getX() - w / 2, point.getY() - h / 2, w, h);
                 }
             }
-            super.paint(g);
+            super.paintComponent(g);
         }
 
         /** {@inheritDoc} */

@@ -10,10 +10,9 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.opentrafficsim.water.network.infra.Obstacle;
 import org.opentrafficsim.water.transfer.Terminal;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * A waterway, i.e. a river, canal or sailable route on a lake or sea.
@@ -61,8 +60,7 @@ public class Waterway extends OTSLink
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Waterway(final Network network, final String id, final String name, final OTSNode startNode, final OTSNode endNode,
-            final LinkType linkType, final OTSLine3D designLine, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
-            throws NetworkException
+            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine, simulator);
         this.name = name;

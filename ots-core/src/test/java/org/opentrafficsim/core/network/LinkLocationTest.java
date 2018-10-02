@@ -11,8 +11,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.mock.MockSimulator;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * <p>
@@ -42,7 +41,7 @@ public class LinkLocationTest
         Node toNode = new OTSNode(network, "endNode", toPoint);
         LinkType linkType = LinkType.ROAD;
         OTSLine3D designLine = new OTSLine3D(fromPoint, toPoint);
-        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
         Link link = new OTSLink(network, "link", fromNode, toNode, linkType, designLine, simulator);
         Length linkLength = link.getLength();
         // Create an unrelated link

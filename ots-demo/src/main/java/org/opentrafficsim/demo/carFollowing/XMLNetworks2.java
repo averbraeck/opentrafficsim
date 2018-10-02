@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.Frame;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -71,7 +70,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -146,7 +145,7 @@ public class XMLNetworks2 extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator)
+    protected final void addTabs(final OTSSimulatorInterface simulator)
     {
         int graphCount = this.model.pathCount();
         int columns = 1;
@@ -730,7 +729,7 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
             // }
             // }
             xmlCode.append("</NETWORK>\n");
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) theSimulator);
 
             System.out.println("Building network from XML description\n" + xmlCode.toString());
             nlp.build(new ByteArrayInputStream(xmlCode.toString().getBytes()), this.network, true);
@@ -843,8 +842,8 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND),
-                    this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND), this,
+                    this, "drawGraphs", null);
         }
         catch (SimRuntimeException exception)
         {

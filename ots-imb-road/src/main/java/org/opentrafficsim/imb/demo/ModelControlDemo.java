@@ -83,6 +83,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tno.imb.TConnection;
 import nl.tno.imb.mc.ModelParameters;
@@ -430,7 +431,7 @@ public class ModelControlDemo extends ModelStarter
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** Number of cars created. */
         private int carsCreated = 0;
@@ -630,7 +631,7 @@ public class ModelControlDemo extends ModelStarter
             {
                 this.paths.add(new ArrayList<Lane>());
             }
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
+            this.simulator = (OTSSimulatorInterface) theSimulator;
             double radius = 6000 / 2 / Math.PI;
             double headway = 40;
             double headwayVariability = 0;

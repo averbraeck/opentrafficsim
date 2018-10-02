@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
  * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SimpleSimulator extends DEVSSimulator.TimeDoubleUnit implements SimpleSimulatorInterface, Serializable
+public class SimpleSimulator extends DEVSSimulator.TimeDoubleUnit implements OTSSimulatorInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150510L;
@@ -73,17 +73,22 @@ public class SimpleSimulator extends DEVSSimulator.TimeDoubleUnit implements Sim
                 ReplicationMode.TERMINATING);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public final SimEvent<SimTimeDoubleUnit> scheduleEvent(final Time executionTime, final short priority, final Object source,
             final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
-        SimEvent<SimTimeDoubleUnit> result = new SimEvent<SimTimeDoubleUnit>(
+        SimEvent<SimTimeDoubleUnit> result = new SimEvent<>(
                 new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public OTSReplication getReplication()
+    {
+        return (OTSReplication) super.getReplication();
+    }
+    
 }

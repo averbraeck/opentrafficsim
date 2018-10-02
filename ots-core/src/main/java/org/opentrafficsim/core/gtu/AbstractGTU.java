@@ -25,6 +25,7 @@ import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.PerceivableContext;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -64,7 +65,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     private final GTUType gtuType;
 
     /** The simulator to schedule activities on. */
-    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** Model parameters. */
     private Parameters parameters;
@@ -132,12 +133,12 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /**
      * @param id String; the id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule plan changes on
+     * @param simulator OTSSimulatorInterface; the simulator to schedule plan changes on
      * @param perceivableContext PerceivableContext; the perceivable context in which this GTU will be registered
      * @throws GTUException when the preconditions of the constructor are not met
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTU(final String id, final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+    public AbstractGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,
             final PerceivableContext perceivableContext) throws GTUException
     {
         Throw.when(id == null, GTUException.class, "id is null");
@@ -147,7 +148,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
                 "GTU with id %s already registered in perceivableContext %s", id, perceivableContext.getId());
         Throw.when(simulator == null, GTUException.class, "simulator is null for GTU with id %s", id);
 
-        HistoryManager historyManager = ((OTSReplication) simulator.getReplication()).getHistoryManager(simulator);
+        HistoryManager historyManager = simulator.getReplication().getHistoryManager(simulator);
         this.id = id;
         this.uniqueNumber = ++staticUNIQUENUMBER;
         this.gtuType = gtuType;
@@ -163,13 +164,13 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     /**
      * @param idGenerator IdGenerator; the generator that will produce a unique id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule plan changes on
+     * @param simulator OTSSimulatorInterface; the simulator to schedule plan changes on
      * @param perceivableContext PerceivableContext; the perceivable context in which this GTU will be registered
      * @throws GTUException when the preconditions of the constructor are not met
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractGTU(final IdGenerator idGenerator, final GTUType gtuType,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final PerceivableContext perceivableContext)
+            final OTSSimulatorInterface simulator, final PerceivableContext perceivableContext)
             throws GTUException
     {
         this(generateId(idGenerator), gtuType, simulator, perceivableContext);
@@ -365,7 +366,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
+    public final OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }

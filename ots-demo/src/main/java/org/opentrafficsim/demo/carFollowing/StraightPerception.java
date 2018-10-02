@@ -82,7 +82,7 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
@@ -230,7 +230,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
 
         // Make the tab with the plots
@@ -363,7 +363,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
         private static final long serialVersionUID = 20140815L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** The network. */
         private OTSNetwork network = new OTSNetwork("network");
@@ -439,7 +439,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
         public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
+            this.simulator = (OTSSimulatorInterface) theSimulator;
             try
             {
                 OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
@@ -727,7 +727,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
              * @throws ParameterException in case of a parameter problem.
              */
             LaneBasedPerceivingCar(final String id, final GTUType gtuType, final Length length, final Length width,
-                    final Speed maximumSpeed, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSNetwork network)
+                    final Speed maximumSpeed, final OTSSimulatorInterface simulator, final OTSNetwork network)
                     throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
                     ParameterException
             {

@@ -39,12 +39,12 @@ import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -444,16 +444,16 @@ public class AimsunControl extends AbstractWrappableAnimation
         private OTSNetwork network;
 
         /** The simulator. */
-        private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
+        private OTSSimulatorInterface simulator;
 
         /** {@inheritDoc} */
         @Override
         public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = theSimulator;
+            this.simulator = (OTSSimulatorInterface) theSimulator;
             // URL url = URLResource.getResource("/aimsun/singleRoad.xml");
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             @SuppressWarnings("synthetic-access")
             String xml = AimsunControl.this.networkXML;
             try

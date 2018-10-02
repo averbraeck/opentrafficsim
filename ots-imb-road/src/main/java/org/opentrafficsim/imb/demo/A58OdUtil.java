@@ -60,6 +60,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -117,7 +118,7 @@ public class A58OdUtil
      * @throws ProbabilityException on error with the lane-based distributions
      */
     public static void createDemand(final OTSNetwork network, final GTUColorer gtuColorer,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, double penetrationRate) throws ProbabilityException
+            final OTSSimulatorInterface simulator, double penetrationRate) throws ProbabilityException
     {
 
         Map<String, StreamInterface> streams = new HashMap<>();
@@ -348,7 +349,7 @@ public class A58OdUtil
      * @throws ParameterException in case a parameter for the perception is missing
      */
     private static void makeGenerator(final Lane lane, final Speed generationSpeed, final String id,
-            final IdGenerator idGenerator, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSNetwork network,
+            final IdGenerator idGenerator, final OTSSimulatorInterface simulator, final OTSNetwork network,
             final Distribution<LaneBasedTemplateGTUType> distribution, final HeadwayGeneratorDemand headwayGenerator,
             final GTUColorer gtuColorer, final RoomChecker roomChecker, final ParameterFactory bcFactory,
             final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final StreamInterface stream)

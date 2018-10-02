@@ -27,6 +27,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -64,7 +65,7 @@ public class CurveTest
         GTUType gtuType = CAR;
         LaneType laneType = LaneType.TWO_WAY_LANE;
         Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
-        DEVSSimulatorInterface.TimeDoubleUnit simulator = CarTest.makeSimulator();
+        OTSSimulatorInterface simulator = CarTest.makeSimulator();
         Network network = new OTSNetwork("curve test network");
         OTSNode origin = new OTSNode(network, "origin", new OTSPoint3D(10, 10, 0));
         OTSNode curveStart = new OTSNode(network, "curveStart", new OTSPoint3D(100, 10, 0));
@@ -92,7 +93,7 @@ public class CurveTest
                         + " time for reference to get to end " + timeAtEnd);
             }
             LaneBasedIndividualGTU car = CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
-                    (DEVSSimulator.TimeDoubleUnit) simulator,
+                    simulator,
                     new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(25, DurationUnit.SI)),
                     new FixedLaneChangeModel(null), (OTSNetwork) network);
             printEventList(simulator);

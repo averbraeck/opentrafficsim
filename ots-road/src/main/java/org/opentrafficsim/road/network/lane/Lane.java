@@ -20,7 +20,6 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -46,7 +45,6 @@ import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.immutablecollections.Immutable;
@@ -409,7 +407,7 @@ public class Lane extends CrossSectionElement implements Serializable
             OTSNetwork.cloneAnimation(cse, this, cse.getParentLink().getSimulator(), newSimulator);
         }
     }
-    
+
     /**
      * Obtains the history manager from the parent link.
      * @param parLink CrossSectionLink; parent link
@@ -417,8 +415,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     private HistoryManager getManager(final CrossSectionLink parLink)
     {
-        return ((OTSReplication) parLink.getSimulator().getReplication())
-                .getHistoryManager((DEVSSimulatorInterface.TimeDoubleUnit) parLink.getSimulator());
+        return parLink.getSimulator().getReplication().getHistoryManager(parLink.getSimulator());
     }
 
     // TODO constructor calls with this(...)

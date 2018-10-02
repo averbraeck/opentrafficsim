@@ -63,7 +63,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
-import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
@@ -154,6 +153,7 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -565,7 +565,7 @@ public class LmrsStrategies implements EventListenerInterface
         public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simul)
                 throws SimRuntimeException
         {
-            DEVSSimulatorInterface.TimeDoubleUnit sim = (DEVSSimulatorInterface.TimeDoubleUnit) simul;
+            OTSSimulatorInterface sim = (OTSSimulatorInterface) simul;
             LmrsStrategies.this.simulator = sim;
             OTSNetwork net = new OTSNetwork("LMRS strategies");
             try

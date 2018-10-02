@@ -31,6 +31,7 @@ import org.mockito.stubbing.Answer;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
+import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -51,6 +52,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -84,10 +86,10 @@ public class ODApplierTest
     private StreamInterface stream = new MersenneTwister(1L);
 
     /** MockUp replication. */
-    private Replication.TimeDoubleUnit replication;
+    private OTSReplication replication;
 
     /** MockUp simulator. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private OTSSimulatorInterface simulator;
 
     /** Network. */
     private OTSNetwork network;
@@ -99,9 +101,9 @@ public class ODApplierTest
      * @return a mock of the simulator that uses this.time as the time for getSimulatorTime()
      */
     @SuppressWarnings("static-access")
-    private Replication.TimeDoubleUnit createReplicationMock()
+    private OTSReplication createReplicationMock()
     {
-        Replication.TimeDoubleUnit replicationMock = PowerMockito.mock(Replication.TimeDoubleUnit.class);
+        OTSReplication replicationMock = PowerMockito.mock(OTSReplication.class);
         PowerMockito.when(replicationMock.getStream(Mockito.anyString())).thenReturn(this.stream);
         return replicationMock;
     }
@@ -109,9 +111,9 @@ public class ODApplierTest
     /**
      * @return a mock of the simulator that uses this.time as the time for getSimulatorTime()
      */
-    private DEVSSimulatorInterface.TimeDoubleUnit createSimulatorMock()
+    private OTSSimulatorInterface createSimulatorMock()
     {
-        DEVSSimulatorInterface.TimeDoubleUnit simulatorMock = PowerMockito.mock(DEVSSimulatorInterface.TimeDoubleUnit.class);
+        OTSSimulatorInterface simulatorMock = PowerMockito.mock(OTSSimulatorInterface.class);
         Answer<Time> answerTime = new Answer<Time>()
         {
             @Override

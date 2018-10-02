@@ -11,8 +11,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.Throw;
 
@@ -78,7 +78,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CrossSectionLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OTSLine3D designLine, final SimulatorInterface.TimeDoubleUnit simulator,
+            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine, simulator);
@@ -94,7 +94,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected CrossSectionLink(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation,
+    protected CrossSectionLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation,
             final CrossSectionLink link) throws NetworkException
     {
         super(newNetwork, newSimulator, animation, link);
@@ -222,7 +222,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CrossSectionLink clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation)
+    public CrossSectionLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
             throws NetworkException
     {
         return new CrossSectionLink(newNetwork, newSimulator, animation, this);

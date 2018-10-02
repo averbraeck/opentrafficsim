@@ -17,8 +17,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.mock.MockSimulator;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * Test the LinkLocation class.
@@ -45,7 +44,7 @@ public class LinkLocationTest implements UNITS
         OTSNode nodeFrom = new OTSNode(network, "From", new OTSPoint3D(0, 0, 0));
         OTSNode nodeTo = new OTSNode(network, "To", new OTSPoint3D(1000, 0, 0));
         OTSLine3D line = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0) });
-        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
         CrossSectionLink link = new CrossSectionLink(network, "Link", nodeFrom, nodeTo, LinkType.ROAD, line, simulator,
                 LaneKeepingPolicy.KEEP_RIGHT);
         Length linkLength = line.getLength();

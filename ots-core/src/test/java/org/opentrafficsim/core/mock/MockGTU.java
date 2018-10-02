@@ -2,8 +2,7 @@ package org.opentrafficsim.core.mock;
 
 import org.mockito.Mockito;
 import org.opentrafficsim.core.gtu.GTU;
-
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * MockGTU.java. <br>
@@ -22,7 +21,7 @@ public class MockGTU
     private String name;
     
     /** mocked simulator. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator = MockDEVSSimulator.createMock();
+    private OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
 
     /**
      * @param name the name

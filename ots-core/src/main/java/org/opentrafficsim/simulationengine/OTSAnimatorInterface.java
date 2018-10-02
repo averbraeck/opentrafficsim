@@ -12,7 +12,7 @@ import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface SimpleAnimatorInterface extends SimpleSimulatorInterface, AnimatorInterface
+public interface OTSAnimatorInterface extends OTSSimulatorInterface, AnimatorInterface
 {
     // no extra methods
 }

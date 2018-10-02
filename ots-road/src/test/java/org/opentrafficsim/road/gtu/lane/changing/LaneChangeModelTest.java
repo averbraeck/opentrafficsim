@@ -54,11 +54,11 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -86,14 +86,14 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param from Node; start node of the new Link
      * @param to Node; end node of the new Link
      * @param width Length; the width of the new Link
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @return Link
      * @throws OTSGeometryException when coordinates cannot be calculated
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network
      */
     private static CrossSectionLink makeLink(final Network network, final String name, final OTSNode from, final OTSNode to,
-            final Length width, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws OTSGeometryException, NetworkException
+            final Length width, final OTSSimulatorInterface simulator) throws OTSGeometryException, NetworkException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
@@ -136,12 +136,12 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param to Node; ending node of the new Lane
      * @param laneType LaneType&lt;String&gt;; the type of GTU that can use the lanes
      * @param laneCount int; number of lanes in the road
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
     public static Lane[] makeMultiLane(final Network network, final String name, final OTSNode from, final OTSNode to,
-            final LaneType laneType, final int laneCount, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws Exception
+            final LaneType laneType, final int laneCount, final OTSSimulatorInterface simulator) throws Exception
     {
         Length width = new Length(laneCount * 4.0, METER);
         final CrossSectionLink link = makeLink(network, name, from, to, width, simulator);

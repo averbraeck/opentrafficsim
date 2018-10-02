@@ -17,8 +17,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.mock.MockSimulator;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * Test the LaneBasedStrategicalRoutePlanner class.
@@ -47,7 +46,7 @@ public class LaneBasedStrategicalRoutePlannerTest
         OTSNode fromNode = new OTSNode(network, "from", new OTSPoint3D(0, 0, 0));
         OTSNode toNode = new OTSNode(network, "to", new OTSPoint3D(100, 0, 0));
         OTSLine3D designLine = new OTSLine3D(fromNode.getPoint(), toNode.getPoint());
-        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
         OTSLink link = new OTSLink(network, "link", fromNode, toNode, LinkType.ROAD, designLine, simulator);
         CarFollowingModel cfm = new IDMPlus();
         LaneBasedCFLCTacticalPlanner tacticalPlanner = new LaneBasedCFLCTacticalPlanner(null, null, null);

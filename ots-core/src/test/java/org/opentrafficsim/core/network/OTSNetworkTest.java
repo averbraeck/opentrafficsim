@@ -21,8 +21,8 @@ import org.opentrafficsim.core.mock.MockGTU;
 import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventType;
@@ -71,7 +71,7 @@ public class OTSNetworkTest implements EventListenerInterface
     {
         String networkId = "testOTSNetwork";
         OTSNetwork network = new OTSNetwork(networkId);
-        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
         assertTrue("Id must match", networkId.equals(network.getId()));
         network.addListener(this, Network.LINK_ADD_EVENT);
         network.addListener(this, Network.LINK_REMOVE_EVENT);
@@ -335,8 +335,8 @@ public class OTSNetworkTest implements EventListenerInterface
      */
     private void compareNetworkWithClone(final OTSNetwork network) throws NetworkException
     {
-        SimulatorInterface.TimeDoubleUnit oldSimulator = MockSimulator.createMock();
-        SimulatorInterface.TimeDoubleUnit newSimulator = MockSimulator.createMock();
+        OTSSimulatorInterface oldSimulator = MockSimulator.createMock();
+        OTSSimulatorInterface newSimulator = MockSimulator.createMock();
         OTSNetwork clone = network.clone("cloned network", oldSimulator, newSimulator, false);
         assertTrue("nodes match", network.getNodeMap().equals(clone.getNodeMap()));
         assertTrue("links match", network.getLinkMap().equals(clone.getLinkMap()));
@@ -710,7 +710,7 @@ public class OTSNetworkTest implements EventListenerInterface
     private List<Node> createRingNodesAndLinks(final Network network, final LongitudinalDirectionality ld, final int maxNode)
             throws NetworkException, OTSGeometryException
     {
-        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
         GTUCompatibility<LinkType> compatibility =
                 new GTUCompatibility<>((LinkType) null).addAllowedGTUType(GTUType.ROAD_USER, ld);
         LinkType linkType = new LinkType("linkType", null, compatibility);

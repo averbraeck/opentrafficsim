@@ -35,11 +35,10 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -62,7 +61,7 @@ public class XmlOdParserTest
     private Set<GTUType> gtuTypes = new HashSet<>();
 
     /** Simulator. */
-    DEVSSimulatorInterface.TimeDoubleUnit simulator = new DEVSSimulator.TimeDoubleUnit();
+    OTSSimulatorInterface simulator;
 
     /** Parser. */
     private XmlOdParser parser;

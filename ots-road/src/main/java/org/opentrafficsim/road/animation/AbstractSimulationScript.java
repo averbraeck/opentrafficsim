@@ -39,7 +39,7 @@ import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -72,7 +72,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     private final String description;
 
     /** The simulator. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private OTSSimulatorInterface simulator;
 
     /** The network. */
     private OTSNetwork network;
@@ -253,9 +253,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /**
      * Returns the simulator.
-     * @return DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @return OTSSimulatorInterface; simulator
      */
-    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
+    public final OTSSimulatorInterface getSimulator()
     {
         return AbstractSimulationScript.this.simulator;
     }
@@ -340,9 +340,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /**
      * Adds taps to the animation. May be overridden.
-     * @param sim SimpleSimulatorInterface; simulator
+     * @param sim OTSSimulatorInterface; simulator
      */
-    protected void addTabs(final SimpleSimulatorInterface sim)
+    protected void addTabs(final OTSSimulatorInterface sim)
     {
         //
     }
@@ -378,11 +378,11 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     /**
      * Sets up the simulation based on provided properties. Properties can be obtained with {@code getProperty()}. Setting up a
      * simulation should at least create a network and some demand. Additionally this may setup traffic control, sampling, etc.
-     * @param sim DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param sim OTSSimulatorInterface; simulator
      * @return OTSNetwork; network
      * @throws Exception on any exception
      */
-    protected abstract OTSNetwork setupSimulation(DEVSSimulatorInterface.TimeDoubleUnit sim) throws Exception;
+    protected abstract OTSNetwork setupSimulation(OTSSimulatorInterface sim) throws Exception;
 
     // Nested classes
 
@@ -476,7 +476,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        protected final void addTabs(final SimpleSimulatorInterface sim)
+        protected final void addTabs(final OTSSimulatorInterface sim)
         {
             AbstractSimulationScript.this.addTabs(sim);
         }
@@ -528,13 +528,13 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim)
                 throws SimRuntimeException
         {
-            AbstractSimulationScript.this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) sim;
+            AbstractSimulationScript.this.simulator = (OTSSimulatorInterface) sim;
             Map<String, StreamInterface> streams = new HashMap<>();
             StreamInterface stream = new MersenneTwister(Long.valueOf(getProperty("seed")));
             streams.put("generation", stream);
             sim.getReplication().setStreams(streams);
             AbstractSimulationScript.this.network =
-                    Try.assign(() -> AbstractSimulationScript.this.setupSimulation((DEVSSimulatorInterface.TimeDoubleUnit) sim),
+                    Try.assign(() -> AbstractSimulationScript.this.setupSimulation((OTSSimulatorInterface) sim),
                             RuntimeException.class, "Exception while setting up simulation.");
             try
             {

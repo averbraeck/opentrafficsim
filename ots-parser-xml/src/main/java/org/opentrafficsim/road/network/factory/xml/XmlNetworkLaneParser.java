@@ -54,6 +54,7 @@ import org.opentrafficsim.road.network.factory.xml.demand.XmlOdParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -61,7 +62,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.immutablecollections.Immutable;
 import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
 import nl.tudelft.simulation.immutablecollections.ImmutableList;
@@ -142,7 +142,7 @@ public class XmlNetworkLaneParser implements Serializable
 
     /** The simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
-    protected DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    protected OTSSimulatorInterface simulator;
 
     /** The network to register the GTUs in. */
     @SuppressWarnings("visibilitymodifier")
@@ -154,7 +154,7 @@ public class XmlNetworkLaneParser implements Serializable
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
-    public XmlNetworkLaneParser(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    public XmlNetworkLaneParser(final OTSSimulatorInterface simulator)
     {
         this.simulator = simulator;
         LaneTypeTag laneTypeTagNoTraffic = new LaneTypeTag();
@@ -166,7 +166,7 @@ public class XmlNetworkLaneParser implements Serializable
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      * @param colorer GTU colorer
      */
-    public XmlNetworkLaneParser(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final GTUColorer colorer)
+    public XmlNetworkLaneParser(final OTSSimulatorInterface simulator, final GTUColorer colorer)
     {
         this.simulator = simulator;
         GTUColorerTag.defaultColorer = colorer;
