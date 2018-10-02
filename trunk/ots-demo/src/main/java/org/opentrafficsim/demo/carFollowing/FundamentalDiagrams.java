@@ -54,7 +54,7 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
@@ -153,7 +153,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(4, panelsPerRow);
@@ -218,7 +218,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
         private static final long serialVersionUID = 20140820L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** The network. */
         private OTSNetwork network = new OTSNetwork("network");
@@ -280,7 +280,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
         {
             try
             {
-                this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
+                this.simulator = (OTSSimulatorInterface) theSimulator;
                 OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
                 OTSNode to = new OTSNode(this.network, "To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
                 OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));

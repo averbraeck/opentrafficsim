@@ -5,7 +5,6 @@ import static org.opentrafficsim.core.gtu.GTUType.CAR;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -61,11 +60,11 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -254,7 +253,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
         private static final long serialVersionUID = 20140815L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** The network. */
         private final OTSNetwork network = new OTSNetwork("network");
@@ -304,7 +303,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
         public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
+            this.simulator = (OTSSimulatorInterface) theSimulator;
             try
             {
                 OTSNode[][] nodes = new OTSNode[4][4];

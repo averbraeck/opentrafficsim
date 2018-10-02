@@ -26,6 +26,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.core.perception.PerceivableContext;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
@@ -766,7 +767,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      */
     @SuppressWarnings("checkstyle:designforextension")
     public OTSNetwork clone(final String newId, final SimulatorInterface.TimeDoubleUnit oldSimulator,
-            final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation) throws NetworkException
+            final OTSSimulatorInterface newSimulator, final boolean animation) throws NetworkException
     {
         OTSNetwork newNetwork = new OTSNetwork(newId);
 

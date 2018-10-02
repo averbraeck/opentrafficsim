@@ -71,7 +71,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
@@ -218,7 +218,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
         // Make the tab with the plots
         Property<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
@@ -338,7 +338,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
         private static final long serialVersionUID = 20150130L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** The network. */
         private final OTSNetwork network = new OTSNetwork("network");
@@ -409,7 +409,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
         public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
+            this.simulator = (OTSSimulatorInterface) theSimulator;
             this.speedLimit = new Speed(100, KM_PER_HOUR);
 
             // TODO Bezier curves make 180 degree mistake when minus is true

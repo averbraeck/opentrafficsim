@@ -51,10 +51,10 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -79,7 +79,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
      * @throws SimRuntimeException ...
      * @throws NamingException ...
      */
-    private static DEVSSimulator.TimeDoubleUnit makeSimulator() throws SimRuntimeException, NamingException
+    private static SimpleSimulator makeSimulator() throws SimRuntimeException, NamingException
     {
         return new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), new OTSModelInterface()
         {
@@ -123,7 +123,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
      * @throws NamingException ...
      * @throws SimRuntimeException ...
      */
-    private static Lane[] buildNetwork(final double[] lengths, final DEVSSimulator.TimeDoubleUnit simulator)
+    private static Lane[] buildNetwork(final double[] lengths, final OTSSimulatorInterface simulator)
             throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException
     {
         OTSNetwork network = new OTSNetwork("network");
@@ -207,7 +207,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
             for (int pos = 50; pos < 130; pos++)
             {
                 System.out.println("Number of lanes is " + lengthList.length + " pos is " + pos);
-                DEVSSimulator.TimeDoubleUnit simulator = makeSimulator();
+                SimpleSimulator simulator = makeSimulator();
                 Lane[] lanes = buildNetwork(lengthList, simulator);
                 OTSNetwork network = (OTSNetwork) lanes[0].getParentLink().getNetwork();
                 Length a = new Length(100, LengthUnit.METER);

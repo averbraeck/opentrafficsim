@@ -23,12 +23,11 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 public class TestVissimParser extends AbstractWrappableAnimation
@@ -84,7 +83,7 @@ public class TestVissimParser extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator)
+    protected final void addTabs(final OTSSimulatorInterface simulator)
     {
         return;
     }
@@ -132,7 +131,7 @@ public class TestVissimParser extends AbstractWrappableAnimation
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** The network. */
         private OTSNetwork network = new OTSNetwork("test Vissim network");
@@ -160,7 +159,7 @@ public class TestVissimParser extends AbstractWrappableAnimation
                 sensorClassName = "nl.grontmij.smarttraffic.model.CheckSensor";
                 trafficLightName = "org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight";
             }
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
+            this.simulator = (OTSSimulatorInterface) pSimulator;
             ClassLoader classLoader = getClass().getClassLoader();
             URL inputUrl = null;
             try

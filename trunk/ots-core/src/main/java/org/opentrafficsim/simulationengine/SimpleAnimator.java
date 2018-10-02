@@ -27,7 +27,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SimpleAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements SimpleSimulatorInterface, Serializable
+public class SimpleAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTSSimulatorInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150511L;
@@ -81,10 +81,17 @@ public class SimpleAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements 
     public final SimEvent<SimTimeDoubleUnit> scheduleEvent(final Time executionTime, final short priority, final Object source,
             final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
-        SimEvent<SimTimeDoubleUnit> result = new SimEvent<SimTimeDoubleUnit>(
+        SimEvent<SimTimeDoubleUnit> result = new SimEvent<>(
                 new SimTimeDoubleUnit(new Time(executionTime.getSI(), TimeUnit.BASE)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final OTSReplication getReplication()
+    {
+        return (OTSReplication) super.getReplication();
     }
 
 }

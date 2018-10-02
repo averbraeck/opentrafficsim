@@ -82,7 +82,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
@@ -157,7 +157,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator)
+    protected final void addTabs(final OTSSimulatorInterface simulator)
     {
         int graphCount = this.model.pathCount();
         int columns = 1;
@@ -210,7 +210,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         private static final long serialVersionUID = 20150304L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** The network. */
         private final OTSNetwork network = new OTSNetwork("network");
@@ -314,7 +314,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
+            this.simulator = (OTSSimulatorInterface) theSimulator;
             try
             {
                 OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(0, 0, 0));

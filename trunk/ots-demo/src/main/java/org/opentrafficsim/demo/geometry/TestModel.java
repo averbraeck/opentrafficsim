@@ -26,6 +26,7 @@ import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -47,7 +48,7 @@ public class TestModel implements OTSModelInterface, UNITS
     private static final long serialVersionUID = 1L;
 
     /** The simulator. */
-    private SimulatorInterface.TimeDoubleUnit simulator;
+    private OTSSimulatorInterface simulator;
 
     /** the network. */
     private OTSNetwork network = new OTSNetwork("geometry test network");
@@ -57,7 +58,7 @@ public class TestModel implements OTSModelInterface, UNITS
     public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
             throws SimRuntimeException
     {
-        this.simulator = (SimulatorInterface.TimeDoubleUnit) theSimulator;
+        this.simulator = (OTSSimulatorInterface) theSimulator;
 
         // create a small graph and a road around it.
 

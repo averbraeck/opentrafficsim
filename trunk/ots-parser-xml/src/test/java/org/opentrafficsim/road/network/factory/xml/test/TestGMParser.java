@@ -55,13 +55,13 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistExponential;
@@ -177,7 +177,7 @@ public class TestGMParser extends AbstractWrappableAnimation
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** the network. */
         private OTSNetwork network;
@@ -187,7 +187,7 @@ public class TestGMParser extends AbstractWrappableAnimation
         public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
                 throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
+            this.simulator = (OTSSimulatorInterface) pSimulator;
             URL url = URLResource.getResource("/networkv2_90km_V5i.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try

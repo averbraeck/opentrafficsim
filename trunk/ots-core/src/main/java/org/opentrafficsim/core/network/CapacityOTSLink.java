@@ -2,8 +2,7 @@ package org.opentrafficsim.core.network;
 
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * A link with a maximum capacity, expressed as the maximum number of GTUs per time unit that the link can handle.
@@ -39,7 +38,7 @@ public class CapacityOTSLink extends OTSLink implements Capacity
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CapacityOTSLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OTSLine3D designLine, final SimulatorInterface.TimeDoubleUnit simulator,
+            final LinkType linkType, final OTSLine3D designLine, final OTSSimulatorInterface simulator,
             final Frequency capacity) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine, simulator);
@@ -55,8 +54,8 @@ public class CapacityOTSLink extends OTSLink implements Capacity
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected CapacityOTSLink(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation, final CapacityOTSLink link) throws NetworkException
+    protected CapacityOTSLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation,
+            final CapacityOTSLink link) throws NetworkException
     {
         super(newNetwork, newSimulator, animation, link);
         this.capacity = link.capacity;
@@ -86,8 +85,8 @@ public class CapacityOTSLink extends OTSLink implements Capacity
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CapacityOTSLink clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public CapacityOTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
     {
         return new CapacityOTSLink(newNetwork, newSimulator, animation, this);
     }

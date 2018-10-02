@@ -46,9 +46,9 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -96,7 +96,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     private final OTSNetwork network;
 
     /** Simulator. */
-    private final DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** The way that this generator checks if it is safe to construct and place the next lane based GTU. */
     private final RoomChecker roomChecker;
@@ -122,7 +122,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
      *            each GTU
      * @param generatorPositions GeneratorPositions; location and initial direction provider for all generated GTUs
      * @param network OTSNetwork; the OTS network that owns the generated GTUs
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param roomChecker LaneBasedGTUGenerator.RoomChecker; the way that this generator checks that there is sufficient room to
      *            place a new GTU
      * @param idGenerator IdGenerator; id generator
@@ -133,7 +133,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final GTUColorer gtuColorer, final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final OTSNetwork network,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final RoomChecker roomChecker, final IdGenerator idGenerator)
+            final OTSSimulatorInterface simulator, final RoomChecker roomChecker, final IdGenerator idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException
     {
         this.id = id;

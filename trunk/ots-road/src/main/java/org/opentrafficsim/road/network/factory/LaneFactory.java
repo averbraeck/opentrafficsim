@@ -30,6 +30,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -67,7 +68,7 @@ public final class LaneFactory
      *             or the end node of the link are not registered in the network.
      */
     public static CrossSectionLink makeLink(final Network network, final String name, final Node from, final Node to,
-            final OTSPoint3D[] intermediatePoints, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            final OTSPoint3D[] intermediatePoints, final OTSSimulatorInterface simulator)
             throws OTSGeometryException, NetworkException
     {
         List<OTSPoint3D> pointList =
@@ -135,7 +136,8 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
             final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NamingException, NetworkException, OTSGeometryException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            throws NamingException, NetworkException, OTSGeometryException
     {
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.VEHICLE, speedLimit);
@@ -165,7 +167,7 @@ public final class LaneFactory
      *            points may contain the coordinates of the from node and to node
      * @param laneType LaneType; type of the new Lane
      * @param speedLimit Speed; the speed limit on the new Lane
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane; the new Lane
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on network inconsistency
@@ -173,7 +175,7 @@ public final class LaneFactory
      */
     public static Lane makeLane(final Network network, final String name, final OTSNode from, final OTSNode to,
             final OTSPoint3D[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NamingException, NetworkException, OTSGeometryException
+            final OTSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
     {
         Length width = new Length(4.0, LengthUnit.METER);
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, simulator);
@@ -196,7 +198,7 @@ public final class LaneFactory
      * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
      * @param laneType LaneType; type of the new Lanes
      * @param speedLimit Speed; the speed limit on all lanes
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on topological problems
@@ -205,7 +207,7 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final Network network, final String name, final OTSNode from, final OTSNode to,
             final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart, final int laneOffsetAtEnd,
-            final LaneType laneType, final Speed speedLimit, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            final LaneType laneType, final Speed speedLimit, final OTSSimulatorInterface simulator)
             throws NamingException, NetworkException, OTSGeometryException
     {
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, simulator);
@@ -246,7 +248,7 @@ public final class LaneFactory
      * @param laneCount int; number of lanes in the road
      * @param laneType LaneType; type of the new Lanes
      * @param speedLimit Speed the speed limit (applies to all generated lanes)
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on topological problems
@@ -255,7 +257,7 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final Network network, final String name, final OTSNode from, final OTSNode to,
             final OTSPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType, final Speed speedLimit,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NamingException, NetworkException, OTSGeometryException
+            final OTSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
     {
         return makeMultiLane(network, name, from, to, intermediatePoints, laneCount, 0, 0, laneType, speedLimit, simulator);
     }
@@ -275,7 +277,7 @@ public final class LaneFactory
      * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
      * @param laneType LaneType; type of the new Lanes
      * @param speedLimit Speed; the speed limit on all lanes
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on topological problems
@@ -284,7 +286,7 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLaneBezier(final Network network, final String name, final OTSNode n1, final OTSNode n2,
             final OTSNode n3, final OTSNode n4, final int laneCount, final int laneOffsetAtStart, final int laneOffsetAtEnd,
-            final LaneType laneType, final Speed speedLimit, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            final LaneType laneType, final Speed speedLimit, final OTSSimulatorInterface simulator)
             throws NamingException, NetworkException, OTSGeometryException
     {
         OTSLine3D bezier = makeBezier(n1, n2, n3, n4);

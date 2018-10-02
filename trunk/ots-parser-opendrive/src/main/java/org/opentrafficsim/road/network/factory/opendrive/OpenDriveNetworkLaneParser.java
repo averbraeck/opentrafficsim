@@ -21,6 +21,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -28,7 +29,6 @@ import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -70,7 +70,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
 
     /** The simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
-    protected DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    protected OTSSimulatorInterface simulator;
 
     /** OTS network */
     @SuppressWarnings("visibilitymodifier")
@@ -95,7 +95,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
-    public OpenDriveNetworkLaneParser(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    public OpenDriveNetworkLaneParser(final OTSSimulatorInterface simulator)
     {
         this.simulator = simulator;
     }

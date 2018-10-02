@@ -9,8 +9,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /** */
@@ -36,7 +36,7 @@ public class RTICars extends LaneBasedIndividualGTU
      * @throws OperationalPlanException when plan retrieval fails
      */
     public RTICars(final String valueOf, final GTUType carType, final Length carLength, final Length width,
-            final Speed maxSpeed, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSNetwork network)
+            final Speed maxSpeed, final OTSSimulatorInterface simulator, final OTSNetwork network)
             throws NamingException, GTUException, OperationalPlanException
     {
         super(valueOf, carType, carLength, width, maxSpeed, carLength.multiplyBy(0.5), simulator, network);

@@ -1,6 +1,7 @@
 package org.opentrafficsim.simulationengine;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSReplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -17,7 +18,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface SimpleSimulatorInterface extends DEVSSimulatorInterface.TimeDoubleUnit
+public interface OTSSimulatorInterface extends DEVSSimulatorInterface.TimeDoubleUnit
 {
     /**
      * Construct and schedule a SimEvent using a Time to specify the execution time.
@@ -35,5 +36,9 @@ public interface SimpleSimulatorInterface extends DEVSSimulatorInterface.TimeDou
      */
     SimEvent<SimTimeDoubleUnit> scheduleEvent(Time executionTime, short priority, Object source, Object target, String method,
             Object[] args) throws SimRuntimeException;
+    
+    /** {@inheritDoc} */
+    @Override
+    OTSReplication getReplication();
 
 }

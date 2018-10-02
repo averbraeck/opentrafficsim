@@ -50,6 +50,7 @@ import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -121,7 +122,7 @@ public final class ODApplier
      * @throws SimRuntimeException if this method is called after simulation time 0
      */
     public static Map<String, GeneratorObjects> applyOD(final OTSNetwork network, final ODMatrix od,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final ODOptions odOptions) throws ParameterException, SimRuntimeException
+            final OTSSimulatorInterface simulator, final ODOptions odOptions) throws ParameterException, SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null.");
         Throw.whenNull(od, "OD matrix may not be null.");

@@ -92,9 +92,9 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -129,7 +129,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** Queue of cumulative odometers. */
     private final List<Double> queue = new ArrayList<>();
-    
+
     /** Lane change listener. */
     private KmplcListener kmplcListener;
 
@@ -435,7 +435,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected OTSNetwork setupSimulation(final DEVSSimulatorInterface.TimeDoubleUnit sim) throws Exception
+    protected OTSNetwork setupSimulation(final OTSSimulatorInterface sim) throws Exception
     {
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
 
@@ -588,7 +588,7 @@ public class StrategiesDemo extends AbstractSimulationScript
             initialPositions.add(new DirectedLanePosition(prevLane, prevPos, GTUDirectionality.DIR_PLUS));
         }
         gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class, getGtuColorer());
-        
+
         Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGTU.LANE_CHANGE_EVENT),
                 "Exception while adding lane change listener");
     }

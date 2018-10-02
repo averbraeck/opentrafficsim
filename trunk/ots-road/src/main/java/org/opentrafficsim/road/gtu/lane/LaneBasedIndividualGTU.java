@@ -26,6 +26,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -77,14 +78,14 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
      * @param front Length; front distance relative to the reference position
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param network the network that the GTU is initially registered in
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
-            final Speed maximumSpeed, final Length front, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSNetwork network)
+            final Speed maximumSpeed, final Length front, final OTSSimulatorInterface simulator, final OTSNetwork network)
             throws NamingException, GTUException
     {
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
@@ -281,7 +282,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         private Length front = null;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator = null;
+        private OTSSimulatorInterface simulator = null;
 
         /** Animation. */
         private Class<? extends Renderable2D<? super LaneBasedIndividualGTU>> animationClass = null;
@@ -387,7 +388,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @param simulator set simulator
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setSimulator(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+        public final LaneBasedIndividualCarBuilder setSimulator(final OTSSimulatorInterface simulator)
         {
             this.simulator = simulator;
             return this;

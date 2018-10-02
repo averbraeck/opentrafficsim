@@ -32,7 +32,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLig
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
@@ -112,7 +112,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
         JScrollPane scrollPane = new JScrollPane(TrafCODDemo.this.controllerDisplayPanel);
         JPanel wrapper = new JPanel(new BorderLayout());
@@ -153,7 +153,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
             try
             {
                 URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) theSimulator);
                 this.network = nlp.build(url, true);
 
                 Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "X")).getCrossSectionElement("FORWARD");

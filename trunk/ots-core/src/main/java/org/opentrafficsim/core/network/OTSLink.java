@@ -10,9 +10,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -52,7 +52,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
     private final OTSLine3D designLine;
 
     /** The simulator on which events can be scheduled. */
-    private final SimulatorInterface.TimeDoubleUnit simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** The GTUs on this Link. */
     private final Set<GTU> gtus = new LinkedHashSet<>();
@@ -71,7 +71,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public OTSLink(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OTSLine3D designLine, final SimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
+            final OTSLine3D designLine, final OTSSimulatorInterface simulator) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -102,7 +102,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected OTSLink(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation,
+    protected OTSLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation,
             final OTSLink link) throws NetworkException
     {
         this(newNetwork, link.id, newNetwork.getNode(link.startNode.getId()), newNetwork.getNode(link.endNode.getId()),
@@ -198,7 +198,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface.TimeDoubleUnit getSimulator()
+    public final OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -308,8 +308,8 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSLink clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public OTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
+            throws NetworkException
     {
         return new OTSLink(newNetwork, newSimulator, animation, this);
     }

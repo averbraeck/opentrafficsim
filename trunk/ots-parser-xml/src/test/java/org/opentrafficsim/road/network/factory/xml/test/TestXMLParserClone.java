@@ -30,13 +30,13 @@ import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 import nl.tudelft.simulation.naming.context.ContextUtil;
@@ -198,7 +198,7 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** {@inheritDoc} */
         @Override
@@ -206,7 +206,7 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             long millis = System.currentTimeMillis();
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
+            this.simulator = (OTSSimulatorInterface) pSimulator;
             URL url = URLResource.getResource("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
@@ -261,7 +261,7 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** {@inheritDoc} */
         @Override
@@ -269,7 +269,7 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             long millis = System.currentTimeMillis();
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
+            this.simulator = (OTSSimulatorInterface) pSimulator;
 
             try
             {

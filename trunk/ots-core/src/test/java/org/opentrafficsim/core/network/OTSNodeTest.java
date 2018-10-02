@@ -22,8 +22,8 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.mock.MockSimulator;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -78,7 +78,7 @@ public class OTSNodeTest
 
         assertEquals("node 1 has no links", 0, node1.getLinks().size());
 
-        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
 
         // Create a couple of links
         Link link1 = new OTSLink(network, "link 1", node1, node2, LinkType.ROAD,
@@ -144,7 +144,7 @@ public class OTSNodeTest
     public final void connectionTest() throws NetworkException, OTSGeometryException
     {
         Network network = new OTSNetwork("connection test network");
-        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
         OTSNode node = new OTSNode(network, "main", new OTSPoint3D(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
@@ -286,7 +286,7 @@ public class OTSNodeTest
     public final void connectionSetTest() throws NetworkException, OTSGeometryException
     {
         Network network = new OTSNetwork("connectionSets test network");
-        SimulatorInterface.TimeDoubleUnit simulator = MockSimulator.createMock();
+        OTSSimulatorInterface simulator = MockSimulator.createMock();
         OTSNode node = new OTSNode(network, "main", new OTSPoint3D(10, 100, 10));
         int maxNeighbor = 10;
         for (int i = 0; i < maxNeighbor; i++)
@@ -443,8 +443,8 @@ public class OTSNodeTest
      */
     private void checkClone(final OTSNetwork network) throws NetworkException
     {
-        SimulatorInterface.TimeDoubleUnit oldSimulator = MockSimulator.createMock();
-        SimulatorInterface.TimeDoubleUnit newSimulator = MockSimulator.createMock();
+        OTSSimulatorInterface oldSimulator = MockSimulator.createMock();
+        OTSSimulatorInterface newSimulator = MockSimulator.createMock();
         OTSNetwork clonedNetwork = network.clone("clonedNetwork", oldSimulator, newSimulator, false);
         assertEquals("Number of nodes should be same", network.getNodeMap().size(), clonedNetwork.getNodeMap().size());
         assertTrue("Node map should be equal", network.getNodeMap().equals(clonedNetwork.getNodeMap()));

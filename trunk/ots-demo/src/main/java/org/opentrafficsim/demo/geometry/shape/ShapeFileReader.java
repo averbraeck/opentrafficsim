@@ -41,6 +41,7 @@ import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -176,7 +177,7 @@ public final class ShapeFileReader implements UNITS
      * @throws IOException on error
      */
     public static void readLinks(final Network network, final String shapeFileName, final Map<String, Link> links,
-            final Map<String, OTSNode> nodes, final SimulatorInterface.TimeDoubleUnit simulator) throws IOException
+            final Map<String, OTSNode> nodes, final OTSSimulatorInterface simulator) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -356,8 +357,8 @@ public final class ShapeFileReader implements UNITS
      * @throws RemoteException in case of context error
      * @throws NetworkException on network inconsistency
      */
-    private static void animate(final CrossSectionLink link, final String wegType, final SimulatorInterface.TimeDoubleUnit simulator)
-            throws NamingException, NetworkException, RemoteException
+    private static void animate(final CrossSectionLink link, final String wegType,
+            final SimulatorInterface.TimeDoubleUnit simulator) throws NamingException, NetworkException, RemoteException
     {
         // leave out if center line not needed.
         new LinkAnimation(link, simulator, 0.1f);

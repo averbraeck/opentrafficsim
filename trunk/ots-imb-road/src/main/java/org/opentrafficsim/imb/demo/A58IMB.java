@@ -44,13 +44,13 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -179,7 +179,7 @@ public class A58IMB extends AbstractWrappableAnimation
         private static final long serialVersionUID = 20141121L;
 
         /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** User settable properties. */
         private List<Property<?>> modelProperties = null;
@@ -210,7 +210,7 @@ public class A58IMB extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             System.out.println("A58IMB: constructModel called; Connecting to IMB");
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
+            this.simulator = (OTSSimulatorInterface) pSimulator;
             SimpleAnimator imbAnimator = (SimpleAnimator) pSimulator;
             try
             {

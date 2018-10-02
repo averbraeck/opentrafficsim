@@ -20,6 +20,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -98,7 +99,7 @@ public class VissimNetworkLaneParser implements Serializable
     private Map<String, LaneType> laneTypes = new HashMap<>();
 
     /** The simulator for creating the animation. Null if no animation needed. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private OTSSimulatorInterface simulator;
 
     /** The network to register the GTUs in. */
     @SuppressWarnings("visibilitymodifier")
@@ -117,7 +118,7 @@ public class VissimNetworkLaneParser implements Serializable
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
-    public VissimNetworkLaneParser(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    public VissimNetworkLaneParser(final OTSSimulatorInterface simulator)
     {
         this.simulator = simulator;
     }
@@ -169,7 +170,7 @@ public class VissimNetworkLaneParser implements Serializable
 
         // make the GTUTypes ALL and NONE to get started
         this.gtuTypes.put("ALL", GTUType.VEHICLE);
-        //this.gtuTypes.put("NONE", GTUType.NONE);
+        // this.gtuTypes.put("NONE", GTUType.NONE);
 
         // Read the link (and connector) tags and ...
         // Construct the nodes as Vissim does not use Nodes!!
@@ -768,7 +769,7 @@ public class VissimNetworkLaneParser implements Serializable
         return simulator;
     }
 
-    public void setSimulator(DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    public void setSimulator(OTSSimulatorInterface simulator)
     {
         this.simulator = simulator;
     }

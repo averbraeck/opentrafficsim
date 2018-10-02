@@ -1,9 +1,7 @@
 package org.opentrafficsim.core.mock;
 
 import org.mockito.Mockito;
-
-import nl.tudelft.simulation.dsol.simulators.Simulator;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * MockSimulator.java. <br>
@@ -24,8 +22,8 @@ public final class MockSimulator
     /**
      * @return mocked Simulator
      */
-    public static SimulatorInterface.TimeDoubleUnit createMock()
+    public static OTSSimulatorInterface createMock()
     {
-        return Mockito.mock(Simulator.TimeDoubleUnit.class);
+        return Mockito.mock(OTSSimulatorInterface.class);
     }
 }

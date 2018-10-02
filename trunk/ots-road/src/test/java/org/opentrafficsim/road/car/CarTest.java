@@ -44,15 +44,12 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
+import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.experiment.Experiment;
-import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.experiment.Treatment;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -83,7 +80,7 @@ public class CarTest implements UNITS
         GTUType gtuType = CAR;
         LaneType laneType = LaneType.TWO_WAY_LANE;
         OTSNetwork network = new OTSNetwork("network");
-        DEVSSimulator.TimeDoubleUnit simulator = makeSimulator();
+        OTSSimulatorInterface simulator = makeSimulator();
         Lane lane = makeLane(network, laneType, simulator);
         Length initialPosition = new Length(12, METER);
         Speed initialSpeed = new Speed(34, KM_PER_HOUR);
@@ -110,18 +107,11 @@ public class CarTest implements UNITS
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
      */
-    public static DEVSSimulator.TimeDoubleUnit makeSimulator() throws SimRuntimeException, NamingException
+    public static OTSSimulatorInterface makeSimulator() throws SimRuntimeException, NamingException
     {
-        DEVSSimulator.TimeDoubleUnit simulator = new DEVSSimulator.TimeDoubleUnit();
         Model model = new Model();
-        Experiment<Time, Duration, SimTimeDoubleUnit> exp = new Experiment<Time, Duration, SimTimeDoubleUnit>();
-        Treatment<Time, Duration, SimTimeDoubleUnit> tr = new Treatment<>(exp, "tr1",
-                new SimTimeDoubleUnit(new Time(0, TimeUnit.BASE_SECOND)), new Duration(0, SECOND), new Duration(3600.0, SECOND));
-        exp.setTreatment(tr);
-        exp.setModel(model);
-        Replication<Time, Duration, SimTimeDoubleUnit> rep = new Replication<>(exp);
-        simulator.initialize(rep, ReplicationMode.TERMINATING);
-        return simulator;
+        return new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND), new Duration(3600.0, SECOND),
+                model);
     }
 
     /**
@@ -144,7 +134,7 @@ public class CarTest implements UNITS
      * @throws OTSGeometryException when the initial path is wrong
      */
     public static LaneBasedIndividualGTU makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
-            final Length initialPosition, final Speed initialSpeed, final DEVSSimulator.TimeDoubleUnit simulator,
+            final Length initialPosition, final Speed initialSpeed, final OTSSimulatorInterface simulator,
             final GTUFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
@@ -167,12 +157,13 @@ public class CarTest implements UNITS
     /**
      * @param network Network; the network
      * @param laneType LaneType&lt;String&gt;; the type of the lane
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @return a lane of 1000 m long.
      * @throws NetworkException on network error
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
-    public static Lane makeLane(final Network network, final LaneType laneType, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException, OTSGeometryException
+    public static Lane makeLane(final Network network, final LaneType laneType, final OTSSimulatorInterface simulator)
+            throws NetworkException, OTSGeometryException
     {
         OTSNode n1 = new OTSNode(network, "n1", new OTSPoint3D(0, 0));
         OTSNode n2 = new OTSNode(network, "n2", new OTSPoint3D(100000.0, 0.0));

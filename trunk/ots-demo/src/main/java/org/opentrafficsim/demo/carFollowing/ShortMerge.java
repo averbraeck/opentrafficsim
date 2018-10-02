@@ -90,6 +90,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -148,7 +149,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     private GTUColorer colorer = new LmrsSwitchableColorer();
 
     /** The simulator. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private OTSSimulatorInterface simulator;
 
     /** {@inheritDoc} */
     @Override
@@ -191,7 +192,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     /**
      * @return simulator.
      */
-    public final DEVSSimulatorInterface.TimeDoubleUnit getSimulator()
+    public final OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -199,7 +200,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     /**
      * @param simulator set simulator.
      */
-    public final void setSimulator(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    public final void setSimulator(final OTSSimulatorInterface simulator)
     {
         this.simulator = simulator;
     }
@@ -257,12 +258,12 @@ public class ShortMerge extends AbstractWrappableAnimation
         public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
                 throws SimRuntimeException
         {
-            ShortMerge.this.setSimulator((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+            ShortMerge.this.setSimulator((OTSSimulatorInterface) theSimulator);
 
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) theSimulator);
                 this.network = new OTSNetwork("ShortMerge");
                 nlp.build(stream, this.network, false);
 

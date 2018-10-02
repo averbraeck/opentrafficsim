@@ -38,6 +38,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.sensor.SimpleReportingSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -51,8 +52,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision$, by $Author$, initial
- * version Jul 25, 2015 <br>
+ * LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision$, by $Author$,
+ * initial version Jul 25, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 final class Links
@@ -342,8 +343,8 @@ final class Links
      * @throws NamingException when node animation cannot link to the animation context.
      * @throws NetworkException when tag type not filled
      */
-    static void buildLink(final LinkTag linkTag, final VissimNetworkLaneParser parser,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws OTSGeometryException, NamingException, NetworkException
+    static void buildLink(final LinkTag linkTag, final VissimNetworkLaneParser parser, final OTSSimulatorInterface simulator)
+            throws OTSGeometryException, NamingException, NetworkException
     {
         NodeTag from = linkTag.nodeStartTag;
         OTSPoint3D startPoint = new OTSPoint3D(from.coordinate);

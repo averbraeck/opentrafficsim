@@ -38,6 +38,7 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -603,7 +604,7 @@ public class AHFEAnimation extends AbstractWrappableAnimation
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) theSimulator);
                 this.network = new OTSNetwork("AHFE");
                 nlp.build(stream, this.network, true);
 
@@ -620,10 +621,10 @@ public class AHFEAnimation extends AbstractWrappableAnimation
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, AHFEAnimation.this.getColorer(),
-                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, getReplication(), getAnticipationStrategy(),
-                        getReactionTime(), getAnticipationTime(), getTruckFraction(), SIMEND, getLeftDemand(), getRightDemand(),
-                        getLeftFraction(), getDistanceError(), getSpeedError(), getAccelerationError());
+                AHFEUtil.createDemand(this.network, AHFEAnimation.this.getColorer(), (OTSSimulatorInterface) theSimulator,
+                        getReplication(), getAnticipationStrategy(), getReactionTime(), getAnticipationTime(),
+                        getTruckFraction(), SIMEND, getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(),
+                        getSpeedError(), getAccelerationError());
 
             }
             catch (Exception exception)

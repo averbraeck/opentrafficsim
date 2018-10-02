@@ -92,7 +92,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
@@ -247,7 +247,7 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final SimpleSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, PropertyException
     {
         // Make the tab with the plots
         Property<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
@@ -382,7 +382,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
     private static final long serialVersionUID = 20141121L;
 
     /** The simulator. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    private OTSSimulatorInterface simulator;
 
     /** Number of cars created. */
     private int carsCreated = 0;
@@ -497,7 +497,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         {
             this.paths.add(new ArrayList<Lane>());
         }
-        this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
+        this.simulator = (OTSSimulatorInterface) theSimulator;
         double radius = 6000 / 2 / Math.PI;
         double headway = 40;
         double headwayVariability = 0;

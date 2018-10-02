@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
@@ -52,11 +51,11 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
 
@@ -212,11 +211,11 @@ public class LoadXML extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = theSimulator;
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, getColorer());
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) theSimulator, getColorer());
             try
             {
                 this.network = nlp.build(new ByteArrayInputStream(LoadXML.this.xml.getBytes(StandardCharsets.UTF_8)), false);
-                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator,
+                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, (OTSSimulatorInterface) theSimulator,
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException

@@ -64,13 +64,13 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -174,11 +174,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @param network the network that the GTU is initially registered in
      * @throws GTUException when initial values are not correct
      */
-    public AbstractLaneBasedGTU(final String id, final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+    public AbstractLaneBasedGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,
             final OTSNetwork network) throws GTUException
     {
         super(id, gtuType, simulator, network);
-        HistoryManager historyManager = ((OTSReplication) simulator.getReplication()).getHistoryManager(simulator);
+        HistoryManager historyManager = simulator.getReplication().getHistoryManager(simulator);
         this.fractionalLinkPositions = new HistoricalLinkedHashMap<>(historyManager);
         this.currentLanes = new HistoricalLinkedHashMap<>(historyManager);
         this.turnIndicatorStatus = new HistoricalValue<>(historyManager, TurnIndicatorStatus.NOTPRESENT);

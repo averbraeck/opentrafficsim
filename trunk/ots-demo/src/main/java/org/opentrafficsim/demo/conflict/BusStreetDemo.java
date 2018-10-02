@@ -1,7 +1,6 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,6 +77,7 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -146,13 +146,13 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         private OTSNetwork network;
 
         /** Simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
+        private OTSSimulatorInterface simulator;
 
         /** {@inheritDoc} */
         @Override
         public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) arg0;
+            this.simulator = (OTSSimulatorInterface) arg0;
             Map<String, StreamInterface> streams = new HashMap<>();
             streams.put("generation", new MersenneTwister(100L));
             this.simulator.getReplication().setStreams(streams);

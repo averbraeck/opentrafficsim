@@ -44,6 +44,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -504,7 +505,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
     }
 
     /** @return simulator. */
-    public abstract DEVSSimulatorInterface.TimeDoubleUnit getSimulator();
+    public abstract OTSSimulatorInterface getSimulator();
 
     /** @return lengthDist. */
     public abstract ContinuousDistDoubleScalar.Rel<Length, LengthUnit> getLengthDist();

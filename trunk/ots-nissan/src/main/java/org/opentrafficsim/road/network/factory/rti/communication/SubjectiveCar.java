@@ -15,9 +15,9 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.immutablecollections.ImmutableMap;
 import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 import nl.tudelft.simulation.language.d3.BoundingBox;
@@ -50,7 +50,7 @@ public class SubjectiveCar extends AbstractGTU
      * @throws NamingException when animation cannot be registered
      * @throws RemoteException when animation context or simulator cannot be reached
      */
-    public SubjectiveCar(final String id, final GTUType type, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+    public SubjectiveCar(final String id, final GTUType type, final OTSSimulatorInterface simulator,
             final DirectedPoint initialLocation, final OTSNetwork network)
             throws SimRuntimeException, GTUException, RemoteException, NamingException
     {

@@ -27,7 +27,6 @@ import javax.vecmath.Point3d;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -185,7 +184,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             final Length upMerge, final LaneBasedGTU gtu)
     {
         HistoryManager historyManager =
-                ((OTSReplication) gtu.getSimulator().getReplication()).getHistoryManager(gtu.getSimulator());
+                gtu.getSimulator().getReplication().getHistoryManager(gtu.getSimulator());
         this.root = new HistoricalValue<>(historyManager);
         this.lookAhead = lookAhead;
         this.down = down;

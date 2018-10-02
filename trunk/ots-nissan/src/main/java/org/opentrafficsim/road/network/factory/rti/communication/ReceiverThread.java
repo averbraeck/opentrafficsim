@@ -17,10 +17,10 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.network.factory.rti.data.OTSToRTIData;
 import org.opentrafficsim.road.network.factory.rti.data.RTIToOTSData;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /** */
@@ -37,7 +37,7 @@ public class ReceiverThread extends Thread
     private SubjectiveCar car;
 
     /** */
-    DEVSSimulatorInterface.TimeDoubleUnit simulator;
+    OTSSimulatorInterface simulator;
 
     /** */
     GTUType carType;
@@ -56,7 +56,7 @@ public class ReceiverThread extends Thread
      * @throws SocketException when communication fails
      */
     @SuppressFBWarnings("IL_INFINITE_LOOP")
-    public ReceiverThread(DEVSSimulatorInterface.TimeDoubleUnit simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars,
+    public ReceiverThread(OTSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars,
             final OTSNetwork network) throws SocketException
     {
         super();
@@ -95,9 +95,8 @@ public class ReceiverThread extends Thread
 
                 // System.out.println("yaw is " + simData.getEgoOri().getYaw() + ", pitch is " + simData.getEgoOri().getPitch()
                 // + ", roll is " + simData.getEgoOri().getRoll());
-                DirectedPoint position =
-                        new DirectedPoint(simData.getEgoPos().getY(), simData.getEgoPos().getX(), 1.0, 0.0, 0.0,
-                                (Math.PI / 2 - simData.getEgoOri().getYaw()));
+                DirectedPoint position = new DirectedPoint(simData.getEgoPos().getY(), simData.getEgoPos().getX(), 1.0, 0.0,
+                        0.0, (Math.PI / 2 - simData.getEgoOri().getYaw()));
 
                 if (this.car == null)
                     this.car = new SubjectiveCar("nissan", this.carType, this.simulator, position, this.network);

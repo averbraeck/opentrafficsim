@@ -45,7 +45,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -84,7 +84,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         LaneType laneType = LaneType.TWO_WAY_LANE;
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModel();
-        final SimpleSimulatorInterface simulator =
+        final OTSSimulatorInterface simulator =
                 new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
 
         Lane[] lanesGroupA = LaneFactory.makeMultiLane(this.network, "A", nodeAFrom, nodeATo, null, 3, laneType,

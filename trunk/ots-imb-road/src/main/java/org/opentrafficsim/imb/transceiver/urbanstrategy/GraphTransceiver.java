@@ -14,7 +14,7 @@ import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -226,7 +226,7 @@ public class GraphTransceiver extends AbstractTransceiver
     /**
      * Construct a new GraphTransceiver.
      * @param connector Connector; the IMB connector
-     * @param simulator SimpleSimulatorInterface; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param network Network; the network
      * @param width int; the width of the graph, in pixels
      * @param height int; the height of the graph, in pixels
@@ -234,7 +234,7 @@ public class GraphTransceiver extends AbstractTransceiver
      * @param transmissionInterval Duration; the interval between generation of graphs
      * @throws IMBException when the message cannot be posted, or the scheduling of the publish event fails
      */
-    public GraphTransceiver(final Connector connector, SimpleSimulatorInterface simulator, Network network, final int width,
+    public GraphTransceiver(final Connector connector, OTSSimulatorInterface simulator, Network network, final int width,
             final int height, final AbstractOTSPlot plot, final Duration transmissionInterval) throws IMBException
     {
         super("Graph", connector, simulator);
