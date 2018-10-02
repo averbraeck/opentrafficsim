@@ -463,7 +463,7 @@ public final class GeneratorPositions implements Locatable
          * @param gtuType GTUType; GTU type
          * @return double; weight for this link
          */
-        double getWeight(GTUType gtuType)
+        double getWeight(final GTUType gtuType)
         {
             if (this.weight < 0.0)
             {

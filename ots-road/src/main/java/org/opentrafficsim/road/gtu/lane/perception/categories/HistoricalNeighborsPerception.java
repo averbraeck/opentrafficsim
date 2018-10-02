@@ -130,7 +130,7 @@ public class HistoricalNeighborsPerception extends AbstractPerceptionCategory<La
 
     /** {@inheritDoc} */
     @Override
-    public SortedSet<HeadwayGTU> getFirstLeaders(LateralDirectionality lat)
+    public SortedSet<HeadwayGTU> getFirstLeaders(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         return null;
@@ -138,7 +138,7 @@ public class HistoricalNeighborsPerception extends AbstractPerceptionCategory<La
 
     /** {@inheritDoc} */
     @Override
-    public SortedSet<HeadwayGTU> getFirstFollowers(LateralDirectionality lat)
+    public SortedSet<HeadwayGTU> getFirstFollowers(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         return null;
@@ -146,7 +146,7 @@ public class HistoricalNeighborsPerception extends AbstractPerceptionCategory<La
 
     /** {@inheritDoc} */
     @Override
-    public boolean isGtuAlongside(LateralDirectionality lat)
+    public boolean isGtuAlongside(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         return false;
@@ -154,14 +154,14 @@ public class HistoricalNeighborsPerception extends AbstractPerceptionCategory<La
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getLeaders(RelativeLane lane)
+    public PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getLeaders(final RelativeLane lane)
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getFollowers(RelativeLane lane)
+    public PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getFollowers(final RelativeLane lane)
     {
         return null;
     }
