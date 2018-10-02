@@ -406,7 +406,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
      */
     private static Acceleration gtuCapabilities(final Acceleration acceleration, final LaneBasedGTU gtu)
     {
-        return acceleration;// .gt(gtu.getMaximumDeceleration())
+        return acceleration; // .gt(gtu.getMaximumDeceleration())
         // ? (acceleration.lt(gtu.getMaximumAcceleration()) ? acceleration : gtu.getMaximumAcceleration())
         // : gtu.getMaximumDeceleration();
     }
