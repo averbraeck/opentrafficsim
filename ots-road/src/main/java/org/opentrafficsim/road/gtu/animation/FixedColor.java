@@ -53,7 +53,7 @@ public class FixedColor implements GTUColorer, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(GTU gtu)
+    public Color getColor(final GTU gtu)
     {
         return this.color;
     }

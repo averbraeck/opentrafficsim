@@ -20,7 +20,7 @@ public interface Anticipation
 {
 
     /** Assume no anticipation. */
-    public final static Anticipation NONE = new Anticipation()
+    Anticipation NONE = new Anticipation()
     {
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
@@ -37,7 +37,7 @@ public interface Anticipation
     };
 
     /** Assume constant speed. */
-    public final static Anticipation CONSTANT_SPEED = new Anticipation()
+    Anticipation CONSTANT_SPEED = new Anticipation()
     {
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
@@ -56,7 +56,7 @@ public interface Anticipation
     };
 
     /** Assume constant acceleration. */
-    public final static Anticipation CONSTANT_ACCELERATION = new Anticipation()
+    Anticipation CONSTANT_ACCELERATION = new Anticipation()
     {
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
@@ -114,7 +114,7 @@ public interface Anticipation
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public static class NeighborTriplet
+    class NeighborTriplet
     {
 
         /** Headway. */
