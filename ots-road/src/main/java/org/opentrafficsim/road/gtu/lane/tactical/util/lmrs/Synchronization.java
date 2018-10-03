@@ -1,14 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.canBeAhead;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.gentleUrgency;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getFollower;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getMergeDistance;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.removeAllUpstreamOfConflicts;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.requiredBufferSpace;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.stopForEnd;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.tagAlongAcceleration;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -632,7 +623,7 @@ public interface Synchronization extends LmrsParameters
      * @param dCoop cooperation threshold
      * @return required buffer space to perform a lane change and further lane changes
      */
-    public static Length requiredBufferSpace(final Speed speed, final int nCur, final Length x0, final Duration t0,
+    static Length requiredBufferSpace(final Speed speed, final int nCur, final Length x0, final Duration t0,
             final Duration lc, final double dCoop)
     {
         Length xCrit = speed.multiplyBy(t0);
