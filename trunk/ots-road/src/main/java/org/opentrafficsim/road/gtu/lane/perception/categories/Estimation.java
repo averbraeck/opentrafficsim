@@ -23,7 +23,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalA
 public interface Estimation
 {
     /** No estimation errors. */
-    public static final Estimation NONE = new Estimation()
+    Estimation NONE = new Estimation()
     {
         @Override
         public NeighborTriplet estimate(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
@@ -34,7 +34,7 @@ public interface Estimation
     };
 
     /** Underestimation based on situational awareness. */
-    public static final Estimation UNDERESTIMATION = new Estimation()
+    Estimation UNDERESTIMATION = new Estimation()
     {
         @Override
         public NeighborTriplet estimate(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,

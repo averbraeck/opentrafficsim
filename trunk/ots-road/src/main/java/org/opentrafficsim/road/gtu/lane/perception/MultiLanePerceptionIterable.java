@@ -84,7 +84,7 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
         SortedMap<PrimaryIteratorEntry, RelativeLane> elements;
 
         /** Constructor. */
-        public MultiLaneIterator()
+        MultiLaneIterator()
         {
             //
         }

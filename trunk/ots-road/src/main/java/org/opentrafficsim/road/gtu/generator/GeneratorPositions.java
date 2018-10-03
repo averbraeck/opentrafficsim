@@ -946,7 +946,7 @@ public final class GeneratorPositions implements Locatable
          * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
          * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
          */
-        public class ByValue implements RoadPosition
+        class ByValue implements RoadPosition
         {
 
             /** Road position. */
@@ -956,7 +956,7 @@ public final class GeneratorPositions implements Locatable
              * Constructor.
              * @param value double; road position
              */
-            public ByValue(final double value)
+            ByValue(final double value)
             {
                 Throw.when(value < 0.0 || value > 1.0, IllegalArgumentException.class,
                         "Road position value should be in the range [0...1].");
@@ -1020,7 +1020,7 @@ public final class GeneratorPositions implements Locatable
          * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
          * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
          */
-        public class BySpeed implements RoadPosition
+        class BySpeed implements RoadPosition
         {
 
             /** Desired speed at left side of the road. */
@@ -1034,7 +1034,7 @@ public final class GeneratorPositions implements Locatable
              * @param leftSpeed Speed; desired speed at left side of the road
              * @param rightSpeed Speed; desired speed at right side of the road
              */
-            public BySpeed(final Speed leftSpeed, final Speed rightSpeed)
+            BySpeed(final Speed leftSpeed, final Speed rightSpeed)
             {
                 Throw.when(leftSpeed.eq(rightSpeed), IllegalArgumentException.class,
                         "Left speed and right speed may not be equal. Use LaneBias.NONE.");
