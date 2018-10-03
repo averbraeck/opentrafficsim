@@ -349,7 +349,7 @@ public class LaneChange implements Serializable
     public interface LaneChangePath
     {
         /** A simple Bezier curve directly to the lane change target position. */
-        public final static LaneChangePath BEZIER = new LaneChangePath()
+        LaneChangePath BEZIER = new LaneChangePath()
         {
             @Override
             public OTSLine3D getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
@@ -364,7 +364,7 @@ public class LaneChange implements Serializable
         };
 
         /** The target point (including rotation) for the coming time step is based on a sine wave. */
-        public final static LaneChangePath SINE = new SequentialLaneChangePath()
+        LaneChangePath SINE = new SequentialLaneChangePath()
         {
             /** {@inheritDoc} */
             @Override
@@ -383,7 +383,7 @@ public class LaneChange implements Serializable
         };
 
         /** The target point (including rotation) for the coming time step is based on a 3rd-degree polynomial. */
-        public final static LaneChangePath POLY3 = new SequentialLaneChangePath()
+        LaneChangePath POLY3 = new SequentialLaneChangePath()
         {
             /** {@inheritDoc} */
             @Override
@@ -414,7 +414,7 @@ public class LaneChange implements Serializable
          * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
          * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
          */
-        public abstract static class SequentialLaneChangePath implements LaneChangePath
+        abstract class SequentialLaneChangePath implements LaneChangePath
         {
             /** {@inheritDoc} */
             @Override

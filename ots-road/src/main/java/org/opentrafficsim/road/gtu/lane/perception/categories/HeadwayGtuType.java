@@ -28,7 +28,7 @@ public interface HeadwayGtuType
 {
 
     /** The GTU is wrapped, and info is taken directly from it. */
-    public final static HeadwayGtuType WRAP = new HeadwayGtuType()
+    HeadwayGtuType WRAP = new HeadwayGtuType()
     {
         @Override
         public HeadwayGTUReal createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
@@ -46,7 +46,7 @@ public interface HeadwayGtuType
     };
 
     /** Info regarding the GTU is copied. */
-    public final static HeadwayGtuType COPY = new HeadwayGtuType()
+    HeadwayGtuType COPY = new HeadwayGtuType()
     {
         @Override
         public HeadwayGTURealCopy createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
