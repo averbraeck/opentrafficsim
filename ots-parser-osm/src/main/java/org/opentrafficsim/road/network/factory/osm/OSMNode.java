@@ -139,6 +139,7 @@ public class OSMNode implements Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return String.format("Node %d %.6f %.6f", getId(), getLongitude(), getLatitude());

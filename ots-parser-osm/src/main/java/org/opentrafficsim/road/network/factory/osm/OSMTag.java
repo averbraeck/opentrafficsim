@@ -52,6 +52,7 @@ public class OSMTag implements Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return "Tag: Key: " + this.key + " Value: " + this.value;

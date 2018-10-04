@@ -180,9 +180,8 @@ public class OSMLink implements Serializable, Identifiable
         this.intermediateNodes = new ArrayList<OSMNode>();
     }
 
-    /**
-     * @return id
-     */
+    /** {@inheritDoc} */
+    @Override
     public final String getId()
     {
         return this.id;
@@ -323,6 +322,7 @@ public class OSMLink implements Serializable, Identifiable
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toString()
     {
         return String.format("Link %s from %d to %d", getId(), getStart().getId(), getEnd().getId());
