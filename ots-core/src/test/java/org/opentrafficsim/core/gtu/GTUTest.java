@@ -121,7 +121,7 @@ public class GTUTest<S extends StrategicalPlanner, T extends TacticalPlanner> im
             }
 
             @Override
-            public TacticalPlanner getTacticalPlanner(Time time)
+            public TacticalPlanner getTacticalPlanner(final Time time)
             {
                 return null;
             }
