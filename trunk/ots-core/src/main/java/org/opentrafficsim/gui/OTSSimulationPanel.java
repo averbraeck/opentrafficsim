@@ -185,7 +185,7 @@ public class OTSSimulationPanel extends JPanel
         /**
          * @param tabPlacement tabPlacement
          */
-        public AppearanceControlTabbedContentPane(int tabPlacement)
+        AppearanceControlTabbedContentPane(final int tabPlacement)
         {
             super(tabPlacement);
         }
@@ -196,6 +196,7 @@ public class OTSSimulationPanel extends JPanel
         {
             return "AppearanceControlTabbedContentPane []";
         }
+        
     }
 
 }
