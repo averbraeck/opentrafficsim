@@ -711,7 +711,7 @@ public final class Convert
             }
             name.append(gtu.getId());
         }
-        GTUCompatibility<LaneType> compatibility = new GTUCompatibility((LaneType) null);
+        GTUCompatibility<LaneType> compatibility = new GTUCompatibility<>((LaneType) null);
         LaneType result = new LaneType(name.toString(), null, compatibility);
         return result;
     }
@@ -815,7 +815,7 @@ public final class Convert
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    public String toString()
     {
         return "Convert []";
     }
@@ -852,7 +852,7 @@ class LaneAttributes implements Serializable
      * @param c - Color
      * @param d - LongitudinalDIrectionality
      */
-    public LaneAttributes(final LaneType lt, final Color c, final LongitudinalDirectionality d)
+    LaneAttributes(final LaneType lt, final Color c, final LongitudinalDirectionality d)
     {
         if (lt == null)
         {
@@ -872,7 +872,7 @@ class LaneAttributes implements Serializable
      * @param directionality - LongitudinalDIrectionality
      * @param width - width
      */
-    public LaneAttributes(final LaneType laneType, final Color color, final LongitudinalDirectionality directionality,
+    LaneAttributes(final LaneType laneType, final Color color, final LongitudinalDirectionality directionality,
             final Double width)
     {
         if (laneType == null)
@@ -930,6 +930,7 @@ class LaneAttributes implements Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString()
     {
         return "Lane Attributes: " + this.laneType + "; " + this.color + "; " + this.directionality + "; " + this.width;
