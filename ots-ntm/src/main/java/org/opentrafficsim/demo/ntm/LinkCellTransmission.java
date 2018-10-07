@@ -2,14 +2,18 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.ArrayList;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * <p>
@@ -24,7 +28,7 @@ import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class LinkCellTransmission extends Link
+public class LinkCellTransmission extends NTMLink
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -33,7 +37,7 @@ public class LinkCellTransmission extends Link
     private ArrayList<FlowCell> cells;
 
     /** SPEEDAB class java.lang.Double 120.0. */
-    private Rel<TimeUnit> actualTime;
+    private Duration actualTime;
 
     /**
      * @param geometry
@@ -48,25 +52,28 @@ public class LinkCellTransmission extends Link
      * @param linkData
      * @param cells
      * @param hierarchy
+     * @throws NetworkException
      */
 
-    public LinkCellTransmission(OTSLine3D geometry, String nr, DoubleScalar.Rel<LengthUnit> length, Node startNode,
-        Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time,
-        Frequency capacity, TrafficBehaviourType behaviourType, LinkData linkData,
-        ArrayList<FlowCell> cells, int hierarchy)
+    public LinkCellTransmission(final Network network, final OTSSimulatorInterface simulator,
+            OTSLine3D geometry, String nr, Length length, NTMNode startNode, NTMNode endNode, Speed speed, Duration time,
+            Frequency capacity, TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells, int hierarchy)
+            throws NetworkException
     {
-        super(geometry, nr, length, startNode, endNode, speed, time, capacity, behaviourType, linkData);
+        super(network, simulator, geometry, nr, length, startNode, endNode, speed, time, capacity, behaviourType, linkData);
         this.cells = cells;
     }
 
     /**
      * @param link original Link
      * @param cells to add
+     * @throws NetworkException
      */
-    public LinkCellTransmission(final Link link, final ArrayList<FlowCell> cells)
+    public LinkCellTransmission(final NTMLink link, final ArrayList<FlowCell> cells) throws NetworkException
     {
-        super(link.getDesignLine(), link.getId(), link.getLength(), (Node) link.getStartNode(), (Node) link.getEndNode(),
-            link.getFreeSpeed(), link.getTime(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
+        super(link.getNetwork(), link.getSimulator(), link.getDesignLine(), link.getId(), link.getLength(),
+                (NTMNode) link.getStartNode(), (NTMNode) link.getEndNode(), link.getFreeSpeed(), link.getDuration(),
+                link.getCapacity(), link.getBehaviourType(), link.getLinkData());
         this.cells = cells;
     }
 
@@ -75,11 +82,14 @@ public class LinkCellTransmission extends Link
      * @param startNode
      * @param endNode
      * @param cells to add
+     * @throws NetworkException
      */
-    public LinkCellTransmission(final Link link, BoundedNode startNode, BoundedNode endNode, final ArrayList<FlowCell> cells)
+    public LinkCellTransmission(final NTMLink link, BoundedNode startNode, BoundedNode endNode, final ArrayList<FlowCell> cells)
+            throws NetworkException
     {
-        super(link.getDesignLine(), link.getId(), link.getLength(), startNode, endNode, link.getFreeSpeed(), link.getTime(),
-            link.getCapacity(), link.getBehaviourType(), link.getLinkData());
+        super(link.getNetwork(), link.getSimulator(), link.getDesignLine(), link.getId(), link.getLength(),
+                startNode, endNode, link.getFreeSpeed(), link.getDuration(), link.getCapacity(), link.getBehaviourType(),
+                link.getLinkData());
         this.cells = cells;
     }
 
@@ -104,14 +114,14 @@ public class LinkCellTransmission extends Link
      * @param timeStepDurationCellTransmission
      * @return
      */
-    public static final ArrayList<FlowCell> createCells(final Link link, Rel<TimeUnit> timeStepDurationCellTransmission)
+    public static final ArrayList<FlowCell> createCells(final NTMLink link, Duration timeStepDurationCellTransmission)
     {
         ArrayList<FlowCell> flowCells = new ArrayList<FlowCell>();
         // the length of the cell depends on the speed and simulation time step
-        DoubleScalar.Abs<SpeedUnit> speed = link.getFreeSpeed();
-        Rel<LengthUnit> cellLength =
-            new DoubleScalar.Rel<LengthUnit>(speed.getInUnit(SpeedUnit.KM_PER_HOUR)
-                * timeStepDurationCellTransmission.getInUnit(TimeUnit.HOUR), LengthUnit.KILOMETER);
+        Speed speed = link.getFreeSpeed();
+        Length cellLength = new Length(
+                speed.getInUnit(SpeedUnit.KM_PER_HOUR) * timeStepDurationCellTransmission.getInUnit(DurationUnit.HOUR),
+                LengthUnit.KILOMETER);
         // find out how many Cells fit into this Link
         double numberOfCells = Math.max(Math.rint(link.getLength().getSI() / cellLength.getSI()), 1);
         // Frequency capPerLane =
@@ -121,7 +131,7 @@ public class LinkCellTransmission extends Link
         for (int i = 0; i < numberOfCells; i++)
         {
             FlowCell cell =
-                new FlowCell(cellLength, link.getCapacity(), speed, link.getNumberOfLanes(), TrafficBehaviourType.FLOW);
+                    new FlowCell(cellLength, link.getCapacity(), speed, link.getNumberOfLanes(), TrafficBehaviourType.FLOW);
             flowCells.add(cell);
         }
         return flowCells;
@@ -131,14 +141,14 @@ public class LinkCellTransmission extends Link
      * @param accumulatedCars
      * @return actualTime.
      */
-    public Rel<TimeUnit> retrieveActualTime()
+    public Duration retrieveActualTime()
     {
         Double timeDouble = new Double(0.0);
         for (FlowCell cell : this.cells)
         {
-            timeDouble += cell.retrieveCurrentTravelTime().getInUnit(TimeUnit.HOUR);
+            timeDouble += cell.retrieveCurrentTravelDuration().getInUnit(DurationUnit.HOUR);
         }
-        this.actualTime = new Rel<TimeUnit>(timeDouble, TimeUnit.HOUR);
+        this.actualTime = new Duration(timeDouble, DurationUnit.HOUR);
         return this.actualTime;
     }
 

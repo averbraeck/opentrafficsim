@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
 
 /**
  * <p>
@@ -31,7 +31,7 @@ public class CsvFileWriter
         String textOut;
         File fileParametersNTM = new File(pathAndFile);
         parametersNTMOut = WriteOutput.createWriter(fileParametersNTM);
-        for (Node node : model.getAreaGraph().vertexSet())
+        for (NTMNode node : model.getAreaGraph().vertexSet())
         {
             if (node.getBehaviourType() == TrafficBehaviourType.NTM)
             {
@@ -62,14 +62,14 @@ public class CsvFileWriter
         File filecapRestraintsAreas = new File(pathAndFile);
         capResFileWriter = WriteOutput.createWriter(filecapRestraintsAreas);
         boolean header = true;
-        for (Node origin : model.getAreaGraph().vertexSet())
+        for (NTMNode origin : model.getAreaGraph().vertexSet())
         {
             if (origin.getBehaviourType() == TrafficBehaviourType.NTM
                 | origin.getBehaviourType() == TrafficBehaviourType.CORDON)
             {
                 String textOutCapRes = origin.getId();
                 String textHeader = "Capacity";
-                for (Node destination : model.getAreaGraph().vertexSet())
+                for (NTMNode destination : model.getAreaGraph().vertexSet())
                 {
                     if (destination.getBehaviourType() == TrafficBehaviourType.NTM
                         | destination.getBehaviourType() == TrafficBehaviourType.CORDON)

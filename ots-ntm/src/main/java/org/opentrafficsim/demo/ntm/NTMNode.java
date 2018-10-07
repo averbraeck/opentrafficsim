@@ -1,6 +1,8 @@
 package org.opentrafficsim.demo.ntm;
 
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -18,7 +20,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class Node extends OTSNode implements Comparable<Node>
+public class NTMNode extends OTSNode implements Comparable<NTMNode>
 {
     /**
      * <p>
@@ -55,10 +57,11 @@ public class Node extends OTSNode implements Comparable<Node>
      * @param nr to Identify
      * @param point ...
      * @param behaviourType describes traffic behaviour of units moving through the "node"
+     * @throws NetworkException 
      */
-    public Node(String nr, Coordinate point, TrafficBehaviourType behaviourType)
+    public NTMNode(final Network network, String nr, Coordinate point, TrafficBehaviourType behaviourType) throws NetworkException
     {
-        super(nr, new OTSPoint3D(point));
+        super(network, nr, new OTSPoint3D(point));
         // long index = indexNumber++;
         this.behaviourType = behaviourType;
 
@@ -113,7 +116,7 @@ public class Node extends OTSNode implements Comparable<Node>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Node other = (Node) obj;
+        NTMNode other = (NTMNode) obj;
         if (getPoint() == null)
         {
             if (other.getPoint().getCoordinate() != null)
@@ -125,7 +128,7 @@ public class Node extends OTSNode implements Comparable<Node>
     }
 
     /** {@inheritDoc} */
-    public int compareTo(Node o)
+    public int compareTo(NTMNode o)
     {
         return this.getId().compareTo(o.getId());
     }

@@ -1,7 +1,7 @@
 package org.opentrafficsim.demo.ntm.trafficdemand;
 
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * <p>
@@ -20,10 +20,10 @@ public class FractionOfTripDemandByTimeSegment
 {
 
     /** StartTime of the segment in Calendar Time. */
-    private DoubleScalar.Abs<TimeUnit> timeSinceMidnight;
+    private Time timeSinceMidnight;
 
     /** Length of a time segment. */
-    private DoubleScalar.Rel<TimeUnit> duration;
+    private Duration duration;
 
     /** Relative amount of trips. */
     private double shareOfDemand;
@@ -33,8 +33,8 @@ public class FractionOfTripDemandByTimeSegment
      * @param duration length of this time segment
      * @param shareOfDemand amount of trips of this segment relatively to the total simulation period
      */
-    public FractionOfTripDemandByTimeSegment(final DoubleScalar.Abs<TimeUnit> timeSinceMidnight,
-        final DoubleScalar.Rel<TimeUnit> duration, final double shareOfDemand)
+    public FractionOfTripDemandByTimeSegment(final Time timeSinceMidnight,
+        final Duration duration, final double shareOfDemand)
     {
         this.timeSinceMidnight = timeSinceMidnight;
         this.duration = duration;
@@ -60,7 +60,7 @@ public class FractionOfTripDemandByTimeSegment
     /**
      * @return timeSinceMidnight
      */
-    public final DoubleScalar.Abs<TimeUnit> getTimeSinceMidnight()
+    public final Time getTimeSinceMidnight()
     {
         return this.timeSinceMidnight;
     }
@@ -68,7 +68,7 @@ public class FractionOfTripDemandByTimeSegment
     /**
      * @param timeSinceMidnight set timeSinceMidnight
      */
-    public final void setTimeSinceMidnight(final DoubleScalar.Abs<TimeUnit> timeSinceMidnight)
+    public final void setTimeSinceMidnight(final Time timeSinceMidnight)
     {
         this.timeSinceMidnight = timeSinceMidnight;
     }
@@ -76,7 +76,7 @@ public class FractionOfTripDemandByTimeSegment
     /**
      * @return duration
      */
-    public final DoubleScalar.Rel<TimeUnit> getDuration()
+    public final Duration getDuration()
     {
         return this.duration;
     }
@@ -84,7 +84,7 @@ public class FractionOfTripDemandByTimeSegment
     /**
      * @param duration set duration
      */
-    public final void setDuration(final DoubleScalar.Rel<TimeUnit> duration)
+    public final void setDuration(final Duration duration)
     {
         this.duration = duration;
     }

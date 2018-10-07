@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Speed;
 
 /**
  * <p>
@@ -31,7 +31,7 @@ public class ParametersFundamentalDiagram
     /**
      * freeSpeed: average free speed of cars in CELL.
      */
-    private DoubleScalar.Abs<SpeedUnit> freeSpeed;
+    private Speed freeSpeed;
 
     /** */
     private Frequency capacity;
@@ -49,7 +49,7 @@ public class ParametersFundamentalDiagram
      * @param capacity
      * @param numberOfLanes
      */
-    public ParametersFundamentalDiagram(final DoubleScalar.Abs<SpeedUnit> freeSpeed,
+    public ParametersFundamentalDiagram(final Speed freeSpeed,
         final Frequency capacity, final int numberOfLanes)
     {
         super();
@@ -65,7 +65,7 @@ public class ParametersFundamentalDiagram
     /**
      * @return freeSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> getFreeSpeed()
+    public Speed getFreeSpeed()
     {
         return this.freeSpeed;
     }
@@ -73,7 +73,7 @@ public class ParametersFundamentalDiagram
     /**
      * @param freeSpeed set freeSpeed.
      */
-    public void setFreeSpeed(DoubleScalar.Abs<SpeedUnit> freeSpeed)
+    public void setFreeSpeed(Speed freeSpeed)
     {
         this.freeSpeed = freeSpeed;
     }

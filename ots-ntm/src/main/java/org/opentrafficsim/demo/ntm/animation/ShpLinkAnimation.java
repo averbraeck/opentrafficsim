@@ -10,10 +10,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import org.opentrafficsim.demo.ntm.NTMLink;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.demo.ntm.Link;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -38,7 +38,7 @@ public class ShpLinkAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public ShpLinkAnimation(Link source, OTSSimulatorInterface simulator, final float width, Color color)
+    public ShpLinkAnimation(NTMLink source, SimulatorInterface.TimeDoubleUnit simulator, final float width, Color color)
         throws NamingException, RemoteException
     {
         super(source, simulator);
@@ -51,7 +51,7 @@ public class ShpLinkAnimation extends Renderable2D
     public void paint(Graphics2D graphics, ImageObserver observer) throws RemoteException
     {
         graphics.setColor(Color.RED);
-        for (Path2D line : ((Link) getSource()).getLines())
+        for (Path2D line : ((NTMLink) getSource()).getLines())
         {
             Stroke oldStroke = graphics.getStroke();
             graphics.setStroke(new BasicStroke(this.width));

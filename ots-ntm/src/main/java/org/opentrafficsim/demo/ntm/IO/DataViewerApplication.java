@@ -9,21 +9,24 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 import javax.swing.JScrollPane;
 
+import org.djunits.unit.DurationUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.dsol.OTSReplication;
+import org.opentrafficsim.demo.ntm.NTMModel;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
-
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
-import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.demo.ntm.NTMModel;
 
 /**
  * <p>
@@ -41,7 +44,7 @@ public class DataViewerApplication extends DSOLApplication
      * @param panel
      */
     public DataViewerApplication(String title,
-        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+        DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {
         super(title, panel);
     }
@@ -55,23 +58,22 @@ public class DataViewerApplication extends DSOLApplication
      * @throws RemoteException
      * @throws NamingException
      * @throws IOException
+     * @throws PropertyException 
      */
-    public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException
+    public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException, PropertyException
     {
         DataViewer model = new DataViewer();
-        OTSDEVSAnimator simulator = new OTSDEVSAnimator();
-        // model.getSettingsNTM().getStartTimeSinceMidnight().getInUnit(TimeUnit.SECOND)
-        OTSSimTimeDouble startTime = new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND));
+        // model.getSettingsNTM().getStartTimeSinceMidnight().getInUnit(DurationUnit.SECOND)
+        Time startTime = new Time(0.0, TimeUnit.BASE_SECOND);
         // OTSReplication replication =
-        // new OTSReplication("rep1", startTime, new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), model
+        // new OTSReplication("rep1", startTime, new Duration(0.0, DurationUnit.SECOND), model
         // .getSettingsNTM().getDurationOfSimulation(), model);
-        OTSReplication replication =
-            new OTSReplication("rep1", startTime, new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
-                new DoubleScalar.Rel<TimeUnit>(7200.0, TimeUnit.SECOND), model);
-        simulator.initialize(replication, ReplicationMode.TERMINATING);
+        SimpleAnimator simulator = new SimpleAnimator(startTime, new Duration(0.0, DurationUnit.SECOND),
+                new Duration(7200.0, DurationUnit.SECOND), model);
+        // simulator.initialize(replication, ReplicationMode.TERMINATING);
 
-        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
-            new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
+        DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel =
+            new DSOLPanel<Time, Duration, SimTimeDoubleUnit>(model, simulator);
         addInfoTab(panel);
 
         Rectangle2D extent = new Rectangle2D.Double(65000.0, 440000.0, 55000.0, 30000.0);
@@ -90,7 +92,7 @@ public class DataViewerApplication extends DSOLApplication
      * @param panel
      */
     private static void addInfoTab(
-        final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+        final DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {
         // Let's find some content for our infoscreen and add it to our tabbedPane
         String helpSource = "/" + NTMModel.class.getPackage().getName().replace('.', '/') + "/html/ntm.html";

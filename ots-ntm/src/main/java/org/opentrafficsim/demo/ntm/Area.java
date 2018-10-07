@@ -8,21 +8,18 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * The area contains the following information:
@@ -51,7 +48,7 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Area extends GeoObject implements LocatableInterface
+public class Area extends GeoObject implements Locatable
 {
 
     /**
@@ -90,13 +87,13 @@ public class Area extends GeoObject implements LocatableInterface
     private final Coordinate centroid;
 
     /** */
-    private DoubleScalar.Abs<SpeedUnit> averageSpeed;
+    private Speed averageSpeed;
 
     /** */
-    private DoubleScalar.Abs<SpeedUnit> currentSpeed;
+    private Speed currentSpeed;
 
     /** */
-    private DoubleScalar.Rel<LengthUnit> roadLength;
+    private Length roadLength;
 
     /** */
     private ParametersNTM parametersNTM;
@@ -144,7 +141,7 @@ public class Area extends GeoObject implements LocatableInterface
      */
     public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente,
         final String gebied, final String regio, final double dhb, final Coordinate centroid,
-        final TrafficBehaviourType trafficBehaviourType, Rel<LengthUnit> roadLength, Abs<SpeedUnit> averageSpeed,
+        final TrafficBehaviourType trafficBehaviourType, Length roadLength, Speed averageSpeed,
         double increaseDemandByFactor, ParametersNTM parametersNTM)
     {
         super(geometry);
@@ -308,7 +305,7 @@ public class Area extends GeoObject implements LocatableInterface
     /**
      * @return roadLength.
      */
-    public DoubleScalar.Rel<LengthUnit> getRoadLength()
+    public Length getRoadLength()
     {
         return this.roadLength;
     }
@@ -316,7 +313,7 @@ public class Area extends GeoObject implements LocatableInterface
     /**
      * @param roadLength set roadLength.
      */
-    public void setRoadLength(DoubleScalar.Rel<LengthUnit> roadLength)
+    public void setRoadLength(Length roadLength)
     {
         this.roadLength = roadLength;
     }
@@ -324,23 +321,23 @@ public class Area extends GeoObject implements LocatableInterface
     /**
      * @param rel
      */
-    public void addRoadLength(Rel<LengthUnit> rel)
+    public void addRoadLength(Length rel)
     {
-        this.roadLength = DoubleScalar.plus(rel, this.roadLength);
+        this.roadLength = this.roadLength.plus(rel);
     }
 
     /**
      * @return averageSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> getAverageSpeed()
+    public Speed getAverageSpeed()
     {
-        return averageSpeed;
+        return this.averageSpeed;
     }
 
     /**
      * @param averageSpeed set averageSpeed.
      */
-    public void setAverageSpeed(DoubleScalar.Abs<SpeedUnit> averageSpeed)
+    public void setAverageSpeed(Speed averageSpeed)
     {
         this.averageSpeed = averageSpeed;
     }
@@ -348,15 +345,15 @@ public class Area extends GeoObject implements LocatableInterface
     /**
      * @return currentSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
+    public Speed getCurrentSpeed()
     {
-        return currentSpeed;
+        return this.currentSpeed;
     }
 
     /**
      * @param currentSpeed set currentSpeed.
      */
-    public void setCurrentSpeed(DoubleScalar.Abs<SpeedUnit> currentSpeed)
+    public void setCurrentSpeed(Speed currentSpeed)
     {
         this.currentSpeed = currentSpeed;
     }
@@ -366,7 +363,7 @@ public class Area extends GeoObject implements LocatableInterface
      */
     public double getIncreaseDemandByFactor()
     {
-        return increaseDemandByFactor;
+        return this.increaseDemandByFactor;
     }
 
     /**
@@ -382,7 +379,7 @@ public class Area extends GeoObject implements LocatableInterface
      */
     public ParametersNTM getParametersNTM()
     {
-        return parametersNTM;
+        return this.parametersNTM;
     }
 
     /**

@@ -20,23 +20,21 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.LinkEdge;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
 import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpLinkAnimation;
@@ -46,12 +44,17 @@ import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
+
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -69,7 +72,7 @@ public class NTMModel implements OTSModelInterface
     private static final long serialVersionUID = 20140815L;
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
+    private OTSSimulatorInterface simulator;
 
     /** Detailed areas from the traffic model. */
     private Map<String, Area> areas;
@@ -81,28 +84,28 @@ public class NTMModel implements OTSModelInterface
     private ShapeStore compressedAreas;
 
     /** Nodes from shape file. */
-    private Map<String, Node> nodes;
+    private Map<String, NTMNode> nodes;
 
     /** Connectors from shape file. */
-    private Map<String, Link> shpConnectors;
+    private Map<String, NTMLink> shpConnectors;
 
     /** Connectors from shape file. */
-    private Map<String, Link> shpBigConnectors;
+    private Map<String, NTMLink> shpBigConnectors;
 
     /** Links from shape file. */
-    private Map<String, Link> shpLinks;
+    private Map<String, NTMLink> shpLinks;
 
     /** Subset of links from shape file used as flow links. */
-    private Map<String, Link> flowLinks;
+    private Map<String, NTMLink> flowLinks;
 
     /** Detailed areas from the traffic model. */
     private Map<String, AreaFlowLink> areaFlowLinks;
 
     /** The centroids. */
-    private Map<String, Node> centroids;
+    private Map<String, NTMNode> centroids;
 
     /** The centroids. */
-    private Map<String, Node> bigCentroids;
+    private Map<String, NTMNode> bigCentroids;
 
     /** The demand of trips by Origin and Destination. */
     private TripDemand<TripInfoTimeDynamic> tripDemand;
@@ -123,16 +126,19 @@ public class NTMModel implements OTSModelInterface
     private ArrayList<DepartureTimeProfile> departureTimeProfiles;
 
     /** Graph containing the original network. */
-    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> linkGraph;
+    private SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>> linkGraph;
 
     /** Graph containing the simplified network. */
-    private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> areaGraph;
+    private SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>> areaGraph;
 
     /** */
-    private Map<String, Node> nodeAreaGraphMap = new HashMap<>();
+    private Map<String, NTMNode> nodeAreaGraphMap = new HashMap<>();
 
     /** Subset of links from shape file used as flow links. */
-    private LinkedHashMap<String, Link> debugLinkList;
+    private LinkedHashMap<String, NTMLink> debugLinkList;
+
+    /** TODO: make sure network is used... It's empty now... */
+    private OTSNetwork network = new OTSNetwork("ntm");
 
     /**
      * Constructor to make the graphs with the right type.
@@ -140,68 +146,63 @@ public class NTMModel implements OTSModelInterface
     @SuppressWarnings("unchecked")
     public NTMModel()
     {
-        LinkEdge<Link> l = new LinkEdge<Link>(null);
+        LinkEdge<NTMLink> l = new LinkEdge<NTMLink>(null);
         this.linkGraph =
-            new SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
+                new SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>>((Class<? extends LinkEdge<NTMLink>>) l.getClass());
         this.areaGraph =
-            new SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>((Class<? extends LinkEdge<Link>>) l.getClass());
+                new SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>>((Class<? extends LinkEdge<NTMLink>>) l.getClass());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(
-        final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
+    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> _simulator)
     {
-        this.simulator = (OTSDEVSSimulatorInterface) _simulator;
+        this.simulator = (OTSSimulatorInterface) _simulator;
         try
         {
             // create the output base maps
 
             // boolean DEBUG = true;
             // set the time step value at ten seconds;
-            DoubleScalar.Rel<TimeUnit> timeStepNTM = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
-            DoubleScalar.Rel<TimeUnit> timeStepCellTransmissionModel = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
-            Rel<TimeUnit> durationOfSimulation = new DoubleScalar.Rel<TimeUnit>(10800, TimeUnit.SECOND);
+            Duration timeStepNTM = new Duration(10, DurationUnit.SECOND);
+            Duration timeStepCellTransmissionModel = new Duration(10, DurationUnit.SECOND);
+            Duration durationOfSimulation = new Duration(10800, DurationUnit.SECOND);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
             Calendar startTime = new GregorianCalendar(2014, 1, 28, 15, 0, 0);
             this.shpLinks = new HashMap<>();
             this.shpConnectors = new HashMap<>();
 
-            this.centroids =
-                ShapeFileReader.ReadNodes(this.getInputNTM().getInputMap() + this.getInputNTM().getFileCentroids(),
-                    "NODENR", this.getInputNTM().isReturnCentroidsCentroid(), this.getInputNTM()
-                        .isOnlyCentroidsFileCentroid());
-            this.nodes =
-                ShapeFileReader.ReadNodes(this.getInputNTM().getInputMap() + this.getInputNTM().getFileNodes(), "NODENR",
-                    this.getInputNTM().isReturnCentroidsNode(), this.getInputNTM().isOnlyCentroidsFileNode());
-            this.areas =
-                ShapeFileReader.readAreas(this.getInputNTM().getInputMap() + this.getInputNTM().getFileAreas(),
+            this.centroids = ShapeFileReader.ReadNodes(this,
+                    this.getInputNTM().getInputMap() + this.getInputNTM().getFileCentroids(), "NODENR",
+                    this.getInputNTM().isReturnCentroidsCentroid(), this.getInputNTM().isOnlyCentroidsFileCentroid());
+            this.nodes = ShapeFileReader.ReadNodes(this, this.getInputNTM().getInputMap() + this.getInputNTM().getFileNodes(),
+                    "NODENR", this.getInputNTM().isReturnCentroidsNode(), this.getInputNTM().isOnlyCentroidsFileNode());
+            this.areas = ShapeFileReader.readAreas(this.getInputNTM().getInputMap() + this.getInputNTM().getFileAreas(),
                     this.centroids, this.getInputNTM().getScalingFactorDemand());
 
-            ShapeFileReader.readLinks(this.getInputNTM().getInputMap() + this.getInputNTM().getFileLinks(), this.shpLinks,
-                this.shpConnectors, this.nodes, this.centroids, this.getInputNTM().getLengthUnitLink(), this.getInputNTM()
-                    .getLinkCapacityNumberOfHours());
+            ShapeFileReader.readLinks(this, this.getInputNTM().getInputMap() + this.getInputNTM().getFileLinks(), this.shpLinks,
+                    this.shpConnectors, this.nodes, this.centroids, this.getInputNTM().getLengthUnitLink(),
+                    this.getInputNTM().getLinkCapacityNumberOfHours());
 
             if (this.getInputNTM().getFileFeederLinks() != null)
             {
                 if (!this.getInputNTM().getFileFeederLinks().isEmpty())
                 {
-                    ShapeFileReader.readLinks(this.getInputNTM().getInputMap() + this.getInputNTM().getFileFeederLinks(),
-                        this.shpLinks, this.shpConnectors, this.nodes, this.centroids, this.getInputNTM()
-                            .getLengthUnitLink(), this.getInputNTM().getLinkCapacityNumberOfHours());
+                    ShapeFileReader.readLinks(this, this.getInputNTM().getInputMap() + this.getInputNTM().getFileFeederLinks(),
+                            this.shpLinks, this.shpConnectors, this.nodes, this.centroids,
+                            this.getInputNTM().getLengthUnitLink(), this.getInputNTM().getLinkCapacityNumberOfHours());
                 }
             }
-            this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(this.getInputNTM().getInputMap()
-                + this.getInputNTM().getFileProfiles(), ";", "\\s+"));
+            this.setDepartureTimeProfiles(CsvFileReader.readDepartureTimeProfiles(
+                    this.getInputNTM().getInputMap() + this.getInputNTM().getFileProfiles(), ";", "\\s+"));
 
             this.getInputNTM().setOutputMap("/output" + this.getInputNTM().getVariantNumber());
 
-            this.settingsNTM =
-                new NTMSettings(startTime, durationOfSimulation, " NTM The Hague ", timeStepNTM,
-                    timeStepCellTransmissionModel, this.getInputNTM().getReRouteTimeInterval(), this.getInputNTM()
-                        .getNumberOfRoutes(), this.getInputNTM().getWeightNewRoutes(), this.getInputNTM()
-                        .getVarianceRoutes(), this.getInputNTM().isReRoute(), this.getInputNTM().getInputMap(), this
-                        .getInputNTM().isIncreaseDemandAreaByFactor(), this.getInputNTM().getScalingFactorDemand());
+            this.settingsNTM = new NTMSettings(startTime, durationOfSimulation, " NTM The Hague ", timeStepNTM,
+                    timeStepCellTransmissionModel, this.getInputNTM().getReRouteTimeInterval(),
+                    this.getInputNTM().getNumberOfRoutes(), this.getInputNTM().getWeightNewRoutes(),
+                    this.getInputNTM().getVarianceRoutes(), this.getInputNTM().isReRoute(), this.getInputNTM().getInputMap(),
+                    this.getInputNTM().isIncreaseDemandAreaByFactor(), this.getInputNTM().getScalingFactorDemand());
 
             // the Map areas contains a reference to the centroids!
             // save the selected and created areas to a shape file
@@ -214,13 +215,13 @@ public class NTMModel implements OTSModelInterface
             // - move links from normal to connectors
             // - add time settings from the demand matrix
             // - create demand between centoids and areas
-            this.setTripDemand(CsvFileReader.readOmnitransExportDemand(this.getInputNTM().getInputMap()
-                + this.getInputNTM().getFileDemand(), ";", "\\s+|-", this.centroids, this.shpLinks, this.shpConnectors,
-                this.settingsNTM, this.getDepartureTimeProfiles(), this.areas));
+            this.setTripDemand(CsvFileReader.readOmnitransExportDemand(this,
+                    this.getInputNTM().getInputMap() + this.getInputNTM().getFileDemand(), ";", "\\s+|-", this.centroids,
+                    this.shpLinks, this.shpConnectors, this.settingsNTM, this.getDepartureTimeProfiles(), this.areas));
 
             Map<String, Area> areasToUse;
-            Map<String, Node> centroidsToUse;
-            Map<String, Link> shpConnectorsToUse;
+            Map<String, NTMNode> centroidsToUse;
+            Map<String, NTMLink> shpConnectorsToUse;
 
             if (this.getInputNTM().COMPRESS_AREAS)
             {
@@ -241,21 +242,19 @@ public class NTMModel implements OTSModelInterface
                     ParametersNTM parametersNTM = new ParametersNTM(accCritical);
                     Point p = shape.getDesignLine().getCentroid();
                     Coordinate centroid = new Coordinate(p.getX(), p.getY());
-                    Area bigArea =
-                        new Area(shape.getDesignLine(), areaName, "name", "gemeente", "gebied", "regio", 0, centroid,
-                            TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.KILOMETER), new Abs<SpeedUnit>(0,
-                                SpeedUnit.KM_PER_HOUR), this.getInputNTM().getScalingFactorDemand(), parametersNTM);
+                    Area bigArea = new Area(shape.getDesignLine(), areaName, "name", "gemeente", "gebied", "regio", 0, centroid,
+                            TrafficBehaviourType.NTM, new Length(0, LengthUnit.KILOMETER), new Speed(0, SpeedUnit.KM_PER_HOUR),
+                            this.getInputNTM().getScalingFactorDemand(), parametersNTM);
                     this.bigAreas.put(bigArea.getCentroidNr(), bigArea);
                 }
                 // create new centroids
-                this.bigCentroids = new HashMap<String, Node>();
+                this.bigCentroids = new HashMap<String, NTMNode>();
                 // key from small to big areas, and new connectors and new bigCentroids!
-                HashMap<Node, Node> mapSmallAreaToBigArea =
-                    connectCentroidsToBigger(this.compressedAreas, this.centroids, this.bigCentroids, this.shpConnectors,
-                        this.areas);
+                HashMap<NTMNode, NTMNode> mapSmallAreaToBigArea = connectCentroidsToBigger(this.compressedAreas, this.centroids,
+                        this.bigCentroids, this.shpConnectors, this.areas);
                 this.setShpBigConnectors(createConnectors(mapSmallAreaToBigArea, this.shpConnectors));
                 this.compressedTripDemand =
-                    TripDemand.compressTripDemand(this.tripDemand, this.centroids, mapSmallAreaToBigArea);
+                        TripDemand.compressTripDemand(this.tripDemand, this.centroids, mapSmallAreaToBigArea);
 
                 shpConnectorsToUse = this.getShpBigConnectors();
                 areasToUse = this.getBigAreas();
@@ -272,7 +271,7 @@ public class NTMModel implements OTSModelInterface
 
             // set the lower values for flow links:
             this.flowLinks =
-                createFlowLinks(this.shpLinks, this.getInputNTM().getMaxSpeed(), this.getInputNTM().getMaxCapacity());
+                    createFlowLinks(this.shpLinks, this.getInputNTM().getMaxSpeed(), this.getInputNTM().getMaxCapacity());
 
             // merge link segments between junctions on flow links:
             // Link.findSequentialLinks(this.flowLinks, this.nodes);
@@ -292,39 +291,38 @@ public class NTMModel implements OTSModelInterface
 
             if (this.getInputNTM().COMPRESS_AREAS)
             {
-                readOrSetParametersNTM(this, areasToUse, centroidsToUse, this.getInputNTM().getInputMap()
-                    + this.getInputNTM().getFileNameParametersNTMBig());
+                readOrSetParametersNTM(this, areasToUse, centroidsToUse,
+                        this.getInputNTM().getInputMap() + this.getInputNTM().getFileNameParametersNTMBig());
 
-                readOrSetCapacityRestraints(this, areasToUse, this.getInputNTM().getInputMap()
-                    + this.getInputNTM().getFileNameCapacityRestraintBig(), this.getInputNTM().getInputMap()
-                    + this.getInputNTM().getFileNameCapacityRestraintFactorBig());
+                readOrSetCapacityRestraints(this, areasToUse,
+                        this.getInputNTM().getInputMap() + this.getInputNTM().getFileNameCapacityRestraintBig(),
+                        this.getInputNTM().getInputMap() + this.getInputNTM().getFileNameCapacityRestraintFactorBig());
             }
             else
             {
-                readOrSetParametersNTM(this, areasToUse, centroidsToUse, this.getInputNTM().getInputMap()
-                    + this.getInputNTM().getFileNameParametersNTM());
+                readOrSetParametersNTM(this, areasToUse, centroidsToUse,
+                        this.getInputNTM().getInputMap() + this.getInputNTM().getFileNameParametersNTM());
 
-                readOrSetCapacityRestraints(this, areasToUse, this.getInputNTM().getInputMap()
-                    + this.getInputNTM().getFileNameCapacityRestraint(), this.getInputNTM().getInputMap()
-                    + this.getInputNTM().getFileNameCapacityRestraintFactor());
+                readOrSetCapacityRestraints(this, areasToUse,
+                        this.getInputNTM().getInputMap() + this.getInputNTM().getFileNameCapacityRestraint(),
+                        this.getInputNTM().getInputMap() + this.getInputNTM().getFileNameCapacityRestraintFactor());
             }
 
             WriteOutput.writeInputData(this);
 
             Routes.createRoutes(this, this.getSettingsNTM().getNumberOfRoutes(), this.getInputNTM().getWeightNewRoutes(),
-                this.getInputNTM().getVarianceRoutes(), true, 1, 999999);
+                    this.getInputNTM().getVarianceRoutes(), true, 1, 999999);
 
             // in case we run on an animator and not on a simulator, we create the animation
-            if (_simulator instanceof OTSAnimatorInterface)
+            if (_simulator instanceof AnimatorInterface)
             {
                 createDynamicAreaAnimation(this);
             }
 
             // copyInputFiles(this.getInputNTM().getInputMap(), this.getInputNTM().getFileDemand(),
             // this.getInputNTM().getFileProfiles());
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                "ntmFlowTimestep", null);
-            // this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1799.99, TimeUnit.SECOND), this, this,
+            this.simulator.scheduleEventRel(new Duration(0.0, DurationUnit.SECOND), this, this, "ntmFlowTimestep", null);
+            // this.simulator.scheduleEventAbs(new Time(1799.99, DurationUnit.SECOND), this, this,
             // "drawGraph", null);
         }
         catch (Throwable exception)
@@ -337,7 +335,7 @@ public class NTMModel implements OTSModelInterface
      * @param flowLinks2
      * @return
      */
-    private Map<String, AreaFlowLink> createFlowLinkBuffers(Map<String, Link> flowLinks)
+    private Map<String, AreaFlowLink> createFlowLinkBuffers(Map<String, NTMLink> flowLinks)
     {
         // Create new Areas where they are lacking
         /**
@@ -346,7 +344,7 @@ public class NTMModel implements OTSModelInterface
          */
         Map<String, Area> areasFlowLink = new HashMap<String, Area>();
 
-        for (Link link : flowLinks.values())
+        for (NTMLink link : flowLinks.values())
         {
             LinkCellTransmission linkCTM = (LinkCellTransmission) link;
             char character = 'a';
@@ -354,7 +352,7 @@ public class NTMModel implements OTSModelInterface
             {
                 ArrayList<Coordinate> cellPoints = new ArrayList<Coordinate>();
                 cellPoints =
-                    WriteOutput.retrieveCellXY(linkCTM, cell, linkCTM.getCells().indexOf(cell), linkCTM.getCells().size());
+                        WriteOutput.retrieveCellXY(linkCTM, cell, linkCTM.getCells().indexOf(cell), linkCTM.getCells().size());
                 Coordinate[] coordinates = new Coordinate[3];
                 coordinates[0] = cellPoints.get(0);
                 coordinates[1] = cellPoints.get(2);
@@ -365,10 +363,9 @@ public class NTMModel implements OTSModelInterface
                 Coordinate centroid = new Coordinate(centroidPoint.getX(), centroidPoint.getY());
                 double dhb = 0.0;
                 ParametersNTM parametersNTM = new ParametersNTM();
-                AreaFlowLink areaFlowLink =
-                    new AreaFlowLink(buffer, "test", "test", "test", "test", "test", dhb, centroid,
-                        TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(0,
-                            SpeedUnit.KM_PER_HOUR), 1.0, parametersNTM, linkCTM, linkCTM.getCells().indexOf(cell));
+                AreaFlowLink areaFlowLink = new AreaFlowLink(buffer, "test", "test", "test", "test", "test", dhb, centroid,
+                        TrafficBehaviourType.NTM, new Length(0, LengthUnit.METER), new Speed(0, SpeedUnit.KM_PER_HOUR), 1.0,
+                        parametersNTM, linkCTM, linkCTM.getCells().indexOf(cell));
                 String Id = link.getId() + character;
                 areasFlowLink.put(Id, areaFlowLink);
                 character++;
@@ -383,11 +380,12 @@ public class NTMModel implements OTSModelInterface
      * @param compressedAreas2
      * @param areas2
      * @return
+     * @throws NetworkException
      */
-    private HashMap<Node, Node> connectCentroidsToBigger(ShapeStore compressedAreas, Map<String, Node> centroids,
-        Map<String, Node> bigCentroids, Map<String, Link> connectors, Map<String, Area> areas)
+    private HashMap<NTMNode, NTMNode> connectCentroidsToBigger(ShapeStore compressedAreas, Map<String, NTMNode> centroids,
+            Map<String, NTMNode> bigCentroids, Map<String, NTMLink> connectors, Map<String, Area> areas) throws NetworkException
     {
-        HashMap<Node, Node> mapSmallAreaToBigArea = new HashMap<Node, Node>();
+        HashMap<NTMNode, NTMNode> mapSmallAreaToBigArea = new HashMap<NTMNode, NTMNode>();
         // ArrayList<Node> centroidsToRemove = new ArrayList<Node>();
         for (ShapeObject bigArea : compressedAreas.getGeoObjects())
         {
@@ -396,9 +394,9 @@ public class NTMModel implements OTSModelInterface
             String nr = bigArea.getValues().get(0);
             Point centroidPoint = bigArea.getDesignLine().getCentroid();
             Coordinate centroidCoordinate = new Coordinate(centroidPoint.getX(), centroidPoint.getY());
-            Node bigCentroid = new Node(nr, centroidCoordinate, TrafficBehaviourType.NTM);
+            NTMNode bigCentroid = new NTMNode(this.network, nr, centroidCoordinate, TrafficBehaviourType.NTM);
             bigCentroids.put(nr, bigCentroid);
-            for (Node centroid : centroids.values())
+            for (NTMNode centroid : centroids.values())
             {
                 Coordinate nodeCoordinate = centroid.getPoint().getCoordinate();
                 Geometry nodeGeometry = new GeometryFactory().createPoint(nodeCoordinate);
@@ -431,18 +429,17 @@ public class NTMModel implements OTSModelInterface
      * @throws ParseException
      * @throws IOException
      */
-    public void readOrSetParametersNTM(NTMModel model, Map<String, Area> areasToUse, Map<String, Node> centroidsToUse,
-        String file) throws IOException, ParseException
+    public void readOrSetParametersNTM(NTMModel model, Map<String, Area> areasToUse, Map<String, NTMNode> centroidsToUse,
+            String file) throws IOException, ParseException
     {
-        HashMap<String, ArrayList<java.lang.Double>> parametersNTMByCentroid =
-            CsvFileReader.readParametersNTM(file, ";", ",");
+        HashMap<String, ArrayList<java.lang.Double>> parametersNTMByCentroid = CsvFileReader.readParametersNTM(file, ";", ",");
         if (parametersNTMByCentroid.isEmpty())
         {
             CsvFileWriter.writeParametersNTM(this, file);
             parametersNTMByCentroid = CsvFileReader.readParametersNTM(file, ";", ",");
         }
 
-        for (Node node : centroidsToUse.values())
+        for (NTMNode node : centroidsToUse.values())
         {
             ParametersNTM parametersNTM = null;
             ArrayList<java.lang.Double> parameters = parametersNTMByCentroid.get(node.getId());
@@ -469,14 +466,12 @@ public class NTMModel implements OTSModelInterface
                         }
                         // capacity = 9000;
                         parameters.remove(parameters.size() - 1);
-                        parametersNTM =
-                            new ParametersNTM(parameters, capacity, areasToUse.get(node.getId()).getRoadLength());
+                        parametersNTM = new ParametersNTM(parameters, capacity, areasToUse.get(node.getId()).getRoadLength());
                     }
                     else
                     {
-                        parametersNTM =
-                            new ParametersNTM(areasToUse.get(node.getId()).getAverageSpeed(), areasToUse.get(node.getId())
-                                .getRoadLength());
+                        parametersNTM = new ParametersNTM(areasToUse.get(node.getId()).getAverageSpeed(),
+                                areasToUse.get(node.getId()).getRoadLength());
                     }
                     cellBehaviourNTM.setParametersNTM(parametersNTM);
                 }
@@ -494,12 +489,11 @@ public class NTMModel implements OTSModelInterface
      * @throws ParseException
      */
     public void readOrSetCapacityRestraints(NTMModel model, Map<String, Area> areasToUse, String file, String fileFactor)
-        throws IOException, ParseException
+            throws IOException, ParseException
     {
-        HashMap<String, HashMap<String, Frequency>> borderCapacityAreasMap =
-            CsvFileReader.readCapResNTM(file, ";", ",");
+        HashMap<String, HashMap<String, Frequency>> borderCapacityAreasMap = CsvFileReader.readCapResNTM(file, ";", ",");
         HashMap<String, HashMap<String, java.lang.Double>> borderCapacityFactorAreasMap =
-            CsvFileReader.readCapResFactorNTM(fileFactor, ";", ",");
+                CsvFileReader.readCapResFactorNTM(fileFactor, ";", ",");
 
         if (borderCapacityAreasMap.isEmpty())
         {
@@ -514,18 +508,18 @@ public class NTMModel implements OTSModelInterface
         }
 
         // set the border capacity
-        for (Node origin : model.getAreaGraph().vertexSet())
+        for (NTMNode origin : model.getAreaGraph().vertexSet())
         {
             if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
             {
                 HashMap<BoundedNode, Frequency> borderCapacity = new HashMap<BoundedNode, Frequency>();
                 BoundedNode node = (BoundedNode) origin;
                 CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
-                Set<LinkEdge<Link>> outGoing = this.getAreaGraph().outgoingEdgesOf(node);
-                for (LinkEdge<Link> link : outGoing)
+                Set<LinkEdge<NTMLink>> outGoing = this.getAreaGraph().outgoingEdgesOf(node);
+                for (LinkEdge<NTMLink> link : outGoing)
                 {
                     double factor = 1.0;
-                    Node neighbourNode = (Node) link.getLink().getEndNode();
+                    NTMNode neighbourNode = (NTMNode) link.getLink().getEndNode();
                     BoundedNode graphEndNode = (BoundedNode) this.getNodeAreaGraphMap().get(neighbourNode.getId());
                     if (!borderCapacityAreasMap.isEmpty())
                     {
@@ -541,13 +535,12 @@ public class NTMModel implements OTSModelInterface
                             }
                             else
                             {
-                                factor =
-                                    borderCapacityFactorAreasMap.get(origin.getId()).get(graphEndNode.getId()).doubleValue();
+                                factor = borderCapacityFactorAreasMap.get(origin.getId()).get(graphEndNode.getId())
+                                        .doubleValue();
                             }
                         }
-                        double capacity =
-                            borderCapacityAreasMap.get(origin.getId()).get(graphEndNode.getId()).getInUnit(
-                                FrequencyUnit.PER_HOUR);
+                        double capacity = borderCapacityAreasMap.get(origin.getId()).get(graphEndNode.getId())
+                                .getInUnit(FrequencyUnit.PER_HOUR);
                         capacity *= factor;
                         Frequency cap = new Frequency(capacity, FrequencyUnit.PER_HOUR);
                         borderCapacity.put(graphEndNode, cap);
@@ -569,15 +562,17 @@ public class NTMModel implements OTSModelInterface
      * @param compressedAreas2
      * @param areas2
      * @return
+     * @throws NetworkException
      */
-    private Map<String, Link> createConnectors(HashMap<Node, Node> mapSmallAreaToBigArea, Map<String, Link> connectors)
+    private Map<String, NTMLink> createConnectors(HashMap<NTMNode, NTMNode> mapSmallAreaToBigArea,
+            Map<String, NTMLink> connectors) throws NetworkException
     {
-        HashMap<String, Link> mapConnectors = new HashMap<String, Link>();
-        for (Link link : connectors.values())
+        HashMap<String, NTMLink> mapConnectors = new HashMap<String, NTMLink>();
+        for (NTMLink link : connectors.values())
         {
-            Node startNode = null;
-            Node endNode = null;
-            Link newConnector = null;
+            NTMNode startNode = null;
+            NTMNode endNode = null;
+            NTMLink newConnector = null;
 
             if (mapSmallAreaToBigArea.containsKey(link.getStartNode()))
             {
@@ -589,19 +584,19 @@ public class NTMModel implements OTSModelInterface
             }
             if (startNode != null)
             {
-                newConnector =
-                    new Link(link.getDesignLine(), link.getId(), link.getLength(), startNode, (Node) link.getEndNode(), link
-                        .getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(), link.getLinkData());
+                newConnector = new NTMLink(this.network, this.getSimulator(), link.getDesignLine(), link.getId(),
+                        link.getLength(), startNode, (NTMNode) link.getEndNode(), link.getFreeSpeed(), null, link.getCapacity(),
+                        link.getBehaviourType(), link.getLinkData());
             }
             else if (endNode != null)
             {
-                newConnector =
-                    new Link(link.getDesignLine(), link.getId(), link.getLength(), (Node) link.getStartNode(), endNode, link
-                        .getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(), link.getLinkData());
+                newConnector = new NTMLink(this.network, this.getSimulator(), link.getDesignLine(), link.getId(),
+                        link.getLength(), (NTMNode) link.getStartNode(), endNode, link.getFreeSpeed(), null, link.getCapacity(),
+                        link.getBehaviourType(), link.getLinkData());
             }
             else
             {
-                newConnector = new Link(link);
+                newConnector = new NTMLink(link);
             }
             mapConnectors.put(link.getId(), newConnector);
         }
@@ -612,11 +607,11 @@ public class NTMModel implements OTSModelInterface
      * @param shpLinks2
      * @param areas2
      */
-    private void determineRoadLengthInAreas(Map<String, Link> shpLinks, Map<String, Area> areas)
+    private void determineRoadLengthInAreas(Map<String, NTMLink> shpLinks, Map<String, Area> areas)
     {
         Double speedTotal;
         Map<Area, java.lang.Double> speedTotalByArea = new HashMap<Area, java.lang.Double>();
-        for (Link link : shpLinks.values())
+        for (NTMLink link : shpLinks.values())
         {
             for (Area area : areas.values())
             {
@@ -628,11 +623,11 @@ public class NTMModel implements OTSModelInterface
                         covers = 1;
                     }
                     double length = covers * link.getLength().getInUnit(LengthUnit.KILOMETER) * link.getNumberOfLanes();
-                    DoubleScalar.Rel<LengthUnit> laneLength = new DoubleScalar.Rel<LengthUnit>(length, LengthUnit.KILOMETER);
+                    Length laneLength = new Length(length, LengthUnit.KILOMETER);
                     area.addRoadLength(laneLength);
                     // in SI (m*m/s)
                     java.lang.Double speedLaneLength =
-                        new java.lang.Double(link.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) * length);
+                            new java.lang.Double(link.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) * length);
                     if (speedTotalByArea.get(area) != null)
                     {
                         speedLaneLength += speedTotalByArea.get(area);
@@ -646,14 +641,14 @@ public class NTMModel implements OTSModelInterface
             if (speedTotalByArea.get(area) != null && area.getRoadLength() != null)
             {
                 double averageSpeed = speedTotalByArea.get(area) / area.getRoadLength().getInUnit(LengthUnit.KILOMETER);
-                area.setAverageSpeed(new DoubleScalar.Abs<SpeedUnit>(averageSpeed, SpeedUnit.KM_PER_HOUR));
+                area.setAverageSpeed(new Speed(averageSpeed, SpeedUnit.KM_PER_HOUR));
             }
             else
             {
                 System.out.println("FlowLink Area: nodeNumber " + area.getCentroidNr());
-                area.setRoadLength(new Rel<LengthUnit>(java.lang.Double.POSITIVE_INFINITY, LengthUnit.KILOMETER));
+                area.setRoadLength(new Length(java.lang.Double.POSITIVE_INFINITY, LengthUnit.KILOMETER));
                 double averageSpeed = 100;
-                area.setAverageSpeed(new DoubleScalar.Abs<SpeedUnit>(averageSpeed, SpeedUnit.KM_PER_HOUR));
+                area.setAverageSpeed(new Speed(averageSpeed, SpeedUnit.KM_PER_HOUR));
             }
         }
 
@@ -670,7 +665,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @param nodes set nodes.
      */
-    public void setNodes(Map<String, Node> nodes)
+    public void setNodes(Map<String, NTMNode> nodes)
     {
         this.nodes = nodes;
     }
@@ -678,7 +673,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @param shpLinks set shpLinks.
      */
-    public void setShpLinks(Map<String, Link> shpLinks)
+    public void setShpLinks(Map<String, NTMLink> shpLinks)
     {
         this.shpLinks = shpLinks;
     }
@@ -686,7 +681,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @param centroids set centroids.
      */
-    public void setCentroids(Map<String, Node> centroids)
+    public void setCentroids(Map<String, NTMNode> centroids)
     {
         this.centroids = centroids;
     }
@@ -699,11 +694,11 @@ public class NTMModel implements OTSModelInterface
     {
         NTMsimulation.simulate(this);
 
-        if (this.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) * NTMsimulation.steps
-            % this.getSettingsNTM().getReRouteTimeInterval().getInUnit(TimeUnit.SECOND) == 0)
+        if (this.getSettingsNTM().getTimeStepDurationNTM().getInUnit(DurationUnit.SECOND) * NTMsimulation.steps
+                % this.getSettingsNTM().getReRouteTimeInterval().getInUnit(DurationUnit.SECOND) == 0)
         {
             // in case we run on an animator and not on a simulator, we create the animation
-            if (this.simulator instanceof OTSAnimatorInterface)
+            if (this.simulator instanceof AnimatorInterface)
             {
                 if (this.getInputNTM().isPaint())
                 {
@@ -748,14 +743,14 @@ public class NTMModel implements OTSModelInterface
             }
             if (showLinks)
             {
-                for (LinkEdge<Link> shpLink : this.linkGraph.edgeSet())
+                for (LinkEdge<NTMLink> shpLink : this.linkGraph.edgeSet())
                 {
                     new ShpLinkAnimation(shpLink.getLink(), this.simulator, 2.0F, Color.RED);
                 }
             }
             if (showConnectors)
             {
-                for (Link shpConnector : this.shpConnectors.values())
+                for (NTMLink shpConnector : this.shpConnectors.values())
                 {
                     new ShpLinkAnimation(shpConnector, this.simulator, 5.0F, Color.BLUE);
                 }
@@ -763,14 +758,14 @@ public class NTMModel implements OTSModelInterface
 
             if (showFlowLinks)
             {
-                for (Link flowLink : this.flowLinks.values())
+                for (NTMLink flowLink : this.flowLinks.values())
                 {
                     new ShpLinkAnimation(flowLink, this.simulator, 10.0F, Color.RED);
                 }
             }
             if (showNodes)
             {
-                for (Node Node : this.nodes.values())
+                for (NTMNode Node : this.nodes.values())
                 {
                     new ShpNodeAnimation(Node, this.simulator);
                 }
@@ -781,14 +776,14 @@ public class NTMModel implements OTSModelInterface
             // }
             if (showGraphEdges)
             {
-                for (LinkEdge<Link> linkEdge : this.areaGraph.edgeSet())
+                for (LinkEdge<NTMLink> linkEdge : this.areaGraph.edgeSet())
                 {
                     new ShpLinkAnimation(linkEdge.getLink(), this.simulator, 5f, Color.BLACK);
                 }
             }
             if (showAreaNode)
             {
-                for (Node node : this.areaGraph.vertexSet())
+                for (NTMNode node : this.areaGraph.vertexSet())
                 {
                     new NodeAnimation(node, this.simulator);
                 }
@@ -848,14 +843,14 @@ public class NTMModel implements OTSModelInterface
             }
             if (showLinks)
             {
-                for (Link shpLink : model.shpLinks.values())
+                for (NTMLink shpLink : model.shpLinks.values())
                 {
                     new ShpLinkAnimation(shpLink, model.simulator, 6.0F, Color.GRAY);
                 }
             }
             if (showConnectors)
             {
-                for (Link shpConnector : model.shpConnectors.values())
+                for (NTMLink shpConnector : model.shpConnectors.values())
                 {
                     new ShpLinkAnimation(shpConnector, model.simulator, 5.0F, Color.BLUE);
                 }
@@ -863,14 +858,14 @@ public class NTMModel implements OTSModelInterface
 
             if (showFlowLinks)
             {
-                for (Link flowLink : model.flowLinks.values())
+                for (NTMLink flowLink : model.flowLinks.values())
                 {
                     new ShpLinkAnimation(flowLink, model.simulator, 2.0F, Color.RED);
                 }
             }
             if (showNodes)
             {
-                for (Node Node : model.nodes.values())
+                for (NTMNode Node : model.nodes.values())
                 {
                     new ShpNodeAnimation(Node, model.simulator);
                 }
@@ -881,14 +876,14 @@ public class NTMModel implements OTSModelInterface
             // }
             if (showEdges)
             {
-                for (LinkEdge<Link> linkEdge : model.areaGraph.edgeSet())
+                for (LinkEdge<NTMLink> linkEdge : model.areaGraph.edgeSet())
                 {
                     new ShpLinkAnimation(linkEdge.getLink(), model.simulator, 3f, Color.BLACK);
                 }
             }
             if (showAreaNode)
             {
-                for (Node node : model.areaGraph.vertexSet())
+                for (NTMNode node : model.areaGraph.vertexSet())
                 {
                     new NodeAnimation(node, model.simulator);
                 }
@@ -902,8 +897,7 @@ public class NTMModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+    public final OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -959,7 +953,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return flowLinks.
      */
-    public final Map<String, Link> getFlowLinks()
+    public final Map<String, NTMLink> getFlowLinks()
     {
         return this.flowLinks;
     }
@@ -967,7 +961,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @param flowLinks set flowLinks.
      */
-    public final void setFlowLinks(final Map<String, Link> flowLinks)
+    public final void setFlowLinks(final Map<String, NTMLink> flowLinks)
     {
         this.flowLinks = flowLinks;
     }
@@ -991,7 +985,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return areaGraph.
      */
-    public final SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> getAreaGraph()
+    public final SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>> getAreaGraph()
     {
         return this.areaGraph;
     }
@@ -999,7 +993,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return shpConnectors.
      */
-    public final Map<String, Link> getShpConnectors()
+    public final Map<String, NTMLink> getShpConnectors()
     {
         return this.shpConnectors;
     }
@@ -1007,7 +1001,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @param shpConnectors set shpConnectors.
      */
-    public final void setShpConnectors(final Map<String, Link> shpConnectors)
+    public final void setShpConnectors(final Map<String, NTMLink> shpConnectors)
     {
         this.shpConnectors = shpConnectors;
     }
@@ -1015,7 +1009,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return shpBigConnectors.
      */
-    public Map<String, Link> getShpBigConnectors()
+    public Map<String, NTMLink> getShpBigConnectors()
     {
         return this.shpBigConnectors;
     }
@@ -1023,7 +1017,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @param shpBigConnectors set shpBigConnectors.
      */
-    public void setShpBigConnectors(Map<String, Link> shpBigConnectors)
+    public void setShpBigConnectors(Map<String, NTMLink> shpBigConnectors)
     {
         this.shpBigConnectors = shpBigConnectors;
     }
@@ -1055,7 +1049,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return nodes.
      */
-    public final Map<String, Node> getNodes()
+    public final Map<String, NTMNode> getNodes()
     {
         return this.nodes;
     }
@@ -1063,7 +1057,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return shpLinks.
      */
-    public final Map<String, Link> getShpLinks()
+    public final Map<String, NTMLink> getShpLinks()
     {
         return this.shpLinks;
     }
@@ -1071,7 +1065,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return centroids.
      */
-    public final Map<String, Node> getCentroids()
+    public final Map<String, NTMNode> getCentroids()
     {
         return this.centroids;
     }
@@ -1079,7 +1073,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return linkGraph.
      */
-    public final SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> getLinkGraph()
+    public final SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>> getLinkGraph()
     {
         return this.linkGraph;
     }
@@ -1088,34 +1082,35 @@ public class NTMModel implements OTSModelInterface
      * Links that show typical highway or mainroad behaviour are specified explicitly as roads.
      * @param shpLinks the links of this model
      * @return the flowLinks
+     * @throws NetworkException
      */
-    public static Map<String, Link> createFlowLinks(final Map<String, Link> shpLinks, DoubleScalar<SpeedUnit> maxSpeed,
-        DoubleScalar<FrequencyUnit> maxCapacity)
+    public static Map<String, NTMLink> createFlowLinks(final Map<String, NTMLink> shpLinks, Speed maxSpeed,
+            Frequency maxCapacity) throws NetworkException
     {
-        Map<String, Link> flowLinks = new HashMap<String, Link>();
-        for (Link shpLink : shpLinks.values())
+        Map<String, NTMLink> flowLinks = new HashMap<String, NTMLink>();
+        for (NTMLink shpLink : shpLinks.values())
         {
 
             if (shpLink.getFreeSpeed().doubleValue() >= maxSpeed.doubleValue()
-                && shpLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
+                    && shpLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
             {
-                Link flowLink = new Link(shpLink);
+                NTMLink flowLink = new NTMLink(shpLink);
                 if (flowLink.getDesignLine() == null)
                 {
                     System.out.println("NTMModel line 694 ... no geometry");
                 }
                 flowLink.setBehaviourType(TrafficBehaviourType.FLOW);
-                ((Node) flowLink.getStartNode()).setBehaviourType(TrafficBehaviourType.FLOW);
-                ((Node) flowLink.getEndNode()).setBehaviourType(TrafficBehaviourType.FLOW);
+                ((NTMNode) flowLink.getStartNode()).setBehaviourType(TrafficBehaviourType.FLOW);
+                ((NTMNode) flowLink.getEndNode()).setBehaviourType(TrafficBehaviourType.FLOW);
                 flowLinks.put(flowLink.getId(), flowLink);
             }
         }
 
-        for (Link flowLink : flowLinks.values())
+        for (NTMLink flowLink : flowLinks.values())
         {
 
             if (flowLink.getFreeSpeed().doubleValue() >= maxSpeed.doubleValue()
-                && flowLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
+                    && flowLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
             {
                 shpLinks.remove(flowLink.getId());
             }
@@ -1173,7 +1168,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return bigCentroids.
      */
-    public Map<String, Node> getBigCentroids()
+    public Map<String, NTMNode> getBigCentroids()
     {
         return this.bigCentroids;
     }
@@ -1181,7 +1176,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @param bigCentroids set bigCentroids.
      */
-    public void setBigCentroids(Map<String, Node> bigCentroids)
+    public void setBigCentroids(Map<String, NTMNode> bigCentroids)
     {
         this.bigCentroids = bigCentroids;
     }
@@ -1205,7 +1200,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return debugLinkList.
      */
-    public Map<String, Link> getDebugLinkList()
+    public Map<String, NTMLink> getDebugLinkList()
     {
         return this.debugLinkList;
     }
@@ -1213,7 +1208,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @param debugLinkList set debugLinkList.
      */
-    public void setDebugLinkList(LinkedHashMap<String, Link> debugLinkList)
+    public void setDebugLinkList(LinkedHashMap<String, NTMLink> debugLinkList)
     {
         this.debugLinkList = debugLinkList;
     }
@@ -1221,7 +1216,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @return nodeAreaGraphMap.
      */
-    public Map<String, Node> getNodeAreaGraphMap()
+    public Map<String, NTMNode> getNodeAreaGraphMap()
     {
         return this.nodeAreaGraphMap;
     }
@@ -1229,7 +1224,7 @@ public class NTMModel implements OTSModelInterface
     /**
      * @param nodeAreaGraphMap set nodeAreaGraphMap.
      */
-    public void setNodeAreaGraphMap(Map<String, Node> nodeAreaGraphMap)
+    public void setNodeAreaGraphMap(Map<String, NTMNode> nodeAreaGraphMap)
     {
         this.nodeAreaGraphMap = nodeAreaGraphMap;
     }
@@ -1250,13 +1245,20 @@ public class NTMModel implements OTSModelInterface
         this.inputNTM = inputNTM;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public OTSNetwork getNetwork()
+    {
+        return this.network;
+    }
+
     /*
      * // Create new Areas around highways, that show different behaviour
      *//**
-     * @param shpLinks the links of this model
-     * @param areas the intial areas
-     * @return the additional areas
-     */
+       * @param shpLinks the links of this model
+       * @param areas the intial areas
+       * @return the additional areas
+       */
     /*
      * public static Map<String, AreaNTM> createCordonFeederAreas(final Map<String, ShpLink> shpLinks, final Map<String,
      * AreaNTM> areas) { for (ShpLink shpLink : shpLinks.values()) { if (shpLink.getSpeed() > 70 && shpLink.getCapacity() >

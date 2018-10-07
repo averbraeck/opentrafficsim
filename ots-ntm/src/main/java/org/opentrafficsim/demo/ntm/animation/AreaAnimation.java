@@ -10,11 +10,11 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
 import org.djunits.unit.SpeedUnit;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.demo.ntm.Area;
+
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -45,7 +45,7 @@ public class AreaAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public AreaAnimation(Area source, OTSSimulatorInterface simulator, final float width) throws NamingException,
+    public AreaAnimation(Area source, SimulatorInterface.TimeDoubleUnit simulator, final float width) throws NamingException,
         RemoteException
     {
         super(source, simulator);
@@ -130,7 +130,7 @@ public class AreaAnimation extends Renderable2D
      * @return
      */
     public static Float[] RGBtoHSV(float red, float green, float blue)
-    {
+    { 
         Float[] color = new Float[3];
         float min, max, delta, h, v, s;
         min = Math.min(red, green);

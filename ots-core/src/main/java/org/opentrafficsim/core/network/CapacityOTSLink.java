@@ -77,7 +77,7 @@ public class CapacityOTSLink extends OTSLink implements Capacity
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    public String toString()
     {
         return "CapacityOTSLink [capacity=" + this.capacity + "]";
     }

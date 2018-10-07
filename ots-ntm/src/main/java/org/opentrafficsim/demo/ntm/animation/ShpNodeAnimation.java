@@ -8,10 +8,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import org.opentrafficsim.demo.ntm.NTMNode;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.demo.ntm.Node;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -30,7 +30,7 @@ public class ShpNodeAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public ShpNodeAnimation(Node source, OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public ShpNodeAnimation(NTMNode source, SimulatorInterface.TimeDoubleUnit simulator) throws NamingException, RemoteException
     {
         super(source, simulator);
     }

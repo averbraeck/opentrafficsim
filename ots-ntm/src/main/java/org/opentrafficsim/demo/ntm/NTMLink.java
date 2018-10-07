@@ -12,17 +12,19 @@ import java.util.Set;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.network.CapacityOTSLink;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSLink;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -46,13 +48,13 @@ import com.vividsolutions.jts.operation.linemerge.LineMerger;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Link extends OTSLink
+public class NTMLink extends CapacityOTSLink
 {
     /** SPEEDAB class java.lang.Double 120.0. */
-    private DoubleScalar.Abs<SpeedUnit> freeSpeed;
+    private Speed freeSpeed;
 
     /** SPEEDAB class java.lang.Double 120.0. */
-    private DoubleScalar.Rel<TimeUnit> time;
+    private Duration time;
 
     /** The lines for the animation, relative to the centroid. */
     private Set<Path2D> lines = null;
@@ -82,19 +84,20 @@ public class Link extends OTSLink
      * @param linkData
      * @param name
      * @param direction
+     * @throws NetworkException
      */
 
-    public Link(final OTSLine3D geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length, final Node startNode,
-        final Node endNode, DoubleScalar.Abs<SpeedUnit> freeSpeed, DoubleScalar.Rel<TimeUnit> time,
-        final Frequency capacity, final TrafficBehaviourType behaviourType, LinkData linkData)
+    public NTMLink(final Network network, final OTSSimulatorInterface simulator, final OTSLine3D geometry, final String nr,
+            final Length length, final NTMNode startNode, final NTMNode endNode, Speed freeSpeed, Duration time,
+            final Frequency capacity, final TrafficBehaviourType behaviourType, LinkData linkData) throws NetworkException
     {
-        super(nr, startNode, endNode, LinkType.ALL, geometry, capacity);
+        super(network, nr, startNode, endNode, LinkType.ROAD, geometry, simulator, capacity);
         if (null == behaviourType)
         {
             System.out.println("behaviourType is null!");
         }
         // OTSLink(final IDL id, final OTSNode<IDN> startNode, final OTSNode<IDN> endNode,
-        // final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Frequency capacity)
+        // final Length length, final DoubleScalar.Frequency capacity)
         this.freeSpeed = freeSpeed;
         this.time = time;
         this.behaviourType = behaviourType;
@@ -110,12 +113,12 @@ public class Link extends OTSLink
             else
             {
                 if (Math.abs(cc[0].x - startNode.getPoint().x) > 0.001 && Math.abs(cc[0].x - endNode.getPoint().x) > 0.001
-                    && Math.abs(cc[cc.length - 1].x - startNode.getPoint().x) > 0.001
-                    && Math.abs(cc[cc.length - 1].x - endNode.getPoint().x) > 0.001)
+                        && Math.abs(cc[cc.length - 1].x - startNode.getPoint().x) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - endNode.getPoint().x) > 0.001)
                 {
-                    System.out.println("x coordinate non-match for " + nr + " (" + nr + "); cc[0].x=" + cc[0].x
-                        + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + startNode.getPoint().x + ", nodeB.x="
-                        + endNode.getPoint().x);
+                    System.out.println("x coordinate non-match for " + nr + " (" + nr + "); cc[0].x=" + cc[0].x + ", cc[L].x="
+                            + cc[cc.length - 1].x + ", nodeA.x=" + startNode.getPoint().x + ", nodeB.x="
+                            + endNode.getPoint().x);
                 }
             }
         }
@@ -127,7 +130,7 @@ public class Link extends OTSLink
      * @param speed2
      * @return
      */
-    private int estimateLanes(Frequency capacity, Abs<SpeedUnit> speed)
+    private int estimateLanes(Frequency capacity, Speed speed)
     {
         int lanes = 0;
         if (capacity != null)
@@ -219,10 +222,12 @@ public class Link extends OTSLink
 
     /**
      * @param link
+     * @throws NetworkException
      */
-    public Link(final Link link)
+    public NTMLink(final NTMLink link) throws NetworkException
     {
-        super(link.getId(), link.getStartNode(), link.getEndNode(), LinkType.ALL, link.getDesignLine(), link.getCapacity());
+        super(link.getNetwork(), link.getId(), link.getStartNode(), link.getEndNode(), LinkType.ROAD, link.getDesignLine(),
+                link.getSimulator(), link.getCapacity());
         this.freeSpeed = link.freeSpeed;
         this.numberOfLanes = link.getNumberOfLanes();
         this.behaviourType = link.behaviourType;
@@ -234,12 +239,12 @@ public class Link extends OTSLink
             else
             {
                 if (Math.abs(cc[0].x - this.getStartNode().getPoint().x) > 0.001
-                    && Math.abs(cc[0].x - this.getEndNode().getPoint().x) > 0.001
-                    && Math.abs(cc[cc.length - 1].x - this.getStartNode().getPoint().x) > 0.001
-                    && Math.abs(cc[cc.length - 1].x - this.getEndNode().getPoint().x) > 0.001)
+                        && Math.abs(cc[0].x - this.getEndNode().getPoint().x) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - this.getStartNode().getPoint().x) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - this.getEndNode().getPoint().x) > 0.001)
                     System.out.println("x coordinate non-match for " + this.getId() + " (" + this.getId() + "); cc[0].x="
-                        + cc[0].x + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + this.getStartNode().getPoint().x
-                        + ", nodeB.x=" + this.getEndNode().getPoint().x);
+                            + cc[0].x + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + this.getStartNode().getPoint().x
+                            + ", nodeB.x=" + this.getEndNode().getPoint().x);
             }
         }
     }
@@ -252,56 +257,65 @@ public class Link extends OTSLink
      * @param trafficBehaviourType
      * @return
      */
-    public static Link createLink(Node startNode, Node endNode, Frequency capacity,
-        DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time, TrafficBehaviourType trafficBehaviourType)
+    public static NTMLink createLink(Network network, OTSSimulatorInterface simulator, NTMNode startNode, NTMNode endNode,
+            Frequency capacity, Speed speed, Duration time, TrafficBehaviourType trafficBehaviourType)
 
     {
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate coordStart = new Coordinate(startNode.getPoint().x, startNode.getPoint().y);
         Coordinate coordEnd = new Coordinate(endNode.getPoint().x, endNode.getPoint().y);
-        Coordinate[] coords = new Coordinate[]{coordStart, coordEnd};
+        Coordinate[] coords = new Coordinate[] { coordStart, coordEnd };
         LineString line = geometryFactory.createLineString(coords);
         OTSLine3D geometry = null;
         try
         {
             geometry = new OTSLine3D(line);
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             exception.printStackTrace();
         }
-        DoubleScalar.Rel<LengthUnit> length =
-            new DoubleScalar.Rel<LengthUnit>(startNode.getPoint().getCoordinate().distance(
-                endNode.getPoint().getCoordinate()), LengthUnit.METER);
+        Length length =
+                new Length(startNode.getPoint().getCoordinate().distance(endNode.getPoint().getCoordinate()), LengthUnit.METER);
         String nr = startNode.getId() + " - " + endNode.getId();
-        Link newLink = new Link(geometry, nr, length, startNode, endNode, speed, null, capacity, trafficBehaviourType, null);
+        NTMLink newLink;
+        try
+        {
+            newLink = new NTMLink(network, simulator, geometry, nr, length, startNode, endNode, speed, null, capacity,
+                    trafficBehaviourType, null);
+        }
+        catch (NetworkException exception)
+        {
+            exception.printStackTrace();
+            newLink = null;
+        }
         return newLink;
     }
 
     /**
      * @param links HashMap
      */
-    public static void findSequentialLinks(final Map<String, Link> links, Map<String, Node> nodes)
+    public static void findSequentialLinks(final Map<String, NTMLink> links, Map<String, NTMNode> nodes)
     {
         // compare all links
-        HashMap<org.opentrafficsim.core.network.Node, ArrayList<Link>> linksStartAtNode = new HashMap<>();
-        HashMap<org.opentrafficsim.core.network.Node, ArrayList<Link>> linksEndAtNode = new HashMap<>();
+        HashMap<org.opentrafficsim.core.network.Node, ArrayList<NTMLink>> linksStartAtNode = new HashMap<>();
+        HashMap<org.opentrafficsim.core.network.Node, ArrayList<NTMLink>> linksEndAtNode = new HashMap<>();
         // HashMap<Node, Link> endNodeToLinkMap = new HashMap<Node, Link>();
         // HashMap<Node, Integer> numberOfLinksFromStartNodeMap = new HashMap<Node, Integer>();
         // find out how many links start from the endNode of a link
-        for (Link link : links.values())
+        for (NTMLink link : links.values())
         {
             // we put the first link we find in the map
             // as we are only interested in a connection with one in- and one out, one is enough
             if (linksStartAtNode.get(link.getStartNode()) == null)
             {
-                ArrayList<Link> localLinks = new ArrayList<Link>();
+                ArrayList<NTMLink> localLinks = new ArrayList<NTMLink>();
                 localLinks.add(link);
                 linksStartAtNode.put(link.getStartNode(), localLinks);
             }
             else
             {
-                ArrayList<Link> localLinks = linksStartAtNode.get(link.getStartNode());
+                ArrayList<NTMLink> localLinks = linksStartAtNode.get(link.getStartNode());
                 localLinks.add(link);
                 linksStartAtNode.put(link.getStartNode(), localLinks);
             }
@@ -313,13 +327,13 @@ public class Link extends OTSLink
 
             if (linksEndAtNode.get(link.getEndNode()) == null)
             {
-                ArrayList<Link> localLinks = new ArrayList<Link>();
+                ArrayList<NTMLink> localLinks = new ArrayList<NTMLink>();
                 localLinks.add(link);
                 linksEndAtNode.put(link.getEndNode(), localLinks);
             }
             else
             {
-                ArrayList<Link> localLinks = linksEndAtNode.get(link.getEndNode());
+                ArrayList<NTMLink> localLinks = linksEndAtNode.get(link.getEndNode());
                 localLinks.add(link);
                 linksEndAtNode.put(link.getEndNode(), localLinks);
             }
@@ -328,31 +342,31 @@ public class Link extends OTSLink
 
         }
 
-        HashMap<Link, ArrayList<Link>> upLinks = new HashMap<Link, ArrayList<Link>>();
-        HashMap<Link, ArrayList<Link>> downLinks = new HashMap<Link, ArrayList<Link>>();
-        for (Link link : links.values())
+        HashMap<NTMLink, ArrayList<NTMLink>> upLinks = new HashMap<NTMLink, ArrayList<NTMLink>>();
+        HashMap<NTMLink, ArrayList<NTMLink>> downLinks = new HashMap<NTMLink, ArrayList<NTMLink>>();
+        for (NTMLink link : links.values())
         {
             if (link.getEndNode().getId().equals("1090639793"))
             {
                 System.out.println("test: ");
             }
 
-            ArrayList<Link> downStreamLinks = null;
+            ArrayList<NTMLink> downStreamLinks = null;
             if (linksStartAtNode.get(link.getEndNode()) != null)
             {
-                downStreamLinks = new ArrayList<Link>(linksStartAtNode.get(link.getEndNode()));
+                downStreamLinks = new ArrayList<NTMLink>(linksStartAtNode.get(link.getEndNode()));
             }
 
-            ArrayList<Link> upStreamLinks = null;
+            ArrayList<NTMLink> upStreamLinks = null;
             if (linksEndAtNode.get(link.getStartNode()) != null)
             {
-                upStreamLinks = new ArrayList<Link>(linksEndAtNode.get(link.getStartNode()));
+                upStreamLinks = new ArrayList<NTMLink>(linksEndAtNode.get(link.getStartNode()));
 
             }
             // remove the BA link (U-turn)
             if (downStreamLinks != null)
             {
-                for (Link down : downStreamLinks)
+                for (NTMLink down : downStreamLinks)
                 {
                     if (down.getEndNode().equals(link.getStartNode()))
                     {
@@ -365,7 +379,7 @@ public class Link extends OTSLink
             if (upStreamLinks != null)
             {
 
-                for (Link up : upStreamLinks)
+                for (NTMLink up : upStreamLinks)
                 {
                     if (up.getStartNode().equals(link.getEndNode()))
                     {
@@ -384,39 +398,38 @@ public class Link extends OTSLink
             finished = true;
             boolean noMoreFound = true;
 
-            for (Link link : links.values())
+            for (NTMLink link : links.values())
             {
-                ArrayList<Link> downStreamLinks = downLinks.get(link);
+                ArrayList<NTMLink> downStreamLinks = downLinks.get(link);
                 // join this "link" with the "down" link, if they have no junction
 
                 if (downStreamLinks != null)
                 {
                     if (downStreamLinks.size() == 1)
                     {
-                        Link down = downStreamLinks.get(0);
+                        NTMLink down = downStreamLinks.get(0);
                         if (upLinks.get(down).size() == 1)
                         {
-                            if (link.getFreeSpeed().equals(down.getFreeSpeed())
-                                && link.getCapacity().equals(down.getCapacity())
-                                && link.getBehaviourType().equals(down.getBehaviourType()))
+                            if (link.getFreeSpeed().equals(down.getFreeSpeed()) && link.getCapacity().equals(down.getCapacity())
+                                    && link.getBehaviourType().equals(down.getBehaviourType()))
                             {
                                 noMoreFound = false;
-                                Link mergedLink = joinLink(link, down);
+                                NTMLink mergedLink = joinLink(link, down);
                                 if (mergedLink != null)
                                 {
-                                    ArrayList<Link> downLink = downLinks.get(down);
+                                    ArrayList<NTMLink> downLink = downLinks.get(down);
                                     upLinks.put(mergedLink, downLink);
-                                    ArrayList<Link> upLink = upLinks.get(link);
+                                    ArrayList<NTMLink> upLink = upLinks.get(link);
                                     upLinks.put(mergedLink, upLink);
 
-                                    ArrayList<Link> downDownStreamLinks = downLinks.get(down);
+                                    ArrayList<NTMLink> downDownStreamLinks = downLinks.get(down);
                                     if (downDownStreamLinks != null)
                                     {
-                                        for (Link downDown : downDownStreamLinks)
+                                        for (NTMLink downDown : downDownStreamLinks)
                                         {
                                             if (upLinks.get(downDown) != null)
                                             {
-                                                for (Link up : upLinks.get(downDown))
+                                                for (NTMLink up : upLinks.get(downDown))
                                                 {
                                                     if (up == down)
                                                     {
@@ -430,14 +443,14 @@ public class Link extends OTSLink
                                         }
                                     }
 
-                                    ArrayList<Link> upStreamLinks = upLinks.get(link);
+                                    ArrayList<NTMLink> upStreamLinks = upLinks.get(link);
                                     if (upStreamLinks != null)
                                     {
-                                        for (Link up : upStreamLinks)
+                                        for (NTMLink up : upStreamLinks)
                                         {
                                             if (downLinks.get(up) != null)
                                             {
-                                                for (Link down1 : downLinks.get(up))
+                                                for (NTMLink down1 : downLinks.get(up))
                                                 {
                                                     if (down1 == link)
                                                     {
@@ -487,11 +500,11 @@ public class Link extends OTSLink
      * @param down
      * @return
      */
-    public static Link joinLink(Link up, Link down)
+    public static NTMLink joinLink(NTMLink up, NTMLink down)
     {
         LinkData dataUp = up.getLinkData();
         LinkData dataDown = down.getLinkData();
-        Link mergedLink = null;
+        NTMLink mergedLink = null;
         LineMerger lineMerger = new LineMerger();
         Collection<Geometry> lineStrings = new ArrayList<Geometry>();
         lineStrings.add(down.getDesignLine().getLineString());
@@ -507,8 +520,7 @@ public class Link extends OTSLink
         // System.out.println("test: " + nr + " length A: " + up.getLength().doubleValue() + " length B: "
         // + down.getLength().doubleValue());
 
-        DoubleScalar.Rel<LengthUnit> length =
-            new DoubleScalar.Rel<LengthUnit>(up.getLength().getSI() + down.getLength().getSI(), LengthUnit.METER);
+        Length length = new Length(up.getLength().getSI() + down.getLength().getSI(), LengthUnit.METER);
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate[] coords = mergedGeometry.getCoordinates();
         LineString line = geometryFactory.createLineString(coords);
@@ -517,14 +529,21 @@ public class Link extends OTSLink
         {
             geometry = new OTSLine3D(line);
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             exception.printStackTrace();
         }
-        mergedLink =
-            new Link(geometry, nr, length, (Node) up.getStartNode(), (Node) down.getEndNode(), up.getFreeSpeed(), up
-                .getTime(), up.getCapacity(), up.getBehaviourType(), up.getLinkData());
-
+        try
+        {
+            mergedLink = new NTMLink(up.getNetwork(), up.getSimulator(), geometry, nr, length, (NTMNode) up.getStartNode(),
+                    (NTMNode) down.getEndNode(), up.getFreeSpeed(), up.getDuration(), up.getCapacity(), up.getBehaviourType(),
+                    up.getLinkData());
+        }
+        catch (NetworkException exception)
+        {
+            exception.printStackTrace();
+            mergedLink = null;
+        }
         return mergedLink;
     }
 
@@ -568,7 +587,7 @@ public class Link extends OTSLink
     /**
      * @return speed
      */
-    public DoubleScalar.Abs<SpeedUnit> getFreeSpeed()
+    public Speed getFreeSpeed()
     {
         return this.freeSpeed;
     }
@@ -603,7 +622,7 @@ public class Link extends OTSLink
     /**
      * @return time.
      */
-    public Rel<TimeUnit> getTime()
+    public Duration getDuration()
     {
         return this.time;
     }
@@ -611,7 +630,7 @@ public class Link extends OTSLink
     /**
      * @param time set time.
      */
-    public void setTime(Rel<TimeUnit> time)
+    public void setDuration(Duration time)
     {
         this.time = time;
     }
@@ -636,19 +655,20 @@ public class Link extends OTSLink
         this.behaviourType = behaviourType;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString()
-    {
-        return "ShpLink [nr=" + this.getId() + ", nodeA=" + this.getStartNode() + ", nodeB=" + this.getEndNode() + "]";
-    }
+    // TODO: uncomment after update of OTS
+    // /** {@inheritDoc} */
+    // @Override
+    // public String toString()
+    // {
+    // return "ShpLink [nr=" + this.getId() + ", nodeA=" + this.getStartNode() + ", nodeB=" + this.getEndNode() + "]";
+    // }
 
     /**
      * @return numberOfLanes.
      */
     public int getNumberOfLanes()
     {
-        return numberOfLanes;
+        return this.numberOfLanes;
     }
 
     /**
@@ -664,7 +684,7 @@ public class Link extends OTSLink
      */
     public LinkData getLinkData()
     {
-        return linkData;
+        return this.linkData;
     }
 
     /**
