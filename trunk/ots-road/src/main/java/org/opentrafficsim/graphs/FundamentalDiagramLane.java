@@ -82,8 +82,9 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     private ArrayList<Sample> samples = new ArrayList<Sample>();
 
     /** Definition of the density axis. */
-    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER), new LinearDensity(200,
-            LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
+    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER),
+            new LinearDensity(200, LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density",
+            "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -114,8 +115,8 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     }
 
     /** Definition of the flow axis. */
-    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR), new Frequency(3000d, FrequencyUnit.HERTZ),
-            null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
+    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR), new Frequency(3000d, FrequencyUnit.HERTZ), null,
+            0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
     private Axis xAxis;
@@ -168,8 +169,8 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
      * @throws SimRuntimeException in case scheduling of the sampler fails
      */
     public FundamentalDiagramLane(final String caption, final Duration aggregationTime, final Lane lane,
-            final Compatible detectedGTUTypes, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException,
-            SimRuntimeException
+            final Compatible detectedGTUTypes, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            throws NetworkException, SimRuntimeException
     {
         if (aggregationTime.getSI() <= 0)
         {

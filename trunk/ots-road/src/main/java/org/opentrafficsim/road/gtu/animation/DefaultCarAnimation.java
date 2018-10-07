@@ -52,7 +52,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
     /** is the animation destroyed? */
     private boolean isDestroyed = false;
-    
+
     /** Hashcode. */
     private final int hashCode;
 
@@ -77,8 +77,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedGTU gtu, final SimulatorInterface.TimeDoubleUnit simulator, final GTUColorer gtuColorer)
-            throws NamingException, RemoteException
+    public DefaultCarAnimation(final LaneBasedGTU gtu, final SimulatorInterface.TimeDoubleUnit simulator,
+            final GTUColorer gtuColorer) throws NamingException, RemoteException
     {
         super(gtu, simulator);
         this.hashCode = gtu.hashCode();

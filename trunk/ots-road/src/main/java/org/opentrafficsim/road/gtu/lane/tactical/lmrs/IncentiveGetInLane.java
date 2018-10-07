@@ -37,10 +37,10 @@ public class IncentiveGetInLane implements MandatoryIncentive
 
     /** Congestion speed threshold parameter type. */
     protected static final ParameterTypeSpeed VCONG = ParameterTypes.VCONG;
-    
+
     /** Hierarchy parameter. */
     protected static final ParameterTypeDouble SOCIO = LmrsParameters.SOCIO;
-    
+
     /** {@inheritDoc} */
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,

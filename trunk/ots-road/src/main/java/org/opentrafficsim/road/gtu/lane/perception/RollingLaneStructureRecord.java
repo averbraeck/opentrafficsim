@@ -670,7 +670,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     {
         return this.startDistance;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public boolean isDownstreamBranch()

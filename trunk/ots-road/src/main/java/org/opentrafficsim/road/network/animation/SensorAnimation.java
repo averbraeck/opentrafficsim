@@ -54,8 +54,8 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public SensorAnimation(final SingleSensor sensor, final Length sensorPosition, final SimulatorInterface.TimeDoubleUnit simulator,
-            final Color color) throws NamingException, RemoteException
+    public SensorAnimation(final SingleSensor sensor, final Length sensorPosition,
+            final SimulatorInterface.TimeDoubleUnit simulator, final Color color) throws NamingException, RemoteException
     {
         super(sensor, simulator, .9, new Length(0.5, LengthUnit.SI));
         this.sensorPosition = sensorPosition;

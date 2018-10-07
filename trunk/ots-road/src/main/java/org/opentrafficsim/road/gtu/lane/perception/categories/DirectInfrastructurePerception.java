@@ -486,7 +486,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             // already done at this time
             return;
         }
-        this.crossSection = new TimeStampedObject<>(getPerception().getLaneStructure().getExtendedCrossSection(), getTimestamp());
+        this.crossSection =
+                new TimeStampedObject<>(getPerception().getLaneStructure().getExtendedCrossSection(), getTimestamp());
     }
 
     /** {@inheritDoc} */

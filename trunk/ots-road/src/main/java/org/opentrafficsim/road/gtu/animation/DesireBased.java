@@ -23,5 +23,5 @@ public interface DesireBased
      * @return latest desire from the specified incentive
      */
     Desire getLatestDesire(Class<? extends Incentive> incentiveClass);
-    
+
 }

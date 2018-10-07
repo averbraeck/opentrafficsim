@@ -27,8 +27,8 @@ public enum Interpolation
     {
         /** {@inheritDoc} */
         @Override
-        Frequency interpolate(final Frequency frequency0, final Time time0, final Frequency frequency1,
-                final Time time1, final Time time)
+        Frequency interpolate(final Frequency frequency0, final Time time0, final Frequency frequency1, final Time time1,
+                final Time time)
         {
             return frequency0;
         }
@@ -47,8 +47,8 @@ public enum Interpolation
     {
         /** {@inheritDoc} */
         @Override
-        Frequency interpolate(final Frequency frequency0, final Time time0, final Frequency frequency1,
-                final Time time1, final Time time)
+        Frequency interpolate(final Frequency frequency0, final Time time0, final Frequency frequency1, final Time time1,
+                final Time time)
         {
             return Frequency.interpolate(frequency0, frequency1, (time.si - time0.si) / (time1.si - time0.si));
         }
@@ -107,8 +107,8 @@ public enum Interpolation
      * @param sliceStart boolean; whether the time is at the start of an arbitrary time slice
      * @return interpolated value from array at given time, or 0 when time is outside of range
      */
-    public final Frequency interpolateVector(final Time time, final FrequencyVector demandVector,
-            final TimeVector timeVector, final boolean sliceStart)
+    public final Frequency interpolateVector(final Time time, final FrequencyVector demandVector, final TimeVector timeVector,
+            final boolean sliceStart)
     {
         try
         {

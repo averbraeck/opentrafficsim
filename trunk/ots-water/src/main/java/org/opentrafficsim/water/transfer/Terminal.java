@@ -27,7 +27,4 @@ public class Terminal extends AbstractNamedLocated
         super(name, location);
     }
 
-  
-
 }
-

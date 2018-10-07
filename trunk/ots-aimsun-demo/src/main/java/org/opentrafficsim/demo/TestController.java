@@ -104,8 +104,7 @@ public final class TestController
             throw new Error("Could not load network from resource " + networkResource);
         }
         URLConnection conn = networkURL.openConnection();
-        try (BufferedReader reader =
-                new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)))
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)))
         {
             network = reader.lines().collect(Collectors.joining("\n"));
         }
@@ -127,8 +126,8 @@ public final class TestController
             AimsunControlProtoBuf.SimulateUntil simulateUntil =
                     AimsunControlProtoBuf.SimulateUntil.newBuilder().setTime(0.5d * step).build();
             System.out.println("Sending simulate up to step " + step + " command");
-            sendProtoMessage(outputStream, AimsunControlProtoBuf.OTSMessage.newBuilder().setSimulateUntil(simulateUntil)
-                    .build());
+            sendProtoMessage(outputStream,
+                    AimsunControlProtoBuf.OTSMessage.newBuilder().setSimulateUntil(simulateUntil).build());
             System.out.println("Receive reply");
             AimsunControlProtoBuf.OTSMessage reply = receiveProtoMessage(inputStream);
             System.out.println("Received " + reply);
@@ -182,9 +181,8 @@ public final class TestController
         // {
         // System.out.print(String.format("%d ", sizeBytes[i]));
         // }
-        int size =
-                ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
-                        + (sizeBytes[3] & 0xff);
+        int size = ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
+                + (sizeBytes[3] & 0xff);
         // System.out.println(String.format("-> %d", size));
         byte[] messageBytes = receiveBytes(inputStream, size);
         return AimsunControlProtoBuf.OTSMessage.parseFrom(messageBytes);

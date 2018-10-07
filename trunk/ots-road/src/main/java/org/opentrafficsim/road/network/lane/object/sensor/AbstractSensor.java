@@ -59,8 +59,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSLine3D geometry,
-            final Length elevation, final Compatible detectedGTUTypes) throws NetworkException
+            final RelativePosition.TYPE positionType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final OTSLine3D geometry, final Length elevation, final Compatible detectedGTUTypes) throws NetworkException
     {
         super(id, lane, longitudinalPosition, geometry, elevation);
         Throw.when(simulator == null, NullPointerException.class, "simulator is null");
@@ -86,8 +86,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public AbstractSensor(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSLine3D geometry,
-            final Compatible detectedGTUTypes) throws NetworkException
+            final RelativePosition.TYPE positionType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final OTSLine3D geometry, final Compatible detectedGTUTypes) throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, geometry, DEFAULT_SENSOR_ELEVATION, detectedGTUTypes);
     }
@@ -247,8 +247,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /** {@inheritDoc} */
     @Override
-    public abstract AbstractSensor clone(CrossSectionElement newCSE, SimulatorInterface.TimeDoubleUnit newSimulator, boolean animation)
-            throws NetworkException;
+    public abstract AbstractSensor clone(CrossSectionElement newCSE, SimulatorInterface.TimeDoubleUnit newSimulator,
+            boolean animation) throws NetworkException;
 
     /** {@inheritDoc} */
     @Override

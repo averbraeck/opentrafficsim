@@ -45,8 +45,7 @@ public class CsvFileWriter
                 textOut += ", ";
                 textOut += String.format("%.1f", nodeBehaviour.getParametersNTM().getAccCritical().get(2));
                 textOut += ", ";
-                textOut +=
-                    String.format("%.1f", (nodeBehaviour.getMaxCapacityNTMArea().getInUnit(FrequencyUnit.PER_HOUR))
+                textOut += String.format("%.1f", (nodeBehaviour.getMaxCapacityNTMArea().getInUnit(FrequencyUnit.PER_HOUR))
                         / nodeBehaviour.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER));
                 parametersNTMOut.write(textOut + " \n");
             }
@@ -65,14 +64,14 @@ public class CsvFileWriter
         for (NTMNode origin : model.getAreaGraph().vertexSet())
         {
             if (origin.getBehaviourType() == TrafficBehaviourType.NTM
-                | origin.getBehaviourType() == TrafficBehaviourType.CORDON)
+                    | origin.getBehaviourType() == TrafficBehaviourType.CORDON)
             {
                 String textOutCapRes = origin.getId();
                 String textHeader = "Capacity";
                 for (NTMNode destination : model.getAreaGraph().vertexSet())
                 {
                     if (destination.getBehaviourType() == TrafficBehaviourType.NTM
-                        | destination.getBehaviourType() == TrafficBehaviourType.CORDON)
+                            | destination.getBehaviourType() == TrafficBehaviourType.CORDON)
                     {
                         if (header)
                         {
@@ -86,8 +85,7 @@ public class CsvFileWriter
                             {
                                 if (factor == 0.0)
                                 {
-                                    capacity =
-                                        model.getAreaGraph().getEdge(origin, destination).getLink().getCorridorCapacity()
+                                    capacity = model.getAreaGraph().getEdge(origin, destination).getLink().getCorridorCapacity()
                                             .getInUnit(FrequencyUnit.PER_HOUR);
                                 }
                                 else

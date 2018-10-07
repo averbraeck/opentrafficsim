@@ -22,4 +22,3 @@ public class Sim0MQConnector
     }
 
 }
-

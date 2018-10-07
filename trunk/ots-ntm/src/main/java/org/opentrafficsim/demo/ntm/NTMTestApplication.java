@@ -85,8 +85,7 @@ public class NTMTestApplication extends DSOLApplication
         Dimension size = new Dimension(1024, 768);
         AnimationPanel animationPanel = new AnimationPanel(extent, size, simulator);
         panel.getTabbedPane().addTab(0, "animation", animationPanel);
-        String content =
-            "The simulation starts with the import of alle data, and initializes the NTM model\n"
+        String content = "The simulation starts with the import of alle data, and initializes the NTM model\n"
                 + "Wait untill this process has finished...\n" + " \n";
         int index = panel.getTabbedPane().getSelectedIndex();
         textArea = new JTextArea(content);

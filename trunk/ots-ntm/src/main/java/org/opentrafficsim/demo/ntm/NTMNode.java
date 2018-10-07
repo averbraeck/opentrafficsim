@@ -24,7 +24,8 @@ public class NTMNode extends OTSNode implements Comparable<NTMNode>
 {
     /**
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author$,
@@ -37,7 +38,11 @@ public class NTMNode extends OTSNode implements Comparable<NTMNode>
      */
     public enum TrafficBehaviourType
     {
-        NTM, CORDON, FLOW, CENTROID, ROAD
+        NTM,
+        CORDON,
+        FLOW,
+        CENTROID,
+        ROAD
     };
 
     /** */
@@ -57,9 +62,10 @@ public class NTMNode extends OTSNode implements Comparable<NTMNode>
      * @param nr to Identify
      * @param point ...
      * @param behaviourType describes traffic behaviour of units moving through the "node"
-     * @throws NetworkException 
+     * @throws NetworkException
      */
-    public NTMNode(final Network network, String nr, Coordinate point, TrafficBehaviourType behaviourType) throws NetworkException
+    public NTMNode(final Network network, String nr, Coordinate point, TrafficBehaviourType behaviourType)
+            throws NetworkException
     {
         super(network, nr, new OTSPoint3D(point));
         // long index = indexNumber++;
@@ -106,7 +112,7 @@ public class NTMNode extends OTSNode implements Comparable<NTMNode>
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
     @Override
     public boolean equals(final Object obj)
     {

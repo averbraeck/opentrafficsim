@@ -157,12 +157,12 @@ public class WriteToShp
             {
                 // Conditionally force valid polygons
                 if ((area.getGeometry() instanceof Polygon || area.getGeometry() instanceof MultiPolygon)
-                    && !IsValidOp.isValid(area.getGeometry()))
+                        && !IsValidOp.isValid(area.getGeometry()))
                 {
                     area.getGeometry().convexHull(); // or even: geom = geom.getEnvelope();
                 }
                 if (area.getGeometry().getGeometryType().equals("MultiPolygon")
-                    || area.getGeometry().getGeometryType().equals("Polygon"))
+                        || area.getGeometry().getGeometryType().equals("Polygon"))
                 {
                     String Id = Integer.toString(i);
                     MultiPolygon multiPolygon = null;

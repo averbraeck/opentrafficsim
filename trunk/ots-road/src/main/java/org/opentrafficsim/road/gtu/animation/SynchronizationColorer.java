@@ -88,7 +88,7 @@ public class SynchronizationColorer implements GTUColorer, Serializable
     {
         return LEGEND;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final String toString()

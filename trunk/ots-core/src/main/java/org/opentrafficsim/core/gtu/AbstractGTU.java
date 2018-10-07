@@ -169,9 +169,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * @throws GTUException when the preconditions of the constructor are not met
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTU(final IdGenerator idGenerator, final GTUType gtuType,
-            final OTSSimulatorInterface simulator, final PerceivableContext perceivableContext)
-            throws GTUException
+    public AbstractGTU(final IdGenerator idGenerator, final GTUType gtuType, final OTSSimulatorInterface simulator,
+            final PerceivableContext perceivableContext) throws GTUException
     {
         this(generateId(idGenerator), gtuType, simulator, perceivableContext);
     }
@@ -566,8 +565,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     {
         if (this.operationalPlan.get() == null)
         {
-            SimLogger.always().error(
-                    "No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime());
+            SimLogger.always()
+                    .error("No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime());
             return new DirectedPoint(0, 0, 0);
         }
         try

@@ -34,7 +34,7 @@ public abstract class AbstractNamed implements Named
         this.name = name;
     }
 
-    /**{@inheritDoc} */
+    /** {@inheritDoc} */
     @Override
     public final String getName()
     {

@@ -59,8 +59,8 @@ public class NoTrafficLane extends Lane
             final Length lateralOffsetAtEnd, final Length beginWidth, final Length endWidth)
             throws OTSGeometryException, NetworkException
     {
-        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE,
-                SPEED_NULL, NO_OVERTAKING);
+        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE, SPEED_NULL,
+                NO_OVERTAKING);
     }
 
     /**

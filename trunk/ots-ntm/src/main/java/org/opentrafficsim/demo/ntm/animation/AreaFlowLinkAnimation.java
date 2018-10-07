@@ -48,7 +48,7 @@ public class AreaFlowLinkAnimation extends Renderable2D
      * @throws RemoteException
      */
     public AreaFlowLinkAnimation(AreaFlowLink source, SimulatorInterface.TimeDoubleUnit simulator, final float width)
-        throws NamingException, RemoteException
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;
@@ -60,9 +60,8 @@ public class AreaFlowLinkAnimation extends Renderable2D
         {
             if (cell.getCellBehaviourFlow().getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) > 0)
             {
-                this.colorArea =
-                    colorFor(normalize(0, 100, cell.getCellBehaviourFlow().getCurrentSpeed()
-                        .getInUnit(SpeedUnit.KM_PER_HOUR)));
+                this.colorArea = colorFor(
+                        normalize(0, 100, cell.getCellBehaviourFlow().getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)));
                 // this.colorArea = Color.RED;
             }
         }

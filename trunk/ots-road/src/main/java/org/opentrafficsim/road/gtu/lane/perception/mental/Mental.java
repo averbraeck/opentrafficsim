@@ -5,7 +5,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
- * Interface for mental modules operating on perception. This is a first step of perception, where parameters both for the 
+ * Interface for mental modules operating on perception. This is a first step of perception, where parameters both for the
  * perception and tactical models can be set.
  * <p>
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

@@ -57,8 +57,7 @@ public final class Break
      */
     public static void onSuper(final GTU gtu, final String id, final double time, final boolean additionalCondition)
     {
-        superCondition =
-                gtu.getId().equals(id) && gtu.getSimulator().getSimulatorTime().si >= time && additionalCondition;
+        superCondition = gtu.getId().equals(id) && gtu.getSimulator().getSimulatorTime().si >= time && additionalCondition;
     }
 
     /**
@@ -73,7 +72,7 @@ public final class Break
             trigger();
         }
     }
-    
+
     /**
      * This method can be used if the context of a lower-level function does not contain the information on which to break. This
      * method will only trigger a break if at a higher-level function where the context was sufficient, the break condition was

@@ -81,8 +81,8 @@ public class Shoulder extends CrossSectionElement
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Shoulder(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation,
-            final Shoulder cse) throws NetworkException
+    protected Shoulder(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
+            final boolean animation, final Shoulder cse) throws NetworkException
     {
         super(newParentLink, newSimulator, animation, cse);
 

@@ -271,7 +271,8 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
             updateLeaders(lane);
             updateFollowers(lane);
         }
-        setInfo(CROSSSECTION, new TimeStampedObject<>(getPerception().getLaneStructure().getExtendedCrossSection(), getTimestamp()));
+        setInfo(CROSSSECTION,
+                new TimeStampedObject<>(getPerception().getLaneStructure().getExtendedCrossSection(), getTimestamp()));
         setInfo(ODOMETER, new TimeStampedObject<>(getGtu().getOdometer(), getTimestamp()));
     }
 

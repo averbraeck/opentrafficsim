@@ -144,7 +144,7 @@ public final class GeneratorPositions implements Locatable
     {
         return create(positions, stream, biases, null);
     }
-    
+
     /**
      * Create a GeneratorPositions object to draw positions from. The given positions are grouped per link. Lanes are drawn
      * without bias.
@@ -380,7 +380,7 @@ public final class GeneratorPositions implements Locatable
         {
             return this.link;
         }
-        
+
         /**
          * Returns the direction of travel.
          * @return GTUDirectionality; direction of travel
@@ -542,7 +542,7 @@ public final class GeneratorPositions implements Locatable
             }
             return this.positions.get(this.positions.size() - 1);
         }
-        
+
         /**
          * Returns the direction of travel.
          * @return GTUDirectionality; direction of travel

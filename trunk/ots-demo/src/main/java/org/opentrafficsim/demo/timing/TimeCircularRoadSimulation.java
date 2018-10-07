@@ -41,7 +41,7 @@ public class TimeCircularRoadSimulation implements UNITS
 {
     /** */
     private static final boolean GRAPHS = true;
-    
+
     /** */
     public TimeCircularRoadSimulation()
     {

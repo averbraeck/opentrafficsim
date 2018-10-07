@@ -126,7 +126,7 @@ final class LinkTag implements Serializable
 
     /** The priority for conflicts. */
     Priority priority = null;
-    
+
     /**
      * Parse the LINK tags.
      * @param nodeList nodeList the top-level nodes of the XML-file
@@ -183,7 +183,7 @@ final class LinkTag implements Serializable
 
             if (attributes.getNamedItem("PRIORITY") != null)
                 linkTag.priority = LaneAttributes.parsePriority(attributes.getNamedItem("PRIORITY").getNodeValue());
-            
+
             Node lkp = attributes.getNamedItem("LANEKEEPING");
             if (lkp != null)
                 linkTag.laneKeepingPolicy = LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());

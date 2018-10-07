@@ -16,11 +16,10 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 /**
  * <br>
  * Copyright (c) 2011-2013 TU Delft, Faculty of TBM, Systems and Simulation <br>
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk
- * Onderzoek TNO (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten
- * Binnenvaart, Ab Ovo Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en
- * Leefomgeving, including the right to sub-license sources and derived products to third parties. <br>
- * 
+ * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
+ * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
+ * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
+ * right to sub-license sources and derived products to third parties. <br>
  * @version Mar 24, 2013 <br>
  * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
  */
@@ -55,7 +54,6 @@ public class XFrequency implements Serializable
 
     /**
      * Returns the current counter value for a key
-     * 
      * @param key the string key for the counter
      * @return long the counter value
      */
@@ -66,7 +64,6 @@ public class XFrequency implements Serializable
 
     /**
      * Returns all counters
-     * 
      * @return the counter values
      */
     public SortedMap<String, Long> getFrequencies()
@@ -76,7 +73,6 @@ public class XFrequency implements Serializable
 
     /**
      * Returns the current number of observations
-     * 
      * @return long the number of observations
      */
     public long getN()
@@ -86,7 +82,6 @@ public class XFrequency implements Serializable
 
     /**
      * count frequency
-     * 
      * @param key the key to count the value under
      * @param value the value
      */
@@ -104,7 +99,6 @@ public class XFrequency implements Serializable
 
     /**
      * count 1
-     * 
      * @param key key
      */
     public void count(final String key)
@@ -135,7 +129,6 @@ public class XFrequency implements Serializable
 
     /**
      * is the counter initialized?
-     * 
      * @return returns whether the counter is initialized
      */
     public boolean isInitialized()
@@ -145,7 +138,6 @@ public class XFrequency implements Serializable
 
     /**
      * sets n
-     * 
      * @param n the number of measurements
      */
     private void setN(final long n)
@@ -155,7 +147,6 @@ public class XFrequency implements Serializable
 
     /**
      * returns the description of the counter
-     * 
      * @return String the description
      */
     public String getDescription()
@@ -165,7 +156,7 @@ public class XFrequency implements Serializable
 
     /**
      * Write statistics to an excel spreadsheet, starting on row "startRow"
-     * @param sheet the excel sheet to write to 
+     * @param sheet the excel sheet to write to
      * @param startRow the first row of writing
      * @return first free row after writing
      */

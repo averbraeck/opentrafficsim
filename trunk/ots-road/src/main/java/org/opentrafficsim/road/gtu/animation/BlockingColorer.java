@@ -56,7 +56,7 @@ public class BlockingColorer implements GTUColorer
         }
         return NOT_BLOCKING;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

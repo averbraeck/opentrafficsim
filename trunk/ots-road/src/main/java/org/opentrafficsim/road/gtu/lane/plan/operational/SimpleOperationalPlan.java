@@ -113,7 +113,7 @@ public class SimpleOperationalPlan implements Serializable
         checkAcceleration(a);
         this.acceleration = Acceleration.min(this.acceleration, a);
     }
-    
+
     /**
      * Check acceleration level.
      * @param a acceleration

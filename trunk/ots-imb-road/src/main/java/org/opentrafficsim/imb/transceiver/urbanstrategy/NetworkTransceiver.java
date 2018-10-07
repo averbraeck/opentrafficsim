@@ -65,8 +65,8 @@ public class NetworkTransceiver extends AbstractTransceiver
      * @throws IMBException when the message cannot be sent
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public NetworkTransceiver(final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSNetwork network)
-            throws IMBException
+    public NetworkTransceiver(final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final OTSNetwork network) throws IMBException
     {
         super("Network", connector, simulator);
         Throw.whenNull(network, "Network cannot be null");

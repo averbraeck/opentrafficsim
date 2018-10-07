@@ -39,7 +39,7 @@ public class SubjectiveCarAnimation extends Renderable2D implements Serializable
      * @throws RemoteException on communication failure
      */
     public SubjectiveCarAnimation(final SubjectiveCar source, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
-        throws NamingException, RemoteException
+            throws NamingException, RemoteException
     {
         super(source, simulator);
     }

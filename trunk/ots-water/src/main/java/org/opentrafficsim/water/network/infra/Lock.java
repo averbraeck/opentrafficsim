@@ -51,16 +51,16 @@ public class Lock extends Obstacle implements OperatedObstacle
      * @param name the name of the lock
      * @param waterwayLocation the location along the waterway
      * @param numberChambers the number of lock chambers
-     * @param operationHoursPerDay  hours per day
+     * @param operationHoursPerDay hours per day
      * @param operationDaysPerWeek days per week
      * @param length the length
      * @param width the width
      * @param cargoPriority does cargo have priority?
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Lock(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final String name, final WaterwayLocation waterwayLocation,
-            final int numberChambers, final int operationHoursPerDay, final int operationDaysPerWeek, final Length length,
-            final Length width, final boolean cargoPriority)
+    public Lock(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final String name,
+            final WaterwayLocation waterwayLocation, final int numberChambers, final int operationHoursPerDay,
+            final int operationDaysPerWeek, final Length length, final Length width, final boolean cargoPriority)
     {
         super(name, waterwayLocation);
         this.simulator = simulator;
@@ -125,6 +125,7 @@ public class Lock extends Obstacle implements OperatedObstacle
     {
         return this.numberChambers;
     }
+
     /**
      * @return the cargoPriority
      */

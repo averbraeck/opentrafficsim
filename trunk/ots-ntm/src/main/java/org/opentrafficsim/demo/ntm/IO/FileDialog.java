@@ -66,7 +66,7 @@ public class FileDialog
                 fullName += "." + fileType;
             if ((!reading) && (!defaultName.equals(fullName)) && (new File(fullName).exists()))
                 if (JOptionPane.showConfirmDialog(null, String.format("Overwrite existing file \"%s\"?", fullName),
-                    "Overwrite file", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION)
+                        "Overwrite file", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION)
                     return null;
             return fullName;
         }
@@ -104,7 +104,7 @@ class ExtensionFileFilter extends FileFilter
 
     public ExtensionFileFilter(String description, String extension)
     {
-        this(description, new String[]{extension});
+        this(description, new String[] { extension });
     }
 
     public ExtensionFileFilter(String description, String extensions[])

@@ -20,7 +20,7 @@ class BezierTag
     /** The shape factor. Will be filled after parsing. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     double shape;
-    
+
     /** Whether the control point distances are weighted. Will be filled after parsing. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     boolean weighted;

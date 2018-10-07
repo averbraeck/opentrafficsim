@@ -286,7 +286,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
     {
         return null; // multiple networks defined...
     }
-    
+
 }
 
 /** */

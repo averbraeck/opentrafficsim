@@ -36,7 +36,7 @@ public interface OTSSimulatorInterface extends DEVSSimulatorInterface.TimeDouble
      */
     SimEvent<SimTimeDoubleUnit> scheduleEvent(Time executionTime, short priority, Object source, Object target, String method,
             Object[] args) throws SimRuntimeException;
-    
+
     /** {@inheritDoc} */
     @Override
     OTSReplication getReplication();

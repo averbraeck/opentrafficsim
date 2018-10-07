@@ -54,9 +54,9 @@ public class MovableBridge extends FixedBridge implements OperatedObstacle
      * @param maxHeightClosed max height when bridge is closed
      * @param maxHeightOpened max height when bridge is opened
      */
-    public MovableBridge(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final String name, final WaterwayLocation waterwayLocation,
-            final int operationHoursPerDay, final int operationDaysPerWeek, final Length maxHeightClosed,
-            final Length maxHeightOpened)
+    public MovableBridge(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final String name,
+            final WaterwayLocation waterwayLocation, final int operationHoursPerDay, final int operationDaysPerWeek,
+            final Length maxHeightClosed, final Length maxHeightOpened)
     {
         super(name, waterwayLocation, maxHeightOpened);
         this.simulator = simulator;

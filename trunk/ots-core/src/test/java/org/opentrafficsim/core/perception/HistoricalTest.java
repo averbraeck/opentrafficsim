@@ -70,7 +70,7 @@ public class HistoricalTest
             {
                 return HistoricalTest.this.time;
             }
-            
+
         };
         Mockito.when(simulatorMock.getSimulatorTime()).then(answerTime);
         return simulatorMock;

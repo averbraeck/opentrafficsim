@@ -26,7 +26,7 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
 {
     /** */
     private static final long serialVersionUID = 20150000L;
-    
+
     /** The initial set of GTU colorers in the default list. */
     private static final GTUColorer[] COLORERS;
 

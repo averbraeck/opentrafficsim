@@ -40,7 +40,8 @@ public class SinkSensor extends AbstractSensor
      * @param simulator the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkSensor(final Lane lane, final Length position, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
+    public SinkSensor(final Lane lane, final Length position, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            throws NetworkException
     {
         super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator, Compatible.EVERYTHING);
         try
@@ -92,8 +93,8 @@ public class SinkSensor extends AbstractSensor
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public SinkSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation)
-            throws NetworkException
+    public SinkSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
+            final boolean animation) throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,

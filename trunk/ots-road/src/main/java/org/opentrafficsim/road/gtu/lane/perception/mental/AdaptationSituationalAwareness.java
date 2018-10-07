@@ -21,7 +21,7 @@ import nl.tudelft.simulation.language.Throw;
  * SA = | SA_MAX - (SA_MAX - SA_MIN) * (taskSaturation - TS_CRIT) / (TS_MAX - TS_CRIT),   TS_CRIT &lt;= taskSaturation &lt; TS_MAX 
  *      \ SA_MIN,                                                                         taskSaturation &gt;= TS_MAX
  * 
- * TR = (S_MAX - SA) * TR_MAX   
+ * TR = (S_MAX - SA) * TR_MAX
  * </pre>
  * <p>
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

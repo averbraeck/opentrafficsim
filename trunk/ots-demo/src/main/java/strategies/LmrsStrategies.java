@@ -562,8 +562,7 @@ public class LmrsStrategies implements EventListenerInterface
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simul)
-                throws SimRuntimeException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simul) throws SimRuntimeException
         {
             OTSSimulatorInterface sim = (OTSSimulatorInterface) simul;
             LmrsStrategies.this.simulator = sim;

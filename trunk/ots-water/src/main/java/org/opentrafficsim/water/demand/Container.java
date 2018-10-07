@@ -84,8 +84,8 @@ public class Container implements Serializable
      * @param empty empty or full
      * @param shippingLine shipping line of the container
      */
-    public Container(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Terminal terminalFrom, final Terminal terminalTo,
-            final boolean empty, final ShippingLine shippingLine)
+    public Container(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Terminal terminalFrom,
+            final Terminal terminalTo, final boolean empty, final ShippingLine shippingLine)
     {
         super();
         this.simulator = simulator;
@@ -433,7 +433,7 @@ public class Container implements Serializable
      */
     public final void setOnShipTime()
     {
-        this.onShipTime = this.simulator.getSimulatorTime()   ;
+        this.onShipTime = this.simulator.getSimulatorTime();
     }
 
 }

@@ -75,7 +75,7 @@ public class SpeedLimitProspect implements Serializable
     {
         return this.addSources.containsKey(source);
     }
-    
+
     /**
      * Returns whether the given source is already removed in the prospect.
      * @param source Object; source
@@ -85,7 +85,7 @@ public class SpeedLimitProspect implements Serializable
     {
         return this.removeSources.containsKey(source);
     }
-    
+
     /**
      * Returns the odometer value at which the last update was performed.
      * @return Length; odometer value at which the last update was performed
@@ -94,7 +94,7 @@ public class SpeedLimitProspect implements Serializable
     {
         return this.odometer;
     }
-    
+
     /**
      * Sets the speed info of a speed limit type.
      * @param distance location to set info for a speed limit type

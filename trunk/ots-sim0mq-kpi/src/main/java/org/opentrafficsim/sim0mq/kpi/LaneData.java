@@ -18,10 +18,10 @@ public class LaneData implements LaneDataInterface
 {
     /** Corresponding Link. */
     private LinkData linkData;
-    
+
     /** Wrapped lane. */
     private final String laneName;
-    
+
     /** the link length. */
     final Length length;
 
@@ -112,5 +112,5 @@ public class LaneData implements LaneDataInterface
     {
         return "LaneData [linkData=" + this.linkData + ", laneName=" + this.laneName + ", length=" + this.length + "]";
     }
-    
+
 }

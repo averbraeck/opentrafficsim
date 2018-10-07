@@ -122,7 +122,8 @@ public class TaskLaneChanging extends TaskHeadwayBased
         };
 
         /**
-         * Returns fraction of lateral consideration, &lt;0 for left lane, &gt;0 for right lane. Should be in the range -1 ... 1.
+         * Returns fraction of lateral consideration, &lt;0 for left lane, &gt;0 for right lane. Should be in the range -1 ...
+         * 1.
          * @param perception LanePerception; perception
          * @param gtu LaneBasedGTU; gtu
          * @param parameters Parameters; parameters

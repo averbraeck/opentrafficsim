@@ -3,7 +3,6 @@
  */
 package org.opentrafficsim.water.network;
 
-
 /**
  * A link between two points along waterways.
  * <p>
@@ -59,7 +58,7 @@ public class WaterwayLink
     {
         return "WaterwayLink " + this.waterwayLocation1 + " x " + this.waterwayLocation2;
     }
-    
+
     /**
      * @return short link info
      */

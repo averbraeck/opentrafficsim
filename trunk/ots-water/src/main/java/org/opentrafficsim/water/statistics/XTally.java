@@ -20,71 +20,70 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 /**
  * <br>
  * Copyright (c) 2011-2013 TU Delft, Faculty of TBM, Systems and Simulation <br>
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk
- * Onderzoek TNO (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten
- * Binnenvaart, Ab Ovo Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en
- * Leefomgeving, including the right to sub-license sources and derived products to third parties. <br>
- * 
+ * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
+ * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
+ * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
+ * right to sub-license sources and derived products to third parties. <br>
  * @version Mar 24, 2013 <br>
  * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
  */
 @XStreamAlias("tally")
+@SuppressWarnings("checkstyle:visibilitymodifier")
 public class XTally implements Serializable
 {
     /** */
     @XStreamOmitField
     private static final long serialVersionUID = 1L;
 
-    /** sum refers to the sum of the tally */
+    /** sum refers to the sum of the tally. */
     protected double sum = Double.NaN;
 
-    /** min refers to the min of the tally */
+    /** min refers to the min of the tally. */
     protected double min = Double.NaN;
 
-    /** maxrefers to the max of the tally */
+    /** maxrefers to the max of the tally. */
     protected double max = Double.NaN;
 
-    /** varianceSum refers to the varianceSum of the tally */
+    /** varianceSum refers to the varianceSum of the tally. */
     protected double varianceSum = Double.NaN;
 
-    /** n refers to the number of measurements */
+    /** n refers to the number of measurements. */
     protected long n = Long.MIN_VALUE;
 
-    /** description refers to the description of this tally */
+    /** description refers to the description of this tally. */
     protected String description;
 
-    /** the confidenceDistribution */
+    /** the confidenceDistribution. */
     @XStreamOmitField
     private DistNormal confidenceDistribution = new DistNormal(new MersenneTwister());
 
-    /** the semaphore */
+    /** the semaphore. */
     @XStreamOmitField
     protected Object semaphore = new Object();
 
-    /** LEFT_SIDE_CONFIDENCE refers to the left side confidence */
+    /** LEFT_SIDE_CONFIDENCE refers to the left side confidence. */
     @XStreamOmitField
     public static final short LEFT_SIDE_CONFIDENCE = -1;
 
-    /** BOTH_SIDE_CONFIDENCE refers to both sides of the confidence */
+    /** BOTH_SIDE_CONFIDENCE refers to both sides of the confidence. */
     @XStreamOmitField
     public static final short BOTH_SIDE_CONFIDENCE = 0;
 
-    /** RIGTH_SIDE_CONFIDENCE refers to the right side confidence */
+    /** RIGTH_SIDE_CONFIDENCE refers to the right side confidence. */
     @XStreamOmitField
     public static final short RIGTH_SIDE_CONFIDENCE = 1;
 
     /**
      * @param description description of the statistic
      */
-    public XTally(String description)
+    public XTally(final String description)
     {
         super();
         this.description = description;
     }
 
     /**
-     * Returns the sampleMean of all oberservations since the initialization
-     * 
+     * Returns the sampleMean of all oberservations since the initialization.
      * @return double the sampleMean
      */
     public double getSampleMean()
@@ -96,10 +95,9 @@ public class XTally implements Serializable
     }
 
     /**
-     * returns the confidence interval on either side of the mean
-     * 
-     * @param alpha Alpha is the significance level used to compute the confidence level. The confidence level equals
-     *            100*(1 - alpha)%, or in other words, an alpha of 0.05 indicates a 95 percent confidence level.
+     * returns the confidence interval on either side of the mean.
+     * @param alpha Alpha is the significance level used to compute the confidence level. The confidence level equals 100*(1 -
+     *            alpha)%, or in other words, an alpha of 0.05 indicates a 95 percent confidence level.
      * @return double[] the confidence interval of this tally
      */
     public double[] getConfidenceInterval(final double alpha)
@@ -108,10 +106,9 @@ public class XTally implements Serializable
     }
 
     /**
-     * returns the confidence interval based of the mean
-     * 
-     * @param alpha Alpha is the significance level used to compute the confidence level. The confidence level equals
-     *            100*(1 - alpha)%, or in other words, an alpha of 0.05 indicates a 95 percent confidence level.
+     * returns the confidence interval based of the mean.
+     * @param alpha Alpha is the significance level used to compute the confidence level. The confidence level equals 100*(1 -
+     *            alpha)%, or in other words, an alpha of 0.05 indicates a 95 percent confidence level.
      * @param side the side of the confidence interval with respect to the mean
      * @return double[] the confidence interval of this tally
      */
@@ -138,7 +135,7 @@ public class XTally implements Serializable
             }
             double z = this.confidenceDistribution.getInverseCumulativeProbability(level);
             double confidence = z * Math.sqrt(this.getSampleVariance() / this.n);
-            double[] result = {this.getSampleMean() - confidence, this.getSampleMean() + confidence};
+            double[] result = { this.getSampleMean() - confidence, this.getSampleMean() + confidence };
             if (side == Tally.LEFT_SIDE_CONFIDENCE)
             {
                 result[1] = this.getSampleMean();
@@ -154,8 +151,7 @@ public class XTally implements Serializable
     }
 
     /**
-     * returns the description of this tally
-     * 
+     * returns the description of this tally.
      * @return Sting description
      */
     public String getDescription()
@@ -165,7 +161,6 @@ public class XTally implements Serializable
 
     /**
      * Returns the max.
-     * 
      * @return double
      */
     public double getMax()
@@ -175,7 +170,6 @@ public class XTally implements Serializable
 
     /**
      * Returns the min.
-     * 
      * @return double
      */
     public double getMin()
@@ -184,8 +178,7 @@ public class XTally implements Serializable
     }
 
     /**
-     * Returns the number of observations
-     * 
+     * Returns the number of observations.
      * @return long n
      */
     public long getN()
@@ -194,8 +187,7 @@ public class XTally implements Serializable
     }
 
     /**
-     * Returns the current tally standard deviation
-     * 
+     * Returns the current tally standard deviation.
      * @return double the standard deviation
      */
     public double getStdDev()
@@ -211,8 +203,7 @@ public class XTally implements Serializable
     }
 
     /**
-     * returns the sum of the values of the observations
-     * 
+     * returns the sum of the values of the observations.
      * @return double sum
      */
     public double getSum()
@@ -221,8 +212,7 @@ public class XTally implements Serializable
     }
 
     /**
-     * Returns the current tally variance
-     * 
+     * Returns the current tally variance.
      * @return double samplevariance
      */
     public double getSampleVariance()
@@ -254,7 +244,6 @@ public class XTally implements Serializable
 
     /**
      * is this tally initialized?
-     * 
      * @return true whenever this.initialize is invoked.
      */
     public boolean isInitialized()
@@ -263,8 +252,7 @@ public class XTally implements Serializable
     }
 
     /**
-     * tally
-     * 
+     * tally.
      * @param value the value
      */
     public void tally(final double value)
@@ -285,9 +273,8 @@ public class XTally implements Serializable
     }
 
     /**
-     * Write statistics to an excel spreadsheet, starting on row "startRow"
-     * 
-     * @param sheet the excel sheet to write to 
+     * Write statistics to an excel spreadsheet, starting on row "startRow".
+     * @param sheet the excel sheet to write to
      * @param startRow the first row of writing
      * @return first free row after writing
      */

@@ -59,7 +59,8 @@ public final class ConflictBuilder
      * @throws OTSGeometryException in case of geometry exception
      */
     public static void buildConflicts(final OTSNetwork network, final GTUType gtuType,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator) throws OTSGeometryException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
+            throws OTSGeometryException
     {
         buildConflicts(network, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
     }
@@ -106,8 +107,9 @@ public final class ConflictBuilder
      * @param widthGenerator width generator
      * @throws OTSGeometryException in case of geometry exception
      */
-    public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
-            final WidthGenerator widthGenerator) throws OTSGeometryException
+    public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
+            throws OTSGeometryException
     {
         buildConflicts(lanes, gtuType, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList());
     }
@@ -122,9 +124,9 @@ public final class ConflictBuilder
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OTSGeometryException in case of geometry exception
      */
-    public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
-            final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
-            throws OTSGeometryException
+    public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator,
+            final LaneCombinationList ignoreList, final LaneCombinationList permittedList) throws OTSGeometryException
     {
         // Loop Lane / GTUDirectionality combinations
         for (int i = 0; i < lanes.size(); i++)
@@ -376,8 +378,8 @@ public final class ConflictBuilder
                     f2Start = f2End;
                     f2End = f2Temp;
                 }
-                buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction1(), lane2, dir2, f2Start,
-                        f2End, gtuType, simulator, widthGenerator, permitted);
+                buildCrossingConflict(lane1, dir1, f1Start, intersection.getFraction1(), lane2, dir2, f2Start, f2End, gtuType,
+                        simulator, widthGenerator, permitted);
                 f1Start = Double.NaN;
                 f2Start = Double.NaN;
                 f2End = Double.NaN;
@@ -456,8 +458,9 @@ public final class ConflictBuilder
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static void buildSplitConflict(final Lane lane1, final GTUDirectionality dir1, final double f1end, final Lane lane2,
-            final GTUDirectionality dir2, final double f2end, final GTUType gtuType, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
-            final WidthGenerator widthGenerator) throws NetworkException, OTSGeometryException
+            final GTUDirectionality dir2, final double f2end, final GTUType gtuType,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final WidthGenerator widthGenerator)
+            throws NetworkException, OTSGeometryException
     {
 
         // Determine lane start from direction

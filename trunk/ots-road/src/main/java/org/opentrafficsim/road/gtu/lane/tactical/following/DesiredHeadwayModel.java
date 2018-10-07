@@ -27,5 +27,5 @@ public interface DesiredHeadwayModel
      * @return desired headway
      */
     Length desiredHeadway(Parameters parameters, Speed speed) throws ParameterException;
-    
+
 }

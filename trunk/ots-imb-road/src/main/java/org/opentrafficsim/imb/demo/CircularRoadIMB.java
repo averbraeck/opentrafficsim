@@ -743,9 +743,8 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(
-                    new Time(this.simulator.getSimulatorTime().getSI() + 10, TimeUnit.BASE_SECOND), this, this,
-                    "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 10, TimeUnit.BASE_SECOND),
+                    this, this, "drawGraphs", null);
         }
         catch (SimRuntimeException exception)
         {

@@ -424,10 +424,10 @@ public interface Synchronization extends LmrsParameters
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> set, final LanePerception perception,
             final RelativeLane relativeLane) throws OperationalPlanException
     {
-//        if (true)
-//        {
-//            return set;
-//        }
+        // if (true)
+        // {
+        // return set;
+        // }
         // TODO find a better solution for this inefficient hack... when to ignore a vehicle for synchronization?
         SortedSetPerceptionIterable<HeadwayGTU, LaneBasedGTU> out = new SortedSetPerceptionIterable<>();
         if (set == null)
@@ -623,8 +623,8 @@ public interface Synchronization extends LmrsParameters
      * @param dCoop cooperation threshold
      * @return required buffer space to perform a lane change and further lane changes
      */
-    static Length requiredBufferSpace(final Speed speed, final int nCur, final Length x0, final Duration t0,
-            final Duration lc, final double dCoop)
+    static Length requiredBufferSpace(final Speed speed, final int nCur, final Length x0, final Duration t0, final Duration lc,
+            final double dCoop)
     {
         Length xCrit = speed.multiplyBy(t0);
         xCrit = Length.max(xCrit, x0);

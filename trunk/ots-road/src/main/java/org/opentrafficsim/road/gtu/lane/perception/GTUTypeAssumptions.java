@@ -54,8 +54,7 @@ public class GTUTypeAssumptions implements Serializable
      * @param gtuType the GTUType to set the model for
      * @param parameters the model to set for the GTUType
      */
-    public final void setParameters(final GTUType gtuType,
-            final Parameters parameters)
+    public final void setParameters(final GTUType gtuType, final Parameters parameters)
     {
         Throw.whenNull(gtuType, "gtuType cannot be null");
         Throw.whenNull(parameters, "parameters cannot be null");
@@ -141,8 +140,7 @@ public class GTUTypeAssumptions implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((this.parametersMap == null) ? 0 : this.parametersMap.hashCode());
+        result = prime * result + ((this.parametersMap == null) ? 0 : this.parametersMap.hashCode());
         result = prime * result + ((this.carFollowingModelMap == null) ? 0 : this.carFollowingModelMap.hashCode());
         result = prime * result + ((this.laneTypeSpeedMap == null) ? 0 : this.laneTypeSpeedMap.hashCode());
         return result;
@@ -188,8 +186,8 @@ public class GTUTypeAssumptions implements Serializable
     @Override
     public final String toString()
     {
-        return "GTUTypeAssumptions [carFollowingModelMap=" + this.carFollowingModelMap + ", parametersMap="
-                + this.parametersMap + ", laneTypeSpeedMap=" + this.laneTypeSpeedMap + "]";
+        return "GTUTypeAssumptions [carFollowingModelMap=" + this.carFollowingModelMap + ", parametersMap=" + this.parametersMap
+                + ", laneTypeSpeedMap=" + this.laneTypeSpeedMap + "]";
     }
 
 }

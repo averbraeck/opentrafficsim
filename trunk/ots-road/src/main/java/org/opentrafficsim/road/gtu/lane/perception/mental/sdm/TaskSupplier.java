@@ -26,13 +26,13 @@ public interface TaskSupplier
     Task getTask(LaneBasedGTU gtu);
 
     /**
-     * Class that supplies a constant task. 
+     * Class that supplies a constant task.
      */
     class Constant implements TaskSupplier
     {
         /** Task demand. */
         private double taskDemand;
-        
+
         /**
          * Constructor.
          * @param taskDemand double; task demand
@@ -49,5 +49,5 @@ public interface TaskSupplier
             return new Task.Constant(this.taskDemand);
         }
     }
-    
+
 }

@@ -21,7 +21,7 @@ public class AngularVel implements Serializable
     public String toString()
     {
         return "AngularVel [yawRate=" + this.getYawRate() + ", pitchRate=" + this.getPitchRate() + ", rollRate="
-            + this.getRollRate() + "]";
+                + this.getRollRate() + "]";
     }
 
     /**

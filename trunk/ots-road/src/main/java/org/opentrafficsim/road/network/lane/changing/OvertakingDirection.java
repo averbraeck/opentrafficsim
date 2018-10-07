@@ -23,5 +23,5 @@ public enum OvertakingDirection
 
     /** Neither left nor right are allowed. */
     NONE;
-    
+
 }

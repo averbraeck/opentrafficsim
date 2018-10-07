@@ -19,7 +19,8 @@ import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeSpeed<G extends GtuDataInterface> extends ExtendedDataTypeFloat<SpeedUnit, FloatSpeed, FloatSpeedVector, G>
+public abstract class ExtendedDataTypeSpeed<G extends GtuDataInterface>
+        extends ExtendedDataTypeFloat<SpeedUnit, FloatSpeed, FloatSpeedVector, G>
 {
 
     /**

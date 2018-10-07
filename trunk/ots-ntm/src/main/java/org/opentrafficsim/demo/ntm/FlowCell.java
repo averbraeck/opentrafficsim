@@ -62,8 +62,8 @@ public class FlowCell implements Locatable
      * @param numberOfLanes
      * @param behaviourType
      */
-    public FlowCell(final Length cellLength, final Frequency maxCapacity,
-        Speed speed, final int numberOfLanes, final TrafficBehaviourType behaviourType)
+    public FlowCell(final Length cellLength, final Frequency maxCapacity, Speed speed, final int numberOfLanes,
+            final TrafficBehaviourType behaviourType)
     {
         this.cellLength = cellLength;
         this.maxCapacity = maxCapacity;
@@ -83,7 +83,7 @@ public class FlowCell implements Locatable
      * @return carProduction
      */
     public final Frequency retrieveCurrentInflowCapacity(final double accumulatedCarsPerLengthUnit,
-        final Frequency maximumCapacity, final ParametersFundamentalDiagram param)
+            final Frequency maximumCapacity, final ParametersFundamentalDiagram param)
     {
         Frequency currentInflowCapacity;
         if (accumulatedCarsPerLengthUnit > param.getAccCritical().get(0))
@@ -114,24 +114,21 @@ public class FlowCell implements Locatable
     public Speed retrieveCurrentSpeed(final double accumulatedCarsPerLengthUnit)
     {
         double speedDouble;
-        Frequency currentInflowCapacity =
-            retrieveCurrentInflowCapacity(accumulatedCarsPerLengthUnit, this.maxCapacity, this.cellBehaviour
-                .getParametersFundamentalDiagram());
-        LinearDensity density =
-            new LinearDensity(accumulatedCarsPerLengthUnit, LinearDensityUnit.PER_KILOMETER);
+        Frequency currentInflowCapacity = retrieveCurrentInflowCapacity(accumulatedCarsPerLengthUnit, this.maxCapacity,
+                this.cellBehaviour.getParametersFundamentalDiagram());
+        LinearDensity density = new LinearDensity(accumulatedCarsPerLengthUnit, LinearDensityUnit.PER_KILOMETER);
         if (density.getInUnit(LinearDensityUnit.PER_KILOMETER) > this.cellBehaviour.getParametersFundamentalDiagram()
-            .getAccCritical().get(0))
+                .getAccCritical().get(0))
         {
-            speedDouble =
-                currentInflowCapacity.getInUnit(FrequencyUnit.PER_HOUR) / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
+            speedDouble = currentInflowCapacity.getInUnit(FrequencyUnit.PER_HOUR)
+                    / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
             // speedDouble =
             // Math.max(speedDouble, this.getCellBehaviourFlow().getParametersFundamentalDiagram().getFreeSpeed()
             // .getInUnit(SpeedUnit.KM_PER_HOUR));
         }
         else
         {
-            speedDouble =
-                this.cellBehaviour.getParametersFundamentalDiagram().getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
+            speedDouble = this.cellBehaviour.getParametersFundamentalDiagram().getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
                     / this.cellBehaviour.getParametersFundamentalDiagram().getAccCritical().get(0);
         }
         return this.setActualSpeed(new Speed(speedDouble, SpeedUnit.KM_PER_HOUR));
@@ -144,9 +141,8 @@ public class FlowCell implements Locatable
     public Duration retrieveCurrentTravelDuration()
     {
         double densityPerLengthUnit =
-            this.getCellBehaviourFlow().getAccumulatedCars() / this.cellLength.getInUnit(LengthUnit.KILOMETER);
-        double timeDouble =
-            this.cellLength.getInUnit(LengthUnit.KILOMETER)
+                this.getCellBehaviourFlow().getAccumulatedCars() / this.cellLength.getInUnit(LengthUnit.KILOMETER);
+        double timeDouble = this.cellLength.getInUnit(LengthUnit.KILOMETER)
                 / retrieveCurrentSpeed(densityPerLengthUnit).getInUnit(SpeedUnit.KM_PER_HOUR);
         double UPPERBOUND_TRAVELTIME_HOUR = 99;
         timeDouble = Math.min(UPPERBOUND_TRAVELTIME_HOUR, timeDouble);

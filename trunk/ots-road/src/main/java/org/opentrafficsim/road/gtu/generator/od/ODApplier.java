@@ -779,8 +779,8 @@ public final class ODApplier
          * @param randomStream StreamInterface; stream for random numbers
          */
         GTUCharacteristicsGeneratorODWrapper(final DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root,
-                final DEVSSimulatorInterface.TimeDoubleUnit simulator, final GTUCharacteristicsGeneratorOD charachteristicsGenerator,
-                final StreamInterface randomStream)
+                final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+                final GTUCharacteristicsGeneratorOD charachteristicsGenerator, final StreamInterface randomStream)
         {
             this.root = root;
             this.simulator = simulator;

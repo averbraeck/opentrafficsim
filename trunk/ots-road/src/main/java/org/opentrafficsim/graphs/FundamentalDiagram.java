@@ -96,8 +96,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private ArrayList<Sample> samples = new ArrayList<Sample>();
 
     /** Definition of the density axis. */
-    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER), new LinearDensity(200,
-            LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
+    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER),
+            new LinearDensity(200, LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density",
+            "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -128,8 +129,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     }
 
     /** Definition of the flow axis. */
-    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR), new Frequency(3000d, FrequencyUnit.HERTZ),
-            null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
+    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR), new Frequency(3000d, FrequencyUnit.HERTZ), null,
+            0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
     private Axis xAxis;
@@ -453,8 +454,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     @Override
     public final String toString()
     {
-        return "FundamentalDiagram [caption=" + this.caption + ", aggregationTime=" + this.aggregationTime
-                + ", samples.size=" + this.samples.size() + "]";
+        return "FundamentalDiagram [caption=" + this.caption + ", aggregationTime=" + this.aggregationTime + ", samples.size="
+                + this.samples.size() + "]";
     }
 
     /**
@@ -581,7 +582,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Internal Sensor class.
      * <p>
-     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
@@ -631,8 +633,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
         /** {@inheritDoc} */
         @Override
-        public FundamentalDiagramSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-                final boolean animation) throws NetworkException
+        public FundamentalDiagramSensor clone(final CrossSectionElement newCSE,
+                final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation) throws NetworkException
         {
             Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
             Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,

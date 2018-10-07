@@ -128,8 +128,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
     public HeadwayGTURealCopy(final LaneBasedGTU gtu, final Length distance) throws GTUException
     {
         super(gtu.getId(), gtu.getGTUType(), distance, true, gtu.getLength(), gtu.getWidth(), gtu.getSpeed(),
-                gtu.getAcceleration(), gtu.getDesiredSpeed(),
-                getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime()));
+                gtu.getAcceleration(), gtu.getDesiredSpeed(), getGTUStatuses(gtu, gtu.getSimulator().getSimulatorTime()));
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.parameters = new ParameterSet(gtu.getParameters());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);

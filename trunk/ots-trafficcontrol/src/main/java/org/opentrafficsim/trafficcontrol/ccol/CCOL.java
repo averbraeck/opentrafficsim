@@ -247,7 +247,8 @@ public class CCOL extends EventProducer implements TrafficController
 
     /** {@inheritDoc} */
     @Override
-    public InvisibleObjectInterface clone(SimulatorInterface.TimeDoubleUnit newSimulator, Network newNetwork) throws NetworkException
+    public InvisibleObjectInterface clone(SimulatorInterface.TimeDoubleUnit newSimulator, Network newNetwork)
+            throws NetworkException
     {
         // FIXME: implement the clone() for CCOL
         return null;

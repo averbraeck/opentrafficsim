@@ -82,8 +82,7 @@ public class XmlOdParserTest
             private static final long serialVersionUID = 20180528L;
 
             @Override
-            public void constructModel(SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim)
-                    throws SimRuntimeException
+            public void constructModel(SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim) throws SimRuntimeException
             {
                 //
             }

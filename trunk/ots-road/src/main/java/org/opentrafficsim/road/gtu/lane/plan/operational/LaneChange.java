@@ -64,7 +64,7 @@ public class LaneChange implements Serializable
 
     /** Instance to invoke static method through scheduled event on. */
     private static final LaneOperationalPlanBuilder BUILDER = new LaneOperationalPlanBuilder();
-    
+
     /** Minimum distance required to perform a lane change as factor on vehicle length. */
     public static double MIN_LC_LENGTH_FACTOR = 2.0;
 
@@ -87,7 +87,7 @@ public class LaneChange implements Serializable
     {
         this.boundary = boundary;
     }
-    
+
     /**
      * Returns the fraction of the lane change performed.
      * @return double; fraction of lane change performed

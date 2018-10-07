@@ -132,8 +132,8 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
      */
     public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final GTUColorer gtuColorer, final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
-            final GeneratorPositions generatorPositions, final OTSNetwork network,
-            final OTSSimulatorInterface simulator, final RoomChecker roomChecker, final IdGenerator idGenerator)
+            final GeneratorPositions generatorPositions, final OTSNetwork network, final OTSSimulatorInterface simulator,
+            final RoomChecker roomChecker, final IdGenerator idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException
     {
         this.id = id;

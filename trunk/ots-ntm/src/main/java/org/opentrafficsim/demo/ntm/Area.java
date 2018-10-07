@@ -53,7 +53,8 @@ public class Area extends GeoObject implements Locatable
 
     /**
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author$,
@@ -110,7 +111,8 @@ public class Area extends GeoObject implements Locatable
 
     /**
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author$,
@@ -139,10 +141,9 @@ public class Area extends GeoObject implements Locatable
      * @param averageSpeed
      * @param increaseDemandByFactor
      */
-    public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente,
-        final String gebied, final String regio, final double dhb, final Coordinate centroid,
-        final TrafficBehaviourType trafficBehaviourType, Length roadLength, Speed averageSpeed,
-        double increaseDemandByFactor, ParametersNTM parametersNTM)
+    public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente, final String gebied,
+            final String regio, final double dhb, final Coordinate centroid, final TrafficBehaviourType trafficBehaviourType,
+            Length roadLength, Speed averageSpeed, double increaseDemandByFactor, ParametersNTM parametersNTM)
     {
         super(geometry);
         this.centroidNr = centroidNr;
@@ -164,7 +165,7 @@ public class Area extends GeoObject implements Locatable
     public DirectedPoint getLocation() throws RemoteException
     {
         Point c = this.getGeometry().getCentroid();
-        return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
+        return new DirectedPoint(new double[] { c.getX(), c.getY(), 0.0d });
     }
 
     /** {@inheritDoc} */
@@ -173,9 +174,8 @@ public class Area extends GeoObject implements Locatable
     {
         DirectedPoint d = getLocation();
         Envelope envelope = this.getGeometry().getEnvelopeInternal();
-        return new BoundingBox(new Point3d(envelope.getMinX() - d.x, d.y - envelope.getMinY(), 0.0d), new Point3d(envelope
-            .getMaxX()
-            - d.x, d.y - envelope.getMaxY(), 0.0d));
+        return new BoundingBox(new Point3d(envelope.getMinX() - d.x, d.y - envelope.getMinY(), 0.0d),
+                new Point3d(envelope.getMaxX() - d.x, d.y - envelope.getMaxY(), 0.0d));
     }
 
     /**

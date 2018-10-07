@@ -64,8 +64,8 @@ public class SpeedSign extends AbstractLaneBasedObject
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final SimulatorInterface.TimeDoubleUnit simulator, final Speed speed, final GTUType gtuType,
-            final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
+            final Length longitudinalPosition, final SimulatorInterface.TimeDoubleUnit simulator, final Speed speed,
+            final GTUType gtuType, final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
         super(id, lane, direction, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
         this.speed = speed;
@@ -95,8 +95,8 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
-            final Length longitudinalPosition, final SimulatorInterface.TimeDoubleUnit simulator, final Speed speed, final GTUType gtuType)
-            throws NetworkException
+            final Length longitudinalPosition, final SimulatorInterface.TimeDoubleUnit simulator, final Speed speed,
+            final GTUType gtuType) throws NetworkException
     {
         this(id, lane, direction, longitudinalPosition, simulator, speed, gtuType, Duration.ZERO, ENDOFDAY);
     }
@@ -160,8 +160,8 @@ public class SpeedSign extends AbstractLaneBasedObject
 
     /** {@inheritDoc} */
     @Override
-    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE,
+            final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation) throws NetworkException
     {
         return new SpeedSign(getId(), (Lane) newCSE, getDirection(), getLongitudinalPosition(), newSimulator, this.speed,
                 this.gtuType, this.startTimeOfDay, this.endTimeOfDay);

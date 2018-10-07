@@ -40,7 +40,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
 
     /** Comfortable deceleration parameter type. */
     protected static final ParameterTypeAcceleration B = ParameterTypes.B;
-    
+
     /** the perception. */
     private final LanePerception perception;
 
@@ -79,8 +79,8 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
         Acceleration straightA = applyDriverPersonality(thisLaneAccelerationSteps).plus(laneChangeThreshold);
         DualAccelerationStep otherLaneAccelerationSteps = null == otherLane ? null
                 : gtuFollowingModel.computeDualAccelerationStep(gtu, otherLaneGTUs, maxDistance, speedLimit, laneChangeTime);
-        if (null != otherLaneAccelerationSteps && otherLaneAccelerationSteps.getFollowerAcceleration()
-                .getSI() < -gtu.getParameters().getParameter(B).getSI())
+        if (null != otherLaneAccelerationSteps
+                && otherLaneAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getParameters().getParameter(B).getSI())
         {
             otherLane = null; // do not change to the other lane
         }

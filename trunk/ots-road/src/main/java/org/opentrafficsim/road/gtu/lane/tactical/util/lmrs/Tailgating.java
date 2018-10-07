@@ -34,8 +34,7 @@ public interface Tailgating
 {
 
     /** Social pressure applied to the leader. */
-    ParameterTypeDouble RHO =
-            new ParameterTypeDouble("rho", "Social pressure", 0.0, ConstraintInterface.UNITINTERVAL);
+    ParameterTypeDouble RHO = new ParameterTypeDouble("rho", "Social pressure", 0.0, ConstraintInterface.UNITINTERVAL);
 
     /** No tailgating. */
     Tailgating NONE = new Tailgating()

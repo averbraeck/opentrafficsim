@@ -48,7 +48,8 @@ public class PubSubIMBMessageHandler implements IMBMessageHandler
      * @throws IMBException in case the construction fails
      */
     public PubSubIMBMessageHandler(final String imbEventName, final EventType eventType,
-            final IMBToOTSTransformer imbToOTSTransformer, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws IMBException
+            final IMBToOTSTransformer imbToOTSTransformer, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            throws IMBException
     {
         this.imbEventName = imbEventName;
         this.eventType = eventType;

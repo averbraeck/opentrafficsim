@@ -345,7 +345,7 @@ public class MarkovCorrelation<S, I extends Number>
         {
             this.correlation = 0.0;
         }
-        
+
         /**
          * Returns the current intensity, used for the Markov Chain process.
          * @return current intensity, used for the Markov Chain process, 0.0 if no intensity was provided
