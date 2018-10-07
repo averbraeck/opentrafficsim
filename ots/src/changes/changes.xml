@@ -13,6 +13,12 @@
         As a result it becomes easier to e.g., suppress dsol logger-messages and still see ots logger
         messages.  
       </action>
+      <action dev="averbraeck" type="fix">
+        ots-core: toString() method of OTSCapacityNode made non-final.
+      </action>
+      <action dev="averbraeck" type="fix">
+        ots-ntm project updated to latest ots, dsol, and djunits version.
+      </action>
     </release>
   
     <release version="1.00.02" date="2018-09-20" description="Demo repairs, ots-aimsun integrated, Logger">
