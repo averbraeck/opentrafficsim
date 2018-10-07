@@ -10,13 +10,13 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
 import org.djunits.unit.SpeedUnit;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.demo.ntm.Area;
 import org.opentrafficsim.demo.ntm.AreaFlowLink;
 import org.opentrafficsim.demo.ntm.FlowCell;
+
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -47,7 +47,7 @@ public class AreaFlowLinkAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public AreaFlowLinkAnimation(AreaFlowLink source, OTSSimulatorInterface simulator, final float width)
+    public AreaFlowLinkAnimation(AreaFlowLink source, SimulatorInterface.TimeDoubleUnit simulator, final float width)
         throws NamingException, RemoteException
     {
         super(source, simulator);

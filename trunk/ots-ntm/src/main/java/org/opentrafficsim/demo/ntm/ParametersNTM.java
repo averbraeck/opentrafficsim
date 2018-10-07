@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 
 /**
  * <p>
@@ -28,14 +27,14 @@ public class ParametersNTM extends ParametersFundamentalDiagram
     /**
      * roadLength: aggregated road lengths in CELL.
      */
-    private final DoubleScalar.Rel<LengthUnit> roadLength;
+    private final Length roadLength;
 
     /**
      * @param accCritical
      * @param freeSpeed
      * @param roadLength
      */
-    public ParametersNTM(ArrayList<Double> accCritical, Abs<SpeedUnit> freeSpeed, Rel<LengthUnit> roadLength)
+    public ParametersNTM(ArrayList<Double> accCritical, Speed freeSpeed, Length roadLength)
     {
         super();
         this.setAccCritical(accCritical);
@@ -50,14 +49,14 @@ public class ParametersNTM extends ParametersFundamentalDiagram
      * @param capacityPerLaneLength
      * @param roadLength
      */
-    public ParametersNTM(ArrayList<Double> accCritical, double capacityPerLaneLength, Rel<LengthUnit> roadLength)
+    public ParametersNTM(ArrayList<Double> accCritical, double capacityPerLaneLength, Length roadLength)
     {
         super();
         // TODO parameters should depend on area characteristics
         this.setAccCritical(accCritical);
         this.setCapacityPerUnit(new Frequency(capacityPerLaneLength, FrequencyUnit.PER_HOUR));
         double freeSpeed = this.getCapacity().getInUnit(FrequencyUnit.PER_HOUR) / this.getAccCritical().get(0);
-        this.setFreeSpeed(new DoubleScalar.Abs<SpeedUnit>(freeSpeed, SpeedUnit.KM_PER_HOUR));
+        this.setFreeSpeed(new Speed(freeSpeed, SpeedUnit.KM_PER_HOUR));
         this.roadLength = roadLength;
     }
 
@@ -71,7 +70,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
         super();
         // TODO parameters should depend on area characteristics
         this.setAccCritical(accCritical);
-        this.roadLength = new Rel<LengthUnit>(0, LengthUnit.KILOMETER);
+        this.roadLength = new Length(0, LengthUnit.KILOMETER);
     }
 
     /**
@@ -79,7 +78,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
      * @param freeSpeed
      * @param roadLength
      */
-    public ParametersNTM(Abs<SpeedUnit> freeSpeed, Rel<LengthUnit> roadLength)
+    public ParametersNTM(Speed freeSpeed, Length roadLength)
     {
         super();
         // TODO parameters should depend on area characteristics
@@ -102,7 +101,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
     public ParametersNTM()
     {
         super();
-        Abs<SpeedUnit> freeSpeed = new Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        Speed freeSpeed = new Speed(50, SpeedUnit.KM_PER_HOUR);
         // TODO parameters should depend on area characteristics
         ArrayList<Double> accCritical = new ArrayList<Double>();
         accCritical.add(25.0);
@@ -110,7 +109,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
         accCritical.add(100.0);
         this.setAccCritical(accCritical);
         this.setFreeSpeed(freeSpeed);
-        this.roadLength = new Rel<LengthUnit>(0, LengthUnit.KILOMETER);
+        this.roadLength = new Length(0, LengthUnit.KILOMETER);
         double capacity = this.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) * this.getAccCritical().get(0);
         this.setCapacityPerUnit(new Frequency(capacity, FrequencyUnit.PER_HOUR));
     }
@@ -118,7 +117,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
     /**
      * @return roadLength.
      */
-    public Rel<LengthUnit> getRoadLength()
+    public Length getRoadLength()
     {
         return this.roadLength;
     }

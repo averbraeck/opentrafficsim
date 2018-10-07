@@ -10,12 +10,12 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.demo.ntm.Link;
+import org.opentrafficsim.demo.ntm.NTMLink;
 
 import com.vividsolutions.jts.geom.Coordinate;
+
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -38,7 +38,7 @@ public class LinkAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public LinkAnimation(final Link link, final OTSSimulatorInterface simulator, final float width) throws NamingException,
+    public LinkAnimation(final NTMLink link, final SimulatorInterface.TimeDoubleUnit simulator, final float width) throws NamingException,
         RemoteException
     {
         super(link, simulator);
@@ -52,8 +52,8 @@ public class LinkAnimation extends Renderable2D
         graphics.setColor(Color.BLACK);
         Stroke oldStroke = graphics.getStroke();
         graphics.setStroke(new BasicStroke(this.width));
-        Coordinate a = ((Link) getSource()).getStartNode().getPoint().getCoordinate();
-        Coordinate b = ((Link) getSource()).getEndNode().getPoint().getCoordinate();
+        Coordinate a = ((NTMLink) getSource()).getStartNode().getPoint().getCoordinate();
+        Coordinate b = ((NTMLink) getSource()).getEndNode().getPoint().getCoordinate();
         // draw relative to point A (getLocation)
         graphics.draw(new Line2D.Double(0.0, 0.0, b.x - a.x, a.y - b.y));
         graphics.setStroke(oldStroke);

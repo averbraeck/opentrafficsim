@@ -3,8 +3,6 @@ package org.opentrafficsim.demo.ntm;
 import java.util.HashMap;
 
 import org.djunits.unit.FrequencyUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.djunits.value.vdouble.scalar.Frequency;
 
 /**
@@ -28,11 +26,11 @@ public class CellBehaviour
     public CellBehaviour()
     {
         super();
-        this.tripInfoByDestinationMap = new HashMap<Node, TripInfoByDestination>();
+        this.tripInfoByDestinationMap = new HashMap<NTMNode, TripInfoByDestination>();
     }
 
     /** The first Area/Node encountered on the path to Destination. */
-    private HashMap<Node, TripInfoByDestination> tripInfoByDestinationMap;
+    private HashMap<NTMNode, TripInfoByDestination> tripInfoByDestinationMap;
 
     /** Maximum in-flow */
     private double supply;
@@ -170,7 +168,7 @@ public class CellBehaviour
     /**
      * @return tripInfoNode.
      */
-    public final HashMap<Node, TripInfoByDestination> getTripInfoByDestinationMap()
+    public final HashMap<NTMNode, TripInfoByDestination> getTripInfoByDestinationMap()
     {
         return this.tripInfoByDestinationMap;
     }
@@ -178,7 +176,7 @@ public class CellBehaviour
     /**
      * @param tripInfoByDestinationMap set tripInfoNode.
      */
-    public final void setTripInfoByDestinationMap(final HashMap<Node, TripInfoByDestination> tripInfoByDestinationMap)
+    public final void setTripInfoByDestinationMap(final HashMap<NTMNode, TripInfoByDestination> tripInfoByDestinationMap)
     {
         this.tripInfoByDestinationMap = tripInfoByDestinationMap;
     }

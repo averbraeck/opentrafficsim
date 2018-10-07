@@ -3,9 +3,9 @@ package org.opentrafficsim.demo.ntm.trafficdemand;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * Describes the division the departure of trips within a period over the separate segments
@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 public class DepartureTimeProfile
 {
     /** */
-    private NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> departureTimeCurve;
+    private NavigableMap<Time, FractionOfTripDemandByTimeSegment> departureTimeCurve;
 
     /** Descriptive name of the profile. */
     private String name;
@@ -36,8 +36,8 @@ public class DepartureTimeProfile
      * @param departureTimeProfile
      * @param name Name of the profile
      */
-    public DepartureTimeProfile(final NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> departureTimeProfile,
-        final String name)
+    public DepartureTimeProfile(final NavigableMap<Time, FractionOfTripDemandByTimeSegment> departureTimeProfile,
+            final String name)
     {
         this.departureTimeCurve = departureTimeProfile;
         this.name = name;
@@ -50,62 +50,54 @@ public class DepartureTimeProfile
      * @param startSimulationTimeSinceMidnight Start of the simulation by time of (a) day
      * @return List of new segment
      */
-    public final NavigableMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> checkAndNormalizeCurve(
-        final DoubleScalar.Abs<TimeUnit> startSimulationTimeSinceMidnight,
-        final DoubleScalar.Rel<TimeUnit> durationOfSimulation,
-        final NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> navigableMap)
+    public final NavigableMap<Time, FractionOfTripDemandByTimeSegment> checkAndNormalizeCurve(
+            final Time startSimulationTimeSinceMidnight, final Duration durationOfSimulation,
+            final NavigableMap<Time, FractionOfTripDemandByTimeSegment> navigableMap)
     {
         double totalShare = 0;
         // ShareOfTripDemandByTimeWindow prevSegment = null;
-        NavigableMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> segmentsOut =
-            new TreeMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment>();
-        DoubleScalar.Abs<TimeUnit> endTimeOfSimulation =
-            DoubleScalar.plus(startSimulationTimeSinceMidnight, durationOfSimulation);
+        NavigableMap<Time, FractionOfTripDemandByTimeSegment> segmentsOut =
+                new TreeMap<Time, FractionOfTripDemandByTimeSegment>();
+        Time endTimeOfSimulation = DoubleScalar.plus(startSimulationTimeSinceMidnight, durationOfSimulation);
         // only select the segments of the DepartureTimeProfile that are within this simulation period
         for (FractionOfTripDemandByTimeSegment segment : navigableMap.values())
         {
-            @SuppressWarnings("static-access")
-            DoubleScalar.Abs<TimeUnit> endTimeOfSegment =
-                DoubleScalar.Rel.plus(segment.getTimeSinceMidnight(), segment.getDuration());
+            Time endTimeOfSegment = segment.getTimeSinceMidnight().plus(segment.getDuration());
             if (segment.getTimeSinceMidnight().getInUnit() < startSimulationTimeSinceMidnight.getInUnit()
-                && endTimeOfSegment.getInUnit() > startSimulationTimeSinceMidnight.getInUnit())
+                    && endTimeOfSegment.getInUnit() > startSimulationTimeSinceMidnight.getInUnit())
             // first segment from the departureTimeProfile that starts before the start of the simulation, but ends
             // within this simulation
             {
-                DoubleScalar.Rel<TimeUnit> durationWithinSimulation =
-                    DoubleScalar.minus(segment.getTimeSinceMidnight(), startSimulationTimeSinceMidnight);
+                Duration durationWithinSimulation =
+                        DoubleScalar.minus(segment.getTimeSinceMidnight(), startSimulationTimeSinceMidnight);
                 double shareFirstSegment =
-                    durationWithinSimulation.getSI() / segment.getDuration().getSI() * segment.getShareOfDemand();
-                FractionOfTripDemandByTimeSegment newSegment =
-                    new FractionOfTripDemandByTimeSegment(startSimulationTimeSinceMidnight, durationWithinSimulation,
-                        shareFirstSegment);
+                        durationWithinSimulation.getSI() / segment.getDuration().getSI() * segment.getShareOfDemand();
+                FractionOfTripDemandByTimeSegment newSegment = new FractionOfTripDemandByTimeSegment(
+                        startSimulationTimeSinceMidnight, durationWithinSimulation, shareFirstSegment);
                 segmentsOut.put(startSimulationTimeSinceMidnight, newSegment);
                 totalShare += newSegment.getShareOfDemand();
             }
             // detects that this segment segment from the departureTimeProfile starts beyond the simulation period
             // this is the last segment to be inspected!
             else if (segment.getTimeSinceMidnight().getInUnit() < endTimeOfSimulation.getInUnit()
-                && endTimeOfSegment.getInUnit() >= endTimeOfSimulation.getInUnit())
+                    && endTimeOfSegment.getInUnit() >= endTimeOfSimulation.getInUnit())
             {
-                @SuppressWarnings("static-access")
-                DoubleScalar.Rel<TimeUnit> durationWithinSimulation =
-                    DoubleScalar.Rel.minus(endTimeOfSimulation, segment.getTimeSinceMidnight());
+                Duration durationWithinSimulation = endTimeOfSimulation.minus(segment.getTimeSinceMidnight());
                 double share = durationWithinSimulation.getSI() / segment.getDuration().getSI();
                 double newShare = share * segment.getShareOfDemand();
-                FractionOfTripDemandByTimeSegment newSegment =
-                    new FractionOfTripDemandByTimeSegment(segment.getTimeSinceMidnight(), durationWithinSimulation, newShare);
+                FractionOfTripDemandByTimeSegment newSegment = new FractionOfTripDemandByTimeSegment(
+                        segment.getTimeSinceMidnight(), durationWithinSimulation, newShare);
                 segmentsOut.put(segment.getTimeSinceMidnight(), newSegment);
                 totalShare += newSegment.getShareOfDemand();
                 // now leave this loop: we have passed all segments of this simulation period
                 break;
             }
             else if (segment.getTimeSinceMidnight().getInUnit() >= startSimulationTimeSinceMidnight.getInUnit()
-                && endTimeOfSegment.getInUnit() <= endTimeOfSimulation.getInUnit())
+                    && endTimeOfSegment.getInUnit() <= endTimeOfSimulation.getInUnit())
             // all segments from the departureTimeProfile that are within the simulation period
             {
-                FractionOfTripDemandByTimeSegment newSegment =
-                    new FractionOfTripDemandByTimeSegment(segment.getTimeSinceMidnight(), segment.getDuration(), segment
-                        .getShareOfDemand());
+                FractionOfTripDemandByTimeSegment newSegment = new FractionOfTripDemandByTimeSegment(
+                        segment.getTimeSinceMidnight(), segment.getDuration(), segment.getShareOfDemand());
                 segmentsOut.put(segment.getTimeSinceMidnight(), newSegment);
                 totalShare += newSegment.getShareOfDemand();
             }
@@ -133,7 +125,7 @@ public class DepartureTimeProfile
     /**
      * @return departureTimeCurve.
      */
-    public final NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> getDepartureTimeCurve()
+    public final NavigableMap<Time, FractionOfTripDemandByTimeSegment> getDepartureTimeCurve()
     {
         return this.departureTimeCurve;
     }
@@ -141,8 +133,7 @@ public class DepartureTimeProfile
     /**
      * @param profileList set departureTimeCurve.
      */
-    public final void
-        setDepartureTimeCurve(final NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> profileList)
+    public final void setDepartureTimeCurve(final NavigableMap<Time, FractionOfTripDemandByTimeSegment> profileList)
     {
         this.departureTimeCurve = profileList;
     }

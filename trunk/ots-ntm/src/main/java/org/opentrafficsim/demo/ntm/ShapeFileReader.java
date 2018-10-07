@@ -11,10 +11,9 @@ import java.util.Map;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -24,7 +23,7 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -51,8 +50,8 @@ public class ShapeFileReader
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
-    public static Map<String, Area> readAreas(final String shapeFileName, final Map<String, Node> centroids,
-        double scalingFactorDemand) throws IOException
+    public static Map<String, Area> readAreas(final String shapeFileName, final Map<String, NTMNode> centroids,
+            double scalingFactorDemand) throws IOException
     {
         /*-
         the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232, ...
@@ -110,7 +109,7 @@ public class ShapeFileReader
                  */
                 double dhb = (double) 0.0;
 
-                Node centroidNode = null;
+                NTMNode centroidNode = null;
                 if (centroids != null)
                 {
                     // search for areas within the centroids (from the "points")
@@ -118,7 +117,7 @@ public class ShapeFileReader
                 }
                 if (centroidNode == null)
                 {
-                    for (Node node : centroids.values())
+                    for (NTMNode node : centroids.values())
                     {
                         Geometry g = new GeometryFactory().createPoint(node.getPoint().getCoordinate());
                         if (geometry.contains(g))
@@ -139,8 +138,7 @@ public class ShapeFileReader
                 {
                     if (areas.containsKey(centroidNr))
                     {
-                        System.out
-                            .println("Area number " + centroidNr + "(" + name + ") already exists. Number not unique!");
+                        System.out.println("Area number " + centroidNr + "(" + name + ") already exists. Number not unique!");
                         newNr++;
                         centroidNr = newNr.toString();
                     }
@@ -153,10 +151,9 @@ public class ShapeFileReader
                     accCritical.add(accCritMaxCapEnd);
                     accCritical.add(accCritJam);
                     ParametersNTM parametersNTM = new ParametersNTM(accCritical);
-                    Area area =
-                        new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroidNode.getPoint()
-                            .getCoordinate(), TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER),
-                            new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor, parametersNTM);
+                    Area area = new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb,
+                            centroidNode.getPoint().getCoordinate(), TrafficBehaviourType.NTM, new Length(0, LengthUnit.METER),
+                            new Speed(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor, parametersNTM);
                     areas.put(centroidNr, area);
                     numberOfAreasWithCentroid++;
                 }
@@ -181,7 +178,7 @@ public class ShapeFileReader
 
         if (centroids != null)
         {
-            for (Node centroid : centroids.values())
+            for (NTMNode centroid : centroids.values())
             {
                 boolean found = false;
 
@@ -209,8 +206,8 @@ public class ShapeFileReader
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
-    public static Map<String, Node> ReadNodes(final String shapeFileName, final String numberType, boolean returnCentroid,
-        boolean allCentroids) throws IOException
+    public static Map<String, NTMNode> ReadNodes(final NTMModel model, final String shapeFileName, final String numberType,
+            boolean returnCentroid, boolean allCentroids) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.Point POINT (190599 325650)
@@ -232,7 +229,7 @@ public class ShapeFileReader
         }
         ShapefileDataStore storeNodes = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
-        Map<String, Node> nodes = new HashMap<>();
+        Map<String, NTMNode> nodes = new HashMap<>();
 
         SimpleFeatureSource featureSourceNodes = storeNodes.getFeatureSource();
         SimpleFeatureCollection featureCollectionNodes = featureSourceNodes.getFeatures();
@@ -283,7 +280,7 @@ public class ShapeFileReader
                     }
 
                     // initially, set the behaviour default to TrafficBehaviourType.ROAD
-                    Node node = new Node(nr, point, type);
+                    NTMNode node = new NTMNode(model.getNetwork(), nr, point, type);
                     nodes.put(nr, node);
                 }
             }
@@ -302,9 +299,10 @@ public class ShapeFileReader
     }
 
     /*    *//**
-     * @param number
-     * @return nr: the number of the Node without characters
-     */
+             * @param number
+             * @return nr: the number of the Node without characters
+             */
+
     /*
      * public static String NodeCentroidNumber(String number) { // String nr = null; number =
      * CsvFileReader.removeQuotes(number); String[] names = number.split(":"); String name = names[0]; if (name.charAt(0) ==
@@ -337,9 +335,9 @@ public class ShapeFileReader
      * @param linkCapacityNumberOfHours
      * @throws IOException on error
      */
-    public static void readLinks(final String shapeFileName, Map<String, Link> links, Map<String, Link> connectors,
-        Map<String, Node> nodes, Map<String, Node> centroids, String lengthUnit, Double linkCapacityNumberOfHours)
-        throws IOException
+    public static void readLinks(final NTMModel model, final String shapeFileName, Map<String, NTMLink> links,
+            Map<String, NTMLink> connectors, Map<String, NTMNode> nodes, Map<String, NTMNode> centroids, String lengthUnit,
+            Double linkCapacityNumberOfHours) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -387,14 +385,14 @@ public class ShapeFileReader
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
                 double lengthIn = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
-                DoubleScalar.Rel<LengthUnit> length = null;
+                Length length = null;
                 if (lengthUnit.equals("kilometer"))
                 {
-                    length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
+                    length = new Length(lengthIn, LengthUnit.KILOMETER);
                 }
                 else if (lengthUnit.equals("meter"))
                 {
-                    length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.METER);
+                    length = new Length(lengthIn, LengthUnit.METER);
                 }
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
                 String lNodeA = String.valueOf(feature.getAttribute("ANODE"));
@@ -405,18 +403,17 @@ public class ShapeFileReader
                 String typeWegVak = (String) feature.getAttribute("TYPEWEGVAB");
                 String typeWeg = (String) feature.getAttribute("TYPEWEG_AB");
                 Double speedIn = Double.parseDouble(String.valueOf(feature.getAttribute("SPEEDAB")));
-                DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedIn, SpeedUnit.KM_PER_HOUR);
+                Speed speed = new Speed(speedIn, SpeedUnit.KM_PER_HOUR);
                 double capacityIn =
-                    Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB"))) / linkCapacityNumberOfHours;
-                Frequency capacity =
-                    new Frequency(capacityIn, FrequencyUnit.PER_HOUR);
+                        Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB"))) / linkCapacityNumberOfHours;
+                Frequency capacity = new Frequency(capacityIn, FrequencyUnit.PER_HOUR);
                 int hierarchy = 0;
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....
-                Node centroidA = centroids.get(lNodeA);
-                Node centroidB = centroids.get(lNodeB);
-                Node nodeA = nodes.get(lNodeA);
-                Node nodeB = nodes.get(lNodeB);
+                NTMNode centroidA = centroids.get(lNodeA);
+                NTMNode centroidB = centroids.get(lNodeB);
+                NTMNode nodeA = nodes.get(lNodeA);
+                NTMNode nodeB = nodes.get(lNodeB);
                 boolean nodeACentroid = false;
                 boolean nodeBCentroid = false;
 
@@ -424,16 +421,14 @@ public class ShapeFileReader
                 {
                     if (nodeA != null && nodeB != null)
                     {
-                        Link linkAB = null;
-                        Link linkBA = null;
+                        NTMLink linkAB = null;
+                        NTMLink linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
-                        linkAB =
-                            new Link(new OTSLine3D(line), nr, length, nodeA, nodeB, speed, null, capacity,
-                                TrafficBehaviourType.ROAD, linkData);
+                        linkAB = new NTMLink(model.getNetwork(), model.getSimulator(), new OTSLine3D(line), nr, length, nodeA,
+                                nodeB, speed, null, capacity, TrafficBehaviourType.ROAD, linkData);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
-                        linkBA =
-                            new Link(new OTSLine3D(line), nrBA, length, nodeB, nodeA, speed, null, capacity,
-                                TrafficBehaviourType.ROAD, linkData);
+                        linkBA = new NTMLink(model.getNetwork(), model.getSimulator(), new OTSLine3D(line), nrBA, length, nodeB,
+                                nodeA, speed, null, capacity, TrafficBehaviourType.ROAD, linkData);
                         if (direction == 1)
                         {
                             links.put(nr, linkAB);
@@ -452,7 +447,7 @@ public class ShapeFileReader
                     else
                     {
                         System.out.println("Node lNodeA=" + lNodeA + " or lNodeB=" + lNodeB + " not found for linknr=" + nr
-                            + ", name=" + name);
+                                + ", name=" + name);
                     }
                 }
                 else
@@ -467,8 +462,8 @@ public class ShapeFileReader
                     }
                     if (centroidB != null)
                     {
-                        if (testGeometry(geometry.getCoordinates()[geometry.getCoordinates().length - 1], centroidA
-                            .getPoint().getCoordinate()))
+                        if (testGeometry(geometry.getCoordinates()[geometry.getCoordinates().length - 1],
+                                centroidA.getPoint().getCoordinate()))
                         {
                             nodeBCentroid = true;
                         }
@@ -476,20 +471,18 @@ public class ShapeFileReader
                     if (nodeACentroid && nodeBCentroid) // should not happen
                     {
                         System.out.println("Strange connector!!!: both Centroids lNodeA= " + centroidA + " or lNodeB= "
-                            + centroidB + " connected to linknr=" + nr + ", name=" + name);
+                                + centroidB + " connected to linknr=" + nr + ", name=" + name);
                     }
                     else if (nodeACentroid)
                     {
-                        Link linkAB = null;
-                        Link linkBA = null;
+                        NTMLink linkAB = null;
+                        NTMLink linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
-                        linkAB =
-                            new Link(new OTSLine3D(line), nr, length, centroidA, nodeB, speed, null, capacity,
-                                TrafficBehaviourType.NTM, linkData);
+                        linkAB = new NTMLink(model.getNetwork(), model.getSimulator(), new OTSLine3D(line), nr, length,
+                                centroidA, nodeB, speed, null, capacity, TrafficBehaviourType.NTM, linkData);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
-                        linkBA =
-                            new Link(new OTSLine3D(line), nrBA, length, nodeB, centroidA, speed, null, capacity,
-                                TrafficBehaviourType.NTM, linkData);
+                        linkBA = new NTMLink(model.getNetwork(), model.getSimulator(), new OTSLine3D(line), nrBA, length, nodeB,
+                                centroidA, speed, null, capacity, TrafficBehaviourType.NTM, linkData);
                         if (direction == 1)
                         {
                             connectors.put(nr, linkAB);
@@ -507,16 +500,14 @@ public class ShapeFileReader
                     }
                     else if (nodeBCentroid)
                     {
-                        Link linkAB = null;
-                        Link linkBA = null;
+                        NTMLink linkAB = null;
+                        NTMLink linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
-                        linkAB =
-                            new Link(new OTSLine3D(line), nr, length, nodeA, centroidB, speed, null, capacity,
-                                TrafficBehaviourType.NTM, linkData);
+                        linkAB = new NTMLink(model.getNetwork(), model.getSimulator(), new OTSLine3D(line), nr, length, nodeA,
+                                centroidB, speed, null, capacity, TrafficBehaviourType.NTM, linkData);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
-                        linkBA =
-                            new Link(new OTSLine3D(line), nrBA, length, centroidB, nodeA, speed, null, capacity,
-                                TrafficBehaviourType.NTM, linkData);
+                        linkBA = new NTMLink(model.getNetwork(), model.getSimulator(), new OTSLine3D(line), nrBA, length,
+                                centroidB, nodeA, speed, null, capacity, TrafficBehaviourType.NTM, linkData);
                         if (direction == 1)
                         {
                             connectors.put(nr, linkAB);
@@ -536,9 +527,8 @@ public class ShapeFileReader
                     // should not happen
                     {
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
-                        Link link =
-                            new Link(new OTSLine3D(line), nr, length, nodeA, nodeB, speed, null, capacity,
-                                TrafficBehaviourType.ROAD, linkData);
+                        NTMLink link = new NTMLink(model.getNetwork(), model.getSimulator(), new OTSLine3D(line), nr, length,
+                                nodeA, nodeB, speed, null, capacity, TrafficBehaviourType.ROAD, linkData);
                         links.put(nr, link);
                     }
                 }

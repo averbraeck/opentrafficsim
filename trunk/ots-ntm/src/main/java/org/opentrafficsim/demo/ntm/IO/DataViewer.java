@@ -18,22 +18,22 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.djunits.unit.DurationUnit;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.demo.ntm.animation.RoadAnimation;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
+import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import com.vividsolutions.jts.geom.Geometry;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -72,7 +72,7 @@ public class DataViewer implements OTSModelInterface
     HashMap<String, ShapeObject> mapRoadCounts;
 
     /** The simulator. */
-    private OTSDEVSSimulatorInterface simulator;
+    private OTSSimulatorInterface simulator;
 
     /**
      * Constructor to make the graphs with the right type.
@@ -89,10 +89,10 @@ public class DataViewer implements OTSModelInterface
      */
     @Override
     public final void constructModel(
-        final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
+        final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> _simulator)
         throws SimRuntimeException
     {
-        this.simulator = (OTSDEVSSimulatorInterface) _simulator;
+        this.simulator = (OTSSimulatorInterface) _simulator;
         String startMap = "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data";
 
         String fileArea = FileDialog.showFileDialog(true, "shp", "Shapefile with Areas", startMap);
@@ -123,15 +123,8 @@ public class DataViewer implements OTSModelInterface
          * { exception.printStackTrace(); }
          */
 
-        try
-        {
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "ntmFlowTimestep",
-                null);
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
+        this.simulator.scheduleEventRel(new Duration(0.0, DurationUnit.SECOND), this, this, "ntmFlowTimestep",
+            null);
     }
 
     /**
@@ -141,9 +134,9 @@ public class DataViewer implements OTSModelInterface
     protected final void ntmFlowTimestep()
     {
         this.mapRoadCounts.values();
-        DoubleScalar.Rel<TimeUnit> timeStep = new DoubleScalar.Rel(2.0, TimeUnit.SECOND);
+        Duration timeStep = new Duration(2.0, DurationUnit.SECOND);
         // in case we run on an animator and not on a simulator, we create the animation
-        if (this.simulator instanceof OTSAnimatorInterface)
+        if (this.simulator instanceof AnimatorInterface)
         {
             createDynamicAreaAnimation();
         }
@@ -521,7 +514,14 @@ public class DataViewer implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OTSNetwork getNetwork()
     {
         return null;
     }

@@ -7,10 +7,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
+
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -35,7 +35,7 @@ public class RoadAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public RoadAnimation(ShapeObject source, OTSSimulatorInterface simulator, final float width, Color color)
+    public RoadAnimation(ShapeObject source, SimulatorInterface.TimeDoubleUnit simulator, final float width, Color color)
         throws NamingException, RemoteException
     {
         super(source, simulator);

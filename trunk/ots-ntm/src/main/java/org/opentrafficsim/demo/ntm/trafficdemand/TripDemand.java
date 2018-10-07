@@ -5,10 +5,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.demo.ntm.Node;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.demo.ntm.NTMNode;
 
 /**
  * <p>
@@ -31,10 +30,10 @@ public class TripDemand<TripInformation>
     private Map<String, Map<String, TripInformation>> tripInfo;
 
     /** Starting time. */
-    private DoubleScalar.Abs<TimeUnit> startTime;
+    private Time startTime;
 
     /** Time period covered by this demand. */
-    private DoubleScalar.Rel<TimeUnit> timeSpan;
+    private Duration timeSpan;
 
     /**
      */
@@ -60,7 +59,7 @@ public class TripDemand<TripInformation>
      * @return
      */
     public static TripDemand<TripInfoTimeDynamic> compressTripDemand(TripDemand<TripInfoTimeDynamic> tripDemand,
-        Map<String, Node> centroids, HashMap<Node, Node> mapSmallAreaToBigArea)
+        Map<String, NTMNode> centroids, HashMap<NTMNode, NTMNode> mapSmallAreaToBigArea)
     {
         TripDemand<TripInfoTimeDynamic> compressedTripDemand = new TripDemand<TripInfoTimeDynamic>();
         compressedTripDemand.tripInfo = new HashMap<String, Map<String, TripInfoTimeDynamic>>();
@@ -68,7 +67,7 @@ public class TripDemand<TripInformation>
         compressedTripDemand.timeSpan = tripDemand.getTimeSpan();
         int notFound = 0;
         // loop through all detailed nodes/areas
-        for (Node node : centroids.values())
+        for (NTMNode node : centroids.values())
         {
             if (mapSmallAreaToBigArea.get(node) != null)
             {
@@ -98,7 +97,7 @@ public class TripDemand<TripInformation>
                     {
                         String idSmall = entry.getKey();
                         // mapSmallAreaToBigArea.get(node);
-                        Node destination = centroids.get(idSmall);
+                        NTMNode destination = centroids.get(idSmall);
                         TripInfoTimeDynamic tripInfo = tripDemandRow.get(idSmall);
                         if (destination != null)
                         {
@@ -173,7 +172,7 @@ public class TripDemand<TripInformation>
      * @return mapDestinations a hashmap with destination as key and tripInfo as values
      */
     public static final double getTotalNumberOfTripsFromOrigin(TripDemand<TripInfoTimeDynamic> thisDemand, String originID,
-        DoubleScalar.Abs<TimeUnit> currentTime, final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
+        Time currentTime, final Duration timeStepDurationNTM)
     {
         Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
         Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
@@ -193,13 +192,13 @@ public class TripDemand<TripInformation>
 
     public static final double getTotalNumberOfTripsFromOriginToDestinationByTimeStep(
         TripDemand<TripInfoTimeDynamic> thisDemand, String originID, String destination,
-        DoubleScalar.Abs<TimeUnit> currentTime, final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
+        Time currentTime, final Duration timeStepDurationNTM)
     {
         Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
         Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
         double cellTotal = 0.0;
         TripInfoTimeDynamic tripInfo = mapDestinations.get(destination);
-        NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> curve =
+        NavigableMap<Time, FractionOfTripDemandByTimeSegment> curve =
             tripInfo.getDepartureTimeProfile().getDepartureTimeCurve();
         Object ceilingKey = curve.floorKey(currentTime);
         if (ceilingKey == null)
@@ -269,7 +268,7 @@ public class TripDemand<TripInformation>
     /**
      * @return startTime.
      */
-    public final DoubleScalar.Abs<TimeUnit> getStartTime()
+    public final Time getStartTime()
     {
         return this.startTime;
     }
@@ -277,7 +276,7 @@ public class TripDemand<TripInformation>
     /**
      * @param startTime set startTime.
      */
-    public final void setStartTime(final DoubleScalar.Abs<TimeUnit> startTime)
+    public final void setStartTime(final Time startTime)
     {
         this.startTime = startTime;
     }
@@ -293,7 +292,7 @@ public class TripDemand<TripInformation>
     /**
      * @return timeSpan.
      */
-    public final DoubleScalar.Rel<TimeUnit> getTimeSpan()
+    public final Duration getTimeSpan()
     {
         return this.timeSpan;
     }
@@ -301,7 +300,7 @@ public class TripDemand<TripInformation>
     /**
      * @param timeSpan set timeSpan.
      */
-    public final void setTimeSpan(final DoubleScalar.Rel<TimeUnit> timeSpan)
+    public final void setTimeSpan(final Duration timeSpan)
     {
         this.timeSpan = timeSpan;
     }

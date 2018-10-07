@@ -16,7 +16,7 @@ import java.awt.Font;
 import java.io.File;
 
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -46,7 +46,7 @@ public class TimeSeriesChart
         int width = 560; /* Width of the image */
         int height = 370; /* Height of the image */
         File fileTimeChart = new File(fileName);
-        ChartUtilities.saveChartAsJPEG(fileTimeChart, timechart, width, height);
+        ChartUtils.saveChartAsJPEG(fileTimeChart, timechart, width, height);
     }
 
     public static void BarChart(String fileName, DefaultCategoryDataset datasetCategory) throws Exception
@@ -70,7 +70,7 @@ public class TimeSeriesChart
         int width = 960; /* Width of the image */
         int height = 670; /* Height of the image */
         File fileTimeChart = new File(fileName);
-        ChartUtilities.saveChartAsJPEG(fileTimeChart, chart, width, height);
+        ChartUtils.saveChartAsJPEG(fileTimeChart, chart, width, height);
     }
 
 }

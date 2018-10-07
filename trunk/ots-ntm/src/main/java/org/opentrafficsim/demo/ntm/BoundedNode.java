@@ -1,7 +1,9 @@
 package org.opentrafficsim.demo.ntm;
 
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -18,7 +20,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class BoundedNode extends Node
+public class BoundedNode extends NTMNode
 {
     /** */
     private static final long serialrsionUID = 20140920L;
@@ -59,10 +61,12 @@ public class BoundedNode extends Node
      * @param area the area to which the node belongs.
      * @param behaviourType describes behaviour of the node depending on its type
      * @param parametersNTM
+     * @throws NetworkException 
      */
-    public BoundedNode(final Coordinate centroid, final String nr, final Area area, final TrafficBehaviourType behaviourType)
+    public BoundedNode(final Network network, final Coordinate centroid,
+            final String nr, final Area area, final TrafficBehaviourType behaviourType) throws NetworkException
     {
-        super(nr, new Coordinate(centroid.x, centroid.y, zCoordinate(behaviourType)), behaviourType);
+        super(network, nr, new Coordinate(centroid.x, centroid.y, zCoordinate(behaviourType)), behaviourType);
         this.area = area;
 
         if (behaviourType == TrafficBehaviourType.ROAD)
@@ -78,7 +82,7 @@ public class BoundedNode extends Node
 
         else if (behaviourType == TrafficBehaviourType.FLOW)
         {
-            DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(80, SpeedUnit.KM_PER_HOUR);
+            Speed speed = new Speed(80, SpeedUnit.KM_PER_HOUR);
             // TODO parameters should depend on area characteristics
             // Frequency maxCapacityPerLane = new Frequency(2000,
             // FrequencyUnit.PER_HOUR);

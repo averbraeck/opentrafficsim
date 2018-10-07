@@ -1,10 +1,8 @@
 package org.opentrafficsim.demo.ntm;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -48,8 +46,8 @@ public class AreaFlowLink extends Area
      * @param indexCell
      */
     public AreaFlowLink(Geometry geometry, String centroidNr, String name, String gemeente, String gebied, String regio,
-        double dhb, Coordinate centroid, TrafficBehaviourType trafficBehaviourType, Rel<LengthUnit> roadLength,
-        Abs<SpeedUnit> averageSpeed, double increaseDemandByFactor, ParametersNTM parametersNTM,
+        double dhb, Coordinate centroid, TrafficBehaviourType trafficBehaviourType, Length roadLength,
+        Speed averageSpeed, double increaseDemandByFactor, ParametersNTM parametersNTM,
         LinkCellTransmission flowLink, int indexCell)
     {
         super(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroid, trafficBehaviourType, roadLength,

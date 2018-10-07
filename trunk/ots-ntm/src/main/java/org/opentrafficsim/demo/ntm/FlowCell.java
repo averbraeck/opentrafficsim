@@ -6,19 +6,21 @@ import java.util.ArrayList;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -33,10 +35,10 @@ import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class FlowCell implements LocatableInterface
+public class FlowCell implements Locatable
 {
     /** Link length in a length unit. */
-    private DoubleScalar.Rel<LengthUnit> cellLength;
+    private Length cellLength;
 
     /** Link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
     private Frequency maxCapacity;
@@ -45,10 +47,10 @@ public class FlowCell implements LocatableInterface
     private int numberOfLanes;
 
     /** SPEEDAB class java.lang.Double 120.0. */
-    private DoubleScalar.Abs<SpeedUnit> currentSpeed;
+    private Speed currentSpeed;
 
     /** SPEEDAB class java.lang.Double 120.0. */
-    private DoubleScalar.Abs<TimeUnit> currentTravelTime;
+    private Duration currentTravelDuration;
 
     /** */
     private CellBehaviourFlow cellBehaviour;
@@ -60,8 +62,8 @@ public class FlowCell implements LocatableInterface
      * @param numberOfLanes
      * @param behaviourType
      */
-    public FlowCell(final DoubleScalar.Rel<LengthUnit> cellLength, final Frequency maxCapacity,
-        DoubleScalar.Abs<SpeedUnit> speed, final int numberOfLanes, final TrafficBehaviourType behaviourType)
+    public FlowCell(final Length cellLength, final Frequency maxCapacity,
+        Speed speed, final int numberOfLanes, final TrafficBehaviourType behaviourType)
     {
         this.cellLength = cellLength;
         this.maxCapacity = maxCapacity;
@@ -109,14 +111,14 @@ public class FlowCell implements LocatableInterface
      * @param accumulatedCarsPerLengthUnit
      * @return actualSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCarsPerLengthUnit)
+    public Speed retrieveCurrentSpeed(final double accumulatedCarsPerLengthUnit)
     {
         double speedDouble;
         Frequency currentInflowCapacity =
             retrieveCurrentInflowCapacity(accumulatedCarsPerLengthUnit, this.maxCapacity, this.cellBehaviour
                 .getParametersFundamentalDiagram());
-        Abs<LinearDensityUnit> density =
-            new DoubleScalar.Abs<LinearDensityUnit>(accumulatedCarsPerLengthUnit, LinearDensityUnit.PER_KILOMETER);
+        LinearDensity density =
+            new LinearDensity(accumulatedCarsPerLengthUnit, LinearDensityUnit.PER_KILOMETER);
         if (density.getInUnit(LinearDensityUnit.PER_KILOMETER) > this.cellBehaviour.getParametersFundamentalDiagram()
             .getAccCritical().get(0))
         {
@@ -132,14 +134,14 @@ public class FlowCell implements LocatableInterface
                 this.cellBehaviour.getParametersFundamentalDiagram().getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
                     / this.cellBehaviour.getParametersFundamentalDiagram().getAccCritical().get(0);
         }
-        return this.setActualSpeed(new DoubleScalar.Abs<SpeedUnit>(speedDouble, SpeedUnit.KM_PER_HOUR));
+        return this.setActualSpeed(new Speed(speedDouble, SpeedUnit.KM_PER_HOUR));
     }
 
     /**
      * @param accumulatedCars
      * @return actualSpeed.
      */
-    public DoubleScalar.Abs<TimeUnit> retrieveCurrentTravelTime()
+    public Duration retrieveCurrentTravelDuration()
     {
         double densityPerLengthUnit =
             this.getCellBehaviourFlow().getAccumulatedCars() / this.cellLength.getInUnit(LengthUnit.KILOMETER);
@@ -148,7 +150,7 @@ public class FlowCell implements LocatableInterface
                 / retrieveCurrentSpeed(densityPerLengthUnit).getInUnit(SpeedUnit.KM_PER_HOUR);
         double UPPERBOUND_TRAVELTIME_HOUR = 99;
         timeDouble = Math.min(UPPERBOUND_TRAVELTIME_HOUR, timeDouble);
-        return this.setCurrentTravelTime(new DoubleScalar.Abs(timeDouble, TimeUnit.HOUR));
+        return this.setCurrentTravelDuration(new Duration(timeDouble, DurationUnit.HOUR));
     }
 
     /** {@inheritDoc} */
@@ -168,7 +170,7 @@ public class FlowCell implements LocatableInterface
     /**
      * @return cellLength.
      */
-    public DoubleScalar<LengthUnit> getCellLength()
+    public Length getCellLength()
     {
         return this.cellLength;
     }
@@ -176,7 +178,7 @@ public class FlowCell implements LocatableInterface
     /**
      * @param cellLength set cellLength.
      */
-    public void setCellLength(DoubleScalar.Rel<LengthUnit> cellLength)
+    public void setCellLength(Length cellLength)
     {
         this.cellLength = cellLength;
     }
@@ -232,15 +234,15 @@ public class FlowCell implements LocatableInterface
     /**
      * @return actualSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
+    public Speed getCurrentSpeed()
     {
-        return currentSpeed;
+        return this.currentSpeed;
     }
 
     /**
      * @param currentSpeed set actualSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> setActualSpeed(DoubleScalar.Abs<SpeedUnit> currentSpeed)
+    public Speed setActualSpeed(Speed currentSpeed)
     {
         this.currentSpeed = currentSpeed;
         return currentSpeed;
@@ -249,18 +251,18 @@ public class FlowCell implements LocatableInterface
     /**
      * @return currentTravelTime.
      */
-    public DoubleScalar.Abs<TimeUnit> getCurrentTravelTime()
+    public Duration getCurrentTravelDuration()
     {
-        return currentTravelTime;
+        return this.currentTravelDuration;
     }
 
     /**
-     * @param currentTravelTime set currentTravelTime.
+     * @param currentTravelDuration set currentTravelTime.
      */
-    public DoubleScalar.Abs<TimeUnit> setCurrentTravelTime(DoubleScalar.Abs<TimeUnit> currentTravelTime)
+    public Duration setCurrentTravelDuration(Duration currentTravelDuration)
     {
-        this.currentTravelTime = currentTravelTime;
-        return currentTravelTime;
+        this.currentTravelDuration = currentTravelDuration;
+        return currentTravelDuration;
     }
 
 }

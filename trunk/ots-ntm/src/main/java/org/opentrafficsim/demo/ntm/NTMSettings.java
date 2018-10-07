@@ -2,10 +2,10 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.Calendar;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * <p>
@@ -26,25 +26,25 @@ public class NTMSettings
     /**
      * Start time of the simulation since Midnight, translated from Calendar to seconds since.
      */
-    private Abs<TimeUnit> startTimeSinceMidnight;
+    private Duration durationSinceMidnight;
 
     /** Relative time length of simulation */
-    private Rel<TimeUnit> durationOfSimulation;
+    private Duration durationOfSimulation;
 
     /** Name and description of the project */
     private String descriptionProject;
 
     /** Time step interval NTM */
-    private DoubleScalar.Rel<TimeUnit> timeStepDurationNTM;
+    private Duration timeStepDurationNTM;
 
     /** Cell transmission might have different time step interval?? */
-    private DoubleScalar.Rel<TimeUnit> timeStepDurationCellTransmissionModel;
+    private Duration timeStepDurationCellTransmissionModel;
 
     /** Time of a certain date */
-    private DoubleScalar.Abs<TimeUnit> absoluteStartTime;
+    private Time absoluteStartTime;
 
     /** Generate new routes after a certain time interval */
-    private DoubleScalar.Rel<TimeUnit> reRouteTimeInterval;
+    private Duration reRouteTimeInterval;
 
     /** */
     private double scalingFactorDemand;
@@ -81,19 +81,19 @@ public class NTMSettings
      * @param path
      * @param scalingFactorDemand
      */
-    public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
-        Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval,
+    public NTMSettings(Calendar startTime, Duration durationOfSimulation, String descriptionProject,
+        Duration timeStepDurationNTM, Duration timeStepDurationCTM, Duration reRouteTimeInterval,
         int numberOfRoutes, double weightNewRoutes, double varianceRoutes, boolean reRoute, String path,
         boolean increaseDemandByArea, double scalingFactorDemand)
     {
-        this.setStartTime(new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis(), TimeUnit.MILLISECOND));
+        this.setStartTime(new Time(startTime.getTimeInMillis(), TimeUnit.BASE_MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);
         int minutes = startTime.get(Calendar.MINUTE);
         int seconds = startTime.get(Calendar.SECOND);
-        long time = hour * 60 * 60 + minutes * 60 + seconds;
+        long duration = hour * 60 * 60 + minutes * 60 + seconds;
         // time = startTime.getTimeInMillis()/1000;
 
-        this.startTimeSinceMidnight = new DoubleScalar.Abs<TimeUnit>(time, TimeUnit.SECOND);
+        this.durationSinceMidnight = new Duration(duration, DurationUnit.SECOND);
         this.durationOfSimulation = durationOfSimulation;
         this.setDescriptionProject(descriptionProject);
         this.timeStepDurationNTM = timeStepDurationNTM;
@@ -112,7 +112,7 @@ public class NTMSettings
      * @param timeStepDurationNTM
      * @param timeStepDurationCTM
      */
-    public NTMSettings(Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM)
+    public NTMSettings(Duration timeStepDurationNTM, Duration timeStepDurationCTM)
     {
         this.timeStepDurationNTM = timeStepDurationNTM;
         this.setTimeStepDurationCellTransmissionModel(timeStepDurationCTM);
@@ -121,7 +121,7 @@ public class NTMSettings
     /**
      * @param timeStepDurationNTM
      */
-    public NTMSettings(Rel<TimeUnit> timeStepDurationNTM)
+    public NTMSettings(Duration timeStepDurationNTM)
     {
         this.timeStepDurationNTM = timeStepDurationNTM;
     }
@@ -129,23 +129,23 @@ public class NTMSettings
     /**
      * @return startTimeSinceMidnight
      */
-    public Abs<TimeUnit> getStartTimeSinceMidnight()
+    public Duration getDurationSinceMidnight()
     {
-        return this.startTimeSinceMidnight;
+        return this.durationSinceMidnight;
     }
 
     /**
      * @param startTimeSinceMidnight set startTimeSinceMidnight
      */
-    public void setStartTimeSinceMidnight(DoubleScalar.Abs<TimeUnit> startTimeSinceMidnight)
+    public void setDurationSinceMidnight(Duration startTimeSinceMidnight)
     {
-        this.startTimeSinceMidnight = startTimeSinceMidnight;
+        this.durationSinceMidnight = startTimeSinceMidnight;
     }
 
     /**
      * @return durationOfSimulation
      */
-    public Rel<TimeUnit> getDurationOfSimulation()
+    public Duration getDurationOfSimulation()
     {
         return this.durationOfSimulation;
     }
@@ -153,7 +153,7 @@ public class NTMSettings
     /**
      * @param timeSpan set durationOfSimulation
      */
-    public void setDurationOfSimulation(Rel<TimeUnit> timeSpan)
+    public void setDurationOfSimulation(Duration timeSpan)
     {
         this.durationOfSimulation = timeSpan;
     }
@@ -161,7 +161,7 @@ public class NTMSettings
     /**
      * @return timeStepDuration
      */
-    public Rel<TimeUnit> getTimeStepDurationNTM()
+    public Duration getTimeStepDurationNTM()
     {
         return this.timeStepDurationNTM;
     }
@@ -169,7 +169,7 @@ public class NTMSettings
     /**
      * @param timeStepDuration set timeStepDuration
      */
-    public void setTimeStepDurationNTM(Rel<TimeUnit> timeStepDuration)
+    public void setTimeStepDurationNTM(Duration timeStepDuration)
     {
         this.timeStepDurationNTM = timeStepDuration;
     }
@@ -177,7 +177,7 @@ public class NTMSettings
     /**
      * @return startTime
      */
-    public DoubleScalar.Abs<TimeUnit> getStartTime()
+    public Time getStartTime()
     {
         return this.absoluteStartTime;
     }
@@ -185,7 +185,7 @@ public class NTMSettings
     /**
      * @param startTime set startTime
      */
-    public void setStartTime(DoubleScalar.Abs<TimeUnit> startTime)
+    public void setStartTime(Time startTime)
     {
         this.absoluteStartTime = startTime;
     }
@@ -193,7 +193,7 @@ public class NTMSettings
     /**
      * @return timeStepDurationCellTransmissionModel.
      */
-    public DoubleScalar.Rel<TimeUnit> getTimeStepDurationCellTransmissionModel()
+    public Duration getTimeStepDurationCellTransmissionModel()
     {
         return this.timeStepDurationCellTransmissionModel;
     }
@@ -201,7 +201,7 @@ public class NTMSettings
     /**
      * @param timeStepDurationCellTransmissionModel set timeStepDurationCellTransmissionModel.
      */
-    public void setTimeStepDurationCellTransmissionModel(DoubleScalar.Rel<TimeUnit> timeStepDurationCellTransmissionModel)
+    public void setTimeStepDurationCellTransmissionModel(Duration timeStepDurationCellTransmissionModel)
     {
         this.timeStepDurationCellTransmissionModel = timeStepDurationCellTransmissionModel;
     }
@@ -225,7 +225,7 @@ public class NTMSettings
     /**
      * @return reRouteTimeInterval.
      */
-    public DoubleScalar.Rel<TimeUnit> getReRouteTimeInterval()
+    public Duration getReRouteTimeInterval()
     {
         return this.reRouteTimeInterval;
     }
@@ -233,7 +233,7 @@ public class NTMSettings
     /**
      * @param reRouteTimeInterval set reRouteTimeInterval.
      */
-    public void setReRouteTimeInterval(DoubleScalar.Rel<TimeUnit> reRouteTimeInterval)
+    public void setReRouteTimeInterval(Duration reRouteTimeInterval)
     {
         this.reRouteTimeInterval = reRouteTimeInterval;
     }

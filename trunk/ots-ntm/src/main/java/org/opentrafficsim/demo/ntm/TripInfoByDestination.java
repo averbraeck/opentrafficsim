@@ -27,7 +27,7 @@ public class TripInfoByDestination
     private HashMap<BoundedNode, Double> demandToNeighbour;
 
     /** The first Area/Node encountered on the path to Destination. */
-    private Node destination;
+    private NTMNode destination;
 
     /** Trips on their journey within an area. */
     private double accumulatedCarsToDestination;
@@ -55,7 +55,7 @@ public class TripInfoByDestination
      */
     public TripInfoByDestination(HashMap<BoundedNode, Double> routeFractionToNeighbours,
         HashMap<BoundedNode, Double> accumulatedCarsToNeighbour, HashMap<BoundedNode, Double> demandToNeighbour,
-        Node destination)
+        NTMNode destination)
     {
         super();
         this.routeFractionToNeighbours = routeFractionToNeighbours;
@@ -115,7 +115,7 @@ public class TripInfoByDestination
     /**
      * @return geef bestemmin g
      */
-    public Node getDestination()
+    public NTMNode getDestination()
     {
         return this.destination;
     }
@@ -123,7 +123,7 @@ public class TripInfoByDestination
     /**
      * @param destination set destination.
      */
-    public void setDestination(Node destination)
+    public void setDestination(NTMNode destination)
     {
         this.destination = destination;
     }

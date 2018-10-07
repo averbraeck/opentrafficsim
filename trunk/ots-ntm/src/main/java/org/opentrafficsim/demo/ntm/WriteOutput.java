@@ -17,7 +17,7 @@ import org.jfree.data.general.SeriesException;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.opentrafficsim.core.network.LinkEdge;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.animation.TimeSeriesChart;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfo;
 
@@ -83,22 +83,22 @@ public class WriteOutput
     static int numberOfCells = 0;
 
     /** */
-    static HashMap<Link, Integer> linkIndex = new HashMap<Link, Integer>();
+    static HashMap<NTMLink, Integer> linkIndex = new HashMap<NTMLink, Integer>();
 
     /** */
-    static HashMap<Integer, Link> indexLink = new HashMap<Integer, Link>();
+    static HashMap<Integer, NTMLink> indexLink = new HashMap<Integer, NTMLink>();
 
     /** */
-    static HashMap<Integer, Node> indexStartNode = new HashMap<Integer, Node>();
+    static HashMap<Integer, NTMNode> indexStartNode = new HashMap<Integer, NTMNode>();
 
     /** */
-    static HashMap<Integer, Node> indexEndNode = new HashMap<Integer, Node>();
+    static HashMap<Integer, NTMNode> indexEndNode = new HashMap<Integer, NTMNode>();
 
     /** */
-    static HashMap<Node, Integer> nodeIndex = new HashMap<>();
+    static HashMap<NTMNode, Integer> nodeIndex = new HashMap<>();
 
     /** */
-    static HashMap<Integer, Node> indexNode = new HashMap<>();
+    static HashMap<Integer, NTMNode> indexNode = new HashMap<>();
 
     public static void writeInputData(NTMModel model) throws IOException
     {
@@ -114,16 +114,16 @@ public class WriteOutput
             data = createWriter(fileTripsBigArea);
 
             data.write("Matrix Big Areas " + ", ");
-            for (Node from : model.getBigCentroids().values())
+            for (NTMNode from : model.getBigCentroids().values())
             {
                 data.write(from.getId() + ", ");
             }
             data.write(" \n");
 
-            for (Node from : model.getBigCentroids().values())
+            for (NTMNode from : model.getBigCentroids().values())
             {
                 data.write(from.getId() + ", ");
-                for (Node to : model.getBigCentroids().values())
+                for (NTMNode to : model.getBigCentroids().values())
                 {
                     if (model.tripDemandToUse.getTripDemandOriginToDestination(from.getId(), to.getId()) != null)
                     {
@@ -147,16 +147,16 @@ public class WriteOutput
             new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
         data = createWriter(fileTrips);
         data.write("Matrix " + ", ");
-        for (Node from : model.getCentroids().values())
+        for (NTMNode from : model.getCentroids().values())
         {
             data.write(from.getId() + ", ");
         }
         data.write(" \n");
 
-        for (Node from : model.getCentroids().values())
+        for (NTMNode from : model.getCentroids().values())
         {
             data.write(from.getId() + ", ");
-            for (Node to : model.getCentroids().values())
+            for (NTMNode to : model.getCentroids().values())
             {
                 if (model.getTripDemand().getTripDemandOriginToDestination(from.getId(), to.getId()) != null)
                 {
@@ -247,7 +247,7 @@ public class WriteOutput
 
             for (LinkEdge le : model.getAreaGraph().edgeSet())
             {
-                Link link = (Link) le.getLink();
+                NTMLink link = (NTMLink) le.getLink();
                 if (link.getBehaviourType() == TrafficBehaviourType.FLOW)
                 {
                     LinkCellTransmission ctmLink = (LinkCellTransmission) link;
@@ -257,8 +257,8 @@ public class WriteOutput
                         {
                             linkIndex.put(link, i);
                             indexLink.put(i, link);
-                            indexStartNode.put(i, (Node) link.getStartNode());
-                            indexEndNode.put(i, (Node) link.getEndNode());
+                            indexStartNode.put(i, (NTMNode) link.getStartNode());
+                            indexEndNode.put(i, (NTMNode) link.getEndNode());
                             cellID[i] = String.valueOf(linkNumber);
 
                             if (DATATYPE == "cellData")
@@ -529,28 +529,28 @@ public class WriteOutput
     static Double[][][] fluxToNeighbourNTM = new Double[9][9][MAXSTEPS];
 
     /** */
-    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> fluxToNeighbourNTMMap = new HashMap<>();
+    static HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> fluxToNeighbourNTMMap = new HashMap<>();
 
     /** */
-    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> demandToNeighbourNTMMap = new HashMap<>();
+    static HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> demandToNeighbourNTMMap = new HashMap<>();
 
     /** */
-    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> accumulationToNeighbourNTMMap = new HashMap<>();
+    static HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> accumulationToNeighbourNTMMap = new HashMap<>();
 
     /** */
-    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> routeFractionToNeighbourNTMMap = new HashMap<>();
+    static HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> routeFractionToNeighbourNTMMap = new HashMap<>();
 
     /** */
-    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> demandVersusCapacityToNeighbourNTMMap = new HashMap<>();
+    static HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> demandVersusCapacityToNeighbourNTMMap = new HashMap<>();
 
     /** */
-    static HashMap<Node, HashMap<Node, Double[]>> timeToDestinationNTMMap = new HashMap<>();
+    static HashMap<NTMNode, HashMap<NTMNode, Double[]>> timeToDestinationNTMMap = new HashMap<>();
 
     /** */
-    static HashMap<Node, HashMap<Node, Double[]>> ODArrivalsNTMMap = new HashMap<>();
+    static HashMap<NTMNode, HashMap<NTMNode, Double[]>> ODArrivalsNTMMap = new HashMap<>();
 
     /** */
-    static HashMap<Node, HashMap<Node, Double[]>> ODDeparturesNTMMap = new HashMap<>();
+    static HashMap<NTMNode, HashMap<NTMNode, Double[]>> ODDeparturesNTMMap = new HashMap<>();
 
     /** */
     static Double[][] parametersNFD = new Double[MAXZONES][9];
@@ -751,14 +751,14 @@ public class WriteOutput
      * @param MAXSTEPS
      * @throws IOException
      */
-    public static void writeOutputRoutesNTM(NTMModel model, int steps, int pathIterator, Node startNode, Node neighbour,
-        Node destination, int MAXSTEPS, BufferedWriter data, double oldShare, double addShare, double pathWeight)
+    public static void writeOutputRoutesNTM(NTMModel model, int steps, int pathIterator, NTMNode startNode, NTMNode neighbour,
+        NTMNode destination, int MAXSTEPS, BufferedWriter data, double oldShare, double addShare, double pathWeight)
         throws IOException
     {
         // for testing we open a file and write some results:
         // TODO testing
         String description = "routesNTM";
-        ArrayList<Node> path = new ArrayList<>();
+        ArrayList<NTMNode> path = new ArrayList<>();
         path.add(startNode);
         path.add(neighbour);
         path.add(destination);
@@ -777,7 +777,7 @@ public class WriteOutput
      * @throws IOException
      */
     static void writeRoutes(NTMModel model, int steps, int pathIterator, int MAXSTEPS, BufferedWriter data,
-        String description, ArrayList<Node> dataArray, double oldShare, double addShare, double pathWeight)
+        String description, ArrayList<NTMNode> dataArray, double oldShare, double addShare, double pathWeight)
         throws IOException
     {
         if (description == "routesNTM")
@@ -827,17 +827,17 @@ public class WriteOutput
      * @param intNodeMap
      */
     static void writeHashMap(NTMModel model, int steps, int MAXSTEPS, String description, BufferedWriter data,
-        HashMap<Node, HashMap<Node, Double[]>> nodeNodeDoublemap,
-        HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> nodeNodeNodeDoublemap, HashMap<Integer, Node> intNodeMap,
+        HashMap<NTMNode, HashMap<NTMNode, Double[]>> nodeNodeDoublemap,
+        HashMap<NTMNode, HashMap<NTMNode, HashMap<NTMNode, Double[]>>> nodeNodeNodeDoublemap, HashMap<Integer, NTMNode> intNodeMap,
         String DATATYPE)
     {
 
         if (steps < MAXSTEPS)
         {
             int i = 0;
-            TreeSet<Node> graphVertices = new TreeSet<Node>(model.getAreaGraph().vertexSet());
+            TreeSet<NTMNode> graphVertices = new TreeSet<NTMNode>(model.getAreaGraph().vertexSet());
 
-            for (Node nodeIn : graphVertices)
+            for (NTMNode nodeIn : graphVertices)
             {
                 BoundedNode origin = (BoundedNode) nodeIn;
                 if (origin.getBehaviourType() == TrafficBehaviourType.NTM
@@ -863,7 +863,7 @@ public class WriteOutput
                             {
                                 if (nodeNodeDoublemap.get(origin) == null)
                                 {
-                                    HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
+                                    HashMap<NTMNode, Double[]> fluxMap = new HashMap<NTMNode, Double[]>();
                                     Double[] fluxes = new Double[MAXSTEPS];
                                     fluxes[steps - 1] = trips;
                                     fluxMap.put(destination, fluxes);
@@ -934,9 +934,9 @@ public class WriteOutput
                                 {
                                     if (nodeNodeNodeDoublemap.get(origin) == null)
                                     {
-                                        HashMap<Node, HashMap<Node, Double[]>> nodeFluxMap =
-                                            new HashMap<Node, HashMap<Node, Double[]>>();
-                                        HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
+                                        HashMap<NTMNode, HashMap<NTMNode, Double[]>> nodeFluxMap =
+                                            new HashMap<NTMNode, HashMap<NTMNode, Double[]>>();
+                                        HashMap<NTMNode, Double[]> fluxMap = new HashMap<NTMNode, Double[]>();
                                         Double[] fluxes = new Double[MAXSTEPS];
                                         fluxes[steps - 1] = trips;
                                         fluxMap.put(neighbour, fluxes);
@@ -947,7 +947,7 @@ public class WriteOutput
                                     {
                                         if (nodeNodeNodeDoublemap.get(origin).get(destination) == null)
                                         {
-                                            HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
+                                            HashMap<NTMNode, Double[]> fluxMap = new HashMap<NTMNode, Double[]>();
                                             Double[] fluxes = new Double[MAXSTEPS];
                                             fluxes[steps - 1] = trips;
                                             fluxMap.put(neighbour, fluxes);
@@ -988,7 +988,7 @@ public class WriteOutput
                 {
                     for (int i = 0; i < numberOfCells; i++)
                     {
-                        HashMap<Node, Double[]> fluxMap = nodeNodeDoublemap.get(intNodeMap.get(i));
+                        HashMap<NTMNode, Double[]> fluxMap = nodeNodeDoublemap.get(intNodeMap.get(i));
                         if (fluxMap != null)
                         {
                             for (int j = 0; j < numberOfCells; j++)
@@ -1017,12 +1017,12 @@ public class WriteOutput
                 {
                     for (int i = 0; i < numberOfCells; i++)
                     {
-                        HashMap<Node, HashMap<Node, Double[]>> nodeFluxMap = nodeNodeNodeDoublemap.get(intNodeMap.get(i));
+                        HashMap<NTMNode, HashMap<NTMNode, Double[]>> nodeFluxMap = nodeNodeNodeDoublemap.get(intNodeMap.get(i));
                         if (nodeFluxMap != null)
                         {
                             for (int j = 0; j < numberOfCells; j++)
                             {
-                                HashMap<Node, Double[]> fluxMap = nodeFluxMap.get(intNodeMap.get(j));
+                                HashMap<NTMNode, Double[]> fluxMap = nodeFluxMap.get(intNodeMap.get(j));
                                 if (fluxMap != null)
                                 {
                                     for (int k = 0; k < numberOfCells; k++)
@@ -1077,9 +1077,9 @@ public class WriteOutput
         {
 
             int i = 0;
-            TreeSet<Node> graphVertices = new TreeSet<Node>(model.getAreaGraph().vertexSet());
+            TreeSet<NTMNode> graphVertices = new TreeSet<NTMNode>(model.getAreaGraph().vertexSet());
 
-            for (Node nodeIn : graphVertices)
+            for (NTMNode nodeIn : graphVertices)
             {
                 BoundedNode node = (BoundedNode) nodeIn;
                 if (node.getBehaviourType() == TrafficBehaviourType.NTM

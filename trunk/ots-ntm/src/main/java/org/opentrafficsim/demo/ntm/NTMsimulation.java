@@ -1,20 +1,20 @@
 package org.opentrafficsim.demo.ntm;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.network.LinkEdge;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 
@@ -41,7 +41,7 @@ public class NTMsimulation
     static int MAXSTEPS = 1080;
 
     /** */
-    static HashMap<Node, HashMap<Node, Double[]>> fluxAreaToNeighbours = new HashMap<>();
+    static HashMap<NTMNode, HashMap<NTMNode, Double[]>> fluxAreaToNeighbours = new HashMap<>();
 
     /**
      * @param model
@@ -50,19 +50,12 @@ public class NTMsimulation
     public static void simulate(final NTMModel model) throws Exception
     {
         @SuppressWarnings("unchecked")
-        DoubleScalar.Abs<TimeUnit> currentTime = null;
+        Time currentTime = null;
         // debug for fastest path and write data??
         steps++;
-        try
-        {
-            currentTime =
-                new DoubleScalar.Abs<TimeUnit>(model.getSettingsNTM().getStartTimeSinceMidnight().getSI()
-                    + model.getSimulator().getSimulatorTime().get().getSI(), TimeUnit.SECOND);
-        }
-        catch (RemoteException exception2)
-        {
-            exception2.printStackTrace();
-        }
+        currentTime =
+            new Time(model.getSettingsNTM().getDurationSinceMidnight().getSI()
+                + model.getSimulator().getSimulatorTime().getSI(), TimeUnit.BASE_SECOND);
 
         // retrieve information from the Area Graph containing the NTM areas and the selected highways
 
@@ -102,8 +95,8 @@ public class NTMsimulation
 
         if (model.getSettingsNTM().isReRoute())
         {
-            if (model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) * steps
-                % model.getSettingsNTM().getReRouteTimeInterval().getInUnit(TimeUnit.SECOND) == 0)
+            if (model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(DurationUnit.SECOND) * steps
+                % model.getSettingsNTM().getReRouteTimeInterval().getInUnit(DurationUnit.SECOND) == 0)
             {
                 System.out.println("reroute");
                 // new K-shortest paths creation
@@ -119,7 +112,7 @@ public class NTMsimulation
             NTMTestApplication.textArea.append("The simulation has started right now, \n"
                 + "Wait for the next message...  \n" + "This may take a while! \n" + " \n");
 
-            for (Node node : model.getAreaGraph().vertexSet())
+            for (NTMNode node : model.getAreaGraph().vertexSet())
             {
                 BoundedNode origin = (BoundedNode) node;
                 // **** RELEVANT: set SUPPLY of all areas at maximum in first step
@@ -156,7 +149,7 @@ public class NTMsimulation
         // The structure (or Class in Java) named TripInfoDynamic is stored in a HashMap (lookup array) that
         // contains this information for all destinations separately.
 
-        for (Node node : model.getAreaGraph().vertexSet())
+        for (NTMNode node : model.getAreaGraph().vertexSet())
         {
             BoundedNode origin = (BoundedNode) node;
             try
@@ -188,7 +181,7 @@ public class NTMsimulation
                                 tripByHourPerLengthUnit
                                     * cellBehaviourNTM.getArea().getRoadLength().getInUnit(LengthUnit.KILOMETER);
                             double tripByTimeStep =
-                                model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.HOUR) * tripByHour;
+                                model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(DurationUnit.HOUR) * tripByHour;
                             cellBehaviourNTM.setDemand(tripByTimeStep);
                             // compute the total supply (maximum) from neighbours to this Area (again based on the
                             // accumulation and NFD/area characteristics)
@@ -201,15 +194,15 @@ public class NTMsimulation
                                     .getInUnit(FrequencyUnit.PER_HOUR)
                                     * cellBehaviourNTM.getArea().getRoadLength().getInUnit(LengthUnit.KILOMETER);
                             tripByTimeStep =
-                                model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.HOUR) * tripByHourSupply;
+                                model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(DurationUnit.HOUR) * tripByHourSupply;
 
                             cellBehaviourNTM.setSupply(tripByTimeStep);
-                            Abs<SpeedUnit> speed =
+                            Speed speed =
                                 cellBehaviourNTM.retrieveCurrentSpeed(cellBehaviourNTM.getAccumulatedCars(),
                                     cellBehaviourNTM.getArea().getRoadLength());
                             if (speed == null)
                             {
-                                speed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
+                                speed = new Speed(0, SpeedUnit.KM_PER_HOUR);
                             }
                             origin.getArea().setCurrentSpeed(
                                 cellBehaviourNTM.retrieveCurrentSpeed(cellBehaviourNTM.getAccumulatedCars(),
@@ -255,7 +248,7 @@ public class NTMsimulation
                                     .getInUnit(FrequencyUnit.PER_HOUR)
                                     * cellBehaviourNTM.getArea().getRoadLength().getInUnit(LengthUnit.KILOMETER);
                             double tripByTimeStep =
-                                model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.HOUR) * tripByHour;
+                                model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(DurationUnit.HOUR) * tripByHour;
                             cellBehaviourNTM.setSupply(tripByTimeStep);
                         }
                     }
@@ -290,7 +283,7 @@ public class NTMsimulation
                                                 * cellBehaviour.getDemand();
                                         double demandToNeighbourPerHour =
                                             demandToNeighbour * 3600
-                                                / model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND);
+                                                / model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(DurationUnit.SECOND);
                                         Frequency demand =
                                             new Frequency(demandToNeighbourPerHour, FrequencyUnit.PER_HOUR);
                                         cellBehaviour.addBorderDemand(neighbour, demand);
@@ -433,7 +426,7 @@ public class NTMsimulation
 
         // Step 4: FLOW links
         // Here we regard the generation of demand as a result of propagation of traffic on FLOW links
-        for (LinkEdge<Link> link : model.getAreaGraph().edgeSet())
+        for (LinkEdge<NTMLink> link : model.getAreaGraph().edgeSet())
         {
             {
                 if (link.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
@@ -452,7 +445,7 @@ public class NTMsimulation
                             cell.getCellBehaviourFlow().retrieveSupply(accumulationCell,
                                 cell.getCellBehaviourFlow().getParametersFundamentalDiagram());
                         double tripByStep =
-                            model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND)
+                            model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(DurationUnit.SECOND)
                                 * tripByHour.getInUnit(FrequencyUnit.PER_SECOND);
                         cell.getCellBehaviourFlow().setSupply(tripByStep);
                         // DEMAND
@@ -462,7 +455,7 @@ public class NTMsimulation
                                 cell.getCellBehaviourFlow().retrieveDemand(accumulationCell,
                                     cell.getCellBehaviourFlow().getParametersFundamentalDiagram());
                             tripByStep =
-                                model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND)
+                                model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(DurationUnit.SECOND)
                                     * tripByHour.getInUnit(FrequencyUnit.PER_SECOND);
                             cell.getCellBehaviourFlow().setDemand(tripByStep);
                         }
@@ -473,7 +466,7 @@ public class NTMsimulation
         }
 
         // STEP 5; after determining the total demand on FLOW links, here the demand by destination is determined
-        for (Node node : model.getAreaGraph().vertexSet())
+        for (NTMNode node : model.getAreaGraph().vertexSet())
         {
             BoundedNode origin = (BoundedNode) node;
             try
@@ -642,7 +635,7 @@ public class NTMsimulation
         // Monitor whether the demand of traffic from outside areas is able to enter a certain Area
         // Perhaps SUPPLY poses an upper bound on the Demand!
         // First, NTM and Cordon nodes are being passed
-        for (Node node : model.getAreaGraph().vertexSet())
+        for (NTMNode node : model.getAreaGraph().vertexSet())
         {
             BoundedNode origin = (BoundedNode) node;
             try
@@ -862,7 +855,7 @@ public class NTMsimulation
         }
 
         // STEP 6b: FLUXES of flow links!!!!!
-        for (LinkEdge<Link> link : model.getAreaGraph().edgeSet())
+        for (LinkEdge<NTMLink> link : model.getAreaGraph().edgeSet())
         {
             {
                 if (link.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
@@ -875,7 +868,7 @@ public class NTMsimulation
 
         // FIRST: Loop through all nodes and reset the relevant variables such as DemandToEnter (for nodes with more
         // than one entrance) to zero
-        for (LinkEdge<Link> link : model.getAreaGraph().edgeSet())
+        for (LinkEdge<NTMLink> link : model.getAreaGraph().edgeSet())
         {
             {
                 // only the feeding areas of the type NTM and Cordon can generate new traffic from the trip demand
@@ -900,7 +893,7 @@ public class NTMsimulation
         // STEP 7: Add new Demand from the trip matrix to prepare for the next simulation cycle
         // The variable TripsFrom contains information on trips from an origin/node to ALL other
         // destinations.
-        for (Node node : model.getAreaGraph().vertexSet())
+        for (NTMNode node : model.getAreaGraph().vertexSet())
         {
             BoundedNode origin = (BoundedNode) node;
             try
@@ -931,7 +924,7 @@ public class NTMsimulation
                         }
 
                         // double share =
-                        // model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND) / 3600;
+                        // model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(DurationUnit.SECOND) / 3600;
                         Double maxAccumulationThisArea = roadLength * critDensityPerHour;
                         maximumNumberOfTripsToAdd = maxAccumulationThisArea - origin.getCellBehaviour().getAccumulatedCars();
                     }
@@ -1027,7 +1020,7 @@ public class NTMsimulation
 
         // FIRST: Loop through all nodes and reset the relevant variables such as DemandToEnter (for nodes with more
         // than one entrance) to zero
-        for (LinkEdge<Link> link : model.getAreaGraph().edgeSet())
+        for (LinkEdge<NTMLink> link : model.getAreaGraph().edgeSet())
         {
             {
                 // only the feeding areas of the type NTM and Cordon can generate new traffic from the trip demand
@@ -1072,8 +1065,8 @@ public class NTMsimulation
      * @param areaGraph
      * @param ctmLink
      */
-    public static void simulateFlowLink(SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> areaGraph,
-        Map<String, Node> nodeAreaGraph, LinkCellTransmission ctmLink)
+    public static void simulateFlowLink(SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>> areaGraph,
+        Map<String, NTMNode> nodeAreaGraph, LinkCellTransmission ctmLink)
     {
         // Retrieve the cell transmission link
         // all cells (should) have identical characteristics

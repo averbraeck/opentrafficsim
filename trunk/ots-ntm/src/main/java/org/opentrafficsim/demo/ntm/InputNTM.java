@@ -1,9 +1,8 @@
 package org.opentrafficsim.demo.ntm;
 
-import org.djunits.unit.FrequencyUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Speed;
 
 /**
  * <p>
@@ -190,13 +189,13 @@ public class InputNTM
     private boolean reRoute = false;
 
     /** */
-    private DoubleScalar.Rel<TimeUnit> reRouteTimeInterval = null;
+    private Duration reRouteTimeInterval = null;
 
     /** */
-    DoubleScalar<SpeedUnit> maxSpeed = null;
+    Speed maxSpeed = null;
 
     /** */
-    DoubleScalar<FrequencyUnit> maxCapacity = null;
+    Frequency maxCapacity = null;
 
     /** */
     Double linkCapacityNumberOfHours;
@@ -406,7 +405,7 @@ public class InputNTM
      */
     public String getFileFeederLinks()
     {
-        return fileFeederLinks;
+        return this.fileFeederLinks;
     }
 
     /**
@@ -660,7 +659,7 @@ public class InputNTM
     /**
      * @return reRouteTimeInterval.
      */
-    public DoubleScalar.Rel<TimeUnit> getReRouteTimeInterval()
+    public Duration getReRouteTimeInterval()
     {
         return this.reRouteTimeInterval;
     }
@@ -668,7 +667,7 @@ public class InputNTM
     /**
      * @param reRouteTimeInterval set reRouteTimeInterval.
      */
-    public void setReRouteTimeInterval(DoubleScalar.Rel<TimeUnit> reRouteTimeInterval)
+    public void setReRouteTimeInterval(Duration reRouteTimeInterval)
     {
         this.reRouteTimeInterval = reRouteTimeInterval;
     }
@@ -676,7 +675,7 @@ public class InputNTM
     /**
      * @return maxSpeed.
      */
-    public DoubleScalar<SpeedUnit> getMaxSpeed()
+    public Speed getMaxSpeed()
     {
         return this.maxSpeed;
     }
@@ -684,7 +683,7 @@ public class InputNTM
     /**
      * @param maxSpeed set maxSpeed.
      */
-    public void setMaxSpeed(DoubleScalar<SpeedUnit> maxSpeed)
+    public void setMaxSpeed(Speed maxSpeed)
     {
         this.maxSpeed = maxSpeed;
     }
@@ -692,7 +691,7 @@ public class InputNTM
     /**
      * @return maxCapacity.
      */
-    public DoubleScalar<FrequencyUnit> getMaxCapacity()
+    public Frequency getMaxCapacity()
     {
         return this.maxCapacity;
     }
@@ -700,7 +699,7 @@ public class InputNTM
     /**
      * @param maxCapacity set maxCapacity.
      */
-    public void setMaxCapacity(DoubleScalar<FrequencyUnit> maxCapacity)
+    public void setMaxCapacity(Frequency maxCapacity)
     {
         this.maxCapacity = maxCapacity;
     }
@@ -710,7 +709,7 @@ public class InputNTM
      */
     public String getFileDemand()
     {
-        return fileDemand;
+        return this.fileDemand;
     }
 
     /**

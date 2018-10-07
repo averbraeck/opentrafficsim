@@ -4,9 +4,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import org.djunits.unit.FrequencyUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 /**
@@ -29,7 +28,7 @@ public class CellBehaviourFlow extends CellBehaviour
     private static final long serialVersionUID = 20140903L;
 
     /** CurrentSpeed: average current speed of Cars in this CELL. */
-    private DoubleScalar.Abs<SpeedUnit> currentSpeed;
+    private Speed currentSpeed;
 
     /**
      * parametersNTM are: - id ID - accCritical1 low param - accCritical2 high param - accJam jam param - freeSpeed -
@@ -129,7 +128,7 @@ public class CellBehaviourFlow extends CellBehaviour
     /**
      * @return averageSpeed
      */
-    public final DoubleScalar.Abs<SpeedUnit> getCurrentSpeed()
+    public final Speed getCurrentSpeed()
     {
         return this.currentSpeed;
     }
@@ -137,7 +136,7 @@ public class CellBehaviourFlow extends CellBehaviour
     /**
      * @param currentSpeed set currentSpeed.
      */
-    public final void setCurrentSpeed(final DoubleScalar.Abs<SpeedUnit> currentSpeed)
+    public final void setCurrentSpeed(final Speed currentSpeed)
     {
         this.currentSpeed = currentSpeed;
     }

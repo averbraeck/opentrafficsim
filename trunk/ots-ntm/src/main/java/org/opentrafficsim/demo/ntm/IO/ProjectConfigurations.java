@@ -7,13 +7,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.demo.ntm.CsvFileReader;
 import org.opentrafficsim.demo.ntm.NTMModel;
 import org.opentrafficsim.demo.ntm.ShapeFileReader;
@@ -281,7 +280,7 @@ public class ProjectConfigurations
             {
                 String value = config[1].trim();
                 Double valueDouble = Double.parseDouble(value);
-                DoubleScalar.Rel<TimeUnit> time = new Rel<TimeUnit>(300, TimeUnit.SECOND);
+                Duration time = new Duration(300, DurationUnit.SECOND);
                 model.getInputNTM().setReRouteTimeInterval(time);
             }
             else if (name.equals("linkCapacityNumberOfHours"))
@@ -294,14 +293,14 @@ public class ProjectConfigurations
             {
                 String value = config[1].trim();
                 Double valueDouble = Double.parseDouble(value);
-                DoubleScalar.Abs<SpeedUnit> speed = new Abs<SpeedUnit>(valueDouble, SpeedUnit.KM_PER_HOUR);
+                Speed speed = new Speed(valueDouble, SpeedUnit.KM_PER_HOUR);
                 model.getInputNTM().setMaxSpeed(speed);
             }
             else if (name.equals("maxCapacity"))
             {
                 String value = config[1].trim();
                 Double valueDouble = Double.parseDouble(value);
-                DoubleScalar<FrequencyUnit> maxCapacity =
+                Frequency maxCapacity =
                     new Frequency(valueDouble, FrequencyUnit.PER_HOUR);
                 model.getInputNTM().setMaxCapacity(maxCapacity);
             }

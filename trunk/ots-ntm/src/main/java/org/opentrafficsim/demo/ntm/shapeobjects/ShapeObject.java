@@ -7,10 +7,10 @@ import java.util.Set;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import com.vividsolutions.jts.geom.Geometry;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class ShapeObject implements LocatableInterface
+public class ShapeObject implements Locatable
 {
     /** */
     private Geometry geometry;

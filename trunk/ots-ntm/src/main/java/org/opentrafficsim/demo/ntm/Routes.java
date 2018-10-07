@@ -5,15 +5,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.jgrapht.GraphPath;
-import org.jgrapht.alg.FloydWarshallShortestPaths;
+import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths;
 import org.opentrafficsim.core.network.LinkEdge;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
+import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
 
 /**
  * <p>
@@ -45,22 +46,21 @@ public class Routes
      * @throws IOException
      */
     public static void createRoutes(NTMModel model, int numberOfRoutes, double weight_newRoutes, double VARIANCE,
-        final boolean initiateSimulation, int steps, int MAXSTEPS) throws IOException
+            final boolean initiateSimulation, int steps, int MAXSTEPS) throws IOException
     {
         // every route receives a fixed share
         java.lang.Double addShare = (double) (1.0 / numberOfRoutes);
         /** */
         BufferedWriter dataRoutesNTMOut = null;
         String fileName = "/ALLroutes";
-        File file =
-            new File(model.getSettingsNTM().getPath() + model.getInputNTM().getOutputMap() + fileName + steps + ".txt");
+        File file = new File(model.getSettingsNTM().getPath() + model.getInputNTM().getOutputMap() + fileName + steps + ".txt");
         dataRoutesNTMOut = WriteOutput.createWriter(file);
         for (int i = 0; i < numberOfRoutes; i++)
         {
 
             // create stochastic link edge weights
 
-            for (LinkEdge le : model.getAreaGraph().edgeSet())
+            for (LinkEdge<NTMLink> le : model.getAreaGraph().edgeSet())
             {
                 double rateCongestedVersusFreeTravelTime = 1.0;
                 BoundedNode startNode = (BoundedNode) model.getNodeAreaGraphMap().get(le.getLink().getStartNode().getId());
@@ -69,51 +69,55 @@ public class Routes
                 {
 
                     if (startNode.getBehaviourType() == TrafficBehaviourType.NTM
-                        && endNode.getBehaviourType() == TrafficBehaviourType.NTM)
+                            && endNode.getBehaviourType() == TrafficBehaviourType.NTM)
                     {
                         CellBehaviourNTM cellBehaviourStart = (CellBehaviourNTM) startNode.getCellBehaviour();
                         if (cellBehaviourStart.getAccumulatedCars() > 0)
                         {
                             double currentSpeedStart =
-                                cellBehaviourStart.retrieveCurrentSpeed(cellBehaviourStart.getAccumulatedCars(),
-                                    cellBehaviourStart.getArea().getRoadLength()).getInUnit(SpeedUnit.KM_PER_HOUR);
+                                    cellBehaviourStart
+                                            .retrieveCurrentSpeed(cellBehaviourStart.getAccumulatedCars(),
+                                                    cellBehaviourStart.getArea().getRoadLength())
+                                            .getInUnit(SpeedUnit.KM_PER_HOUR);
                             double freeSpeedStart =
-                                cellBehaviourStart.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                                    cellBehaviourStart.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
                             rateCongestedVersusFreeTravelTime = 0.5 * freeSpeedStart / currentSpeedStart;
                             CellBehaviourNTM cellBehaviourEnd = (CellBehaviourNTM) endNode.getCellBehaviour();
                             double currentSpeedEnd =
-                                cellBehaviourEnd.retrieveCurrentSpeed(cellBehaviourEnd.getAccumulatedCars(),
-                                    cellBehaviourStart.getArea().getRoadLength()).getInUnit(SpeedUnit.KM_PER_HOUR);
+                                    cellBehaviourEnd
+                                            .retrieveCurrentSpeed(cellBehaviourEnd.getAccumulatedCars(),
+                                                    cellBehaviourStart.getArea().getRoadLength())
+                                            .getInUnit(SpeedUnit.KM_PER_HOUR);
                             double freeSpeedEnd =
-                                cellBehaviourEnd.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                                    cellBehaviourEnd.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
                             rateCongestedVersusFreeTravelTime += 0.5 * freeSpeedEnd / currentSpeedEnd;
                         }
                     }
                     else if (startNode.getBehaviourType() == TrafficBehaviourType.FLOW
-                        && endNode.getBehaviourType() == TrafficBehaviourType.FLOW)
+                            && endNode.getBehaviourType() == TrafficBehaviourType.FLOW)
                     {
                         // the endNode of this edge is the "Neighbour" area
                         LinkCellTransmission ctmLink = (LinkCellTransmission) le.getLink();
-                        double freeTime = ctmLink.getTime().getInUnit(TimeUnit.SECOND);
-                        double currrentTime = ctmLink.retrieveActualTime().getInUnit(TimeUnit.SECOND);
+                        double freeTime = ctmLink.getDuration().getInUnit(DurationUnit.SECOND);
+                        double currrentTime = ctmLink.retrieveActualTime().getInUnit(DurationUnit.SECOND);
                         rateCongestedVersusFreeTravelTime = currrentTime / freeTime;
 
                         if (rateCongestedVersusFreeTravelTime > 10000)
                         {
                             System.out.println("Start: " + startNode.getId() + " End node: " + endNode.getId()
-                                + " currentTime: " + currrentTime + " freeTime: " + currrentTime);
-                            double testCurrrentTime = ctmLink.retrieveActualTime().getInUnit(TimeUnit.SECOND);
+                                    + " currentTime: " + currrentTime + " freeTime: " + currrentTime);
+                            double testCurrrentTime = ctmLink.retrieveActualTime().getInUnit(DurationUnit.SECOND);
                         }
 
                     }
                 }
 
                 if (startNode.getBehaviourType() == TrafficBehaviourType.CORDON
-                    || endNode.getBehaviourType() == TrafficBehaviourType.CORDON)
+                        || endNode.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
                     rateCongestedVersusFreeTravelTime = 999999;
                 }
-                double speed = ((Link) le.getLink()).getFreeSpeed().getInUnit(SpeedUnit.METER_PER_SECOND);
+                double speed = le.getLink().getFreeSpeed().getInUnit(SpeedUnit.METER_PER_SECOND);
                 double length = le.getLink().getLength().getInUnit(LengthUnit.METER);
                 double travelTime = length / speed;
                 // double weight =
@@ -122,17 +126,25 @@ public class Routes
                 model.getAreaGraph().setEdgeWeight(le, weight);
             }
 
-            Collection<GraphPath<BoundedNode, LinkEdge<Link>>> sp1 = null;
-            sp1 = new FloydWarshallShortestPaths(model.getAreaGraph()).getShortestPaths();
+            FloydWarshallShortestPaths<NTMNode, LinkEdge<NTMLink>> allPaths =
+                    new FloydWarshallShortestPaths<>(model.getAreaGraph());
+            Collection<GraphPath<NTMNode, LinkEdge<NTMLink>>> sp1 = new HashSet<>();
+            for (NTMNode source : model.getAreaGraph().vertexSet())
+            {
+                for (NTMNode sink : model.getAreaGraph().vertexSet())
+                {
+                    sp1.add(allPaths.getPath(source, sink));
+                }
+            }
 
             // assign a share to every route (i)
-            for (GraphPath<BoundedNode, LinkEdge<Link>> path : sp1)
+            for (GraphPath<NTMNode, LinkEdge<NTMLink>> path : sp1)
             {
-                BoundedNode origin = path.getStartVertex();
-                BoundedNode destination = path.getEndVertex();
+                BoundedNode origin = (BoundedNode) path.getStartVertex();
+                BoundedNode destination = (BoundedNode) path.getEndVertex();
                 // only generate to "real" destinations
                 if (destination.getBehaviourType() == TrafficBehaviourType.NTM
-                    || destination.getBehaviourType() == TrafficBehaviourType.CORDON)
+                        || destination.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
                     // determine the start and end node of the first edge that starts from the origin
                     // the endNode of this edge is the "Neighbour" area
@@ -158,12 +170,11 @@ public class Routes
                         {
                             HashMap<BoundedNode, java.lang.Double> neighbours = new HashMap<BoundedNode, java.lang.Double>();
                             HashMap<BoundedNode, java.lang.Double> accumulatedCarsToNeighbour =
-                                new HashMap<BoundedNode, java.lang.Double>();
+                                    new HashMap<BoundedNode, java.lang.Double>();
                             HashMap<BoundedNode, java.lang.Double> demandToNeighbour =
-                                new HashMap<BoundedNode, java.lang.Double>();
-                            TripInfoByDestination tripInfoByNode =
-                                new TripInfoByDestination(neighbours, accumulatedCarsToNeighbour, demandToNeighbour,
-                                    destination);
+                                    new HashMap<BoundedNode, java.lang.Double>();
+                            TripInfoByDestination tripInfoByNode = new TripInfoByDestination(neighbours,
+                                    accumulatedCarsToNeighbour, demandToNeighbour, destination);
                             origin.getCellBehaviour().getTripInfoByDestinationMap().put(destination, tripInfoByNode);
                         }
                     }
@@ -176,13 +187,12 @@ public class Routes
                         if (i == 0)
                         {
                             for (BoundedNode node : origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
-                                .getRouteFractionToNeighbours().keySet())
+                                    .getRouteFractionToNeighbours().keySet())
                             {
-                                java.lang.Double oldShare =
-                                    origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
-                                        .getRouteFractionToNeighbours().get(node);
+                                java.lang.Double oldShare = origin.getCellBehaviour().getTripInfoByDestinationMap()
+                                        .get(destination).getRouteFractionToNeighbours().get(node);
                                 origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
-                                    .getRouteFractionToNeighbours().put(node, (1 - weightNew) * oldShare);
+                                        .getRouteFractionToNeighbours().put(node, (1 - weightNew) * oldShare);
                             }
                         }
                     }
@@ -190,11 +200,10 @@ public class Routes
                     // for all node - destination pairs add information on their first neighbour on the shortest path
                     BoundedNode neighbour = (BoundedNode) model.getNodeAreaGraphMap().get(endNode.getId());
                     java.lang.Double share = 0.0;
-                    if (origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
-                        .getRouteFractionToNeighbours().containsKey(neighbour))
+                    if (origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination).getRouteFractionToNeighbours()
+                            .containsKey(neighbour))
                     {
-                        share =
-                            origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
+                        share = origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
                                 .getRouteFractionToNeighbours().get(neighbour);
                         if (share > 0.0)
                         {
@@ -202,15 +211,15 @@ public class Routes
                         }
                     }
                     origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination).getRouteFractionToNeighbours()
-                        .put(neighbour, share + weightNew * addShare);
+                            .put(neighbour, share + weightNew * addShare);
                     // create a field to store accumulated cars to a certain neighbour on its path to a destination
                     if (!origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
-                        .getAccumulatedCarsToNeighbour().containsKey(neighbour))
+                            .getAccumulatedCarsToNeighbour().containsKey(neighbour))
                     {
-                        origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
-                            .getAccumulatedCarsToNeighbour().put(neighbour, 0.0);
-                        origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination).getDemandToNeighbour().put(
-                            neighbour, 0.0);
+                        origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination).getAccumulatedCarsToNeighbour()
+                                .put(neighbour, 0.0);
+                        origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination).getDemandToNeighbour()
+                                .put(neighbour, 0.0);
                     }
 
                     if (startNode == null || neighbour == null || destination == null)
@@ -219,14 +228,14 @@ public class Routes
                     }
 
                     WriteOutput.writeOutputRoutesNTM(model, steps, i, origin, neighbour, destination, MAXSTEPS,
-                        dataRoutesNTMOut, share, weightNew * addShare, path.getWeight());
+                            dataRoutesNTMOut, share, weightNew * addShare, path.getWeight());
 
                     // only for initialisation of routes over the flow Links;
                     if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                     {
                         // for the flow links we create the trip info by Node also for the flow cells
                         LinkCellTransmission ctmLink =
-                            (LinkCellTransmission) model.getAreaGraph().getEdge(origin, neighbour).getLink();
+                                (LinkCellTransmission) model.getAreaGraph().getEdge(origin, neighbour).getLink();
                         // Loop through the cells and do transmission
                         for (FlowCell cell : ctmLink.getCells())
                         {
@@ -234,14 +243,13 @@ public class Routes
                             if (initiateSimulation)
                             {
                                 HashMap<BoundedNode, java.lang.Double> neighbours =
-                                    new HashMap<BoundedNode, java.lang.Double>();
+                                        new HashMap<BoundedNode, java.lang.Double>();
                                 HashMap<BoundedNode, java.lang.Double> accumulatedCarsToNeighbour =
-                                    new HashMap<BoundedNode, java.lang.Double>();
+                                        new HashMap<BoundedNode, java.lang.Double>();
                                 HashMap<BoundedNode, java.lang.Double> demandToNeighbour =
-                                    new HashMap<BoundedNode, java.lang.Double>();
-                                TripInfoByDestination tripInfoByNode =
-                                    new TripInfoByDestination(neighbours, accumulatedCarsToNeighbour, demandToNeighbour,
-                                        destination);
+                                        new HashMap<BoundedNode, java.lang.Double>();
+                                TripInfoByDestination tripInfoByNode = new TripInfoByDestination(neighbours,
+                                        accumulatedCarsToNeighbour, demandToNeighbour, destination);
                                 cell.getCellBehaviourFlow().getTripInfoByDestinationMap().put(destination, tripInfoByNode);
                             }
                             else
@@ -249,20 +257,18 @@ public class Routes
                                 if (cell.getCellBehaviourFlow().getTripInfoByDestinationMap().get(destination) == null)
                                 {
                                     HashMap<BoundedNode, java.lang.Double> neighbours =
-                                        new HashMap<BoundedNode, java.lang.Double>();
+                                            new HashMap<BoundedNode, java.lang.Double>();
                                     HashMap<BoundedNode, java.lang.Double> accumulatedCarsToNeighbour =
-                                        new HashMap<BoundedNode, java.lang.Double>();
+                                            new HashMap<BoundedNode, java.lang.Double>();
                                     HashMap<BoundedNode, java.lang.Double> demandToNeighbour =
-                                        new HashMap<BoundedNode, java.lang.Double>();
-                                    TripInfoByDestination tripInfoByNode =
-                                        new TripInfoByDestination(neighbours, accumulatedCarsToNeighbour, demandToNeighbour,
-                                            destination);
-                                    cell.getCellBehaviourFlow().getTripInfoByDestinationMap().put(destination,
-                                        tripInfoByNode);
+                                            new HashMap<BoundedNode, java.lang.Double>();
+                                    TripInfoByDestination tripInfoByNode = new TripInfoByDestination(neighbours,
+                                            accumulatedCarsToNeighbour, demandToNeighbour, destination);
+                                    cell.getCellBehaviourFlow().getTripInfoByDestinationMap().put(destination, tripInfoByNode);
                                 }
                             }
                             cell.getCellBehaviourFlow().getTripInfoByDestinationMap().get(destination)
-                                .getRouteFractionToNeighbours().put(neighbour, 1.0);
+                                    .getRouteFractionToNeighbours().put(neighbour, 1.0);
                         }
                     }
 
