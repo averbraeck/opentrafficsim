@@ -19,6 +19,19 @@
       <action dev="averbraeck" type="fix">
         ots-ntm project updated to latest ots, dsol, and djunits version.
       </action>
+      <action dev="averbraeck" type="fix">
+        Recent Java-8 compilers are more strict on generics. Therefore the class definition of ToledoPerception 
+        has been adapted as follows: public class ToledoPerception extends LaneBasedAbstractPerceptionCategory 
+        implements LaneBasedPerceptionCategory. DirectEgoPerception's class definition has been updated to: 
+        public class DirectEgoPerception&lt;G extends GTU, P extends Perception&lt;G&gt;&gt; 
+        extends AbstractPerceptionCategory&lt;G, P&gt; implements EgoPerception&lt;G, P&gt;
+      </action>      
+      <action dev="averbraeck" type="update">
+        The projects have been adapted to the latest Eclipse version (4.8; Photon). Test sources and
+        classes are more strictly separated from regular classes. This asked for several small changes
+        in the Eclipse environment that have been included in the .classpath file in the root folder 
+        of the projects. 
+      </action>
     </release>
   
     <release version="1.00.02" date="2018-09-20" description="Demo repairs, ots-aimsun integrated, Logger">
