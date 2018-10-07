@@ -43,8 +43,8 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends R
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public AbstractLineAnimation(final T source, final SimulatorInterface.TimeDoubleUnit simulator, final double length, final Length width)
-            throws NamingException, RemoteException
+    public AbstractLineAnimation(final T source, final SimulatorInterface.TimeDoubleUnit simulator, final double length,
+            final Length width) throws NamingException, RemoteException
     {
         super(source, simulator);
         this.halfLength = .5 * length * source.getLane().getWidth(0.0).getSI();

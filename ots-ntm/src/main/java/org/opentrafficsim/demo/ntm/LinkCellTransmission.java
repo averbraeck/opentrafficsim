@@ -55,9 +55,9 @@ public class LinkCellTransmission extends NTMLink
      * @throws NetworkException
      */
 
-    public LinkCellTransmission(final Network network, final OTSSimulatorInterface simulator,
-            OTSLine3D geometry, String nr, Length length, NTMNode startNode, NTMNode endNode, Speed speed, Duration time,
-            Frequency capacity, TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells, int hierarchy)
+    public LinkCellTransmission(final Network network, final OTSSimulatorInterface simulator, OTSLine3D geometry, String nr,
+            Length length, NTMNode startNode, NTMNode endNode, Speed speed, Duration time, Frequency capacity,
+            TrafficBehaviourType behaviourType, LinkData linkData, ArrayList<FlowCell> cells, int hierarchy)
             throws NetworkException
     {
         super(network, simulator, geometry, nr, length, startNode, endNode, speed, time, capacity, behaviourType, linkData);
@@ -87,9 +87,8 @@ public class LinkCellTransmission extends NTMLink
     public LinkCellTransmission(final NTMLink link, BoundedNode startNode, BoundedNode endNode, final ArrayList<FlowCell> cells)
             throws NetworkException
     {
-        super(link.getNetwork(), link.getSimulator(), link.getDesignLine(), link.getId(), link.getLength(),
-                startNode, endNode, link.getFreeSpeed(), link.getDuration(), link.getCapacity(), link.getBehaviourType(),
-                link.getLinkData());
+        super(link.getNetwork(), link.getSimulator(), link.getDesignLine(), link.getId(), link.getLength(), startNode, endNode,
+                link.getFreeSpeed(), link.getDuration(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
         this.cells = cells;
     }
 

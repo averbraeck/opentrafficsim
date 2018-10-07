@@ -300,8 +300,7 @@ public class ProjectConfigurations
             {
                 String value = config[1].trim();
                 Double valueDouble = Double.parseDouble(value);
-                Frequency maxCapacity =
-                    new Frequency(valueDouble, FrequencyUnit.PER_HOUR);
+                Frequency maxCapacity = new Frequency(valueDouble, FrequencyUnit.PER_HOUR);
                 model.getInputNTM().setMaxCapacity(maxCapacity);
             }
             else if (name.equals("variantNumber"))

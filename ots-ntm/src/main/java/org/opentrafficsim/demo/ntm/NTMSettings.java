@@ -82,9 +82,9 @@ public class NTMSettings
      * @param scalingFactorDemand
      */
     public NTMSettings(Calendar startTime, Duration durationOfSimulation, String descriptionProject,
-        Duration timeStepDurationNTM, Duration timeStepDurationCTM, Duration reRouteTimeInterval,
-        int numberOfRoutes, double weightNewRoutes, double varianceRoutes, boolean reRoute, String path,
-        boolean increaseDemandByArea, double scalingFactorDemand)
+            Duration timeStepDurationNTM, Duration timeStepDurationCTM, Duration reRouteTimeInterval, int numberOfRoutes,
+            double weightNewRoutes, double varianceRoutes, boolean reRoute, String path, boolean increaseDemandByArea,
+            double scalingFactorDemand)
     {
         this.setStartTime(new Time(startTime.getTimeInMillis(), TimeUnit.BASE_MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);

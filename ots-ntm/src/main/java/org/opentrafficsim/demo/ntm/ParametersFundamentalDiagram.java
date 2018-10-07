@@ -49,8 +49,7 @@ public class ParametersFundamentalDiagram
      * @param capacity
      * @param numberOfLanes
      */
-    public ParametersFundamentalDiagram(final Speed freeSpeed,
-        final Frequency capacity, final int numberOfLanes)
+    public ParametersFundamentalDiagram(final Speed freeSpeed, final Frequency capacity, final int numberOfLanes)
     {
         super();
         this.accCritical = new ArrayList<Double>();

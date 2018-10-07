@@ -133,8 +133,8 @@ public final class AnticipationInfo implements Serializable
      * @throws ParameterException if parameter is not defined
      */
     public static AnticipationInfo anticipateMovementFreeAcceleration(final Length distance, final Speed initialSpeed,
-            final Parameters parameters, final CarFollowingModel carFollowingModel,
-            final SpeedLimitInfo speedLimitInfo, final Duration timeStep) throws ParameterException
+            final Parameters parameters, final CarFollowingModel carFollowingModel, final SpeedLimitInfo speedLimitInfo,
+            final Duration timeStep) throws ParameterException
     {
         if (distance.lt0())
         {
@@ -149,8 +149,7 @@ public final class AnticipationInfo implements Serializable
         Speed speed = initialSpeed;
         while (xCumul.lt(distance))
         {
-            Acceleration a =
-                    CarFollowingUtil.freeAcceleration(carFollowingModel, parameters, speed, speedLimitInfo);
+            Acceleration a = CarFollowingUtil.freeAcceleration(carFollowingModel, parameters, speed, speedLimitInfo);
             Length add = new Length(speed.si * timeStep.si + .5 * a.si * timeStep.si * timeStep.si, LengthUnit.SI);
             Length remain = distance.minus(xCumul);
             if (add.lt(remain))

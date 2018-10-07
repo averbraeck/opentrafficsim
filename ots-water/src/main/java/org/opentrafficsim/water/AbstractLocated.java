@@ -54,5 +54,5 @@ public abstract class AbstractLocated implements Located
     {
         return new BoundingSphere();
     }
-    
+
 }

@@ -56,7 +56,8 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the incoming notifications on
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public AbstractTransceiver(final String id, final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+    public AbstractTransceiver(final String id, final Connector connector,
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
         Throw.whenNull(connector, "Connector can not be null");
         Throw.whenNull(id, "id can not be null");

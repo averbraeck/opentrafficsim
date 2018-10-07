@@ -43,8 +43,7 @@ public class DataViewerApplication extends DSOLApplication
      * @param title
      * @param panel
      */
-    public DataViewerApplication(String title,
-        DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
+    public DataViewerApplication(String title, DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {
         super(title, panel);
     }
@@ -58,7 +57,7 @@ public class DataViewerApplication extends DSOLApplication
      * @throws RemoteException
      * @throws NamingException
      * @throws IOException
-     * @throws PropertyException 
+     * @throws PropertyException
      */
     public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException, PropertyException
     {
@@ -72,8 +71,7 @@ public class DataViewerApplication extends DSOLApplication
                 new Duration(7200.0, DurationUnit.SECOND), model);
         // simulator.initialize(replication, ReplicationMode.TERMINATING);
 
-        DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel =
-            new DSOLPanel<Time, Duration, SimTimeDoubleUnit>(model, simulator);
+        DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel = new DSOLPanel<Time, Duration, SimTimeDoubleUnit>(model, simulator);
         addInfoTab(panel);
 
         Rectangle2D extent = new Rectangle2D.Double(65000.0, 440000.0, 55000.0, 30000.0);
@@ -91,8 +89,7 @@ public class DataViewerApplication extends DSOLApplication
     /**
      * @param panel
      */
-    private static void addInfoTab(
-        final DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
+    private static void addInfoTab(final DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {
         // Let's find some content for our infoscreen and add it to our tabbedPane
         String helpSource = "/" + NTMModel.class.getPackage().getName().replace('.', '/') + "/html/ntm.html";

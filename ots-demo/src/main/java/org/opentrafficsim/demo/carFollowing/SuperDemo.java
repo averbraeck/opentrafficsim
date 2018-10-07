@@ -229,7 +229,7 @@ public class SuperDemo implements UNITS
                     simulation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND),
                             SuperDemo.this.activeProperties, null, false);
                 }
-                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException 
+                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException
                         | PropertyException exception)
                 {
                     exception.printStackTrace();
@@ -263,9 +263,8 @@ public class SuperDemo implements UNITS
         this.propertyPanel.removeAll();
         try
         {
-            CompoundProperty simulationSettings =
-                    new CompoundProperty("SimulationSettings", "Simulation settings",
-                            "Select the simulation network and traffic composition", null, false, 0);
+            CompoundProperty simulationSettings = new CompoundProperty("SimulationSettings", "Simulation settings",
+                    "Select the simulation network and traffic composition", null, false, 0);
             /*
              * This is ugly, but it gets the job done... Insert a dummy property at the top and later replace the property
              * editor for the dummy property by the simulationSelection JPanel.
@@ -297,9 +296,8 @@ public class SuperDemo implements UNITS
                 simulationSettings.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                         "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                         new Double[] { 0.8, 0.2 }, false, 5));
-                CompoundProperty modelSelection =
-                        new CompoundProperty("ModelSelection", "Model selection", "Modeling specific settings", null, false,
-                                300);
+                CompoundProperty modelSelection = new CompoundProperty("ModelSelection", "Model selection",
+                        "Modeling specific settings", null, false, 300);
                 modelSelection.add(new SelectionProperty("SimulationScale", "Simulation scale",
                         "Level of detail of the simulation", new String[] { "Micro", "Macro", "Meta" }, 0, true, 0));
                 modelSelection.add(new SelectionProperty("CarFollowingModel", "Car following model",
@@ -307,13 +305,14 @@ public class SuperDemo implements UNITS
                                 + "the acceleration that a vehicle will make taking into account "
                                 + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                 + "curvature of the road) capabilities of the vehicle and personality "
-                                + "of the driver.</html>", new String[] { "IDM", "IDM+" }, 1, false, 1));
+                                + "of the driver.</html>",
+                        new String[] { "IDM", "IDM+" }, 1, false, 1));
                 modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
                         new Acceleration(1.56, METER_PER_SECOND_2), new Acceleration(2.09, METER_PER_SECOND_2),
                         new Length(3.0, METER), new Duration(1.2, SECOND), 2));
-                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.75,
-                        METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length(3.0, METER), new Duration(
-                        1.2, SECOND), 3));
+                modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
+                        new Acceleration(0.75, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
+                        new Length(3.0, METER), new Duration(1.2, SECOND), 3));
                 properties.add(properties.size() > 0 ? 1 : 0, modelSelection);
             }
             properties.add(0, simulationSettings);
@@ -433,9 +432,8 @@ public class SuperDemo implements UNITS
             slider.setMinimum(ip.getMinimumValue());
             slider.setValue(ip.getValue());
             slider.setPaintTicks(true);
-            final JLabel currentValue =
-                    new JLabel(String.format(DefaultLocale.getLocale(), ip.getFormatString(), ip.getValue()),
-                            SwingConstants.RIGHT);
+            final JLabel currentValue = new JLabel(
+                    String.format(DefaultLocale.getLocale(), ip.getFormatString(), ip.getValue()), SwingConstants.RIGHT);
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
@@ -471,11 +469,10 @@ public class SuperDemo implements UNITS
             final int useSteps = 1000;
             slider.setMaximum(useSteps);
             slider.setMinimum(0);
-            slider.setValue((int) (useSteps * (cp.getValue() - cp.getMinimumValue()) / (cp.getMaximumValue() - cp
-                    .getMinimumValue())));
-            final JLabel currentValue =
-                    new JLabel(String.format(DefaultLocale.getLocale(), cp.getFormatString(), cp.getValue()),
-                            SwingConstants.RIGHT);
+            slider.setValue(
+                    (int) (useSteps * (cp.getValue() - cp.getMinimumValue()) / (cp.getMaximumValue() - cp.getMinimumValue())));
+            final JLabel currentValue = new JLabel(
+                    String.format(DefaultLocale.getLocale(), cp.getFormatString(), cp.getValue()), SwingConstants.RIGHT);
             slider.addChangeListener(new ChangeListener()
             {
                 @Override

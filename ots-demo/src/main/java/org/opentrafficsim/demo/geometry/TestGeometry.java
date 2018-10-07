@@ -55,8 +55,8 @@ public class TestGeometry extends DSOLApplication implements UNITS
     {
         OTSModelInterface model = new TestModel();
         DEVSAnimator.TimeDoubleUnit simulator = new DEVSAnimator.TimeDoubleUnit();
-        OTSReplication replication = new OTSReplication("rep1", new SimTimeDoubleUnit(Time.ZERO),
-                Duration.ZERO, new Duration(1800.0, SECOND), model);
+        OTSReplication replication = new OTSReplication("rep1", new SimTimeDoubleUnit(Time.ZERO), Duration.ZERO,
+                new Duration(1800.0, SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
         DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel = new DSOLPanel<Time, Duration, SimTimeDoubleUnit>(model, simulator);
 

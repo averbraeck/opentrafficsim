@@ -183,8 +183,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     public RollingLaneStructure(final Length lookAhead, final Length down, final Length up, final Length downSplit,
             final Length upMerge, final LaneBasedGTU gtu)
     {
-        HistoryManager historyManager =
-                gtu.getSimulator().getReplication().getHistoryManager(gtu.getSimulator());
+        HistoryManager historyManager = gtu.getSimulator().getReplication().getHistoryManager(gtu.getSimulator());
         this.root = new HistoricalValue<>(historyManager);
         this.lookAhead = lookAhead;
         this.down = down;

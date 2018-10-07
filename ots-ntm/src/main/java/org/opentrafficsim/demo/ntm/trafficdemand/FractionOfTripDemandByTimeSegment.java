@@ -33,8 +33,7 @@ public class FractionOfTripDemandByTimeSegment
      * @param duration length of this time segment
      * @param shareOfDemand amount of trips of this segment relatively to the total simulation period
      */
-    public FractionOfTripDemandByTimeSegment(final Time timeSinceMidnight,
-        final Duration duration, final double shareOfDemand)
+    public FractionOfTripDemandByTimeSegment(final Time timeSinceMidnight, final Duration duration, final double shareOfDemand)
     {
         this.timeSinceMidnight = timeSinceMidnight;
         this.duration = duration;

@@ -39,7 +39,7 @@ public interface LaneBasedGTU extends GTU
     /** {@inheritDoc} */
     @Override
     LaneBasedStrategicalPlanner getStrategicalPlanner();
-    
+
     /** {@inheritDoc} */
     @Override
     LaneBasedStrategicalPlanner getStrategicalPlanner(Time time);
@@ -50,7 +50,7 @@ public interface LaneBasedGTU extends GTU
     {
         return getStrategicalPlanner().getTacticalPlanner();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     default LaneBasedTacticalPlanner getTacticalPlanner(final Time time)
@@ -95,7 +95,7 @@ public interface LaneBasedGTU extends GTU
      * @param event SimEventInterface&ltSimTimeDoubleUnit&gt;; event
      */
     void setFinalizeLaneChangeEvent(SimEventInterface<SimTimeDoubleUnit> event);
-    
+
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered. <br>
@@ -262,7 +262,7 @@ public interface LaneBasedGTU extends GTU
     {
         return VehicleModel.MINMAX;
     }
-    
+
     /**
      * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
      * by:<br>
@@ -277,7 +277,7 @@ public interface LaneBasedGTU extends GTU
     {
         return isBrakingLightsOn(getSimulator().getSimulatorTime());
     }
-    
+
     /**
      * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
      * by:<br>

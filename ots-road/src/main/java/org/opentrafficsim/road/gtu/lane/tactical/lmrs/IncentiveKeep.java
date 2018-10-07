@@ -24,15 +24,15 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
  */
 public class IncentiveKeep implements VoluntaryIncentive
 {
-    
+
     /** Free lane change threshold parameter type. */
     protected static final ParameterTypeDouble DFREE = LmrsParameters.DFREE;
 
     /** {@inheritDoc} */
     @Override
-    public final Desire determineDesire(final Parameters parameters,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
-            final Desire voluntaryDesire) throws ParameterException, OperationalPlanException
+    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
+            throws ParameterException, OperationalPlanException
     {
         if (mandatoryDesire.getRight() < 0 || voluntaryDesire.getRight() < 0
                 || !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT))

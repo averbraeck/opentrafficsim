@@ -131,9 +131,8 @@ public class LaneBasedGTUTest implements UNITS
         GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
         Parameters parameters = DefaultTestParameters.create();
 
-        LaneBasedIndividualGTU truck =
-                new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed,
-                        truckLength.multiplyBy(0.5), simulator, this.network);
+        LaneBasedIndividualGTU truck = new LaneBasedIndividualGTU("Truck", truckType, truckLength, truckWidth, maximumSpeed,
+                truckLength.multiplyBy(0.5), simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
         truck.setParameters(parameters);

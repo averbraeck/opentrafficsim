@@ -4,18 +4,17 @@ package org.opentrafficsim.water.statistics;
  * <br>
  * Copyright (c) 2013-2014 Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving. All rights reserved. <br>
  * Some parts of the software (c) 2011-2014 TU Delft, Faculty of TBM, Systems and Simulation <br>
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk
- * Onderzoek TNO (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten
- * Binnenvaart, Ab Ovo Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en
- * Leefomgeving, including the right to sub-license sources and derived products to third parties. <br>
- * 
+ * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
+ * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
+ * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
+ * right to sub-license sources and derived products to third parties. <br>
  * @version Mar 24, 2013 <br>
  * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
- * @version SVN $Revision: 130 $ $Author: averbraeck $
- * $Date: 2014-04-03 21:21:03 +0200 (Thu, 03 Apr 2014) $
+ * @version SVN $Revision: 130 $ $Author: averbraeck $ $Date: 2014-04-03 21:21:03 +0200 (Thu, 03 Apr 2014) $
  **/
 @SuppressWarnings("javadoc")
-public enum SailingServiceTimeBreakdownEnum {
+public enum SailingServiceTimeBreakdownEnum
+{
 
     INLAND_WAIT_LOADS("wachten lading inland", "wachttijd op lading bij de inlandterminal(s), inclusief hopterminals"),
 
@@ -50,8 +49,7 @@ public enum SailingServiceTimeBreakdownEnum {
 
     RTM_ED_WAIT_QUAY("wachten kade Rtm-MTD", "wachttijd op kade bij empty depot terminals in Rtm"),
 
-    RTM_ED_WAIT_TRANSPORT("wachten kadetransport Rtm-MTD",
-            "wachttijd op kadetransport bij empty depot terminals in Rtm"),
+    RTM_ED_WAIT_TRANSPORT("wachten kadetransport Rtm-MTD", "wachttijd op kadetransport bij empty depot terminals in Rtm"),
 
     RTM_ED_LOADING("laden terminal Rtm-MTD", "laadtijd bij empty depot terminals in Rtm"),
 

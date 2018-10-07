@@ -19,7 +19,7 @@ public class MockGTU
 
     /** name. */
     private String name;
-    
+
     /** mocked simulator. */
     private OTSSimulatorInterface simulator = MockDEVSSimulator.createMock();
 

@@ -70,7 +70,7 @@ public class ShapeStore
      * @param attributeClassTypes
      */
     public ShapeStore(ArrayList<ShapeObject> geoObjects, ArrayList<String> variableNames,
-        HashMap<String, String> variableTypeMap, HashMap<String, Class<? extends Object>> attributeClassTypes)
+            HashMap<String, String> variableTypeMap, HashMap<String, Class<? extends Object>> attributeClassTypes)
     {
         super();
         this.geoObjects = geoObjects;
@@ -255,7 +255,7 @@ public class ShapeStore
         {
             // Conditionally force valid polygons
             if ((shape.getDesignLine() instanceof Polygon || shape.getDesignLine() instanceof MultiPolygon)
-                && !IsValidOp.isValid(shape.getDesignLine()))
+                    && !IsValidOp.isValid(shape.getDesignLine()))
             {
                 shape.getDesignLine().convexHull();
             }

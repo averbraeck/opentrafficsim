@@ -50,5 +50,5 @@ public class XmlParserException extends Exception
     {
         super(cause);
     }
-    
+
 }

@@ -295,8 +295,8 @@ class GeneratorTag implements Serializable
      * @throws NetworkException when route generator cannot be instantiated
      * @throws GTUException when construction of the Strategical Planner failed
      */
-    static void makeGenerators(final LinkTag linkTag, final XmlNetworkLaneParser parser,
-            final OTSSimulatorInterface simulator) throws SimRuntimeException, NetworkException, GTUException
+    static void makeGenerators(final LinkTag linkTag, final XmlNetworkLaneParser parser, final OTSSimulatorInterface simulator)
+            throws SimRuntimeException, NetworkException, GTUException
     {
         for (GeneratorTag generatorTag : linkTag.generatorTags.values())
         {

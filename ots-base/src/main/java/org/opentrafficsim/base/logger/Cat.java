@@ -20,7 +20,7 @@ public final class Cat
 
     /** BASE project. */
     public static final LogCategory BASE = new LogCategory("BASE");
-    
+
     /** CORE project. */
     public static final LogCategory CORE = new LogCategory("CORE");
 
@@ -28,4 +28,3 @@ public final class Cat
     public static final LogCategory ROAD = new LogCategory("ROAD");
 
 }
-

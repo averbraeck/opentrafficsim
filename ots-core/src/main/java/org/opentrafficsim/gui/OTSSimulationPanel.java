@@ -196,7 +196,7 @@ public class OTSSimulationPanel extends JPanel
         {
             return "AppearanceControlTabbedContentPane []";
         }
-        
+
     }
 
 }

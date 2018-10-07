@@ -499,7 +499,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     {
                         // Lane drop; our lane disappears. This is a compulsory lane change; which is not controlled
                         // by the Route. Perform the forced lane change.
-                        if (currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtu.getGTUType(), drivingDirection)
+                        if (currentLane
+                                .accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtu.getGTUType(), drivingDirection)
                                 .size() > 0)
                         {
                             for (Lane adjacentLane : currentLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT,

@@ -26,7 +26,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public class GTUGeneratorAnimation extends Renderable2D<GTUGenerator>
 {
-    
+
     /** Default font. */
     private static final Font FONT = new Font("SansSerif", Font.PLAIN, 4);
 

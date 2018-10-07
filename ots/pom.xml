@@ -123,9 +123,9 @@
       </resource>
     </resources>
     <testResources>
-      <testResource>
+      <!-- testResource>
         <directory>${basedir}/src/main/resources</directory>
-      </testResource>
+      </testResource -->
       <testResource>
         <directory>${basedir}/src/test/resources</directory>
       </testResource>

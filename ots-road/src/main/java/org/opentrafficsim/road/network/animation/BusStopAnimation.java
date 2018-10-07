@@ -42,7 +42,8 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
-    public BusStopAnimation(final BusStop source, final SimulatorInterface.TimeDoubleUnit simulator) throws NamingException, RemoteException
+    public BusStopAnimation(final BusStop source, final SimulatorInterface.TimeDoubleUnit simulator)
+            throws NamingException, RemoteException
     {
         super(source, simulator, .8, new Length(0.5, LengthUnit.SI));
 

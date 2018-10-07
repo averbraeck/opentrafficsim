@@ -32,7 +32,7 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
 
     /** Destination. */
     private final Node destination;
-    
+
     /** Vehicle model. */
     private final VehicleModel vehicleModel;
 
@@ -90,7 +90,7 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     {
         return this.destination;
     }
-    
+
     /**
      * Returns the vehicle model.
      * @return VehicleModel; vehicle model

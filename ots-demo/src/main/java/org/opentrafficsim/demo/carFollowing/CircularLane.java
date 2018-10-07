@@ -550,9 +550,8 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
             // Re schedule this method
             try
             {
-                this.simulator.scheduleEventAbs(
-                        new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND), this, this,
-                        "drawGraphs", null);
+                this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND),
+                        this, this, "drawGraphs", null);
             }
             catch (SimRuntimeException exception)
             {

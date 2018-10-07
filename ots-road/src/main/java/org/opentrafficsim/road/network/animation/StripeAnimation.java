@@ -255,8 +255,8 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public ClonableRenderable2DInterface<Stripe> clone(final Stripe newSource, final SimulatorInterface.TimeDoubleUnit newSimulator)
-            throws NamingException, RemoteException
+    public ClonableRenderable2DInterface<Stripe> clone(final Stripe newSource,
+            final SimulatorInterface.TimeDoubleUnit newSimulator) throws NamingException, RemoteException
     {
         try
         {

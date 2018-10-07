@@ -56,9 +56,9 @@ public class RTIToOTSData implements Serializable
     public String toString()
     {
         return "RTIToOTSData [timeStamp=" + this.getTimeStamp() + "\ndeltaT=" + this.getDeltaT() + "\negoPos="
-            + this.getEgoPos() + "\negoOri=" + this.getEgoOri() + "\negoVel=" + this.getEgoVel() + "\negoAngVel="
-            + this.getEgoAngVel() + "\nintersection_type=" + this.getIntersection_type() + "\nintersection_phase="
-            + this.getIntersection_phase() + "\nintersection_distance=" + this.getIntersection_distance() + "]";
+                + this.getEgoPos() + "\negoOri=" + this.getEgoOri() + "\negoVel=" + this.getEgoVel() + "\negoAngVel="
+                + this.getEgoAngVel() + "\nintersection_type=" + this.getIntersection_type() + "\nintersection_phase="
+                + this.getIntersection_phase() + "\nintersection_distance=" + this.getIntersection_distance() + "]";
     }
 
     /**

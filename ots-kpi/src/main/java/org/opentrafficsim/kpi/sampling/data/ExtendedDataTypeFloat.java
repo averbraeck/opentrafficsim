@@ -26,8 +26,8 @@ import nl.tudelft.simulation.language.Throw;
  * @param <O> vector type
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>,
-        O extends AbstractFloatVector<U, O>, G extends GtuDataInterface> extends ExtendedDataType<T, O, float[], G>
+public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>, O extends AbstractFloatVector<U, O>, G extends GtuDataInterface>
+        extends ExtendedDataType<T, O, float[], G>
 {
     /**
      * Constructor setting the id.

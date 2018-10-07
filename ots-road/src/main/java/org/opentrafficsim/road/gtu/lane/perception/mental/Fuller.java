@@ -111,7 +111,7 @@ public class Fuller implements Mental
     {
         this.tasks.add(task);
     }
-    
+
     /**
      * Removes a task.
      * @param task Task; task to remove
@@ -120,7 +120,7 @@ public class Fuller implements Mental
     {
         this.tasks.remove(task);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void apply(final LanePerception perception) throws ParameterException, GTUException
@@ -176,7 +176,7 @@ public class Fuller implements Mental
          */
         double demand(LanePerception perception, LaneBasedGTU gtu, Parameters parameters)
                 throws ParameterException, GTUException;
-        
+
         /**
          * Class for constant demand.
          */
@@ -184,7 +184,7 @@ public class Fuller implements Mental
         {
             /** Task demand. */
             private double taskDemand;
-            
+
             /**
              * Constructor.
              * @param taskDemand double; task demand
@@ -193,7 +193,7 @@ public class Fuller implements Mental
             {
                 this.taskDemand = taskDemand;
             }
-            
+
             /** {@inheritDoc} */
             @Override
             public double demand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)

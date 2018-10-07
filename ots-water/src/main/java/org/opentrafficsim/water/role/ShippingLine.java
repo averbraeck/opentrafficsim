@@ -26,6 +26,4 @@ public class ShippingLine extends Company
         super(code, name, location);
     }
 
-
 }
-

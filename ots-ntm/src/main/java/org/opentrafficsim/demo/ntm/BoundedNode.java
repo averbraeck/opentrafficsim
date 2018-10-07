@@ -61,10 +61,10 @@ public class BoundedNode extends NTMNode
      * @param area the area to which the node belongs.
      * @param behaviourType describes behaviour of the node depending on its type
      * @param parametersNTM
-     * @throws NetworkException 
+     * @throws NetworkException
      */
-    public BoundedNode(final Network network, final Coordinate centroid,
-            final String nr, final Area area, final TrafficBehaviourType behaviourType) throws NetworkException
+    public BoundedNode(final Network network, final Coordinate centroid, final String nr, final Area area,
+            final TrafficBehaviourType behaviourType) throws NetworkException
     {
         super(network, nr, new Coordinate(centroid.x, centroid.y, zCoordinate(behaviourType)), behaviourType);
         this.area = area;

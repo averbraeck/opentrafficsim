@@ -45,8 +45,8 @@ public class AreaAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public AreaAnimation(Area source, SimulatorInterface.TimeDoubleUnit simulator, final float width) throws NamingException,
-        RemoteException
+    public AreaAnimation(Area source, SimulatorInterface.TimeDoubleUnit simulator, final float width)
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;
@@ -130,7 +130,7 @@ public class AreaAnimation extends Renderable2D
      * @return
      */
     public static Float[] RGBtoHSV(float red, float green, float blue)
-    { 
+    {
         Float[] color = new Float[3];
         float min, max, delta, h, v, s;
         min = Math.min(red, green);

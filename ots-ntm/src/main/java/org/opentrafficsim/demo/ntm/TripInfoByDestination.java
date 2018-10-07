@@ -54,8 +54,8 @@ public class TripInfoByDestination
      * @param destination
      */
     public TripInfoByDestination(HashMap<BoundedNode, Double> routeFractionToNeighbours,
-        HashMap<BoundedNode, Double> accumulatedCarsToNeighbour, HashMap<BoundedNode, Double> demandToNeighbour,
-        NTMNode destination)
+            HashMap<BoundedNode, Double> accumulatedCarsToNeighbour, HashMap<BoundedNode, Double> demandToNeighbour,
+            NTMNode destination)
     {
         super();
         this.routeFractionToNeighbours = routeFractionToNeighbours;

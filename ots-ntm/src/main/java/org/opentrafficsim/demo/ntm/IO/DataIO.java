@@ -37,7 +37,8 @@ public class DataIO
 {
     /**
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author$,
@@ -50,7 +51,13 @@ public class DataIO
      */
     public enum days
     {
-        Sat, Sun, Mon, Tue, Wed, Thu, Fri
+        Sat,
+        Sun,
+        Mon,
+        Tue,
+        Wed,
+        Thu,
+        Fri
     };
 
     public static void main(String[] args) throws IOException
@@ -68,13 +75,13 @@ public class DataIO
             // File file = new File(fileName);
             String fileRoads = FileDialog.showFileDialog(true, "shp", "Shapefile with Roads", startMap);
             String filePathData =
-                "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. VLOG data/di-do-2014/";
+                    "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. VLOG data/di-do-2014/";
             String fileNameStarts = "I_";
             boolean fileNameDay = false;
             addArea(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay, dataTNO);
 
             filePathData =
-                "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. NDW data_v2/";
+                    "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. NDW data_v2/";
             fileNameStarts = "I_";
             fileNameDay = true;
             addArea(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay, dataTNO);
@@ -104,8 +111,8 @@ public class DataIO
      * @param fileNameDay
      * @throws IOException
      */
-    public static void addArea(String fileArea, String fileRoads, String pathData, String fileNameStarts,
-        boolean fileNameDay, boolean dataTNO) throws IOException
+    public static void addArea(String fileArea, String fileRoads, String pathData, String fileNameStarts, boolean fileNameDay,
+            boolean dataTNO) throws IOException
     {
         ShapeStore roads = null;
         // Map<String, Area> areas = new HashMap<String, Area>();
@@ -152,18 +159,16 @@ public class DataIO
                     {
                         for (days dayName : days.values())
                         {
-                            String inputFile =
-                                pathData + fileNameStarts + year + month + day + "_" + dayName + "_GV[none].csv";
+                            String inputFile = pathData + fileNameStarts + year + month + day + "_" + dayName + "_GV[none].csv";
                             Map<String, ArrayList<Double>> countMap = readData(inputFile, ";", pathData, year, 1);
                             if (countMap.size() > 0)
                             {
-                                String outputFile =
-                                    pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName
+                                String outputFile = pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName
                                         + "_area_GV[none].csv";
                                 String outputShapeFile =
-                                    pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName + ".shp";
+                                        pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName + ".shp";
                                 detectLocationOfObject(outputShapeFile, null, outputFile, countMap, roads, areas, "LINK_ID",
-                                    "Name");
+                                        "Name");
                             }
 
                         }
@@ -177,7 +182,7 @@ public class DataIO
                             String outputShapeFile = pathData + "new/" + fileNameStarts + year + month + day + ".shp";
                             String outputFile = pathData + "new/" + fileNameStarts + year + month + day + "_area.csv";
                             detectLocationOfObject(outputShapeFile, centroidOutputFile, outputFile, countMap, roads, areas,
-                                "LINK_ID", "Name");
+                                    "LINK_ID", "Name");
                         }
                     }
                 }
@@ -194,8 +199,8 @@ public class DataIO
      * @param fileNameDay
      * @throws IOException
      */
-    public static void addGeo(String fileArea, String fileRoads, String pathData, String fileNameStarts,
-        boolean fileNameDay, boolean dataTNO) throws IOException
+    public static void addGeo(String fileArea, String fileRoads, String pathData, String fileNameStarts, boolean fileNameDay,
+            boolean dataTNO) throws IOException
     {
         ShapeStore roads = null;
         // Map<String, Area> areas = new HashMap<String, Area>();
@@ -229,8 +234,8 @@ public class DataIO
      * @throws IOException
      */
     public static void detectLocationOfObjectGeo(String outputShapeFile, String centroidOutputFile, String outputFile,
-        Map<String, ArrayList<Double>> countMap, ShapeStore roads, ShapeStore areas, String fieldNameToDetect,
-        String fieldNameSearchAreas) throws IOException
+            Map<String, ArrayList<Double>> countMap, ShapeStore roads, ShapeStore areas, String fieldNameToDetect,
+            String fieldNameSearchAreas) throws IOException
     {
         File fileNew = new File(outputFile);
         BufferedWriter out = null;
@@ -361,7 +366,7 @@ public class DataIO
      * @throws FileNotFoundException
      */
     public static Map<String, ArrayList<Double>> readData(String inputFile, String csvSplitBy, String path, String year,
-        Integer aggregateBy) throws FileNotFoundException
+            Integer aggregateBy) throws FileNotFoundException
     {
         Map<String, ArrayList<Double>> countMap = new HashMap<String, ArrayList<Double>>();
         BufferedReader in = null;
@@ -472,8 +477,8 @@ public class DataIO
      */
 
     public static void detectLocationOfObject(String outputShapeFile, String centroidOutputFile, String outputFile,
-        Map<String, ArrayList<Double>> countMap, ShapeStore objectsToDetect, ShapeStore searchLocations,
-        String fieldNameToDetect, String fieldNameSearchAreas) throws IOException
+            Map<String, ArrayList<Double>> countMap, ShapeStore objectsToDetect, ShapeStore searchLocations,
+            String fieldNameToDetect, String fieldNameSearchAreas) throws IOException
     {
         File fileNew = new File(outputFile);
         BufferedWriter out = null;

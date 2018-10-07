@@ -31,7 +31,7 @@ public enum TrafficLightColor
     {
         return this.equals(RED) | this.equals(YELLOW);
     }
-    
+
     /** @return whether the light is red. */
     public final boolean isRed()
     {

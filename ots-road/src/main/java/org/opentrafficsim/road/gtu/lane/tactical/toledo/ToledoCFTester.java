@@ -53,8 +53,7 @@ public class ToledoCFTester
         while (x.eq0() || speed.gt0())
         {
             Length s = leader.minus(x);
-            PerceptionIterable<Headway> leaders =
-                    new PerceptionIterableSet<>(new CarFollowingHeadway(s, Speed.ZERO));
+            PerceptionIterable<Headway> leaders = new PerceptionIterableSet<>(new CarFollowingHeadway(s, Speed.ZERO));
             Length desiredHeadway = cf.desiredHeadway(params, speed);
             Acceleration a = cf.followingAcceleration(params, speed, desiredSpeed, desiredHeadway, leaders);
             System.out.println("t=" + t + ", v=" + speed + ", s=" + s + ", a=" + a);

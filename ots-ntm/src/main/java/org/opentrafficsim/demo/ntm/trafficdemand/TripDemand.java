@@ -59,7 +59,7 @@ public class TripDemand<TripInformation>
      * @return
      */
     public static TripDemand<TripInfoTimeDynamic> compressTripDemand(TripDemand<TripInfoTimeDynamic> tripDemand,
-        Map<String, NTMNode> centroids, HashMap<NTMNode, NTMNode> mapSmallAreaToBigArea)
+            Map<String, NTMNode> centroids, HashMap<NTMNode, NTMNode> mapSmallAreaToBigArea)
     {
         TripDemand<TripInfoTimeDynamic> compressedTripDemand = new TripDemand<TripInfoTimeDynamic>();
         compressedTripDemand.tripInfo = new HashMap<String, Map<String, TripInfoTimeDynamic>>();
@@ -77,7 +77,7 @@ public class TripDemand<TripInformation>
                 if (mapSmallAreaToBigArea.get(node).getId() != null)
                 {
                     bigTripDemandRow =
-                        compressedTripDemand.getTripDemandOriginToAllDestinations(mapSmallAreaToBigArea.get(node).getId());
+                            compressedTripDemand.getTripDemandOriginToAllDestinations(mapSmallAreaToBigArea.get(node).getId());
                 }
                 else
                 // if not found we keep the old centroid
@@ -112,7 +112,7 @@ public class TripDemand<TripInformation>
                                 // System.out.println("node " + destination.getId() + "bigNode ID "
                                 // + mapSmallAreaToBigArea.get(destination).getId());
                                 TripInfoTimeDynamic bigTripInfo =
-                                    bigTripDemandRow.get(mapSmallAreaToBigArea.get(destination).getId());
+                                        bigTripDemandRow.get(mapSmallAreaToBigArea.get(destination).getId());
                                 if (bigTripInfo == null)
                                 {
                                     bigTripInfo = new TripInfoTimeDynamic(0, null);
@@ -172,7 +172,7 @@ public class TripDemand<TripInformation>
      * @return mapDestinations a hashmap with destination as key and tripInfo as values
      */
     public static final double getTotalNumberOfTripsFromOrigin(TripDemand<TripInfoTimeDynamic> thisDemand, String originID,
-        Time currentTime, final Duration timeStepDurationNTM)
+            Time currentTime, final Duration timeStepDurationNTM)
     {
         Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
         Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
@@ -181,8 +181,7 @@ public class TripDemand<TripInformation>
         {
             for (Entry<String, TripInfoTimeDynamic> tripInfo : mapDestinations.entrySet())
             {
-                double trips =
-                    getTotalNumberOfTripsFromOriginToDestinationByTimeStep(thisDemand, originID, tripInfo.getKey(),
+                double trips = getTotalNumberOfTripsFromOriginToDestinationByTimeStep(thisDemand, originID, tripInfo.getKey(),
                         currentTime, timeStepDurationNTM);
                 rowTotal += trips;
             }
@@ -191,15 +190,15 @@ public class TripDemand<TripInformation>
     }
 
     public static final double getTotalNumberOfTripsFromOriginToDestinationByTimeStep(
-        TripDemand<TripInfoTimeDynamic> thisDemand, String originID, String destination,
-        Time currentTime, final Duration timeStepDurationNTM)
+            TripDemand<TripInfoTimeDynamic> thisDemand, String originID, String destination, Time currentTime,
+            final Duration timeStepDurationNTM)
     {
         Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
         Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
         double cellTotal = 0.0;
         TripInfoTimeDynamic tripInfo = mapDestinations.get(destination);
         NavigableMap<Time, FractionOfTripDemandByTimeSegment> curve =
-            tripInfo.getDepartureTimeProfile().getDepartureTimeCurve();
+                tripInfo.getDepartureTimeProfile().getDepartureTimeCurve();
         Object ceilingKey = curve.floorKey(currentTime);
         if (ceilingKey == null)
         {
@@ -254,7 +253,7 @@ public class TripDemand<TripInformation>
      * @return
      */
     public final Map<String, Map<String, TripInformation>> setTripDemandOriginToDestination(final String origin,
-        final String destination, TripInformation tripInfo, Map<String, Map<String, TripInformation>> tripInfoAll)
+            final String destination, TripInformation tripInfo, Map<String, Map<String, TripInformation>> tripInfoAll)
     {
         Map<String, TripInformation> map = tripInfoAll.get(origin);
         if (map == null)

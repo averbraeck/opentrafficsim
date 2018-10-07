@@ -38,8 +38,8 @@ public class LinkAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public LinkAnimation(final NTMLink link, final SimulatorInterface.TimeDoubleUnit simulator, final float width) throws NamingException,
-        RemoteException
+    public LinkAnimation(final NTMLink link, final SimulatorInterface.TimeDoubleUnit simulator, final float width)
+            throws NamingException, RemoteException
     {
         super(link, simulator);
         this.width = width;

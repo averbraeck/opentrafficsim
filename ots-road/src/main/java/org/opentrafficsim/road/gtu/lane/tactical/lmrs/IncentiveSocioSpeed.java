@@ -132,5 +132,5 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
     {
         return "IncentiveSocioSpeed";
     }
-    
+
 }

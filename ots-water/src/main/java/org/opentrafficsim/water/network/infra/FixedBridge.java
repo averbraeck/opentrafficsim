@@ -18,7 +18,6 @@ import org.opentrafficsim.water.network.WaterwayLocation;
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
  * initial version Nov 6, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-
  */
 public class FixedBridge extends Obstacle implements HeightRestricted
 {

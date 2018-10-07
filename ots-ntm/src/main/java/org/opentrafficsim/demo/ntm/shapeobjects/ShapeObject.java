@@ -48,9 +48,9 @@ public class ShapeObject implements Locatable
     }
 
     /*    *//**
-     * @return polygon
-     * @throws RemoteException
-     */
+             * @return polygon
+             * @throws RemoteException
+             */
     /*
      * public Set<Path2D> getLines() throws RemoteException { // create the polygon if it did not exist before if (this.lines ==
      * null) { double dx = this.getLocation().getX(); double dy = this.getLocation().getY(); // double dx = 0; // double dy = 0;

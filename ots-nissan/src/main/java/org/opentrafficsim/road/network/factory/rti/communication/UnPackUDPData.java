@@ -12,7 +12,7 @@ public class UnPackUDPData
 {
     /**
      * @param inputStream input stream of data
-     * @return RTIToOTSData element 
+     * @return RTIToOTSData element
      * @throws IOException on i/o error
      */
     static RTIToOTSData unPack(DataInputStream inputStream) throws IOException
@@ -63,7 +63,7 @@ public class UnPackUDPData
 
     /**
      * @param inputStream input data stream
-     * @return float 
+     * @return float
      * @throws IOException on i/o error
      */
     private static float parseFloat(DataInputStream inputStream) throws IOException

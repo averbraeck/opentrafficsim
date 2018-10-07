@@ -104,7 +104,7 @@ public class DirectedLanePosition implements Serializable
         }
         return new DirectedPoint(p.x, p.y, p.z, p.getRotX(), p.getRotY(), p.getRotZ() + Math.PI);
     }
-    
+
     /**
      * Returns the lane direction in the direction of this lane direction.
      * @return lane direction in the direction of this lane direction
@@ -113,7 +113,7 @@ public class DirectedLanePosition implements Serializable
     {
         return new LaneDirection(this.lane, this.gtuDirection);
     }
-    
+
     /**
      * Returns the link direction in the direction of this lane direction.
      * @return link direction in the direction of this lane direction
@@ -140,6 +140,7 @@ public class DirectedLanePosition implements Serializable
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:needbraces")
     @Override
     public boolean equals(final Object obj)
     {

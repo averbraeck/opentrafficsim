@@ -39,7 +39,7 @@ public class ShpLinkAnimation extends Renderable2D
      * @throws RemoteException
      */
     public ShpLinkAnimation(NTMLink source, SimulatorInterface.TimeDoubleUnit simulator, final float width, Color color)
-        throws NamingException, RemoteException
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;

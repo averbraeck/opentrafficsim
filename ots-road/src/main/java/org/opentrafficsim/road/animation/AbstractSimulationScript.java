@@ -525,8 +525,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim)
-                throws SimRuntimeException
+        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim) throws SimRuntimeException
         {
             AbstractSimulationScript.this.simulator = (OTSSimulatorInterface) sim;
             Map<String, StreamInterface> streams = new HashMap<>();

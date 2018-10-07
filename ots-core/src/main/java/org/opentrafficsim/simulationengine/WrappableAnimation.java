@@ -43,8 +43,8 @@ public interface WrappableAnimation
      *             fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    OTSSimulatorInterface buildAnimator(Time startTime, Duration warmupPeriod, Duration runLength,
-            List<Property<?>> properties, Rectangle rect, boolean exitOnClose)
+    OTSSimulatorInterface buildAnimator(Time startTime, Duration warmupPeriod, Duration runLength, List<Property<?>> properties,
+            Rectangle rect, boolean exitOnClose)
             throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException, PropertyException;
 
     /**

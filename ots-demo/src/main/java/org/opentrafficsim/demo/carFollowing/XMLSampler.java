@@ -904,9 +904,8 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
             // Re schedule this method
             try
             {
-                this.simulator.scheduleEventAbs(
-                        new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND), this, this,
-                        "drawGraphs", null);
+                this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND),
+                        this, this, "drawGraphs", null);
             }
             catch (SimRuntimeException exception)
             {
@@ -1032,8 +1031,8 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         @SuppressWarnings("unused")
         private void sampleGTUs()
         {
-            System.out.println("sampleGTUs called, the time is " + this.simulator.getSimulatorTime()
-                    + ", the network contains " + this.knownGTUs.size() + " GTUs");
+            System.out.println("sampleGTUs called, the time is " + this.simulator.getSimulatorTime() + ", the network contains "
+                    + this.knownGTUs.size() + " GTUs");
             // TODO sample the GTU positions and figure out the TTC etc.
             // This will make use of this.knownGTUs
             // Re-schedule this method

@@ -22,10 +22,10 @@ public class GtuData implements GtuDataInterface
 
     /** gtu type. */
     private final GtuTypeData gtuType;
-    
+
     /** route. */
     private final RouteData route;
-   
+
     /**
      * @param id the id
      * @param gtuType the gtu type
@@ -110,5 +110,5 @@ public class GtuData implements GtuDataInterface
     {
         return "GtuData [id=" + this.id + ", gtuType=" + this.gtuType + ", route=" + this.route + "]";
     }
-    
+
 }

@@ -98,8 +98,8 @@ public class Stripe extends RoadMarkerAlong
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Stripe(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation,
-            final Stripe cse) throws NetworkException
+    protected Stripe(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
+            final boolean animation, final Stripe cse) throws NetworkException
     {
         super(newParentLink, newSimulator, animation, cse);
 
@@ -148,8 +148,8 @@ public class Stripe extends RoadMarkerAlong
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Stripe clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation)
-            throws NetworkException
+    public Stripe clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
+            final boolean animation) throws NetworkException
     {
         return new Stripe(newParentLink, newSimulator, animation, this);
     }

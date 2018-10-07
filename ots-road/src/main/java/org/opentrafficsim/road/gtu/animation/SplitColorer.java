@@ -98,7 +98,7 @@ public class SplitColorer implements GTUColorer
             }
             catch (@SuppressWarnings("unused") NetworkException exception)
             {
-                //System.err.println("Network exception while defining split color for GTU.");
+                // System.err.println("Network exception while defining split color for GTU.");
                 return UNKNOWN;
             }
         }

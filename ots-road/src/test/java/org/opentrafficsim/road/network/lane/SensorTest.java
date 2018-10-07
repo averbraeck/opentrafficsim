@@ -217,7 +217,8 @@ class DummyModelForSensorTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
+    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0)
+            throws SimRuntimeException
     {
         // Nothing happens here
     }

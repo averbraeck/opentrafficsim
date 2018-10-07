@@ -38,7 +38,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
 
     /** Peeked car following model. */
     private CarFollowingModel peekedCarFollowingModel = null;
-    
+
     /** Perception factory. */
     private final PerceptionFactory perceptionFactory;
 
@@ -48,7 +48,8 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
      * @param perceptionFactory PerceptionFactory; perception factory
      */
     public AbstractLaneBasedTacticalPlannerFactory(
-            final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory, final PerceptionFactory perceptionFactory)
+            final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
+            final PerceptionFactory perceptionFactory)
     {
         this.carFollowingModelFactory = carFollowingModelFactory;
         this.perceptionFactory = perceptionFactory;
@@ -135,7 +136,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
             throw new GTUException(exception);
         }
     }
-    
+
     /**
      * Returns the perception factory.
      * @return PerceptionFactory; perception factory

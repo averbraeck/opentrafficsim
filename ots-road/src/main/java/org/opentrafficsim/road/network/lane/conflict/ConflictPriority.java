@@ -19,7 +19,7 @@ public enum ConflictPriority
 
     /** Turn on red. */
     TURN_ON_RED,
-    
+
     /** Yield. */
     YIELD,
 
@@ -40,7 +40,7 @@ public enum ConflictPriority
     {
         return this.equals(PRIORITY);
     }
-    
+
     /**
      * Returns whether this is a turn on red conflict.
      * @return whether this is a turn on red conflict

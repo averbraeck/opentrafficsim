@@ -96,7 +96,7 @@ public class Categorization implements Serializable, Identifiable
     {
         return this.id;
     }
-    
+
     /**
      * Returns whether the categorization contains a class that is, or is a sub type of, the given class.
      * @param clazz Class; class to check

@@ -30,7 +30,7 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150211L;
-    
+
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 

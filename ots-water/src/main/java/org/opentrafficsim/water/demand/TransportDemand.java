@@ -180,7 +180,7 @@ public class TransportDemand implements Serializable
     {
         return this.simulator;
     }
-    
+
     /**
      * A cell of demand from a terminal to a terminal.
      * <p>

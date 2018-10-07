@@ -26,7 +26,7 @@ public interface TrafficPerception extends LaneBasedPerceptionCategory
      * @throws ParameterException on parameter exception
      */
     Speed getSpeed(RelativeLane lane) throws ParameterException;
-    
+
     /**
      * Returns the perceived density on the given lane.
      * @param lane RelativeLane; lane
@@ -34,12 +34,12 @@ public interface TrafficPerception extends LaneBasedPerceptionCategory
      * @throws ParameterException on parameter exception
      */
     LinearDensity getDensity(RelativeLane lane) throws ParameterException;
-    
+
     /** {@inheritDoc} */
     @Override
     default void updateAll()
     {
         // on demand
     }
-    
+
 }

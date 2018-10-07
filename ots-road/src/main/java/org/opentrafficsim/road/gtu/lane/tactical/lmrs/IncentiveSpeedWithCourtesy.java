@@ -82,9 +82,9 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
          * LMRS, but can be any number of reasons here. E.g. traffic lights, conflicts, etc.)
          */
         Acceleration aCur = ego.getAcceleration();
-        
+
         /*
-         * The idea to let aCur simply be the current acceleration is wrong; aCur -should- only describe the car-following 
+         * The idea to let aCur simply be the current acceleration is wrong; aCur -should- only describe the car-following
          * relation, as this describes a sense of sticking to a lane as the leader is getting away.
          */
         aCur = Try.assign(() -> perception.getGtu().getCarFollowingAcceleration(), "Could not obtain the GTU.");

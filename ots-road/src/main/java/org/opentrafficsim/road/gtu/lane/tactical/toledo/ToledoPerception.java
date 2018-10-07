@@ -8,13 +8,13 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
-import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedAbstractPerceptionCategory;
+import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedPerceptionCategory;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
 /**
@@ -31,7 +31,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 // TODO updateInfrastructureLaneChangeInfo with split number
-public class ToledoPerception extends AbstractPerceptionCategory implements PerceptionCategory
+public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implements LaneBasedPerceptionCategory
 {
 
     /** */

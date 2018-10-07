@@ -31,7 +31,7 @@ import nl.tudelft.simulation.language.Throw;
  * {@code new Platoons(...).addPlatoon(...).addGtu(...).addGtu(...).addPlatoon(...).addGtu(...).addGtu(...).start();}. Method
  * {@code addGtu(...)} may only determine a generation time if other info is set by {@code fixInfo(...)}.<br>
  * <br>
- * This class bay be used with a {@code LaneBasedGTUCharacteristicsGenerator} or {@code GTUCharacteristicsGeneratorOD}. In the 
+ * This class bay be used with a {@code LaneBasedGTUCharacteristicsGenerator} or {@code GTUCharacteristicsGeneratorOD}. In the
  * former case the origin and destination nodes as well as the OD category can be {@code null}.
  * <p>
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -114,7 +114,8 @@ public class Platoons
      * @param position Set&lt;DirectedLanePosition&gt;; position
      */
     public Platoons(final LaneBasedGTUGenerator generator, final GTUCharacteristicsGeneratorOD characteristics,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final StreamInterface stream, final Set<DirectedLanePosition> position)
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator, final StreamInterface stream,
+            final Set<DirectedLanePosition> position)
     {
         this.generator = generator;
         this.characteristics = null;

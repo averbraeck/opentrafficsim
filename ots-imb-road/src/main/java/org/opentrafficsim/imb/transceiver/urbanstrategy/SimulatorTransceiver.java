@@ -51,7 +51,8 @@ public class SimulatorTransceiver extends AbstractTransceiver
      * @throws IMBException when the registration of one of the channels fails
      * @throws NullPointerException in case one of the arguments is null.
      */
-    public SimulatorTransceiver(final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws IMBException
+    public SimulatorTransceiver(final Connector connector, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+            throws IMBException
     {
         super("Simulator Control", connector, simulator);
 

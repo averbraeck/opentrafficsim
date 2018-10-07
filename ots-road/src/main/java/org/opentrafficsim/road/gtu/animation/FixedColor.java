@@ -41,7 +41,7 @@ public class FixedColor implements GTUColorer, Serializable
         this.color = color;
         this.name = name;
     }
-    
+
     /**
      * Constructor.
      * @param color Color; the color

@@ -73,9 +73,8 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public GTUGeneratorIndividual(final String name, final OTSSimulatorInterface simulator,
-            final GTUType gtuType, final Class<?> gtuClass,
-            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
+    public GTUGeneratorIndividual(final String name, final OTSSimulatorInterface simulator, final GTUType gtuType,
+            final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> lengthDist,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist,

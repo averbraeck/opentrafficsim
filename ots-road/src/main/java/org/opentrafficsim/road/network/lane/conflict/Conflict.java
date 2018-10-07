@@ -140,8 +140,8 @@ public final class Conflict extends AbstractLaneBasedObject
     @SuppressWarnings("checkstyle:parameternumber")
     private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final GTUDirectionality direction,
             final OTSLine3D geometry, final ConflictType conflictType, final ConflictRule conflictRule,
-            final SimulatorInterface.TimeDoubleUnit simulator, final GTUType gtuType, final boolean permitted, final Object cloneLock)
-            throws NetworkException
+            final SimulatorInterface.TimeDoubleUnit simulator, final GTUType gtuType, final boolean permitted,
+            final Object cloneLock) throws NetworkException
     {
         super(UUID.randomUUID().toString(), lane, Throw.whenNull(direction, "Direction may not be null.").isPlus()
                 ? LongitudinalDirectionality.DIR_PLUS : LongitudinalDirectionality.DIR_MINUS, longitudinalPosition, geometry);
@@ -376,8 +376,8 @@ public final class Conflict extends AbstractLaneBasedObject
 
     /** {@inheritDoc} */
     @Override
-    public Conflict clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation)
-            throws NetworkException
+    public Conflict clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
+            final boolean animation) throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
@@ -451,8 +451,8 @@ public final class Conflict extends AbstractLaneBasedObject
 
         /** {@inheritDoc} */
         @Override
-        public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-                final boolean animation) throws NetworkException
+        public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE,
+                final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation) throws NetworkException
         {
             // Constructor of Conflict creates these.
             return null;
@@ -655,9 +655,8 @@ public final class Conflict extends AbstractLaneBasedObject
          * @param downstream boolean; downstream (or upstream) neighbors
          * @param base AbstractPerceptionIterable; base iterable from the conflict
          */
-        ConflictGtuIterable(final LaneBasedGTU perceivingGtu, final HeadwayGtuType headwayGtuType,
-                final Length visibility, final boolean downstream,
-                final AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer> base)
+        ConflictGtuIterable(final LaneBasedGTU perceivingGtu, final HeadwayGtuType headwayGtuType, final Length visibility,
+                final boolean downstream, final AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer> base)
         {
             super(perceivingGtu);
             this.headwayGtuType = headwayGtuType;

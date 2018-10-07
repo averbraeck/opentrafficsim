@@ -37,7 +37,7 @@ public class ConnectorTag implements Serializable
 
     /** Demand weight. */
     Double demandWeight = null;
-    
+
     /** Resulting connector link. */
     Link connector;
 

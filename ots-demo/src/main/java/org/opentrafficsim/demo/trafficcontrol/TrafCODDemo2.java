@@ -185,13 +185,13 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                         sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                 lane.getLength().minus(headDetectorMargin), lane,
                                 lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
-                                RelativePosition.FRONT, RelativePosition.REAR, (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator,
-                                Compatible.EVERYTHING));
+                                RelativePosition.FRONT, RelativePosition.REAR,
+                                (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, Compatible.EVERYTHING));
                         sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
                                 lane.getLength().minus(longDetectorMargin), lane,
                                 lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
-                                RelativePosition.FRONT, RelativePosition.REAR, (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator,
-                                Compatible.EVERYTHING));
+                                RelativePosition.FRONT, RelativePosition.REAR,
+                                (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, Compatible.EVERYTHING));
                         stream++;
                     }
                 }

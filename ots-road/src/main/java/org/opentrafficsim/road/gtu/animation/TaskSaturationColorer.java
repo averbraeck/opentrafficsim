@@ -20,24 +20,24 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TaskSaturationColorer implements GTUColorer 
+public class TaskSaturationColorer implements GTUColorer
 {
 
     /** Full. */
     static final Color MAX = Color.RED;
-    
+
     /** Medium. */
     static final Color MID = Color.YELLOW;
-    
+
     /** Zero. */
     static final Color SUBCRIT = Color.GREEN;
-    
+
     /** Not available. */
     static final Color NA = Color.WHITE;
-    
+
     /** Legend. */
     static final List<LegendEntry> LEGEND;
-    
+
     static
     {
         LEGEND = new ArrayList<>();
@@ -46,7 +46,7 @@ public class TaskSaturationColorer implements GTUColorer
         LEGEND.add(new LegendEntry(MAX, "max", "max task saturation"));
         LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Color getColor(final GTU gtu)
@@ -81,7 +81,7 @@ public class TaskSaturationColorer implements GTUColorer
     {
         return LEGEND;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

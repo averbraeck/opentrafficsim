@@ -520,8 +520,8 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         for (Lane lane : positions.keySet())
         {
             Length pos = positions.get(lane);
-            if (pos.si > 0.0 && pos.si < lane.getLength().si
-                    && lane.accessibleAdjacentLanesLegal(direction, getGtu().getGTUType(), getGtu().getDirection(lane)).isEmpty())
+            if (pos.si > 0.0 && pos.si < lane.getLength().si && lane
+                    .accessibleAdjacentLanesLegal(direction, getGtu().getGTUType(), getGtu().getDirection(lane)).isEmpty())
             {
                 return false;
             }
@@ -594,8 +594,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
         gtu.changeLaneInstantaneously(direction);
 
         // stay at a certain number of seconds in the current lane (unless we HAVE to change lanes)
-        this.earliestNextLaneChangeTime =
-                gtu.getSimulator().getSimulatorTime().plus(this.durationInLaneAfterLaneChange);
+        this.earliestNextLaneChangeTime = gtu.getSimulator().getSimulatorTime().plus(this.durationInLaneAfterLaneChange);
 
         // make sure out turn indicator is on!
         gtu.setTurnIndicatorStatus(direction.isLeft() ? TurnIndicatorStatus.LEFT : TurnIndicatorStatus.RIGHT);

@@ -86,7 +86,7 @@ public class SimpleAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements 
         scheduleEvent(result);
         return result;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final OTSReplication getReplication()

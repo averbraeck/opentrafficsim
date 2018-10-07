@@ -68,7 +68,7 @@ public class BuildGraph
          * //generate the incoming and outgoing links from nodes for (Link link: allLinks) {
          * link.getStartNode().getIncomingLinks().add(link); link.getEndNode().getIncomingLinks().add(link); }
          */// make a directed graph of the entire network
-          // FIRST CREATE the LinkGraph
+           // FIRST CREATE the LinkGraph
         for (NTMLink shpLink : allLinks)
         {
             // area node: copies a node from a link and connects the area
@@ -326,8 +326,7 @@ public class BuildGraph
             {
                 BoundedNode cSch = (BoundedNode) areaNodeCentroidMap.get(aSch);
                 BoundedNode cVb = (BoundedNode) areaNodeCentroidMap.get(aVb);
-                DijkstraShortestPath<NTMNode, LinkEdge<NTMLink>> dijkstra =
-                        new DijkstraShortestPath<>(model.getAreaGraph());
+                DijkstraShortestPath<NTMNode, LinkEdge<NTMLink>> dijkstra = new DijkstraShortestPath<>(model.getAreaGraph());
                 GraphPath<NTMNode, LinkEdge<NTMLink>> sp = dijkstra.getPath(cSch, cVb);
                 System.out.println("Length=" + sp.getLength());
                 List<LinkEdge<NTMLink>> spList = sp.getEdgeList();
@@ -742,7 +741,7 @@ public class BuildGraph
                                 }
                             }
 
-                            dijkstra = new DijkstraShortestPath<>(model.getLinkGraph()); 
+                            dijkstra = new DijkstraShortestPath<>(model.getLinkGraph());
                             sp = dijkstra.getPath(nodeNear, nodeIsolated);
                             spList = sp.getEdgeList();
                             if (spList != null)
@@ -982,9 +981,9 @@ public class BuildGraph
     /*
      * // Create new Areas where they are lacking
      *//**
-       * @param centroid
-       * @return the additional areas
-       */
+        * @param centroid
+        * @return the additional areas
+        */
     public SimpleDirectedWeightedGraph copySimpleDirectedWeightedGraph(final SimpleDirectedWeightedGraph graph)
     {
         SimpleDirectedWeightedGraph copyOfGraph = null;

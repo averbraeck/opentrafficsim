@@ -21,11 +21,11 @@ public interface LaneBasedStrategicalPlanner extends StrategicalPlanner
     /** {@inheritDoc} */
     @Override
     LaneBasedGTU getGtu();
-    
+
     /** {@inheritDoc} */
     @Override
     LaneBasedTacticalPlanner getTacticalPlanner();
-    
+
     /** {@inheritDoc} */
     @Override
     LaneBasedTacticalPlanner getTacticalPlanner(Time time);

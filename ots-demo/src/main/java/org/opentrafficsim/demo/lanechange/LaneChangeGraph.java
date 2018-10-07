@@ -437,8 +437,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator)
-            throws SimRuntimeException
+    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator) throws SimRuntimeException
     {
         // Do nothing
     }

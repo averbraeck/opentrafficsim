@@ -23,19 +23,19 @@ public interface LaneStructureRecord extends LaneRecord<LaneStructureRecord>
      * @return Node; the 'from' node of the link belonging to this lane, in the driving direction
      */
     Node getFromNode();
-    
+
     /**
      * Returns the the 'to' node of the link belonging to this lane, in the driving direction.
      * @return Node; the 'to' node of the link belonging to this lane, in the driving direction
      */
     Node getToNode();
-    
+
     /**
      * Returns the left LSR or null if not available. Left and right are relative to the <b>driving</b> direction.
      * @return LaneStructureRecord; the left LSR or null if not available
      */
     LaneStructureRecord getLeft();
-    
+
     /**
      * Returns the right LSR or null if not available. Left and right are relative to the <b>driving</b> direction.
      * @return LaneStructureRecord; the right LSR or null if not available
@@ -47,19 +47,19 @@ public interface LaneStructureRecord extends LaneRecord<LaneStructureRecord>
      * @return whether a left lane change is legal
      */
     boolean legalLeft();
-    
+
     /**
      * Returns whether a right lane change is legal.
      * @return whether a right lane change is legal
      */
     boolean legalRight();
-    
+
     /**
      * Returns whether a left lane change is physically possible.
      * @return whether a left lane change is physically possible
      */
     boolean physicalLeft();
-    
+
     /**
      * Returns whether a right lane change is physically possible.
      * @return whether a right lane change is physically possible
@@ -75,7 +75,7 @@ public interface LaneStructureRecord extends LaneRecord<LaneStructureRecord>
     {
         return legal ? legalLeft() : physicalLeft();
     }
-    
+
     /**
      * Returns the right lane change possibility.
      * @param legal boolean; legal, or otherwise physical, possibility
@@ -85,19 +85,19 @@ public interface LaneStructureRecord extends LaneRecord<LaneStructureRecord>
     {
         return legal ? legalRight() : physicalRight();
     }
-    
+
     /**
      * Returns whether this lane has no next records as the lane structure was cut-off.
      * @return whether this lane has no next records as the lane structure was cut-off
      */
     boolean isCutOffEnd();
-    
+
     /**
      * Returns whether this lane has no previous records as the lane structure was cut-off.
      * @return whether this lane has no previous records as the lane structure was cut-off
      */
     boolean isCutOffStart();
-    
+
     /**
      * Returns whether the record forms a dead-end.
      * @return whether the record forms a dead-end
@@ -121,5 +121,5 @@ public interface LaneStructureRecord extends LaneRecord<LaneStructureRecord>
      * @throws NetworkException if no destination node
      */
     boolean allowsRouteAtEnd(Route route, GTUType gtuType) throws NetworkException;
-    
+
 }

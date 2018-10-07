@@ -48,7 +48,7 @@ public class GTUTypeColorer implements GTUColorer, Serializable
         standardColors[8] = Color.GRAY;
         standardColors[9] = Color.WHITE;
     }
-    
+
     /** Default instance with colors for common GTUTypes. */
     public static final GTUTypeColorer DEFAULT = new GTUTypeColorer().add(GTUType.CAR, Color.BLUE).add(GTUType.TRUCK, Color.RED)
             .add(GTUType.VEHICLE, Color.GRAY).add(GTUType.PEDESTRIAN, Color.YELLOW).add(GTUType.BICYCLE, Color.GREEN);

@@ -75,11 +75,11 @@ public class TimeCircularRoadAnimation implements UNITS
             activeProperties.add(modelSelection);
             SimpleAnimator sim = (SimpleAnimator) simulation.buildAnimator(Time.ZERO, Duration.ZERO,
                     new Duration(3600.0, SECOND), activeProperties, null, false);
-            
+
             sim.setSpeedFactor(1.0E9);
-  
+
             Thread.sleep(5000);
-            
+
             sim.scheduleEventRel(new Duration(59.999, MINUTE), this, this, "stop", new Object[] { System.currentTimeMillis() });
             sim.start();
         }

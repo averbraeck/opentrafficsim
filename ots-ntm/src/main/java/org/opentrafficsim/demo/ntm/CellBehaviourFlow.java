@@ -60,8 +60,7 @@ public class CellBehaviourFlow extends CellBehaviour
      * @return car
      */
     // @Override
-    public Frequency retrieveSupply(final Double accumulatedCars,
-        final ParametersFundamentalDiagram param)
+    public Frequency retrieveSupply(final Double accumulatedCars, final ParametersFundamentalDiagram param)
     {
         Frequency supply;
         if (accumulatedCars > param.getAccCritical().get(0))
@@ -83,8 +82,7 @@ public class CellBehaviourFlow extends CellBehaviour
      * @param numberOfLanes
      * @return carProduction
      */
-    public final Frequency retrieveDemand(final double accumulatedCars,
-        final ParametersFundamentalDiagram param)
+    public final Frequency retrieveDemand(final double accumulatedCars, final ParametersFundamentalDiagram param)
     {
         Frequency demand;
         if (accumulatedCars <= param.getAccCritical().get(0))
@@ -106,8 +104,7 @@ public class CellBehaviourFlow extends CellBehaviour
      * @param numberOfLanes
      * @return carProduction
      */
-    public final Frequency retrieveFD(final double accumulatedCars,
-        final ParametersFundamentalDiagram param)
+    public final Frequency retrieveFD(final double accumulatedCars, final ParametersFundamentalDiagram param)
     {
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
         Point2D p = new Point2D.Double();

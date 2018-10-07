@@ -134,7 +134,8 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
     /**
      * Wrapper of intermediate result with info for the iterator algorithm.
      * <p>
-     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 apr. 2018 <br>
@@ -150,11 +151,11 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
         /** Intermediate object. */
         private I object;
-        
+
         /** Whether to stop accumulating. */
         private boolean stop = false;
 
-        /** 
+        /**
          * Constructor.
          * @param object I; identity value
          */
@@ -171,7 +172,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
         {
             return this.object;
         }
-        
+
         /**
          * Set intermediate object.
          * @param object I; intermediate object
@@ -197,7 +198,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
         {
             this.number++;
         }
-        
+
         /**
          * Method for the accumulator to indicate the iterator can stop.
          */
@@ -205,7 +206,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
         {
             this.stop = true;
         }
-        
+
         /**
          * Method for the iterator to check if it can stop.
          * @return boolean; whether the iterator can stop

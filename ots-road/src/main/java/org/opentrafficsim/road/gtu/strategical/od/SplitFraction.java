@@ -216,8 +216,8 @@ public class SplitFraction
             }
         }
         Throw.when(!fractionAdded, UnsupportedOperationException.class,
-                "Split fraction on node %s cannot be derived for gtuType %s as there are no outgoing links.",
-                this.node, gtuType);
+                "Split fraction on node %s cannot be derived for gtuType %s as there are no outgoing links.", this.node,
+                gtuType);
         // redraw with the information that was just set
         return draw(gtuType);
     }

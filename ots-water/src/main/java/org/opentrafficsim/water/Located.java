@@ -15,7 +15,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
- * A located object can report its location. 
+ * A located object can report its location.
  * <p>
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -46,12 +46,11 @@ public interface Located extends Locatable, Serializable
     {
         return new Point3d(getLocation().x, getLocation().y, getLocation().z);
     }
-    
+
     /** @return the coordinate for DSOL 2D or 3D */
     default OTSPoint3D getOTSPoint3D()
     {
         return new OTSPoint3D(getLocation());
     }
-    
-    
+
 }

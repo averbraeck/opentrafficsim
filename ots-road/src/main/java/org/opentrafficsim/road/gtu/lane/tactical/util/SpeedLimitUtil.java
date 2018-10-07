@@ -101,9 +101,8 @@ public final class SpeedLimitUtil
      * @return acceleration for speed limit transitions
      * @throws ParameterException if a required parameter is not found
      */
-    public static Acceleration considerSpeedLimitTransitions(final Parameters parameters,
-            final Speed speed, final SpeedLimitProspect speedLimitProspect, final CarFollowingModel carFollowingModel)
-            throws ParameterException
+    public static Acceleration considerSpeedLimitTransitions(final Parameters parameters, final Speed speed,
+            final SpeedLimitProspect speedLimitProspect, final CarFollowingModel carFollowingModel) throws ParameterException
     {
         Acceleration out = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         SpeedLimitInfo currentSpeedLimitInfo = speedLimitProspect.getSpeedLimitInfo(Length.ZERO);

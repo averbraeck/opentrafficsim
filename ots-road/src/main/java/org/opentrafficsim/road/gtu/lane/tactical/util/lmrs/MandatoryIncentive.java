@@ -30,7 +30,7 @@ public interface MandatoryIncentive extends Incentive
      * @throws ParameterException if a parameter is not given or out of bounds
      * @throws OperationalPlanException in case of a perception exception
      */
-    Desire determineDesire(Parameters parameters, LanePerception perception,
-            CarFollowingModel carFollowingModel, Desire mandatoryDesire) throws ParameterException, OperationalPlanException;
+    Desire determineDesire(Parameters parameters, LanePerception perception, CarFollowingModel carFollowingModel,
+            Desire mandatoryDesire) throws ParameterException, OperationalPlanException;
 
 }

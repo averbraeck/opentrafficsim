@@ -49,8 +49,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafficLightSensor extends EventProducer implements EventListenerInterface, NonDirectionalOccupancySensor,
-        EventProducerInterface, Locatable, Sensor
+public class TrafficLightSensor extends EventProducer
+        implements EventListenerInterface, NonDirectionalOccupancySensor, EventProducerInterface, Locatable, Sensor
 {
     /** */
     private static final long serialVersionUID = 20161103L;
@@ -132,9 +132,8 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
         else
         {
             this.directionalityA = findDirectionality(laneA, intermediateLanes);
-            this.directionalityB =
-                    GTUDirectionality.DIR_PLUS == findDirectionality(laneB, intermediateLanes) ? GTUDirectionality.DIR_MINUS
-                            : GTUDirectionality.DIR_PLUS;
+            this.directionalityB = GTUDirectionality.DIR_PLUS == findDirectionality(laneB, intermediateLanes)
+                    ? GTUDirectionality.DIR_MINUS : GTUDirectionality.DIR_PLUS;
             // System.out.println("Directionality on B is " + this.directionalityB);
         }
         List<OTSPoint3D> outLine = new ArrayList<>();
@@ -281,8 +280,7 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
             }
             try
             {
-                Map<Lane, Length> frontPositions =
-                        gtu.positions(gtu.getRelativePositions().get(this.entryA.getPositionType()));
+                Map<Lane, Length> frontPositions = gtu.positions(gtu.getRelativePositions().get(this.entryA.getPositionType()));
                 Set<Lane> remainingLanes = new HashSet<>(frontPositions.keySet());
                 remainingLanes.retainAll(this.lanes);
                 if (remainingLanes.size() == 0)
@@ -308,16 +306,14 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
             // Determine whether the GTU is in our range
             try
             {
-                Map<Lane, Length> frontPositions =
-                        gtu.positions(gtu.getRelativePositions().get(this.entryA.getPositionType()));
+                Map<Lane, Length> frontPositions = gtu.positions(gtu.getRelativePositions().get(this.entryA.getPositionType()));
                 Set<Lane> remainingLanes = new HashSet<>(frontPositions.keySet());
                 remainingLanes.retainAll(this.lanes);
                 if (remainingLanes.size() == 0)
                 {
                     System.err.println("GTU is not in any or our lanes - CANNOT HAPPEN");
                 }
-                Map<Lane, Length> rearPositions =
-                        gtu.positions(gtu.getRelativePositions().get(this.exitA.getPositionType()));
+                Map<Lane, Length> rearPositions = gtu.positions(gtu.getRelativePositions().get(this.exitA.getPositionType()));
                 for (Lane remainingLane : remainingLanes)
                 {
                     Length frontPosition = frontPositions.get(remainingLane);
@@ -326,8 +322,8 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
                     // System.out.println("frontPosition " + frontPosition + ", rearPosition " + rearPosition + ", laneLength "
                     // + laneLength + ", directionalityB " + this.directionalityB);
 
-                    if (frontPosition.lt0() && rearPosition.lt0() || frontPosition.gt(laneLength)
-                            && rearPosition.gt(laneLength))
+                    if (frontPosition.lt0() && rearPosition.lt0()
+                            || frontPosition.gt(laneLength) && rearPosition.gt(laneLength))
                     {
                         continue; // Not detected on this lane
                     }
@@ -508,13 +504,13 @@ public class TrafficLightSensor extends EventProducer implements EventListenerIn
         // : this.exitB == sensor ? "exitB" : "???";
         // System.out.println("Time " + sensor.getSimulator().getSimulatorTime() + ": " + this.id + " " + source
         // + " triggered on " + gtu + " driving direction is " + gtuDirection);
-        if (this.entryA == sensor && gtuDirection == this.directionalityA || this.entryB == sensor
-                && gtuDirection != this.directionalityB)
+        if (this.entryA == sensor && gtuDirection == this.directionalityA
+                || this.entryB == sensor && gtuDirection != this.directionalityB)
         {
             addGTU(gtu);
         }
-        else if (this.exitA == sensor && gtuDirection != this.directionalityA || this.exitB == sensor
-                && gtuDirection == this.directionalityB)
+        else if (this.exitA == sensor && gtuDirection != this.directionalityA
+                || this.exitB == sensor && gtuDirection == this.directionalityB)
         // Some exit sensor has triggered
         {
             removeGTU(gtu);

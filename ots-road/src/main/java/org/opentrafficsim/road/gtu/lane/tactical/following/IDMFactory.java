@@ -17,7 +17,7 @@ public class IDMFactory extends AbstractIDMFactory<IDM>
 {
 
     /**
-     * Constructor. 
+     * Constructor.
      * @param randomStream StreamInterface; random number stream
      */
     public IDMFactory(final StreamInterface randomStream)

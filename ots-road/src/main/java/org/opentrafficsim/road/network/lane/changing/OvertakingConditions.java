@@ -68,8 +68,7 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
             return OvertakingDirection.LEFT;
         }
@@ -100,8 +99,7 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
             return OvertakingDirection.RIGHT;
         }
@@ -130,8 +128,7 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
             return OvertakingDirection.NONE;
         }
@@ -160,8 +157,7 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
             return OvertakingDirection.BOTH;
         }
@@ -190,8 +186,7 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
             return OvertakingDirection.LEFT;
         }
@@ -220,8 +215,7 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
             return OvertakingDirection.RIGHT;
         }
@@ -250,8 +244,7 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
             return OvertakingDirection.BOTH;
         }
@@ -293,8 +286,7 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
             return gtu.getSpeed().lt(this.rightOvertakingSpeedMax) ? OvertakingDirection.BOTH : OvertakingDirection.LEFT;
         }
@@ -336,8 +328,7 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
             return gtu.getSpeed().lt(this.leftOvertakingSpeedMax) ? OvertakingDirection.BOTH : OvertakingDirection.RIGHT;
         }
@@ -393,11 +384,9 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leaderGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leaderGTU)
         {
-            if (this.overtakingGTUTypes.contains(gtu.getGTUType())
-                    && this.overtakenGTUTypes.contains(leaderGTU.getGTUType()))
+            if (this.overtakingGTUTypes.contains(gtu.getGTUType()) && this.overtakenGTUTypes.contains(leaderGTU.getGTUType()))
             {
                 return OvertakingDirection.LEFT;
             }
@@ -408,8 +397,8 @@ public interface OvertakingConditions
         @Override
         public final String toString()
         {
-            return "LeftSet [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
-                    + this.overtakenGTUTypes + "]";
+            return "LeftSet [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes=" + this.overtakenGTUTypes
+                    + "]";
         }
 
     }
@@ -455,11 +444,9 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leaderGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leaderGTU)
         {
-            if (this.overtakingGTUTypes.contains(gtu.getGTUType())
-                    && this.overtakenGTUTypes.contains(leaderGTU.getGTUType()))
+            if (this.overtakingGTUTypes.contains(gtu.getGTUType()) && this.overtakenGTUTypes.contains(leaderGTU.getGTUType()))
             {
                 return OvertakingDirection.RIGHT;
             }
@@ -470,8 +457,8 @@ public interface OvertakingConditions
         @Override
         public final String toString()
         {
-            return "RightSet [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
-                    + this.overtakenGTUTypes + "]";
+            return "RightSet [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes=" + this.overtakenGTUTypes
+                    + "]";
         }
 
     }
@@ -524,12 +511,10 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
-            boolean left =
-                    (this.overtakingGTUTypes.contains(gtu.getGTUType()) && this.overtakenGTUTypes.contains(leadereGTU
-                            .getGTUType()));
+            boolean left = (this.overtakingGTUTypes.contains(gtu.getGTUType())
+                    && this.overtakenGTUTypes.contains(leadereGTU.getGTUType()));
             boolean right = gtu.getSpeed().lt(this.rightOvertakingSpeedMax);
             if (left)
             {
@@ -596,12 +581,10 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu,
-                final LaneBasedGTU leadereGTU)
+        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
         {
-            boolean right =
-                    ((this.overtakingGTUTypes.contains(gtu.getGTUType()) && (this.overtakenGTUTypes.contains(leadereGTU
-                            .getGTUType()))));
+            boolean right = ((this.overtakingGTUTypes.contains(gtu.getGTUType())
+                    && (this.overtakenGTUTypes.contains(leadereGTU.getGTUType()))));
             boolean left = gtu.getSpeed().lt(this.leftOvertakingSpeedMax);
             if (right)
             {

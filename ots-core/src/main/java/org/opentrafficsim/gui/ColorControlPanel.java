@@ -55,9 +55,9 @@ public class ColorControlPanel extends JPanel implements ActionListener
         if (gtuColorer instanceof SwitchableGTUColorer)
         {
             this.switchableGTUColorer = (SwitchableGTUColorer) gtuColorer;
-            
+
             /**
-             * ComboBox for AppearanceControl. 
+             * ComboBox for AppearanceControl.
              * @param <T> generic type of the ComboBox
              */
             class AppearanceControlComboBox<T> extends JComboBox<T> implements AppearanceControl
@@ -78,7 +78,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
                 {
                     return "AppearanceControlComboBox []";
                 }
-                
+
             }
             this.comboBoxGTUColor = new AppearanceControlComboBox<>();
             this.add(this.comboBoxGTUColor);
@@ -136,7 +136,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
         {
             JPanel panel = new JPanel(new BorderLayout());
             /**
-             * ColorBox for AppearanceControl. 
+             * ColorBox for AppearanceControl.
              */
             class ColorBox extends JLabel implements AppearanceControl
             {
@@ -157,7 +157,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
                 {
                     return "ColorBox []";
                 }
-                
+
             }
             ColorBox colorBox = new ColorBox();
             colorBox.setOpaque(true); // By default, the label is transparent

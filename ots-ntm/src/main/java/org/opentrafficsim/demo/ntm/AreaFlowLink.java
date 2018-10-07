@@ -46,12 +46,11 @@ public class AreaFlowLink extends Area
      * @param indexCell
      */
     public AreaFlowLink(Geometry geometry, String centroidNr, String name, String gemeente, String gebied, String regio,
-        double dhb, Coordinate centroid, TrafficBehaviourType trafficBehaviourType, Length roadLength,
-        Speed averageSpeed, double increaseDemandByFactor, ParametersNTM parametersNTM,
-        LinkCellTransmission flowLink, int indexCell)
+            double dhb, Coordinate centroid, TrafficBehaviourType trafficBehaviourType, Length roadLength, Speed averageSpeed,
+            double increaseDemandByFactor, ParametersNTM parametersNTM, LinkCellTransmission flowLink, int indexCell)
     {
         super(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroid, trafficBehaviourType, roadLength,
-            averageSpeed, increaseDemandByFactor, parametersNTM);
+                averageSpeed, increaseDemandByFactor, parametersNTM);
         this.flowLink = flowLink;
         this.indexCell = indexCell;
     }

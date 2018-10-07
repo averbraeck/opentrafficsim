@@ -63,9 +63,8 @@ public class LinearFunctionLibrary
                     {
                         System.out.println("test");
                     }
-                    result =
-                        prevPoint.getY() + (p.getY() - prevPoint.getY()) * (valueX - prevPoint.getX())
-                            / (p.getX() - prevPoint.getX());
+                    result = prevPoint.getY()
+                            + (p.getY() - prevPoint.getY()) * (valueX - prevPoint.getX()) / (p.getX() - prevPoint.getX());
                     break;
                 }
                 prevPoint = p;

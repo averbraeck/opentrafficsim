@@ -155,7 +155,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     {
         return this.gapAcceptance;
     }
-    
+
     /**
      * Return the tail gating.
      * @return gap-acceptance
