@@ -4,6 +4,19 @@
 
     <release version="1.00.03" date="2018-XX-XX" description="POM in aimsun-proto updated; using external logger">
       <action dev="averbraeck" type="fix">
+        The .classpath files have a classpathentry for /src/main/resources after a Maven Update with
+        an entry 'excluding="**" kind="src"'. The exclusion means that the export of a Runnable jar 
+        in Eclipse does not work. Therefore this update on svn ensures that the export of a jar file
+        works. Ensure that after each Maven Update in Eclipse, the "Excludes:" entry for 
+        /src/main/resources in each project's Properties - Build path - Source is set to (None)
+        before committing the sources!
+      </action>
+      <action dev="averbraeck" type="add">
+        A small program called CleanClassfileFiles has been added to ots-build-tools to help in
+        setting the exclusions correctly in the build path. After running this program, do a 
+        Project - Clean - All.
+      </action>
+      <action dev="averbraeck" type="fix">
         The pom file in aimsun-proto was not properly compiling the proto-files within Eclipse. 
         Following the suggestions in https://github.com/trustin/os-maven-plugin the problem was solved. 
         A readme.txt in the root of the ots-aimsun-proto project provides instructions.        
