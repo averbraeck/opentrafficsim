@@ -2,6 +2,7 @@ package org.opentrafficsim;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -27,10 +28,11 @@ public final class CleanClassfileFiles
     /**
      * @param args none
      * @throws IOException on I/O error
+     * @throws URISyntaxException on I/O error
      */
-    public static void main(final String[] args) throws IOException
+    public static void main(final String[] args) throws IOException, URISyntaxException
     {
-        File classFolder = new File(CleanClassfileFiles.class.getResource("/").getPath());
+        File classFolder = new File(CleanClassfileFiles.class.getResource("/").toURI());
         File workspaceFolder = classFolder.getParentFile().getParentFile().getParentFile();
         for (File projectFolder : workspaceFolder.listFiles())
         {
