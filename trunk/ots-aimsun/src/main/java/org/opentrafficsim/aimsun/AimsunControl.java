@@ -83,8 +83,8 @@ public class AimsunControl extends AbstractWrappableAnimation
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException, ValueException,
-            ParameterException, SimRuntimeException
+    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException,
+            ValueException, ParameterException, SimRuntimeException
     {
         String ip = null;
         Integer port = null;
@@ -184,8 +184,8 @@ public class AimsunControl extends AbstractWrappableAnimation
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    private void commandLoop(final Socket socket) throws IOException, NetworkException, OTSGeometryException, NamingException,
-            ValueException, ParameterException, SimRuntimeException
+    private void commandLoop(final Socket socket) throws IOException, NetworkException, OTSGeometryException,
+            NamingException, ValueException, ParameterException, SimRuntimeException
     {
         System.out.println("Entering command loop");
         InputStream inputStream = socket.getInputStream();
@@ -201,8 +201,9 @@ public class AimsunControl extends AbstractWrappableAnimation
                 byte[] sizeBytes = new byte[4];
                 // inputStream.read(sizeBytes);
                 fillBuffer(inputStream, sizeBytes);
-                int size = ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
-                        + (sizeBytes[3] & 0xff);
+                int size =
+                        ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
+                                + (sizeBytes[3] & 0xff);
                 System.out.println("expecting message of " + size + " bytes");
                 byte[] buffer = new byte[size];
                 // inputStream.read(buffer);
@@ -230,8 +231,9 @@ public class AimsunControl extends AbstractWrappableAnimation
                         Duration warmupDuration = new Duration(createSimulation.getWarmUpTime(), DurationUnit.SECOND);
                         try
                         {
-                            SimpleAnimator animator = buildAnimator(Time.ZERO, warmupDuration, runDuration,
-                                    new ArrayList<Property<?>>(), null, true);
+                            SimpleAnimator animator =
+                                    buildAnimator(Time.ZERO, warmupDuration, runDuration, new ArrayList<Property<?>>(),
+                                            null, true);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
                         }
                         catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception1)
@@ -252,7 +254,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                         }
                         AimsunControlProtoBuf.SimulateUntil simulateUntil = message.getSimulateUntil();
                         Time stopTime = new Time(simulateUntil.getTime(), TimeUnit.BASE_SECOND);
-                        System.out.println("Simulate until " + stopTime);
+                        System.out.print("Simulate until " + stopTime + " ");
                         DEVSSimulator<Time, ?, ?> simulator = (DEVSSimulator<Time, ?, ?>) this.model.getSimulator();
                         try
                         {
@@ -261,17 +263,25 @@ public class AimsunControl extends AbstractWrappableAnimation
                                 throw new SimRuntimeException(error);
                             }
                             simulator.runUpTo(stopTime);
+                            int attempt = 0;
                             while (simulator.isRunning())
                             {
+                                attempt++;
                                 try
                                 {
                                     Thread.sleep(10);
+                                    if (Integer.toBinaryString(attempt).matches("10*"))
+                                    {
+                                        System.out.print(".");
+                                    }
                                 }
                                 catch (InterruptedException ie)
                                 {
-                                    ie = null; // ignore
+                                    ie.printStackTrace();
+                                    // ie = null; // ignore
                                 }
                             }
+                            System.out.println("Simulator has stopped at time " + simulator.getSimulatorTime());
                             AimsunControlProtoBuf.GTUPositions.Builder builder =
                                     AimsunControlProtoBuf.GTUPositions.newBuilder();
                             for (GTU gtu : this.model.getNetwork().getGTUs())
@@ -460,8 +470,8 @@ public class AimsunControl extends AbstractWrappableAnimation
             {
                 this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), true);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException | ValueException | ParameterException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
+                    | GTUException | OTSGeometryException | ValueException | ParameterException exception)
             {
                 exception.printStackTrace();
                 throw new SimRuntimeException(exception);
