@@ -24,7 +24,7 @@ public interface LaneBasedTacticalPlannerFactory<T extends LaneBasedTacticalPlan
 
     /**
      * Creates a new tactical planner for the given GTU.
-     * @param gtu GTU
+     * @param gtu LaneBasedGTU; GTU
      * @return tactical planner for the given GTU
      * @throws GTUException if the gtu is not suitable in any way for the creation of the tactical planner
      */

@@ -369,7 +369,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
 
     /**
      * Configure the range of an axis.
-     * @param valueAxis ValueAxis
+     * @param valueAxis ValueAxis; ValueAxis
      * @param range double; the upper bound of the axis
      */
     static void configureAxis(final ValueAxis valueAxis, final double range)

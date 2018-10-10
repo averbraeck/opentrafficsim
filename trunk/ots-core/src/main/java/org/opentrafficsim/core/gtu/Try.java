@@ -588,7 +588,8 @@ public final class Try
      * Core method to create the Throwable to throw.
      * @param throwableClass Class&lt;T&gt;; the throwable class
      * @param message String; the message to construct when an exception is thrown.
-     * @param argList List&lt;Object&gt; the arguments as implied by format escapes in <code>message</code>
+     * @param argList List&lt;Object&gt;; List&lt;Object&gt; the arguments as implied by format escapes in
+     *            &lt;code&gt;message&lt;/code&gt;
      * @param cause Throwable; underlying cause thrown inside the assign()/execute()
      * @param <T> throwable type
      * @return T; throwable

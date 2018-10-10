@@ -24,7 +24,7 @@ public abstract class Type<T extends Type<T>>
      * <tt>speedLimitType.isType(SpeedLimitType.CURVATURE)</tt>.<br>
      * <br>
      * Note that it is <b>not</b> safe to use <tt>speedLimitType == SpeedLimitType.CURVATURE</tt>.
-     * @param type type instance to compare to
+     * @param type T; type instance to compare to
      * @return whether this type is the same type as the given type
      */
     public final boolean isType(final T type)

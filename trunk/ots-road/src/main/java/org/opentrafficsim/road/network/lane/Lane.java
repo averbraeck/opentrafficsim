@@ -562,7 +562,7 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Insert a sensor at the right place in the sensor list of this Lane.
-     * @param sensor Sensor; the sensor to add
+     * @param sensor SingleSensor; the sensor to add
      * @throws NetworkException when the position of the sensor is beyond (or before) the range of this Lane
      */
     public final void addSensor(final SingleSensor sensor) throws NetworkException
@@ -590,7 +590,7 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Remove a sensor from the sensor list of this Lane.
-     * @param sensor Sensoe; the sensor to remove.
+     * @param sensor SingleSensor; the sensor to remove.
      * @throws NetworkException when the sensor was not found on this Lane
      */
     public final void removeSensor(final SingleSensor sensor) throws NetworkException
@@ -615,7 +615,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * defensive copy.
      * @param minimumPosition Length; the minimum distance on the Lane (inclusive)
      * @param maximumPosition Length; the maximum distance on the Lane (inclusive)
-     * @param gtuType the GTU type to provide the sensors for
+     * @param gtuType GTUType; the GTU type to provide the sensors for
      * @param direction GTUDirectionality; direction of movement of the GTU
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range. This is a defensive copy.
      */
@@ -1029,8 +1029,8 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Remove a GTU from the GTU list of this lane.
-     * @param gtu the GTU to remove.
-     * @param removeFromParentLink when the GTU leaves the last lane of the parentLink of this Lane
+     * @param gtu LaneBasedGTU; the GTU to remove.
+     * @param removeFromParentLink boolean; when the GTU leaves the last lane of the parentLink of this Lane
      * @param position Length; last position of the GTU
      */
     public final void removeGTU(final LaneBasedGTU gtu, final boolean removeFromParentLink, final Length position)
@@ -1499,9 +1499,9 @@ public class Lane extends CrossSectionElement implements Serializable
      * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
      * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
      * <b>Note:</b> LEFT and RIGHT are seen from the direction of the GTU, in its forward driving direction. <br>
-     * @param lateralDirection LEFT or RIGHT.
-     * @param gtuType the type of GTU for which to return the adjacent lanes.
-     * @param drivingDirection GTUDirectinality; the driving direction of the GTU on <code>this</code> Lane
+     * @param lateralDirection LateralDirectionality; LEFT or RIGHT.
+     * @param gtuType GTUType; the type of GTU for which to return the adjacent lanes.
+     * @param drivingDirection GTUDirectionality; the driving direction of the GTU on &lt;code&gt;this&lt;/code&gt; Lane
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
      *         direction.
      */
@@ -1521,9 +1521,9 @@ public class Lane extends CrossSectionElement implements Serializable
      * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
      * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
      * <b>Note:</b> LEFT and RIGHT are seen from the direction of the GTU, in its forward driving direction. <br>
-     * @param lateralDirection LEFT or RIGHT.
-     * @param gtuType the type of GTU for which to return the adjacent lanes.
-     * @param drivingDirection GTUDirectinality; the driving direction of the GTU on <code>this</code> Lane
+     * @param lateralDirection LateralDirectionality; LEFT or RIGHT.
+     * @param gtuType GTUType; the type of GTU for which to return the adjacent lanes.
+     * @param drivingDirection GTUDirectionality; the driving direction of the GTU on &lt;code&gt;this&lt;/code&gt; Lane
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
      *         direction.
      */
@@ -1546,7 +1546,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Get the speed limit of this lane, which can differ per GTU type. E.g., cars might be allowed to drive 120 km/h and trucks
      * 90 km/h.
-     * @param gtuType the GTU type to provide the speed limit for
+     * @param gtuType GTUType; the GTU type to provide the speed limit for
      * @return the speedLimit.
      * @throws NetworkException on network inconsistency
      */
@@ -1615,8 +1615,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
      * GTUType.ALL to 120 km/h, and for TRUCK to 90 km/h.
-     * @param gtuType the GTU type to provide the speed limit for
-     * @param speedLimit the speed limit for this gtu type
+     * @param gtuType GTUType; the GTU type to provide the speed limit for
+     * @param speedLimit Speed; the speed limit for this gtu type
      */
     public final void setSpeedLimit(final GTUType gtuType, final Speed speedLimit)
     {
@@ -1630,7 +1630,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * speed limit of GTUType.ALL. <br>
      * <b>Note</b>: if no speed limit is known for a GTUType, getSpeedLimit will throw a NetworkException when the speed limit
      * is retrieved for that GTUType.
-     * @param gtuType the GTU type to provide the speed limit for
+     * @param gtuType GTUType; the GTU type to provide the speed limit for
      */
     public final void removeSpeedLimit(final GTUType gtuType)
     {

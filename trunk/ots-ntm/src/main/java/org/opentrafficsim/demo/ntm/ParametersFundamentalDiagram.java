@@ -70,7 +70,7 @@ public class ParametersFundamentalDiagram
     }
 
     /**
-     * @param freeSpeed set freeSpeed.
+     * @param freeSpeed Speed; set freeSpeed.
      */
     public void setFreeSpeed(Speed freeSpeed)
     {
@@ -86,7 +86,7 @@ public class ParametersFundamentalDiagram
     }
 
     /**
-     * @param accCritical
+     * @param accCritical ArrayList&lt;Double&gt;;
      */
     public void setAccCritical(ArrayList<Double> accCritical)
     {
@@ -102,7 +102,7 @@ public class ParametersFundamentalDiagram
     }
 
     /**
-     * @param capacity set capacity.
+     * @param capacity Frequency; set capacity.
      */
     public void setCapacityPerUnit(Frequency capacity)
     {

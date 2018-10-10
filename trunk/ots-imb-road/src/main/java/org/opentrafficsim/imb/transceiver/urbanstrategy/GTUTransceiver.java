@@ -418,7 +418,7 @@ public class GTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the addition of a GTU to the network to a corresponding IMB message.
-     * @param event the event to transform to a NEW message.
+     * @param event EventInterface; the event to transform to a NEW message.
      * @return the NEW payload
      */
     private Object[] transformNew(final EventInterface event)
@@ -448,7 +448,7 @@ public class GTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the deletion of a GTU from the network to a corresponding IMB message.
-     * @param event the event to transform to a DELETE message.
+     * @param event EventInterface; the event to transform to a DELETE message.
      * @return the DELETE payload
      */
     private Object[] transformDelete(final EventInterface event)
@@ -474,7 +474,7 @@ public class GTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the move of a GTU in the network to a corresponding IMB message.
-     * @param event the event to transform to a CHANGE message.
+     * @param event EventInterface; the event to transform to a CHANGE message.
      * @return the CHANGE payload
      */
     private Object[] transformChange(final EventInterface event)

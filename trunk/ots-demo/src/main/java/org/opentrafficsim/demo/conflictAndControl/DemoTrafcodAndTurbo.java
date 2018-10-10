@@ -355,8 +355,8 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
         /**
          * Put a block at the end of a Lane.
          * @param lane Lane; the lane on which the block is placed
-         * @param theSimulator the simulator
-         * @param gtuColorer the gtu colorer to use
+         * @param theSimulator OTSSimulatorInterface; the simulator
+         * @param gtuColorer GTUColorer; the gtu colorer to use
          * @return Lane; the lane
          * @throws NamingException on ???
          * @throws NetworkException on network inconsistency

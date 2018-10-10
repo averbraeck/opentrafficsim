@@ -74,7 +74,7 @@ public class TrajectoryGroup
 
     /**
      * Add trajectory.
-     * @param trajectory trajectory to add
+     * @param trajectory Trajectory&lt;?&gt;; trajectory to add
      */
     public final synchronized void addTrajectory(final Trajectory<?> trajectory)
     {
@@ -100,7 +100,7 @@ public class TrajectoryGroup
     /**
      * Whether this {@code TrajectoryGroup} holds the given trajectory. Note that this is false if the given trajectory is
      * derived from a trajectory in this {@code TrajectoryGroup}.
-     * @param trajectory trajectory
+     * @param trajectory Trajectory&lt;?&gt;; trajectory
      * @return whether this {@code TrajectoryGroup} holds the given trajectory.
      */
     public final boolean contains(final Trajectory<?> trajectory)
@@ -128,8 +128,8 @@ public class TrajectoryGroup
 
     /**
      * Returns trajectory group between two locations.
-     * @param x0 start length
-     * @param x1 end length
+     * @param x0 Length; start length
+     * @param x1 Length; end length
      * @return list of trajectories
      */
     public final synchronized TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1)
@@ -146,8 +146,8 @@ public class TrajectoryGroup
 
     /**
      * Returns trajectory group between two times.
-     * @param t0 start time
-     * @param t1 end time
+     * @param t0 Time; start time
+     * @param t1 Time; end time
      * @return list of trajectories
      */
     public final synchronized TrajectoryGroup getTrajectoryGroup(final Time t0, final Time t1)
@@ -162,10 +162,10 @@ public class TrajectoryGroup
 
     /**
      * Returns trajectory group between two locations and between two times.
-     * @param x0 start length
-     * @param x1 end length
-     * @param t0 start time
-     * @param t1 end time
+     * @param x0 Length; start length
+     * @param x1 Length; end length
+     * @param t0 Time; start time
+     * @param t1 Time; end time
      * @return list of trajectories
      */
     public final synchronized TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1, final Time t0, final Time t1)

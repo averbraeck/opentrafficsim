@@ -98,7 +98,7 @@ public class GTUMIX
 
     /**
      * Sets the value of the name property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setNAME(String value)
     {
@@ -116,7 +116,7 @@ public class GTUMIX
 
     /**
      * Sets the value of the base property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setBase(String value)
     {
@@ -162,7 +162,7 @@ public class GTUMIX
 
         /**
          * Sets the value of the name property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setNAME(String value)
         {

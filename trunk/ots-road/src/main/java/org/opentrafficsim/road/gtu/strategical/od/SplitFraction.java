@@ -68,8 +68,8 @@ public class SplitFraction
 
     /**
      * Add fraction to link, this will apply to {@code GTUType.ALL} and all time.
-     * @param link link
-     * @param fraction fraction
+     * @param link Link; link
+     * @param fraction double; fraction
      */
     public void addFraction(final Link link, final double fraction)
     {
@@ -78,9 +78,9 @@ public class SplitFraction
 
     /**
      * Add fraction to link for gtu type, this will apply to all time.
-     * @param link link
-     * @param gtuType gtu type
-     * @param fraction fraction
+     * @param link Link; link
+     * @param gtuType GTUType; gtu type
+     * @param fraction double; fraction
      */
     public void addFraction(final Link link, final GTUType gtuType, final double fraction)
     {
@@ -104,9 +104,9 @@ public class SplitFraction
 
     /**
      * Add fraction to link over time, this will apply to {@code GTUType.ALL}.
-     * @param link link
-     * @param time time
-     * @param fraction fraction
+     * @param link Link; link
+     * @param time DurationVector; time
+     * @param fraction double[]; fraction
      */
     public void addFraction(final Link link, final DurationVector time, final double[] fraction)
     {
@@ -115,10 +115,10 @@ public class SplitFraction
 
     /**
      * Add fraction to link over time for gtu type.
-     * @param link link
-     * @param gtuType gtu type
-     * @param time time
-     * @param fraction fraction
+     * @param link Link; link
+     * @param gtuType GTUType; gtu type
+     * @param time DurationVector; time
+     * @param fraction double[]; fraction
      */
     public void addFraction(final Link link, final GTUType gtuType, final DurationVector time, final double[] fraction)
     {
@@ -152,7 +152,7 @@ public class SplitFraction
     /**
      * Draw next link based on split fractions. If no fractions were defined, split fractions are determined based on the number
      * of lanes per link.
-     * @param gtuType gtuType
+     * @param gtuType GTUType; gtuType
      * @return next link
      */
     public Link draw(final GTUType gtuType)

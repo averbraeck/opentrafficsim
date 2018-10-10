@@ -43,11 +43,11 @@ public final class Bezier
 
     /**
      * Construct a cubic B&eacute;zier curve from start to end with two control points.
-     * @param numPoints the number of points for the B&eacute;zier curve
-     * @param start the start point of the B&eacute;zier curve
-     * @param control1 the first control point
-     * @param control2 the second control point
-     * @param end the end point of the B&eacute;zier curve
+     * @param numPoints int; the number of points for the B&eacute;zier curve
+     * @param start OTSPoint3D; the start point of the B&eacute;zier curve
+     * @param control1 OTSPoint3D; the first control point
+     * @param control2 OTSPoint3D; the second control point
+     * @param end OTSPoint3D; the end point of the B&eacute;zier curve
      * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
      * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
@@ -72,9 +72,9 @@ public final class Bezier
     /**
      * Construct a cubic B&eacute;zier curve from start to end with two generated control points at half the distance between
      * start and end. The z-value is interpolated in a linear way.
-     * @param numPoints the number of points for the B&eacute;zier curve
-     * @param start the directed start point of the B&eacute;zier curve
-     * @param end the directed end point of the B&eacute;zier curve
+     * @param numPoints int; the number of points for the B&eacute;zier curve
+     * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
+     * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
      * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
      * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
@@ -88,9 +88,9 @@ public final class Bezier
     /**
      * Construct a cubic B&eacute;zier curve from start to end with two generated control points at half the distance between
      * start and end. The z-value is interpolated in a linear way.
-     * @param numPoints the number of points for the B&eacute;zier curve
-     * @param start the directed start point of the B&eacute;zier curve
-     * @param end the directed end point of the B&eacute;zier curve
+     * @param numPoints int; the number of points for the B&eacute;zier curve
+     * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
+     * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
      * @param shape shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a pointier
      *            shape, &lt; 1 results in a flatter shape, value should be above 0
      * @return a cubic B&eacute;zier curve between start and end, with the two determined control points
@@ -106,9 +106,9 @@ public final class Bezier
     /**
      * Construct a cubic B&eacute;zier curve from start to end with two generated control points at half the distance between
      * start and end. The z-value is interpolated in a linear way.
-     * @param numPoints the number of points for the B&eacute;zier curve
-     * @param start the directed start point of the B&eacute;zier curve
-     * @param end the directed end point of the B&eacute;zier curve
+     * @param numPoints int; the number of points for the B&eacute;zier curve
+     * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
+     * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
      * @param shape shape factor; 1 = control points at half the distance between start and end, &gt; 1 results in a pointier
      *            shape, &lt; 1 results in a flatter shape, value should be above 0
      * @param weighted boolean; control point distance relates to distance to projected point on extended line from other end
@@ -163,8 +163,8 @@ public final class Bezier
     /**
      * Construct a cubic B&eacute;zier curve from start to end with two generated control points at half the distance between
      * start and end. The z-value is interpolated in a linear way.
-     * @param start the directed start point of the B&eacute;zier curve
-     * @param end the directed end point of the B&eacute;zier curve
+     * @param start DirectedPoint; the directed start point of the B&eacute;zier curve
+     * @param end DirectedPoint; the directed end point of the B&eacute;zier curve
      * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
      * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
@@ -177,11 +177,11 @@ public final class Bezier
     /**
      * Calculate the cubic B&eacute;zier point with B(t) = (1 - t)<sup>3</sup>P<sub>0</sub> + 3t(1 - t)<sup>2</sup>
      * P<sub>1</sub> + 3t<sup>2</sup> (1 - t) P<sub>2</sub> + t<sup>3</sup> P<sub>3</sub>.
-     * @param t the fraction
-     * @param p0 the first point of the curve
-     * @param p1 the first control point
-     * @param p2 the second control point
-     * @param p3 the end point of the curve
+     * @param t double; the fraction
+     * @param p0 double; the first point of the curve
+     * @param p1 double; the first control point
+     * @param p2 double; the second control point
+     * @param p3 double; the end point of the curve
      * @return the cubic bezier value B(t)
      */
     @SuppressWarnings("checkstyle:methodname")
@@ -197,9 +197,9 @@ public final class Bezier
 
     /**
      * Construct a B&eacute;zier curve of degree n.
-     * @param numPoints the number of points for the B&eacute;zier curve to be constructed
-     * @param points the points of the curve, where the first and last are begin and end point, and the intermediate ones are
-     *            control points. There should be at least two points.
+     * @param numPoints int; the number of points for the B&eacute;zier curve to be constructed
+     * @param points OTSPoint3D...; the points of the curve, where the first and last are begin and end point, and the
+     *            intermediate ones are control points. There should be at least two points.
      * @return the B&eacute;zier value B(t) of degree n, where n is the number of points in the array
      * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
@@ -229,8 +229,8 @@ public final class Bezier
 
     /**
      * Construct a B&eacute;zier curve of degree n.
-     * @param points the points of the curve, where the first and last are begin and end point, and the intermediate ones are
-     *            control points. There should be at least two points.
+     * @param points OTSPoint3D...; the points of the curve, where the first and last are begin and end point, and the
+     *            intermediate ones are control points. There should be at least two points.
      * @return the B&eacute;zier value B(t) of degree n, where n is the number of points in the array
      * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
@@ -243,9 +243,9 @@ public final class Bezier
     /**
      * Calculate the B&eacute;zier point of degree n, with B(t) = Sum(i = 0..n) [C(n, i) * (1 - t)<sup>n-i</sup> t<sup>i</sup>
      * P<sub>i</sub>], where C(n, k) is the binomial coefficient defined by n! / ( k! (n-k)! ), ! being the factorial operator.
-     * @param t the fraction
-     * @param p the points of the curve, where the first and last are begin and end point, and the intermediate ones are control
-     *            points
+     * @param t double; the fraction
+     * @param p double...; the points of the curve, where the first and last are begin and end point, and the intermediate ones
+     *            are control points
      * @return the B&eacute;zier value B(t) of degree n, where n is the number of points in the array
      */
     @SuppressWarnings("checkstyle:methodname")
@@ -265,7 +265,7 @@ public final class Bezier
 
     /**
      * Calculate factorial(k), which is k * (k-1) * (k-2) * ... * 1. For factorials up to 20, a lookup table is used.
-     * @param k the parameter
+     * @param k int; the parameter
      * @return factorial(k)
      */
     private static double factorial(final int k)
@@ -283,7 +283,7 @@ public final class Bezier
     }
 
     /**
-     * @param args args
+     * @param args String[]; args
      * @throws OTSGeometryException ne
      */
     public static void main(final String[] args) throws OTSGeometryException

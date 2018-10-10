@@ -112,7 +112,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
 
     /**
      * Adds a mandatory incentive. Ignores {@code null}.
-     * @param incentive Incentive to add.
+     * @param incentive MandatoryIncentive; Incentive to add.
      */
     public final void addMandatoryIncentive(final MandatoryIncentive incentive)
     {
@@ -124,7 +124,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
 
     /**
      * Adds a voluntary incentive. Ignores {@code null}.
-     * @param incentive Incentive to add.
+     * @param incentive VoluntaryIncentive; Incentive to add.
      */
     public final void addVoluntaryIncentive(final VoluntaryIncentive incentive)
     {
@@ -136,7 +136,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
 
     /**
      * Adds an acceleration incentive. Ignores {@code null}.
-     * @param incentive Incentive to add.
+     * @param incentive AccelerationIncentive; Incentive to add.
      */
     public final void addAccelerationIncentive(final AccelerationIncentive incentive)
     {

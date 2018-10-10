@@ -89,7 +89,7 @@ public class ParameterSet implements Parameters, Serializable
 
     /**
      * Sets a parameter value while checking conditions.
-     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type
+     * @param parameterType ParameterType&lt;T&gt;; the parameter type
      * @param value T; new value for the parameter
      * @param resettable boolean; whether the parameter set should be resettable
      * @param <T> Class of the value
@@ -194,7 +194,7 @@ public class ParameterSet implements Parameters, Serializable
 
     /**
      * Sets the default value of a parameter. Default value sets are not resettable.
-     * @param parameter AbstractParameterType&lt;T&gt;; the parameter to set the default value of
+     * @param parameter ParameterType&lt;T&gt;; the parameter to set the default value of
      * @param <T> Class of the value
      * @return Parameters; this set of parameters (for method chaining)
      * @throws ParameterException if the parameter type has no default value

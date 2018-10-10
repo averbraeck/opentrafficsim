@@ -86,18 +86,18 @@ public interface Anticipation
 
     /**
      * Anticipate movement.
-     * @param neighborTriplet headway, speed and acceleration
-     * @param duration duration
-     * @param traveledDistance distance the subject vehicle traveled during the anticipation time
+     * @param neighborTriplet NeighborTriplet; headway, speed and acceleration
+     * @param duration Duration; duration
+     * @param traveledDistance Length; distance the subject vehicle traveled during the anticipation time
      * @return anticipated info
      */
     NeighborTriplet anticipate(NeighborTriplet neighborTriplet, Duration duration, Length traveledDistance);
 
     /**
      * Anticipate own movement.
-     * @param speed current speed
-     * @param acceleration current acceleration
-     * @param duration anticipation time
+     * @param speed Speed; current speed
+     * @param acceleration Acceleration; current acceleration
+     * @param duration Duration; anticipation time
      * @return anticipated distance traveled
      */
     Length egoAnticipation(Speed speed, Acceleration acceleration, Duration duration);

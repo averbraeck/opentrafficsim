@@ -29,8 +29,8 @@ public final class XMLParser
     }
 
     /**
-     * @param nodeList the list of nodes to process
-     * @param tag the tag to look for, e.g., LINK
+     * @param nodeList NodeList; the list of nodes to process
+     * @param tag String; the tag to look for, e.g., LINK
      * @return the nodes (which can contain nodeLists themselves) with the given tag
      */
     public static List<Node> getNodes(final NodeList nodeList, final String tag)
@@ -53,9 +53,9 @@ public final class XMLParser
     /**
      * Returns nodes sorted by attributes and/or value. Nodes are sorted according to the given attribute order. In this order
      * the node value can used by providing {@code null}.
-     * @param nodeList the list of nodes to process
-     * @param tag the tag to look for, e.g., LINK
-     * @param sortAttributes list of attributes, which may contain {@code null} to use the node value
+     * @param nodeList NodeList; the list of nodes to process
+     * @param tag String; the tag to look for, e.g., LINK
+     * @param sortAttributes String...; list of attributes, which may contain {@code null} to use the node value
      * @return sorted nodes by attributes and/or value
      */
     public static List<Node> getNodesSorted(final NodeList nodeList, final String tag, final String... sortAttributes)

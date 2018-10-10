@@ -118,17 +118,17 @@ public final class ConflictUtil
      * having priority. Such a 'yield plan' is remembered in <tt>YieldPlans</tt>. By forwarding the same <tt>YieldPlans</tt> for
      * a GTU consistency of such plans is provided. If any conflict is not accepted to pass, stopping before a more upstream
      * conflict is applied if there not sufficient stopping length in between conflicts.
-     * @param parameters parameters
-     * @param conflicts set of conflicts to approach
-     * @param leaders leading vehicles
-     * @param carFollowingModel car-following model
-     * @param vehicleLength length of vehicle
-     * @param vehicleWidth width of vehicle
-     * @param speed current speed
-     * @param acceleration current acceleration
-     * @param speedLimitInfo speed limit info
-     * @param conflictPlans set of plans for conflict
-     * @param gtu gtu
+     * @param parameters Parameters; parameters
+     * @param conflicts PerceptionCollectable&lt;HeadwayConflict,Conflict&gt;; set of conflicts to approach
+     * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leading vehicles
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param vehicleLength Length; length of vehicle
+     * @param vehicleWidth Length; width of vehicle
+     * @param speed Speed; current speed
+     * @param acceleration Acceleration; current acceleration
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param conflictPlans ConflictPlans; set of plans for conflict
+     * @param gtu LaneBasedGTU; gtu
      * @return acceleration appropriate for approaching the conflicts
      * @throws GTUException in case of an unsupported conflict rule
      * @throws ParameterException if a parameter is not defined or out of bounds
@@ -316,11 +316,11 @@ public final class ConflictUtil
 
     /**
      * Determines acceleration for following conflicting vehicles <i>on</i> a merge or split conflict.
-     * @param conflict merge or split conflict
-     * @param parameters parameters
-     * @param carFollowingModel car-following model
-     * @param speed current speed
-     * @param speedLimitInfo speed limit info
+     * @param conflict HeadwayConflict; merge or split conflict
+     * @param parameters Parameters; parameters
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param speed Speed; current speed
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
      * @param vehicleWidth Length; own width
      * @return acceleration for following conflicting vehicles <i>on</i> a merge or split conflict
      * @throws ParameterException if a parameter is not given or out of bounds
@@ -415,11 +415,11 @@ public final class ConflictUtil
 
     /**
      * Determines an acceleration required to avoid a collision with GTUs <i>on</i> a crossing conflict.
-     * @param parameters parameters
-     * @param conflict conflict
-     * @param carFollowingModel car-following model
-     * @param speed current speed
-     * @param speedLimitInfo speed limit info
+     * @param parameters Parameters; parameters
+     * @param conflict HeadwayConflict; conflict
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param speed Speed; current speed
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
      * @return acceleration required to avoid a collision
      * @throws ParameterException if parameter is not defined
      */
@@ -507,12 +507,12 @@ public final class ConflictUtil
     /**
      * Approach a priority conflict. Stopping is applied to give way to conflicting traffic in case congestion is present on the
      * own lane. This is courtesy yielding.
-     * @param conflict conflict to approach
-     * @param leaders leading vehicles in own lane
-     * @param speed current speed
-     * @param vehicleLength vehicle length
-     * @param parameters parameters
-     * @param yieldPlans set of plans for yielding with priority
+     * @param conflict HeadwayConflict; conflict to approach
+     * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leading vehicles in own lane
+     * @param speed Speed; current speed
+     * @param vehicleLength Length; vehicle length
+     * @param parameters Parameters; parameters
+     * @param yieldPlans ConflictPlans; set of plans for yielding with priority
      * @return whether to stop for this conflict
      * @throws ParameterException if parameter B is not defined
      */
@@ -555,15 +555,15 @@ public final class ConflictUtil
 
     /**
      * Approach a give-way conflict.
-     * @param conflict conflict
-     * @param leaders leaders
-     * @param speed current speed
-     * @param acceleration current acceleration
-     * @param vehicleLength vehicle length
-     * @param parameters parameters
-     * @param speedLimitInfo speed limit info
-     * @param carFollowingModel car-following model
-     * @param bType parameter type for considered deceleration
+     * @param conflict HeadwayConflict; conflict
+     * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leaders
+     * @param speed Speed; current speed
+     * @param acceleration Acceleration; current acceleration
+     * @param vehicleLength Length; vehicle length
+     * @param parameters Parameters; parameters
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param bType ParameterTypeAcceleration; parameter type for considered deceleration
      * @return whether to stop for this conflict
      * @throws ParameterException if a parameter is not defined
      */
@@ -745,15 +745,15 @@ public final class ConflictUtil
 
     /**
      * Approach a stop conflict. Currently this is equal to approaching a give-way conflict.
-     * @param conflict conflict
-     * @param leaders leaders
-     * @param speed current speed
-     * @param acceleration current acceleration
-     * @param vehicleLength vehicle length
-     * @param parameters parameters
-     * @param speedLimitInfo speed limit info
-     * @param carFollowingModel car-following model
-     * @param bType parameter type for considered deceleration
+     * @param conflict HeadwayConflict; conflict
+     * @param leaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leaders
+     * @param speed Speed; current speed
+     * @param acceleration Acceleration; current acceleration
+     * @param vehicleLength Length; vehicle length
+     * @param parameters Parameters; parameters
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param bType ParameterTypeAcceleration; parameter type for considered deceleration
      * @return whether to stop for this conflict
      * @throws ParameterException if a parameter is not defined
      */
@@ -770,8 +770,8 @@ public final class ConflictUtil
 
     /**
      * Approach an all-stop conflict.
-     * @param conflict conflict to approach
-     * @param conflictPlans set of plans for conflict
+     * @param conflict HeadwayConflict; conflict to approach
+     * @param conflictPlans ConflictPlans; set of plans for conflict
      * @return whether to stop for this conflict
      */
     public static boolean stopForAllStopConflict(final HeadwayConflict conflict, final ConflictPlans conflictPlans)
@@ -816,8 +816,8 @@ public final class ConflictUtil
 
     /**
      * Returns a speed dependent distance needed behind the leader to completely pass the conflict.
-     * @param vehicleLength vehicle length
-     * @param parameters parameters
+     * @param vehicleLength Length; vehicle length
+     * @param parameters Parameters; parameters
      * @return speed dependent distance needed behind the leader to completely pass the conflict
      * @throws ParameterException if parameter is not available
      */
@@ -874,8 +874,8 @@ public final class ConflictUtil
 
         /**
          * Sets the estimated arrival time of a GTU.
-         * @param gtu GTU
-         * @param time estimated arrival time
+         * @param gtu AbstractHeadwayGTU; GTU
+         * @param time Time; estimated arrival time
          */
         void setArrivalTime(final AbstractHeadwayGTU gtu, final Time time)
         {
@@ -884,7 +884,7 @@ public final class ConflictUtil
 
         /**
          * Returns the estimated arrival time of given GTU.
-         * @param gtu GTU
+         * @param gtu AbstractHeadwayGTU; GTU
          * @return estimated arrival time of given GTU
          */
         Time getArrivalTime(final AbstractHeadwayGTU gtu)
@@ -894,7 +894,7 @@ public final class ConflictUtil
 
         /**
          * Sets the current phase to 'approach' for the given stop line.
-         * @param stopLine stop line
+         * @param stopLine HeadwayStopLine; stop line
          */
         void setStopPhaseApproach(final HeadwayStopLine stopLine)
         {
@@ -903,7 +903,7 @@ public final class ConflictUtil
 
         /**
          * Sets the current phase to 'yield' for the given stop line.
-         * @param stopLine stop line
+         * @param stopLine HeadwayStopLine; stop line
          * @throws RuntimeException if the phase was not set to approach before
          */
         void setStopPhaseYield(final HeadwayStopLine stopLine)
@@ -917,7 +917,7 @@ public final class ConflictUtil
 
         /**
          * Sets the current phase to 'run' for the given stop line.
-         * @param stopLine stop line
+         * @param stopLine HeadwayStopLine; stop line
          * @throws RuntimeException if the phase was not set to approach before
          */
         void setStopPhaseRun(final HeadwayStopLine stopLine)
@@ -928,7 +928,7 @@ public final class ConflictUtil
         }
 
         /**
-         * @param stopLine stop line
+         * @param stopLine HeadwayStopLine; stop line
          * @return whether the current phase is 'approach' for the given stop line
          */
         boolean isStopPhaseApproach(final HeadwayStopLine stopLine)
@@ -938,7 +938,7 @@ public final class ConflictUtil
         }
 
         /**
-         * @param stopLine stop line
+         * @param stopLine HeadwayStopLine; stop line
          * @return whether the current phase is 'yield' for the given stop line
          */
         boolean isStopPhaseYield(final HeadwayStopLine stopLine)
@@ -948,7 +948,7 @@ public final class ConflictUtil
         }
 
         /**
-         * @param stopLine stop line
+         * @param stopLine HeadwayStopLine; stop line
          * @return whether the current phase is 'run' for the given stop line
          */
         boolean isStopPhaseRun(final HeadwayStopLine stopLine)
@@ -980,8 +980,8 @@ public final class ConflictUtil
         }
 
         /**
-         * @param intent indicator intent
-         * @param distance distance to object pertaining to the turn indicator intent
+         * @param intent TurnIndicatorIntent; indicator intent
+         * @param distance Length; distance to object pertaining to the turn indicator intent
          */
         public void setIndicatorIntent(final TurnIndicatorIntent intent, final Length distance)
         {

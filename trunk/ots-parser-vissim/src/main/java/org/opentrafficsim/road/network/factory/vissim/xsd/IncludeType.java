@@ -121,7 +121,7 @@ public class IncludeType
 
     /**
      * Sets the value of the href property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setHref(String value)
     {
@@ -146,7 +146,7 @@ public class IncludeType
 
     /**
      * Sets the value of the parse property.
-     * @param value allowed object is {@link ParseType }
+     * @param value ParseType; allowed object is {@link ParseType }
      */
     public void setParse(ParseType value)
     {
@@ -164,7 +164,7 @@ public class IncludeType
 
     /**
      * Sets the value of the xpointer property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setXpointer(String value)
     {
@@ -182,7 +182,7 @@ public class IncludeType
 
     /**
      * Sets the value of the encoding property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setEncoding(String value)
     {
@@ -200,7 +200,7 @@ public class IncludeType
 
     /**
      * Sets the value of the accept property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setAccept(String value)
     {
@@ -218,7 +218,7 @@ public class IncludeType
 
     /**
      * Sets the value of the acceptLanguage property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setAcceptLanguage(String value)
     {

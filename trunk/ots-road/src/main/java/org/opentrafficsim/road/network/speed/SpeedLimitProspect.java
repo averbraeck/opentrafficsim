@@ -97,9 +97,9 @@ public class SpeedLimitProspect implements Serializable
 
     /**
      * Sets the speed info of a speed limit type.
-     * @param distance location to set info for a speed limit type
-     * @param speedLimitType speed limit type to set the info for
-     * @param speedInfo speed info to set
+     * @param distance Length; location to set info for a speed limit type
+     * @param speedLimitType SpeedLimitType&lt;T&gt;; speed limit type to set the info for
+     * @param speedInfo T; speed info to set
      * @param source Object; source object
      * @param <T> class of speed info
      * @throws IllegalStateException if speed info for a specific speed limit type is set or removed twice at the same distance
@@ -117,8 +117,8 @@ public class SpeedLimitProspect implements Serializable
 
     /**
      * Removes the speed info of a speed limit type.
-     * @param distance distance to remove speed info of a speed limit type
-     * @param speedLimitType speed limit type to remove speed info of
+     * @param distance Length; distance to remove speed info of a speed limit type
+     * @param speedLimitType SpeedLimitType&lt;?&gt;; speed limit type to remove speed info of
      * @param source Object; source object
      * @throws IllegalStateException if speed info for a specific speed limit type is set or removed twice at the same distance
      * @throws IllegalArgumentException if the speed limit type is {@code MAX_VEHICLE_SPEED}
@@ -140,7 +140,7 @@ public class SpeedLimitProspect implements Serializable
 
     /**
      * Checks the speed limit entry before adding to the prospect.
-     * @param speedLimitEntry speed limit entry to add
+     * @param speedLimitEntry SpeedLimitEntry&lt;?&gt;; speed limit entry to add
      * @param source Object; source object
      * @param remove boolean; whether the source causes a removal of info
      * @throws IllegalStateException if the speed entry forms an undefined set with any existing entry
@@ -200,7 +200,7 @@ public class SpeedLimitProspect implements Serializable
     /**
      * Returns the distances at which a change of the given speed limit type in the prospect is present in order (most upstream
      * first). If multiple changes are present at the same distance, only one distance is returned in the list.
-     * @param speedLimitType speed limit type to get the distances of
+     * @param speedLimitType SpeedLimitType&lt;?&gt;; speed limit type to get the distances of
      * @return distances at which a change of the given speed limit type in the prospect is present in order
      */
     public final List<Length> getDistances(final SpeedLimitType<?> speedLimitType)
@@ -211,7 +211,7 @@ public class SpeedLimitProspect implements Serializable
     /**
      * Returns the upstream distances at which a change of the given speed limit type in the prospect is present in order (most
      * upstream first). If multiple changes are present at the same distance, only one distance is returned in the list.
-     * @param speedLimitType speed limit type to get the distances of
+     * @param speedLimitType SpeedLimitType&lt;?&gt;; speed limit type to get the distances of
      * @return distances at which a change of the given speed limit type in the prospect is present in order
      */
     public final List<Length> getUpstreamDistances(final SpeedLimitType<?> speedLimitType)
@@ -222,7 +222,7 @@ public class SpeedLimitProspect implements Serializable
     /**
      * Returns the downstream distances at which a change of the given speed limit type in the prospect is present in order
      * (most upstream first). If multiple changes are present at the same distance, only one distance is returned in the list.
-     * @param speedLimitType speed limit type to get the distances of
+     * @param speedLimitType SpeedLimitType&lt;?&gt;; speed limit type to get the distances of
      * @return distances at which a change of the given speed limit type in the prospect is present in order
      */
     public final List<Length> getDownstreamDistances(final SpeedLimitType<?> speedLimitType)
@@ -233,9 +233,9 @@ public class SpeedLimitProspect implements Serializable
     /**
      * Returns the distances between limits at which a change of the given speed limit type in the prospect is present in order
      * (most upstream first). If multiple changes are present at the same distance, only one distance is returned in the list.
-     * @param speedLimitType speed limit type to get the distances of
-     * @param min minimum distance, may be {@code null} for no minimum limit
-     * @param max maximum distance, may be {@code null} for no maximum limit
+     * @param speedLimitType SpeedLimitType&lt;?&gt;; speed limit type to get the distances of
+     * @param min Length; minimum distance, may be {@code null} for no minimum limit
+     * @param max Length; maximum distance, may be {@code null} for no maximum limit
      * @return distances at which a change of the given speed limit type in the prospect is present in order
      */
     private List<Length> getDistancesInRange(final SpeedLimitType<?> speedLimitType, final Length min, final Length max)
@@ -255,8 +255,8 @@ public class SpeedLimitProspect implements Serializable
 
     /**
      * Returns whether the given speed limit type is changed at the given distance.
-     * @param distance distance to check
-     * @param speedLimitType speed limit type to check
+     * @param distance Length; distance to check
+     * @param speedLimitType SpeedLimitType&lt;?&gt;; speed limit type to check
      * @return whether the given speed limit type is changed at the given distance
      * @throws NullPointerException if distance is null
      */
@@ -276,8 +276,8 @@ public class SpeedLimitProspect implements Serializable
     /**
      * Returns the speed info of given speed limit type where it changed. If the change was removing the speed limit type (e.g.
      * end of corner), then {@code null} is returned.
-     * @param distance distance where the info changed
-     * @param speedLimitType speed limit type
+     * @param distance Length; distance where the info changed
+     * @param speedLimitType SpeedLimitType&lt;T&gt;; speed limit type
      * @return speed info of given speed limit type where it changed, {@code null} if speed limit type is removed
      * @throws IllegalArgumentException if the speed info did not change at the given distance for the speed limit type
      * @param <T> class of the speed limit type info
@@ -299,7 +299,7 @@ public class SpeedLimitProspect implements Serializable
 
     /**
      * Returns the speed info at a given location.
-     * @param distance where to get the speed info
+     * @param distance Length; where to get the speed info
      * @return speed info at a given distance
      * @throws NullPointerException if distance is null
      */
@@ -332,9 +332,9 @@ public class SpeedLimitProspect implements Serializable
 
     /**
      * Returns the speed info at a location following an acceleration over some duration.
-     * @param speed current speed
-     * @param acceleration acceleration to apply
-     * @param time duration of acceleration
+     * @param speed Speed; current speed
+     * @param acceleration Acceleration; acceleration to apply
+     * @param time Duration; duration of acceleration
      * @return speed info at a given distance
      * @throws NullPointerException if any input is null
      */
@@ -351,8 +351,8 @@ public class SpeedLimitProspect implements Serializable
      * certain that the speed info inside the speed limit entry matches the declared info type of the speed limit type inside
      * the entry, i.e. {@code speedLimitEntry.getSpeedLimitType() = SpeedLimitType<T>} and
      * {@code speedLimitEntry.getSpeedInfo() = T}.
-     * @param speedLimitInfo speed limit info to put speed info in
-     * @param speedLimitEntry entry with speed limit type and speed info to set
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info to put speed info in
+     * @param speedLimitEntry SpeedLimitEntry&lt;?&gt;; entry with speed limit type and speed info to set
      * @param <T> underlying speed info class depending on speed limit type
      */
     @SuppressWarnings("unchecked")
@@ -366,8 +366,8 @@ public class SpeedLimitProspect implements Serializable
     /**
      * Builds speed limit info with only MAX_VEHICLE_SPEED and the given speed limit type, where the speed info is obtained at
      * the given distance.
-     * @param distance distance to get the speed info at
-     * @param speedLimitType speed limit type of which to include the info
+     * @param distance Length; distance to get the speed info at
+     * @param speedLimitType SpeedLimitType&lt;T&gt;; speed limit type of which to include the info
      * @param <T> class of speed info of given speed limit type
      * @return speed limit info with only MAX_VEHICLE_SPEED and the given speed limit type
      */

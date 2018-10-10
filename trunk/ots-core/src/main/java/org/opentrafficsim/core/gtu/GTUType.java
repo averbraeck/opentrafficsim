@@ -107,8 +107,8 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
 
     /**
      * Returns default characteristics for given GTUType.
-     * @param gtuType GTUType GTU type
-     * @param randomStream stream for random numbers
+     * @param gtuType GTUType; GTUType GTU type
+     * @param randomStream StreamInterface; stream for random numbers
      * @return default characteristics for given GTUType
      * @throws GTUException if there are no default characteristics for the GTU type
      */

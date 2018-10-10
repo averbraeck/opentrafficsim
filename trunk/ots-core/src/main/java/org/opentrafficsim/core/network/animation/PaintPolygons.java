@@ -35,8 +35,8 @@ public final class PaintPolygons
      * @param graphics Graphics2D; the graphics environment
      * @param color Color; the color to use
      * @param referencePoint DirectedPoint; the reference point
-     * @param line array of points
-     * @param fill fill or just contour
+     * @param line OTSLine3D; array of points
+     * @param fill boolean; fill or just contour
      */
     public static void paintMultiPolygon(final Graphics2D graphics, final Color color, final DirectedPoint referencePoint,
             final OTSLine3D line, final boolean fill)

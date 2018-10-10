@@ -60,7 +60,7 @@ public final class Profile
     /**
      * Forwarding method used for consistent stack trace filtering.
      * @param name String; name
-     * @param nanoTime long; time obtained by entrance method
+     * @param nanoTime Long; time obtained by entrance method
      */
     private static void start0(final String name, final Long nanoTime)
     {
@@ -87,7 +87,7 @@ public final class Profile
     /**
      * Forwarding method used for consistent stack trace filtering.
      * @param name String; name
-     * @param nanoTime long; time obtained by entrance method
+     * @param nanoTime Long; time obtained by entrance method
      */
     private static void end0(final String name, final Long nanoTime)
     {

@@ -19,7 +19,7 @@ public interface DesireBased
 
     /**
      * Returns the latest desire from the specified incentive.
-     * @param incentiveClass Class; incentive class
+     * @param incentiveClass Class&lt;? extends Incentive&gt;; incentive class
      * @return latest desire from the specified incentive
      */
     Desire getLatestDesire(Class<? extends Incentive> incentiveClass);

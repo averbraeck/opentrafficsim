@@ -104,11 +104,11 @@ public class DataIO
     }
 
     /**
-     * @param fileArea
-     * @param fileRoads
-     * @param pathData
-     * @param fileNameStarts
-     * @param fileNameDay
+     * @param fileArea String;
+     * @param fileRoads String;
+     * @param pathData String;
+     * @param fileNameStarts String;
+     * @param fileNameDay boolean;
      * @throws IOException
      */
     public static void addArea(String fileArea, String fileRoads, String pathData, String fileNameStarts, boolean fileNameDay,
@@ -192,11 +192,11 @@ public class DataIO
     }
 
     /**
-     * @param fileArea
-     * @param fileRoads
-     * @param pathData
-     * @param fileNameStarts
-     * @param fileNameDay
+     * @param fileArea String;
+     * @param fileRoads String;
+     * @param pathData String;
+     * @param fileNameStarts String;
+     * @param fileNameDay boolean;
      * @throws IOException
      */
     public static void addGeo(String fileArea, String fileRoads, String pathData, String fileNameStarts, boolean fileNameDay,
@@ -223,14 +223,14 @@ public class DataIO
     }
 
     /**
-     * @param outputShapeFile
-     * @param centroidOutputFile
-     * @param outputFile
-     * @param countMap
-     * @param roads
-     * @param areas
-     * @param fieldNameToDetect
-     * @param fieldNameSearchAreas
+     * @param outputShapeFile String;
+     * @param centroidOutputFile String;
+     * @param outputFile String;
+     * @param countMap Map&lt;String,ArrayList&lt;Double&gt;&gt;;
+     * @param roads ShapeStore;
+     * @param areas ShapeStore;
+     * @param fieldNameToDetect String;
+     * @param fieldNameSearchAreas String;
      * @throws IOException
      */
     public static void detectLocationOfObjectGeo(String outputShapeFile, String centroidOutputFile, String outputFile,
@@ -310,18 +310,18 @@ public class DataIO
              * objectsToDetect.getGeoObjects()) { mapRoads.put(road.getValues().get(indexFieldNameToDetect), road); } int
              * indexFieldNameLength = -1;
              *//*
-                * for (String name : objectsToDetect.getVariableNames()) { if (name.equals("LENGTH")) { indexFieldNameLength =
-                * objectsToDetect.getVariableNames().indexOf(name); break; } } int indexFieldNameWegbeheerder = -1; for (String
-                * name : objectsToDetect.getVariableNames()) { if (name.equals("WEGDEELLTR")) { indexFieldNameWegbeheerder =
-                * objectsToDetect.getVariableNames().indexOf(name); break; } } int indexFieldNameSTT_NAAM = -1; for (String name
-                * : objectsToDetect.getVariableNames()) { if (name.equals("STT_NAAM")) { indexFieldNameSTT_NAAM =
-                * objectsToDetect.getVariableNames().indexOf(name); break; } } for (ShapeObject road :
-                * objectsToDetect.getGeoObjects()) { mapRoadLengths .put(road.getValues().get(indexFieldNameToDetect),
-                * road.getValues().get(indexFieldNameLength)); mapRoadCTM.put(road.getValues().get(indexFieldNameToDetect),
-                * road.getValues().get(indexFieldNameWegbeheerder));
-                * mapRoadSTT_NAAM.put(road.getValues().get(indexFieldNameToDetect),
-                * road.getValues().get(indexFieldNameSTT_NAAM)); }
-                */
+               * for (String name : objectsToDetect.getVariableNames()) { if (name.equals("LENGTH")) { indexFieldNameLength =
+               * objectsToDetect.getVariableNames().indexOf(name); break; } } int indexFieldNameWegbeheerder = -1; for (String
+               * name : objectsToDetect.getVariableNames()) { if (name.equals("WEGDEELLTR")) { indexFieldNameWegbeheerder =
+               * objectsToDetect.getVariableNames().indexOf(name); break; } } int indexFieldNameSTT_NAAM = -1; for (String name
+               * : objectsToDetect.getVariableNames()) { if (name.equals("STT_NAAM")) { indexFieldNameSTT_NAAM =
+               * objectsToDetect.getVariableNames().indexOf(name); break; } } for (ShapeObject road :
+               * objectsToDetect.getGeoObjects()) { mapRoadLengths .put(road.getValues().get(indexFieldNameToDetect),
+               * road.getValues().get(indexFieldNameLength)); mapRoadCTM.put(road.getValues().get(indexFieldNameToDetect),
+               * road.getValues().get(indexFieldNameWegbeheerder));
+               * mapRoadSTT_NAAM.put(road.getValues().get(indexFieldNameToDetect),
+               * road.getValues().get(indexFieldNameSTT_NAAM)); }
+               */
 
             // write the data with the corresponding area ID to a new file
             /*
@@ -358,10 +358,10 @@ public class DataIO
     }
 
     /**
-     * @param inputFile
-     * @param csvSplitBy
-     * @param path
-     * @param year
+     * @param inputFile String;
+     * @param csvSplitBy String;
+     * @param path String;
+     * @param year String;
      * @return values
      * @throws FileNotFoundException
      */

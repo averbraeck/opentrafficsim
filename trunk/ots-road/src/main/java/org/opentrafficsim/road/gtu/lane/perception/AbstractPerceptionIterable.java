@@ -85,7 +85,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
     /**
      * Returns the next object(s) on the lane represented by the record. This should only consider objects on the given lane.
      * This method should not check the distance towards objects with the maximum distance.
-     * @param record R; record representing the lane and direction
+     * @param record LaneRecord&lt;?&gt;; record representing the lane and direction
      * @param position Length; position to look beyond
      * @param counter C; counter
      * @return next object(s) on the lane or {@code null} if none
@@ -97,7 +97,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * Returns the distance to the object. The position fed in to this method is directly taken from an {@code Entry} returned
      * by {@code getNext}. The two methods need to be consistent with each other.
      * @param object U; underlying object
-     * @param record R; record representing the lane and direction
+     * @param record LaneRecord&lt;?&gt;; record representing the lane and direction
      * @param position Length; position of the object on the lane
      * @return Length; distance to the object
      */
@@ -221,7 +221,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
         /**
          * Iterative method that continues a search on the next lanes if no object is found.
-         * @param record R; record
+         * @param record LaneRecord&lt;?&gt;; record
          * @param position Length; position
          */
         @SuppressWarnings("synthetic-access")
@@ -304,7 +304,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
     /**
      * Returns whether the record is on the route.
-     * @param record R; record
+     * @param record LaneRecord&lt;?&gt;; record
      * @return boolean; whether the record is on the route
      */
     final boolean isOnRoute(final LaneRecord<?> record)

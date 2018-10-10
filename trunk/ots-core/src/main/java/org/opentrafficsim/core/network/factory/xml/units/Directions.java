@@ -21,7 +21,7 @@ public final class Directions
     }
 
     /**
-     * @param dirStr the direction.
+     * @param dirStr String; the direction.
      * @return the directionality.
      * @throws NetworkException in case of unknown model.
      */

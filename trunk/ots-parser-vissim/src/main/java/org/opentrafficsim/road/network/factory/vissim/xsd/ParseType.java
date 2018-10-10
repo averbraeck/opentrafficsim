@@ -48,7 +48,7 @@ public enum ParseType
     }
 
     /**
-     * @param v String to parse
+     * @param v String; String to parse
      * @return a ParseType
      */
     public static ParseType fromValue(String v)

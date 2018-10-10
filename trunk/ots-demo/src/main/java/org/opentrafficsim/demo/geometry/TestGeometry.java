@@ -46,7 +46,7 @@ public class TestGeometry extends DSOLApplication implements UNITS
     }
 
     /**
-     * @param args args
+     * @param args String[]; args
      * @throws RemoteException if error
      * @throws SimRuntimeException if error
      * @throws NamingException if error

@@ -92,7 +92,7 @@ public class TimeCircularRoadAnimation implements UNITS
 
     /**
      * Timer.
-     * @param startTime start time of simulation
+     * @param startTime long; start time of simulation
      */
     protected void stop(final long startTime)
     {
@@ -104,7 +104,7 @@ public class TimeCircularRoadAnimation implements UNITS
     }
 
     /**
-     * @param args args should be empty
+     * @param args String[]; args should be empty
      */
     public static void main(final String[] args)
     {

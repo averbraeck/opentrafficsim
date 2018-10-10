@@ -30,7 +30,7 @@ public class PersistentStatistic<T extends AbstractDoubleScalarRel<?, T>> implem
     }
 
     /**
-     * @param alpha confidence level
+     * @param alpha double; confidence level
      * @return both-side confidence interval
      */
     public ConfidenceInterval<T> getConfidenceInterval(final double alpha)
@@ -39,8 +39,8 @@ public class PersistentStatistic<T extends AbstractDoubleScalarRel<?, T>> implem
     }
 
     /**
-     * @param alpha confidence level
-     * @param side side of confidence interval
+     * @param alpha double; confidence level
+     * @param side IntervalSide; side of confidence interval
      * @return confidence interval
      */
     public ConfidenceInterval<T> getConfidenceInterval(final double alpha, final IntervalSide side)

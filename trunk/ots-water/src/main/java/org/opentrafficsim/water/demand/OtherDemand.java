@@ -58,7 +58,7 @@ public class OtherDemand implements Dynamic, Serializable
 
     /**
      * add a cell to the demandmap.
-     * @param otherDemandCell demand to add
+     * @param otherDemandCell OtherDemandCell; demand to add
      */
     public final void addDemand(final OtherDemandCell otherDemandCell)
     {
@@ -67,10 +67,10 @@ public class OtherDemand implements Dynamic, Serializable
 
     /**
      * add a cell to the demand map.
-     * @param origin the origin location
-     * @param destination the destination location
-     * @param annualMoves the annual number of moves
-     * @param shipType the type of ship to use
+     * @param origin WaterwayLocation; the origin location
+     * @param destination WaterwayLocation; the destination location
+     * @param annualMoves int; the annual number of moves
+     * @param shipType ShipType; the type of ship to use
      */
     public final void addDemand(final WaterwayLocation origin, final WaterwayLocation destination, final int annualMoves,
             final ShipType shipType)

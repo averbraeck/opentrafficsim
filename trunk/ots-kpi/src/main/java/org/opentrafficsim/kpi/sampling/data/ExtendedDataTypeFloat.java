@@ -26,8 +26,8 @@ import nl.tudelft.simulation.language.Throw;
  * @param <O> vector type
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>, O extends AbstractFloatVector<U, O>, G extends GtuDataInterface>
-        extends ExtendedDataType<T, O, float[], G>
+public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends AbstractFloatScalar<U, T>,
+        O extends AbstractFloatVector<U, O>, G extends GtuDataInterface> extends ExtendedDataType<T, O, float[], G>
 {
     /**
      * Constructor setting the id.
@@ -95,7 +95,7 @@ public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends Abstrac
 
     /**
      * Convert float to typed value.
-     * @param value float value
+     * @param value float; float value
      * @return typed value
      */
     protected abstract T convertValue(final float value);
@@ -117,7 +117,7 @@ public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends Abstrac
 
     /**
      * Convert float array to typed array.
-     * @param storage float array storage
+     * @param storage float[]; float array storage
      * @return typed array
      * @throws ValueException when float array cannot be converted
      */

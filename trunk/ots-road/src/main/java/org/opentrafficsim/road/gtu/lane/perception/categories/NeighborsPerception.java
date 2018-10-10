@@ -27,7 +27,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
     /**
      * Update set of leaders on a lane, which is usually 0 or 1, but possibly more in case of a downstream split with no
      * intermediate GTU.
-     * @param lat LEFT or RIGHT
+     * @param lat LateralDirectionality; LEFT or RIGHT
      * @throws NetworkException in case of a network exception
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if a parameter was not present or out of bounds
@@ -39,7 +39,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
     /**
      * Update set of followers on a lane, which is usually 0 or 1, but possibly more in case of an upstream merge with no
      * intermediate GTU.
-     * @param lat LEFT or RIGHT
+     * @param lat LateralDirectionality; LEFT or RIGHT
      * @throws NetworkException in case of a network exception
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if a parameter was not present or out of bounds
@@ -50,7 +50,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
 
     /**
      * Update whether there is a GTU alongside, i.e. with overlap, in an adjacent lane.
-     * @param lat LEFT or RIGHT
+     * @param lat LateralDirectionality; LEFT or RIGHT
      * @throws NetworkException in case of a network exception
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if parameter is not defined
@@ -62,7 +62,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
     /**
      * Update set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT. Distance will be
      * from the own vehicle FRONT to their REAR. This is negative for (partially) adjacent vehicles.
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @throws NetworkException in case of a network exception
      * @throws GTUException if the GRU was not initialized
      * @throws ParameterException if a parameter was not present or out of bounds
@@ -72,7 +72,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
     /**
      * Update set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT. Distance will
      * be from their FRONT to the own vehicle REAR. This is negative for (partially) adjacent vehicles.
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @throws NetworkException in case of a network exception
      * @throws GTUException if the GRU was not initialized
      * @throws ParameterException if a parameter was not present or out of bounds
@@ -95,7 +95,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
      * 
      * <b>Only vehicles who's rear is beyond the own front are considered, no alongside vehicles.</b><br>
      * <br>
-     * @param lat LEFT or RIGHT
+     * @param lat LateralDirectionality; LEFT or RIGHT
      * @return list of followers on a lane
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
@@ -121,7 +121,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
      * 
      * <b>Only vehicles who's front is before the own rear are considered, no alongside vehicles.</b><br>
      * <br>
-     * @param lat LEFT or RIGHT
+     * @param lat LateralDirectionality; LEFT or RIGHT
      * @return list of followers on a lane
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
@@ -132,7 +132,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
 
     /**
      * Whether there is a GTU alongside, i.e. with overlap, in an adjacent lane.
-     * @param lat LEFT or RIGHT
+     * @param lat LateralDirectionality; LEFT or RIGHT
      * @return whether there is a GTU alongside, i.e. with overlap, in an adjacent lane
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
@@ -143,7 +143,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
     /**
      * Set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT. Leaders are sorted by
      * headway value.
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
     PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getLeaders(RelativeLane lane);
@@ -151,7 +151,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
     /**
      * Set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT. Follower are are
      * sorted by distance.
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @return set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT
      */
     PerceptionCollectable<HeadwayGTU, LaneBasedGTU> getFollowers(RelativeLane lane);

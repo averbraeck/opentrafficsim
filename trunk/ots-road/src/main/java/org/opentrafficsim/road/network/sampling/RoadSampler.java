@@ -186,8 +186,8 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /**
      * Compares a {@link KpiGtuDirectionality} and a {@link GTUDirectionality}.
-     * @param kpiGtuDirectionality kpi gtu direction
-     * @param gtuDirectionality gtu direction
+     * @param kpiGtuDirectionality KpiGtuDirectionality; kpi gtu direction
+     * @param gtuDirectionality GTUDirectionality; gtu direction
      * @return whether both are in the same direction
      */
     private boolean sameDirection(final KpiGtuDirectionality kpiGtuDirectionality, final GTUDirectionality gtuDirectionality)
@@ -308,8 +308,8 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /**
      * Schedules a sampling event for the given gtu on the given lane for the sampling interval from the current time.
-     * @param gtu gtu to sample
-     * @param laneDirection lane direction where the gtu is at
+     * @param gtu LaneBasedGTU; gtu to sample
+     * @param laneDirection LaneDirection; lane direction where the gtu is at
      */
     private void scheduleSamplingEvent(final LaneBasedGTU gtu, final LaneDirection laneDirection)
     {
@@ -336,8 +336,8 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /**
      * Samples a gtu and schedules the next sampling event.
-     * @param gtu gtu to sample
-     * @param laneDirection lane direction where the gtu is at
+     * @param gtu LaneBasedGTU; gtu to sample
+     * @param laneDirection LaneDirection; lane direction where the gtu is at
      */
     public final void notifySample(final LaneBasedGTU gtu, final LaneDirection laneDirection)
     {

@@ -120,7 +120,7 @@ public class ModelParameters implements SelfWrapper
 
     /**
      * Add a parameter. The name of the parameter must be unique.
-     * @param parameter Parameter
+     * @param parameter Parameter; Parameter
      * @return boolean; true if the parameter was added
      */
     public boolean addParameter(final Parameter parameter)

@@ -64,7 +64,7 @@ public class Route implements Serializable, Identifiable
 
     /**
      * Add a node to the end of the node list.
-     * @param node the node to add.
+     * @param node Node; the node to add.
      * @return Route; this route for method chaining
      * @throws NetworkException in case node could not be added to the route.
      */
@@ -85,7 +85,7 @@ public class Route implements Serializable, Identifiable
     }
 
     /**
-     * @param i the index of the node to obtain
+     * @param i int; the index of the node to obtain
      * @return node i.
      * @throws NetworkException if i &lt; 0 or i &gt; size
      */
@@ -172,9 +172,9 @@ public class Route implements Serializable, Identifiable
 
     /**
      * Clone the Route.
-     * @param newNetwork the new network
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
+     * @param newNetwork Network; the new network
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
+     * @param animation boolean; whether to (re)create animation or not
      * @return a clone of this route
      * @throws NetworkException in case the cloning fails
      */

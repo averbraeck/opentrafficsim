@@ -770,13 +770,15 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
     }
 
     /**
-     * @param stream the random stream to use
-     * @param lane reference lane to generate GTUs on
-     * @param lengthDistribution distribution of the GTU length
-     * @param widthDistribution distribution of the GTU width
-     * @param maximumSpeedDistribution distribution of the GTU's maximum speed
-     * @param initialPositions initial position(s) of the GTU on the Lane(s)
-     * @param strategicalPlannerFactory factory to generate the strategical planner for the GTU
+     * @param stream StreamInterface; the random stream to use
+     * @param lane Lane; reference lane to generate GTUs on
+     * @param lengthDistribution ContinuousDistDoubleScalar.Rel&lt;Length,LengthUnit&gt;; distribution of the GTU length
+     * @param widthDistribution ContinuousDistDoubleScalar.Rel&lt;Length,LengthUnit&gt;; distribution of the GTU width
+     * @param maximumSpeedDistribution ContinuousDistDoubleScalar.Rel&lt;Speed,SpeedUnit&gt;; distribution of the GTU's maximum
+     *            speed
+     * @param initialPositions Set&lt;DirectedLanePosition&gt;; initial position(s) of the GTU on the Lane(s)
+     * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;LaneBasedStrategicalPlanner&gt;; factory to
+     *            generate the strategical planner for the GTU
      * @return template for a GTU
      * @throws GTUException when characteristics cannot be initialized
      */

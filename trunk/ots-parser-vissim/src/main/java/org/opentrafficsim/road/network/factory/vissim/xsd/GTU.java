@@ -71,7 +71,7 @@ public class GTU
 
     /**
      * Sets the value of the name property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setNAME(String value)
     {
@@ -89,7 +89,7 @@ public class GTU
 
     /**
      * Sets the value of the gtutype property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setGTUTYPE(String value)
     {
@@ -107,7 +107,7 @@ public class GTU
 
     /**
      * Sets the value of the length property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setLENGTH(String value)
     {
@@ -125,7 +125,7 @@ public class GTU
 
     /**
      * Sets the value of the width property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setWIDTH(String value)
     {
@@ -143,7 +143,7 @@ public class GTU
 
     /**
      * Sets the value of the maxspeed property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setMAXSPEED(String value)
     {
@@ -161,7 +161,7 @@ public class GTU
 
     /**
      * Sets the value of the base property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setBase(String value)
     {

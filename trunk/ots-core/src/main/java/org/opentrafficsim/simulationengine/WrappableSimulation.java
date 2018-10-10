@@ -31,8 +31,8 @@ public interface WrappableSimulation
      * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
      *            this is)
      * @param runLength Duration; the duration of the simulation
-     * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must
-     *            contain all the properties returned by getProperties(); any additional properties may be ignored
+     * @param properties ArrayList&lt;Property&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must contain all
+     *            the properties returned by getProperties(); any additional properties may be ignored
      * @return SimpleSimulation; the new simulation
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency

@@ -31,7 +31,7 @@ public final class TestIntersectionPerformance
     /**
      * Create and return an OTSShape.
      * @param numVertices int; the number of vertices in the constructed OTSShape
-     * @param r double radius of the constructed OTSShape
+     * @param r double; double radius of the constructed OTSShape
      * @param cX double; x-coordinate of the center of the constructed OTSShape
      * @param cY double; y-coordinate of the center of the constructed OTSShape
      * @return OTSShape

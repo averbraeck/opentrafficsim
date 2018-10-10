@@ -22,7 +22,7 @@ public final class Test2
     }
 
     /**
-     * @param args args
+     * @param args String[]; args
      * @throws NetworkException on error
      * @throws OTSGeometryException on error
      */

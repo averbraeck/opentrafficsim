@@ -137,8 +137,8 @@ class RoadTag implements Serializable
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
-     * @param node the top-level road node
-     * @param parser the parser with the lists of information
+     * @param node Node; the top-level road node
+     * @param parser OpenDriveNetworkLaneParser; the parser with the lists of information
      * @return the generated RoadTag for further reference
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
@@ -186,9 +186,9 @@ class RoadTag implements Serializable
     }
 
     /**
-     * @param roadTag the road tag
-     * @param simulator the simulator
-     * @param openDriveNetworkLaneParser the parser
+     * @param roadTag RoadTag; the road tag
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param openDriveNetworkLaneParser OpenDriveNetworkLaneParser; the parser
      * @throws NetworkException on network error
      * @throws OTSGeometryException on geometry or position error
      * @throws NamingException on error registering the animation
@@ -391,9 +391,9 @@ class RoadTag implements Serializable
     }
 
     /**
-     * @param roadTag the road tag
-     * @param simulator the simulator
-     * @param openDriveNetworkLaneParser the parser
+     * @param roadTag RoadTag; the road tag
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param openDriveNetworkLaneParser OpenDriveNetworkLaneParser; the parser
      * @throws NetworkException on network error
      * @throws OTSGeometryException on geometry or position error
      * @throws NamingException on error registering the animation
@@ -845,8 +845,8 @@ class RoadTag implements Serializable
     }
 
     /**
-     * @param roadTag the road tag
-     * @param openDriveNetworkLaneParser the parser
+     * @param roadTag RoadTag; the road tag
+     * @param openDriveNetworkLaneParser OpenDriveNetworkLaneParser; the parser
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
@@ -900,9 +900,9 @@ class RoadTag implements Serializable
     }
 
     /**
-     * @param roadTag the road tag
-     * @param simulator the simulator
-     * @param openDriveNetworkLaneParser the parser
+     * @param roadTag RoadTag; the road tag
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param openDriveNetworkLaneParser OpenDriveNetworkLaneParser; the parser
      * @throws NetworkException on network error
      */
     public static void generateTrafficLightsbySignal(RoadTag roadTag, DEVSSimulatorInterface.TimeDoubleUnit simulator,
@@ -971,9 +971,9 @@ class RoadTag implements Serializable
     }
 
     /**
-     * @param roadTag the road tag
-     * @param simulator the simulator
-     * @param openDriveNetworkLaneParser the parser
+     * @param roadTag RoadTag; the road tag
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param openDriveNetworkLaneParser OpenDriveNetworkLaneParser; the parser
      * @throws NetworkException on network error
      */
     public static void generateTrafficLightsbySignalReference(RoadTag roadTag, DEVSSimulatorInterface.TimeDoubleUnit simulator,

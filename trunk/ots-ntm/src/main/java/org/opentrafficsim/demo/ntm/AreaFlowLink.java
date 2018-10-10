@@ -64,7 +64,7 @@ public class AreaFlowLink extends Area
     }
 
     /**
-     * @param flowLink set flowLink.
+     * @param flowLink LinkCellTransmission; set flowLink.
      */
     public void setFlowLink(LinkCellTransmission flowLink)
     {
@@ -80,7 +80,7 @@ public class AreaFlowLink extends Area
     }
 
     /**
-     * @param indexCell set indexCell.
+     * @param indexCell int; set indexCell.
      */
     public void setIndexCell(int indexCell)
     {

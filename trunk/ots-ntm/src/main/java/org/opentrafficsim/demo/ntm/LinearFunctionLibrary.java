@@ -36,8 +36,8 @@ public class LinearFunctionLibrary
      *            x1                   x2     x3
      * </pre>
      * <p>
-     * @param xyPairs point that define the curve
-     * @param valueX provides te value to execute (returns the Y-value)
+     * @param xyPairs ArrayList&lt;Point2D&gt;; point that define the curve
+     * @param valueX double; provides te value to execute (returns the Y-value)
      * @return the Y value of a valueX
      */
     public static double createPieceWiseLinear(final ArrayList<Point2D> xyPairs, final double valueX)

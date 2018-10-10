@@ -165,9 +165,9 @@ class CrossSectionElementTag implements Serializable
 
     /**
      * Parse the ROADLAYOUT.LANE tag.
-     * @param node the node of the XML-file
-     * @param parser the parser with the lists of information
-     * @param roadLayoutTag the tag with the enclosing information
+     * @param node Node; the node of the XML-file
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param roadLayoutTag RoadLayoutTag; the tag with the enclosing information
      * @return the cross section element for this part of the road
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
@@ -320,9 +320,9 @@ class CrossSectionElementTag implements Serializable
 
     /**
      * Parse the ROADLAYOUT.NOTRAFFICLANE tag.
-     * @param node the node of the XML-file
-     * @param parser the parser with the lists of information
-     * @param roadLayoutTag the tag with the enclosing information
+     * @param node Node; the node of the XML-file
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param roadLayoutTag RoadLayoutTag; the tag with the enclosing information
      * @return the cross section element for this part of the road
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
@@ -393,9 +393,9 @@ class CrossSectionElementTag implements Serializable
 
     /**
      * Parse the ROADLAYOUT.SHOULDER tag.
-     * @param node the node of the XML-file
-     * @param parser the parser with the lists of information
-     * @param roadLayoutTag the tag with the enclosing information
+     * @param node Node; the node of the XML-file
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param roadLayoutTag RoadLayoutTag; the tag with the enclosing information
      * @return the cross section element for this part of the road
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
@@ -466,9 +466,9 @@ class CrossSectionElementTag implements Serializable
 
     /**
      * Parse the ROADLAYOUT.STRIPE tag.
-     * @param node the node of the XML-file
-     * @param parser the parser with the lists of information
-     * @param roadLayoutTag the tag with the enclosing information
+     * @param node Node; the node of the XML-file
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param roadLayoutTag RoadLayoutTag; the tag with the enclosing information
      * @return the cross section element for this part of the road
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
@@ -534,7 +534,7 @@ class CrossSectionElementTag implements Serializable
     }
 
     /**
-     * @param stripeStr the stripe string.
+     * @param stripeStr String; the stripe string.
      * @return the stripe type.
      * @throws NetworkException in case of unknown model.
      */

@@ -26,7 +26,7 @@ public final class CleanClassfileFiles
     }
 
     /**
-     * @param args none
+     * @param args String[]; none
      * @throws IOException on I/O error
      * @throws URISyntaxException on I/O error
      */

@@ -646,7 +646,7 @@ public class Diagram
     /**
      * Return the Nth step in a route.
      * @param pointNo int; the rank of the requested step
-     * @param steps RouteStep... the steps
+     * @param steps RouteStep...; RouteStep... the steps
      * @return RouteStep; the Nth step in the route or null if the route does not have <code>pointNo</code> steps
      * @throws TrafficLightException when the command in a routestep is not recognized
      */

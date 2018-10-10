@@ -27,9 +27,9 @@ public class SubstringLine
      */
 
     /**
-     * @param line
-     * @param startLength
-     * @param endLength
+     * @param line LineString;
+     * @param startLength double;
+     * @param endLength double;
      * @return the substring
      */
     public static LineString getSubstring(LineString line, double startLength, double endLength)
@@ -70,8 +70,8 @@ public class SubstringLine
 
     /**
      * Assumes input is strictly valid (e.g. startDist < endDistance)
-     * @param startDistance
-     * @param endDistance
+     * @param startDistance double;
+     * @param endDistance double;
      * @return the substring
      */
     private LineString computeSubstring(double startDistance, double endDistance)

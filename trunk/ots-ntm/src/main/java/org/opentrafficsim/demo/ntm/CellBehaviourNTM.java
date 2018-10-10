@@ -70,7 +70,7 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
-     * @param accumulatedCars
+     * @param accumulatedCars double;
      * @return actualSpeed.
      */
     public Speed retrieveCurrentSpeed(final double accumulatedCars, final Length roadLength)
@@ -113,9 +113,9 @@ public class CellBehaviourNTM extends CellBehaviour
 
     /**
      * Retrieves car production from network fundamental diagram.
-     * @param accumulatedCars number of cars in Cell
+     * @param accumulatedCars double; number of cars in Cell
      * @param maximumCapacityArea based on area information
-     * @param parametersNTM
+     * @param parametersNTM ParametersNTM;
      * @return carProduction
      */
     public final Frequency retrieveDemandPerLengthUnit(final double accumulatedCars, final Length roadLength,
@@ -154,7 +154,7 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
-     * @param parametersNTM set parametersNTM.
+     * @param parametersNTM ParametersNTM; set parametersNTM.
      */
     public void setParametersNTM(ParametersNTM parametersNTM)
     {
@@ -170,7 +170,7 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
-     * @param area set area.
+     * @param area Area; set area.
      */
     public void setArea(final Area area)
     {
@@ -202,7 +202,7 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
-     * @param currentSpeed set currentSpeed.
+     * @param currentSpeed Speed; set currentSpeed.
      * @return
      */
     public Speed setCurrentSpeed(Speed currentSpeed)
@@ -219,7 +219,7 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
-     * @param time set currentTravelTime.
+     * @param time Duration; set currentTravelTime.
      * @return
      */
     public Duration setCurrentTravelTime(Duration time)
@@ -238,7 +238,7 @@ public class CellBehaviourNTM extends CellBehaviour
     }
 
     /**
-     * @param freeSpeed set freeSpeed.
+     * @param freeSpeed Speed; set freeSpeed.
      */
     public void setFreeSpeed(Speed freeSpeed)
     {

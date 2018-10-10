@@ -43,8 +43,8 @@ class GTUTypeTag implements Serializable
     String name = null;
 
     /**
-     * @param nodeList nodeList the top-level nodes of the XML-file
-     * @param parser the parser with the lists of information
+     * @param nodeList NodeList; nodeList the top-level nodes of the XML-file
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
      * @throws SAXException when parsing of GTU tag fails
      * @throws NetworkException when parsing of GTU tag fails
      * @throws GTUException if GTUType defined twice

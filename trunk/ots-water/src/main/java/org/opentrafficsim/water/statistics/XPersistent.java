@@ -107,7 +107,7 @@ public class XPersistent extends XTally
 
     /**
      * dstat
-     * @param value value
+     * @param value double; value
      */
     public void persist(final double value)
     {

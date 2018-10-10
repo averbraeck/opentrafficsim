@@ -54,7 +54,7 @@ public class XFrequency implements Serializable
 
     /**
      * Returns the current counter value for a key
-     * @param key the string key for the counter
+     * @param key String; the string key for the counter
      * @return long the counter value
      */
     public long getFrequency(final String key)
@@ -82,8 +82,8 @@ public class XFrequency implements Serializable
 
     /**
      * count frequency
-     * @param key the key to count the value under
-     * @param value the value
+     * @param key String; the key to count the value under
+     * @param value long; the value
      */
     public void count(final String key, final long value)
     {
@@ -99,7 +99,7 @@ public class XFrequency implements Serializable
 
     /**
      * count 1
-     * @param key key
+     * @param key String; key
      */
     public void count(final String key)
     {
@@ -138,7 +138,7 @@ public class XFrequency implements Serializable
 
     /**
      * sets n
-     * @param n the number of measurements
+     * @param n long; the number of measurements
      */
     private void setN(final long n)
     {
@@ -156,8 +156,8 @@ public class XFrequency implements Serializable
 
     /**
      * Write statistics to an excel spreadsheet, starting on row "startRow"
-     * @param sheet the excel sheet to write to
-     * @param startRow the first row of writing
+     * @param sheet Sheet; the excel sheet to write to
+     * @param startRow int; the first row of writing
      * @return first free row after writing
      */
     public int writeToExcel(final Sheet sheet, final int startRow)

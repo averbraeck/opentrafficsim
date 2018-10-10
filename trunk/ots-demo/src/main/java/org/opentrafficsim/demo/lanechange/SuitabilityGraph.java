@@ -318,7 +318,7 @@ class SuitabilityData implements XYDataset
 
     /**
      * Notify interested parties of an event affecting this TrajectoryPlot.
-     * @param event DatasetChangedEvent
+     * @param event DatasetChangeEvent; DatasetChangedEvent
      */
     private void notifyListeners(final DatasetChangeEvent event)
     {

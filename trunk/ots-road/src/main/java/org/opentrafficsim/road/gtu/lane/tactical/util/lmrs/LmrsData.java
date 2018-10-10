@@ -69,7 +69,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /**
      * Checks if the given leader is a new leader.
-     * @param gtu gtu to check
+     * @param gtu HeadwayGTU; gtu to check
      * @return whether the gtu is a new leader
      */
     boolean isNewLeader(final HeadwayGTU gtu)
@@ -90,7 +90,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /**
      * Remembers the gtu that is synchronized to.
-     * @param gtu gtu that is synchronized to
+     * @param gtu HeadwayGTU; gtu that is synchronized to
      */
     void setSyncVehicle(final HeadwayGTU gtu)
     {
@@ -99,7 +99,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /**
      * Returns whether the provided gtu is the gtu that is synchronized to.
-     * @param gtu gtu to inquiry
+     * @param gtu HeadwayGTU; gtu to inquiry
      * @return whether the provided gtu is the gtu that is synchronized to
      */
     boolean isSyncVehicle(final HeadwayGTU gtu)
@@ -110,7 +110,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     /**
      * Returns the gtu from the set that is the current sync vehicle, or {@code null} of there is no sync vehicle or it is not
      * in the set.
-     * @param adjLeaders leaders in adjacent lane
+     * @param adjLeaders PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; leaders in adjacent lane
      * @return gtu from the set that is the current sync vehicle
      */
     HeadwayGTU getSyncVehicle(final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> adjLeaders)

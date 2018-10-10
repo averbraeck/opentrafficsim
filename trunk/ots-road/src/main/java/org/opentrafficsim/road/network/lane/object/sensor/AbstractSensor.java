@@ -115,8 +115,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /**
      * Make a geometry perpendicular to the center line of the lane with a length of 90% of the width of the lane.
-     * @param lane the lane for which to make a perpendicular geometry
-     * @param longitudinalPosition the position on the lane
+     * @param lane Lane; the lane for which to make a perpendicular geometry
+     * @param longitudinalPosition Length; the position on the lane
      * @return an OTSLine3D that describes the line
      * @throws NetworkException in case the sensor point on the center line of the lane cannot be found
      */

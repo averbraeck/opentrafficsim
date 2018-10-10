@@ -758,10 +758,10 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /**
      * Clone the OTSNetwork.
-     * @param newId the new id of the network
-     * @param oldSimulator the old simulator for this network
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
+     * @param newId String; the new id of the network
+     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator for this network
+     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
+     * @param animation boolean; whether to (re)create animation or not
      * @return a clone of this network
      * @throws NetworkException in case the cloning fails
      */
@@ -829,10 +829,11 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
      * not known on beforehand which objects need to be cloned. It is important for cloning that the animation objects implement
      * the CloneableRenderable2DInterface, so they can be cloned with their properties. If not, they will not be taken into
      * account for cloning by this method.
-     * @param oldSource the old source object that might have one or more animation objects attached to it
-     * @param newSource the new source object to attach the cloned animation objects to
-     * @param oldSimulator the old simulator when the old objects can be found
-     * @param newSimulator the new simulator where the new simulation objects need to be registered
+     * @param oldSource Locatable; the old source object that might have one or more animation objects attached to it
+     * @param newSource T; the new source object to attach the cloned animation objects to
+     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator when the old objects can be found
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator where the new simulation objects need to be
+     *            registered
      * @param <T> locatable type
      */
     @SuppressWarnings("checkstyle:designforextension")
@@ -869,7 +870,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /**
      * Remove all objects and animation in the network.
-     * @param simulator the simulator of the old network
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator of the old network
      */
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy(final SimulatorInterface.TimeDoubleUnit simulator)
@@ -916,8 +917,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /**
      * Remove all animation objects of the given class.
-     * @param clazz the class to remove the animation objects for
-     * @param oldSimulator the old simulator
+     * @param clazz Class&lt;?&gt;; the class to remove the animation objects for
+     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator
      */
     @SuppressWarnings("checkstyle:designforextension")
     public void removeAnimation(final Class<?> clazz, final SimulatorInterface.TimeDoubleUnit oldSimulator)

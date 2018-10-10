@@ -45,8 +45,8 @@ public class ShapeFileReader
 {
 
     /**
-     * @param shapeFileName the areas shapefile to read
-     * @param centroids the map of centroids
+     * @param shapeFileName String; the areas shapefile to read
+     * @param centroids Map&lt;String,NTMNode&gt;; the map of centroids
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
@@ -199,10 +199,10 @@ public class ShapeFileReader
     }
 
     /**
-     * @param shapeFileName the nodes shapefile to read
-     * @param numberType
-     * @param returnCentroid , if true only loop through the centroid/zones (in case of mixed nodes and centroids)
-     * @param allCentroids , if true: the file only contains centroids (a centroid file)
+     * @param shapeFileName String; the nodes shapefile to read
+     * @param numberType String;
+     * @param returnCentroid boolean; , if true only loop through the centroid/zones (in case of mixed nodes and centroids)
+     * @param allCentroids boolean; , if true: the file only contains centroids (a centroid file)
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
@@ -309,7 +309,7 @@ public class ShapeFileReader
      * 'C') { name = name.substring(1); // nr = (long) Long.parseLong(name); } return name; }
      */
     /**
-     * @param number
+     * @param number String;
      * @return nr: the number of the Node without characters
      */
     public static boolean inspectNodeCentroid(String number)
@@ -326,13 +326,13 @@ public class ShapeFileReader
     }
 
     /**
-     * @param shapeFileName the nodes shapefile to read
-     * @param links : returns the file with real links
-     * @param connectors returns the file with artificial links to a centroid/zone
-     * @param nodes the map of nodes to retrieve start and end node
-     * @param centroids the centroids to check start and end Node
-     * @param lengthUnit
-     * @param linkCapacityNumberOfHours
+     * @param shapeFileName String; the nodes shapefile to read
+     * @param links Map&lt;String,NTMLink&gt;; : returns the file with real links
+     * @param connectors Map&lt;String,NTMLink&gt;; returns the file with artificial links to a centroid/zone
+     * @param nodes Map&lt;String,NTMNode&gt;; the map of nodes to retrieve start and end node
+     * @param centroids Map&lt;String,NTMNode&gt;; the centroids to check start and end Node
+     * @param lengthUnit String;
+     * @param linkCapacityNumberOfHours Double;
      * @throws IOException on error
      */
     public static void readLinks(final NTMModel model, final String shapeFileName, Map<String, NTMLink> links,
@@ -549,8 +549,8 @@ public class ShapeFileReader
     }
 
     /**
-     * @param coordinate
-     * @param centroid
+     * @param coordinate Coordinate;
+     * @param centroid Coordinate;
      * @return if TRUE: the points match geographically
      */
     public static boolean testGeometry(final Coordinate coordinate, final Coordinate centroid)
@@ -567,7 +567,7 @@ public class ShapeFileReader
     }
 
     /**
-     * @param shapeFileName the areas shapefile to read
+     * @param shapeFileName String; the areas shapefile to read
      * @throws IOException on error
      */
     public static void shapeFileInfo(final String shapeFileName) throws IOException

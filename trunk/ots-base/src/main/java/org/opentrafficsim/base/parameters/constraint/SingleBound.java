@@ -41,7 +41,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
 
     /**
      * Creates a lower inclusive bound; {@code value >= bound}.
-     * @param bound AbstractDoubleScalar; bound value
+     * @param bound T; bound value
      * @param <T> value type
      * @return lower inclusive bound
      */
@@ -74,7 +74,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
 
     /**
      * Creates a lower exclusive bound; {@code value > bound}.
-     * @param bound AbstractDoubleScalar; bound value
+     * @param bound T; bound value
      * @param <T> value type
      * @return lower exclusive bound
      */
@@ -106,7 +106,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
 
     /**
      * Creates an upper inclusive bound; {@code value <= bound}.
-     * @param bound AbstractDoubleScalar; bound value
+     * @param bound T; bound value
      * @return upper inclusive bound
      * @param <T> value type
      */
@@ -139,7 +139,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
 
     /**
      * Creates an upper exclusive bound; {@code value < bound}.
-     * @param bound AbstractDoubleScalar; bound value
+     * @param bound T; bound value
      * @param <T> value type
      * @return upper exclusive bound
      */

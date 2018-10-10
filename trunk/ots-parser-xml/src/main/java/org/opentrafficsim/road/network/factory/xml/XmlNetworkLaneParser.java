@@ -176,7 +176,7 @@ public class XmlNetworkLaneParser implements Serializable
     }
 
     /**
-     * @param url the file with the network in the agreed xml-grammar.
+     * @param url URL; the file with the network in the agreed xml-grammar.
      * @param interpretXMLComments boolean; if true; interpret specifically formatted XML comments and modify the network
      *            accordingly
      * @return the network with Nodes, Links, and Lanes.
@@ -200,7 +200,7 @@ public class XmlNetworkLaneParser implements Serializable
     }
 
     /**
-     * @param stream the input stream with the network in the agreed xml-grammar.
+     * @param stream InputStream; the input stream with the network in the agreed xml-grammar.
      * @param interpretXMLComments boolean; if true; interpret specifically formatted XML comments and modify the network
      *            accordingly
      * @return the network with Nodes, Links, and Lanes.
@@ -224,7 +224,7 @@ public class XmlNetworkLaneParser implements Serializable
     }
 
     /**
-     * @param url the file with the network in the agreed xml-grammar.
+     * @param url URL; the file with the network in the agreed xml-grammar.
      * @param otsNetwork OTSNetwork; the network
      * @param interpretXMLComments boolean; if true; interpret specifically formatted XML comments and modify the network
      *            accordingly
@@ -249,7 +249,7 @@ public class XmlNetworkLaneParser implements Serializable
     }
 
     /**
-     * @param stream the input stream with the network in the agreed xml-grammar.
+     * @param stream InputStream; the input stream with the network in the agreed xml-grammar.
      * @param otsNetwork OTSNetwork; the network
      * @param interpretXMLComments boolean; if true; interpret specifically formatted XML comments and modify the network
      *            accordingly

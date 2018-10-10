@@ -260,8 +260,8 @@ public final class Clothoid
 
     /**
      * Approximate one point of the "standard" spiral (curvature at start is 0).
-     * @param s run-length along spiral
-     * @param cDot first derivative of curvature [1/m2]
+     * @param s double; run-length along spiral
+     * @param cDot double; first derivative of curvature [1/m2]
      * @param initialCurvature double; curvature at start
      * @return double[]; array of three double values containing x, y, and tangent direction
      */
@@ -400,8 +400,8 @@ public final class Clothoid
      * Approximate a clothoid.
      * @param start OTSPoint3D; starting point of the clothoid
      * @param startDirection Direction; start direction of the clothoid
-     * @param startCurvature double; curvature at the start of the clothoid [1/m]
-     * @param endCurvature double; curvature at the end of the clothoid [1/m]
+     * @param startCurvature LinearDensity; curvature at the start of the clothoid [1/m]
+     * @param endCurvature LinearDensity; curvature at the end of the clothoid [1/m]
      * @param length Length; length of the clothoid
      * @param endElevation Length; elevation at end of the clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)

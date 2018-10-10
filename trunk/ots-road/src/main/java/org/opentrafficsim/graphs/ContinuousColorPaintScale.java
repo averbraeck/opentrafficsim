@@ -92,9 +92,9 @@ public class ContinuousColorPaintScale implements PaintScale, Serializable
      * Create a mixed color component. When ratio varies from 0.0 to 1.0, the result varies from <i>low</i> to <i>high</i>. If
      * ratio is outside the range 0.0 to 1.0, the result value can be outside the <i>range</i> <i>low</i> to <i>high</i>.
      * However, the result is always limited to the range 0..255.
-     * @param ratio Double; value (normally) between 0.0 and 1.0.
-     * @param low Integer; this value is returned when ratio equals 0.0
-     * @param high Integer; this value is returned when ratio equals 1.0
+     * @param ratio double; value (normally) between 0.0 and 1.0.
+     * @param low int; this value is returned when ratio equals 0.0
+     * @param high int; this value is returned when ratio equals 1.0
      * @return Integer; the ratio-weighted average of <i>low</i> and <i>high</i>
      */
     private static int mixComponent(final double ratio, final int low, final int high)

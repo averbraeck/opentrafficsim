@@ -92,7 +92,7 @@ public enum LongitudinalDirectionality
      * <td>true</td>
      * </tr>
      * </table>
-     * @param directionality the directionality to compare with
+     * @param directionality LongitudinalDirectionality; the directionality to compare with
      * @return whether this directionality "contains" the provided other directionality
      */
     public final boolean contains(final LongitudinalDirectionality directionality)

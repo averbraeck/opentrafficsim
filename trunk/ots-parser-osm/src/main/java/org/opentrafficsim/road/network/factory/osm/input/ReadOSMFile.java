@@ -123,7 +123,7 @@ public final class ReadOSMFile implements Serializable
     }
 
     /**
-     * @param progressListener set progressListener.
+     * @param progressListener ProgressListener; set progressListener.
      */
     public void setProgressListener(final ProgressListener progressListener)
     {

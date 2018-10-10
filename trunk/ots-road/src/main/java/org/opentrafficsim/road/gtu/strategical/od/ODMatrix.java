@@ -185,10 +185,10 @@ public class ODMatrix implements Serializable, Identifiable
 
     /**
      * Add a demand vector to OD.
-     * @param origin origin
-     * @param destination destination
-     * @param category category
-     * @param demand demand data, length has to be equal to the global time vector
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
+     * @param demand FrequencyVector; demand data, length has to be equal to the global time vector
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
@@ -206,12 +206,12 @@ public class ODMatrix implements Serializable, Identifiable
      * Add a demand vector to OD. In this method, which all other methods that add or put demand indirectly refer to, many
      * consistency and validity checks are performed. These do not include checks on network connectivity, since the network may
      * be subject to change during simulation.
-     * @param origin origin
-     * @param destination destination
-     * @param category category
-     * @param demand demand data, length has to be equal to the time vector
-     * @param timeVector time vector
-     * @param interpolation interpolation
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
+     * @param demand FrequencyVector; demand data, length has to be equal to the time vector
+     * @param timeVector TimeVector; time vector
+     * @param interpolation Interpolation; interpolation
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
@@ -277,13 +277,13 @@ public class ODMatrix implements Serializable, Identifiable
 
     /**
      * Add a demand vector to OD, by a fraction of total demand.
-     * @param origin origin
-     * @param destination destination
-     * @param category category
-     * @param demand demand data, length has to be equal to the time vector
-     * @param timeVector time vector
-     * @param interpolation interpolation
-     * @param fraction fraction of demand for this category
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
+     * @param demand FrequencyVector; demand data, length has to be equal to the time vector
+     * @param timeVector TimeVector; time vector
+     * @param interpolation Interpolation; interpolation
+     * @param fraction double; fraction of demand for this category
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
@@ -323,13 +323,13 @@ public class ODMatrix implements Serializable, Identifiable
 
     /**
      * Add a demand vector to OD, by a fraction per time period of total demand.
-     * @param origin origin
-     * @param destination destination
-     * @param category category
-     * @param demand demand data, length has to be equal to the time vector
-     * @param timeVector time vector
-     * @param interpolation interpolation
-     * @param fraction fraction of demand for this category
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
+     * @param demand FrequencyVector; demand data, length has to be equal to the time vector
+     * @param timeVector TimeVector; time vector
+     * @param interpolation Interpolation; interpolation
+     * @param fraction double[]; fraction of demand for this category
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
@@ -367,9 +367,9 @@ public class ODMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @param origin origin
-     * @param destination destination
-     * @param category category
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
      * @return demand data for given origin, destination and categorization, {@code null} if no data is given
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
@@ -386,9 +386,9 @@ public class ODMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @param origin origin
-     * @param destination destination
-     * @param category category
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
      * @return interpolation for given origin, destination and categorization, {@code null} if no data is given
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
@@ -405,9 +405,9 @@ public class ODMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @param origin origin
-     * @param destination destination
-     * @param category category
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
      * @return interpolation for given origin, destination and categorization, {@code null} if no data is given
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
@@ -429,7 +429,7 @@ public class ODMatrix implements Serializable, Identifiable
      * @param origin Node; origin
      * @param destination Node; destination
      * @param category Category; category
-     * @param time Duration; time
+     * @param time Time; time
      * @param sliceStart boolean; whether the time is at the start of an arbitrary time slice
      * @return demand for given origin, destination and categorization, at given time
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
@@ -449,9 +449,9 @@ public class ODMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @param origin origin
-     * @param destination destination
-     * @param category category
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
      * @return OD entry for given origin, destination and categorization.
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
@@ -472,9 +472,9 @@ public class ODMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @param origin origin
-     * @param destination destination
-     * @param category category
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
      * @return whether there is data for the specified origin, destination and category
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
@@ -487,8 +487,8 @@ public class ODMatrix implements Serializable, Identifiable
 
     /**
      * Returns the categories specified for given origin-destination combination.
-     * @param origin origin
-     * @param destination destination
+     * @param origin Node; origin
+     * @param destination Node; destination
      * @return categories specified for given origin-destination combination
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws NullPointerException if an input is null
@@ -509,11 +509,11 @@ public class ODMatrix implements Serializable, Identifiable
     /******************************************************************************************************/
 
     /**
-     * @param origin origin
-     * @param destination destination
-     * @param category category
-     * @param trips trip data, length has to be equal to the global time vector - 1, each value is the number of trips during a
-     *            period
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
+     * @param trips int[]; trip data, length has to be equal to the global time vector - 1, each value is the number of trips
+     *            during a period
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
@@ -528,11 +528,12 @@ public class ODMatrix implements Serializable, Identifiable
 
     /**
      * Sets demand data by number of trips. Interpolation over time is stepwise.
-     * @param origin origin
-     * @param destination destination
-     * @param category category
-     * @param trips trip data, length has to be equal to the time vector - 1, each value is the number of trips during a period
-     * @param timeVector time vector
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
+     * @param trips int[]; trip data, length has to be equal to the time vector - 1, each value is the number of trips during a
+     *            period
+     * @param timeVector TimeVector; time vector
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws IllegalArgumentException if the demand data has a different length than time data, or is less than 2
@@ -569,9 +570,9 @@ public class ODMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @param origin origin
-     * @param destination destination
-     * @param category category
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
      * @return trip data for given origin, destination and categorization, {@code null} if no data is given
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
@@ -604,10 +605,10 @@ public class ODMatrix implements Serializable, Identifiable
 
     /**
      * Returns the number of trips in the given time period.
-     * @param origin origin
-     * @param destination destination
-     * @param category category
-     * @param periodIndex index of time period
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
+     * @param periodIndex int; index of time period
      * @return demand for given origin, destination and categorization, at given time
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
@@ -640,11 +641,11 @@ public class ODMatrix implements Serializable, Identifiable
     /**
      * Adds a number of trips to given origin-destination combination, category and time period. This can only be done for data
      * with stepwise interpolation.
-     * @param origin origin
-     * @param destination destination
-     * @param category category
-     * @param periodIndex index of time period
-     * @param trips trips to add (may be negative)
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param category Category; category
+     * @param periodIndex int; index of time period
+     * @param trips int; trips to add (may be negative)
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws IndexOutOfBoundsException if the period is outside of the specified range
@@ -681,7 +682,7 @@ public class ODMatrix implements Serializable, Identifiable
 
     /**
      * Calculates total number of trips over time for given origin.
-     * @param origin origin
+     * @param origin Node; origin
      * @return total number of trips over time for given origin
      * @throws IllegalArgumentException if origin is not part of the OD matrix
      * @throws NullPointerException if origin is null
@@ -698,7 +699,7 @@ public class ODMatrix implements Serializable, Identifiable
 
     /**
      * Calculates total number of trips over time for given destination.
-     * @param destination destination
+     * @param destination Node; destination
      * @return total number of trips over time for given destination
      * @throws IllegalArgumentException if destination is not part of the OD matrix
      * @throws NullPointerException if destination is null
@@ -734,8 +735,8 @@ public class ODMatrix implements Serializable, Identifiable
 
     /**
      * Calculates total number of trips over time for given origin-destination combination.
-     * @param origin origin
-     * @param destination destination
+     * @param origin Node; origin
+     * @param destination Node; destination
      * @return total number of trips over time for given origin-destination combination
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws NullPointerException if an input is null

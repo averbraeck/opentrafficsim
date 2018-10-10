@@ -255,7 +255,7 @@ public class OSMParser implements Sink, Serializable
     /**
      * Set/replace the list of wanted tags.<br>
      * This method makes a deep copy of the supplied list.
-     * @param tags List&lt;Tag&gt;; the list of wanted tags
+     * @param tags List&lt;OSMTag&gt;; the list of wanted tags
      */
     public final void setWantedTags(final List<OSMTag> tags)
     {
@@ -269,7 +269,7 @@ public class OSMParser implements Sink, Serializable
     /**
      * Set/replace the filter keys.<br>
      * The provided list is <b>not copied</b>; the caller should not modify the list afterwards.
-     * @param keys List&lt;String&gt; list of filter keys
+     * @param keys List&lt;String&gt;; List&lt;String&gt; list of filter keys
      */
     public final void setFilterKeys(final List<String> keys)
     {
@@ -285,7 +285,7 @@ public class OSMParser implements Sink, Serializable
     }
 
     /**
-     * @param progressListener set progressListener.
+     * @param progressListener ProgressListener; set progressListener.
      */
     public final void setProgressListener(final ProgressListener progressListener)
     {

@@ -736,7 +736,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
             }
 
             /**
-             * @param perceptionInterval the interval for perceiving.
+             * @param perceptionInterval Duration; the interval for perceiving.
              */
             public void setPerceptionInterval(final Duration perceptionInterval)
             {

@@ -68,7 +68,7 @@ public class LaneData implements LaneDataInterface
     }
 
     /**
-     * @param linkData set linkData
+     * @param linkData LinkData; set linkData
      */
     public final void setLinkData(LinkData linkData)
     {

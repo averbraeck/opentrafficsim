@@ -64,9 +64,9 @@ public final class AnticipationInfo implements Serializable
 
     /**
      * Returns info of the anticipation assuming constant acceleration.
-     * @param distance distance to cover
-     * @param initialSpeed initial speed
-     * @param acceleration (assumed) acceleration
+     * @param distance Length; distance to cover
+     * @param initialSpeed Speed; initial speed
+     * @param acceleration Acceleration; (assumed) acceleration
      * @return duration to cover given distance with given initial speed and acceleration
      */
     public static AnticipationInfo anticipateMovement(final Length distance, final Speed initialSpeed,
@@ -77,10 +77,10 @@ public final class AnticipationInfo implements Serializable
 
     /**
      * Returns info of the anticipation assuming constant acceleration, without exceeding maximum speed.
-     * @param distance distance to cover
-     * @param initialSpeed initial speed
-     * @param acceleration (assumed) acceleration
-     * @param maxSpeed maximum speed
+     * @param distance Length; distance to cover
+     * @param initialSpeed Speed; initial speed
+     * @param acceleration Acceleration; (assumed) acceleration
+     * @param maxSpeed Speed; maximum speed
      * @return duration to cover given distance with given initial speed and acceleration, without exceeding maximum speed
      */
     public static AnticipationInfo anticipateMovementSpeedLimited(final Length distance, final Speed initialSpeed,
@@ -123,12 +123,12 @@ public final class AnticipationInfo implements Serializable
 
     /**
      * Returns info of the anticipation using free acceleration from car-following model.
-     * @param distance distance to cover
-     * @param initialSpeed initial speed
-     * @param parameters parameters of the anticipated GTU
-     * @param carFollowingModel car-following model of the anticipated GTU
-     * @param speedLimitInfo speed limit info of the anticipated GTU
-     * @param timeStep time step to use
+     * @param distance Length; distance to cover
+     * @param initialSpeed Speed; initial speed
+     * @param parameters Parameters; parameters of the anticipated GTU
+     * @param carFollowingModel CarFollowingModel; car-following model of the anticipated GTU
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info of the anticipated GTU
+     * @param timeStep Duration; time step to use
      * @return info regarding anticipation of movement
      * @throws ParameterException if parameter is not defined
      */

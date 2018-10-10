@@ -48,7 +48,7 @@ public final class TestController
      * @version Oct 21, 2016
      */
     /**
-     * @param args command line arguments
+     * @param args String[]; command line arguments
      * @throws IOException when communication fails
      */
     public static void main(final String[] args) throws IOException
@@ -146,7 +146,7 @@ public final class TestController
     /**
      * Transit one message to the OTS server.
      * @param outputStream OutputStream; output stream to the OTS server
-     * @param message AimsunControlProtobuf.OTSMessage; the message
+     * @param message AimsunControlProtoBuf.OTSMessage; the message
      * @throws IOException when communication fails in any way
      */
     public static void sendProtoMessage(final OutputStream outputStream, final AimsunControlProtoBuf.OTSMessage message)

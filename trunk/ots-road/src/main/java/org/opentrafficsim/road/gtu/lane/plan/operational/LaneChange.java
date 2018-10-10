@@ -81,7 +81,7 @@ public class LaneChange implements Serializable
      * Sets the distance within which a lane change should be finished. Should be set by a tactical planner. In case of a single
      * lane change required before some point, this is not required as the found center line length is intrinsically limited.
      * For multiple lane changes being required, space after a lane change is required.
-     * @param boundary DirectedPoint; boundary
+     * @param boundary Length; boundary
      */
     public void setBoundary(final Length boundary)
     {

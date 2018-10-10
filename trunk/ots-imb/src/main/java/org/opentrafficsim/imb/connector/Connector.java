@@ -31,8 +31,8 @@ public interface Connector
     /**
      * Register the transceiver as the interested party when an IMB message identified by the imbEventName is received. When an
      * IMB message with that imbEventName is received, the postOTSMessage method on the transceiver is called.
-     * @param fullIMBEventName the IMB Event name including the federation prefix, e.g. OTS_RT.SIM_Start
-     * @param transceiver the transceiver to handle the incoming event
+     * @param fullIMBEventName String; the IMB Event name including the federation prefix, e.g. OTS_RT.SIM_Start
+     * @param transceiver Transceiver; the transceiver to handle the incoming event
      * @throws IMBException in case the transceiver is switched to a new one for an event
      */
     void register(String fullIMBEventName, Transceiver transceiver) throws IMBException;

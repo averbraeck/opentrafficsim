@@ -725,9 +725,9 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
 
         /**
          * Destroy the animation of the link and underlying cross section elements.
-         * @param nlp the parser with the animation map
-         * @param network the network in which the link is registered
-         * @param linkId the link to destroy
+         * @param nlp OpenDriveNetworkLaneParser; the parser with the animation map
+         * @param network OTSNetwork; the network in which the link is registered
+         * @param linkId String; the link to destroy
          * @throws NamingException in case destroying fails
          * @throws NetworkException in case link cannot be found in the network
          */
@@ -756,17 +756,17 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
 
         /**
          * Create an extra link to "repair" the network.
-         * @param network network
-         * @param sLinkStr start link id
-         * @param sNodeStr start node id
-         * @param sLaneStr start lane id
-         * @param eLinkStr end link id
-         * @param eNodeStr end node id
-         * @param eLaneStr end lane id
-         * @param linkId the id of the new link
-         * @param laneId the id of the new lane
-         * @param linkType the type of the new link
-         * @param laneKeepingPolicy the lane keeping policy of the new link
+         * @param network OTSNetwork; network
+         * @param sLinkStr String; start link id
+         * @param sNodeStr String; start node id
+         * @param sLaneStr String; start lane id
+         * @param eLinkStr String; end link id
+         * @param eNodeStr String; end node id
+         * @param eLaneStr String; end lane id
+         * @param linkId String; the id of the new link
+         * @param laneId String; the id of the new lane
+         * @param linkType LinkType; the type of the new link
+         * @param laneKeepingPolicy LaneKeepingPolicy; the lane keeping policy of the new link
          * @return the created lane
          * @throws OTSGeometryException when points cannot be found or line cannot be constructed
          * @throws NetworkException when lane cannot be constructed

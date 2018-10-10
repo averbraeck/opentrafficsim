@@ -51,7 +51,7 @@ public class SubCollectionConstraint<T> implements Constraint<Collection<T>>
 
     /**
      * Creates a new instance with given collection.
-     * @param objs acceptable objects
+     * @param objs T...; acceptable objects
      * @param <T> type
      * @return new instance with given collection
      */

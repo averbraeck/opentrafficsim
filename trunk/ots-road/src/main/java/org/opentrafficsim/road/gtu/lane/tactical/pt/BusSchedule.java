@@ -63,10 +63,10 @@ public class BusSchedule extends Route
 
     /**
      * Adds a stop to the schedule.
-     * @param busStopId bus stop id
-     * @param departureTime departure time
-     * @param dwellTime dwell time
-     * @param forceSchedule whether to wait until departure time
+     * @param busStopId String; bus stop id
+     * @param departureTime Time; departure time
+     * @param dwellTime Duration; dwell time
+     * @param forceSchedule boolean; whether to wait until departure time
      */
     public final void addBusStop(final String busStopId, final Time departureTime, final Duration dwellTime,
             final boolean forceSchedule)
@@ -79,8 +79,8 @@ public class BusSchedule extends Route
 
     /**
      * Whether the bus of this line should stop for this bus stop. False if not the correct line, or already stopped.
-     * @param busStopId id of bus stop
-     * @param time time to check
+     * @param busStopId String; id of bus stop
+     * @param time Time; time to check
      * @return whether the bus of this line should stop for this bus stop
      */
     public final boolean isLineStop(final String busStopId, final Time time)
@@ -91,7 +91,7 @@ public class BusSchedule extends Route
 
     /**
      * Returns departure time for the given bus stop.
-     * @param busStopId id of bus stop
+     * @param busStopId String; id of bus stop
      * @return departure time for the given bus stop
      */
     public final Time getDepartureTime(final String busStopId)
@@ -102,7 +102,7 @@ public class BusSchedule extends Route
 
     /**
      * Returns dwell time for the given bus stop.
-     * @param busStopId id of bus stop
+     * @param busStopId String; id of bus stop
      * @return dwell time for the given bus stop
      */
     public final Duration getDwellTime(final String busStopId)
@@ -113,7 +113,7 @@ public class BusSchedule extends Route
 
     /**
      * Returns whether the departure time is enforced.
-     * @param busStopId id of bus stop
+     * @param busStopId String; id of bus stop
      * @return whether the departure time is enforced
      */
     public final boolean isForceSchedule(final String busStopId)
@@ -124,7 +124,7 @@ public class BusSchedule extends Route
 
     /**
      * Throws exception when the bus stop is not part of this schedule.
-     * @param busStopId id of bus stop
+     * @param busStopId String; id of bus stop
      * @throws IllegalArgumentException if the bus stop is not part of this schedule
      */
     private void checkStop(final String busStopId)
@@ -135,9 +135,9 @@ public class BusSchedule extends Route
 
     /**
      * Set actual departure time.
-     * @param busStopId bus stop id
-     * @param conflictIds conflicts downstream of the bus stop
-     * @param time actual departure time
+     * @param busStopId String; bus stop id
+     * @param conflictIds Set&lt;String&gt;; conflicts downstream of the bus stop
+     * @param time Time; actual departure time
      */
     public final void setActualDeparture(final String busStopId, final Set<String> conflictIds, final Time time)
     {
@@ -150,7 +150,7 @@ public class BusSchedule extends Route
 
     /**
      * Return the actual departure time.
-     * @param busStopId bus stop id
+     * @param busStopId String; bus stop id
      * @return actual departure time, {@code null} if not given
      */
     public final Time getActualDepartureBusStop(final String busStopId)
@@ -160,7 +160,7 @@ public class BusSchedule extends Route
 
     /**
      * Return the actual departure time.
-     * @param conflictId conflict id
+     * @param conflictId String; conflict id
      * @return actual departure time, {@code null} if not given
      */
     public final Time getActualDepartureConflict(final String conflictId)

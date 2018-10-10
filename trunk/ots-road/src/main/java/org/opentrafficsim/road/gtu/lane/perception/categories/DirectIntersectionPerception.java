@@ -104,10 +104,10 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
             Length pos = record.getStartDistance().neg();
             pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
                     : pos.minus(getGtu().getFront().getDx());
-            PerceptionCollectable<HeadwayTrafficLight, TrafficLight> it =
-                    new LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight>(getGtu(), TrafficLight.class, record,
-                            Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
-                            route)
+            PerceptionCollectable<HeadwayTrafficLight,
+                    TrafficLight> it = new LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight>(getGtu(),
+                            TrafficLight.class, record, Length.max(Length.ZERO, pos),
+                            getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), route)
                     {
                         /** {@inheritDoc} */
                         @Override
@@ -171,89 +171,91 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
                     pos = record.getDirection().isPlus() ? Length.min(pos, cPos) : Length.max(pos, cPos);
                 }
             }
-            PerceptionCollectable<HeadwayConflict, Conflict> it = new LaneBasedObjectIterable<HeadwayConflict, Conflict>(
-                    getGtu(), Conflict.class, record, Length.max(MARGIN.neg(), pos),
-                    getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), route)
-            {
-                /** {@inheritDoc} */
-                @SuppressWarnings("synthetic-access")
-                @Override
-                public HeadwayConflict perceive(final LaneBasedGTU perceivingGtu, final Conflict conflict,
-                        final Length distance)
-                {
-                    Conflict otherConflict = conflict.getOtherConflict();
-                    ConflictType conflictType = conflict.getConflictType();
-                    ConflictPriority conflictPriority = conflict.conflictPriority();
-                    Class<? extends ConflictRule> conflictRuleType = conflict.getConflictRule().getClass();
-                    String id = conflict.getId();
-                    Length length = conflict.getLength();
-                    Length conflictingLength = otherConflict.getLength();
-                    CrossSectionLink conflictingLink = otherConflict.getLane().getParentLink();
-
-                    // TODO get from link combination (needs to be a map property on the links)
-                    Length lookAhead =
-                            Try.assign(() -> getGtu().getParameters().getParameter(LOOKAHEAD), "Parameter not present.");
-                    Length conflictingVisibility = lookAhead;
-                    Speed conflictingSpeedLimit;
-                    try
+            PerceptionCollectable<HeadwayConflict,
+                    Conflict> it = new LaneBasedObjectIterable<HeadwayConflict, Conflict>(getGtu(), Conflict.class, record,
+                            Length.max(MARGIN.neg(), pos), getGtu().getParameters().getParameter(LOOKAHEAD),
+                            getGtu().getFront(), route)
                     {
-                        conflictingSpeedLimit = otherConflict.getLane().getHighestSpeedLimit();
-                    }
-                    catch (NetworkException exception)
-                    {
-                        throw new RuntimeException("GTU type not available on conflicting lane.", exception);
-                    }
+                        /** {@inheritDoc} */
+                        @SuppressWarnings("synthetic-access")
+                        @Override
+                        public HeadwayConflict perceive(final LaneBasedGTU perceivingGtu, final Conflict conflict,
+                                final Length distance)
+                        {
+                            Conflict otherConflict = conflict.getOtherConflict();
+                            ConflictType conflictType = conflict.getConflictType();
+                            ConflictPriority conflictPriority = conflict.conflictPriority();
+                            Class<? extends ConflictRule> conflictRuleType = conflict.getConflictRule().getClass();
+                            String id = conflict.getId();
+                            Length length = conflict.getLength();
+                            Length conflictingLength = otherConflict.getLength();
+                            CrossSectionLink conflictingLink = otherConflict.getLane().getParentLink();
 
-                    LongitudinalDirectionality otherDir = otherConflict.getDirection();
-                    Throw.when(otherDir.isBoth(), UnsupportedOperationException.class,
-                            "Conflicts on lanes with direction BOTH are not supported.");
-                    // TODO limit 'conflictingVisibility' to first upstream traffic light, so GTU's behind it are
-                    // ignored
+                            // TODO get from link combination (needs to be a map property on the links)
+                            Length lookAhead = Try.assign(() -> getGtu().getParameters().getParameter(LOOKAHEAD),
+                                    "Parameter not present.");
+                            Length conflictingVisibility = lookAhead;
+                            Speed conflictingSpeedLimit;
+                            try
+                            {
+                                conflictingSpeedLimit = otherConflict.getLane().getHighestSpeedLimit();
+                            }
+                            catch (NetworkException exception)
+                            {
+                                throw new RuntimeException("GTU type not available on conflicting lane.", exception);
+                            }
 
-                    HeadwayConflict headwayConflict;
-                    try
-                    {
-                        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs = otherConflict.getUpstreamGtus(
-                                getGtu(), DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
-                        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs =
-                                otherConflict.getDownstreamGtus(getGtu(), DirectIntersectionPerception.this.headwayGtuType,
-                                        conflictingVisibility);
-                        // TODO stop lines (current models happen not to use this, but should be possible)
-                        HeadwayStopLine stopLine = new HeadwayStopLine("stopLineId", Length.ZERO);
-                        HeadwayStopLine conflictingStopLine = new HeadwayStopLine("conflictingStopLineId", Length.ZERO);
+                            LongitudinalDirectionality otherDir = otherConflict.getDirection();
+                            Throw.when(otherDir.isBoth(), UnsupportedOperationException.class,
+                                    "Conflicts on lanes with direction BOTH are not supported.");
+                            // TODO limit 'conflictingVisibility' to first upstream traffic light, so GTU's behind it are
+                            // ignored
 
-                        Lane thisLane = conflict.getLane();
-                        Lane otherLane = otherConflict.getLane();
-                        Length pos1a = conflict.getLongitudinalPosition();
-                        Length pos2a = otherConflict.getLongitudinalPosition();
-                        Length pos1b = Length.min(pos1a.plus(conflict.getLength()), thisLane.getLength());
-                        Length pos2b = Length.min(pos2a.plus(otherConflict.getLength()), otherLane.getLength());
-                        OTSLine3D line1 = thisLane.getCenterLine();
-                        OTSLine3D line2 = otherLane.getCenterLine();
-                        double dStart = line1.getLocation(pos1a).distance(line2.getLocation(pos2a));
-                        double dEnd = line1.getLocation(pos1b).distance(line2.getLocation(pos2b));
-                        Length startWidth =
-                                Length.createSI(dStart + .5 * thisLane.getWidth(pos1a).si + .5 * otherLane.getWidth(pos2a).si);
-                        Length endWidth =
-                                Length.createSI(dEnd + .5 * thisLane.getWidth(pos1b).si + .5 * otherLane.getWidth(pos2b).si);
+                            HeadwayConflict headwayConflict;
+                            try
+                            {
+                                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> upstreamConflictingGTUs =
+                                        otherConflict.getUpstreamGtus(getGtu(),
+                                                DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
+                                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> downstreamConflictingGTUs =
+                                        otherConflict.getDownstreamGtus(getGtu(),
+                                                DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
+                                // TODO stop lines (current models happen not to use this, but should be possible)
+                                HeadwayStopLine stopLine = new HeadwayStopLine("stopLineId", Length.ZERO);
+                                HeadwayStopLine conflictingStopLine = new HeadwayStopLine("conflictingStopLineId", Length.ZERO);
 
-                        headwayConflict = new HeadwayConflict(conflictType, conflictPriority, conflictRuleType, id, distance,
-                                length, conflictingLength, upstreamConflictingGTUs, downstreamConflictingGTUs,
-                                conflictingVisibility, conflictingSpeedLimit, conflictingLink,
-                                HeadwayConflict.Width.linear(startWidth, endWidth), stopLine, conflictingStopLine);
-                    }
-                    catch (GTUException | OTSGeometryException exception)
-                    {
-                        throw new RuntimeException("Could not create headway objects.", exception);
-                    }
-                    // TODO
-                    // if (trafficLightDistance != null && trafficLightDistance.le(lookAhead))
-                    // {
-                    // headwayConflict.setConflictingTrafficLight(trafficLightDistance, conflict.isPermitted());
-                    // }
-                    return headwayConflict;
-                }
-            };
+                                Lane thisLane = conflict.getLane();
+                                Lane otherLane = otherConflict.getLane();
+                                Length pos1a = conflict.getLongitudinalPosition();
+                                Length pos2a = otherConflict.getLongitudinalPosition();
+                                Length pos1b = Length.min(pos1a.plus(conflict.getLength()), thisLane.getLength());
+                                Length pos2b = Length.min(pos2a.plus(otherConflict.getLength()), otherLane.getLength());
+                                OTSLine3D line1 = thisLane.getCenterLine();
+                                OTSLine3D line2 = otherLane.getCenterLine();
+                                double dStart = line1.getLocation(pos1a).distance(line2.getLocation(pos2a));
+                                double dEnd = line1.getLocation(pos1b).distance(line2.getLocation(pos2b));
+                                Length startWidth = Length.createSI(
+                                        dStart + .5 * thisLane.getWidth(pos1a).si + .5 * otherLane.getWidth(pos2a).si);
+                                Length endWidth = Length
+                                        .createSI(dEnd + .5 * thisLane.getWidth(pos1b).si + .5 * otherLane.getWidth(pos2b).si);
+
+                                headwayConflict = new HeadwayConflict(conflictType, conflictPriority, conflictRuleType, id,
+                                        distance, length, conflictingLength, upstreamConflictingGTUs, downstreamConflictingGTUs,
+                                        conflictingVisibility, conflictingSpeedLimit, conflictingLink,
+                                        HeadwayConflict.Width.linear(startWidth, endWidth), stopLine, conflictingStopLine);
+                            }
+                            catch (GTUException | OTSGeometryException exception)
+                            {
+                                throw new RuntimeException("Could not create headway objects.", exception);
+                            }
+                            // TODO
+                            // if (trafficLightDistance != null && trafficLightDistance.le(lookAhead))
+                            // {
+                            // headwayConflict.setConflictingTrafficLight(trafficLightDistance, conflict.isPermitted());
+                            // }
+                            return headwayConflict;
+                        }
+                    };
             this.conflicts.put(lane, new TimeStampedObject<>(it, getTimestamp()));
         }
 
@@ -312,7 +314,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
 
     /**
      * Returns a time stamped set of traffic lights along the route. Traffic lights are sorted by headway value.
-     * @param lane lane
+     * @param lane RelativeLane; lane
      * @return set of traffic lights along the route
      */
     public final TimeStampedObject<PerceptionCollectable<HeadwayTrafficLight, TrafficLight>> getTimeStampedTrafficLights(
@@ -323,7 +325,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
 
     /**
      * Returns a time stamped set of traffic lights along the route. Traffic lights are sorted by headway value.
-     * @param lane lane
+     * @param lane RelativeLane; lane
      * @return set of traffic lights along the route
      */
     public final TimeStampedObject<PerceptionCollectable<HeadwayConflict, Conflict>> getTimeStampedConflicts(

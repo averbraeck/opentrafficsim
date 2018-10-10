@@ -140,8 +140,8 @@ public class SpeedSign extends AbstractLaneBasedObject
 
     /**
      * Return whether this speed limit is currently active.
-     * @param gtuTypeIn GTU type
-     * @param time current time-of-day
+     * @param gtuTypeIn GTUType; GTU type
+     * @param time Duration; current time-of-day
      * @return whether this speed limit is currently active
      */
     public final boolean isActive(final GTUType gtuTypeIn, final Duration time)

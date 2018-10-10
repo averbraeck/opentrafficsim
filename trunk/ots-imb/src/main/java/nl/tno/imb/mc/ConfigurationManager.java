@@ -24,7 +24,7 @@ public class ConfigurationManager
 
     /**
      * STUB
-     * @param settingName
+     * @param settingName String;
      * @return null
      * @throws ConfigurationErrorsException Not gonna happen in this STUB
      */

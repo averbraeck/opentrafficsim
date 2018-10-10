@@ -138,7 +138,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * Indicate that no lane change should happen for the indicated duration.
-     * @param noLaneChangeDuration the duration for which no lane change should happen.
+     * @param noLaneChangeDuration Duration; the duration for which no lane change should happen.
      */
     public final void setNoLaneChange(final Duration noLaneChangeDuration)
     {
@@ -407,10 +407,10 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * Make a plan for the current lane.
-     * @param laneBasedGTU the gtu to generate the plan for
-     * @param startTime the time from which the new operational plan has to be operational
-     * @param locationAtStartTime the location of the GTU at the start time of the new plan
-     * @param lanePathInfo the lane path for the current lane.
+     * @param laneBasedGTU LaneBasedGTU; the gtu to generate the plan for
+     * @param startTime Time; the time from which the new operational plan has to be operational
+     * @param locationAtStartTime DirectedPoint; the location of the GTU at the start time of the new plan
+     * @param lanePathInfo LanePathInfo; the lane path for the current lane.
      * @return An operation plan for staying in the current lane.
      * @throws OperationalPlanException when there is a problem planning a path in the network
      * @throws GTUException when there is a problem with the state of the GTU when planning a path
@@ -453,8 +453,8 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * We are not on a lane that leads to our destination. Determine whether the lateral direction to go is left or right.
-     * @param laneBasedGTU the gtu
-     * @param nextSplitInfo the information about the next split
+     * @param laneBasedGTU LaneBasedGTU; the gtu
+     * @param nextSplitInfo NextSplitInfo; the information about the next split
      * @return the lateral direction to go, or null if this cannot be determined
      */
     private LateralDirectionality determineLeftRight(final LaneBasedGTU laneBasedGTU, final NextSplitInfo nextSplitInfo)
@@ -494,10 +494,11 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * See if a lane change in the given direction if possible.
-     * @param gtu the GTU that has to make the lane change
-     * @param perception the perception, where forward headway, accessible lanes and speed limit have been assessed
-     * @param lanePathInfo the information for the path on the current lane
-     * @param direction the lateral direction, either LEFT or RIGHT
+     * @param gtu LaneBasedGTU; the GTU that has to make the lane change
+     * @param perception LanePerception; the perception, where forward headway, accessible lanes and speed limit have been
+     *            assessed
+     * @param lanePathInfo LanePathInfo; the information for the path on the current lane
+     * @param direction LateralDirectionality; the lateral direction, either LEFT or RIGHT
      * @return whether a lane change is possible.
      * @throws NetworkException when there is a network inconsistency in updating the perception
      * @throws GTUException when there is an issue retrieving GTU information for the perception update
@@ -584,8 +585,8 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * Change lanes instantaneously.
-     * @param gtu the gtu
-     * @param direction the direction
+     * @param gtu LaneBasedGTU; the gtu
+     * @param direction LateralDirectionality; the direction
      * @return the new location of the GTU after the lane change
      * @throws GTUException in case the enter lane fails
      */
@@ -610,8 +611,8 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
      * front of the GTU and speed sign. This method will return the acceleration based on the headway that limits us most.<br>
      * The method can e.g., be called with:
      * <code>mostLimitingHeadway(simplePerception.getForwardHeadwayGTU(), simplePerception.getForwardHeadwayObject());</code>
-     * @param lanePathInfo the lane path info that was calculated for this GTU.
-     * @param headways zero or more headways specifying possible limitations on our acceleration.
+     * @param lanePathInfo LanePathInfo; the lane path info that was calculated for this GTU.
+     * @param headways Headway...; zero or more headways specifying possible limitations on our acceleration.
      * @return the acceleration based on the most limiting headway.
      * @throws OperationalPlanException in case the PerceptionCategory cannot be found
      * @throws ParameterException in case LOOKAHEAD parameter cannot be found
@@ -749,7 +750,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * When a failure in planning occurs, should we destroy the GTU to avoid halting of the model?
-     * @param destroyGtuOnFailure set destroyGtuOnFailure to true or false
+     * @param destroyGtuOnFailure boolean; set destroyGtuOnFailure to true or false
      */
     public final void setDestroyGtuOnFailure(final boolean destroyGtuOnFailure)
     {
@@ -767,7 +768,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
     /**
      * Set the duration to stay in a Lane after a lane change.
-     * @param durationInLaneAfterLaneChange set duration to stay in a Lane after a lane change
+     * @param durationInLaneAfterLaneChange Duration; set duration to stay in a Lane after a lane change
      * @throws GTUException when durationInLaneAfterLaneChange less than zero
      */
     protected final void setDurationInLaneAfterLaneChange(final Duration durationInLaneAfterLaneChange) throws GTUException

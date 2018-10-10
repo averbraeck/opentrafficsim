@@ -80,7 +80,7 @@ public class StaticObjectAnimation extends Renderable2D implements Serializable
     }
 
     /**
-     * @param width set width
+     * @param width float; set width
      */
     public final void setWidth(final float width)
     {
@@ -96,7 +96,7 @@ public class StaticObjectAnimation extends Renderable2D implements Serializable
     }
 
     /**
-     * @param color set color
+     * @param color Color; set color
      */
     public final void setColor(final Color color)
     {
@@ -112,7 +112,7 @@ public class StaticObjectAnimation extends Renderable2D implements Serializable
     }
 
     /**
-     * @param fill set fill
+     * @param fill boolean; set fill
      */
     public final void setFill(final boolean fill)
     {

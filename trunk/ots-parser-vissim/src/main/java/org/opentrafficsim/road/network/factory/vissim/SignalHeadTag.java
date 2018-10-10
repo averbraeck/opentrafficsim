@@ -80,8 +80,8 @@ class SignalHeadTag implements Serializable
 
     /**
      * Parse the TRAFFICLIGHT tag.
-     * @param nodeList the SignalHead nodes to parse
-     * @param parser the parser with the lists of information
+     * @param nodeList NodeList; the SignalHead nodes to parse
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

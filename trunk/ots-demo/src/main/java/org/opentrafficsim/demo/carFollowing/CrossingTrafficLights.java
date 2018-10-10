@@ -382,7 +382,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
 
         /**
          * Change the traffic light to a new color.
-         * @param tl the traffic light
+         * @param tl TrafficLight; the traffic light
          * @throws SimRuntimeException when scheduling fails
          */
         protected final void changeTL(final TrafficLight tl) throws SimRuntimeException
@@ -406,7 +406,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
 
         /**
          * Generate cars at a fixed rate (implemented by re-scheduling this method).
-         * @param lane the lane to generate the car on
+         * @param lane Lane; the lane to generate the car on
          */
         protected final void generateCar(final Lane lane)
         {

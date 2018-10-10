@@ -23,7 +23,7 @@ public interface TrafficLight extends Locatable, LaneBasedObject
 
     /**
      * Set the new traffic light color.
-     * @param trafficLightColor set the trafficLightColor
+     * @param trafficLightColor TrafficLightColor; set the trafficLightColor
      */
     void setTrafficLightColor(TrafficLightColor trafficLightColor);
 

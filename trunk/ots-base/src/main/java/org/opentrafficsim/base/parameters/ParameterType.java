@@ -217,7 +217,7 @@ public class ParameterType<T> extends Type<ParameterType<T>> implements Serializ
     /**
      * Print the given value from the map in Parameters in a presentable format. The default implementation simply returns the
      * output of toString().
-     * @param parameters Parameters to get the value from
+     * @param parameters Parameters; Parameters to get the value from
      * @return String; readable representation of the value
      * @throws ParameterException If the parameter is not present
      */

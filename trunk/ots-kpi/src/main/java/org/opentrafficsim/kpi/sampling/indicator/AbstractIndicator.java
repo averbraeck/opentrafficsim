@@ -40,9 +40,9 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
     /**
      * Get value for given query over time interval, returning earlier calculated value if possible. This method uses
      * {@code Time.ZERO} as start time.
-     * @param query query
-     * @param endTime start time of interval to calculate indicator over
-     * @param trajectoryGroups group of trajectories to calculate the indicator for
+     * @param query Query; query
+     * @param endTime Time; start time of interval to calculate indicator over
+     * @param trajectoryGroups List&lt;TrajectoryGroup&gt;; group of trajectories to calculate the indicator for
      * @return value for given query
      */
     public final T getValue(final Query query, final Time endTime, final List<TrajectoryGroup> trajectoryGroups)
@@ -52,10 +52,10 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
 
     /**
      * Get value for given query over time interval, returning earlier calculated value if possible.
-     * @param query query
-     * @param startTime start time of interval to calculate indicator over
-     * @param endTime start time of interval to calculate indicator over
-     * @param trajectoryGroups group of trajectories to calculate the indicator for
+     * @param query Query; query
+     * @param startTime Time; start time of interval to calculate indicator over
+     * @param endTime Time; start time of interval to calculate indicator over
+     * @param trajectoryGroups List&lt;TrajectoryGroup&gt;; group of trajectories to calculate the indicator for
      * @return value for given query
      */
     public final T getValue(final Query query, final Time startTime, final Time endTime,
@@ -77,10 +77,10 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
 
     /**
      * Calculate value for given trajectory group.
-     * @param query query
-     * @param startTime start time of interval to calculate indicator over
-     * @param endTime start time of interval to calculate indicator over
-     * @param trajectoryGroups group of trajectories to calculate the indicator for
+     * @param query Query; query
+     * @param startTime Time; start time of interval to calculate indicator over
+     * @param endTime Time; start time of interval to calculate indicator over
+     * @param trajectoryGroups List&lt;TrajectoryGroup&gt;; group of trajectories to calculate the indicator for
      * @return value for given trajectory group
      */
     protected abstract T calculate(final Query query, final Time startTime, final Time endTime,

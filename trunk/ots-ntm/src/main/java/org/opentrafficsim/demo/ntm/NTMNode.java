@@ -75,8 +75,8 @@ public class NTMNode extends OTSNode implements Comparable<NTMNode>
 
     /**
      * create a ShpNode Point
-     * @param x1 coord
-     * @param y1 coord
+     * @param x1 double; coord
+     * @param y1 double; coord
      * @return new Point
      */
     public static Coordinate createPoint(double x1, double y1)
@@ -93,7 +93,7 @@ public class NTMNode extends OTSNode implements Comparable<NTMNode>
     }
 
     /**
-     * @param behaviourType set behaviourType.
+     * @param behaviourType TrafficBehaviourType; set behaviourType.
      */
     public final void setBehaviourType(final TrafficBehaviourType behaviourType)
     {

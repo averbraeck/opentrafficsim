@@ -40,14 +40,14 @@ public interface Perception<G extends GTU> extends Serializable
 
     /**
      * Adds given perception category to the perception.
-     * @param perceptionCategory perception category
+     * @param perceptionCategory T; perception category
      * @param <T> perception category type
      */
     <T extends PerceptionCategory<?, ?>> void addPerceptionCategory(T perceptionCategory);
 
     /**
      * Returns whether the given perception category is present.
-     * @param category perception category class
+     * @param category Class&lt;T&gt;; perception category class
      * @param <T> perception category
      * @return whether the given perception category is present
      */
@@ -55,7 +55,7 @@ public interface Perception<G extends GTU> extends Serializable
 
     /**
      * Returns the given perception category.
-     * @param category perception category class
+     * @param category Class&lt;T&gt;; perception category class
      * @param <T> perception category
      * @return given perception category
      * @throws OperationalPlanException if the perception category is not present
@@ -64,7 +64,7 @@ public interface Perception<G extends GTU> extends Serializable
 
     /**
      * Returns the given perception category, or {@code null} if not present.
-     * @param category perception category class
+     * @param category Class&lt;T&gt;; perception category class
      * @param <T> perception category
      * @return given perception category
      */
@@ -72,7 +72,7 @@ public interface Perception<G extends GTU> extends Serializable
 
     /**
      * Remove give perception category.
-     * @param perceptionCategory perception category to remove
+     * @param perceptionCategory PerceptionCategory&lt;?,?&gt;; perception category to remove
      */
     void removePerceptionCategory(PerceptionCategory<?, ?> perceptionCategory);
 

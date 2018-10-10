@@ -189,7 +189,7 @@ public class OTSToRTIData implements Serializable
     }
 
     /**
-     * @param numCars set numCars
+     * @param numCars int; set numCars
      */
     public void setNumCars(int numCars)
     {
@@ -205,7 +205,7 @@ public class OTSToRTIData implements Serializable
     }
 
     /**
-     * @param numPedestrians set numPedestrians
+     * @param numPedestrians int; set numPedestrians
      */
     public void setNumPedestrians(int numPedestrians)
     {
@@ -221,7 +221,7 @@ public class OTSToRTIData implements Serializable
     }
 
     /**
-     * @param numObjects set numObjects
+     * @param numObjects int; set numObjects
      */
     public void setNumObjects(int numObjects)
     {
@@ -237,7 +237,7 @@ public class OTSToRTIData implements Serializable
     }
 
     /**
-     * @param timeStamp set timeStamp
+     * @param timeStamp long; set timeStamp
      */
     public void setTimeStamp(long timeStamp)
     {

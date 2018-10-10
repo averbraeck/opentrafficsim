@@ -140,8 +140,9 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * 
      * <b>Note:</b> GTUType.ALL can be used to set permeability for all types of GTU at once.
      * <p>
-     * @param gtuType GTU type to add permeability for.
-     * @param lateralDirection direction to add (LEFT or RIGHT) compared to the direction of the design line.
+     * @param gtuType GTUType; GTU type to add permeability for.
+     * @param lateralDirection LateralDirectionality; direction to add (LEFT or RIGHT) compared to the direction of the design
+     *            line.
      */
     public final void addPermeability(final GTUType gtuType, final LateralDirectionality lateralDirection)
     {
@@ -153,8 +154,9 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
     }
 
     /**
-     * @param gtuType GTU type to look for.
-     * @param lateralDirection direction to look for (LEFT or RIGHT) compared to the direction of the design line.
+     * @param gtuType GTUType; GTU type to look for.
+     * @param lateralDirection LateralDirectionality; direction to look for (LEFT or RIGHT) compared to the direction of the
+     *            design line.
      * @return whether the road marker is permeable for the GTU type.
      */
     public final boolean isPermeable(final GTUType gtuType, final LateralDirectionality lateralDirection)

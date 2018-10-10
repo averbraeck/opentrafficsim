@@ -218,8 +218,8 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     /**
      * Helper method that assures that a next entry is available, if the primary iterator has a next value. This method may be
      * used by any process that derives from the primary iterator.
-     * @param next IteratorEntry; currently known next entry
-     * @param lastReturned IteratorEntry; entry of last returned object or value
+     * @param next SecondaryIteratorEntry; currently known next entry
+     * @param lastReturned SecondaryIteratorEntry; entry of last returned object or value
      * @return IteratorEntry; next entry
      */
     synchronized SecondaryIteratorEntry assureNext(final SecondaryIteratorEntry next, final SecondaryIteratorEntry lastReturned)

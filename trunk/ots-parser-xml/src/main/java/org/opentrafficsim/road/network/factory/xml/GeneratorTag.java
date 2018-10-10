@@ -134,9 +134,9 @@ class GeneratorTag implements Serializable
 
     /**
      * Parse the GENERATOR tag.
-     * @param node the GENERATOR node to parse
-     * @param parser the parser with the lists of information
-     * @param linkTag the parent LINK tag
+     * @param node Node; the GENERATOR node to parse
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param linkTag LinkTag; the parent LINK tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
@@ -288,9 +288,9 @@ class GeneratorTag implements Serializable
 
     /**
      * Make the generators for this link, if available.
-     * @param linkTag the parent LINK tag
-     * @param parser the parser with the lists of information
-     * @param simulator the simulator to schedule GTU generation
+     * @param linkTag LinkTag; the parent LINK tag
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param simulator OTSSimulatorInterface; the simulator to schedule GTU generation
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws NetworkException when route generator cannot be instantiated
      * @throws GTUException when construction of the Strategical Planner failed
@@ -306,10 +306,10 @@ class GeneratorTag implements Serializable
 
     /**
      * Make a generator.
-     * @param generatorTag XML tag for the generator to build
-     * @param parser the parser with the lists of information
-     * @param linkTag the parent LINK tag
-     * @param simulator the simulator to schedule GTU generation
+     * @param generatorTag GeneratorTag; XML tag for the generator to build
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param linkTag LinkTag; the parent LINK tag
+     * @param simulator OTSSimulatorInterface; the simulator to schedule GTU generation
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws NetworkException when route generator cannot be instantiated
      * @throws GTUException when construction of the Strategical Planner failed
@@ -385,8 +385,8 @@ class GeneratorTag implements Serializable
 
     /**
      * Factories are: IDM|MOBIL/IDM|DIRECTION/IDM|LMRS|TOLEDO.
-     * @param generatorTag the tag to parse
-     * @param stream random number stream
+     * @param generatorTag GeneratorTag; the tag to parse
+     * @param stream StreamInterface; random number stream
      * @return a LaneBasedTacticalPlannerFactory according to the tag
      */
     static LaneBasedTacticalPlannerFactory<?> makeTacticalPlannerFactory(final GeneratorTag generatorTag,

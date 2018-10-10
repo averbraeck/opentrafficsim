@@ -174,9 +174,9 @@ public class WriteOutput
 
     // Writing output data CELLS
     /**
-     * @param model
-     * @param steps
-     * @param MAXSTEPS
+     * @param model NTMModel;
+     * @param steps int;
+     * @param MAXSTEPS int;
      */
     public static void writeOutputDataFlowLinks(NTMModel model, int steps, int MAXSTEPS)
     {
@@ -230,9 +230,9 @@ public class WriteOutput
     }
 
     /**
-     * @param model
-     * @param steps
-     * @param MAXSTEPS
+     * @param model NTMModel;
+     * @param steps int;
+     * @param MAXSTEPS int;
      */
     public static void writeCellInfo(NTMModel model, int steps, int MAXSTEPS, String description, BufferedWriter data,
             Double[][] dataArray, String DATATYPE)
@@ -555,9 +555,9 @@ public class WriteOutput
 
     // Writing output data
     /**
-     * @param model
-     * @param steps
-     * @param MAXSTEPS
+     * @param model NTMModel;
+     * @param steps int;
+     * @param MAXSTEPS int;
      * @param arrivalsPreviousStep
      * @param departuresPreviousStep
      * @throws Exception
@@ -734,14 +734,14 @@ public class WriteOutput
 
     // Writing output data
     /**
-     * @param model
-     * @param steps
-     * @param pathIterator
-     * @param startNode
-     * @param neighbour
-     * @param destination
+     * @param model NTMModel;
+     * @param steps int;
+     * @param pathIterator int;
+     * @param startNode NTMNode;
+     * @param neighbour NTMNode;
+     * @param destination NTMNode;
      * @param routeI
-     * @param MAXSTEPS
+     * @param MAXSTEPS int;
      * @throws IOException
      */
     public static void writeOutputRoutesNTM(NTMModel model, int steps, int pathIterator, NTMNode startNode, NTMNode neighbour,
@@ -760,12 +760,12 @@ public class WriteOutput
     }
 
     /**
-     * @param model
-     * @param steps
-     * @param MAXSTEPS
-     * @param description
-     * @param data
-     * @param dataArray
+     * @param model NTMModel;
+     * @param steps int;
+     * @param MAXSTEPS int;
+     * @param description String;
+     * @param data BufferedWriter;
+     * @param dataArray ArrayList&lt;NTMNode&gt;;
      * @param DATATYPE
      * @throws IOException
      */
@@ -810,12 +810,12 @@ public class WriteOutput
     }
 
     /**
-     * @param model
-     * @param steps
-     * @param MAXSTEPS
-     * @param data
+     * @param model NTMModel;
+     * @param steps int;
+     * @param MAXSTEPS int;
+     * @param data BufferedWriter;
      * @param nodeDoublemap
-     * @param intNodeMap
+     * @param intNodeMap HashMap&lt;Integer,NTMNode&gt;;
      */
     static void writeHashMap(NTMModel model, int steps, int MAXSTEPS, String description, BufferedWriter data,
             HashMap<NTMNode, HashMap<NTMNode, Double[]>> nodeNodeDoublemap,
@@ -1050,13 +1050,13 @@ public class WriteOutput
     }
 
     /**
-     * @param model
-     * @param steps
-     * @param MAXSTEPS
-     * @param description
-     * @param data
-     * @param dataArray
-     * @param DATATYPE
+     * @param model NTMModel;
+     * @param steps int;
+     * @param MAXSTEPS int;
+     * @param description String;
+     * @param data BufferedWriter;
+     * @param dataArray Double[][];
+     * @param DATATYPE String;
      * @throws Exception
      */
     static void writeArray(NTMModel model, int steps, int MAXSTEPS, String description, BufferedWriter data,
@@ -1294,10 +1294,10 @@ public class WriteOutput
     }
 
     /**
-     * @param ctmLink
-     * @param cell
-     * @param index
-     * @param totalNumberOfCells
+     * @param ctmLink LinkCellTransmission;
+     * @param cell FlowCell;
+     * @param index int;
+     * @param totalNumberOfCells int;
      * @return
      */
     static ArrayList<Coordinate> retrieveCellXY(LinkCellTransmission ctmLink, FlowCell cell, int index, int totalNumberOfCells)

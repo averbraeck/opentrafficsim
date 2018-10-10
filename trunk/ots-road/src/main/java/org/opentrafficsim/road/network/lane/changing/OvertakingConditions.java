@@ -40,9 +40,9 @@ public interface OvertakingConditions
     /**
      * Implementation of the overtaking conditions. E.g., is a car allowed on this road to overtake a tractor? If so, on which
      * side(s)?
-     * @param lane the lane for which to evaluate the overtaking conditions
-     * @param gtu the GTU that might overtake another GTU
-     * @param leaderGTU the GTU in front of the GTU that might want to overtake
+     * @param lane Lane; the lane for which to evaluate the overtaking conditions
+     * @param gtu LaneBasedGTU; the GTU that might overtake another GTU
+     * @param leaderGTU LaneBasedGTU; the GTU in front of the GTU that might want to overtake
      * @return an overtaking direction: LEFT, RIGHT, BOTH or NONE
      */
     OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leaderGTU);

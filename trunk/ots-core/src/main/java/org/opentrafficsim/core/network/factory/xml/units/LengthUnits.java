@@ -60,7 +60,7 @@ public final class LengthUnits implements UNITS
     }
 
     /**
-     * @param s the string to parse
+     * @param s String; the string to parse
      * @return the unit as a String in the Map.
      * @throws NetworkException when parsing fails
      */
@@ -85,7 +85,7 @@ public final class LengthUnits implements UNITS
     }
 
     /**
-     * @param s the string to parse
+     * @param s String; the string to parse
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
@@ -106,7 +106,7 @@ public final class LengthUnits implements UNITS
     }
 
     /**
-     * @param s the string to parse
+     * @param s String; the string to parse
      * @return the unit as a String in the Map.
      * @throws NetworkException when parsing fails
      */
@@ -131,7 +131,7 @@ public final class LengthUnits implements UNITS
     }
 
     /**
-     * @param s the string to parse
+     * @param s String; the string to parse
      * @return the next value.
      * @throws NetworkException when parsing fails
      */

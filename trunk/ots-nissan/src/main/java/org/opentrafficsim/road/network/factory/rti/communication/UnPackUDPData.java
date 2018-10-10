@@ -11,7 +11,7 @@ import org.opentrafficsim.road.network.factory.rti.data.RTIToOTSData;
 public class UnPackUDPData
 {
     /**
-     * @param inputStream input stream of data
+     * @param inputStream DataInputStream; input stream of data
      * @return RTIToOTSData element
      * @throws IOException on i/o error
      */
@@ -62,7 +62,7 @@ public class UnPackUDPData
     }
 
     /**
-     * @param inputStream input data stream
+     * @param inputStream DataInputStream; input data stream
      * @return float
      * @throws IOException on i/o error
      */
@@ -80,7 +80,7 @@ public class UnPackUDPData
     }
 
     /**
-     * @param inputStream input data stream
+     * @param inputStream DataInputStream; input data stream
      * @return int
      * @throws IOException on i/o error
      */

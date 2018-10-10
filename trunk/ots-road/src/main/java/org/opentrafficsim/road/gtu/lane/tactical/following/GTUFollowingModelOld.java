@@ -45,7 +45,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @param headway Length; the headway of the leader
      * @param maxDistance Length; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
-     * @param stepSize given step size, which can be longer or shorter than the provided step size in the algorithms.
+     * @param stepSize Duration; given step size, which can be longer or shorter than the provided step size in the algorithms.
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws GTUException when the speed of the gtu cannot be determined
      */
@@ -74,7 +74,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @param headway Length; the <b>net</b> headway (distance between the front of the follower to the rear of the leader) at
      *            the current time, or the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
-     * @param stepSize given step size, which can be longer or shorter than the provided step size in the algorithms.
+     * @param stepSize Duration; given step size, which can be longer or shorter than the provided step size in the algorithms.
      * @return Acceleration; the acceleration (or, if negative, deceleration) resulting from application of the GTU following
      *         model
      */
@@ -88,7 +88,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @param headway Length; the <b>net</b> headway (distance between the front of the follower to the rear of the leader) at
      *            the current time, or the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
-     * @param currentTime to be used to determine the validity of the AccelerationStep
+     * @param currentTime Time; to be used to determine the validity of the AccelerationStep
      * @return Acceleration; the acceleration (or, if negative, deceleration) resulting from application of the GTU following
      *         model
      */
@@ -102,8 +102,8 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @param headway Length; the <b>net</b> headway (distance between the front of the follower to the rear of the leader) at
      *            the current time, or the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
-     * @param currentTime to be used to determine the validity of the AccelerationStep
-     * @param stepSize given step size, which can be longer or shorter than the provided step size in the algorithms.
+     * @param currentTime Time; to be used to determine the validity of the AccelerationStep
+     * @param stepSize Duration; given step size, which can be longer or shorter than the provided step size in the algorithms.
      * @return Acceleration; the acceleration (or, if negative, deceleration) resulting from application of the GTU following
      *         model
      */
@@ -118,8 +118,8 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * Two AccelerationStep values are returned in a DualAccelerationStep.<br>
      * or should slow down for a crossing from accelerating to unsafe speeds.
      * @param gtu LaneBasedGTU; the GTU for which the accelerations are computed
-     * @param otherHeadways Collection&lt;HeadwayGTU&gt;; the other GTUs. A negative headway value indicates that the other GTU
-     *            is a follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
+     * @param otherHeadways Collection&lt;Headway&gt;; the other GTUs. A negative headway value indicates that the other GTU is
+     *            a follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
      * @param maxDistance Length; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
      * @return DualAccelerationStep; the result with the lowest accelerations (or most severe decelerations) of application of
@@ -137,11 +137,11 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * Two AccelerationStep values are returned in a DualAccelerationStep.<br>
      * or should slow down for a crossing from accelerating to unsafe speeds.
      * @param gtu LaneBasedGTU; the GTU for which the accelerations are computed
-     * @param otherHeadways Collection&lt;HeadwayGTU&gt;; the other GTUs. A negative headway value indicates that the other GTU
-     *            is a follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
+     * @param otherHeadways Collection&lt;Headway&gt;; the other GTUs. A negative headway value indicates that the other GTU is
+     *            a follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
      * @param maxDistance Length; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
-     * @param stepSize given step size, which can be longer or shorter than the provided step size in the algorithms.
+     * @param stepSize Duration; given step size, which can be longer or shorter than the provided step size in the algorithms.
      * @return DualAccelerationStep; the result with the lowest accelerations (or most severe decelerations) of application of
      *         the GTU following model of the referenceGTU for each leader and follower
      * @throws GTUException when the speed of the gtu cannot be determined
@@ -165,7 +165,7 @@ public interface GTUFollowingModelOld extends CarFollowingModel
      * @param gtu LaneBasedGTU; the GTU for which acceleration is computed
      * @param maxDistance Length; the maximum distance we can cover at the current time, e.g. as the result of a lane drop
      * @param speedLimit Speed; the local speed limit
-     * @param stepSize given step size, which can be longer or shorter than the provided step size in the algorithms.
+     * @param stepSize Duration; given step size, which can be longer or shorter than the provided step size in the algorithms.
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws GTUException when the speed of the gtu cannot be determined
      */
@@ -202,19 +202,19 @@ public interface GTUFollowingModelOld extends CarFollowingModel
 
     /**
      * Set value of acceleration parameter.
-     * @param a value to set
+     * @param a Acceleration; value to set
      */
     void setA(final Acceleration a);
 
     /**
      * Set value of desired headway.
-     * @param t desired headway
+     * @param t Duration; desired headway
      */
     void setT(final Duration t);
 
     /**
      * Set value of desired speed factor.
-     * @param fSpeed desired speed factor
+     * @param fSpeed double; desired speed factor
      */
     void setFspeed(final double fSpeed);
 

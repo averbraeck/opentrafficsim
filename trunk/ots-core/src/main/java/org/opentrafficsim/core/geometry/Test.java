@@ -110,7 +110,7 @@ public final class Test
     }
 
     /**
-     * @param args args
+     * @param args String[]; args
      * @throws NetworkException on error
      * @throws OTSGeometryException on error
      */

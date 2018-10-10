@@ -152,9 +152,9 @@ public class OTSNode implements Node, Locatable, Serializable
     /**
      * Add a single connection for a GTU type to the connections map. The data structures will be created is it does not exist
      * yet.
-     * @param gtuType the GTU type for which this connection is made
-     * @param incomingLink the link that connects to this Node
-     * @param outgoingLink the link that the GTU can use to depart from this Node when coming from the incoming link
+     * @param gtuType GTUType; the GTU type for which this connection is made
+     * @param incomingLink Link; the link that connects to this Node
+     * @param outgoingLink Link; the link that the GTU can use to depart from this Node when coming from the incoming link
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
     public final void addConnection(final GTUType gtuType, final Link incomingLink, final Link outgoingLink)
@@ -211,9 +211,10 @@ public class OTSNode implements Node, Locatable, Serializable
     /**
      * Add a set of connections for a GTU type to the connections map. The data structures will be created if it does not exist
      * yet.
-     * @param gtuType the GTU type for which this connection is made
-     * @param incomingLink the link that connects to this Node
-     * @param outgoingLinks a set of links that the GTU can use to depart from this Node when coming from the incoming link
+     * @param gtuType GTUType; the GTU type for which this connection is made
+     * @param incomingLink Link; the link that connects to this Node
+     * @param outgoingLinks Set&lt;Link&gt;; a set of links that the GTU can use to depart from this Node when coming from the
+     *            incoming link
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
     public final void addConnections(final GTUType gtuType, final Link incomingLink, final Set<Link> outgoingLinks)
@@ -424,8 +425,8 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /**
      * Clone the OTSode for e.g., copying a network.
-     * @param newNetwork the new network to which the clone belongs
-     * @param newSimulator the new simulator for this network
+     * @param newNetwork Network; the new network to which the clone belongs
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
      * @return a clone of this object
      * @throws NetworkException in case the cloning fails
      */
@@ -439,9 +440,9 @@ public class OTSNode implements Node, Locatable, Serializable
     /**
      * Complete the cloning of the OTSode for e.g., copying a network. Call this method after all the links have been
      * constructed in the new network.
-     * @param newNetwork the new network to which the clone belongs
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to clone the animation or not (could be used in subclasses)
+     * @param newNetwork Network; the new network to which the clone belongs
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
+     * @param animation boolean; whether to clone the animation or not (could be used in subclasses)
      * @return the completed clone
      * @throws NetworkException in case the cloning fails
      */

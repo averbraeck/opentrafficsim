@@ -277,8 +277,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 
     /**
      * Concatenate two paths, where the first may be {@code null}.
-     * @param path path, may be {@code null}
-     * @param centerLine center line of lane to add
+     * @param path OTSLine3D; path, may be {@code null}
+     * @param centerLine OTSLine3D; center line of lane to add
      * @return concatenated line
      * @throws OTSGeometryException when lines are degenerate or too distant
      */
@@ -668,7 +668,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 
     /**
      * Sets the car-following model.
-     * @param carFollowingModel Car-following model to set.
+     * @param carFollowingModel CarFollowingModel; Car-following model to set.
      */
     public final void setCarFollowingModel(final CarFollowingModel carFollowingModel)
     {

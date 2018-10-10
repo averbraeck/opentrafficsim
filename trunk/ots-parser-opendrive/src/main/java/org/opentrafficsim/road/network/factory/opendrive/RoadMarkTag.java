@@ -50,9 +50,9 @@ class RoadMarkTag implements Serializable
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
-     * @param nodeList the list of subnodes of the road node
-     * @param parser the parser with the lists of information
-     * @param laneTag the LaneTag to which this element belongs
+     * @param nodeList NodeList; the list of subnodes of the road node
+     * @param parser OpenDriveNetworkLaneParser; the parser with the lists of information
+     * @param laneTag LaneTag; the LaneTag to which this element belongs
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

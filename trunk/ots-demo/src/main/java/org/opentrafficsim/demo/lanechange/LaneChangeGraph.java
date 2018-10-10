@@ -253,8 +253,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 
     /**
      * Find the headway at which the decision to merge right changes.
-     * @param low minimum headway to consider
-     * @param high maximum headway to consider
+     * @param low Length; minimum headway to consider
+     * @param high Length; maximum headway to consider
      * @param referenceSpeed Speed; speed of the reference car
      * @param speedDifference Speed; speed of the other car minus speed of the reference car
      * @param laneChangeModel LaneChangeModel; the lane change model to apply
@@ -346,8 +346,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     }
 
     /**
-     * @param referenceCar LaneBasedIndifidualCar&lt;String&gt;; the reference GTU
-     * @param sameLaneGTUs Collection&lt;HeadwayGTU&gt;; the set of GTUs in the same lane as the <cite>referenceCar</cite>
+     * @param referenceCar LaneBasedIndividualGTU; the reference GTU
+     * @param sameLaneGTUs Collection&lt;Headway&gt;; the set of GTUs in the same lane as the
+     *            &lt;cite&gt;referenceCar&lt;/cite&gt;
      * @param speedLimit Speed; the speed limit
      * @param laneChangeModel LaneChangeModel; the lane change model
      * @param otherCarPosition Length; the position of the other car

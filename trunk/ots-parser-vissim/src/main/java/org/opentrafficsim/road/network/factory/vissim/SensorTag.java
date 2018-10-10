@@ -98,8 +98,8 @@ class SensorTag implements Serializable
 
     /**
      * Parse the SENSOR tag.
-     * @param nodeList the SENSOR node to parse
-     * @param parser the parser with the lists of information
+     * @param nodeList NodeList; the SENSOR node to parse
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
@@ -175,9 +175,9 @@ class SensorTag implements Serializable
     }
 
     /**
-     * @param trigger String of the trigger position such as FRONT
-     * @param sensorTag the sensor tag for error messages
-     * @param laneName the lane name for error messages
+     * @param trigger String; String of the trigger position such as FRONT
+     * @param sensorTag SensorTag; the sensor tag for error messages
+     * @param laneName String; the lane name for error messages
      * @return a relative position type, such as RelatievPostition.FRONT
      * @throws SAXException when the trigger position did not exist
      */

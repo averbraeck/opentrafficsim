@@ -60,8 +60,8 @@ abstract class PointerHandler implements MouseListener, MouseMotionListener
     /**
      * Called when the pointer is positioned inside the data area of the graph, or when it leaves the data area. <br>
      * When the mouse is outside the data area both parameters are set to Double.NaN.
-     * @param domainValue Double; the X-value (in domain units), or Double.NaN if the pointer is outside the data area
-     * @param rangeValue Double; the Y-value (in domain units), or Double.NaN if the pointer is outside the data area
+     * @param domainValue double; the X-value (in domain units), or Double.NaN if the pointer is outside the data area
+     * @param rangeValue double; the Y-value (in domain units), or Double.NaN if the pointer is outside the data area
      */
     abstract void updateHint(double domainValue, double rangeValue);
 

@@ -117,7 +117,7 @@ public class DEFINITIONS
 
     /**
      * Sets the value of the base property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setBase(String value)
     {

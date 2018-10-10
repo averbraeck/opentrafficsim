@@ -27,9 +27,9 @@ class BezierTag
 
     /**
      * Parse the LINK.BEZIER tag.
-     * @param bezierNode the XML-node to parse
-     * @param parser the parser with the lists of information
-     * @param linkTag the parent link tag
+     * @param bezierNode Node; the XML-node to parse
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param linkTag LinkTag; the parent link tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

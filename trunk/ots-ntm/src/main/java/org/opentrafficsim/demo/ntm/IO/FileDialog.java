@@ -19,7 +19,7 @@ public class FileDialog
 {
     /**
      * Show a file selector dialog to the user.
-     * @param reading Boolean; set to true if only existing files may be selected, set to false if a non-existing file may be
+     * @param reading boolean; set to true if only existing files may be selected, set to false if a non-existing file may be
      *            returned and new directories may be created. If reading is false and an existing file is selected that is not
      *            equal to the defaultName, an overwrite warning dialog will be displayed.
      * @param fileType String; expected file type

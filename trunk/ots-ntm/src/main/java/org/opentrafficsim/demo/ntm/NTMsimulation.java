@@ -44,7 +44,7 @@ public class NTMsimulation
     static HashMap<NTMNode, HashMap<NTMNode, Double[]>> fluxAreaToNeighbours = new HashMap<>();
 
     /**
-     * @param model
+     * @param model NTMModel;
      * @throws Exception
      */
     public static void simulate(final NTMModel model) throws Exception
@@ -1036,8 +1036,8 @@ public class NTMsimulation
     }
 
     /**
-     * @param areaGraph
-     * @param ctmLink
+     * @param areaGraph SimpleDirectedWeightedGraph&lt;NTMNode,LinkEdge&lt;NTMLink&gt;&gt;;
+     * @param ctmLink LinkCellTransmission;
      */
     public static void simulateFlowLink(SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>> areaGraph,
             Map<String, NTMNode> nodeAreaGraph, LinkCellTransmission ctmLink)

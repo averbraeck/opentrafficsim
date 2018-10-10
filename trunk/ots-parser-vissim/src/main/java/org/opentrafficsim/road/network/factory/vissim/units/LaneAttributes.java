@@ -29,7 +29,7 @@ public final class LaneAttributes
     }
 
     /**
-     * @param lkpStr the lane keeping policy string.
+     * @param lkpStr String; the lane keeping policy string.
      * @return the lane keeping policy.
      * @throws NetworkException in case of unknown policy.
      */
@@ -51,9 +51,9 @@ public final class LaneAttributes
     }
 
     /**
-     * @param ocStr the overtaking conditions string.
+     * @param ocStr String; the overtaking conditions string.
      * @return the overtaking conditions.
-     * @param parser the parser to get access to the defined GTUTypes.
+     * @param parser VissimNetworkLaneParser; the parser to get access to the defined GTUTypes.
      * @throws NetworkException in case of unknown overtaking conditions.
      */
     public static OvertakingConditions parseOvertakingConditions(final String ocStr, final VissimNetworkLaneParser parser)
@@ -165,8 +165,8 @@ public final class LaneAttributes
     }
 
     /**
-     * @param set the string with the GTUTypes ike "CAR, TRUCK" or "ALL"
-     * @param parser the parser to get access to the defined GTUTypes.
+     * @param set String; the string with the GTUTypes ike "CAR, TRUCK" or "ALL"
+     * @param parser VissimNetworkLaneParser; the parser to get access to the defined GTUTypes.
      * @return a parsed set of GTUTypes
      */
     private static Set<GTUType> parseGTUTypeSet(final String set, final VissimNetworkLaneParser parser)
@@ -182,8 +182,8 @@ public final class LaneAttributes
     }
 
     /**
-     * @param typeName the name of the GTU type.
-     * @param parser the parser with the lists of information
+     * @param typeName String; the name of the GTU type.
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
      * @return the GTUType that was retrieved or created.
      */
     private static GTUType parseGTUType(final String typeName, final VissimNetworkLaneParser parser)

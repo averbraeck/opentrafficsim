@@ -52,8 +52,8 @@ public final class PropertiesParser
 
     /**
      * Get the car following model for a GTU type, e.g. "Car" or "Truck" from the properties.
-     * @param properties the properties to parse
-     * @param gtuType the type of GTU, e.g. "Car" or "Truck"
+     * @param properties List&lt;Property&lt;?&gt;&gt;; the properties to parse
+     * @param gtuType String; the type of GTU, e.g. "Car" or "Truck"
      * @return GTUFollowingModelOld; the car following model
      * @throws PropertyException in case parsing fails
      */
@@ -114,7 +114,7 @@ public final class PropertiesParser
 
     /**
      * Get the lane change model from the properties.
-     * @param properties the properties to parse
+     * @param properties List&lt;Property&lt;?&gt;&gt;; the properties to parse
      * @return LaneChangeModel; the lane change model
      * @throws PropertyException in case parsing fails
      */
@@ -144,10 +144,10 @@ public final class PropertiesParser
 
     /**
      * Get the strategical planner factory from the properties.
-     * @param properties the properties to parse
-     * @param gtuFollowingModel the car following model in case it is needed
-     * @param laneChangeModel the lane change model in case it is needed
-     * @param stream random stream
+     * @param properties List&lt;Property&lt;?&gt;&gt;; the properties to parse
+     * @param gtuFollowingModel GTUFollowingModelOld; the car following model in case it is needed
+     * @param laneChangeModel LaneChangeModel; the lane change model in case it is needed
+     * @param stream StreamInterface; random stream
      * @return LaneBasedStrategicalPlannerFactory; the tactical planner factory
      * @throws PropertyException in case parsing fails
      * @throws GTUException in case LMRS Factory cannot be created

@@ -503,7 +503,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
     /**
      * Construct the display of this TrafCOD machine and connect the displayed traffic lights and sensors to this TrafCOD
      * machine.
-     * @param tfgFileURL String; the URL where the display information is to be read from
+     * @param tfgFileURL URL; the URL where the display information is to be read from
      * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic light sensors
      * @return TrafCODDisplay, or null when the display information could not be read, was incomplete, or invalid
      * @throws TrafficControlException when the tfg file could not be read or is invalid
@@ -2417,7 +2417,7 @@ class Variable implements EventListenerInterface
 
     /**
      * Set one flag.
-     * @param flag Flags
+     * @param flag Flags; Flags
      */
     public void setFlag(final Flags flag)
     {

@@ -44,7 +44,7 @@ public class ShipperNameGenerator
 
     /**
      * Add a name, e.g. from a large name file.
-     * @param name the name to add
+     * @param name String; the name to add
      */
     public final void addShipperName(final String name)
     {

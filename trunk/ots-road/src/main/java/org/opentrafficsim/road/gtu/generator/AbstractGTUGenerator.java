@@ -263,7 +263,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
     /**
      * Check if the car to be built is not overlapping with another GTU on the same lane, and if it has enough headway to be
      * generated safely.
-     * @param carBuilder the car to be generated
+     * @param carBuilder LaneBasedIndividualCarBuilder; the car to be generated
      * @return true if car can be safely built, false otherwise.
      * @throws NetworkException when the speed limit of the lane is not known
      * @throws GTUException if GTU does not have a position on the lane where it is registered
@@ -322,12 +322,12 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
 
     /**
      * Calculate the minimum headway, possibly on subsequent lanes, in DIR_PLUS direction.
-     * @param theLane the lane where we are looking right now
-     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the GTU
-     *            when we measure in the lane where the original GTU is positioned, and 0.0 for each subsequent lane
-     * @param cumDistanceSI the distance we have already covered searching on previous lanes
+     * @param theLane Lane; the lane where we are looking right now
+     * @param lanePositionSI double; from which position on this lane do we start measuring? This is the current position of the
+     *            GTU when we measure in the lane where the original GTU is positioned, and 0.0 for each subsequent lane
+     * @param cumDistanceSI double; the distance we have already covered searching on previous lanes
      * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls
-     * @param when the current or future time for which to calculate the headway
+     * @param when Time; the current or future time for which to calculate the headway
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
      * @throws GTUException when there is a problem with the geometry of the network
@@ -382,12 +382,12 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
 
     /**
      * Calculate the minimum headway, possibly on subsequent lanes, in DIR_MINUS direction.
-     * @param theLane the lane where we are looking right now
-     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the GTU
-     *            when we measure in the lane where the original GTU is positioned, and 0.0 for each subsequent lane
-     * @param cumDistanceSI the distance we have already covered searching on previous lanes
+     * @param theLane Lane; the lane where we are looking right now
+     * @param lanePositionSI double; from which position on this lane do we start measuring? This is the current position of the
+     *            GTU when we measure in the lane where the original GTU is positioned, and 0.0 for each subsequent lane
+     * @param cumDistanceSI double; the distance we have already covered searching on previous lanes
      * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls
-     * @param when the current or future time for which to calculate the headway
+     * @param when Time; the current or future time for which to calculate the headway
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
      * @throws GTUException when there is a problem with the geometry of the network
@@ -442,7 +442,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
 
     /**
      * Find the first GTU starting on the specified lane following the specified route.
-     * @param maxDistanceSI the maximum distance to look for in SI units
+     * @param maxDistanceSI double; the maximum distance to look for in SI units
      * @param generatorLane Lane; the lane on which the the search for a leader starts
      * @return the nearest GTU and the net headway to this GTU in SI units when we have found the GTU, or a null GTU with a
      *         distance of Double.MAX_VALUE meters when no other GTU could not be found within maxDistanceSI meters

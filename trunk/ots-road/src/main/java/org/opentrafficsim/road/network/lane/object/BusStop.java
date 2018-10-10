@@ -82,7 +82,7 @@ public class BusStop extends AbstractLaneBasedObject
 
     /**
      * Sets the lines.
-     * @param lines lines that stop at this location
+     * @param lines Set&lt;String&gt;; lines that stop at this location
      */
     public final void setLines(final Set<String> lines)
     {

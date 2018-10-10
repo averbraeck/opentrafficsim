@@ -21,7 +21,7 @@ public interface Compatibility<G extends HierarchicalType<G>, I extends Hierarch
 {
     /**
      * Test if a GTUType can travel over the infrastructure.
-     * @param gtuType GTUType; the type of the GTU
+     * @param gtuType G; the type of the GTU
      * @param directionality GTUDirectionality; the direction of the GTU with respect to the design direction of the
      *            infrastructure
      * @return boolean; true if the GTU can travel over the infrastructure in the given direction; false if the GTU can not
@@ -38,7 +38,7 @@ public interface Compatibility<G extends HierarchicalType<G>, I extends Hierarch
      * If <code>tryParentsOfGTUType</code> is false, the value null is returned. If true; the parent of the GTUType is used and
      * the search is repeated, etc. If none of the parents of the GTUType yields a result, this method returns
      * <code>LongitudinalDirectionality.DIR_NONE</code>.
-     * @param gtuType GTUType; type of the GTU
+     * @param gtuType G; type of the GTU
      * @param tryParentsOfGTUType boolean; if true; the parents of the GTUType are tried if no match was found for the given
      *            GTUType
      * @return LongitudinalDirectionality; the driving directions for the GTUType, or

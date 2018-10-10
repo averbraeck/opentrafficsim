@@ -58,7 +58,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
     }
 
     /**
-     * @param moveThreads set moveThreads
+     * @param moveThreads int; set moveThreads
      */
     public final void setMoveThreads(final int moveThreads)
     {

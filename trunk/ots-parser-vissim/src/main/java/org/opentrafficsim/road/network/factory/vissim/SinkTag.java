@@ -27,9 +27,9 @@ class SinkTag implements Serializable
 
     /**
      * Parse the SINK tag.
-     * @param node the SINK node to parse
-     * @param parser the parser with the lists of information
-     * @param linkTag the parent LINK tag
+     * @param node Node; the SINK node to parse
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param linkTag LinkTag; the parent LINK tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

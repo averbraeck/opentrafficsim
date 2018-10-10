@@ -75,7 +75,7 @@ public class PickList<T> extends ParameterType<T>
     }
 
     /**
-     * @param items2 List&lt;PickListItem&lt;?&gt;&gt;; a non-empty list of pick list items.
+     * @param items2 List&lt;?&gt;; a non-empty list of pick list items.
      * @return Object; item 0 in the list
      * @throws ParameterException when list is null, or empty
      */

@@ -334,7 +334,7 @@ public class ImbKpiTransceiver implements Serializable
 
     /**
      * Notifies about time, such that statistics over some period (very recently ended) can be gathered and published.
-     * @param time the time to be used in the notification (usually the current time)
+     * @param time Time; the time to be used in the notification (usually the current time)
      */
     public void notifyTime(Time time)
     {

@@ -212,7 +212,7 @@ public class ROADLAYOUT
 
     /**
      * Sets the value of the name property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setNAME(String value)
     {
@@ -230,7 +230,7 @@ public class ROADLAYOUT
 
     /**
      * Sets the value of the roadtype property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setROADTYPE(String value)
     {
@@ -248,7 +248,7 @@ public class ROADLAYOUT
 
     /**
      * Sets the value of the width property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setWIDTH(String value)
     {
@@ -266,7 +266,7 @@ public class ROADLAYOUT
 
     /**
      * Sets the value of the lanekeeping property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setLANEKEEPING(String value)
     {
@@ -284,7 +284,7 @@ public class ROADLAYOUT
 
     /**
      * Sets the value of the overtaking property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setOVERTAKING(String value)
     {
@@ -302,7 +302,7 @@ public class ROADLAYOUT
 
     /**
      * Sets the value of the base property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setBase(String value)
     {
@@ -407,7 +407,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the name property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setNAME(String value)
         {
@@ -425,7 +425,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the lanetype property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLANETYPE(String value)
         {
@@ -443,7 +443,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the offset property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setOFFSET(String value)
         {
@@ -461,7 +461,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the width property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setWIDTH(String value)
         {
@@ -479,7 +479,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the direction property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setDIRECTION(String value)
         {
@@ -497,7 +497,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the color property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setCOLOR(String value)
         {
@@ -515,7 +515,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the overtaking property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setOVERTAKING(String value)
         {
@@ -561,7 +561,7 @@ public class ROADLAYOUT
 
             /**
              * Sets the value of the gtutype property.
-             * @param value allowed object is {@link String }
+             * @param value String; allowed object is {@link String }
              */
             public void setGTUTYPE(String value)
             {
@@ -579,7 +579,7 @@ public class ROADLAYOUT
 
             /**
              * Sets the value of the legalspeedlimit property.
-             * @param value allowed object is {@link String }
+             * @param value String; allowed object is {@link String }
              */
             public void setLEGALSPEEDLIMIT(String value)
             {
@@ -637,7 +637,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the name property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setNAME(String value)
         {
@@ -655,7 +655,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the offset property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setOFFSET(String value)
         {
@@ -673,7 +673,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the width property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setWIDTH(String value)
         {
@@ -691,7 +691,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the color property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setCOLOR(String value)
         {
@@ -747,7 +747,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the name property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setNAME(String value)
         {
@@ -765,7 +765,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the offset property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setOFFSET(String value)
         {
@@ -783,7 +783,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the width property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setWIDTH(String value)
         {
@@ -801,7 +801,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the color property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setCOLOR(String value)
         {
@@ -849,7 +849,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the gtutype property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setGTUTYPE(String value)
         {
@@ -867,7 +867,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the legalspeedlimit property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLEGALSPEEDLIMIT(String value)
         {
@@ -927,7 +927,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the name property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setNAME(String value)
         {
@@ -945,7 +945,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the type property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setTYPE(String value)
         {
@@ -963,7 +963,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the offset property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setOFFSET(String value)
         {
@@ -981,7 +981,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the width property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setWIDTH(String value)
         {
@@ -999,7 +999,7 @@ public class ROADLAYOUT
 
         /**
          * Sets the value of the color property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setCOLOR(String value)
         {

@@ -34,7 +34,7 @@ public class ParamComments
     private boolean changed;
 
     /**
-     * @param args none
+     * @param args String[]; none
      * @throws IOException on I/O error
      * @throws URISyntaxException on I/O error
      */
@@ -66,7 +66,7 @@ public class ParamComments
     }
 
     /**
-     * @param srcFolder folder to look for subfolders and/or java files
+     * @param srcFolder File; folder to look for subfolders and/or java files
      * @throws IOException on i/o error
      */
     private void processDirOrFile(final File srcFolder) throws IOException
@@ -88,7 +88,7 @@ public class ParamComments
     }
 
     /**
-     * @param javaFile java file to process
+     * @param javaFile File; java file to process
      * @throws IOException on error
      */
     private void processJavaFile(final File javaFile) throws IOException
@@ -101,8 +101,8 @@ public class ParamComments
         cu.accept(new MethodVisitor(this), null);
         if (this.changed)
         {
-            // Files.write(Paths.get(javaFile.toURI()), this.lines);
-            System.out.println("Changed (BUT NOT WRITTEN YET): " + javaFile.toString());
+            Files.write(Paths.get(javaFile.toURI()), this.lines);
+            System.out.println("CHANGED AND WRITTEN: " + javaFile.toString());
         }
     }
 
@@ -115,7 +115,7 @@ public class ParamComments
     }
 
     /**
-     * @param changed set changed
+     * @param changed boolean; set changed
      */
     public final void setChanged(final boolean changed)
     {
@@ -158,7 +158,8 @@ public class ParamComments
                     .println("\n------\n" + "   " + methodDeclaration.getName() + " : " + methodDeclaration.getTypeAsString());
             for (Parameter parameter : methodDeclaration.getParameters())
             {
-                System.out.println("      " + parameter.getNameAsString() + " : " + parameter.getTypeAsString());
+                System.out.println("      " + parameter.getNameAsString() + " : " + parameter.getTypeAsString()
+                        + (parameter.isVarArgs() ? "..." : ""));
             }
             if (methodDeclaration.getComment().isPresent())
             {
@@ -191,6 +192,8 @@ public class ParamComments
                                     break;
                                 }
                                 line = line.replaceAll("&lt;", "<").replaceAll("&gt;", ">");
+                                // make a line without escaped HTML-sequences
+                                String noHtmlLine = line.replaceAll("&\\w+;", "");
                                 // variable name after @param
                                 int paramIndex = line.indexOf("@param");
                                 int varEndIndex = line.indexOf(' ', paramIndex + 7) == -1 ? line.length()
@@ -203,39 +206,46 @@ public class ParamComments
                                     {
                                         // see if type is there with a ; at the end
                                         String varType = "";
-                                        if (line.indexOf(";", varEndIndex + 1) != -1)
+                                        if (noHtmlLine.indexOf(";", varEndIndex + 1) != -1)
                                         {
-                                            varType =
-                                                    line.substring(varEndIndex + 1, line.indexOf(';', varEndIndex + 1)).trim();
+                                            varType = noHtmlLine
+                                                    .substring(varEndIndex + 1, noHtmlLine.indexOf(';', varEndIndex + 1)).trim()
+                                                    .replaceAll(", ", ",");
+                                            String parameterType =
+                                                    parameter.getType().asString() + (parameter.isVarArgs() ? "..." : "");
                                             // if there are spaces in the varType, we either have a type with spaces
                                             // e.g., Type<A, B>, or we have no variable but a ; later in the line,
                                             // e.g., @param var this is the B&eacute;zier variable. In these cases,
                                             // we have to be super careful and not replace without warning...
-                                            if (!varType.equals(parameter.getType().asString()))
+                                            if (!varType.equals(parameterType))
                                             {
                                                 if (varType.contains(" "))
                                                 {
-                                                    System.out.println("NO CHANGE - SPACES IN TYPE : " + line.trim());
+                                                    System.out.println("NO CHANGE - SPACES IN TYPE : "
+                                                            + line.replaceAll("<", "&lt;").replaceAll(">", "&gt;").trim());
                                                 }
                                                 else
                                                 {
-                                                    line = line.substring(0, varEndIndex) + " " + parameter.getType().asString()
+                                                    parameterType = parameterType.replaceAll(",", ", ");
+                                                    line = line.substring(0, varEndIndex) + " " + parameterType
                                                             + line.substring(line.indexOf(";", varEndIndex + 1));
                                                     line = line.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
                                                     System.out.println("CHANGED TYPE : " + line.trim());
                                                     this.paramComments.setChanged(true);
-                                                    this.paramComments.getLines().set(fileLine, line);
+                                                    this.paramComments.getLines().set(fileLine, line.replaceAll("\\n", ""));
                                                 }
                                             }
                                         }
                                         else
                                         {
-                                            line = line.substring(0, varEndIndex) + " " + parameter.getType().asString() + "; "
+                                            String parameterType = parameter.getType().asString()
+                                                    + (parameter.isVarArgs() ? "..." : "").replaceAll(",", ", ");
+                                            line = line.substring(0, varEndIndex) + " " + parameterType + "; "
                                                     + line.substring(Math.min(varEndIndex + 1, line.length() - 1));
                                             line = line.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
                                             System.out.println("ADDED TYPE : " + line.trim());
                                             this.paramComments.setChanged(true);
-                                            this.paramComments.getLines().set(fileLine, line);
+                                            this.paramComments.getLines().set(fileLine, line.replaceAll("\\n", ""));
                                         }
                                         found = true;
                                         break;

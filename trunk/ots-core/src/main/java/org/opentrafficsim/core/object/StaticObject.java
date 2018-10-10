@@ -123,9 +123,9 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
 
     /**
      * Clone the StaticObject for e.g., copying a network.
-     * @param newNetwork the new network to which the clone belongs
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
+     * @param newNetwork Network; the new network to which the clone belongs
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
+     * @param animation boolean; whether to (re)create animation or not
      * @return a clone of this object
      * @throws NetworkException in case the cloning fails
      */

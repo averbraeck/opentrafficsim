@@ -45,9 +45,10 @@ public class DepartureTimeProfile
 
     /**
      * Generates a time profile curve of the trips that are released in the time segments of this simulation.
-     * @param durationOfSimulation length in TimeUnits
-     * @param navigableMap list with information on the number of Trips to be released in a certain time segment
-     * @param startSimulationTimeSinceMidnight Start of the simulation by time of (a) day
+     * @param durationOfSimulation Duration; length in TimeUnits
+     * @param navigableMap NavigableMap&lt;Time,FractionOfTripDemandByTimeSegment&gt;; list with information on the number of
+     *            Trips to be released in a certain time segment
+     * @param startSimulationTimeSinceMidnight Time; Start of the simulation by time of (a) day
      * @return List of new segment
      */
     public final NavigableMap<Time, FractionOfTripDemandByTimeSegment> checkAndNormalizeCurve(
@@ -131,7 +132,7 @@ public class DepartureTimeProfile
     }
 
     /**
-     * @param profileList set departureTimeCurve.
+     * @param profileList NavigableMap&lt;Time,FractionOfTripDemandByTimeSegment&gt;; set departureTimeCurve.
      */
     public final void setDepartureTimeCurve(final NavigableMap<Time, FractionOfTripDemandByTimeSegment> profileList)
     {
@@ -147,7 +148,7 @@ public class DepartureTimeProfile
     }
 
     /**
-     * @param name set name.
+     * @param name String; set name.
      */
     public final void setName(final String name)
     {

@@ -56,12 +56,13 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     private Map<RelativeLane, TimeStampedObject<SpeedLimitProspect>> speedLimitProspect = new HashMap<>();
 
     /** Legal Lane change possibilities per relative lane and lateral direction. */
-    private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> legalLaneChangePossibility =
-            new HashMap<>();
+    private final Map<RelativeLane,
+            Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> legalLaneChangePossibility = new HashMap<>();
 
     /** Physical Lane change possibilities per relative lane and lateral direction. */
-    private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> physicalLaneChangePossibility =
-            new HashMap<>();
+    private final Map<RelativeLane,
+            Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> physicalLaneChangePossibility =
+                    new HashMap<>();
 
     /** Cross-section. */
     private TimeStampedObject<SortedSet<RelativeLane>> crossSection;
@@ -280,7 +281,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      * Returns whether the given record end is ok to pass. If not, a lane change is required before this end. The method will
      * also return true if the next node is the end node of the route, if the lane is cut off due to limited perception range,
      * or when there is a {@code SinkSensor} on the lane.
-     * @param record checked record
+     * @param record LaneStructureRecord; checked record
      * @return whether the given record end is ok to pass
      * @throws NetworkException if destination could not be obtained
      * @throws GTUException if the GTU could not be obtained
@@ -391,10 +392,12 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
     /**
      * Updates the distance over which lane changes remains legally or physically possible.
-     * @param lane lane from which the lane change possibility is requested
-     * @param lat LEFT or RIGHT, null not allowed
-     * @param legal legal, or physical otherwise
-     * @param possibilityMap legal or physical possibility map
+     * @param lane RelativeLane; lane from which the lane change possibility is requested
+     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
+     * @param legal boolean; legal, or physical otherwise
+     * @param possibilityMap
+     *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;; legal
+     *            or physical possibility map
      * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
      * @throws ParameterException if a parameter is not defined
      */
@@ -468,7 +471,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     }
 
     /**
-     * @param lane lane to check
+     * @param lane RelativeLane; lane to check
      * @throws GTUException if the lane is not in the cross section
      */
     private void checkLaneIsInCrossSection(final RelativeLane lane) throws GTUException
@@ -545,7 +548,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
      * 
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @return time stamped infrastructure lane change info of a lane
      */
     public final TimeStampedObject<SortedSet<InfrastructureLaneChangeInfo>> getTimeStampedInfrastructureLaneChangeInfo(
@@ -556,7 +559,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
     /**
      * Returns the time stamped prospect for speed limits on a lane (dynamic speed limits may vary between lanes).
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @return time stamped prospect for speed limits on a lane
      */
     public final TimeStampedObject<SpeedLimitProspect> getTimeStampedSpeedLimitProspect(final RelativeLane lane)
@@ -566,8 +569,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
     /**
      * Returns the time stamped distance over which a lane change remains legally possible.
-     * @param fromLane lane from which the lane change possibility is requested
-     * @param lat LEFT or RIGHT, null not allowed
+     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
+     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @return time stamped distance over which a lane change remains possible
      * @throws NullPointerException if {@code lat == null}
      */
@@ -581,8 +584,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
     /**
      * Returns the time stamped distance over which a lane change remains physically possible.
-     * @param fromLane lane from which the lane change possibility is requested
-     * @param lat LEFT or RIGHT, null not allowed
+     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
+     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @return time stamped distance over which a lane change remains possible
      * @throws NullPointerException if {@code lat == null}
      */

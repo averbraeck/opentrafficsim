@@ -77,9 +77,9 @@ public class FlowCell implements Locatable
 
     /**
      * Retrieves car production from network fundamental diagram.
-     * @param accumulatedCarsPerLengthUnit number of cars in Cell
-     * @param maximumCapacity based on area information
-     * @param param parameters FD
+     * @param accumulatedCarsPerLengthUnit double; number of cars in Cell
+     * @param maximumCapacity Frequency; based on area information
+     * @param param ParametersFundamentalDiagram; parameters FD
      * @return carProduction
      */
     public final Frequency retrieveCurrentInflowCapacity(final double accumulatedCarsPerLengthUnit,
@@ -108,7 +108,7 @@ public class FlowCell implements Locatable
     }
 
     /**
-     * @param accumulatedCarsPerLengthUnit
+     * @param accumulatedCarsPerLengthUnit double;
      * @return actualSpeed.
      */
     public Speed retrieveCurrentSpeed(final double accumulatedCarsPerLengthUnit)
@@ -172,7 +172,7 @@ public class FlowCell implements Locatable
     }
 
     /**
-     * @param cellLength set cellLength.
+     * @param cellLength Length; set cellLength.
      */
     public void setCellLength(Length cellLength)
     {
@@ -188,7 +188,7 @@ public class FlowCell implements Locatable
     }
 
     /**
-     * @param maxCapacity set capacity.
+     * @param maxCapacity Frequency; set capacity.
      */
     public void setMaxCapacity(Frequency maxCapacity)
     {
@@ -204,7 +204,7 @@ public class FlowCell implements Locatable
     }
 
     /**
-     * @param cellBehaviour set cellBehaviour.
+     * @param cellBehaviour CellBehaviourFlow; set cellBehaviour.
      */
     public void setCellBehaviourFlow(CellBehaviourFlow cellBehaviour)
     {
@@ -220,7 +220,7 @@ public class FlowCell implements Locatable
     }
 
     /**
-     * @param numberOfLanes set numberOfLanes.
+     * @param numberOfLanes int; set numberOfLanes.
      */
     public void setNumberOfLanes(int numberOfLanes)
     {
@@ -236,7 +236,7 @@ public class FlowCell implements Locatable
     }
 
     /**
-     * @param currentSpeed set actualSpeed.
+     * @param currentSpeed Speed; set actualSpeed.
      */
     public Speed setActualSpeed(Speed currentSpeed)
     {
@@ -253,7 +253,7 @@ public class FlowCell implements Locatable
     }
 
     /**
-     * @param currentTravelDuration set currentTravelTime.
+     * @param currentTravelDuration Duration; set currentTravelTime.
      */
     public Duration setCurrentTravelDuration(Duration currentTravelDuration)
     {

@@ -135,7 +135,7 @@ public class NTMSettings
     }
 
     /**
-     * @param startTimeSinceMidnight set startTimeSinceMidnight
+     * @param startTimeSinceMidnight Duration; set startTimeSinceMidnight
      */
     public void setDurationSinceMidnight(Duration startTimeSinceMidnight)
     {
@@ -151,7 +151,7 @@ public class NTMSettings
     }
 
     /**
-     * @param timeSpan set durationOfSimulation
+     * @param timeSpan Duration; set durationOfSimulation
      */
     public void setDurationOfSimulation(Duration timeSpan)
     {
@@ -167,7 +167,7 @@ public class NTMSettings
     }
 
     /**
-     * @param timeStepDuration set timeStepDuration
+     * @param timeStepDuration Duration; set timeStepDuration
      */
     public void setTimeStepDurationNTM(Duration timeStepDuration)
     {
@@ -183,7 +183,7 @@ public class NTMSettings
     }
 
     /**
-     * @param startTime set startTime
+     * @param startTime Time; set startTime
      */
     public void setStartTime(Time startTime)
     {
@@ -199,7 +199,7 @@ public class NTMSettings
     }
 
     /**
-     * @param timeStepDurationCellTransmissionModel set timeStepDurationCellTransmissionModel.
+     * @param timeStepDurationCellTransmissionModel Duration; set timeStepDurationCellTransmissionModel.
      */
     public void setTimeStepDurationCellTransmissionModel(Duration timeStepDurationCellTransmissionModel)
     {
@@ -215,7 +215,7 @@ public class NTMSettings
     }
 
     /**
-     * @param descriptionProject set descriptionProject
+     * @param descriptionProject String; set descriptionProject
      */
     public void setDescriptionProject(String descriptionProject)
     {
@@ -231,7 +231,7 @@ public class NTMSettings
     }
 
     /**
-     * @param reRouteTimeInterval set reRouteTimeInterval.
+     * @param reRouteTimeInterval Duration; set reRouteTimeInterval.
      */
     public void setReRouteTimeInterval(Duration reRouteTimeInterval)
     {
@@ -247,7 +247,7 @@ public class NTMSettings
     }
 
     /**
-     * @param numberOfRoutes set numberOfRoutes.
+     * @param numberOfRoutes int; set numberOfRoutes.
      */
     public void setNumberOfRoutes(int numberOfRoutes)
     {
@@ -263,7 +263,7 @@ public class NTMSettings
     }
 
     /**
-     * @param path set path.
+     * @param path String; set path.
      */
     public void setPath(String path)
     {
@@ -295,7 +295,7 @@ public class NTMSettings
     }
 
     /**
-     * @param reRoute set reRoute.
+     * @param reRoute boolean; set reRoute.
      */
     public void setReRoute(boolean reRoute)
     {
@@ -311,7 +311,7 @@ public class NTMSettings
     }
 
     /**
-     * @param varianceRoutes set varianceRoutes.
+     * @param varianceRoutes double; set varianceRoutes.
      */
     public void setVarianceRoutes(double varianceRoutes)
     {
@@ -327,7 +327,7 @@ public class NTMSettings
     }
 
     /**
-     * @param scalingFactorDemand set scalingFactorDemand.
+     * @param scalingFactorDemand double; set scalingFactorDemand.
      */
     public void setScalingFactorDemand(double scalingFactorDemand)
     {
@@ -343,7 +343,7 @@ public class NTMSettings
     }
 
     /**
-     * @param increaseDemandByArea set increaseDemandByArea.
+     * @param increaseDemandByArea boolean; set increaseDemandByArea.
      */
     public void setIncreaseDemandByArea(boolean increaseDemandByArea)
     {

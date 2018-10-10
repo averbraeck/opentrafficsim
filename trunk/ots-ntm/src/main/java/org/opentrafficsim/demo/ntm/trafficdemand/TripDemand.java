@@ -53,9 +53,9 @@ public class TripDemand<TripInformation>
 
     /**
      * Compresses the trip demand from detailed areas to larger areas
-     * @param tripDemand comprising the original demand
-     * @param centroids the detailed areas
-     * @param mapSmallAreaToBigArea provides the key from small to big areas (type Node!!)
+     * @param tripDemand TripDemand&lt;TripInfoTimeDynamic&gt;; comprising the original demand
+     * @param centroids Map&lt;String,NTMNode&gt;; the detailed areas
+     * @param mapSmallAreaToBigArea HashMap&lt;NTMNode,NTMNode&gt;; provides the key from small to big areas (type Node!!)
      * @return
      */
     public static TripDemand<TripInfoTimeDynamic> compressTripDemand(TripDemand<TripInfoTimeDynamic> tripDemand,
@@ -152,7 +152,7 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param origin
+     * @param origin String;
      * @param destination
      * @return mapDestinations a hashmap with destination as key and tripInfo as values
      */
@@ -164,9 +164,9 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param thisDemand
-     * @param currentTime
-     * @param timeStepDurationNTM
+     * @param thisDemand TripDemand&lt;TripInfoTimeDynamic&gt;;
+     * @param currentTime Time;
+     * @param timeStepDurationNTM Duration;
      * @param origin
      * @param destination
      * @return mapDestinations a hashmap with destination as key and tripInfo as values
@@ -219,8 +219,8 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param origin
-     * @param destination
+     * @param origin String;
+     * @param destination String;
      * @return tripInfo by OD pair
      */
     public final TripInformation getTripDemandOriginToDestination(final String origin, final String destination)
@@ -246,10 +246,10 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param origin
-     * @param destination
-     * @param tripInfo
-     * @param tripInfoAll
+     * @param origin String;
+     * @param destination String;
+     * @param tripInfo TripInformation;
+     * @param tripInfoAll Map&lt;String,Map&lt;String,TripInformation&gt;&gt;;
      * @return
      */
     public final Map<String, Map<String, TripInformation>> setTripDemandOriginToDestination(final String origin,
@@ -273,7 +273,7 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param startTime set startTime.
+     * @param startTime Time; set startTime.
      */
     public final void setStartTime(final Time startTime)
     {
@@ -297,7 +297,7 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param timeSpan set timeSpan.
+     * @param timeSpan Duration; set timeSpan.
      */
     public final void setTimeSpan(final Duration timeSpan)
     {
@@ -305,7 +305,7 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param tripInfo sets tripInfo
+     * @param tripInfo Map&lt;String,Map&lt;String,TripInformation&gt;&gt;; sets tripInfo
      */
     public final void setTripInfo(final Map<String, Map<String, TripInformation>> tripInfo)
     {

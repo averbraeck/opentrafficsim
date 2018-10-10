@@ -185,9 +185,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     }
 
     /**
-     * @param strategicalPlanner the strategical planner (e.g., route determination) to use
-     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes with their directions
-     * @param initialSpeed the initial speed of the car on the lane
+     * @param strategicalPlanner LaneBasedStrategicalPlanner; the strategical planner (e.g., route determination) to use
+     * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the initial positions of the car on one or more
+     *            lanes with their directions
+     * @param initialSpeed Speed; the initial speed of the car on the lane
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when initial values are not correct
@@ -275,7 +276,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /**
      * Reinitializes the GTU on the network using the existing strategical planner and zero speed.
-     * @param initialLongitudinalPositions &lt;Set&gt;; initial position
+     * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; initial position
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when initial values are not correct
@@ -312,10 +313,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /**
      * Registers the lane at the GTU. Only works at the start of a operational plan.
-     * @param lane the lane to add to the list of lanes on which the GTU is registered.
-     * @param gtuDirection the direction of the GTU on the lane (which can be bidirectional). If the GTU has a positive speed,
-     *            it is moving in this direction.
-     * @param position the position on the lane.
+     * @param lane Lane; the lane to add to the list of lanes on which the GTU is registered.
+     * @param gtuDirection GTUDirectionality; the direction of the GTU on the lane (which can be bidirectional). If the GTU has
+     *            a positive speed, it is moving in this direction.
+     * @param position Length; the position on the lane.
      * @throws GTUException when positioning the GTU on the lane causes a problem
      */
     private void addLaneToGtu(final Lane lane, final Length position, final GTUDirectionality gtuDirection) throws GTUException
@@ -375,8 +376,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /**
      * Leave a lane but do not complain about having no lanes left when beingDestroyed is true.
-     * @param lane the lane to leave
-     * @param beingDestroyed if true, no complaints about having no lanes left
+     * @param lane Lane; the lane to leave
+     * @param beingDestroyed boolean; if true, no complaints about having no lanes left
      * @throws GTUException in case leaveLane should not be called
      */
     @SuppressWarnings("checkstyle:designforextension")
@@ -409,7 +410,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /**
      * Removes and cancels events for the given lane.
      * @param lane Lane; lane
-     * @param triggers Map; map to use
+     * @param triggers Map&lt;Lane, List&lt;SimEventInterface&lt;SimTimeDoubleUnit&gt;&gt;&gt;; map to use
      */
     private void removePendingEvents(final Lane lane, final Map<Lane, List<SimEventInterface<SimTimeDoubleUnit>>> triggers)
     {
@@ -484,9 +485,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * Enters lanes upstream and downstream of the new location after an instantaneous lane change.
      * @param lane LaneDirection; considered lane
      * @param position Length; position to add GTU at
-     * @param newLinkPositionsLC Map; new link fractions to store
+     * @param newLinkPositionsLC Map&lt;Link, Double&gt;; new link fractions to store
      * @param planLength Length; length of plan, to consider fractions at start
-     * @param lanesToBeRemoved Set; lanes to leave, from which lanes are removed when entered (such that they arent then left)
+     * @param lanesToBeRemoved Set&lt;Lane&gt;; lanes to leave, from which lanes are removed when entered (such that they arent
+     *            then left)
      * @param dir int; below 0 for upstream, above 0 for downstream, 0 for both
      * @throws GTUException on exception
      */
@@ -570,7 +572,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /**
      * Register on lanes in target lane.
-     * @param laneChangeDirection direction of lane change
+     * @param laneChangeDirection LateralDirectionality; direction of lane change
      * @throws GTUException exception
      */
     @SuppressWarnings("checkstyle:designforextension")
@@ -600,7 +602,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /**
      * Performs the finalization of a lane change by leaving the from lanes.
-     * @param laneChangeDirection direction of lane change
+     * @param laneChangeDirection LateralDirectionality; direction of lane change
      */
     @SuppressWarnings("checkstyle:designforextension")
     protected void finalizeLaneChange(final LateralDirectionality laneChangeDirection)
@@ -1437,7 +1439,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /**
      * Add enter trigger.
      * @param lane Lane; lane
-     * @param event SimEvent; event
+     * @param event SimEventInterface&lt;SimTimeDoubleUnit&gt;; event
      */
     private void addEnterTrigger(final Lane lane, final SimEventInterface<SimTimeDoubleUnit> event)
     {

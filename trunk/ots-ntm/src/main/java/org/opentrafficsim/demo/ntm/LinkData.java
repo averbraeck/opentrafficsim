@@ -52,7 +52,7 @@ public class LinkData
     }
 
     /**
-     * @param name set name.
+     * @param name String; set name.
      */
     public void setName(String name)
     {
@@ -68,7 +68,7 @@ public class LinkData
     }
 
     /**
-     * @param linkTag set linkTag.
+     * @param linkTag String; set linkTag.
      */
     public void setLinkTag(String linkTag)
     {
@@ -84,7 +84,7 @@ public class LinkData
     }
 
     /**
-     * @param wegtype set wegtype.
+     * @param wegtype String; set wegtype.
      */
     public void setWegtype(String wegtype)
     {
@@ -100,7 +100,7 @@ public class LinkData
     }
 
     /**
-     * @param typeWegVak set typeWegVak.
+     * @param typeWegVak String; set typeWegVak.
      */
     public void setTypeWegVak(String typeWegVak)
     {
@@ -116,7 +116,7 @@ public class LinkData
     }
 
     /**
-     * @param typeWeg set typeWeg.
+     * @param typeWeg String; set typeWeg.
      */
     public void setTypeWeg(String typeWeg)
     {

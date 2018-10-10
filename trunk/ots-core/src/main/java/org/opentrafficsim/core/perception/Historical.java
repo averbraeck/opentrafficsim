@@ -32,7 +32,7 @@ public interface Historical<T>
 
     /**
      * Get value at given time.
-     * @param time T; time to get the value
+     * @param time Time; time to get the value
      * @return T; value at current time
      * @throws NullPointerException when time is null
      */

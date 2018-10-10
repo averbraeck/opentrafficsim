@@ -25,8 +25,8 @@ public interface ClonableRenderable2DInterface<T extends Locatable> extends Rend
 {
     /**
      * Clone the animation object and register it for the new source on the new simulation.
-     * @param newSource the source
-     * @param newSimulator the simulator
+     * @param newSource T; the source
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the simulator
      * @return the generated clone
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException - when remote context cannot be found

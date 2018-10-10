@@ -226,12 +226,12 @@ public final class Query implements Identifiable
 
     /**
      * Defines a region in space and time for which this query is valid. All lanes in the link are included.
-     * @param link link
-     * @param direction direction
-     * @param startPosition start position
-     * @param endPosition end position
-     * @param startTime start time
-     * @param endTime end time
+     * @param link LinkDataInterface; link
+     * @param direction KpiGtuDirectionality; direction
+     * @param startPosition Length; start position
+     * @param endPosition Length; end position
+     * @param startTime Time; start time
+     * @param endTime Time; end time
      */
     public void addSpaceTimeRegionLink(final LinkDataInterface link, final KpiGtuDirectionality direction,
             final Length startPosition, final Length endPosition, final Time startTime, final Time endTime)
@@ -255,11 +255,11 @@ public final class Query implements Identifiable
 
     /**
      * Defines a region in space and time for which this query is valid.
-     * @param laneDirection lane direction
-     * @param startPosition start position
-     * @param endPosition end position
-     * @param startTime start time
-     * @param endTime end time
+     * @param laneDirection KpiLaneDirection; lane direction
+     * @param startPosition Length; start position
+     * @param endPosition Length; end position
+     * @param startTime Time; start time
+     * @param endTime Time; end time
      */
     public void addSpaceTimeRegion(final KpiLaneDirection laneDirection, final Length startPosition, final Length endPosition,
             final Time startTime, final Time endTime)
@@ -297,7 +297,7 @@ public final class Query implements Identifiable
      * Returns a list of TrajectoryGroups in accordance with the query. Each {@code TrajectoryGroup} contains {@code Trajectory}
      * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the meta
      * data of this query accepts the trajectory. This method uses {@code Time.ZERO} as start.
-     * @param endTime end time of interval to get trajectory groups for
+     * @param endTime Time; end time of interval to get trajectory groups for
      * @param <T> underlying class of meta data type and its value
      * @return list of trajectory groups in accordance with the query
      */
@@ -310,8 +310,8 @@ public final class Query implements Identifiable
      * Returns a list of TrajectoryGroups in accordance with the query. Each {@code TrajectoryGroup} contains {@code Trajectory}
      * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the meta
      * data of this query accepts the trajectory.
-     * @param startTime start time of interval to get trajectory groups for
-     * @param endTime start time of interval to get trajectory groups for
+     * @param startTime Time; start time of interval to get trajectory groups for
+     * @param endTime Time; start time of interval to get trajectory groups for
      * @param <T> underlying class of meta data type and its value
      * @return list of trajectory groups in accordance with the query
      */

@@ -916,7 +916,7 @@ public class ModelControlDemo extends ModelStarter
          * Generate cars at a fixed rate (implemented by re-scheduling this method).
          * @param initialPosition Length; the initial position of the new cars
          * @param lane Lane; the lane on which the new cars are placed
-         * @param gtuType GTUType&lt;String&gt;; the type of the new cars
+         * @param gtuType GTUType; the type of the new cars
          * @throws NamingException on ???
          * @throws SimRuntimeException cannot happen
          * @throws NetworkException on network inconsistency

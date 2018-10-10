@@ -34,8 +34,8 @@ public class ProjectConfigurations
 {
 
     /**
-     * @param startMap
-     * @param model
+     * @param startMap String;
+     * @param model NTMModel;
      * @throws IOException
      * @throws ParseException
      */

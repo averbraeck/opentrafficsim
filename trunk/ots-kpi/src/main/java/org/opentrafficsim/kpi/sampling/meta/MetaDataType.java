@@ -46,7 +46,7 @@ public abstract class MetaDataType<T> implements Identifiable
 
     /**
      * Retrieves the value of the meta data of this type from a GTU.
-     * @param gtu gtu to retrieve the value from
+     * @param gtu GtuDataInterface; gtu to retrieve the value from
      * @return value of the meta data of this type from a GTU, may be {@code null} if not applicable.
      */
     public abstract T getValue(final GtuDataInterface gtu);
@@ -58,8 +58,8 @@ public abstract class MetaDataType<T> implements Identifiable
      * String.format(format, value.si);
      * </pre>
      * 
-     * @param format format
-     * @param value value
+     * @param format String; format
+     * @param value T; value
      * @return formatted value
      */
     public abstract String formatValue(String format, T value);
@@ -77,8 +77,9 @@ public abstract class MetaDataType<T> implements Identifiable
      * <li>etc.</li>
      * </ol>
      * The default implementation is that of 1, checking that the meta data value is in the provided query set.<br>
-     * @param trajectoryAcceptList containing {@code Trajectory}'s and {@code TrajectoryGroup}'s pertaining to a single GTU
-     * @param querySet set of values in the query for this metadata type
+     * @param trajectoryAcceptList TrajectoryAcceptList; containing {@code Trajectory}'s and {@code TrajectoryGroup}'s
+     *            pertaining to a single GTU
+     * @param querySet Set&lt;T&gt;; set of values in the query for this metadata type
      */
     @SuppressWarnings("checkstyle:designforextension")
     public void accept(final TrajectoryAcceptList trajectoryAcceptList, final Set<T> querySet)

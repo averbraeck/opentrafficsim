@@ -392,7 +392,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the addition of a Lane to the network to a corresponding IMB message.
-     * @param event the event to transform to a NEW message.
+     * @param event EventInterface; the event to transform to a NEW message.
      * @return the NEW payload
      */
     public Object[] transformNew(final EventInterface event)
@@ -435,7 +435,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the GTU added or removed event content to a corresponding IMB message.
-     * @param event the event to transform to a CHANGE message.
+     * @param event EventInterface; the event to transform to a CHANGE message.
      * @return the CHANGE payload
      */
     public Object[] transformChange(final EventInterface event)
@@ -461,7 +461,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the removal of a Lane from the network to a corresponding IMB message.
-     * @param event the event to transform to a DELETE message.
+     * @param event EventInterface; the event to transform to a DELETE message.
      * @return the DELETE payload
      */
     public Object[] transformDelete(final EventInterface event)

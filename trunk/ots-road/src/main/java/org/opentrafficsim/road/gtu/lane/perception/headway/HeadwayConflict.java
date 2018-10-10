@@ -310,8 +310,8 @@ public class HeadwayConflict extends AbstractHeadwayCopy
 
     /**
      * Set the distance of a traffic light upstream on the conflicting lane.
-     * @param trafficLightDistance distance of a traffic light upstream on the conflicting lane.
-     * @param permittedConflict whether the conflict is permitted by the traffic light
+     * @param trafficLightDistance Length; distance of a traffic light upstream on the conflicting lane.
+     * @param permittedConflict boolean; whether the conflict is permitted by the traffic light
      */
     public final void setConflictingTrafficLight(final Length trafficLightDistance, final boolean permittedConflict)
     {

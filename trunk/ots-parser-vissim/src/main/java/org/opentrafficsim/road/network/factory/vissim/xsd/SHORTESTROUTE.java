@@ -85,7 +85,7 @@ public class SHORTESTROUTE
 
     /**
      * Sets the value of the name property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setNAME(String value)
     {
@@ -103,7 +103,7 @@ public class SHORTESTROUTE
 
     /**
      * Sets the value of the from property.
-     * @param value allowed object is {@link Object }
+     * @param value Object; allowed object is {@link Object }
      */
     public void setFROM(Object value)
     {
@@ -121,7 +121,7 @@ public class SHORTESTROUTE
 
     /**
      * Sets the value of the to property.
-     * @param value allowed object is {@link Object }
+     * @param value Object; allowed object is {@link Object }
      */
     public void setTO(Object value)
     {
@@ -163,7 +163,7 @@ public class SHORTESTROUTE
 
     /**
      * Sets the value of the distancecost property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setDISTANCECOST(String value)
     {
@@ -181,7 +181,7 @@ public class SHORTESTROUTE
 
     /**
      * Sets the value of the timecost property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setTIMECOST(String value)
     {
@@ -199,7 +199,7 @@ public class SHORTESTROUTE
 
     /**
      * Sets the value of the base property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setBase(String value)
     {

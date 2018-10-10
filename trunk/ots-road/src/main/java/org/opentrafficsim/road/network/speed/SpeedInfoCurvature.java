@@ -50,7 +50,7 @@ public class SpeedInfoCurvature implements Serializable
 
     /**
      * Returns the speed for which the current lateral acceleration follows in the corner.
-     * @param acceleration acceleration to result from speed in corner
+     * @param acceleration Acceleration; acceleration to result from speed in corner
      * @return speed for which the current lateral acceleration follows in the corner
      * @throws NullPointerException if acceleration is null
      */

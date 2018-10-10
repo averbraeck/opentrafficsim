@@ -68,7 +68,7 @@ public class BuildGraph
          * //generate the incoming and outgoing links from nodes for (Link link: allLinks) {
          * link.getStartNode().getIncomingLinks().add(link); link.getEndNode().getIncomingLinks().add(link); }
          */// make a directed graph of the entire network
-           // FIRST CREATE the LinkGraph
+          // FIRST CREATE the LinkGraph
         for (NTMLink shpLink : allLinks)
         {
             // area node: copies a node from a link and connects the area
@@ -345,9 +345,9 @@ public class BuildGraph
     }
 
     /**
-     * @param model
-     * @param cAVertex
-     * @param cBVertex
+     * @param model NTMModel;
+     * @param cAVertex NTMNode;
+     * @param cBVertex NTMNode;
      */
     private static void addGraphConnector(NTMModel model, NTMNode cAVertex, NTMNode cBVertex, Speed speedA, Speed speedB,
             LinkEdge le, TrafficBehaviourType trafficBehaviourType)
@@ -401,12 +401,12 @@ public class BuildGraph
     }
 
     /**
-     * @param flowNodeA
-     * @param flowNodeB
+     * @param flowNodeA NTMNode;
+     * @param flowNodeB NTMNode;
      * @param centroidA
      * @param centroidB
      * @param le
-     * @param type
+     * @param type TrafficBehaviourType;
      */
     private static void addLinkEdge(NTMNode flowNodeA, NTMNode flowNodeB, LinkEdge<NTMLink> linkEdge, TrafficBehaviourType type,
             SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>> graph)
@@ -457,9 +457,9 @@ public class BuildGraph
     }
 
     /**
-     * @param shpLink link
+     * @param shpLink NTMLink; link
      * @param node node
-     * @param map receives node
+     * @param map Map&lt;String,NTMNode&gt;; receives node
      */
     private static BoundedNode addNodeToLinkGraph(NTMLink shpLink, NTMNode shpLinkNode, Map<String, NTMNode> map,
             Collection<Area> areas, NTMModel model)
@@ -494,9 +494,9 @@ public class BuildGraph
     }
 
     /**
-     * @param shpLink link
+     * @param shpLink NTMLink; link
      * @param node node
-     * @param nodeGraphMap receives node
+     * @param nodeGraphMap Map&lt;String,NTMNode&gt;; receives node
      */
     private static BoundedNode addNodeToAreaGraph(NTMLink shpLink, NTMNode shpLinkNode, Map<String, NTMNode> nodeGraphMap,
             Map<Area, NTMNode> areaNodeCentroidMap, Collection<Area> areas, NTMModel model)
@@ -529,7 +529,7 @@ public class BuildGraph
     }
 
     /**
-     * @param area the point to search.
+     * @param area Area; the point to search.
      * @return the area that contains point p, or null if not found.
      */
     private static BoundedNode findCentroidInArea(NTMModel model, final Area area, Collection<NTMNode> collection)
@@ -568,7 +568,7 @@ public class BuildGraph
     }
 
     /**
-     * @param c the point to search.
+     * @param c Coordinate; the point to search.
      * @return the area that contains point p, or null if not found.
      */
     private static Area findArea(final Coordinate c, Collection<Area> areas)
@@ -591,8 +591,8 @@ public class BuildGraph
     }
 
     /**
-     * @param geom1
-     * @param geom2
+     * @param geom1 Geometry;
+     * @param geom2 Geometry;
      * @return
      */
     private static boolean findBoundaryAreas(Geometry geom1, Geometry geom2)
@@ -627,7 +627,7 @@ public class BuildGraph
 
     /**
      * finds the Areas that do not touch any other area and connects them with the nearest areas!!
-     * @param areaNodeCentroidMap
+     * @param areaNodeCentroidMap Map&lt;Area,NTMNode&gt;;
      * @param areaGraph2
      * @param linkGraph2
      * @param areas2
@@ -795,11 +795,11 @@ public class BuildGraph
     }
 
     /**
-     * @param areaStart
-     * @param areaEnd
-     * @param le
-     * @param linkMap
-     * @param areaNodeCentroidMap
+     * @param areaStart Area;
+     * @param areaEnd Area;
+     * @param le LinkEdge&lt;NTMLink&gt;;
+     * @param linkMap Map&lt;String,LinkEdge&lt;NTMLink&gt;&gt;;
+     * @param areaNodeCentroidMap Map&lt;Area,NTMNode&gt;;
      */
     private static void createFlowConnectors(final Area areaStart, final Area areaEnd, final LinkEdge<NTMLink> le,
             final Map<String, LinkEdge<NTMLink>> linkMap, final Map<Area, NTMNode> areaNodeCentroidMap,
@@ -957,7 +957,7 @@ public class BuildGraph
 
     // Create new Areas where they are lacking
     /**
-     * @param centroid
+     * @param centroid NTMNode;
      * @return the additional areas
      */
     public static Area createMissingArea(final NTMNode centroid)
@@ -981,9 +981,9 @@ public class BuildGraph
     /*
      * // Create new Areas where they are lacking
      *//**
-        * @param centroid
-        * @return the additional areas
-        */
+       * @param centroid
+       * @return the additional areas
+       */
     public SimpleDirectedWeightedGraph copySimpleDirectedWeightedGraph(final SimpleDirectedWeightedGraph graph)
     {
         SimpleDirectedWeightedGraph copyOfGraph = null;
@@ -992,7 +992,7 @@ public class BuildGraph
 
     /**
      * For every area, find the touching areas
-     * @param gisObjects
+     * @param gisObjects ArrayList&lt;GeoObject&gt;;
      */
     private static void findTouching(ArrayList<GeoObject> gisObjects)
     {

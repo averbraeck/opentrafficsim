@@ -51,7 +51,7 @@ public class LinkData implements LinkDataInterface
 
     /**
      * Add the lane to the list of lanes for this link.
-     * @param laneData the lane to add
+     * @param laneData LaneData; the lane to add
      */
     public void addLaneData(final LaneData laneData)
     {

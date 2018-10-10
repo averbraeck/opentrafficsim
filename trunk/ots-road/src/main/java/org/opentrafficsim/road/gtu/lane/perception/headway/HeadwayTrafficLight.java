@@ -41,7 +41,7 @@ public class HeadwayTrafficLight extends AbstractHeadwayCopy
 
     /**
      * Get the id of the traffic light; throw an exception if traffic light is null.
-     * @param trafficLight the traffic light object for further observation, can not be null.
+     * @param trafficLight TrafficLight; the traffic light object for further observation, can not be null.
      * @return he id of the traffic light.
      * @throws GTUException when the trafficLight object is null
      */

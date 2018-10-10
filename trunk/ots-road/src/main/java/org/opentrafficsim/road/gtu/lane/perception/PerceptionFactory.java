@@ -19,7 +19,7 @@ public interface PerceptionFactory extends ModelComponentFactory
 
     /**
      * Generate perception.
-     * @param gtu GTU
+     * @param gtu LaneBasedGTU; GTU
      * @return perception
      */
     LanePerception generatePerception(LaneBasedGTU gtu);

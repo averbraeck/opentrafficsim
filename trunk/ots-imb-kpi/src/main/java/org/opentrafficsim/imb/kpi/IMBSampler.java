@@ -76,7 +76,7 @@ public class IMBSampler extends Sampler
 
     /**
      * Main program for IMBSampler. Listens to events on the IMB bus and calculates and publishes statistics.
-     * @param args the arguments with [0]=IP address, [1]=port
+     * @param args String[]; the arguments with [0]=IP address, [1]=port
      * @throws IMBException in case of invalid arguments
      */
     public static void main(final String[] args) throws IMBException
@@ -169,13 +169,13 @@ public class IMBSampler extends Sampler
 
     /**
      * Sample the data received from a GTU.
-     * @param timeStamp time of the sampling
-     * @param gtuId gtu
-     * @param laneId lane
-     * @param forward driving direction
-     * @param longitudinalPosition position
-     * @param speed speed
-     * @param acceleration acceleration
+     * @param timeStamp double; time of the sampling
+     * @param gtuId String; gtu
+     * @param laneId String; lane
+     * @param forward boolean; driving direction
+     * @param longitudinalPosition double; position
+     * @param speed double; speed
+     * @param acceleration double; acceleration
      */
     protected void sample(double timeStamp, String gtuId, String laneId, boolean forward, double longitudinalPosition,
             double speed, double acceleration)
@@ -228,7 +228,7 @@ public class IMBSampler extends Sampler
     }
 
     /**
-     * @param imbKpiTransceiver add imbKpiTransceiver.
+     * @param imbKpiTransceiver ImbKpiTransceiver; add imbKpiTransceiver.
      */
     public void addImbKpiTransceiver(final ImbKpiTransceiver imbKpiTransceiver)
     {
@@ -237,7 +237,7 @@ public class IMBSampler extends Sampler
 
     /**
      * Updates clock and triggers timed events.
-     * @param timeStamp most recent time stamp
+     * @param timeStamp double; most recent time stamp
      */
     protected void updateClock(double timeStamp)
     {

@@ -147,10 +147,10 @@ public class ParameterFactoryByType implements ParameterFactory
 
     /**
      * Sets a parameter including type casting.
-     * @param parameterType ParameterType; parameter type
-     * @param value T; value
+     * @param parameterType ParameterType&lt;?&gt;; parameter type
+     * @param value Object; value
      * @param parameters Parameters; parameters to set in
-     * @param correls Correlations; correlations
+     * @param correls Map&lt;ParameterType&lt;?&gt;, Correlation&lt;?, ?&gt;&gt;; correlations
      * @param <C> parameter value type of first parameter
      * @param <T> parameter value type of then parameter
      */
@@ -185,9 +185,9 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
-     * @param gtuType the gtu type
-     * @param parameterType the parameter type
-     * @param value the value of the parameter
+     * @param gtuType GTUType; the gtu type
+     * @param parameterType ParameterType&lt;T&gt;; the parameter type
+     * @param value T; the value of the parameter
      * @param <T> parameter value type
      */
     public <T extends DoubleScalarInterface> void addParameter(final GTUType gtuType, final ParameterType<T> parameterType,
@@ -198,9 +198,9 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
-     * @param gtuType the gtu type
-     * @param parameterType the parameter type
-     * @param value the value of the parameter
+     * @param gtuType GTUType; the gtu type
+     * @param parameterType ParameterTypeDouble; the parameter type
+     * @param value double; the value of the parameter
      */
     public void addParameter(final GTUType gtuType, final ParameterTypeDouble parameterType, final double value)
     {
@@ -209,9 +209,9 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
-     * @param gtuType the gtu type
-     * @param parameterType the parameter type
-     * @param distribution the distribution of the parameter
+     * @param gtuType GTUType; the gtu type
+     * @param parameterType ParameterTypeNumeric&lt;T&gt;; the parameter type
+     * @param distribution ContinuousDistDoubleScalar.Rel&lt;T,U&gt;; the distribution of the parameter
      * @param <U> unit type
      * @param <T> parameter value type
      */
@@ -223,9 +223,9 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
-     * @param gtuType the gtu type
-     * @param parameterType the parameter type
-     * @param distribution the distribution of the parameter
+     * @param gtuType GTUType; the gtu type
+     * @param parameterType ParameterTypeDouble; the parameter type
+     * @param distribution DistContinuous; the distribution of the parameter
      */
     public void addParameter(final GTUType gtuType, final ParameterTypeDouble parameterType, final DistContinuous distribution)
     {
@@ -235,8 +235,8 @@ public class ParameterFactoryByType implements ParameterFactory
 
     /**
      * Add parameter for all GTU types.
-     * @param parameterType the parameter type
-     * @param value the value of the parameter
+     * @param parameterType ParameterType&lt;T&gt;; the parameter type
+     * @param value T; the value of the parameter
      * @param <T> type
      */
     public <T extends DoubleScalarInterface> void addParameter(final ParameterType<T> parameterType, final T value)
@@ -246,8 +246,8 @@ public class ParameterFactoryByType implements ParameterFactory
 
     /**
      * Add parameter for all GTU types.
-     * @param parameterType the parameter type
-     * @param value the value of the parameter
+     * @param parameterType ParameterTypeDouble; the parameter type
+     * @param value double; the value of the parameter
      */
     public void addParameter(final ParameterTypeDouble parameterType, final double value)
     {
@@ -256,8 +256,8 @@ public class ParameterFactoryByType implements ParameterFactory
 
     /**
      * Add parameter for all GTU types.
-     * @param parameterType the parameter type
-     * @param distribution the distribution of the parameter
+     * @param parameterType ParameterTypeNumeric&lt;T&gt;; the parameter type
+     * @param distribution ContinuousDistDoubleScalar.Rel&lt;T,U&gt;; the distribution of the parameter
      * @param <U> unit type
      * @param <T> parameter value type
      */
@@ -269,8 +269,8 @@ public class ParameterFactoryByType implements ParameterFactory
 
     /**
      * Add parameter for all GTU types.
-     * @param parameterType the parameter type
-     * @param distribution the distribution of the parameter
+     * @param parameterType ParameterTypeDouble; the parameter type
+     * @param distribution DistContinuous; the distribution of the parameter
      */
     public void addParameter(final ParameterTypeDouble parameterType, final DistContinuous distribution)
     {
@@ -281,9 +281,9 @@ public class ParameterFactoryByType implements ParameterFactory
      * Correlates one parameter to another. The parameter 'first' may also be {@code null}, in which case the parameter can be
      * correlated to an external source.
      * @param gtuType GTUType; GTU type
-     * @param first ParameterType; independent parameter
-     * @param then ParameterType; dependent parameter
-     * @param correlation Correlation; correlation
+     * @param first ParameterType&lt;C&gt;; independent parameter
+     * @param then ParameterType&lt;T&gt;; dependent parameter
+     * @param correlation Correlation&lt;C, T&gt;; correlation
      * @param <C> parameter value type of first parameter
      * @param <T> parameter value type of then parameter
      */
@@ -303,9 +303,9 @@ public class ParameterFactoryByType implements ParameterFactory
 
     /**
      * Correlates one parameter to another for all GTU types.
-     * @param first ParameterType; independent parameter
-     * @param then ParameterType; dependent parameter
-     * @param correlation Correlation; correlation
+     * @param first ParameterType&lt;C&gt;; independent parameter
+     * @param then ParameterType&lt;T&gt;; dependent parameter
+     * @param correlation Correlation&lt;C, T&gt;; correlation
      * @param <C> parameter value type of first parameter
      * @param <T> parameter value type of then parameter
      */
@@ -317,7 +317,7 @@ public class ParameterFactoryByType implements ParameterFactory
 
     /**
      * Assures the gtu type is in the map.
-     * @param gtuType the gtu type
+     * @param gtuType GTUType; the gtu type
      */
     private void assureTypeInMap(final GTUType gtuType)
     {

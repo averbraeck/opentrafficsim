@@ -227,7 +227,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
         /**
          * Make the generator.
-         * @param stream random number stream
+         * @param stream StreamInterface; random number stream
          * @throws GTUException on exception
          * @throws ParameterException on exception
          * @throws ProbabilityException on exception

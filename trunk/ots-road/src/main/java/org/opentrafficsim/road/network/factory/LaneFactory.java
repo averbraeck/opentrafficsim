@@ -55,13 +55,13 @@ public final class LaneFactory
 
     /**
      * Create a Link along intermediate coordinates from one Node to another.
-     * @param network the network
+     * @param network Network; the network
      * @param name String; name of the new Link
      * @param from Node; start Node of the new Link
      * @param to Node; end Node of the new Link
      * @param intermediatePoints OTSPoint3D[]; array of intermediate coordinates (may be null); the intermediate points may
      *            contain the coordinates of the from node and to node
-     * @param simulator the simulator for this network
+     * @param simulator OTSSimulatorInterface; the simulator for this network
      * @return Link; the newly constructed Link
      * @throws OTSGeometryException when the design line is degenerate (only one point or duplicate point)
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
@@ -118,9 +118,9 @@ public final class LaneFactory
 
     /**
      * Create one Lane.
-     * @param link Link; the link that owns the new Lane
+     * @param link CrossSectionLink; the link that owns the new Lane
      * @param id String; the id of this lane, should be unique within the link
-     * @param laneType LaneType&lt;String&gt;; the type of the new Lane
+     * @param laneType LaneType; the type of the new Lane
      * @param latPosAtStart Length; the lateral position of the new Lane with respect to the design line of the link at the
      *            start of the link
      * @param latPosAtEnd Length; the lateral position of the new Lane with respect to the design line of the link at the end of
@@ -159,10 +159,10 @@ public final class LaneFactory
 
     /**
      * Create a simple Lane.
-     * @param network the network
+     * @param network Network; the network
      * @param name String; name of the Lane (and also of the Link that owns it)
-     * @param from Node; starting node of the new Lane
-     * @param to Node; ending node of the new Lane
+     * @param from OTSNode; starting node of the new Lane
+     * @param to OTSNode; ending node of the new Lane
      * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road; the intermediate
      *            points may contain the coordinates of the from node and to node
      * @param laneType LaneType; type of the new Lane
@@ -187,10 +187,10 @@ public final class LaneFactory
      * Create a simple road with the specified number of Lanes.<br>
      * This method returns an array of Lane. These lanes are embedded in a Link that can be accessed through the getParentLink
      * method of the Lane.
-     * @param network the network
+     * @param network Network; the network
      * @param name String; name of the Link
-     * @param from Node; starting node of the new Lane
-     * @param to Node; ending node of the new Lane
+     * @param from OTSNode; starting node of the new Lane
+     * @param to OTSNode; ending node of the new Lane
      * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road; the intermediate
      *            points may contain the coordinates of the from node and to node
      * @param laneCount int; number of lanes in the road
@@ -239,15 +239,15 @@ public final class LaneFactory
      * Create a simple road with the specified number of Lanes.<br>
      * This method returns an array of Lane. These lanes are embedded in a Link that can be accessed through the getParentLink
      * method of the Lane.
-     * @param network the network
+     * @param network Network; the network
      * @param name String; name of the Link
-     * @param from Node; starting node of the new Lane
-     * @param to Node; ending node of the new Lane
+     * @param from OTSNode; starting node of the new Lane
+     * @param to OTSNode; ending node of the new Lane
      * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road; the intermediate
      *            points may contain the coordinates of the from node and to node
      * @param laneCount int; number of lanes in the road
      * @param laneType LaneType; type of the new Lanes
-     * @param speedLimit Speed the speed limit (applies to all generated lanes)
+     * @param speedLimit Speed; Speed the speed limit (applies to all generated lanes)
      * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
@@ -266,12 +266,12 @@ public final class LaneFactory
      * Create a simple road with the specified number of Lanes, based on a Bezier curve.<br>
      * This method returns an array of Lane. These lanes are embedded in a Link that can be accessed through the getParentLink
      * method of the Lane.
-     * @param network the network
+     * @param network Network; the network
      * @param name String; name of the Link
-     * @param n1 Node; control node for the start direction
-     * @param n2 Node; starting node of the new Lane
-     * @param n3 Node; ending node of the new Lane
-     * @param n4 Node; control node for the end direction
+     * @param n1 OTSNode; control node for the start direction
+     * @param n2 OTSNode; starting node of the new Lane
+     * @param n3 OTSNode; ending node of the new Lane
+     * @param n4 OTSNode; control node for the end direction
      * @param laneCount int; number of lanes in the road
      * @param laneOffsetAtStart int; extra offset from design line in lane widths at start of link
      * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
@@ -305,10 +305,10 @@ public final class LaneFactory
     }
 
     /**
-     * @param n1 node 1
-     * @param n2 node 2
-     * @param n3 node 3
-     * @param n4 node 4
+     * @param n1 OTSNode; node 1
+     * @param n2 OTSNode; node 2
+     * @param n3 OTSNode; node 3
+     * @param n4 OTSNode; node 4
      * @return line between n2 and n3 with start-direction n1--&gt;n2 and end-direction n3--&gt;n4
      * @throws OTSGeometryException on failure of Bezier curve creation
      */

@@ -176,8 +176,8 @@ final class LinkTag implements Serializable
 
     /**
      * Parse the LINK tags from Vissim fiels (.inpx) .
-     * @param nodeList nodeList the top-level nodes of the XML-file
-     * @param parser the parser with the lists of information
+     * @param nodeList NodeList; nodeList the top-level nodes of the XML-file
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
@@ -469,9 +469,9 @@ final class LinkTag implements Serializable
 
     /**
      * Creates the Node info for start and end node and intermediate vertices of the StartLink
-     * @param linkTag
-     * @param designLine
-     * @param nodeTag
+     * @param linkTag LinkTag;
+     * @param designLine LineString;
+     * @param nodeTag NodeTag;
      */
     private static void createGeometryStartLink(LinkTag linkTag, LineString designLine, NodeTag nodeTag)
     {
@@ -514,9 +514,9 @@ final class LinkTag implements Serializable
 
     /**
      * Creates the Node info for start and end node and intermediate vertices of the EndLink
-     * @param linkTag
-     * @param designLine
-     * @param nodeTag
+     * @param linkTag LinkTag;
+     * @param designLine LineString;
+     * @param nodeTag NodeTag;
      */
     private static void createGeometryEndLink(LinkTag linkTag, LineString designLine, NodeTag nodeTag)
     {
@@ -616,8 +616,8 @@ final class LinkTag implements Serializable
     /**
      * This method parses a length string that can have values such as: BEGIN, END, 10m, END-10m, 98%. Only use the method after
      * the length of the cross section elements is known!
-     * @param posStr the position string to parse. Lengths are relative to the center line of the cross section element.
-     * @param cse the cross section element to retrieve the center line
+     * @param posStr String; the position string to parse. Lengths are relative to the center line of the cross section element.
+     * @param cse CrossSectionElement; the cross section element to retrieve the center line
      * @return the corresponding position as a length on the center line
      * @throws NetworkException when parsing fails
      */

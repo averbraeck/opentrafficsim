@@ -164,8 +164,8 @@ public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
     /**
      * Check if a GTUCompatibility does not allow things that the GTUCompatibility of a parent object disallows, e.g. a
      * permitted driving direction on a Lane should not be forbidden on the Link that the Lane is part of.
-     * @param parentCompatibility GTUCompatibility&lt;?&gt;; the GTUCompatibility of the parent object
-     * @param tryParentsOfGTUType whether to try parent GTU types
+     * @param parentCompatibility Compatibility&lt;GTUType, ?&gt;; the GTUCompatibility of the parent object
+     * @param tryParentsOfGTUType boolean; whether to try parent GTU types
      * @throws GTUException if a conflict is found
      */
     public final void isCompatibleWith(final Compatibility<GTUType, ?> parentCompatibility, final boolean tryParentsOfGTUType)

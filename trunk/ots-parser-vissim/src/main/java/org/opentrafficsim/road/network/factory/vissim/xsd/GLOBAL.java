@@ -92,7 +92,7 @@ public class GLOBAL
 
     /**
      * Sets the value of the speedgtucolorer property.
-     * @param value allowed object is {@link GLOBAL.SPEEDGTUCOLORER }
+     * @param value GLOBAL.SPEEDGTUCOLORER; allowed object is {@link GLOBAL.SPEEDGTUCOLORER }
      */
     public void setSPEEDGTUCOLORER(GLOBAL.SPEEDGTUCOLORER value)
     {
@@ -110,7 +110,7 @@ public class GLOBAL
 
     /**
      * Sets the value of the accelerationgtucolorer property.
-     * @param value allowed object is {@link GLOBAL.ACCELERATIONGTUCOLORER }
+     * @param value GLOBAL.ACCELERATIONGTUCOLORER; allowed object is {@link GLOBAL.ACCELERATIONGTUCOLORER }
      */
     public void setACCELERATIONGTUCOLORER(GLOBAL.ACCELERATIONGTUCOLORER value)
     {
@@ -128,7 +128,7 @@ public class GLOBAL
 
     /**
      * Sets the value of the lanechangeurgegtucolorer property.
-     * @param value allowed object is {@link GLOBAL.LANECHANGEURGEGTUCOLORER }
+     * @param value GLOBAL.LANECHANGEURGEGTUCOLORER; allowed object is {@link GLOBAL.LANECHANGEURGEGTUCOLORER }
      */
     public void setLANECHANGEURGEGTUCOLORER(GLOBAL.LANECHANGEURGEGTUCOLORER value)
     {
@@ -146,7 +146,7 @@ public class GLOBAL
 
     /**
      * Sets the value of the base property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setBase(String value)
     {
@@ -192,7 +192,7 @@ public class GLOBAL
 
         /**
          * Sets the value of the maxdeceleration property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setMAXDECELERATION(String value)
         {
@@ -210,7 +210,7 @@ public class GLOBAL
 
         /**
          * Sets the value of the maxacceleration property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setMAXACCELERATION(String value)
         {
@@ -258,7 +258,7 @@ public class GLOBAL
 
         /**
          * Sets the value of the minlanechangedistance property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setMINLANECHANGEDISTANCE(String value)
         {
@@ -276,7 +276,7 @@ public class GLOBAL
 
         /**
          * Sets the value of the horizon property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setHORIZON(String value)
         {
@@ -320,7 +320,7 @@ public class GLOBAL
 
         /**
          * Sets the value of the maxspeed property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setMAXSPEED(String value)
         {

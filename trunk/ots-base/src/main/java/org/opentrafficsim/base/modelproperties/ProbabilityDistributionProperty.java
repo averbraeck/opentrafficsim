@@ -52,7 +52,7 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]> 
 
     /**
      * Verify that a provided array of probability values is acceptable.
-     * @param values double[]; the array of values to verify
+     * @param values Double[]; the array of values to verify
      * @throws PropertyException when the number of values is 0, any value is outside [0..1], or the sum of the values does not
      *             add up to 1.0 within a (very small) error margin
      */

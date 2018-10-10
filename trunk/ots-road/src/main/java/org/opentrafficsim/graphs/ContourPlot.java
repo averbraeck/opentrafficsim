@@ -455,7 +455,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
     /**
      * Return the y-axis bin number (the row number) of an item. <br>
      * Do not rely on the (current) fact that the data is stored column by column!
-     * @param item Integer; the item
+     * @param item int; the item
      * @return Integer; the bin number along the y axis of the item
      */
     protected final int yAxisBin(final int item)
@@ -471,7 +471,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
     /**
      * Return the x-axis bin number (the column number) of an item. <br>
      * Do not rely on the (current) fact that the data is stored column by column!
-     * @param item Integer; the item
+     * @param item int; the item
      * @return Integer; the bin number along the x axis of the item
      */
     protected final int xAxisBin(final int item)
@@ -595,8 +595,8 @@ public abstract class ContourPlot extends AbstractOTSPlot
 
     /**
      * Add data for a GTU on a lane to this graph.
-     * @param gtu the gtu to add the data for
-     * @param lane the lane on which the GTU is registered
+     * @param gtu LaneBasedGTU; the gtu to add the data for
+     * @param lane Lane; the lane on which the GTU is registered
      */
     protected final void addData(final LaneBasedGTU gtu, final Lane lane)
     {
@@ -737,17 +737,17 @@ public abstract class ContourPlot extends AbstractOTSPlot
     /**
      * Increase storage for sample data. <br>
      * This is only implemented for the time axis.
-     * @param newUpperLimit DoubleScalar&lt;?&gt; new upper limit for the X range
+     * @param newUpperLimit DoubleScalarInterface; DoubleScalar&lt;?&gt; new upper limit for the X range
      */
     public abstract void extendXRange(DoubleScalarInterface newUpperLimit);
 
     /**
      * Increment the data of one bin.
-     * @param timeBin Integer; the rank of the bin on the time-scale
-     * @param distanceBin Integer; the rank of the bin on the distance-scale
-     * @param duration Double; the time spent in this bin
-     * @param distanceCovered Double; the distance covered in this bin
-     * @param acceleration Double; the average acceleration in this bin
+     * @param timeBin int; the rank of the bin on the time-scale
+     * @param distanceBin int; the rank of the bin on the distance-scale
+     * @param duration double; the time spent in this bin
+     * @param distanceCovered double; the distance covered in this bin
+     * @param acceleration double; the average acceleration in this bin
      */
     public abstract void incrementBinData(int timeBin, int distanceBin, double duration, double distanceCovered,
             double acceleration);
@@ -771,10 +771,10 @@ public abstract class ContourPlot extends AbstractOTSPlot
 
     /**
      * Combine values in a range of time bins and distance bins to obtain a combined density value of the ranges.
-     * @param firstTimeBin Integer; the first time bin to use
-     * @param endTimeBin Integer; one higher than the last time bin to use
-     * @param firstDistanceBin Integer; the first distance bin to use
-     * @param endDistanceBin Integer; one higher than the last distance bin to use
+     * @param firstTimeBin int; the first time bin to use
+     * @param endTimeBin int; one higher than the last time bin to use
+     * @param firstDistanceBin int; the first distance bin to use
+     * @param endDistanceBin int; one higher than the last distance bin to use
      * @return Double; the density value (or Double.NaN if no value can be computed)
      */
     public abstract double computeZValue(int firstTimeBin, int endTimeBin, int firstDistanceBin, int endDistanceBin);

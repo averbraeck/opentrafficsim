@@ -203,7 +203,7 @@ public class TrafficLightSensor extends EventProducer
     /**
      * Figure out which part of a lane is covered by the TrafficLightSensor.
      * @param lane Lane; the lane
-     * @param intermediateLanes TODO
+     * @param intermediateLanes List&lt;Lane&gt;; TODO
      * @return GTUDirectionality; DIR_PLUS if the detector covers the section with higher longitudinal position; DIR_MINUS if
      *         the detector covers the section with lower longitudinal position
      * @throws NetworkException if the lane is not connected to any of the lanes in this.lanes

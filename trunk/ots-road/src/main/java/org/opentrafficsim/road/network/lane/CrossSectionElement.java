@@ -232,7 +232,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
 
     /**
      * Calculate the slice the fractional position is in.
-     * @param fractionalPosition the fractional position between 0 and 1 compared to the design line
+     * @param fractionalPosition double; the fractional position between 0 and 1 compared to the design line
      * @return int; the lower slice number between 0 and number of slices - 1.
      */
     private int calculateSliceNumber(final double fractionalPosition)
@@ -282,7 +282,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
 
     /**
      * Return the width of this CrossSectionElement at a specified longitudinal position.
-     * @param longitudinalPosition DoubleScalar&lt;LengthUnit&gt;; the longitudinal position
+     * @param longitudinalPosition Length; the longitudinal position
      * @return Length; the width of this CrossSectionElement at the specified longitudinal position.
      */
     public final Length getWidth(final Length longitudinalPosition)
@@ -584,9 +584,9 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
 
     /**
      * Clone the CrossSectionElement for e.g., copying a network.
-     * @param newParentLink the new link to which the clone belongs
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
+     * @param newParentLink CrossSectionLink; the new link to which the clone belongs
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
+     * @param animation boolean; whether to (re)create animation or not
      * @return a clone of this object
      * @throws NetworkException in case the cloning fails
      */

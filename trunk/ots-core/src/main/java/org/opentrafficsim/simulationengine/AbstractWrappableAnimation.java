@@ -529,12 +529,12 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
      * Add a button for toggling an animatable class on or off. Button icons for which 'idButton' is true will be placed to the
      * right of the previous button, which should be the corresponding button without the id. An example is an icon for
      * showing/hiding the class 'Lane' followed by the button to show/hide the Lane ids.
-     * @param name the name of the button
-     * @param locatableClass the class for which the button holds (e.g., GTU.class)
-     * @param iconPath the path to the 24x24 icon to display
-     * @param toolTipText the tool tip text to show when hovering over the button
-     * @param initiallyVisible whether the class is initially shown or not
-     * @param idButton id button that needs to be placed next to the previous button
+     * @param name String; the name of the button
+     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the button holds (e.g., GTU.class)
+     * @param iconPath String; the path to the 24x24 icon to display
+     * @param toolTipText String; the tool tip text to show when hovering over the button
+     * @param initiallyVisible boolean; whether the class is initially shown or not
+     * @param idButton boolean; id button that needs to be placed next to the previous button
      */
     public final void addToggleAnimationButtonIcon(final String name, final Class<? extends Locatable> locatableClass,
             final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
@@ -544,10 +544,10 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /**
      * Add a button for toggling an animatable class on or off.
-     * @param name the name of the button
-     * @param locatableClass the class for which the button holds (e.g., GTU.class)
-     * @param toolTipText the tool tip text to show when hovering over the button
-     * @param initiallyVisible whether the class is initially shown or not
+     * @param name String; the name of the button
+     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the button holds (e.g., GTU.class)
+     * @param toolTipText String; the tool tip text to show when hovering over the button
+     * @param initiallyVisible boolean; whether the class is initially shown or not
      */
     public final void addToggleAnimationButtonText(final String name, final Class<? extends Locatable> locatableClass,
             final String toolTipText, final boolean initiallyVisible)
@@ -557,7 +557,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /**
      * Set a class to be shown in the animation to true.
-     * @param locatableClass the class for which the animation has to be shown.
+     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
     public final void showAnimationClass(final Class<? extends Locatable> locatableClass)
     {
@@ -567,7 +567,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /**
      * Set a class to be hidden in the animation to true.
-     * @param locatableClass the class for which the animation has to be hidden.
+     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be hidden.
      */
     public final void hideAnimationClass(final Class<? extends Locatable> locatableClass)
     {
@@ -577,7 +577,8 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /**
      * Toggle a class to be displayed in the animation to its reverse value.
-     * @param locatableClass the class for which a visible animation has to be turned off or vice versa.
+     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which a visible animation has to be turned off or
+     *            vice versa.
      */
     public final void toggleAnimationClass(final Class<? extends Locatable> locatableClass)
     {
@@ -587,9 +588,9 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /**
      * Add a button for toggling a GIS class on or off.
-     * @param header the name of the group of layers
-     * @param gisMap the GIS map for which the toggles have to be added
-     * @param toolTipText the tool tip text to show when hovering over the button
+     * @param header String; the name of the group of layers
+     * @param gisMap GisRenderable2D; the GIS map for which the toggles have to be added
+     * @param toolTipText String; the tool tip text to show when hovering over the button
      */
     public final void addToggleGISButtonText(final String header, final GisRenderable2D gisMap, final String toolTipText)
     {
@@ -610,7 +611,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /**
      * Set a GIS layer to be shown in the animation to true.
-     * @param layerName the name of the GIS-layer that has to be shown.
+     * @param layerName String; the name of the GIS-layer that has to be shown.
      */
     public final void showGISLayer(final String layerName)
     {
@@ -619,7 +620,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /**
      * Set a GIS layer to be hidden in the animation to true.
-     * @param layerName the name of the GIS-layer that has to be hidden.
+     * @param layerName String; the name of the GIS-layer that has to be hidden.
      */
     public final void hideGISLayer(final String layerName)
     {
@@ -628,7 +629,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /**
      * Toggle a GIS layer to be displayed in the animation to its reverse value.
-     * @param layerName the name of the GIS-layer that has to be turned off or vice versa.
+     * @param layerName String; the name of the GIS-layer that has to be turned off or vice versa.
      */
     public final void toggleGISLayer(final String layerName)
     {

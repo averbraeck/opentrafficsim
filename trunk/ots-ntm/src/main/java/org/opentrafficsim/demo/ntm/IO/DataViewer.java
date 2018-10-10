@@ -157,11 +157,11 @@ public class DataViewer implements OTSModelInterface
     }
 
     /**
-     * @param fileArea
-     * @param fileRoads
-     * @param pathData
-     * @param fileNameStarts
-     * @param fileNameDay
+     * @param fileArea String;
+     * @param fileRoads String;
+     * @param pathData String;
+     * @param fileNameStarts String;
+     * @param fileNameDay boolean;
      * @return
      * @throws IOException
      */
@@ -242,10 +242,10 @@ public class DataViewer implements OTSModelInterface
     }
 
     /**
-     * @param inputFile
-     * @param csvSplitBy
-     * @param path
-     * @param year
+     * @param inputFile String;
+     * @param csvSplitBy String;
+     * @param path String;
+     * @param year String;
      * @return values
      * @throws FileNotFoundException
      */

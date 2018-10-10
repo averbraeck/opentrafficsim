@@ -166,9 +166,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /**
      * Returns a set of first leaders per branch, relative to given relative position. Helper method to find first leaders and
      * GTU's alongside.
-     * @param lat LEFT or RIGHT
-     * @param egoRelativePosition position of GTU to start search from
-     * @param otherRelativePosition position of other GTU
+     * @param lat LateralDirectionality; LEFT or RIGHT
+     * @param egoRelativePosition RelativePosition.TYPE; position of GTU to start search from
+     * @param otherRelativePosition RelativePosition.TYPE; position of other GTU
      * @return set of first leaders per branch
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if a parameter was not present or out of bounds
@@ -227,9 +227,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /**
      * Returns a set of lanes to start from for a downstream search, upstream of the reference lane if the tail is before this
      * lane.
-     * @param record start record
-     * @param dx distance between reference point and point to search from
-     * @param set set of lanes that is recursively built up, starting with the reference record
+     * @param record LaneStructureRecord; start record
+     * @param dx Length; distance between reference point and point to search from
+     * @param set Set&lt;LaneStructureRecord&gt;; set of lanes that is recursively built up, starting with the reference record
      */
     private void branchUpstream(final LaneStructureRecord record, final Length dx, final Set<LaneStructureRecord> set)
     {
@@ -250,9 +250,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /**
      * Returns a set of first followers per branch, relative to given relative position. Helper method to find first followers
      * and GTU's alongside.
-     * @param lat LEFT or RIGHT
-     * @param egoRelativePosition position of GTU to start search from
-     * @param otherRelativePosition position of other GTU
+     * @param lat LateralDirectionality; LEFT or RIGHT
+     * @param egoRelativePosition RelativePosition.TYPE; position of GTU to start search from
+     * @param otherRelativePosition RelativePosition.TYPE; position of other GTU
      * @return set of first followers per branch
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if a parameter was not present or out of bounds
@@ -311,9 +311,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /**
      * Returns a set of lanes to start from for an upstream search, downstream of the reference lane if the front is after this
      * lane.
-     * @param record start record
-     * @param dx distance between reference point and point to search from
-     * @param set set of lanes that is recursively built up, starting with the reference record
+     * @param record LaneStructureRecord; start record
+     * @param dx Length; distance between reference point and point to search from
+     * @param set Set&lt;LaneStructureRecord&gt;; set of lanes that is recursively built up, starting with the reference record
      */
     private void branchDownstream(final LaneStructureRecord record, final Length dx, final Set<LaneStructureRecord> set)
     {
@@ -340,9 +340,10 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         Length pos = record.getStartDistance().neg();
         pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx()) : pos.minus(getGtu().getFront().getDx());
         boolean ignoreIfUpstream = true;
-        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> it = new DownstreamNeighborsIterable(getGtu(), record,
-                Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
-                this.headwayGtuType, getGtu(), lane, ignoreIfUpstream);
+        PerceptionCollectable<HeadwayGTU,
+                LaneBasedGTU> it = new DownstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),
+                        getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), this.headwayGtuType, getGtu(),
+                        lane, ignoreIfUpstream);
         this.leaders.put(lane, new TimeStampedObject<>(it, getTimestamp()));
     }
 
@@ -415,7 +416,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * _________________
      * </pre>
      * 
-     * @param lat LEFT or RIGHT
+     * @param lat LateralDirectionality; LEFT or RIGHT
      * @return list of followers on a lane
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
@@ -443,7 +444,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      * _____|___________
      * </pre>
      * 
-     * @param lat LEFT or RIGHT
+     * @param lat LateralDirectionality; LEFT or RIGHT
      * @return list of followers on a lane
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
@@ -458,7 +459,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /**
      * Whether there is a GTU alongside, i.e. with overlap, in an adjacent lane.
-     * @param lat LEFT or RIGHT
+     * @param lat LateralDirectionality; LEFT or RIGHT
      * @return whether there is a GTU alongside, i.e. with overlap, in an adjacent lane
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
@@ -474,7 +475,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /**
      * Set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT. Leaders are sorted by
      * headway value.
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
     public final TimeStampedObject<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> getTimeStampedLeaders(
@@ -486,7 +487,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /**
      * Set of followers on a lane, including adjacent GTU's who's REAR is back of the own vehicle REAR. Follower are are sorted
      * by tailway value.
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @return set of followers on a lane, including adjacent GTU's who's REAR is back of the own vehicle REAR
      */
     public final TimeStampedObject<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> getTimeStampedFollowers(
@@ -497,7 +498,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
     /**
      * Checks that lateral directionality is either left or right and an existing lane.
-     * @param lat LEFT or RIGHT
+     * @param lat LateralDirectionality; LEFT or RIGHT
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
      * @throws IllegalArgumentException if {@code lat} is {@code NONE}

@@ -57,8 +57,8 @@ class NodeTag implements Serializable
     OTSNode node = null;
 
     /**
-     * @param nodeList nodeList the top-level nodes of the XML-file
-     * @param parser the parser with the lists of information
+     * @param nodeList NodeList; nodeList the top-level nodes of the XML-file
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
      * @throws SAXException when parsing of GTU tag fails
      * @throws NetworkException when parsing of GTU tag fails
      */
@@ -104,8 +104,8 @@ class NodeTag implements Serializable
 
     /**
      * Parse a list of Nodes, e.g. for a ROUTE.
-     * @param nodeNames the space separated String with the node names
-     * @param parser the parser with the lists of information
+     * @param nodeNames String; the space separated String with the node names
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
      * @return a list of NodeTags
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
@@ -128,8 +128,8 @@ class NodeTag implements Serializable
     }
 
     /**
-     * @param nodeTag the tag with the info for the node.
-     * @param parser the parser with the lists of information
+     * @param nodeTag NodeTag; the tag with the info for the node.
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
      * @return a constructed node
      * @throws NetworkException when point cannot be instantiated
      * @throws NamingException when animation context cannot be found.

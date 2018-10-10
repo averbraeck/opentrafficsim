@@ -52,10 +52,10 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on network.
-     * @param network network
-     * @param gtuType gtu type
-     * @param simulator simulator
-     * @param widthGenerator width generator
+     * @param network OTSNetwork; network
+     * @param gtuType GTUType; gtu type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param widthGenerator WidthGenerator; width generator
      * @throws OTSGeometryException in case of geometry exception
      */
     public static void buildConflicts(final OTSNetwork network, final GTUType gtuType,
@@ -67,12 +67,12 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on network.
-     * @param network network
-     * @param gtuType gtu type
-     * @param simulator simulator
-     * @param widthGenerator width generator
-     * @param ignoreList lane combinations to ignore
-     * @param permittedList lane combinations that are permitted by traffic control
+     * @param network OTSNetwork; network
+     * @param gtuType GTUType; gtu type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param widthGenerator WidthGenerator; width generator
+     * @param ignoreList LaneCombinationList; lane combinations to ignore
+     * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OTSGeometryException in case of geometry exception
      */
     public static void buildConflicts(final OTSNetwork network, final GTUType gtuType,
@@ -101,10 +101,10 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on list of lanes.
-     * @param lanes lanes
-     * @param gtuType gtu type
-     * @param simulator simulator
-     * @param widthGenerator width generator
+     * @param lanes List&lt;Lane&gt;; lanes
+     * @param gtuType GTUType; gtu type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param widthGenerator WidthGenerator; width generator
      * @throws OTSGeometryException in case of geometry exception
      */
     public static void buildConflicts(final List<Lane> lanes, final GTUType gtuType,
@@ -120,7 +120,7 @@ public final class ConflictBuilder
      * @param gtuType GTUType; the GTU type
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @param widthGenerator WidthGenerator; the width generator
-     * @param ignoreList lane combinations to ignore
+     * @param ignoreList LaneCombinationList; lane combinations to ignore
      * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
      * @throws OTSGeometryException in case of geometry exception
      */
@@ -168,13 +168,13 @@ public final class ConflictBuilder
 
     /**
      * Build conflict on single lane pair. Connecting lanes are determined.
-     * @param lane1 lane 1
-     * @param dir1 gtu direction 1
-     * @param lane2 lane 2
-     * @param dir2 gtu direction 2
-     * @param gtuType gtu type
-     * @param simulator simulator
-     * @param widthGenerator width generator
+     * @param lane1 Lane; lane 1
+     * @param dir1 GTUDirectionality; gtu direction 1
+     * @param lane2 Lane; lane 2
+     * @param dir2 GTUDirectionality; gtu direction 2
+     * @param gtuType GTUType; gtu type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param widthGenerator WidthGenerator; width generator
      * @throws OTSGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -187,14 +187,14 @@ public final class ConflictBuilder
 
     /**
      * Build conflict on single lane pair. Connecting lanes are determined.
-     * @param lane1 lane 1
-     * @param dir1 gtu direction 1
-     * @param lane2 lane 2
-     * @param dir2 gtu direction 2
-     * @param gtuType gtu type
-     * @param simulator simulator
-     * @param widthGenerator width generator
-     * @param permitted conflict permitted by traffic control
+     * @param lane1 Lane; lane 1
+     * @param dir1 GTUDirectionality; gtu direction 1
+     * @param lane2 Lane; lane 2
+     * @param dir2 GTUDirectionality; gtu direction 2
+     * @param gtuType GTUType; gtu type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param widthGenerator WidthGenerator; width generator
+     * @param permitted boolean; conflict permitted by traffic control
      * @throws OTSGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -218,18 +218,18 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on single lane pair.
-     * @param lane1 lane 1
-     * @param dir1 gtu direction 1
-     * @param down1 downstream lanes 1
-     * @param up1 upstream lanes 1
-     * @param lane2 lane 2
-     * @param dir2 gtu direction 2
-     * @param down2 downstream lane 2
-     * @param up2 upstream lanes 2
-     * @param gtuType gtu type
-     * @param permitted conflict permitted by traffic control
-     * @param simulator simulator
-     * @param widthGenerator width generator
+     * @param lane1 Lane; lane 1
+     * @param dir1 GTUDirectionality; gtu direction 1
+     * @param down1 Map&lt;Lane,GTUDirectionality&gt;; downstream lanes 1
+     * @param up1 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 1
+     * @param lane2 Lane; lane 2
+     * @param dir2 GTUDirectionality; gtu direction 2
+     * @param down2 Map&lt;Lane,GTUDirectionality&gt;; downstream lane 2
+     * @param up2 Map&lt;Lane,GTUDirectionality&gt;; upstream lanes 2
+     * @param gtuType GTUType; gtu type
+     * @param permitted boolean; conflict permitted by traffic control
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param widthGenerator WidthGenerator; width generator
      * @throws OTSGeometryException in case of geometry exception
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
@@ -390,16 +390,16 @@ public final class ConflictBuilder
 
     /**
      * Build a merge conflict.
-     * @param lane1 lane 1
-     * @param dir1 gtu direction 1
-     * @param f1start start fraction 1
-     * @param lane2 lane 2
-     * @param dir2 gtu direction 2
-     * @param f2start start fraction 2
-     * @param gtuType gtu type
-     * @param simulator simulator
-     * @param widthGenerator width generator
-     * @param permitted conflict permitted by traffic control
+     * @param lane1 Lane; lane 1
+     * @param dir1 GTUDirectionality; gtu direction 1
+     * @param f1start double; start fraction 1
+     * @param lane2 Lane; lane 2
+     * @param dir2 GTUDirectionality; gtu direction 2
+     * @param f2start double; start fraction 2
+     * @param gtuType GTUType; gtu type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param widthGenerator WidthGenerator; width generator
+     * @param permitted boolean; conflict permitted by traffic control
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      * @throws OTSGeometryException in case of geometry exception
      */
@@ -444,15 +444,15 @@ public final class ConflictBuilder
 
     /**
      * Build a split conflict.
-     * @param lane1 lane 1
-     * @param dir1 gtu direction 1
-     * @param f1end end fraction 1
-     * @param lane2 lane 2
-     * @param dir2 gtu direction 2
-     * @param f2end end fraction 2
-     * @param gtuType gtu type
-     * @param simulator simulator
-     * @param widthGenerator width generator
+     * @param lane1 Lane; lane 1
+     * @param dir1 GTUDirectionality; gtu direction 1
+     * @param f1end double; end fraction 1
+     * @param lane2 Lane; lane 2
+     * @param dir2 GTUDirectionality; gtu direction 2
+     * @param f2end double; end fraction 2
+     * @param gtuType GTUType; gtu type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param widthGenerator WidthGenerator; width generator
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      * @throws OTSGeometryException in case of geometry exception
      */
@@ -484,18 +484,18 @@ public final class ConflictBuilder
 
     /**
      * Build a crossing conflict.
-     * @param lane1 lane 1
-     * @param dir1 gtu direction 1
-     * @param f1start start fraction 1
-     * @param f1end end fraction 1
-     * @param lane2 lane 2
-     * @param dir2 gtu direction 2
-     * @param f2start start fraction 2
-     * @param f2end end fraction 2
-     * @param gtuType gtu type
-     * @param simulator simulator
-     * @param widthGenerator width generator
-     * @param permitted conflict permitted by traffic control
+     * @param lane1 Lane; lane 1
+     * @param dir1 GTUDirectionality; gtu direction 1
+     * @param f1start double; start fraction 1
+     * @param f1end double; end fraction 1
+     * @param lane2 Lane; lane 2
+     * @param dir2 GTUDirectionality; gtu direction 2
+     * @param f2start double; start fraction 2
+     * @param f2end double; end fraction 2
+     * @param gtuType GTUType; gtu type
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param widthGenerator WidthGenerator; width generator
+     * @param permitted boolean; conflict permitted by traffic control
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      * @throws OTSGeometryException in case of geometry exception
      */
@@ -557,10 +557,10 @@ public final class ConflictBuilder
 
     /**
      * Creates geometry for conflict.
-     * @param lane lane
-     * @param fStart longitudinal fraction of start
-     * @param fEnd longitudinal fraction of end
-     * @param widthGenerator width generator
+     * @param lane Lane; lane
+     * @param fStart double; longitudinal fraction of start
+     * @param fEnd double; longitudinal fraction of end
+     * @param widthGenerator WidthGenerator; width generator
      * @return geometry for conflict
      * @throws OTSGeometryException in case of geometry exception
      */
@@ -717,9 +717,9 @@ public final class ConflictBuilder
 
         /**
          * Returns a set of intersections, sorted by the fraction on line 1.
-         * @param line1 line 1
-         * @param line2 line 2
-         * @param combo edge combination number
+         * @param line1 OTSLine3D; line 1
+         * @param line2 OTSLine3D; line 2
+         * @param combo int; edge combination number
          * @return set of intersections, sorted by the fraction on line 1
          * @throws OTSGeometryException in case of geometry exception
          */

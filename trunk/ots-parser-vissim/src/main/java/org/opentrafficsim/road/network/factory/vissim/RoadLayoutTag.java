@@ -142,8 +142,8 @@ class RoadLayoutTag implements Serializable
      * Parse the ROADLAYOUT tags. Delegates to a separate method because the RoadTypeTag can also occur inside a LINK tag. In
      * the latter case, it should not be stored in the central map. When this parseRoadTypes method is called, the tags
      * <b>are</b> stored in the central map in the parser class.
-     * @param nodeList nodeList the top-level nodes of the XML-file
-     * @param parser the parser with the lists of information
+     * @param nodeList NodeList; nodeList the top-level nodes of the XML-file
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
@@ -160,8 +160,8 @@ class RoadLayoutTag implements Serializable
 
     /**
      * Parse the ROADLAYOUT tags.
-     * @param node the ROADLAYOUT nodes of the XML-file
-     * @param parser the parser with the lists of information
+     * @param node Node; the ROADLAYOUT nodes of the XML-file
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
      * @return the parsed RoadTypeTag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails

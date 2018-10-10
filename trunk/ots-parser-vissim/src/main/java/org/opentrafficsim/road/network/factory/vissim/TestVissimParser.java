@@ -196,7 +196,7 @@ public class TestVissimParser extends AbstractWrappableAnimation
         }
 
         /**
-         * @param property
+         * @param property Property;
          * @return a double
          */
         private Double parseDouble(Property property)

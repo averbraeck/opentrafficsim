@@ -42,8 +42,8 @@ public class NestedCache<T>
 
     /**
      * Returns a value.
-     * @param supplier Supplier; supplier of {@code T} for if it wasn't cached yet
-     * @param keys List; list of key objects
+     * @param supplier Supplier&lt;T&gt;; supplier of {@code T} for if it wasn't cached yet
+     * @param keys Object...; list of key objects
      * @return T; value
      */
     public T getValue(final Supplier<T> supplier, final Object... keys)
@@ -53,8 +53,8 @@ public class NestedCache<T>
 
     /**
      * Returns a value. This uses a {@code List} rather than an array to allow flexible inner workings.
-     * @param supplier Supplier; supplier of {@code T} for if it wasn't cached yet
-     * @param keys List; list of key objects
+     * @param supplier Supplier&lt;T&gt;; supplier of {@code T} for if it wasn't cached yet
+     * @param keys List&lt;Object&gt;; list of key objects
      * @return T; value
      */
     @SuppressWarnings("unchecked")

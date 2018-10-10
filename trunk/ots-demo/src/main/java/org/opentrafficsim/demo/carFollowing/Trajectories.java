@@ -475,7 +475,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
         }
 
         /**
-         * @param trajectoryPlot TrajectoryPlot
+         * @param trajectoryPlot TrajectoryPlot; TrajectoryPlot
          */
         public final void setTrajectoryPlot(final TrajectoryPlot trajectoryPlot)
         {

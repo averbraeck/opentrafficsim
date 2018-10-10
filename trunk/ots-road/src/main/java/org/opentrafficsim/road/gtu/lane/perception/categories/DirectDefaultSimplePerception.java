@@ -447,7 +447,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     }
 
     /**
-     * @param lateralDirection the direction to return the accessible adjacent lanes for
+     * @param lateralDirection LateralDirectionality; the direction to return the accessible adjacent lanes for
      * @return TimeStamped accessibleAdjacentLanesRight, the accessible adjacent lanes on the right
      */
     public final TimeStampedObject<Map<Lane, Set<Lane>>> getTimeStampedAccessibleAdjacentLanes(
@@ -478,7 +478,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     }
 
     /**
-     * @param lateralDirection the direction to return the neighboring headways for
+     * @param lateralDirection LateralDirectionality; the direction to return the neighboring headways for
      * @return TimeStamped neighboringHeadwaysRight, the objects (e.g., GTUs) in parallel, in front and behind on the right
      *         neighboring lane, with their headway relative to our GTU, and information about the status of the adjacent
      *         objects
@@ -509,7 +509,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     }
 
     /**
-     * @param lateralDirection the direction to return the parallel headways for
+     * @param lateralDirection LateralDirectionality; the direction to return the parallel headways for
      * @return TimeStamped parallelHeadwaysRight, the parallel objects (e.g., GTUs) on the right, with information about their
      *         status and parallel overlap with our GTU.
      */
@@ -587,7 +587,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
      * @param maxDistance the maximum distance to look for the nearest GTU; positive values search forwards; negative values
      *            search backwards
-     * @param gtu look for gtu if true, for an object if false
+     * @param gtu boolean; look for gtu if true, for an object if false
      * @return HeadwayGTU; the headway and the GTU information
      * @throws GTUException when there is an error with the next lanes in the network.
      * @throws NetworkException when there is a problem with the route planner
@@ -608,11 +608,11 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * traffic is not taken into account in the headway calculation. Instead, gap acceptance algorithms or their equivalent
      * should guide the merging behavior.<br>
      * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
-     * @param lpi the lanePathInfo object that informs the headway algorithm in which lanes to look, and from which position on
-     *            the first lane.
+     * @param lpi LanePathInfo; the lanePathInfo object that informs the headway algorithm in which lanes to look, and from
+     *            which position on the first lane.
      * @param maxDistance the maximum distance to look for the nearest GTU; positive values search forwards; negative values
      *            search backwards
-     * @param gtu look for gtu if true, for an object if false
+     * @param gtu boolean; look for gtu if true, for an object if false
      * @return HeadwayGTU; the headway and the GTU information
      * @throws GTUException when there is an error with the next lanes in the network.
      * @throws NetworkException when there is a problem with the route planner
@@ -689,13 +689,13 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /**
      * Determine the positive headway on a lane, or null if no GTU or blocking object can be found on this lane.
-     * @param laneDirection the lane and direction to look
-     * @param startPosSI the start position to look from in meters
-     * @param cumDistSI the cumulative distance that has already been observed on other lanes
-     * @param now the current time to determine the GTU positions on the lane
+     * @param laneDirection LaneDirection; the lane and direction to look
+     * @param startPosSI double; the start position to look from in meters
+     * @param cumDistSI double; the cumulative distance that has already been observed on other lanes
+     * @param now Time; the current time to determine the GTU positions on the lane
      * @return the HeadwayGTU, containing information on a GTU that is ahead of the given start position, or null if no GTU can
      *         be found on this lane
-     * @param gtu look for gtu if true, for an object if false
+     * @param gtu boolean; look for gtu if true, for an object if false
      * @throws GTUException when the GTUs ahead on the lane cannot be determined
      */
     private Headway headwayLane(final LaneDirection laneDirection, final double startPosSI, final double cumDistSI,
@@ -780,7 +780,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /**
      * Returns a set of statuses for the GTU.
-     * @param gtu gtu
+     * @param gtu LaneBasedGTU; gtu
      * @return set of statuses for the GTU
      */
     private GTUStatus[] getGtuStatus(final LaneBasedGTU gtu)
@@ -847,15 +847,16 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     /**
      * Calculate the minimum headway, possibly on subsequent lanes, in backward direction (so between our back, and the other
      * GTU's front). Note: this method returns a POSITIVE number.
-     * @param lane the lane where we are looking right now
-     * @param direction the direction we are driving on that lane
-     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the rear of
-     *            the GTU when we measure in the lane where the original GTU is positioned, and lane.getLength() for each
-     *            subsequent lane.
-     * @param cumDistanceSI the distance we have already covered searching on previous lanes. Note: This is a POSITIVE number.
+     * @param lane Lane; the lane where we are looking right now
+     * @param direction GTUDirectionality; the direction we are driving on that lane
+     * @param lanePositionSI double; from which position on this lane do we start measuring? This is the current position of the
+     *            rear of the GTU when we measure in the lane where the original GTU is positioned, and lane.getLength() for
+     *            each subsequent lane.
+     * @param cumDistanceSI double; the distance we have already covered searching on previous lanes. Note: This is a POSITIVE
+     *            number.
      * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls. Note: this is a
      *            POSITIVE number.
-     * @param when the current or future time for which to calculate the headway
+     * @param when Time; the current or future time for which to calculate the headway
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
      * @throws GTUException when there is a problem with the geometry of the network
@@ -911,8 +912,8 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     /**
      * Determine which GTUs are parallel with us on another lane, based on fractional positions. <br>
      * Note: When the GTU that calls the method is also registered on the given lane, it is excluded from the return set.
-     * @param lane the lane to look for parallel (partial or full overlapping) GTUs.
-     * @param when the future time for which to calculate the headway
+     * @param lane Lane; the lane to look for parallel (partial or full overlapping) GTUs.
+     * @param when Time; the future time for which to calculate the headway
      * @return the set of GTUs parallel to us on the other lane (partial overlap counts as parallel), based on fractional
      *         positions, or an empty set when no GTUs were found.
      * @throws GTUException when the vehicle's route is inconclusive, when vehicles are not registered correctly on their lanes,
@@ -971,8 +972,9 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * Determine which GTUs are parallel with us in a certain lateral direction, based on fractional positions. <br>
      * Note 1: This method will look to the adjacent lanes of all lanes where the vehicle has been registered.<br>
      * Note 2: When the GTU that calls the method is also registered on the given lane, it is excluded from the return set.
-     * @param lateralDirection the direction of the adjacent lane(s) to look for parallel (partial or full overlapping) GTUs.
-     * @param when the future time for which to calculate the headway
+     * @param lateralDirection LateralDirectionality; the direction of the adjacent lane(s) to look for parallel (partial or
+     *            full overlapping) GTUs.
+     * @param when Time; the future time for which to calculate the headway
      * @return the set of GTUs parallel to us on other lane(s) in the given direction (partial overlap counts as parallel),
      *         based on fractional positions, or an empty set when no GTUs were found.
      * @throws GTUException when the vehicle's route is inconclusive, when vehicles are not registered correctly on their lanes,
@@ -995,9 +997,9 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
      * Collect relevant traffic in adjacent lanes. Parallel traffic is included with headway equal to Double.NaN.
      * @param directionality LateralDirectionality; either <cite>LateralDirectionality.LEFT</cite>, or
      *            <cite>LateralDirectionality.RIGHT</cite>
-     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the (current) time
-     * @param maximumForwardHeadway DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum forward search distance
-     * @param maximumReverseHeadway DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum reverse search distance
+     * @param when Time; the (current) time
+     * @param maximumForwardHeadway Length; the maximum forward search distance
+     * @param maximumReverseHeadway Length; the maximum reverse search distance
      * @return Collection&lt;LaneBasedGTU&gt;;
      * @throws NetworkException on network inconsistency
      * @throws GTUException on problems with the GTU state (e.g., position)
@@ -1065,10 +1067,10 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /**
      * Find a lanePathInfo left or right of the current LanePath.
-     * @param adjacentLane the start adjacent lane for which we calculate the LanePathInfo
+     * @param adjacentLane Lane; the start adjacent lane for which we calculate the LanePathInfo
      * @param direction LateralDirectionality; either <cite>LateralDirectionality.LEFT</cite>, or
      *            <cite>LateralDirectionality.RIGHT</cite>
-     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the (current) time
+     * @param when Time; the (current) time
      * @return the adjacent LanePathInfo
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when the speed limit for a GTU type cannot be retrieved from the network.

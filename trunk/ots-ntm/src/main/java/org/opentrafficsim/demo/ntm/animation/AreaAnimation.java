@@ -121,9 +121,9 @@ public class AreaAnimation extends Renderable2D
     }
 
     /**
-     * @param red
-     * @param green
-     * @param blue
+     * @param red float;
+     * @param green float;
+     * @param blue float;
      * @param h
      * @param s
      * @param v

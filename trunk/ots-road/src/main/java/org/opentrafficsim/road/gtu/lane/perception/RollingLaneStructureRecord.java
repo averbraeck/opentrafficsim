@@ -138,7 +138,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
 
     /**
      * Change the source of the distance.
-     * @param startDistanceSource LaneStructureRecord; record on which the start distance is based
+     * @param startDistanceSource RollingLaneStructureRecord; record on which the start distance is based
      * @param recordLink RecordLink; link type to source
      */
     final void changeStartDistanceSource(final RollingLaneStructureRecord startDistanceSource, final RecordLink recordLink)
@@ -161,7 +161,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
      * Updates the start distance, including all records who's start distance depends on this value. Advised is to only initiate
      * this at the root record. Note that before this is invoked, all record-links should be updated.
      * @param fractionalPosition double; fractional position at the current cross-section
-     * @param laneStructure LaneStructure; parent lane structure
+     * @param laneStructure RollingLaneStructure; parent lane structure
      */
     final void updateStartDistance(final double fractionalPosition, final RollingLaneStructure laneStructure)
     {
@@ -457,8 +457,9 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     }
 
     /**
-     * @param leftRecord set the left LSR or null if not available. Left and right are relative to the <b>driving</b> direction.
-     * @param gtuType GTU type
+     * @param leftRecord RollingLaneStructureRecord; set the left LSR or null if not available. Left and right are relative to
+     *            the &lt;b&gt;driving&lt;/b&gt; direction.
+     * @param gtuType GTUType; GTU type
      */
     public final void setLeft(final RollingLaneStructureRecord leftRecord, final GTUType gtuType)
     {
@@ -493,9 +494,9 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     }
 
     /**
-     * @param rightRecord set the right LSR or null if not available. Left and right are relative to the <b>driving</b>
-     *            direction
-     * @param gtuType GTU type
+     * @param rightRecord RollingLaneStructureRecord; set the right LSR or null if not available. Left and right are relative to
+     *            the &lt;b&gt;driving&lt;/b&gt; direction
+     * @param gtuType GTUType; GTU type
      */
     public final void setRight(final RollingLaneStructureRecord rightRecord, final GTUType gtuType)
     {
@@ -535,7 +536,8 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     }
 
     /**
-     * @param next a next LSRs to add. Next is relative to the driving direction, not to the design line direction.
+     * @param next RollingLaneStructureRecord; a next LSRs to add. Next is relative to the driving direction, not to the design
+     *            line direction.
      * @throws GTUException if the records is cut-off at the end
      */
     public final void addNext(final RollingLaneStructureRecord next) throws GTUException
@@ -561,7 +563,8 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     }
 
     /**
-     * @param prev a previous LSRs to add. Previous is relative to the driving direction, not to the design line direction.
+     * @param prev RollingLaneStructureRecord; a previous LSRs to add. Previous is relative to the driving direction, not to the
+     *            design line direction.
      * @throws GTUException if the records is cut-off at the start
      */
     public final void addPrev(final RollingLaneStructureRecord prev) throws GTUException
@@ -573,7 +576,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
 
     /**
      * Sets this record as being cut-off, i.e. there are no next records due to cut-off.
-     * @param cutOffEnd where this lane was cut-off (in the driving direction) resulting in no next lanes
+     * @param cutOffEnd Length; where this lane was cut-off (in the driving direction) resulting in no next lanes
      * @throws GTUException if there are next records
      */
     public final void setCutOffEnd(final Length cutOffEnd) throws GTUException
@@ -585,7 +588,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
 
     /**
      * Sets this record as being cut-off, i.e. there are no previous records due to cut-off.
-     * @param cutOffStart where this lane was cut-off (in the driving direction) resulting in no prev lanes
+     * @param cutOffStart Length; where this lane was cut-off (in the driving direction) resulting in no prev lanes
      * @throws GTUException if there are previous records
      */
     public final void setCutOffStart(final Length cutOffStart) throws GTUException

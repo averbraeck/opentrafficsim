@@ -27,8 +27,8 @@ public class LaneCombinationList
 
     /**
      * Add any combination of lanes on both links to the list. Order of the links does not matter.
-     * @param link1 link 1
-     * @param link2 link 2
+     * @param link1 CrossSectionLink; link 1
+     * @param link2 CrossSectionLink; link 2
      */
     public final void addLinkCombination(final CrossSectionLink link1, final CrossSectionLink link2)
     {
@@ -43,8 +43,8 @@ public class LaneCombinationList
 
     /**
      * Add lane combination to the list. Order of the lanes does not matter.
-     * @param lane1 lane 1
-     * @param lane2 lane 2
+     * @param lane1 Lane; lane 1
+     * @param lane2 Lane; lane 2
      */
     public final void addLaneCombination(final Lane lane1, final Lane lane2)
     {
@@ -62,8 +62,8 @@ public class LaneCombinationList
 
     /**
      * Returns whether the combination of the two lanes is included. Order of the lanes does not matter.
-     * @param lane1 lane 1
-     * @param lane2 lane 2
+     * @param lane1 Lane; lane 1
+     * @param lane2 Lane; lane 2
      * @return whether the combination of the two lanes is included
      */
     public final boolean contains(final Lane lane1, final Lane lane2)

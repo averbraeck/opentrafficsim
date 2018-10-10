@@ -54,7 +54,7 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /**
      * Updates the infrastructural lane change info.
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @throws GTUException when GTU is not initialized
      */
     public void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GTUException
@@ -82,7 +82,7 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
      * 
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @return infrastructure lane change info of a lane
      */
     public final SortedSet<InfrastructureLaneChangeInfoToledo> getInfrastructureLaneChangeInfo(final RelativeLane lane)
@@ -111,7 +111,7 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
      * 
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @return time stamped infrastructure lane change info of a lane
      */
     public final TimeStampedObject<SortedSet<InfrastructureLaneChangeInfoToledo>> getTimeStampedInfrastructureLaneChangeInfo(
@@ -122,7 +122,7 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /**
      * Updates the speed limit prospect.
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if a parameter is not defined
      */
@@ -133,8 +133,8 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /**
      * Updates the distance over which lane changes remains legally possible.
-     * @param fromLane lane from which the lane change possibility is requested
-     * @param lat LEFT or RIGHT, null not allowed
+     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
+     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if a parameter is not defined
      */
@@ -146,8 +146,8 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /**
      * Updates the distance over which lane changes remains physically possible.
-     * @param fromLane lane from which the lane change possibility is requested
-     * @param lat LEFT or RIGHT, null not allowed
+     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
+     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @throws GTUException if the GTU was not initialized
      * @throws ParameterException if a parameter is not defined
      */
@@ -169,7 +169,7 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /**
      * Returns the prospect for speed limits on a lane (dynamic speed limits may vary between lanes).
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @return prospect for speed limits on a lane
      */
     public final SpeedLimitProspect getSpeedLimitProspect(final RelativeLane lane)
@@ -179,8 +179,8 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /**
      * Returns the distance over which a lane change remains legally possible.
-     * @param fromLane lane from which the lane change possibility is requested
-     * @param lat LEFT or RIGHT, null not allowed
+     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
+     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @return distance over which a lane change remains possible
      * @throws NullPointerException if {@code lat == null}
      */
@@ -191,8 +191,8 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /**
      * Returns the distance over which a lane change remains physically possible.
-     * @param fromLane lane from which the lane change possibility is requested
-     * @param lat LEFT or RIGHT, null not allowed
+     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
+     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @return distance over which a lane change remains possible
      * @throws NullPointerException if {@code lat == null}
      */
@@ -212,7 +212,7 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /**
      * Returns the time stamped prospect for speed limits on a lane (dynamic speed limits may vary between lanes).
-     * @param lane relative lateral lane
+     * @param lane RelativeLane; relative lateral lane
      * @return time stamped prospect for speed limits on a lane
      */
     public final TimeStampedObject<SpeedLimitProspect> getTimeStampedSpeedLimitProspect(final RelativeLane lane)
@@ -222,8 +222,8 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /**
      * Returns the time stamped distance over which a lane change remains legally possible.
-     * @param fromLane lane from which the lane change possibility is requested
-     * @param lat LEFT or RIGHT, null not allowed
+     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
+     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @return time stamped distance over which a lane change remains possible
      * @throws NullPointerException if {@code lat == null}
      */
@@ -235,8 +235,8 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
 
     /**
      * Returns the time stamped distance over which a lane change remains physically possible.
-     * @param fromLane lane from which the lane change possibility is requested
-     * @param lat LEFT or RIGHT, null not allowed
+     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
+     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @return time stamped distance over which a lane change remains possible
      * @throws NullPointerException if {@code lat == null}
      */

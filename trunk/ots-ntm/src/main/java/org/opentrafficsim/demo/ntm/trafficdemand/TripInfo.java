@@ -29,7 +29,7 @@ public class TripInfo
     }
 
     /**
-     * @param add number of Trips to be added
+     * @param add double; number of Trips to be added
      */
     public final void addNumberOfTrips(double add)
     {
@@ -45,7 +45,7 @@ public class TripInfo
     }
 
     /**
-     * @param numberOfTrips set numberOfTrips
+     * @param numberOfTrips double; set numberOfTrips
      */
     public final void setNumberOfTrips(final double numberOfTrips)
     {

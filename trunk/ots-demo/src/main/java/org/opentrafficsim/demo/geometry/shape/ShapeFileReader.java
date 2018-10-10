@@ -70,11 +70,11 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
-     * @param network Network, the network
-     * @param shapeFileName the nodes shapefile to read
-     * @param numberType ???
-     * @param returnCentroid if true only loop through the centroid/zones (in case of mixed nodes and centroids)
-     * @param allCentroids if true: the file contains centroids (a centroid file)
+     * @param network Network; Network, the network
+     * @param shapeFileName String; the nodes shapefile to read
+     * @param numberType String; ???
+     * @param returnCentroid boolean; if true only loop through the centroid/zones (in case of mixed nodes and centroids)
+     * @param allCentroids boolean; if true: the file contains centroids (a centroid file)
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
@@ -153,7 +153,7 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
-     * @param number number string
+     * @param number String; number string
      * @return boolean: true if the number refers to a Centroid; false otherwise
      */
     public static boolean inspectNodeCentroid(final String number)
@@ -170,10 +170,10 @@ public final class ShapeFileReader implements UNITS
 
     /**
      * @param network Network; the network
-     * @param shapeFileName the nodes shapefile to read
-     * @param links : returns the file with real links
-     * @param nodes the map of nodes to retrieve start and end node
-     * @param simulator simulator for the animation registration
+     * @param shapeFileName String; the nodes shapefile to read
+     * @param links Map&lt;String,Link&gt;; : returns the file with real links
+     * @param nodes Map&lt;String,OTSNode&gt;; the map of nodes to retrieve start and end node
+     * @param simulator OTSSimulatorInterface; simulator for the animation registration
      * @throws IOException on error
      */
     public static void readLinks(final Network network, final String shapeFileName, final Map<String, Link> links,
@@ -292,7 +292,7 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
-     * @param shapeFileName the areas shapefile to read
+     * @param shapeFileName String; the areas shapefile to read
      * @throws IOException on error
      */
     public static void shapeFileInfo(final String shapeFileName) throws IOException
@@ -336,7 +336,7 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
-     * @param name the name with quotes
+     * @param name String; the name with quotes
      * @return name without quotes
      */
     public static String removeQuotes(final String name)
@@ -350,9 +350,9 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
-     * @param link the link
-     * @param wegType wegtype
-     * @param simulator animator
+     * @param link CrossSectionLink; the link
+     * @param wegType String; wegtype
+     * @param simulator SimulatorInterface.TimeDoubleUnit; animator
      * @throws NamingException in case of context error
      * @throws RemoteException in case of context error
      * @throws NetworkException on network inconsistency
@@ -413,10 +413,10 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
-     * @param n aantal stroken per zijde
-     * @param spits aantal spitsstroken
-     * @param link link
-     * @param simulator animator
+     * @param n int; aantal stroken per zijde
+     * @param spits int; aantal spitsstroken
+     * @param link CrossSectionLink; link
+     * @param simulator SimulatorInterface.TimeDoubleUnit; animator
      * @throws NetworkException on network inconsistency
      */
     private static void addNLanes(final int n, final int spits, final CrossSectionLink link,
@@ -477,10 +477,10 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
-     * @param n aantal stroken per zijde
-     * @param middenberm aanwezig of niet
-     * @param link link
-     * @param simulator animator
+     * @param n int; aantal stroken per zijde
+     * @param middenberm boolean; aanwezig of niet
+     * @param link CrossSectionLink; link
+     * @param simulator SimulatorInterface.TimeDoubleUnit; animator
      * @throws NetworkException on network inconsistency
      */
     private static void addCityStreetLanes(final int n, final boolean middenberm, final CrossSectionLink link,
@@ -523,8 +523,8 @@ public final class ShapeFileReader implements UNITS
     }
 
     /**
-     * @param link link
-     * @param simulator animator
+     * @param link CrossSectionLink; link
+     * @param simulator SimulatorInterface.TimeDoubleUnit; animator
      * @throws NetworkException on network inconsistency
      */
     private static void addCityStreet(final CrossSectionLink link, final SimulatorInterface.TimeDoubleUnit simulator)

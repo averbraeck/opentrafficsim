@@ -66,7 +66,7 @@ public class InputNTM
     }
 
     /**
-     * @param isOnlyCentroidsFileCentroid set isOnlyCentroidsFileCentroid.
+     * @param isOnlyCentroidsFileCentroid boolean; set isOnlyCentroidsFileCentroid.
      */
     public void setOnlyCentroidsFileCentroid(boolean isOnlyCentroidsFileCentroid)
     {
@@ -82,7 +82,7 @@ public class InputNTM
     }
 
     /**
-     * @param returnCentroidsCentroid set returnCentroidsCentroid.
+     * @param returnCentroidsCentroid boolean; set returnCentroidsCentroid.
      */
     public void setReturnCentroidsCentroid(boolean returnCentroidsCentroid)
     {
@@ -98,7 +98,7 @@ public class InputNTM
     }
 
     /**
-     * @param isOnlyCentroidsFileNode set isOnlyCentroidsFileNode.
+     * @param isOnlyCentroidsFileNode boolean; set isOnlyCentroidsFileNode.
      */
     public void setOnlyCentroidsFileNode(boolean isOnlyCentroidsFileNode)
     {
@@ -114,7 +114,7 @@ public class InputNTM
     }
 
     /**
-     * @param returnCentroidsNode set returnCentroidsNode.
+     * @param returnCentroidsNode boolean; set returnCentroidsNode.
      */
     public void setReturnCentroidsNode(boolean returnCentroidsNode)
     {
@@ -209,7 +209,7 @@ public class InputNTM
     }
 
     /**
-     * @param linkCapacityNumberOfHours set linkCapacityNumberOfHours.
+     * @param linkCapacityNumberOfHours Double; set linkCapacityNumberOfHours.
      */
     public void setLinkCapacityNumberOfHours(Double linkCapacityNumberOfHours)
     {
@@ -233,7 +233,7 @@ public class InputNTM
     }
 
     /**
-     * @param dEBUG set dEBUG.
+     * @param dEBUG boolean; set dEBUG.
      */
     public void setDEBUG(boolean dEBUG)
     {
@@ -249,7 +249,7 @@ public class InputNTM
     }
 
     /**
-     * @param wRITEDATA set wRITEDATA.
+     * @param wRITEDATA boolean; set wRITEDATA.
      */
     public void setWRITEDATA(boolean wRITEDATA)
     {
@@ -265,7 +265,7 @@ public class InputNTM
     }
 
     /**
-     * @param paint set paint.
+     * @param paint boolean; set paint.
      */
     public void setPaint(boolean paint)
     {
@@ -281,7 +281,7 @@ public class InputNTM
     }
 
     /**
-     * @param cOMPRESS_AREAS set cOMPRESS_AREAS.
+     * @param cOMPRESS_AREAS boolean; set cOMPRESS_AREAS.
      */
     public void setCOMPRESS_AREAS(boolean cOMPRESS_AREAS)
     {
@@ -297,7 +297,7 @@ public class InputNTM
     }
 
     /**
-     * @param inputMap set inputMap.
+     * @param inputMap String; set inputMap.
      */
     public void setInputMap(String inputMap)
     {
@@ -313,7 +313,7 @@ public class InputNTM
     }
 
     /**
-     * @param outputMap set outputMap.
+     * @param outputMap String; set outputMap.
      */
     public void setOutputMap(String outputMap)
     {
@@ -329,7 +329,7 @@ public class InputNTM
     }
 
     /**
-     * @param variantNumber set variantNumber.
+     * @param variantNumber String; set variantNumber.
      */
     public void setVariantNumber(String variantNumber)
     {
@@ -345,7 +345,7 @@ public class InputNTM
     }
 
     /**
-     * @param scalingFactorDemand set scalingFactorDemand.
+     * @param scalingFactorDemand double; set scalingFactorDemand.
      */
     public void setScalingFactorDemand(double scalingFactorDemand)
     {
@@ -361,7 +361,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileCentroids set fileCentroids.
+     * @param fileCentroids String; set fileCentroids.
      */
     public void setFileCentroids(String fileCentroids)
     {
@@ -377,7 +377,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileNodes set fileNodes.
+     * @param fileNodes String; set fileNodes.
      */
     public void setFileNodes(String fileNodes)
     {
@@ -393,7 +393,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileLinks set fileLinks.
+     * @param fileLinks String; set fileLinks.
      */
     public void setFileLinks(String fileLinks)
     {
@@ -409,7 +409,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileFeederLinks set fileFeederLinks.
+     * @param fileFeederLinks String; set fileFeederLinks.
      */
     public void setFileFeederLinks(String fileFeederLinks)
     {
@@ -425,7 +425,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileAreas set fileAreas.
+     * @param fileAreas String; set fileAreas.
      */
     public void setFileAreas(String fileAreas)
     {
@@ -441,7 +441,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileAreasBig set fileAreasBig.
+     * @param fileAreasBig String; set fileAreasBig.
      */
     public void setFileAreasBig(String fileAreasBig)
     {
@@ -457,7 +457,7 @@ public class InputNTM
     }
 
     /**
-     * @param increaseDemandAreaByFactor set increaseDemandAreaByFactor.
+     * @param increaseDemandAreaByFactor boolean; set increaseDemandAreaByFactor.
      */
     public void setIncreaseDemandAreaByFactor(boolean increaseDemandAreaByFactor)
     {
@@ -473,7 +473,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileCompressedDemand set fileCompressedDemand.
+     * @param fileCompressedDemand String; set fileCompressedDemand.
      */
     public void setFileCompressedDemand(String fileCompressedDemand)
     {
@@ -489,7 +489,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileProfiles set fileProfiles.
+     * @param fileProfiles String; set fileProfiles.
      */
     public void setFileProfiles(String fileProfiles)
     {
@@ -505,7 +505,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileNameCapacityRestraint set fileNameCapacityRestraint.
+     * @param fileNameCapacityRestraint String; set fileNameCapacityRestraint.
      */
     public void setFileNameCapacityRestraint(String fileNameCapacityRestraint)
     {
@@ -521,7 +521,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileNameCapacityRestraintFactor set fileNameCapacityRestraintFactor.
+     * @param fileNameCapacityRestraintFactor String; set fileNameCapacityRestraintFactor.
      */
     public void setFileNameCapacityRestraintFactor(String fileNameCapacityRestraintFactor)
     {
@@ -537,7 +537,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileNameParametersNTM set fileNameParametersNTM.
+     * @param fileNameParametersNTM String; set fileNameParametersNTM.
      */
     public void setFileNameParametersNTM(String fileNameParametersNTM)
     {
@@ -553,7 +553,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileNameCapacityRestraintBig set fileNameCapacityRestraintBig.
+     * @param fileNameCapacityRestraintBig String; set fileNameCapacityRestraintBig.
      */
     public void setFileNameCapacityRestraintBig(String fileNameCapacityRestraintBig)
     {
@@ -569,7 +569,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileNameCapacityRestraintFactorBig set fileNameCapacityRestraintFactorBig.
+     * @param fileNameCapacityRestraintFactorBig String; set fileNameCapacityRestraintFactorBig.
      */
     public void setFileNameCapacityRestraintFactorBig(String fileNameCapacityRestraintFactorBig)
     {
@@ -585,7 +585,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileNameParametersNTMBig set fileNameParametersNTMBig.
+     * @param fileNameParametersNTMBig String; set fileNameParametersNTMBig.
      */
     public void setFileNameParametersNTMBig(String fileNameParametersNTMBig)
     {
@@ -601,7 +601,7 @@ public class InputNTM
     }
 
     /**
-     * @param numberOfRoutes set numberOfRoutes.
+     * @param numberOfRoutes int; set numberOfRoutes.
      */
     public void setNumberOfRoutes(int numberOfRoutes)
     {
@@ -617,7 +617,7 @@ public class InputNTM
     }
 
     /**
-     * @param weightNewRoutes set weightNewRoutes.
+     * @param weightNewRoutes double; set weightNewRoutes.
      */
     public void setWeightNewRoutes(double weightNewRoutes)
     {
@@ -633,7 +633,7 @@ public class InputNTM
     }
 
     /**
-     * @param varianceRoutes set varianceRoutes.
+     * @param varianceRoutes double; set varianceRoutes.
      */
     public void setVarianceRoutes(double varianceRoutes)
     {
@@ -649,7 +649,7 @@ public class InputNTM
     }
 
     /**
-     * @param reRoute set reRoute.
+     * @param reRoute boolean; set reRoute.
      */
     public void setReRoute(boolean reRoute)
     {
@@ -665,7 +665,7 @@ public class InputNTM
     }
 
     /**
-     * @param reRouteTimeInterval set reRouteTimeInterval.
+     * @param reRouteTimeInterval Duration; set reRouteTimeInterval.
      */
     public void setReRouteTimeInterval(Duration reRouteTimeInterval)
     {
@@ -681,7 +681,7 @@ public class InputNTM
     }
 
     /**
-     * @param maxSpeed set maxSpeed.
+     * @param maxSpeed Speed; set maxSpeed.
      */
     public void setMaxSpeed(Speed maxSpeed)
     {
@@ -697,7 +697,7 @@ public class InputNTM
     }
 
     /**
-     * @param maxCapacity set maxCapacity.
+     * @param maxCapacity Frequency; set maxCapacity.
      */
     public void setMaxCapacity(Frequency maxCapacity)
     {
@@ -713,7 +713,7 @@ public class InputNTM
     }
 
     /**
-     * @param fileDemand set fileDemand.
+     * @param fileDemand String; set fileDemand.
      */
     public void setFileDemand(String fileDemand)
     {
@@ -729,7 +729,7 @@ public class InputNTM
     }
 
     /**
-     * @param lengthUnitLink set lengthUnitLink.
+     * @param lengthUnitLink String; set lengthUnitLink.
      */
     public void setLengthUnitLink(String lengthUnitLink)
     {

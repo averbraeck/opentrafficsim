@@ -148,7 +148,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
     /**
      * Returns the relative lane relative to this lane, for example "the left lane" of "the 3rd right lane" is "the 2nd right
      * lane".
-     * @param relativeLane relative lane to get of this lane
+     * @param relativeLane RelativeLane; relative lane to get of this lane
      * @return relative lane relative to this lane
      */
     public final RelativeLane add(final RelativeLane relativeLane)

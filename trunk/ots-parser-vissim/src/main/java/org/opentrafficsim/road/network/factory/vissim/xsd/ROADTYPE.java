@@ -110,7 +110,7 @@ public class ROADTYPE
 
     /**
      * Sets the value of the name property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setNAME(String value)
     {
@@ -128,7 +128,7 @@ public class ROADTYPE
 
     /**
      * Sets the value of the defaultlanewidth property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setDEFAULTLANEWIDTH(String value)
     {
@@ -146,7 +146,7 @@ public class ROADTYPE
 
     /**
      * Sets the value of the defaultlanekeeping property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setDEFAULTLANEKEEPING(String value)
     {
@@ -164,7 +164,7 @@ public class ROADTYPE
 
     /**
      * Sets the value of the defaultovertaking property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setDEFAULTOVERTAKING(String value)
     {
@@ -182,7 +182,7 @@ public class ROADTYPE
 
     /**
      * Sets the value of the base property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setBase(String value)
     {
@@ -228,7 +228,7 @@ public class ROADTYPE
 
         /**
          * Sets the value of the gtutype property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setGTUTYPE(String value)
         {
@@ -246,7 +246,7 @@ public class ROADTYPE
 
         /**
          * Sets the value of the legalspeedlimit property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLEGALSPEEDLIMIT(String value)
         {

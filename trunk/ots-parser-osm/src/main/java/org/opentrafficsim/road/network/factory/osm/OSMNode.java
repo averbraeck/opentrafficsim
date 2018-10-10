@@ -154,7 +154,7 @@ public class OSMNode implements Serializable
     }
 
     /**
-     * @param trafficSignal set trafficSignal.
+     * @param trafficSignal boolean; set trafficSignal.
      */
     public final void setTrafficSignal(final boolean trafficSignal)
     {
@@ -170,7 +170,7 @@ public class OSMNode implements Serializable
     }
 
     /**
-     * @param stopSign set stopSign.
+     * @param stopSign boolean; set stopSign.
      */
     public final void setStopSign(final boolean stopSign)
     {
@@ -186,7 +186,7 @@ public class OSMNode implements Serializable
     }
 
     /**
-     * @param yieldSign set yieldSign.
+     * @param yieldSign boolean; set yieldSign.
      */
     public final void setYieldSign(final boolean yieldSign)
     {
@@ -202,7 +202,7 @@ public class OSMNode implements Serializable
     }
 
     /**
-     * @param crossing set crossing.
+     * @param crossing boolean; set crossing.
      */
     public final void setCrossing(final boolean crossing)
     {
@@ -210,7 +210,7 @@ public class OSMNode implements Serializable
     }
 
     /**
-     * @param n OTSNode&lt;String&gt;
+     * @param n OTSNode; OTSNode&lt;String&gt;
      */
     public final void setOtsNode(final OTSNode n)
     {

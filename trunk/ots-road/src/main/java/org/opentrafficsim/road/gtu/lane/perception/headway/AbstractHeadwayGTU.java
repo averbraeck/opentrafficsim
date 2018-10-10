@@ -283,7 +283,7 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
 
     /**
      * Creates speed limit info for given GTU.
-     * @param gtu gtu to the the speed limit info for
+     * @param gtu LaneBasedGTU; gtu to the the speed limit info for
      * @return speed limit info for given GTU
      */
     public static SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU gtu)

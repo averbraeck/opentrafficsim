@@ -54,8 +54,8 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
 
     /**
      * Set info of given delayed info type, not pertaining to any lane.
-     * @param delayedInfoType info type
-     * @param info info
+     * @param delayedInfoType DelayedInfoType&lt;T&gt;; info type
+     * @param info TimeStampedObject&lt;T&gt;; info
      * @param <T> data type of delayed info
      */
     public final <T> void setInfo(final DelayedInfoType<T> delayedInfoType, final TimeStampedObject<T> info)
@@ -65,9 +65,9 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
 
     /**
      * Set info of given delayed info type, pertaining to a lane.
-     * @param delayedInfoType info type
-     * @param lane lane, may be {@code null}
-     * @param info info
+     * @param delayedInfoType DelayedInfoType&lt;T&gt;; info type
+     * @param lane RelativeLane; lane, may be {@code null}
+     * @param info TimeStampedObject&lt;T&gt;; info
      * @param <T> data type of delayed info
      */
     public final <T> void setInfo(final DelayedInfoType<T> delayedInfoType, final RelativeLane lane,
@@ -99,7 +99,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
     /**
      * Returns the most recent info of the given type, that is older than the delay. If all data is more recent than the delay,
      * the oldest data is returned. If no data is present, an exception is thrown.
-     * @param delayedInfoType info type
+     * @param delayedInfoType DelayedInfoType&lt;T&gt;; info type
      * @param <T> data type of the info type
      * @return info of the given type
      * @throws PerceptionException if info was not perceived
@@ -112,8 +112,8 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
     /**
      * Returns the most recent info of the given type, that is older than the delay. If all data is more recent than the delay,
      * the oldest data is returned. If no data is present, an exception is thrown.
-     * @param delayedInfoType info type
-     * @param lane lane the data pertains to, may be {@code null}
+     * @param delayedInfoType DelayedInfoType&lt;T&gt;; info type
+     * @param lane RelativeLane; lane the data pertains to, may be {@code null}
      * @param <T> data type of the info type
      * @return info of the given type
      * @throws PerceptionException if info was not perceived
@@ -163,7 +163,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
     /**
      * Move data coupled to a lane to another lane to account for a lane change. The tactical planner needs to call this exactly
      * when it flips logic concerning the origin and target lane.
-     * @param dir direction of lane change
+     * @param dir LateralDirectionality; direction of lane change
      */
     public final void changeLane(final LateralDirectionality dir)
     {

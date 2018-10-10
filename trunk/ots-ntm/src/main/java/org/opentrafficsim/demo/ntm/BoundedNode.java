@@ -112,7 +112,7 @@ public class BoundedNode extends NTMNode
     }
 
     /**
-     * @param area set area.
+     * @param area Area; set area.
      */
     public final void setArea(final Area area)
     {
@@ -128,7 +128,7 @@ public class BoundedNode extends NTMNode
     }
 
     /**
-     * @param cellBehaviour set cellBehaviour.
+     * @param cellBehaviour CellBehaviour; set cellBehaviour.
      */
     public final void setCellBehaviour(final CellBehaviour cellBehaviour)
     {

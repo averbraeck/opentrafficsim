@@ -124,7 +124,7 @@ public class ModelControlA58 extends ModelStarter
 
     /**
      * Tester.
-     * @param args empty
+     * @param args String[]; empty
      * @throws IMBException shen IMB connection fails
      * @throws InterruptedException not used right now
      * @throws InvocationTargetException when running the model control fails
@@ -536,10 +536,10 @@ public class ModelControlA58 extends ModelStarter
 
         /**
          * Get query.
-         * @param net network
-         * @param sampler sampler
-         * @param metaDataSet meta data
-         * @param id id
+         * @param net OTSNetwork; network
+         * @param sampler Sampler; sampler
+         * @param metaDataSet MetaDataSet; meta data
+         * @param id String; id
          * @return query
          */
         Query getQuery(final OTSNetwork net, final Sampler sampler, final MetaDataSet metaDataSet, final String id)

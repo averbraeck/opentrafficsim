@@ -487,7 +487,7 @@ public class OTS2DSet implements Set<OTSShape>, Serializable
 
         /**
          * Construct a OTSShape from a Rectangle2D.
-         * @param rectangle Rectangle3D; the rectangle
+         * @param rectangle Rectangle2D; the rectangle
          * @return OTSShape; a new OTSShape
          */
         private OTSShape rectangleShape(final Rectangle2D rectangle)
