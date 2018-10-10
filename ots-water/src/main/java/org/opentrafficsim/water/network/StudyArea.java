@@ -40,7 +40,7 @@ public class StudyArea implements Serializable
     }
 
     /**
-     * @param terminal terminal
+     * @param terminal Terminal; terminal
      */
     public void addTerminal(final Terminal terminal)
     {

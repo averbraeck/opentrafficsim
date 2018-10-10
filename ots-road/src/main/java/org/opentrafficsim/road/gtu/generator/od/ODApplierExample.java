@@ -111,7 +111,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
     private GTUColorer colorer = new LmrsSwitchableColorer();
 
     /**
-     * @param args arguments
+     * @param args String[]; arguments
      */
     public static void main(final String[] args)
     {

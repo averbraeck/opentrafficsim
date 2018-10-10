@@ -52,7 +52,7 @@ public final class Distributions
 
     /**
      * parse a set of comma-separated values, e.g., <code>10.0, 4, 5.23</code>.
-     * @param s the string to parse.
+     * @param s String; the string to parse.
      * @return array of double values.
      */
     private static double[] parseDoubleArgs(final String s)
@@ -68,8 +68,8 @@ public final class Distributions
 
     /**
      * Parse a continuous distribution.
-     * @param ds the name of the distribution, e.g. UNIF.
-     * @param args the parameters of the distribution, e.g. {1.0, 2.0}.
+     * @param ds String; the name of the distribution, e.g. UNIF.
+     * @param args double[]; the parameters of the distribution, e.g. {1.0, 2.0}.
      * @return the generated distribution.
      * @throws NetworkException in case distribution unknown or parameter number does not match.
      */
@@ -138,7 +138,7 @@ public final class Distributions
 
     /**
      * Parse a relative length distribution, e.g. <code>UNIFORM(1, 3) m</code>.
-     * @param s the string to be parsed.
+     * @param s String; the string to be parsed.
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
@@ -155,7 +155,7 @@ public final class Distributions
 
     /**
      * Parse an absolute length distribution, e.g. <code>UNIFORM(1, 3) m</code>.
-     * @param s the string to be parsed.
+     * @param s String; the string to be parsed.
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
@@ -174,7 +174,7 @@ public final class Distributions
 
     /**
      * Parse a relative time distribution, e.g. <code>UNIFORM(1, 3) s</code>.
-     * @param s the string to be parsed.
+     * @param s String; the string to be parsed.
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
@@ -192,7 +192,7 @@ public final class Distributions
 
     /**
      * Parse an absolute time distribution, e.g. <code>UNIFORM(1, 3) s</code>.
-     * @param s the string to be parsed.
+     * @param s String; the string to be parsed.
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
@@ -210,7 +210,7 @@ public final class Distributions
 
     /**
      * Parse a relative speed distribution, e.g. <code>TRIANGULAR(80, 90, 110) km/h</code>.
-     * @param s the string to be parsed.
+     * @param s String; the string to be parsed.
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */

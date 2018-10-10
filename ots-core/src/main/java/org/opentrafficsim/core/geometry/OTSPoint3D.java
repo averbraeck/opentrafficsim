@@ -382,7 +382,7 @@ public class OTSPoint3D implements Locatable, Serializable
 
     /**
      * Return this point translated by a factor from the origin.
-     * @param factor the translation factor
+     * @param factor double; the translation factor
      * @return OTSPoint3D; the translated point
      */
     public final OTSPoint3D translate(final double factor)
@@ -449,7 +449,7 @@ public class OTSPoint3D implements Locatable, Serializable
     }
 
     /**
-     * @param point the point to which the distance has to be calculated.
+     * @param point OTSPoint3D; the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras, expressed in the SI unit for length (meter)
      */
     public final double distanceSI(final OTSPoint3D point)
@@ -462,7 +462,7 @@ public class OTSPoint3D implements Locatable, Serializable
     }
 
     /**
-     * @param point the point to which the distance has to be calculated.
+     * @param point OTSPoint3D; the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras, expressed in the SI unit for length (meter)
      */
     public final double horizontalDistanceSI(final OTSPoint3D point)
@@ -474,7 +474,7 @@ public class OTSPoint3D implements Locatable, Serializable
     }
 
     /**
-     * @param point the point to which the distance has to be calculated.
+     * @param point OTSPoint3D; the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras
      */
     public final Length horizontalDistance(final OTSPoint3D point)
@@ -483,7 +483,7 @@ public class OTSPoint3D implements Locatable, Serializable
     }
 
     /**
-     * @param point the point to which the distance has to be calculated.
+     * @param point OTSPoint3D; the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras
      */
     public final Length distance(final OTSPoint3D point)

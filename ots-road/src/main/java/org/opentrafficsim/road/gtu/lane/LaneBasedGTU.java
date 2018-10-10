@@ -68,31 +68,31 @@ public interface LaneBasedGTU extends GTU
      * insert GTU at a certain position. This can happen at setup (first initialization), and after a lane change of the GTU.
      * The relative position that will be registered is the referencePosition (dx, dy, dz) = (0, 0, 0). Front and rear positions
      * are relative towards this position.
-     * @param lane the lane to add to the list of lanes on which the GTU is registered.
-     * @param gtuDirection the direction of the GTU on the lane (which can be bidirectional). If the GTU has a positive speed,
-     *            it is moving in this direction.
-     * @param position the position on the lane.
+     * @param lane Lane; the lane to add to the list of lanes on which the GTU is registered.
+     * @param gtuDirection GTUDirectionality; the direction of the GTU on the lane (which can be bidirectional). If the GTU has
+     *            a positive speed, it is moving in this direction.
+     * @param position Length; the position on the lane.
      * @throws GTUException when positioning the GTU on the lane causes a problem
      */
     void enterLane(Lane lane, Length position, GTUDirectionality gtuDirection) throws GTUException;
 
     /**
      * Unregister the GTU from a lane.
-     * @param lane the lane to remove from the list of lanes on which the GTU is registered.
+     * @param lane Lane; the lane to remove from the list of lanes on which the GTU is registered.
      * @throws GTUException when leaveLane should not be called
      */
     void leaveLane(Lane lane) throws GTUException;
 
     /**
      * Change lanes instantaneously.
-     * @param laneChangeDirection the direction to change to
+     * @param laneChangeDirection LateralDirectionality; the direction to change to
      * @throws GTUException in case lane change fails
      */
     void changeLaneInstantaneously(LateralDirectionality laneChangeDirection) throws GTUException;
 
     /**
      * Sets event to finalize lane change.
-     * @param event SimEventInterface&ltSimTimeDoubleUnit&gt;; event
+     * @param event SimEventInterface&lt;SimTimeDoubleUnit&gt;; event
      */
     void setFinalizeLaneChangeEvent(SimEventInterface<SimTimeDoubleUnit> event);
 
@@ -102,7 +102,7 @@ public interface LaneBasedGTU extends GTU
      * <b>Note:</b> If a GTU is registered in multiple parallel lanes, the lateralLaneChangeModel is used to determine the
      * center line of the vehicle at this point in time. Otherwise, the average of the center positions of the lines will be
      * taken.
-     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
@@ -111,8 +111,8 @@ public interface LaneBasedGTU extends GTU
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered.
-     * @param relativePosition the position on the vehicle relative to the reference point.
-     * @param when the future time for which to calculate the positions.
+     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
+     * @param when Time; the future time for which to calculate the positions.
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
      *         the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
@@ -122,8 +122,8 @@ public interface LaneBasedGTU extends GTU
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane at the current
      * simulation time. <br>
-     * @param lane the position on this lane will be returned.
-     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @param lane Lane; the position on this lane will be returned.
+     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
      * @throws GTUException when the vehicle is not on the given lane.
      */
@@ -131,9 +131,9 @@ public interface LaneBasedGTU extends GTU
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane.
-     * @param lane the position on this lane will be returned.
-     * @param relativePosition the position on the vehicle relative to the reference point.
-     * @param when the future time for which to calculate the positions.
+     * @param lane Lane; the position on this lane will be returned.
+     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
+     * @param when Time; the future time for which to calculate the positions.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
      * @throws GTUException when the vehicle is not on the given lane.
      */
@@ -143,7 +143,7 @@ public interface LaneBasedGTU extends GTU
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered, as fractions of the length of the lane. This is important when we want to see if two vehicles are
      * next to each other and we compare an 'inner' and 'outer' curve.<br>
-     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
@@ -153,8 +153,8 @@ public interface LaneBasedGTU extends GTU
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered, as fractions of the length of the lane. This is important when we want to see if two vehicles are
      * next to each other and we compare an 'inner' and 'outer' curve.
-     * @param relativePosition the position on the vehicle relative to the reference point.
-     * @param when the future time for which to calculate the positions.
+     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
+     * @param when Time; the future time for which to calculate the positions.
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
      *         the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
@@ -165,9 +165,9 @@ public interface LaneBasedGTU extends GTU
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
      * of the length of the lane. This is important when we want to see if two vehicles are next to each other and we compare an
      * 'inner' and 'outer' curve.
-     * @param lane the position on this lane will be returned.
-     * @param relativePosition the position on the vehicle relative to the reference point.
-     * @param when the future time for which to calculate the positions.
+     * @param lane Lane; the position on this lane will be returned.
+     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
+     * @param when Time; the future time for which to calculate the positions.
      * @return the fractional relative position on the lane at the given time.
      * @throws GTUException when the vehicle is not on the given lane.
      */
@@ -177,8 +177,8 @@ public interface LaneBasedGTU extends GTU
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
      * of the length of the lane. This is important when we want to see if two vehicles are next to each other and we compare an
      * 'inner' and 'outer' curve.<br>
-     * @param lane the position on this lane will be returned.
-     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @param lane Lane; the position on this lane will be returned.
+     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
      * @return the fractional relative position on the lane at the given time.
      * @throws GTUException when the vehicle is not on the given lane.
      */
@@ -225,13 +225,13 @@ public interface LaneBasedGTU extends GTU
     /**
      * Add an event to the list of lane triggers scheduled for this GTU.
      * @param lane Lane; the lane on which the event occurs
-     * @param event SimeEvent&lt;SimTimeDoubleUnit&gt; the event
+     * @param event SimEventInterface&lt;SimTimeDoubleUnit&gt;; SimeEvent&lt;SimTimeDoubleUnit&gt; the event
      */
     void addTrigger(Lane lane, SimEventInterface<SimTimeDoubleUnit> event);
 
     /**
      * Set distance over which the GTU should not change lane after being created.
-     * @param distance distance over which the GTU should not change lane after being created
+     * @param distance Length; distance over which the GTU should not change lane after being created
      */
     void setNoLaneChangeDistance(Length distance);
 
@@ -307,7 +307,7 @@ public interface LaneBasedGTU extends GTU
 
     /**
      * Set the status of the turn indicator.
-     * @param turnIndicatorStatus the new status of the turn indicator.
+     * @param turnIndicatorStatus TurnIndicatorStatus; the new status of the turn indicator.
      * @throws GTUException when GTUType does not have a turn indicator
      */
     void setTurnIndicatorStatus(TurnIndicatorStatus turnIndicatorStatus) throws GTUException;

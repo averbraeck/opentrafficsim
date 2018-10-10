@@ -71,7 +71,7 @@ public class TransportDemand implements Serializable
 
     /**
      * add a cell to the demandmap.
-     * @param demandCell the cell to add
+     * @param demandCell DemandCell; the cell to add
      */
     public final void addDemand(final DemandCell demandCell)
     {
@@ -86,12 +86,13 @@ public class TransportDemand implements Serializable
 
     /**
      * add a cell to the demandmap.
-     * @param terminalFrom origin terminal
-     * @param terminalTo destination terminal
-     * @param numberAnnual annual number of containers per year
-     * @param fraction20ft fraction of 20 ft containers (rest is 40 ft)
-     * @param fractionEmpty fraction of empty containers (rest is full)
-     * @param fractionOwners map of owners with fraction (adding up to 1.0) indicating who owns the containers
+     * @param terminalFrom Terminal; origin terminal
+     * @param terminalTo Terminal; destination terminal
+     * @param numberAnnual int; annual number of containers per year
+     * @param fraction20ft double; fraction of 20 ft containers (rest is 40 ft)
+     * @param fractionEmpty double; fraction of empty containers (rest is full)
+     * @param fractionOwners Map&lt;Company,Double&gt;; map of owners with fraction (adding up to 1.0) indicating who owns the
+     *            containers
      */
     public final void addDemand(final Terminal terminalFrom, final Terminal terminalTo, final int numberAnnual,
             final double fraction20ft, final double fractionEmpty, final Map<Company, Double> fractionOwners)
@@ -102,8 +103,8 @@ public class TransportDemand implements Serializable
     }
 
     /**
-     * @param terminalFrom origin terminal
-     * @param terminalTo destination terminal
+     * @param terminalFrom Terminal; origin terminal
+     * @param terminalTo Terminal; destination terminal
      * @return the demand between two terminals.
      */
     public final DemandCell getDemand(final Terminal terminalFrom, final Terminal terminalTo)
@@ -116,7 +117,7 @@ public class TransportDemand implements Serializable
     }
 
     /**
-     * @param terminalFrom origin terminal
+     * @param terminalFrom Terminal; origin terminal
      * @return the map of demands originating at a terminal.
      */
     public final Map<Terminal, DemandCell> getDemandMapFrom(final Terminal terminalFrom)
@@ -125,7 +126,7 @@ public class TransportDemand implements Serializable
     }
 
     /**
-     * @param terminalTo destination terminal
+     * @param terminalTo Terminal; destination terminal
      * @return the map of demands for a destination terminal.
      */
     public final Map<Terminal, DemandCell> getDemandMapTo(final Terminal terminalTo)
@@ -145,7 +146,7 @@ public class TransportDemand implements Serializable
     }
 
     /**
-     * @param terminalFrom origin terminal
+     * @param terminalFrom Terminal; origin terminal
      * @return the demands originating at a terminal as a set.
      */
     public final Set<DemandCell> getDemandSetFrom(final Terminal terminalFrom)
@@ -154,7 +155,7 @@ public class TransportDemand implements Serializable
     }
 
     /**
-     * @param terminalTo destination terminal
+     * @param terminalTo Terminal; destination terminal
      * @return the demands for a destination terminal as a set.
      */
     public final Set<DemandCell> getDemandSetTo(final Terminal terminalTo)

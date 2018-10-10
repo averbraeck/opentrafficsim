@@ -32,7 +32,7 @@ public final class OTSNetworkUtils
 
     /**
      * Make a copy of the network, without GTUs and listeners.
-     * @param network the network to copy
+     * @param network OTSNetwork; the network to copy
      * @return a copy of the network
      */
     public static OTSNetwork copy(final OTSNetwork network)
@@ -43,7 +43,7 @@ public final class OTSNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network the network to create an xml-version from
+     * @param network OTSNetwork; the network to create an xml-version from
      * @return an xml-string with the network
      */
     public static String toXml(final OTSNetwork network)
@@ -59,8 +59,8 @@ public final class OTSNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network the network to create an xml-version from
-     * @param out the stream to write the xml-string with the network to
+     * @param network OTSNetwork; the network to create an xml-version from
+     * @param out OutputStream; the stream to write the xml-string with the network to
      */
     public static void toXml(final OTSNetwork network, final OutputStream out)
     {
@@ -70,8 +70,8 @@ public final class OTSNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network the network to create an xml-version from
-     * @param writer the writer to write the xml-string with the network to
+     * @param network OTSNetwork; the network to create an xml-version from
+     * @param writer Writer; the writer to write the xml-string with the network to
      */
     public static void toXml(final OTSNetwork network, final Writer writer)
     {

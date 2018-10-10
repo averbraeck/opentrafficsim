@@ -58,8 +58,8 @@ class GTUMixTag implements Serializable
 
     /**
      * Parse the GTUMIX tag.
-     * @param nodeList nodeList the top-level nodes of the XML-file
-     * @param parser the parser with the lists of information
+     * @param nodeList NodeList; nodeList the top-level nodes of the XML-file
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
@@ -98,9 +98,9 @@ class GTUMixTag implements Serializable
 
     /**
      * Parse the GTUMIX's GTU tag.
-     * @param gtuNode the GTU node to parse
-     * @param parser the parser with the lists of information
-     * @param gtuMixTag the parent tag
+     * @param gtuNode Node; the GTU node to parse
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param gtuMixTag GTUMixTag; the parent tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

@@ -128,7 +128,7 @@ public abstract class AbstractOTSPlot extends JFrame
 
     /**
      * Notify interested parties of an event affecting this TrajectoryPlot.
-     * @param event DatasetChangedEvent
+     * @param event DatasetChangeEvent; DatasetChangedEvent
      */
     protected final void notifyListeners(final DatasetChangeEvent event)
     {

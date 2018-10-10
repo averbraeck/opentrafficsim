@@ -427,7 +427,7 @@ public class Detector extends AbstractSensor
 
     /**
      * Accumulates a measurement.
-     * @param measurement DetectorMeasurement; measurement to accumulate
+     * @param measurement DetectorMeasurement&lt;C, ?&gt;; measurement to accumulate
      * @param gtu LaneBasedGTU; gtu
      * @param front boolean; triggered by front entering (or rear leaving when false)
      * @param <C> accumulated type
@@ -480,7 +480,7 @@ public class Detector extends AbstractSensor
 
     /**
      * Aggregates a periodic measurement.
-     * @param measurement DetectorMeasurement; measurement to aggregate
+     * @param measurement DetectorMeasurement&lt;C, A&gt;; measurement to aggregate
      * @param cnt int; number of GTUs
      * @param agg Duration; aggregation period
      * @param <C> accumulated type
@@ -494,7 +494,7 @@ public class Detector extends AbstractSensor
 
     /**
      * Returns the aggregated value of the measurement.
-     * @param measurement DetectorMeasurement; measurement to aggregate
+     * @param measurement DetectorMeasurement&lt;C, A&gt;; measurement to aggregate
      * @param cnt int; number of GTUs
      * @param agg Duration; aggregation period
      * @return A; aggregated value of the measurement
@@ -550,7 +550,7 @@ public class Detector extends AbstractSensor
      * @param file String; file
      * @param periodic boolean; periodic data
      * @param format String; number format, as used in {@code String.format()}
-     * @param compression how to compress the data
+     * @param compression CompressionMethod; how to compress the data
      * @param <C> accumulated type
      */
     @SuppressWarnings("unchecked")
@@ -673,7 +673,7 @@ public class Detector extends AbstractSensor
 
     /**
      * Prints a list of doubles in to a formatted string.
-     * @param list List; double values
+     * @param list List&lt;Double&gt;; double values
      * @param format String; format string
      * @return formatted string of doubles
      */
@@ -738,7 +738,7 @@ public class Detector extends AbstractSensor
          * Returns an accumulated value for when the front reaches the detector.
          * @param cumulative C; accumulated value
          * @param gtu LaneBasedGTU; gtu
-         * @param loopDetector LoopDetector; loop detector
+         * @param loopDetector Detector; loop detector
          * @return C; accumulated value
          */
         C accumulateEntry(C cumulative, LaneBasedGTU gtu, Detector loopDetector);
@@ -748,7 +748,7 @@ public class Detector extends AbstractSensor
          * triggered an entry due to a lane change. Reversely, GTU's may not trigger an exit while they did trigger an entry.
          * @param cumulative C; accumulated value
          * @param gtu LaneBasedGTU; gtu
-         * @param loopDetector LoopDetector; loop detector
+         * @param loopDetector Detector; loop detector
          * @return C; accumulated value
          */
         C accumulateExit(C cumulative, LaneBasedGTU gtu, Detector loopDetector);

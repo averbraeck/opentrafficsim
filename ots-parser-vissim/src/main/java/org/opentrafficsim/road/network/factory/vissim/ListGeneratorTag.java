@@ -54,9 +54,9 @@ class ListGeneratorTag implements Serializable
 
     /**
      * Parse the LISTGENERATOR tag.
-     * @param node the LISTGENERATOR node to parse
-     * @param parser the parser with the lists of information
-     * @param linkTag the parent LINK tag
+     * @param node Node; the LISTGENERATOR node to parse
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param linkTag LinkTag; the parent LINK tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

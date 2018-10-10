@@ -47,7 +47,7 @@ public class VissimQueryKPI
 
     /**
      * Runs the module from model control.
-     * @param imbConnection the connection to IMB
+     * @param imbConnection TConnection; the connection to IMB
      */
     public static void run(final TConnection imbConnection)
     {
@@ -62,7 +62,7 @@ public class VissimQueryKPI
     }
 
     /**
-     * @param args command line args
+     * @param args String[]; command line args
      * @throws IMBException in case of IMB problem
      */
     public static void main(String[] args) throws IMBException
@@ -100,7 +100,7 @@ public class VissimQueryKPI
 
     /**
      * Starts the KPI module
-     * @param imbConnector the connector to the IMB bus
+     * @param imbConnector IMBConnector; the connector to the IMB bus
      * @throws IMBException when making the query fails
      */
     private static void start(final IMBConnector imbConnector) throws IMBException
@@ -182,12 +182,12 @@ public class VissimQueryKPI
     }
 
     /**
-     * @param sampler sampler
-     * @param id id
-     * @param queryDescription query description
-     * @param metaDataSet meta data set
-     * @param lanes lanes
-     * @param imbConnector imb connector
+     * @param sampler IMBSampler; sampler
+     * @param id String; id
+     * @param queryDescription String; query description
+     * @param metaDataSet MetaDataSet; meta data set
+     * @param lanes Map&lt;String,LaneData&gt;; lanes
+     * @param imbConnector IMBConnector; imb connector
      * @throws IMBException on connection error
      */
     private static void makeQuery(IMBSampler sampler, String id, String queryDescription, MetaDataSet metaDataSet,

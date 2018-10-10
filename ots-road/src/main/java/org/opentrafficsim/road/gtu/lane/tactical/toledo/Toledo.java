@@ -286,10 +286,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns info regarding a gap.
-     * @param params parameters
-     * @param perception perception
-     * @param gap gap
-     * @param lane lane
+     * @param params Parameters; parameters
+     * @param perception LanePerception; perception
+     * @param gap Gap; gap
+     * @param lane RelativeLane; lane
      * @return utility of gap
      * @throws ParameterException if parameter is not given
      * @throws OperationalPlanException perception exception
@@ -464,13 +464,13 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns info regarding gap-acceptance.
-     * @param gtu GTU
-     * @param params parameters
-     * @param perception perception
-     * @param emuTg emu from target gap model
-     * @param eLead lead error
-     * @param eLag lag error
-     * @param lane lane to evaluate
+     * @param gtu LaneBasedGTU; GTU
+     * @param params Parameters; parameters
+     * @param perception LanePerception; perception
+     * @param emuTg double; emu from target gap model
+     * @param eLead double; lead error
+     * @param eLag double; lag error
+     * @param lane RelativeLane; lane to evaluate
      * @return info regarding gap-acceptance
      * @throws ParameterException if parameter is not defined
      * @throws OperationalPlanException perception exception
@@ -556,12 +556,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns the utility of a lane.
-     * @param gtu GTU
-     * @param params parameters
-     * @param perception perception
-     * @param emuGa emu from gap acceptance model
-     * @param sli speed limit info
-     * @param lane lane to evaluate
+     * @param gtu LaneBasedGTU; GTU
+     * @param params Parameters; parameters
+     * @param perception LanePerception; perception
+     * @param emuGa double; emu from gap acceptance model
+     * @param sli SpeedLimitInfo; speed limit info
+     * @param lane RelativeLane; lane to evaluate
      * @return utility of lane
      * @throws ParameterException if parameter is not defined
      * @throws OperationalPlanException perception exception
@@ -706,9 +706,9 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns the density in the given lane based on the following and leading vehicles.
-     * @param gtu subject GTU
-     * @param perception perception
-     * @param lane lane to get density of
+     * @param gtu LaneBasedGTU; subject GTU
+     * @param perception LanePerception; perception
+     * @param lane RelativeLane; lane to get density of
      * @return density in the given lane based on the following and leading vehicles
      * @throws OperationalPlanException perception exception
      */
@@ -739,7 +739,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns the cumulative density function (CDF) at given value of the standard normal distribution.
-     * @param x value
+     * @param x double; value
      * @return cumulative density function (CDF) at given value of the standard normal distribution
      */
     private static double cumNormDist(final double x)
@@ -749,7 +749,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Error function approximation using Horner's method.
-     * @param x value
+     * @param x double; value
      * @return error function approximation
      */
     private static double erf(final double x)
@@ -766,7 +766,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns the probability density function (PDF) at given value of the standard normal distribution.
-     * @param x value
+     * @param x double; value
      * @return probability density function (PDF) at given value of the standard normal distribution
      */
     private static double normDist(final double x)

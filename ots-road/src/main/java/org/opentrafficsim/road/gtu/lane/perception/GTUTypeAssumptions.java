@@ -39,8 +39,8 @@ public class GTUTypeAssumptions implements Serializable
 
     /**
      * Set the car following model for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType the GTUType to set the model for
-     * @param carFollowingModel the model to set for the GTUType
+     * @param gtuType GTUType; the GTUType to set the model for
+     * @param carFollowingModel CarFollowingModel; the model to set for the GTUType
      */
     public final void setCarFollowingModel(final GTUType gtuType, final CarFollowingModel carFollowingModel)
     {
@@ -51,8 +51,8 @@ public class GTUTypeAssumptions implements Serializable
 
     /**
      * Set the parameters for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType the GTUType to set the model for
-     * @param parameters the model to set for the GTUType
+     * @param gtuType GTUType; the GTUType to set the model for
+     * @param parameters Parameters; the model to set for the GTUType
      */
     public final void setParameters(final GTUType gtuType, final Parameters parameters)
     {
@@ -63,9 +63,9 @@ public class GTUTypeAssumptions implements Serializable
 
     /**
      * Set the maximum speed for a certain GTUType on a certain LaneType as an assumption for that GTUType.
-     * @param gtuType the GTUType to set the model for
-     * @param laneType the laneType to set the speed for
-     * @param maxSpeed the maximum speed on the laneType for the given GTUType
+     * @param gtuType GTUType; the GTUType to set the model for
+     * @param laneType LaneType; the laneType to set the speed for
+     * @param maxSpeed Speed; the maximum speed on the laneType for the given GTUType
      */
     public final void setLaneTypeMaxSpeed(final GTUType gtuType, final LaneType laneType, final Speed maxSpeed)
     {
@@ -83,7 +83,7 @@ public class GTUTypeAssumptions implements Serializable
 
     /**
      * Return the car following model for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType the GTUType to get the model for
+     * @param gtuType GTUType; the GTUType to get the model for
      * @return the car following model for the GTUType, or <b>null</b> when there is no information for the gtuType
      */
     public final CarFollowingModel getCarFollowingModel(final GTUType gtuType)
@@ -93,7 +93,7 @@ public class GTUTypeAssumptions implements Serializable
 
     /**
      * Return the parameters model for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType the GTUType to get the model for
+     * @param gtuType GTUType; the GTUType to get the model for
      * @return the parameters for the GTUType, or <b>null</b> when there is no information for the gtuType
      */
     public final Parameters getParameters(final GTUType gtuType)
@@ -103,8 +103,8 @@ public class GTUTypeAssumptions implements Serializable
 
     /**
      * Return the maximum speed on a LaneType for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType the GTUType to get the maximum speed for
-     * @param laneType the LaneType to get the maximum speed for
+     * @param gtuType GTUType; the GTUType to get the maximum speed for
+     * @param laneType LaneType; the LaneType to get the maximum speed for
      * @return the maximum speed for the GTUType on the LaneType, or <b>null</b> when there is no information for the
      *         combination of gtuType and laneType
      */
@@ -119,7 +119,7 @@ public class GTUTypeAssumptions implements Serializable
 
     /**
      * Return a safe copy of the maximum speed for all LaneTypes for a certain GTUType as an assumption for that GTUType.
-     * @param gtuType the GTUType to get the maximum speed for
+     * @param gtuType GTUType; the GTUType to get the maximum speed for
      * @return a map with a safe copy of the maximum speed for the GTUType on all LaneTypes, or <b>null</b> when there is no
      *         information for the gtuType
      */

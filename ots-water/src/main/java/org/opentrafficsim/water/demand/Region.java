@@ -95,7 +95,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param jobs the jobs to set
+     * @param jobs double; the jobs to set
      */
     public final void setJobs(final double jobs)
     {
@@ -127,7 +127,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param inhabitants set inhabitants
+     * @param inhabitants double; set inhabitants
      */
     protected final void setInhabitants(final double inhabitants)
     {
@@ -143,7 +143,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param exportTonTEU the exportTonTEU to set
+     * @param exportTonTEU double; the exportTonTEU to set
      */
     public final void setExportTonTEU(final double exportTonTEU)
     {
@@ -159,7 +159,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param importTonTEU the importTonTEU to set
+     * @param importTonTEU double; the importTonTEU to set
      */
     public final void setImportTonTEU(final double importTonTEU)
     {
@@ -175,7 +175,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param exportEmptyFactor the exportEmptyFactor to set
+     * @param exportEmptyFactor double; the exportEmptyFactor to set
      */
     public final void setExportEmptyFactor(final double exportEmptyFactor)
     {
@@ -191,7 +191,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param importEmptyFactor the importEmptyFactor to set
+     * @param importEmptyFactor double; the importEmptyFactor to set
      */
     public final void setImportEmptyFactor(final double importEmptyFactor)
     {
@@ -207,7 +207,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param newExportTEUPerYear update currentExportTEUperYear
+     * @param newExportTEUPerYear double; update currentExportTEUperYear
      */
     public final void setCurrentExportTEUperYear(final double newExportTEUPerYear)
     {
@@ -215,7 +215,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param newExportTEUPerYear add to currentExportTEUperYear
+     * @param newExportTEUPerYear double; add to currentExportTEUperYear
      */
     public final void addCurrentExportTEUperYear(final double newExportTEUPerYear)
     {
@@ -231,7 +231,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param newImportTEUPerYear update currentExportTEUperYear
+     * @param newImportTEUPerYear double; update currentExportTEUperYear
      */
     public final void setCurrentImportTEUperYear(final double newImportTEUPerYear)
     {
@@ -239,7 +239,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param newImportTEUPerYear add to currentExportTEUperYear
+     * @param newImportTEUPerYear double; add to currentExportTEUperYear
      */
     public final void addCurrentImportTEUperYear(final double newImportTEUPerYear)
     {
@@ -255,7 +255,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param area the area to set
+     * @param area MultiPolygon; the area to set
      */
     public final void setArea(final MultiPolygon area)
     {
@@ -284,7 +284,7 @@ public class Region extends AbstractNamed implements Comparable<Region>
     }
 
     /**
-     * @param p point
+     * @param p Point; point
      * @return whether point is within region bounds
      */
     public final boolean isInArea(final Point p)

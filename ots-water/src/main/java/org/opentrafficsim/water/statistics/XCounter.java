@@ -70,7 +70,7 @@ public class XCounter implements Serializable
     }
 
     /**
-     * @param value the value
+     * @param value long; the value
      */
     public void count(final long value)
     {
@@ -113,7 +113,7 @@ public class XCounter implements Serializable
 
     /**
      * sets the count.
-     * @param count the value
+     * @param count long; the value
      */
     private void setCount(final long count)
     {
@@ -122,7 +122,7 @@ public class XCounter implements Serializable
 
     /**
      * sets n
-     * @param n the number of measurements.
+     * @param n long; the number of measurements.
      */
     private void setN(final long n)
     {
@@ -140,8 +140,8 @@ public class XCounter implements Serializable
 
     /**
      * Write statistics to an excel spreadsheet, starting on row "startRow".
-     * @param sheet the sheet
-     * @param startRow the first row
+     * @param sheet Sheet; the sheet
+     * @param startRow int; the first row
      * @return first free row after writing
      */
     public int writeToExcel(final Sheet sheet, final int startRow)

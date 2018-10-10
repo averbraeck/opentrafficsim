@@ -42,12 +42,12 @@ public final class CarFollowingUtil
 
     /**
      * Follow a set of headway GTUs.
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitInfo speed limit info
-     * @param distance distance
-     * @param leaderSpeed speed of the leader
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param parameters Parameters; parameters
+     * @param speed Speed; current speed
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param distance Length; distance
+     * @param leaderSpeed Speed; speed of the leader
      * @return acceleration for following the leader
      * @throws ParameterException if a parameter is not given or out of bounds
      */
@@ -60,11 +60,11 @@ public final class CarFollowingUtil
 
     /**
      * Follow a set of headway GTUs.
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitInfo speed limit info
-     * @param leader leader
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param parameters Parameters; parameters
+     * @param speed Speed; current speed
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param leader HeadwayGTU; leader
      * @return acceleration for following the leader
      * @throws ParameterException if a parameter is not given or out of bounds
      */
@@ -76,11 +76,11 @@ public final class CarFollowingUtil
 
     /**
      * Stop within given distance.
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitInfo speed limit info
-     * @param distance distance to stop over
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param parameters Parameters; parameters
+     * @param speed Speed; current speed
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param distance Length; distance to stop over
      * @return acceleration to stop over distance
      * @throws ParameterException if a parameter is not given or out of bounds
      */
@@ -93,10 +93,10 @@ public final class CarFollowingUtil
     /**
      * Return constant acceleration in order to stop in specified distance. The car-following model is used to determine the
      * stopping distance (i.e. distance remaining at stand still, e.g. 1-3m).
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speed current speed
-     * @param distance distance to stop over
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param parameters Parameters; parameters
+     * @param speed Speed; current speed
+     * @param distance Length; distance to stop over
      * @return constant acceleration in order to stop in specified distance
      * @throws ParameterException on missing parameter
      */
@@ -109,10 +109,10 @@ public final class CarFollowingUtil
 
     /**
      * Calculate free acceleration.
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitInfo speed limit info
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param parameters Parameters; parameters
+     * @param speed Speed; current speed
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
      * @return acceleration free acceleration
      * @throws ParameterException if a parameter is not given or out of bounds
      */
@@ -167,12 +167,12 @@ public final class CarFollowingUtil
      * Throughout the plane the maximum deceleration of each scenario is close to this value, unless the initial speed is so
      * low, and the target speed is so high, that such levels of deceleration are never required.<br>
      * <br>
-     * @param carFollowingModel car-following model to use
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitInfo info regarding the desired speed for car-following
-     * @param distance distance to the location of the target speed
-     * @param targetSpeed target speed
+     * @param carFollowingModel CarFollowingModel; car-following model to use
+     * @param parameters Parameters; parameters
+     * @param speed Speed; current speed
+     * @param speedLimitInfo SpeedLimitInfo; info regarding the desired speed for car-following
+     * @param distance Length; distance to the location of the target speed
+     * @param targetSpeed Speed; target speed
      * @return acceleration acceleration based on the car-following model in order to adjust the speed
      * @throws ParameterException if parameter exception occurs
      * @throws NullPointerException if any input is null

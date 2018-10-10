@@ -284,7 +284,7 @@ public class Convert
     }
 
     /**
-     * @param args args
+     * @param args String[]; args
      * @throws IOException on i/o error
      * @throws URISyntaxException on illegal filename
      */

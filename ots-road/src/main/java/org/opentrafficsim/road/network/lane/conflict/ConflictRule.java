@@ -18,14 +18,14 @@ public interface ConflictRule
 
     /**
      * Determines the priority for the given conflict.
-     * @param conflict conflict
+     * @param conflict Conflict; conflict
      * @return priority for the given conflict
      */
     ConflictPriority determinePriority(Conflict conflict);
 
     /**
      * Creates a clone of the conflict rule.
-     * @param newSimulator new simulator
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; new simulator
      * @return clone of the conflict rule
      */
     ConflictRule clone(SimulatorInterface.TimeDoubleUnit newSimulator);

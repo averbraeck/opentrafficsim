@@ -150,7 +150,7 @@ public final class GeneratorPositions implements Locatable
      * without bias.
      * @param positions Set&lt;DirectedLanePosition&gt;; all considered positions, each lane is considered separately
      * @param stream StreamInterface; stream for random numbers
-     * @param linkWeights Map; weight per link direction
+     * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; weight per link direction
      * @return GeneratorPositions; object to draw positions from
      */
     public static GeneratorPositions create(final Set<DirectedLanePosition> positions, final StreamInterface stream,
@@ -164,7 +164,7 @@ public final class GeneratorPositions implements Locatable
      * @param positions Set&lt;DirectedLanePosition&gt;; all considered positions, each lane is considered separately
      * @param stream StreamInterface; stream for random numbers
      * @param biases LaneBiases; lane biases for GTU types
-     * @param linkWeights Map; weight per link direction
+     * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; weight per link direction
      * @return GeneratorPositions; object to draw positions from
      */
     public static GeneratorPositions create(final Set<DirectedLanePosition> positions, final StreamInterface stream,
@@ -669,7 +669,7 @@ public final class GeneratorPositions implements Locatable
         /**
          * Adds a GTU bias for randomly drawing a lane.
          * @param gtuType GTUType; gtu type
-         * @param bias Bias; bias
+         * @param bias LaneBias; bias
          * @return LaneBiases; lane biases for method chaining
          */
         public LaneBiases addBias(final GTUType gtuType, final LaneBias bias)

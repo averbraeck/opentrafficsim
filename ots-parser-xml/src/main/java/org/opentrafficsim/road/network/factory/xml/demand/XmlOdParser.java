@@ -429,8 +429,8 @@ public class XmlOdParser implements Serializable
 
     /**
      * Returns the multiplication of two values, taking 1.0 for {@code null} and returning {@code null} if both {@code null}.
-     * @param d1 Double value 1
-     * @param d2 Double value 2
+     * @param d1 Double; Double value 1
+     * @param d2 Double; Double value 2
      * @return multiplication of two values, taking 1.0 for {@code null} and returning {@code null} if both {@code null}
      */
     final static Double nullMultiply(final Double d1, final Double d2)

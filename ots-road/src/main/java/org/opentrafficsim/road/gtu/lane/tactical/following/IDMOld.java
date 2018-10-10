@@ -88,7 +88,7 @@ public class IDMOld extends AbstractGTUFollowingModelMobil implements Serializab
 
     /**
      * Desired speed (taking into account the urge to drive a little faster or slower than the posted speed limit).
-     * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the speed limit
+     * @param speedLimit Speed; the speed limit
      * @param followerMaximumSpeed Speed; the maximum speed that the follower can drive
      * @return DoubleScalarRel&lt;SpeedUnit&gt;; the desired speed
      */

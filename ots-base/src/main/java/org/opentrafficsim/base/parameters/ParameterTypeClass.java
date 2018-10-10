@@ -74,7 +74,7 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
     /**
      * Returns a typed class, where the type is {@code Class<? extends T>}, such that {@code ParameterTypeClass} instances can
      * easily be created.
-     * @param clazz class instance
+     * @param clazz Class&lt;T&gt;; class instance
      * @param <T> constraining class in parameter type, e.g. TacticalPlanner
      * @return typed class
      */

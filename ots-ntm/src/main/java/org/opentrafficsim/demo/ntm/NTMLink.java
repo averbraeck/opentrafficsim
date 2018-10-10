@@ -126,7 +126,7 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param capacity
+     * @param capacity Frequency;
      * @param speed2
      * @return
      */
@@ -250,11 +250,11 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param startNode
-     * @param endNode
-     * @param capacity
-     * @param speed
-     * @param trafficBehaviourType
+     * @param startNode NTMNode;
+     * @param endNode NTMNode;
+     * @param capacity Frequency;
+     * @param speed Speed;
+     * @param trafficBehaviourType TrafficBehaviourType;
      * @return
      */
     public static NTMLink createLink(Network network, OTSSimulatorInterface simulator, NTMNode startNode, NTMNode endNode,
@@ -293,7 +293,7 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param links HashMap
+     * @param links Map&lt;String,NTMLink&gt;; HashMap
      */
     public static void findSequentialLinks(final Map<String, NTMLink> links, Map<String, NTMNode> nodes)
     {
@@ -496,8 +496,8 @@ public class NTMLink extends CapacityOTSLink
      */
 
     /**
-     * @param up
-     * @param down
+     * @param up NTMLink;
+     * @param down NTMLink;
      * @return
      */
     public static NTMLink joinLink(NTMLink up, NTMLink down)
@@ -601,7 +601,7 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param corridorCapacity set corridorCapacity.
+     * @param corridorCapacity Frequency; set corridorCapacity.
      */
     public void setCorridorCapacity(Frequency corridorCapacity)
     {
@@ -609,7 +609,7 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param roadCapacity
+     * @param roadCapacity Frequency;
      * @param linkData set linkData.
      */
     public void addCorridorCapacity(Frequency roadCapacity)
@@ -628,7 +628,7 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param time set time.
+     * @param time Duration; set time.
      */
     public void setDuration(Duration time)
     {
@@ -644,7 +644,7 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param behaviourType set behaviourType.
+     * @param behaviourType TrafficBehaviourType; set behaviourType.
      */
     public void setBehaviourType(TrafficBehaviourType behaviourType)
     {
@@ -672,7 +672,7 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param numberOfLanes set numberOfLanes.
+     * @param numberOfLanes int; set numberOfLanes.
      */
     public void setNumberOfLanes(int numberOfLanes)
     {
@@ -688,7 +688,7 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param linkData set linkData.
+     * @param linkData LinkData; set linkData.
      */
     public void setLinkData(LinkData linkData)
     {

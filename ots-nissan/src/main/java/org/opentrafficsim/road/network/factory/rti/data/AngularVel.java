@@ -33,7 +33,7 @@ public class AngularVel implements Serializable
     }
 
     /**
-     * @param yawRate set yawRate
+     * @param yawRate float; set yawRate
      */
     public void setYawRate(float yawRate)
     {
@@ -49,7 +49,7 @@ public class AngularVel implements Serializable
     }
 
     /**
-     * @param pitchRate set pitchRate
+     * @param pitchRate float; set pitchRate
      */
     public void setPitchRate(float pitchRate)
     {
@@ -65,7 +65,7 @@ public class AngularVel implements Serializable
     }
 
     /**
-     * @param rollRate set rollRate
+     * @param rollRate float; set rollRate
      */
     public void setRollRate(float rollRate)
     {

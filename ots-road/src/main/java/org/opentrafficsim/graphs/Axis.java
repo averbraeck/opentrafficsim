@@ -69,7 +69,7 @@ public class Axis implements Serializable
 
     /**
      * Compute the floating point bin number for a value.
-     * @param value DoubleScalar; the value
+     * @param value DoubleScalarInterface; the value
      * @return double; the bin that belongs to the value
      */
     public final double getRelativeBin(final DoubleScalarInterface value)
@@ -79,7 +79,7 @@ public class Axis implements Serializable
 
     /**
      * Adjust (increase) the range of this AxisDefinition.
-     * @param newMaximum DoubleScalar; the new maximum value of the axis
+     * @param newMaximum DoubleScalarInterface; the new maximum value of the axis
      */
     public final void adjustMaximumValue(final DoubleScalarInterface newMaximum)
     {
@@ -89,7 +89,7 @@ public class Axis implements Serializable
 
     /**
      * Return the value for an aggregated bin number.
-     * @param aggregatedBin Integer; the number of a bin
+     * @param aggregatedBin int; the number of a bin
      * @return Double; the value corresponding to the center of aggregateBin
      */
     public final double getValue(final int aggregatedBin)
@@ -153,7 +153,7 @@ public class Axis implements Serializable
     /**
      * Change the maximum value of this axis. <br>
      * The maximum value can only be increased.
-     * @param newMaximumValue DoubleScalar; the new maximum value of this axis
+     * @param newMaximumValue DoubleScalarInterface; the new maximum value of this axis
      */
     public final void setMaximumValue(final DoubleScalarInterface newMaximumValue)
     {

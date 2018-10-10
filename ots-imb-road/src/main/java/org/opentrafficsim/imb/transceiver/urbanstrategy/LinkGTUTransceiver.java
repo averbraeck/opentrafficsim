@@ -329,7 +329,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the addition of a link to the network to a corresponding IMB message.
-     * @param event the event to transform to a NEW message.
+     * @param event EventInterface; the event to transform to a NEW message.
      * @return the NEW payload
      */
     public Object[] transformNew(final EventInterface event)
@@ -371,7 +371,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the GTU added or removed event content to a corresponding IMB message.
-     * @param event the event to transform to a CHANGE message.
+     * @param event EventInterface; the event to transform to a CHANGE message.
      * @return the CHANGE payload
      */
     public Object[] transformChange(final EventInterface event)
@@ -395,7 +395,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the removal of a link to the network to a corresponding IMB message.
-     * @param event the event to transform to a DELETE message.
+     * @param event EventInterface; the event to transform to a DELETE message.
      * @return the DELETE payload
      */
     public Object[] transformDelete(final EventInterface event)

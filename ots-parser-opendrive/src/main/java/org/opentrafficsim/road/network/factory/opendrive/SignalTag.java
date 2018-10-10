@@ -69,8 +69,8 @@ class SignalTag implements Serializable
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
-     * @param node the node with signal information
-     * @param parser the parser with the lists of information
+     * @param node Node; the node with signal information
+     * @param parser OpenDriveNetworkLaneParser; the parser with the lists of information
      * @return the constructed SignalTag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails

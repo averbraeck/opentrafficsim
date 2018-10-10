@@ -41,8 +41,8 @@ public final class RepeatableRandomStream extends Java2Random
 
     /**
      * Return a random stream that is the same every time for a certain name, but can be changed based on a number (e.g. a year)
-     * @param identifier the identifier for repeatability
-     * @param seed the seed
+     * @param identifier String; the identifier for repeatability
+     * @param seed long; the seed
      * @return a random stream that is the same every time for a certain name and integer
      */
     public static RepeatableRandomStream create(final String identifier, final long seed)
@@ -52,7 +52,7 @@ public final class RepeatableRandomStream extends Java2Random
 
     /**
      * Return a random stream that is the same every time for a certain name.
-     * @param identifier the identifier for repeatability
+     * @param identifier String; the identifier for repeatability
      * @return a random stream that is the same every time for a certain name
      */
     public static RepeatableRandomStream create(final String identifier)

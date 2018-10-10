@@ -64,21 +64,21 @@ public enum Interpolation
 
     /**
      * Interpolate between given frequencies.
-     * @param frequency0 frequency at {@code time0}
-     * @param time0 time of {@code frequency0} (&le; {@code time})
-     * @param frequency1 frequency at {@code time1}
-     * @param time1 time of {@code frequency1} (&gt; {@code time})
-     * @param time {@code time0} &le; {@code time} &lt; {@code time1}
+     * @param frequency0 Frequency; frequency at {@code time0}
+     * @param time0 Time; time of {@code frequency0} (&le; {@code time})
+     * @param frequency1 Frequency; frequency at {@code time1}
+     * @param time1 Time; time of {@code frequency1} (&gt; {@code time})
+     * @param time Time; {@code time0} &le; {@code time} &lt; {@code time1}
      * @return interpolated frequency
      */
     abstract Frequency interpolate(Frequency frequency0, Time time0, Frequency frequency1, Time time1, Time time);
 
     /**
      * Integrates to the number of trips in given period.
-     * @param frequency0 frequency at {@code time0}
-     * @param time0 time of {@code frequency0} (&le; {@code time})
-     * @param frequency1 frequency at {@code time1}
-     * @param time1 time of {@code frequency1} (&gt; {@code time})
+     * @param frequency0 Frequency; frequency at {@code time0}
+     * @param time0 Time; time of {@code frequency0} (&le; {@code time})
+     * @param frequency1 Frequency; frequency at {@code time1}
+     * @param time1 Time; time of {@code frequency1} (&gt; {@code time})
      * @return number of trips in given period
      */
     abstract int integrate(Frequency frequency0, Time time0, Frequency frequency1, Time time1);
@@ -102,8 +102,8 @@ public enum Interpolation
     /**
      * Returns interpolated value from array at given time. If time is outside of the vector range, 0 is returned.
      * @param time Time; time to determine the frequency at
-     * @param demandVector FrequencyVevtor; demand vector
-     * @param timeVector DurationVector; time vector
+     * @param demandVector FrequencyVector; demand vector
+     * @param timeVector TimeVector; time vector
      * @param sliceStart boolean; whether the time is at the start of an arbitrary time slice
      * @return interpolated value from array at given time, or 0 when time is outside of range
      */

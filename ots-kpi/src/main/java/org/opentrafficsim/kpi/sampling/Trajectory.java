@@ -118,11 +118,11 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Adds values of position, speed, acceleration and time.
-     * @param position position is relative to the start of the lane in the direction of the design line, i.e. irrespective of
-     *            the travel direction, also when trajectories have been truncated at a position x &gt; 0
-     * @param speed speed
-     * @param acceleration acceleration
-     * @param time time
+     * @param position Length; position is relative to the start of the lane in the direction of the design line, i.e.
+     *            irrespective of the travel direction, also when trajectories have been truncated at a position x &gt; 0
+     * @param speed Speed; speed
+     * @param acceleration Acceleration; acceleration
+     * @param time Time; time
      */
     public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time)
     {
@@ -131,12 +131,12 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Adds values of position, speed, acceleration and time.
-     * @param position position is relative to the start of the lane in the direction of the design line, i.e. irrespective of
-     *            the travel direction, also when trajectories have been truncated at a position x &gt; 0
-     * @param speed speed
-     * @param acceleration acceleration
-     * @param time time
-     * @param gtu gtu to add extended data for
+     * @param position Length; position is relative to the start of the lane in the direction of the design line, i.e.
+     *            irrespective of the travel direction, also when trajectories have been truncated at a position x &gt; 0
+     * @param speed Speed; speed
+     * @param acceleration Acceleration; acceleration
+     * @param time Time; time
+     * @param gtu G; gtu to add extended data for
      */
     public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time, final G gtu)
     {
@@ -165,8 +165,8 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @param extendedDataType extended data type
-     * @param gtu gtu
+     * @param extendedDataType ExtendedDataType&lt;T,?,S,G&gt;; extended data type
+     * @param gtu G; gtu
      */
     @SuppressWarnings("unchecked")
     private <T, S> void appendValue(final ExtendedDataType<T, ?, S, G> extendedDataType, final G gtu)
@@ -230,7 +230,7 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Returns {@code x} value of a single sample.
-     * @param index index
+     * @param index int; index
      * @return {@code x} value of a single sample
      * @throws SamplingException if the index is out of bounds
      */
@@ -242,7 +242,7 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Returns {@code v} value of a single sample.
-     * @param index index
+     * @param index int; index
      * @return {@code v} value of a single sample
      * @throws SamplingException if the index is out of bounds
      */
@@ -254,7 +254,7 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Returns {@code a} value of a single sample.
-     * @param index index
+     * @param index int; index
      * @return {@code a} value of a single sample
      * @throws SamplingException if the index is out of bounds
      */
@@ -266,7 +266,7 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Returns {@code t} value of a single sample.
-     * @param index index
+     * @param index int; index
      * @return {@code t} value of a single sample
      * @throws SamplingException if the index is out of bounds
      */
@@ -278,8 +278,8 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Returns extended data type value of a single sample.
-     * @param extendedDataType data type from which to retrieve the data
-     * @param index index for which to retrieve the data
+     * @param extendedDataType ExtendedDataType&lt;T,?,S,?&gt;; data type from which to retrieve the data
+     * @param index int; index for which to retrieve the data
      * @param <T> scalar type of extended data type
      * @param <S> storage type of extended data type
      * @return extended data type value of a single sample
@@ -295,7 +295,7 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Throws an exception if the sample index is out of bounds.
-     * @param index sample index
+     * @param index int; sample index
      * @throws SamplingException if the sample index is out of bounds
      */
     private void checkSample(final int index) throws SamplingException
@@ -399,7 +399,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @param metaDataType meta data type
+     * @param metaDataType MetaDataType&lt;?&gt;; meta data type
      * @return whether the trajectory contains the meta data of give type
      */
     public boolean contains(final MetaDataType<?> metaDataType)
@@ -408,7 +408,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @param metaDataType meta data type
+     * @param metaDataType MetaDataType&lt;T&gt;; meta data type
      * @param <T> class of meta data
      * @return value of meta data
      */
@@ -427,7 +427,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @param extendedDataType extended data type
+     * @param extendedDataType ExtendedDataType&lt;?,?,?,?&gt;; extended data type
      * @return whether the trajectory contains the extended data of give type
      */
     public boolean contains(final ExtendedDataType<?, ?, ?, ?> extendedDataType)
@@ -436,7 +436,7 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
-     * @param extendedDataType extended data type to return
+     * @param extendedDataType ExtendedDataType&lt;?,O,S,?&gt;; extended data type to return
      * @param <O> output type
      * @param <S> storage type
      * @return values of extended data type
@@ -462,8 +462,8 @@ public final class Trajectory<G extends GtuDataInterface>
     /**
      * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
      * and the subset is from the start.
-     * @param startPosition start position
-     * @param endPosition end position
+     * @param startPosition Length; start position
+     * @param endPosition Length; end position
      * @return subset of the trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minLength is smaller than maxLength
@@ -482,8 +482,8 @@ public final class Trajectory<G extends GtuDataInterface>
     /**
      * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
      * and the subset is from the start.
-     * @param startTime start time
-     * @param endTime end time
+     * @param startTime Time; start time
+     * @param endTime Time; end time
      * @return subset of the trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minTime is smaller than maxTime
@@ -499,10 +499,10 @@ public final class Trajectory<G extends GtuDataInterface>
     /**
      * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
      * and the subset is from the start.
-     * @param startPosition start position
-     * @param endPosition end position
-     * @param startTime start time
-     * @param endTime end time
+     * @param startPosition Length; start position
+     * @param endPosition Length; end position
+     * @param startTime Time; start time
+     * @param endTime Time; end time
      * @return subset of the trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minLength/Time is smaller than maxLength/Time
@@ -524,8 +524,8 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Determine spatial boundaries.
-     * @param startPosition start position
-     * @param endPosition end position
+     * @param startPosition Length; start position
+     * @param endPosition Length; end position
      * @return spatial boundaries
      */
     private Boundaries spaceBoundaries(final Length startPosition, final Length endPosition)
@@ -562,8 +562,8 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Determine temporal boundaries.
-     * @param startTime start time
-     * @param endTime end time
+     * @param startTime Time; start time
+     * @param endTime Time; end time
      * @return spatial boundaries
      */
     private Boundaries timeBoundaries(final Time startTime, final Time endTime)
@@ -600,7 +600,7 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Copies the trajectory but with a subset of the data. Data is taken from position (from + fFrom) to (to + fTo).
-     * @param bounds boundaries
+     * @param bounds Boundaries; boundaries
      * @param <T> type of underlying extended data value
      * @param <S> storage type
      * @return subset of the trajectory
@@ -800,7 +800,7 @@ public final class Trajectory<G extends GtuDataInterface>
         }
 
         /**
-         * @param boundaries boundaries
+         * @param boundaries Boundaries; boundaries
          * @return intersection of both boundaries
          */
         public Boundaries intersect(final Boundaries boundaries)

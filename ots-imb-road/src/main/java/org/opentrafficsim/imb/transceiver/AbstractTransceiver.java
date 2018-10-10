@@ -190,7 +190,7 @@ public abstract class AbstractTransceiver extends EventProducer implements Event
     /**
      * Register that we are interested in an IMB payload, but do <b>not</b> register a listener or transformer.
      * @param imbEventName String; the name of the IMB event
-     * @param imbMessageHandler IMBMessageHandler the message handler that takes care of the IMB message
+     * @param imbMessageHandler IMBMessageHandler; IMBMessageHandler the message handler that takes care of the IMB message
      * @throws IMBException in case registration fails
      */
     public void addIMBtoOTSChannel(final String imbEventName, final IMBMessageHandler imbMessageHandler) throws IMBException

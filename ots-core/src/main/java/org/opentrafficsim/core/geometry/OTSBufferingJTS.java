@@ -39,7 +39,7 @@ public final class OTSBufferingJTS
 
     /**
      * normalize an angle between 0 and 2 * PI.
-     * @param angle original angle.
+     * @param angle double; original angle.
      * @return angle between 0 and 2 * PI.
      */
     private static double norm(final double angle)
@@ -53,8 +53,8 @@ public final class OTSBufferingJTS
     }
 
     /**
-     * @param c1 first coordinate
-     * @param c2 second coordinate
+     * @param c1 Coordinate; first coordinate
+     * @param c2 Coordinate; second coordinate
      * @return the normalized angle of the line between c1 and c2
      */
     private static double angle(final Coordinate c1, final Coordinate c2)
@@ -70,7 +70,7 @@ public final class OTSBufferingJTS
      * Bourke</a>.
      * @param lineP1 OTSPoint3D; start of line segment
      * @param lineP2 OTSPoint3D; end of line segment
-     * @param point Point to project onto the line segment
+     * @param point OTSPoint3D; Point to project onto the line segment
      * @return double; the distance of the projected point or one of the end points of the line segment to the point
      */
     public static double distanceLineSegmentToPoint(final OTSPoint3D lineP1, final OTSPoint3D lineP2, final OTSPoint3D point)
@@ -85,7 +85,7 @@ public final class OTSBufferingJTS
      * Bourke</a>.
      * @param lineP1 OTSPoint3D; start of line segment
      * @param lineP2 OTSPoint3D; end of line segment
-     * @param point Point to project onto the line segment
+     * @param point OTSPoint3D; Point to project onto the line segment
      * @return Point2D.Double; either <cite>lineP1</cite>, or <cite>lineP2</cite> or a new OTSPoint3D that lies somewhere in
      *         between those two
      */
@@ -321,7 +321,7 @@ public final class OTSBufferingJTS
 
     /**
      * Generate a Geometry that has a fixed offset from a reference Geometry.
-     * @param referenceLine Geometry; the reference line
+     * @param referenceLine OTSLine3D; the reference line
      * @param offset double; offset distance from the reference line; positive is LEFT, negative is RIGHT
      * @return OTSLine3D; the line that has the specified offset from the reference line
      * @throws OTSGeometryException on failure
@@ -450,9 +450,9 @@ public final class OTSBufferingJTS
 
     /**
      * Check if the points check[] are close to the line [lineC1..LineC2].
-     * @param lineC1 first point of the line
-     * @param lineC2 second point of the line
-     * @param check the coordinates to check
+     * @param lineC1 Coordinate; first point of the line
+     * @param lineC2 Coordinate; second point of the line
+     * @param check Coordinate...; the coordinates to check
      * @return whether one of the points to check is close to the line.
      */
     private static boolean close(final Coordinate lineC1, final Coordinate lineC2, final Coordinate... check)
@@ -471,7 +471,7 @@ public final class OTSBufferingJTS
     /**
      * Create a line at linearly varying offset from a reference line. The offset may change linearly from its initial value at
      * the start of the reference line to its final offset value at the end of the reference line.
-     * @param referenceLine Geometry; the Geometry of the reference line
+     * @param referenceLine OTSLine3D; the Geometry of the reference line
      * @param offsetAtStart double; offset at the start of the reference line (positive value is Left, negative value is Right)
      * @param offsetAtEnd double; offset at the end of the reference line (positive value is Left, negative value is Right)
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
@@ -542,7 +542,7 @@ public final class OTSBufferingJTS
     }
 
     /**
-     * @param args args
+     * @param args String[]; args
      * @throws NetworkException on error
      * @throws OTSGeometryException on error
      */

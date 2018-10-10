@@ -324,22 +324,22 @@ public final class Conflict extends AbstractLaneBasedObject
 
     /**
      * Creates a pair of conflicts.
-     * @param conflictType conflict type, i.e. crossing, merge or split
-     * @param conflictRule conflict rule
-     * @param permitted whether the conflict is permitted in traffic light control
-     * @param lane1 lane of conflict 1
-     * @param longitudinalPosition1 longitudinal position of conflict 1
-     * @param length1 {@code Length} of conflict 1
-     * @param direction1 GTU direction of conflict 1
-     * @param geometry1 geometry of conflict 1
-     * @param gtuType1 gtu type of conflict 1
-     * @param lane2 lane of conflict 2
-     * @param longitudinalPosition2 longitudinal position of conflict 2
-     * @param length2 {@code Length} of conflict 2
-     * @param direction2 GTU direction of conflict 2
-     * @param geometry2 geometry of conflict 2
-     * @param gtuType2 gtu type of conflict 2
-     * @param simulator the simulator for animation and timed events
+     * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
+     * @param conflictRule ConflictRule; conflict rule
+     * @param permitted boolean; whether the conflict is permitted in traffic light control
+     * @param lane1 Lane; lane of conflict 1
+     * @param longitudinalPosition1 Length; longitudinal position of conflict 1
+     * @param length1 Length; {@code Length} of conflict 1
+     * @param direction1 GTUDirectionality; GTU direction of conflict 1
+     * @param geometry1 OTSLine3D; geometry of conflict 1
+     * @param gtuType1 GTUType; gtu type of conflict 1
+     * @param lane2 Lane; lane of conflict 2
+     * @param longitudinalPosition2 Length; longitudinal position of conflict 2
+     * @param length2 Length; {@code Length} of conflict 2
+     * @param direction2 GTUDirectionality; GTU direction of conflict 2
+     * @param geometry2 OTSLine3D; geometry of conflict 2
+     * @param gtuType2 GTUType; gtu type of conflict 2
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator for animation and timed events
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")

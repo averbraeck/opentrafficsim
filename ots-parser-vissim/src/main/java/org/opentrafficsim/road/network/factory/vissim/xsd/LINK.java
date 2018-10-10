@@ -286,7 +286,7 @@ public class LINK
 
     /**
      * Sets the value of the bezier property.
-     * @param value allowed object is {@link Object }
+     * @param value LINK.BEZIER; allowed object is {@link Object }
      */
     public void setBEZIER(LINK.BEZIER value)
     {
@@ -304,7 +304,7 @@ public class LINK
 
     /**
      * Sets the value of the clothoid property.
-     * @param value allowed object is {@link LINK.CLOTHOID }
+     * @param value LINK.CLOTHOID; allowed object is {@link LINK.CLOTHOID }
      */
     public void setCLOTHOID(LINK.CLOTHOID value)
     {
@@ -322,7 +322,7 @@ public class LINK
 
     /**
      * Sets the value of the straight property.
-     * @param value allowed object is {@link LINK.STRAIGHT }
+     * @param value LINK.STRAIGHT; allowed object is {@link LINK.STRAIGHT }
      */
     public void setSTRAIGHT(LINK.STRAIGHT value)
     {
@@ -340,7 +340,7 @@ public class LINK
 
     /**
      * Sets the value of the arc property.
-     * @param value allowed object is {@link LINK.ARC }
+     * @param value LINK.ARC; allowed object is {@link LINK.ARC }
      */
     public void setARC(LINK.ARC value)
     {
@@ -358,7 +358,7 @@ public class LINK
 
     /**
      * Sets the value of the polyline property.
-     * @param value allowed object is {@link LINK.POLYLINE }
+     * @param value LINK.POLYLINE; allowed object is {@link LINK.POLYLINE }
      */
     public void setPOLYLINE(LINK.POLYLINE value)
     {
@@ -376,7 +376,7 @@ public class LINK
 
     /**
      * Sets the value of the roadlayout property.
-     * @param value allowed object is {@link ROADLAYOUT }
+     * @param value ROADLAYOUT; allowed object is {@link ROADLAYOUT }
      */
     public void setROADLAYOUT(ROADLAYOUT value)
     {
@@ -423,7 +423,7 @@ public class LINK
 
     /**
      * Sets the value of the name property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setNAME(String value)
     {
@@ -441,7 +441,7 @@ public class LINK
 
     /**
      * Sets the value of the nodestart property.
-     * @param value allowed object is {@link Object }
+     * @param value String; allowed object is {@link Object }
      */
     public void setNODESTART(String value)
     {
@@ -459,7 +459,7 @@ public class LINK
 
     /**
      * Sets the value of the nodeend property.
-     * @param value allowed object is {@link Object }
+     * @param value String; allowed object is {@link Object }
      */
     public void setNODEEND(String value)
     {
@@ -477,7 +477,7 @@ public class LINK
 
     /**
      * Sets the value of the roadlayoutAttribute property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setROADLAYOUTAttribute(String value)
     {
@@ -495,7 +495,7 @@ public class LINK
 
     /**
      * Sets the value of the offsetstart property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setOFFSETSTART(String value)
     {
@@ -513,7 +513,7 @@ public class LINK
 
     /**
      * Sets the value of the offsetend property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setOFFSETEND(String value)
     {
@@ -531,7 +531,7 @@ public class LINK
 
     /**
      * Sets the value of the rotationstart property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setROTATIONSTART(String value)
     {
@@ -549,7 +549,7 @@ public class LINK
 
     /**
      * Sets the value of the rotationend property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setROTATIONEND(String value)
     {
@@ -567,7 +567,7 @@ public class LINK
 
     /**
      * Sets the value of the lanekeeping property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setLANEKEEPING(String value)
     {
@@ -585,7 +585,7 @@ public class LINK
 
     /**
      * Sets the value of the base property.
-     * @param value allowed object is {@link String }
+     * @param value String; allowed object is {@link String }
      */
     public void setBase(String value)
     {
@@ -635,7 +635,7 @@ public class LINK
 
         /**
          * Sets the value of the radius property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setRADIUS(String value)
         {
@@ -653,7 +653,7 @@ public class LINK
 
         /**
          * Sets the value of the angle property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setANGLE(String value)
         {
@@ -671,7 +671,7 @@ public class LINK
 
         /**
          * Sets the value of the direction property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setDIRECTION(String value)
         {
@@ -719,7 +719,7 @@ public class LINK
 
         /**
          * Sets the value of the lane property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLANE(String value)
         {
@@ -737,7 +737,7 @@ public class LINK
 
         /**
          * Sets the value of the position property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setPOSITION(String value)
         {
@@ -801,7 +801,7 @@ public class LINK
 
         /**
          * Sets the value of the startangle property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setSTARTANGLE(String value)
         {
@@ -819,7 +819,7 @@ public class LINK
 
         /**
          * Sets the value of the startcurvature property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setSTARTCURVATURE(String value)
         {
@@ -837,7 +837,7 @@ public class LINK
 
         /**
          * Sets the value of the endcurvature property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setENDCURVATURE(String value)
         {
@@ -855,7 +855,7 @@ public class LINK
 
         /**
          * Sets the value of the length property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLENGTH(String value)
         {
@@ -873,7 +873,7 @@ public class LINK
 
         /**
          * Sets the value of the endelevation property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setENDELEVATION(String value)
         {
@@ -891,7 +891,7 @@ public class LINK
 
         /**
          * Sets the value of the numsegments property.
-         * @param value allowed object is {@link BigInteger }
+         * @param value BigInteger; allowed object is {@link BigInteger }
          */
         public void setNUMSEGMENTS(BigInteger value)
         {
@@ -969,7 +969,7 @@ public class LINK
 
         /**
          * Sets the value of the lane property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLANE(String value)
         {
@@ -987,7 +987,7 @@ public class LINK
 
         /**
          * Sets the value of the gtu property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setGTU(String value)
         {
@@ -1005,7 +1005,7 @@ public class LINK
 
         /**
          * Sets the value of the gtumix property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setGTUMIX(String value)
         {
@@ -1023,7 +1023,7 @@ public class LINK
 
         /**
          * Sets the value of the distance property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setDISTANCE(String value)
         {
@@ -1041,7 +1041,7 @@ public class LINK
 
         /**
          * Sets the value of the initialspeed property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setINITIALSPEED(String value)
         {
@@ -1059,7 +1059,7 @@ public class LINK
 
         /**
          * Sets the value of the maxgtu property.
-         * @param value allowed object is {@link Double }
+         * @param value Double; allowed object is {@link Double }
          */
         public void setMAXGTU(Double value)
         {
@@ -1077,7 +1077,7 @@ public class LINK
 
         /**
          * Sets the value of the route property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setROUTE(String value)
         {
@@ -1161,7 +1161,7 @@ public class LINK
 
         /**
          * Sets the value of the lane property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLANE(String value)
         {
@@ -1179,7 +1179,7 @@ public class LINK
 
         /**
          * Sets the value of the position property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setPOSITION(String value)
         {
@@ -1197,7 +1197,7 @@ public class LINK
 
         /**
          * Sets the value of the gtu property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setGTU(String value)
         {
@@ -1215,7 +1215,7 @@ public class LINK
 
         /**
          * Sets the value of the gtumix property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setGTUMIX(String value)
         {
@@ -1233,7 +1233,7 @@ public class LINK
 
         /**
          * Sets the value of the iat property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setIAT(String value)
         {
@@ -1251,7 +1251,7 @@ public class LINK
 
         /**
          * Sets the value of the initialspeed property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setINITIALSPEED(String value)
         {
@@ -1269,7 +1269,7 @@ public class LINK
 
         /**
          * Sets the value of the maxgtu property.
-         * @param value allowed object is {@link Double }
+         * @param value Double; allowed object is {@link Double }
          */
         public void setMAXGTU(Double value)
         {
@@ -1287,7 +1287,7 @@ public class LINK
 
         /**
          * Sets the value of the starttime property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setSTARTTIME(String value)
         {
@@ -1305,7 +1305,7 @@ public class LINK
 
         /**
          * Sets the value of the endtime property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setENDTIME(String value)
         {
@@ -1323,7 +1323,7 @@ public class LINK
 
         /**
          * Sets the value of the route property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setROUTE(String value)
         {
@@ -1341,7 +1341,7 @@ public class LINK
 
         /**
          * Sets the value of the gtucolorer property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setGTUCOLORER(String value)
         {
@@ -1401,7 +1401,7 @@ public class LINK
 
         /**
          * Sets the value of the lane property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLANE(String value)
         {
@@ -1419,7 +1419,7 @@ public class LINK
 
         /**
          * Sets the value of the legalspeedlimit property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLEGALSPEEDLIMIT(String value)
         {
@@ -1437,7 +1437,7 @@ public class LINK
 
         /**
          * Sets the value of the direction property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setDIRECTION(String value)
         {
@@ -1455,7 +1455,7 @@ public class LINK
 
         /**
          * Sets the value of the color property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setCOLOR(String value)
         {
@@ -1473,7 +1473,7 @@ public class LINK
 
         /**
          * Sets the value of the overtaking property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setOVERTAKING(String value)
         {
@@ -1546,7 +1546,7 @@ public class LINK
 
         /**
          * Sets the value of the uri property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setURI(String value)
         {
@@ -1564,7 +1564,7 @@ public class LINK
 
         /**
          * Sets the value of the lane property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLANE(String value)
         {
@@ -1582,7 +1582,7 @@ public class LINK
 
         /**
          * Sets the value of the position property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setPOSITION(String value)
         {
@@ -1600,7 +1600,7 @@ public class LINK
 
         /**
          * Sets the value of the gtu property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setGTU(String value)
         {
@@ -1618,7 +1618,7 @@ public class LINK
 
         /**
          * Sets the value of the gtumix property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setGTUMIX(String value)
         {
@@ -1636,7 +1636,7 @@ public class LINK
 
         /**
          * Sets the value of the initialspeed property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setINITIALSPEED(String value)
         {
@@ -1654,7 +1654,7 @@ public class LINK
 
         /**
          * Sets the value of the route property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setROUTE(String value)
         {
@@ -1672,7 +1672,7 @@ public class LINK
 
         /**
          * Sets the value of the gtucolorer property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setGTUCOLORER(String value)
         {
@@ -1720,7 +1720,7 @@ public class LINK
 
         /**
          * Sets the value of the length property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLENGTH(String value)
         {
@@ -1807,7 +1807,7 @@ public class LINK
 
         /**
          * Sets the value of the name property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setNAME(String value)
         {
@@ -1825,7 +1825,7 @@ public class LINK
 
         /**
          * Sets the value of the lane property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLANE(String value)
         {
@@ -1843,7 +1843,7 @@ public class LINK
 
         /**
          * Sets the value of the position property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setPOSITION(String value)
         {
@@ -1861,7 +1861,7 @@ public class LINK
 
         /**
          * Sets the value of the class property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setCLASS(String value)
         {
@@ -1879,7 +1879,7 @@ public class LINK
 
         /**
          * Sets the value of the trigger property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setTRIGGER(String value)
         {
@@ -1927,7 +1927,7 @@ public class LINK
 
         /**
          * Sets the value of the lane property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLANE(String value)
         {
@@ -1945,7 +1945,7 @@ public class LINK
 
         /**
          * Sets the value of the position property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setPOSITION(String value)
         {
@@ -1989,7 +1989,7 @@ public class LINK
 
         /**
          * Sets the value of the length property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLENGTH(String value)
         {
@@ -2045,7 +2045,7 @@ public class LINK
 
         /**
          * Sets the value of the name property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setNAME(String value)
         {
@@ -2063,7 +2063,7 @@ public class LINK
 
         /**
          * Sets the value of the lane property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setLANE(String value)
         {
@@ -2081,7 +2081,7 @@ public class LINK
 
         /**
          * Sets the value of the position property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setPOSITION(String value)
         {
@@ -2099,7 +2099,7 @@ public class LINK
 
         /**
          * Sets the value of the class property.
-         * @param value allowed object is {@link String }
+         * @param value String; allowed object is {@link String }
          */
         public void setCLASS(String value)
         {

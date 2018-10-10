@@ -118,7 +118,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the weight to either WEIGHT_REGULAR or WEIGHT_BOLD.
-     * @param bold whether the font is bold or regular
+     * @param bold boolean; whether the font is bold or regular
      */
     public final void setBold(final boolean bold)
     {
@@ -127,7 +127,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the weight to one of multiple weight constants.
-     * @param weight the weight of the font to use
+     * @param weight TextWeight; the weight of the font to use
      */
     public final void setBold(final TextWeight weight)
     {
@@ -136,7 +136,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the posture to either POSTURE_REGULAR or POSTURE_OBLIQUE (italic).
-     * @param italic whether the font is italic or regular
+     * @param italic boolean; whether the font is italic or regular
      */
     public final void setItalic(final boolean italic)
     {
@@ -145,7 +145,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the width to WIDTH_CONDENSED, WIDTH_REGULAR, or WIDTH_EXTENDED.
-     * @param width the TextWidth to use
+     * @param width TextWidth; the TextWidth to use
      */
     public final void setWeightBold(final TextWidth width)
     {
@@ -154,7 +154,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the underline on or off.
-     * @param underline whether the font is underlined or regular
+     * @param underline boolean; whether the font is underlined or regular
      */
     public final void setUnderline(final boolean underline)
     {
@@ -163,7 +163,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the strikethrough on or off.
-     * @param strikethrough whether the font is strikethrough or regular
+     * @param strikethrough boolean; whether the font is strikethrough or regular
      */
     public final void setStrikethrough(final boolean strikethrough)
     {

@@ -154,7 +154,7 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @param position set position
+     * @param position DirectedPoint; set position
      */
     public final void setPosition(final DirectedPoint position)
     {

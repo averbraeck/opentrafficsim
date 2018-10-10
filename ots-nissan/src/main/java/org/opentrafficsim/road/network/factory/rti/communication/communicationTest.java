@@ -17,7 +17,7 @@ public class communicationTest
 {
 
     /**
-     * @param args args
+     * @param args String[]; args
      * @throws IOException i/o exception
      */
     @SuppressFBWarnings("IL_INFINITE_LOOP")

@@ -79,8 +79,8 @@ public class HeaderTag implements Serializable
 
     /**
      * Parse the attributes of the junction tag. The sub-elements are parsed in separate classes.
-     * @param node the junction node to parse
-     * @param parser the parser with the lists of information
+     * @param node Node; the junction node to parse
+     * @param parser OpenDriveNetworkLaneParser; the parser with the lists of information
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

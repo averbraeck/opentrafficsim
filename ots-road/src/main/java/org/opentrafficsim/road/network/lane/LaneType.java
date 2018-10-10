@@ -155,7 +155,7 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
 
     /**
      * Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub types.
-     * @param gtuType GTU type to look for compatibility.
+     * @param gtuType GTUType; GTU type to look for compatibility.
      * @param direction GTUDirectionality; the direction that the GTU is moving (with respect to the direction of the design
      *            line of the Link)
      * @return boolean; true if this LaneType permits GTU type in the given direction

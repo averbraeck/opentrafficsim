@@ -52,7 +52,7 @@ public class Desire implements Serializable
 
     /**
      * Returns desire in the given direction.
-     * @param dir Direction for the desire to return.
+     * @param dir LateralDirectionality; Direction for the desire to return.
      * @return Desire in the given direction.
      */
     public final double get(final LateralDirectionality dir)

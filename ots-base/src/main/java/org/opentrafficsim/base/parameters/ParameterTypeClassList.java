@@ -77,7 +77,7 @@ public class ParameterTypeClassList<T> extends ParameterType<List<Class<? extend
     /**
      * Returns a typed class, where the type is {@code List<Class<? extends T>>}, such that {@code ParameterTypeClass} instances
      * can easily be created.
-     * @param clazz class instance
+     * @param clazz Class&lt;T&gt;; class instance
      * @param <T> constraining class in parameter type, e.g. TacticalPlanner
      * @return typed class
      */

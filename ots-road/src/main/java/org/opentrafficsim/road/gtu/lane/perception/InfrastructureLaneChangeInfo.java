@@ -105,7 +105,7 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
 
     /**
      * Sets whether this reason to change lane is due to a dead-end.
-     * @param deadEnd whether the need to change lane comes from a dead-end
+     * @param deadEnd boolean; whether the need to change lane comes from a dead-end
      */
     public final void setDeadEnd(final boolean deadEnd)
     {
@@ -139,9 +139,9 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
 
     /**
      * Returns lane change info for one lane towards the left.
-     * @param rec record who's end defines the remaining distance
-     * @param rel critical relative position (i.e. nose when driving forward)
-     * @param dead whether the need to change lane comes from a dead-end
+     * @param rec LaneStructureRecord; record who's end defines the remaining distance
+     * @param rel RelativePosition; critical relative position (i.e. nose when driving forward)
+     * @param dead boolean; whether the need to change lane comes from a dead-end
      * @return InfrastructureLaneChangeInfo; lane change info for one lane towards the left
      */
     public final InfrastructureLaneChangeInfo left(final LaneStructureRecord rec, final RelativePosition rel,
@@ -153,9 +153,9 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
 
     /**
      * Returns lane change info for one lane towards the right.
-     * @param rec record who's end defines the remaining distance
-     * @param rel critical relative position (i.e. nose when driving forward)
-     * @param dead whether the need to change lane comes from a dead-end
+     * @param rec LaneStructureRecord; record who's end defines the remaining distance
+     * @param rel RelativePosition; critical relative position (i.e. nose when driving forward)
+     * @param dead boolean; whether the need to change lane comes from a dead-end
      * @return InfrastructureLaneChangeInfo; lane change info for one lane towards the right
      */
     public final InfrastructureLaneChangeInfo right(final LaneStructureRecord rec, final RelativePosition rel,
@@ -167,7 +167,7 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
 
     /**
      * Returns an instance for the case the entire lane is inaccessible.
-     * @param deadEnd dead end
+     * @param deadEnd boolean; dead end
      * @return instance for the case the entire lane is inaccessible
      */
     public static InfrastructureLaneChangeInfo fromInaccessibleLane(final boolean deadEnd)

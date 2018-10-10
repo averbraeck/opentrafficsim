@@ -71,7 +71,7 @@ public class TByteBuffer
 
     /**
      * adjust the length of the buffer retaining buffer contents (less when new size is less)
-     * @param aLength new size of buffer in bytes
+     * @param aLength int; new size of buffer in bytes
      */
     private void setLength(int aLength)
     {
@@ -189,7 +189,7 @@ public class TByteBuffer
 
     /**
      * Read a boolean from the byte buffer
-     * @param aDefaultValue in case of a read error this value is returned
+     * @param aDefaultValue boolean; in case of a read error this value is returned
      * @return boolean read from byte buffer
      */
     public boolean readBoolean(boolean aDefaultValue)
@@ -211,7 +211,7 @@ public class TByteBuffer
 
     /**
      * Read a byte from the byte buffer
-     * @param aDefaultValue in case of a read error this value is returned
+     * @param aDefaultValue byte; in case of a read error this value is returned
      * @return byte read from the byte buffer
      */
     public byte readByte(byte aDefaultValue)
@@ -233,7 +233,7 @@ public class TByteBuffer
 
     /**
      * Read an integer (32 bit) from the byte buffer
-     * @param aDefaultValue in case of a read error this value is returned
+     * @param aDefaultValue int; in case of a read error this value is returned
      * @return integer (32 bit) read from the byte buffer
      */
     public int readInt32(int aDefaultValue)
@@ -260,7 +260,7 @@ public class TByteBuffer
 
     /**
      * Read an integer (64 bit) from the byte buffer
-     * @param aDefaultValue in case of a read error this value is returned
+     * @param aDefaultValue long; in case of a read error this value is returned
      * @return integer (64 bit) read from the byte buffer
      */
     public long readInt64(long aDefaultValue)
@@ -292,7 +292,7 @@ public class TByteBuffer
 
     /**
      * Read a single float from the byte buffer
-     * @param aDefaultValue in case of a read error this value is returned
+     * @param aDefaultValue float; in case of a read error this value is returned
      * @return single float read from the byte buffer
      */
     public float readSingle(float aDefaultValue)
@@ -316,7 +316,7 @@ public class TByteBuffer
 
     /**
      * Read a double float from the byte buffer
-     * @param aDefaultValue in case of a read error this value is returned
+     * @param aDefaultValue double; in case of a read error this value is returned
      * @return double float read from the byte buffer
      */
     public double readDouble(double aDefaultValue)
@@ -341,7 +341,7 @@ public class TByteBuffer
 
     /**
      * Read a string from the byte buffer. The string is converted from UTF-8 to a standard string.
-     * @param aDefaultValue in case of a read error this value is returned
+     * @param aDefaultValue String; in case of a read error this value is returned
      * @return the string read from the byte buffer
      */
     public String readString(String aDefaultValue)
@@ -475,7 +475,7 @@ public class TByteBuffer
 
     /**
      * Read size and data and store as a whole WITHOUT size (size=length buffer)
-     * @param aValue byte buffer to store the read data in
+     * @param aValue TByteBuffer; byte buffer to store the read data in
      */
     public void readByteBuffer(TByteBuffer aValue)
     {
@@ -610,7 +610,7 @@ public class TByteBuffer
 
     /**
      * Skip the specified amount of bytes for reading Advances the read cursor the specified amount of bytes
-     * @param aValueSize number of bytes to skip for reading
+     * @param aValueSize int; number of bytes to skip for reading
      */
     public void skipReading(int aValueSize)
     {
@@ -621,7 +621,7 @@ public class TByteBuffer
     /**
      * Read a boolean from the byte buffer at an offset to the read cursor without advancing the read cursor. If the value could
      * not be read the default 'false' is returned.
-     * @param aOffset 0-based offset to the read cursor to peek at for the boolean
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the boolean
      * @return the value read from the byte buffer at the specified offset
      */
     public boolean peekBoolean(int aOffset)
@@ -631,8 +631,8 @@ public class TByteBuffer
 
     /**
      * Read a boolean from the byte buffer at an offset to the read cursor without advancing the read cursor.
-     * @param aOffset 0-based offset to the read cursor to peek at for the boolean
-     * @param aDefaultValue if the value could not be read this default is returned
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the boolean
+     * @param aDefaultValue boolean; if the value could not be read this default is returned
      * @return the value read from the byte buffer at the specified offset
      */
     public boolean peekBoolean(int aOffset, boolean aDefaultValue)
@@ -646,7 +646,7 @@ public class TByteBuffer
     /**
      * Read a byte from the byte buffer at an offset to the read cursor without advancing the read cursor. If the value could
      * not be read the default '0' is returned.
-     * @param aOffset 0-based offset to the read cursor to peek at for the byte
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the byte
      * @return the value read from the byte buffer at the specified offset
      */
     public byte peekByte(int aOffset)
@@ -656,8 +656,8 @@ public class TByteBuffer
 
     /**
      * Read a byte from the byte buffer at an offset to the read cursor without advancing the read cursor.
-     * @param aOffset 0-based offset to the read cursor to peek at for the byte
-     * @param aDefaultValue if the value could not be read this default is returned
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the byte
+     * @param aDefaultValue byte; if the value could not be read this default is returned
      * @return the value read from the byte buffer at the specified offset
      */
     public byte peekByte(int aOffset, byte aDefaultValue)
@@ -671,7 +671,7 @@ public class TByteBuffer
     /**
      * Read an 32 bit integer from the byte buffer at an offset to the read cursor without advancing the read cursor. If the
      * value could not be read the default '0' is returned.
-     * @param aOffset 0-based offset to the read cursor to peek at for the integer
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the integer
      * @return the value read from the byte buffer at the specified offset
      */
     public int peekInt32(int aOffset)
@@ -681,8 +681,8 @@ public class TByteBuffer
 
     /**
      * Read an 32 bit integer from the byte buffer at an offset to the read cursor without advancing the read cursor.
-     * @param aOffset 0-based offset to the read cursor to peek at for the integer
-     * @param aDefaultValue if the value could not be read this default is returned
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the integer
+     * @param aDefaultValue int; if the value could not be read this default is returned
      * @return the value read from the byte buffer at the specified offset
      */
     public int peekInt32(int aOffset, int aDefaultValue)
@@ -701,7 +701,7 @@ public class TByteBuffer
     /**
      * Read an 64 bit integer (long) from the byte buffer at an offset to the read cursor without advancing the read cursor. If
      * the value could not be read the default '0' is returned.
-     * @param aOffset 0-based offset to the read cursor to peek at for the long
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the long
      * @return the value read from the byte buffer at the specified offset
      */
     public long peekInt64(int aOffset)
@@ -711,8 +711,8 @@ public class TByteBuffer
 
     /**
      * Read an 64 bit integer (long) from the byte buffer at an offset to the read cursor without advancing the read cursor.
-     * @param aOffset 0-based offset to the read cursor to peek at for the long
-     * @param aDefaultValue if the value could not be read this default is returned
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the long
+     * @param aDefaultValue long; if the value could not be read this default is returned
      * @return the value read from the byte buffer at the specified offset
      */
     public long peekInt64(int aOffset, long aDefaultValue)
@@ -733,7 +733,7 @@ public class TByteBuffer
     /**
      * Read a single (32 bit float) from the byte buffer at an offset to the read cursor without advancing the read cursor. If
      * the value could not be read the default 'NaN' is returned.
-     * @param aOffset 0-based offset to the read cursor to peek at for the float
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the float
      * @return the value read from the byte buffer at the specified offset
      */
     public float peekSingle(int aOffset)
@@ -743,8 +743,8 @@ public class TByteBuffer
 
     /**
      * Read a single (32 bit float) from the byte buffer at an offset to the read cursor without advancing the read cursor.
-     * @param aOffset 0-based offset to the read cursor to peek at for the float
-     * @param aDefaultValue if the value could not be read this default is returned
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the float
+     * @param aDefaultValue float; if the value could not be read this default is returned
      * @return the value read from the byte buffer at the specified offset
      */
     public float peekSingle(int aOffset, float aDefaultValue)
@@ -758,7 +758,7 @@ public class TByteBuffer
     /**
      * Read a double from the byte buffer at an offset to the read cursor without advancing the read cursor. If the value could
      * not be read the default 'NaN' is returned.
-     * @param aOffset 0-based offset to the read cursor to peek at for the double
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the double
      * @return the value read from the byte buffer at the specified offset
      */
     public double peekDouble(int aOffset)
@@ -768,8 +768,8 @@ public class TByteBuffer
 
     /**
      * Read a double from the byte buffer at an offset to the read cursor without advancing the read cursor.
-     * @param aOffset 0-based offset to the read cursor to peek at for the double
-     * @param aDefaultValue if the value could not be read this default is returned
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the double
+     * @param aDefaultValue double; if the value could not be read this default is returned
      * @return the value read from the byte buffer at the specified offset
      */
     public double peekDouble(int aOffset, double aDefaultValue)
@@ -783,7 +783,7 @@ public class TByteBuffer
     /**
      * Read a string from the byte buffer at an offset to the read cursor without advancing the read cursor. If the value could
      * not be read the default "" is returned.
-     * @param aOffset 0-based offset to the read cursor to peek at for the string
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the string
      * @return the value read from the byte buffer at the specified offset
      */
     public String peekString(int aOffset)
@@ -793,8 +793,8 @@ public class TByteBuffer
 
     /**
      * Read a string from the byte buffer at an offset to the read cursor without advancing the read cursor.
-     * @param aOffset 0-based offset to the read cursor to peek at for the string
-     * @param aDefaultValue if the value could not be read this default is returned
+     * @param aOffset int; 0-based offset to the read cursor to peek at for the string
+     * @param aDefaultValue String; if the value could not be read this default is returned
      * @return the value read from the byte buffer at the specified offset
      */
     public String peekString(int aOffset, String aDefaultValue)
@@ -815,8 +815,8 @@ public class TByteBuffer
 
     /**
      * Compare the contents of this byte buffer at the read cursor to a given byte array
-     * @param aValue byte array to compare with this byte buffer
-     * @param aOffset offset to the read cursor to start comparing
+     * @param aValue byte[]; byte array to compare with this byte buffer
+     * @param aOffset int; offset to the read cursor to start comparing
      * @return if the byte buffer data equals the byte array contents true is returned
      */
     public boolean compare(byte[] aValue, int aOffset)
@@ -836,7 +836,7 @@ public class TByteBuffer
 
     /**
      * Shift all bytes in the byte buffer to the left and insert a new byte to the right (end of byte buffer)
-     * @param aRightByte the byte to insert at the right side of the byte buffer after the shift
+     * @param aRightByte byte; the byte to insert at the right side of the byte buffer after the shift
      */
     public void shiftLeftOneByte(byte aRightByte)
     {
@@ -860,7 +860,7 @@ public class TByteBuffer
     /**
      * Prepares the byte buffer for later writing of a boolean. Advances the prepare cursor for the correct amount of bytes to
      * write a boolean.
-     * @param aValue the boolean to be written later in a call to qWrite
+     * @param aValue boolean; the boolean to be written later in a call to qWrite
      */
     public void prepare(boolean aValue)
     {
@@ -870,7 +870,7 @@ public class TByteBuffer
     /**
      * Prepares the byte buffer for later writing of a byte. Advances the prepare cursor for the correct amount of bytes to
      * write a byte.
-     * @param aValue the byte to be written later in a call to qWrite
+     * @param aValue byte; the byte to be written later in a call to qWrite
      */
     public void prepare(byte aValue)
     {
@@ -880,7 +880,7 @@ public class TByteBuffer
     /**
      * Prepares the byte buffer for later writing of an 32 bit integer. Advances the prepare cursor for the correct amount of
      * bytes to write an 32 bit integer.
-     * @param aValue the 32 bit integer to be written later in a call to qWrite
+     * @param aValue int; the 32 bit integer to be written later in a call to qWrite
      */
     public void prepare(int aValue)
     {
@@ -890,7 +890,7 @@ public class TByteBuffer
     /**
      * Prepares the byte buffer for later writing of an 64 bit integer (long). Advances the prepare cursor for the correct
      * amount of bytes to write an 64 bit integer (long).
-     * @param aValue the 64 bit integer (long) to be written later in a call to qWrite
+     * @param aValue long; the 64 bit integer (long) to be written later in a call to qWrite
      */
     public void prepare(long aValue)
     {
@@ -900,7 +900,7 @@ public class TByteBuffer
     /**
      * Prepares the byte buffer for later writing of a 32 bit single (float). Advances the prepare cursor for the correct amount
      * of bytes to write a 32 bit single (float).
-     * @param aValue the 32 bit single (float) to be written later in a call to qWrite
+     * @param aValue float; the 32 bit single (float) to be written later in a call to qWrite
      */
     public void prepare(float aValue)
     {
@@ -910,7 +910,7 @@ public class TByteBuffer
     /**
      * Prepares the byte buffer for later writing of a double. Advances the prepare cursor for the correct amount of bytes to
      * write a double.
-     * @param aValue the double to be written later in a call to qWrite
+     * @param aValue double; the double to be written later in a call to qWrite
      */
     public void prepare(double aValue)
     {
@@ -920,7 +920,7 @@ public class TByteBuffer
     /**
      * Prepares the byte buffer for later writing of a string. Advances the prepare cursor for the correct amount of bytes to
      * write a string (including its size).
-     * @param aValue the string to be written later in a call to qWrite
+     * @param aValue String; the string to be written later in a call to qWrite
      */
     public void prepare(String aValue)
     {
@@ -930,7 +930,7 @@ public class TByteBuffer
     /**
      * Prepares the byte buffer for later writing of a byte array (without size). Advances the prepare cursor for the correct
      * amount of bytes to write a byte array (without size).
-     * @param aValue the byte array to be written later in a call to qWrite
+     * @param aValue byte[]; the byte array to be written later in a call to qWrite
      */
     public void prepare(byte[] aValue)
     {
@@ -940,7 +940,7 @@ public class TByteBuffer
     /**
      * Prepares the byte buffer for later writing of an other byte buffers readable data. Advances the prepare cursor for the
      * correct amount of bytes to write a byte buffers readable data.
-     * @param aValue the byte buffers readable data to be written later in a call to qWrite
+     * @param aValue TByteBuffer; the byte buffers readable data to be written later in a call to qWrite
      */
     public void prepare(TByteBuffer aValue)
     {
@@ -950,7 +950,7 @@ public class TByteBuffer
     /**
      * Prepares the byte buffer for later writing of the specified number of bytes. Advances the prepare cursor for the correct
      * amount of bytes to write the specified number of bytes.
-     * @param aValueSize the number of bytes to be written later in a call to qWrite
+     * @param aValueSize int; the number of bytes to be written later in a call to qWrite
      */
     public int prepareSize(int aValueSize)
     {
@@ -979,7 +979,7 @@ public class TByteBuffer
 
     /**
      * Start writing at the specified 0-based index. Resets the write cursor to the specified 0-based index
-     * @param aIndex the new value for the write cursor
+     * @param aIndex int; the new value for the write cursor
      */
     public void writeStart(int aIndex)
     {
@@ -997,7 +997,7 @@ public class TByteBuffer
 
     /**
      * Write the specified boolean to the byte buffer. Buffer space is allocated if needed.
-     * @param aValue the boolean to be written to the byte buffer
+     * @param aValue boolean; the boolean to be written to the byte buffer
      */
     public void write(boolean aValue)
     {
@@ -1009,7 +1009,7 @@ public class TByteBuffer
 
     /**
      * Write the specified byte to the byte buffer. Buffer space is allocated if needed.
-     * @param aValue the byte to be written to the byte buffer
+     * @param aValue byte; the byte to be written to the byte buffer
      */
     public void write(byte aValue)
     {
@@ -1021,7 +1021,7 @@ public class TByteBuffer
 
     /**
      * Write the specified 32 bit integer to the byte buffer. Buffer space is allocated if needed.
-     * @param aValue the 32 bit integer to be written to the byte buffer
+     * @param aValue int; the 32 bit integer to be written to the byte buffer
      */
     public void write(int aValue)
     {
@@ -1036,7 +1036,7 @@ public class TByteBuffer
 
     /**
      * Write the specified 64 bit integer (long) to the byte buffer. Buffer space is allocated if needed.
-     * @param aValue the 64 bit integer (long) to be written to the byte buffer
+     * @param aValue long; the 64 bit integer (long) to be written to the byte buffer
      */
     public void write(long aValue)
     {
@@ -1055,7 +1055,7 @@ public class TByteBuffer
 
     /**
      * Write the specified single (float) to the byte buffer. Buffer space is allocated if needed.
-     * @param aValue the single (float) to be written to the byte buffer
+     * @param aValue float; the single (float) to be written to the byte buffer
      */
     public void write(float aValue)
     {
@@ -1064,7 +1064,7 @@ public class TByteBuffer
 
     /**
      * Write the specified double to the byte buffer. Buffer space is allocated if needed.
-     * @param aValue the double to be written to the byte buffer
+     * @param aValue double; the double to be written to the byte buffer
      */
     public void write(double aValue)
     {
@@ -1073,7 +1073,7 @@ public class TByteBuffer
 
     /**
      * Write the specified string to the byte buffer in UTF-8 format. Buffer space is allocated if needed.
-     * @param aValue the string to be written to the byte buffer
+     * @param aValue String; the string to be written to the byte buffer
      */
     public void write(String aValue)
     {
@@ -1091,7 +1091,7 @@ public class TByteBuffer
 
     /**
      * Write the specified byte array WITHOUT the size to the byte buffer. Buffer space is allocated if needed.
-     * @param aValue the byte buffer to be written to the byte buffer
+     * @param aValue byte[]; the byte buffer to be written to the byte buffer
      */
     public void write(byte[] aValue)
     {
@@ -1105,7 +1105,7 @@ public class TByteBuffer
     // write all readable data WITH size
     /**
      * Write the readable data in the specified byte buffer to this byte buffer. Buffer space is allocated if needed.
-     * @param aValue the byte buffer who's readable data is to be written to this byte buffer
+     * @param aValue TByteBuffer; the byte buffer who's readable data is to be written to this byte buffer
      */
     public void write(TByteBuffer aValue)
     {
@@ -1117,7 +1117,7 @@ public class TByteBuffer
 
     /**
      * write a boolean to the buffer; the QWrite methods do not check for room in the buffer
-     * @param aValue the boolean value to be written to the buffer
+     * @param aValue boolean; the boolean value to be written to the buffer
      */
     public void qWrite(boolean aValue)
     {
@@ -1128,7 +1128,7 @@ public class TByteBuffer
 
     /**
      * write a single byte to the buffer; the QWrite methods do not check for room in the buffer
-     * @param aValue the byte value to be written to the buffer
+     * @param aValue byte; the byte value to be written to the buffer
      */
     public void qWrite(byte aValue)
     {
@@ -1138,7 +1138,7 @@ public class TByteBuffer
 
     /**
      * write a single integer (32 bit) to the buffer; the QWrite methods do not check for room in the buffer
-     * @param aValue the integer (32 bit) value to be written to the buffer
+     * @param aValue int; the integer (32 bit) value to be written to the buffer
      */
     public void qWrite(int aValue)
     {
@@ -1151,7 +1151,7 @@ public class TByteBuffer
 
     /**
      * write a single integer (64 bit) to the buffer; the QWrite methods do not check for room in the buffer
-     * @param aValue the integer (64 bit) value to be written to the buffer
+     * @param aValue long; the integer (64 bit) value to be written to the buffer
      */
     public void qWrite(long aValue)
     {
@@ -1168,7 +1168,7 @@ public class TByteBuffer
 
     /**
      * write a single float (32 bit) to the buffer; the QWrite methods do not check for room in the buffer
-     * @param aValue the float (32 bit) value to be written to the buffer
+     * @param aValue float; the float (32 bit) value to be written to the buffer
      */
     public void qWrite(float aValue)
     {
@@ -1177,7 +1177,7 @@ public class TByteBuffer
 
     /**
      * write a single double (64 bit) to the buffer; the QWrite methods do not check for room in the buffer
-     * @param aValue the float (64 bit) value to be written to the buffer
+     * @param aValue double; the float (64 bit) value to be written to the buffer
      */
     public void qWrite(double aValue)
     {
@@ -1187,7 +1187,7 @@ public class TByteBuffer
     /**
      * Write a string to the buffer, prefixed with the size as a 32 bit integer. The characters are UTF-8 encoded, every char is
      * 1 byte in size The QWrite methods do not check for room in the buffer
-     * @param aValue the float (32 bit) value to be written to the buffer
+     * @param aValue String; the float (32 bit) value to be written to the buffer
      */
     public void qWrite(String aValue)
     {
@@ -1203,7 +1203,7 @@ public class TByteBuffer
 
     /**
      * write array of byte WITHOUT size; the QWrite methods do not check for room in the buffer
-     * @param aValue the byte array written to the buffer (without prefixed size)
+     * @param aValue byte[]; the byte array written to the buffer (without prefixed size)
      */
     public void qWrite(byte[] aValue)
     {
@@ -1214,7 +1214,7 @@ public class TByteBuffer
 
     /**
      * write, with no checking, all readable data from the given byte buffer to this prefixed WITH size
-     * @param aValue readable data in byte buffer to be written to the buffer
+     * @param aValue TByteBuffer; readable data in byte buffer to be written to the buffer
      */
     public void qWrite(TByteBuffer aValue)
     {
@@ -1225,7 +1225,7 @@ public class TByteBuffer
     /**
      * signal number of bytes directly written to buffer without using class methods update write cursor and return if it fitted
      * into buffer (should trigger exception ?)
-     * @param aValueSize number of bytes directly written into buffer
+     * @param aValueSize int; number of bytes directly written into buffer
      * @return true if all written data fitted into buffer
      */
     public boolean written(int aValueSize)

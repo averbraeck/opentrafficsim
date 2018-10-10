@@ -46,9 +46,9 @@ class LaneOverrideTag implements Serializable
 
     /**
      * Parse the LINK.LANEOVERRIDE tag.
-     * @param node the XML-node to parse
-     * @param parser the parser with the lists of information
-     * @param linkTag the parent link tag
+     * @param node Node; the XML-node to parse
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param linkTag LinkTag; the parent link tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

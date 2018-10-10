@@ -38,9 +38,9 @@ class PlanViewTag implements Serializable
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
-     * @param nodeList the list of subnodes of the road node
-     * @param parser the parser with the lists of information
-     * @param roadTag the RoadTag to which this element belongs
+     * @param nodeList NodeList; the list of subnodes of the road node
+     * @param parser OpenDriveNetworkLaneParser; the parser with the lists of information
+     * @param roadTag RoadTag; the RoadTag to which this element belongs
      * @throws SAXException when parsing of the tag fails
      * @throws OTSGeometryException when parsing of the tag fails
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
@@ -111,8 +111,8 @@ class PlanViewTag implements Serializable
     }
 
     /**
-     * @param geometryTag the geometry tag
-     * @param elevationTags the elevations
+     * @param geometryTag GeometryTag; the geometry tag
+     * @param elevationTags NavigableMap&lt;Double,ElevationTag&gt;; the elevations
      * @return elevation the height
      */
     private static Length assignHeight(GeometryTag geometryTag, NavigableMap<Double, ElevationTag> elevationTags)
@@ -138,10 +138,10 @@ class PlanViewTag implements Serializable
     }
 
     /**
-     * @param parser the parser
-     * @param planViewTag the plan view tag
-     * @param geometryTag the geometry tag
-     * @param geometryCount counter
+     * @param parser OpenDriveNetworkLaneParser; the parser
+     * @param planViewTag PlanViewTag; the plan view tag
+     * @param geometryTag GeometryTag; the geometry tag
+     * @param geometryCount int; counter
      * @throws OTSGeometryException if geometry is invalid
      */
     private static void interpolateSpiral(OpenDriveNetworkLaneParser parser, PlanViewTag planViewTag, GeometryTag geometryTag,
@@ -179,10 +179,10 @@ class PlanViewTag implements Serializable
     }
 
     /**
-     * @param planViewTag the plan view tag
-     * @param geometryTag the geometry tag
-     * @param geometryCount counter
-     * @param roadTag the road tag
+     * @param planViewTag PlanViewTag; the plan view tag
+     * @param geometryTag GeometryTag; the geometry tag
+     * @param geometryCount int; counter
+     * @param roadTag RoadTag; the road tag
      * @throws OTSGeometryException in case geometry is invalid
      */
     private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag, int geometryCount, RoadTag roadTag)
@@ -217,12 +217,12 @@ class PlanViewTag implements Serializable
     }
 
     /**
-     * @param pFrom start point
-     * @param pTo end point
-     * @param pRadius radius
-     * @param pMinDistance minimal distance
-     * @param shortest shortest or longest curve
-     * @param side left or right
+     * @param pFrom OTSPoint3D; start point
+     * @param pTo OTSPoint3D; end point
+     * @param pRadius double; radius
+     * @param pMinDistance double; minimal distance
+     * @param shortest boolean; shortest or longest curve
+     * @param side boolean; left or right
      * @return list of points
      */
     private static List<OTSPoint3D> generateCurve(OTSPoint3D pFrom, OTSPoint3D pTo, double pRadius, double pMinDistance,
@@ -350,8 +350,8 @@ class PlanViewTag implements Serializable
 
     /**
      * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network from there.
-     * @param roadTag the road tag
-     * @param planViewTag the link to process
+     * @param roadTag RoadTag; the road tag
+     * @param planViewTag PlanViewTag; the link to process
      * @return a CrossSectionLink
      * @throws OTSGeometryException when OTSLine3D cannot be constructed
      */

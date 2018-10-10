@@ -71,8 +71,9 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     private static final long serialVersionUID = 20160000L;
 
     /** FIFO for templates that have not been generated yet due to insufficient room/headway, per position, and per link. */
-    private final Map<CrossSectionLink, Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>>> unplacedTemplates =
-            new LinkedHashMap<>();
+    private final Map<CrossSectionLink,
+            Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>>> unplacedTemplates =
+                    new LinkedHashMap<>();
 
     /** Name of the GTU generator. */
     private final String id;
@@ -374,7 +375,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     }
 
     /**
-     * @param generatedGTUs set generatedGTUs.
+     * @param generatedGTUs long; set generatedGTUs.
      */
     public final void setGeneratedGTUs(final long generatedGTUs)
     {

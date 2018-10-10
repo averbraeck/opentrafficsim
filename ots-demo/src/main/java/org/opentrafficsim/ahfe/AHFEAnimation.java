@@ -635,9 +635,9 @@ public class AHFEAnimation extends AbstractWrappableAnimation
 
         /**
          * Register a link to the sampler, so data is sampled there.
-         * @param linkData link data
-         * @param startDistance start distance on link
-         * @param endDistance end distance on link
+         * @param linkData LinkData; link data
+         * @param startDistance Length; start distance on link
+         * @param endDistance Length; end distance on link
          */
         private void registerLinkToSampler(final LinkData linkData, final Length startDistance, final Length endDistance)
         {

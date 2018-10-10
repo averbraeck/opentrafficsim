@@ -37,8 +37,8 @@ public class TrajectoryAcceptList
 
     /**
      * Adds a {@code Trajectory} with the {@code TrajectoryGroup} it is from to the accept list.
-     * @param trajectory {@code Trajectory} trajectory
-     * @param trajectoryGroup {@code TrajectoryGroup} trajectories
+     * @param trajectory Trajectory&lt;?&gt;; {@code Trajectory} trajectory
+     * @param trajectoryGroup TrajectoryGroup; {@code TrajectoryGroup} trajectories
      * @throws IllegalArgumentException if the {@code Trajectory} is not within the {@code TrajectoryGroup}
      * @throws IllegalArgumentException if the {@code Trajectory} belongs to a different GTU than an earlier provided
      *             {@code Trajectory}
@@ -67,7 +67,7 @@ public class TrajectoryAcceptList
     }
 
     /**
-     * @param i number of {@code trajectory} to get
+     * @param i int; number of {@code trajectory} to get
      * @return i'th {@code trajectory}
      * @throws IndexOutOfBoundsException if the index is out of range (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
@@ -77,7 +77,7 @@ public class TrajectoryAcceptList
     }
 
     /**
-     * @param i number of {@code TrajectoryGroup} to get
+     * @param i int; number of {@code TrajectoryGroup} to get
      * @return i'th {@code TrajectoryGroup}
      * @throws IndexOutOfBoundsException if the index is out of range (<tt>index &lt; 0 || index &gt;= size()</tt>)
      */
@@ -104,7 +104,7 @@ public class TrajectoryAcceptList
 
     /**
      * Accept given trajectory.
-     * @param trajectory trajectory to accept
+     * @param trajectory Trajectory&lt;?&gt;; trajectory to accept
      * @throws IllegalArgumentException if the trajectory is not part of the trajectory accept list
      */
     public final void acceptTrajectory(final Trajectory<?> trajectory)
@@ -114,7 +114,7 @@ public class TrajectoryAcceptList
 
     /**
      * Reject given trajectory.
-     * @param trajectory trajectory to reject
+     * @param trajectory Trajectory&lt;?&gt;; trajectory to reject
      * @throws IllegalArgumentException if the trajectory is not part of the trajectory accept list
      */
     public final void rejectTrajectory(final Trajectory<?> trajectory)
@@ -124,8 +124,8 @@ public class TrajectoryAcceptList
 
     /**
      * Accept or reject given trajectory.
-     * @param trajectory trajectory to accept or reject
-     * @param accept whether to accept the trajectory
+     * @param trajectory Trajectory&lt;?&gt;; trajectory to accept or reject
+     * @param accept boolean; whether to accept the trajectory
      * @throws IllegalArgumentException if the trajectory is not part of the trajectory accept list
      */
     public final void acceptTrajectory(final Trajectory<?> trajectory, final boolean accept)
@@ -159,7 +159,7 @@ public class TrajectoryAcceptList
 
     /**
      * Returns whether the given trajectory is accepted or not. If this was not determined, it is {@code false} by default.
-     * @param trajectory trajectory
+     * @param trajectory Trajectory&lt;?&gt;; trajectory
      * @return whether the given trajectory is accepted or not
      * @throws IllegalArgumentException if the trajectory is not part of the trajectory accept list
      */

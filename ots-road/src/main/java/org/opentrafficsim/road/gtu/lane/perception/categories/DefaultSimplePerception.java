@@ -102,7 +102,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     /**
      * Update the objects (e.g., GTUs) in parallel, in front and behind for the lane in the given direction, with their headway
      * relative to our GTU, and information about the status of the adjacent objects.
-     * @param lateralDirection the direction to update the parallel headway collection for
+     * @param lateralDirection LateralDirectionality; the direction to update the parallel headway collection for
      * @throws GTUException when the GTU was not yet initialized
      * @throws ParameterException if parameter is not defined or out of bounds
      * @throws NetworkException in case of network exception
@@ -127,7 +127,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     /**
      * Update the parallel objects (e.g., GTUs) for the given direction, with information about their status and parallel
      * overlap with our GTU.
-     * @param lateralDirection the direction to return the neighboring headway collection for
+     * @param lateralDirection LateralDirectionality; the direction to return the neighboring headway collection for
      * @throws GTUException when the GTU was not yet initialized
      */
     void updateParallelHeadways(LateralDirectionality lateralDirection) throws GTUException;
@@ -171,7 +171,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     Map<Lane, Set<Lane>> getAccessibleAdjacentLanesRight();
 
     /**
-     * @param lateralDirection the direction to return the accessible adjacent lane map for
+     * @param lateralDirection LateralDirectionality; the direction to return the accessible adjacent lane map for
      * @return the accessible adjacent lane map for the given direction
      */
     Map<Lane, Set<Lane>> getAccessibleAdjacentLanes(LateralDirectionality lateralDirection);
@@ -189,7 +189,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     Collection<Headway> getNeighboringHeadwaysRight();
 
     /**
-     * @param lateralDirection the direction to return the parallel headway collection for
+     * @param lateralDirection LateralDirectionality; the direction to return the parallel headway collection for
      * @return the the objects (e.g., GTUs) in parallel, in front and behind for the lane in the given direction, with their
      *         headway relative to our GTU, and information about the status of the adjacent objects
      */
@@ -208,7 +208,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     Collection<Headway> getParallelHeadwaysRight();
 
     /**
-     * @param lateralDirection the direction to return the neighboring headway collection for
+     * @param lateralDirection LateralDirectionality; the direction to return the neighboring headway collection for
      * @return the the parallel objects (e.g., GTUs) for the given direction, with information about their status and parallel
      *         overlap with our GTU.
      */
@@ -251,8 +251,8 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
      * returned. <br>
      * <b>Note:</b> LEFT is seen as a negative lateral direction, RIGHT as a positive lateral direction. <br>
      * FIXME In other places in OTS LEFT is positive (and RIGHT is negative). This should be made more consistent.
-     * @param currentLane the lane to look for the best accessible adjacent lane
-     * @param lateralDirection the direction (LEFT, RIGHT) to look at
+     * @param currentLane Lane; the lane to look for the best accessible adjacent lane
+     * @param lateralDirection LateralDirectionality; the direction (LEFT, RIGHT) to look at
      * @param longitudinalPosition Length; the position of the GTU along <cite>currentLane</cite>
      * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
      *         not match.

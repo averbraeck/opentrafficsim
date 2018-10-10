@@ -28,7 +28,7 @@ public final class ClassCollectionConstraint<T> extends SubCollectionConstraint<
 
     /**
      * Creates a new instance with given collection.
-     * @param objs acceptable classes
+     * @param objs Class&lt;? extends T&gt;...; acceptable classes
      * @param <T> type class
      * @return new instance with given collection
      */

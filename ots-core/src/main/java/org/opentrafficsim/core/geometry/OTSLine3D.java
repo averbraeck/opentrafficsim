@@ -97,7 +97,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Construct a new OTSLine3D, and immediately make the length-indexed line.
-     * @param pts the array of points to construct this OTSLine3D from.
+     * @param pts OTSPoint3D...; the array of points to construct this OTSLine3D from.
      * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -426,8 +426,8 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Concatenate several OTSLine3D instances.
-     * @param lines OTSLine3D... one or more OTSLine3D. The last point of the first <strong>must</strong> match the first of the
-     *            second, etc.
+     * @param lines OTSLine3D...; OTSLine3D... one or more OTSLine3D. The last point of the first
+     *            &lt;strong&gt;must&lt;/strong&gt; match the first of the second, etc.
      * @return OTSLine3D
      * @throws OTSGeometryException if zero lines are given, or when there is a gap between consecutive lines
      */
@@ -438,7 +438,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Concatenate two OTSLine3D instances. This method is separate for efficiency reasons.
-     * @param toleranceSI the tolerance between the end point of a line and the first point of the next line
+     * @param toleranceSI double; the tolerance between the end point of a line and the first point of the next line
      * @param line1 OTSLine3D; first line
      * @param line2 OTSLine3D; second line
      * @return OTSLine3D
@@ -468,9 +468,9 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Concatenate several OTSLine3D instances.
-     * @param toleranceSI the tolerance between the end point of a line and the first point of the next line
-     * @param lines OTSLine3D... one or more OTSLine3D. The last point of the first <strong>must</strong> match the first of the
-     *            second, etc.
+     * @param toleranceSI double; the tolerance between the end point of a line and the first point of the next line
+     * @param lines OTSLine3D...; OTSLine3D... one or more OTSLine3D. The last point of the first
+     *            &lt;strong&gt;must&lt;/strong&gt; match the first of the second, etc.
      * @return OTSLine3D
      * @throws OTSGeometryException if zero lines are given, or when there is a gap between consecutive lines
      */
@@ -670,7 +670,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Create an OTSLine3D, while cleaning repeating successive points.
-     * @param points the coordinates of the line as OTSPoint3D
+     * @param points OTSPoint3D...; the coordinates of the line as OTSPoint3D
      * @return the line
      * @throws OTSGeometryException when number of points &lt; 2
      */
@@ -906,7 +906,7 @@ public class OTSLine3D implements Locatable, Serializable
     /**
      * Get the location at a position on the line, with its direction. Position can be below 0 or more than the line length. In
      * that case, the position will be extrapolated in the direction of the line at its start or end.
-     * @param position the position on the line for which to calculate the point on, before, of after the line
+     * @param position Length; the position on the line for which to calculate the point on, before, of after the line
      * @return a directed point
      */
     public final DirectedPoint getLocationExtended(final Length position)
@@ -917,7 +917,8 @@ public class OTSLine3D implements Locatable, Serializable
     /**
      * Get the location at a position on the line, with its direction. Position can be below 0 or more than the line length. In
      * that case, the position will be extrapolated in the direction of the line at its start or end.
-     * @param positionSI the position on the line for which to calculate the point on, before, of after the line, in SI units
+     * @param positionSI double; the position on the line for which to calculate the point on, before, of after the line, in SI
+     *            units
      * @return a directed point
      */
     public final DirectedPoint getLocationExtendedSI(final double positionSI)
@@ -959,7 +960,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Get the location at a fraction of the line, with its direction. Fraction should be between 0.0 and 1.0.
-     * @param fraction the fraction for which to calculate the point on the line
+     * @param fraction double; the fraction for which to calculate the point on the line
      * @return a directed point
      * @throws OTSGeometryException when fraction less than 0.0 or more than 1.0.
      */
@@ -974,8 +975,8 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Get the location at a fraction of the line, with its direction. Fraction should be between 0.0 and 1.0.
-     * @param fraction the fraction for which to calculate the point on the line
-     * @param tolerance the delta from 0.0 and 1.0 that will be forgiven
+     * @param fraction double; the fraction for which to calculate the point on the line
+     * @param tolerance double; the delta from 0.0 and 1.0 that will be forgiven
      * @return a directed point
      * @throws OTSGeometryException when fraction less than 0.0 or more than 1.0.
      */
@@ -992,7 +993,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Get the location at a fraction of the line (or outside the line), with its direction.
-     * @param fraction the fraction for which to calculate the point on the line
+     * @param fraction double; the fraction for which to calculate the point on the line
      * @return a directed point
      */
     public final DirectedPoint getLocationFractionExtended(final double fraction)
@@ -1002,7 +1003,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
-     * @param position the position on the line for which to calculate the point on the line
+     * @param position Length; the position on the line for which to calculate the point on the line
      * @return a directed point
      * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
@@ -1013,7 +1014,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Binary search for a position on the line.
-     * @param pos the position to look for.
+     * @param pos double; the position to look for.
      * @return the index below the position; the position is between points[index] and points[index+1]
      * @throws OTSGeometryException when index could not be found
      */
@@ -1052,7 +1053,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
-     * @param positionSI the position on the line for which to calculate the point on the line
+     * @param positionSI double; the position on the line for which to calculate the point on the line
      * @return a directed point
      * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
@@ -1091,7 +1092,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Truncate a line at the given length (less than the length of the line, and larger than zero) and return a new line.
-     * @param lengthSI the location where to truncate the line
+     * @param lengthSI double; the location where to truncate the line
      * @return a new OTSLine3D truncated at the exact position where line.getLength() == lengthSI
      * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
@@ -1164,8 +1165,8 @@ public class OTSLine3D implements Locatable, Serializable
     /**
      * Returns the fractional position along this line of the orthogonal projection of point (x, y) on this line. If the point
      * is not orthogonal to the closest line segment, the nearest point is selected.
-     * @param x x-coordinate of point to project
-     * @param y y-coordinate of point to project
+     * @param x double; x-coordinate of point to project
+     * @param y double; y-coordinate of point to project
      * @return fractional position along this line of the orthogonal projection on this line of a point
      */
     public final double projectOrthogonal(final double x, final double y)
@@ -1280,11 +1281,11 @@ public class OTSLine3D implements Locatable, Serializable
      * </ol>
      * In the latter two cases the projection is undefined and a orthogonal projection is returned if
      * {@code orthoFallback = true}, or {@code NaN} if {@code orthoFallback = false}.
-     * @param start direction in first point
-     * @param end direction in last point
-     * @param x x-coordinate of point to project
-     * @param y y-coordinate of point to project
-     * @param fallback fallback method for when fractional projection fails
+     * @param start Direction; direction in first point
+     * @param end Direction; direction in last point
+     * @param x double; x-coordinate of point to project
+     * @param y double; y-coordinate of point to project
+     * @param fallback FractionalFallback; fallback method for when fractional projection fails
      * @return fractional position along this line of the fractional projection on that line of a point
      */
     public final double projectFractional(final Direction start, final Direction end, final double x, final double y,
@@ -1452,8 +1453,8 @@ public class OTSLine3D implements Locatable, Serializable
     /**
      * Determines all helpers (points and/or directions) for fractional projection and stores fixed information in properties
      * while returning the first and last center points (.
-     * @param start direction in first point
-     * @param end direction in last point
+     * @param start Direction; direction in first point
+     * @param end Direction; direction in last point
      */
     private void determineFractionalHelpers(final Direction start, final Direction end)
     {
@@ -1563,7 +1564,7 @@ public class OTSLine3D implements Locatable, Serializable
 
     /**
      * Helper method for fractional projection which returns an offset line to the left of a segment at a distance of 1.
-     * @param segment segment number
+     * @param segment int; segment number
      * @return parallel line to the left of a segment at a distance of 1
      */
     private OTSLine3D unitOffsetSegment(final int segment)

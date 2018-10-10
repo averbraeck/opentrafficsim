@@ -75,7 +75,7 @@ public class N201ODfactory
 
     /**
      * Creates origin-destination matrix
-     * @param network network
+     * @param network Network; network
      * @return origin-destination matrix
      */
     public static ODMatrix get(final Network network)
@@ -132,9 +132,9 @@ public class N201ODfactory
 
     /**
      * Makes generators at origin nodes of the OD.
-     * @param network network
-     * @param matrix origin-destination matrix
-     * @param simulator simulator
+     * @param network OTSNetwork; network
+     * @param matrix ODMatrix; origin-destination matrix
+     * @param simulator OTSSimulatorInterface; simulator
      */
     public static void makeGeneratorsFromOD(final OTSNetwork network, final ODMatrix matrix,
             final OTSSimulatorInterface simulator)
@@ -218,8 +218,8 @@ public class N201ODfactory
     }
 
     /**
-     * @param network network
-     * @param sampler sampling
+     * @param network OTSNetwork; network
+     * @param sampler Sampler; sampling
      * @return query covering the entire N201
      */
     public static Query getQuery(final OTSNetwork network, final Sampler sampler)
@@ -246,9 +246,9 @@ public class N201ODfactory
     }
 
     /**
-     * @param query query
-     * @param network network
-     * @param links link names
+     * @param query Query; query
+     * @param network OTSNetwork; network
+     * @param links String[]; link names
      */
     private static void addSpaceTimeRegions(final Query query, final OTSNetwork network, final String[] links)
     {

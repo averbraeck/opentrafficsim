@@ -49,8 +49,8 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
 
     /**
      * Adds an iterable for a lane.
-     * @param lane Lane; lane
-     * @param iterable AbstractPerceptionReiterable; iterable
+     * @param lane RelativeLane; lane
+     * @param iterable AbstractPerceptionReiterable&lt;H, U&gt;; iterable
      */
     public void addIterable(final RelativeLane lane, final AbstractPerceptionReiterable<H, U> iterable)
     {

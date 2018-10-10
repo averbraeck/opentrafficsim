@@ -30,8 +30,8 @@ final class GTUColorerTag
 
     /**
      * Parses the right GTUColorer from ID|SPEED|ACCELERATION|LANECHANGEURGE|SWITCHABLE.
-     * @param name name of the GTUColorer
-     * @param globalTag to define the default parameters of the colorers
+     * @param name String; name of the GTUColorer
+     * @param globalTag GlobalTag; to define the default parameters of the colorers
      * @return the corresponding GTUColorer
      * @throws SAXException in case the name does not correspond to a known GTUColorer
      */
@@ -57,7 +57,7 @@ final class GTUColorerTag
     }
 
     /**
-     * @param globalTag to define the default parameters of the colorers
+     * @param globalTag GlobalTag; to define the default parameters of the colorers
      * @return the corresponding GTUColorer
      */
     static GTUColorer makeSpeedGTUColorer(final GlobalTag globalTag)
@@ -70,7 +70,7 @@ final class GTUColorerTag
     }
 
     /**
-     * @param globalTag to define the default parameters of the colorers
+     * @param globalTag GlobalTag; to define the default parameters of the colorers
      * @return the corresponding GTUColorer
      */
     static GTUColorer makeAccelerationGTUColorer(final GlobalTag globalTag)
@@ -81,7 +81,7 @@ final class GTUColorerTag
     }
 
     /**
-     * @param globalTag to define the default parameters of the colorers
+     * @param globalTag GlobalTag; to define the default parameters of the colorers
      * @return the corresponding GTUColorer
      */
     static GTUColorer makeSwitchableGTUColorer(final GlobalTag globalTag)

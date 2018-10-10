@@ -29,7 +29,7 @@ public class MultiConstraint<T> implements Constraint<T>
 
     /**
      * Creates a {@code MultiConstraint} from given constraints.
-     * @param constraints constraints
+     * @param constraints Constraint&lt;T&gt;...; constraints
      * @param <T> value type
      * @return {@code MultiConstraint}
      */

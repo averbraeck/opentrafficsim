@@ -24,7 +24,7 @@ public final class TimeHashCode
     }
 
     /**
-     * @param args args should be empty
+     * @param args String[]; args should be empty
      */
     public static void main(final String[] args)
     {

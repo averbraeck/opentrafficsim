@@ -40,8 +40,8 @@ public class FundamentalDiagram
 
 {
     /**
-     * @param xyPairs
-     * @param accumulatedCars
+     * @param xyPairs ArrayList&lt;Point2D&gt;;
+     * @param accumulatedCars double;
      * @return piecewise linear
      */
     public static Frequency PieceWiseLinear(ArrayList<Point2D> xyPairs, double accumulatedCars)

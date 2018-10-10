@@ -53,7 +53,7 @@ public class OSMNetwork implements Serializable
 
     /**
      * Retrieve a list of Nodes that form a Way from this Network.
-     * @param wayId long; the id of the Way
+     * @param wayId Long; the id of the Way
      * @return List&lt;Long&gt;; the list of OSMNode ids of the OSMWay with the specified id
      * @throws IOException when no Way with the specified id exists in this Network
      */
@@ -150,7 +150,7 @@ public class OSMNetwork implements Serializable
     /**
      * Set/replace the Nodes of this Network.<br>
      * The provided list is <b>not copied</b>; the caller should not modify the list after setting it.
-     * @param newnodes HashMap&lt;Long, Node&gt;; the (new) Nodes for this Network
+     * @param newnodes HashMap&lt;Long, OSMNode&gt;; the (new) Nodes for this Network
      */
     public final void setNodes(final HashMap<Long, OSMNode> newnodes)
     {
@@ -372,7 +372,7 @@ public class OSMNetwork implements Serializable
 
     /**
      * Finds the link that follows a given OSMLink.
-     * @param link OSMLink for which a successor OSMLink is sought
+     * @param link OSMLink; OSMLink for which a successor OSMLink is sought
      * @return OSMLink (one of) the successor OSMLink(s) of the given OSMLink, or null if the given OSMLink has no successors
      */
     public final OSMLink findFollowingLink(final OSMLink link)

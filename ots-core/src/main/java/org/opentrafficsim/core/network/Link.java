@@ -59,7 +59,7 @@ public interface Link extends Locatable, Serializable, Identifiable
      * to end node) for the GTU type CAR, but BOTH for the GTU type BICYCLE (i.e., bicycles can also go from end node to start
      * node). If there is no entry for the given GTU Type, the values of GTUType.ALL will be returned. If this entry is not
      * present, LongitudinalDirectionality.NONE will be returned.
-     * @param gtuType the GTU type to request the directionality for
+     * @param gtuType GTUType; the GTU type to request the directionality for
      * @return the longitudinal directionality of the link (FORWARD, BACKWARD, BOTH or NONE) for the given GTU type. NONE will
      *         be returned if no directionality is given.
      */

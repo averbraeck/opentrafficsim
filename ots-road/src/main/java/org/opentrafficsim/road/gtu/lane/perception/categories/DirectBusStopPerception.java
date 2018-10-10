@@ -66,23 +66,25 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
             Length pos = record.getStartDistance().neg();
             pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
                     : pos.minus(getGtu().getFront().getDx());
-            AbstractPerceptionIterable<HeadwayBusStop, BusStop, ?> it = new LaneBasedObjectIterable<HeadwayBusStop, BusStop>(
-                    getGtu(), BusStop.class, record, Length.max(Length.ZERO, pos),
-                    getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), route)
-            {
-                /** {@inheritDoc} */
-                @Override
-                public HeadwayBusStop perceive(final LaneBasedGTU perceivingGtu, final BusStop busStop, final Length distance)
-                {
-                    Set<String> conflictIds = new HashSet<>();
-                    for (Conflict conflict : busStop.getConflicts())
+            AbstractPerceptionIterable<HeadwayBusStop, BusStop,
+                    ?> it = new LaneBasedObjectIterable<HeadwayBusStop, BusStop>(getGtu(), BusStop.class, record,
+                            Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
+                            route)
                     {
-                        conflictIds.add(conflict.getId());
-                    }
-                    return Try.assign(() -> new HeadwayBusStop(busStop, distance, lane, conflictIds),
-                            "Exception while creating bus stop headway.");
-                }
-            };
+                        /** {@inheritDoc} */
+                        @Override
+                        public HeadwayBusStop perceive(final LaneBasedGTU perceivingGtu, final BusStop busStop,
+                                final Length distance)
+                        {
+                            Set<String> conflictIds = new HashSet<>();
+                            for (Conflict conflict : busStop.getConflicts())
+                            {
+                                conflictIds.add(conflict.getId());
+                            }
+                            return Try.assign(() -> new HeadwayBusStop(busStop, distance, lane, conflictIds),
+                                    "Exception while creating bus stop headway.");
+                        }
+                    };
             stops.addIterable(lane, it);
         }
         this.busStops = new TimeStampedObject<>(stops, getTimestamp());

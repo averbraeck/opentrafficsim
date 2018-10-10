@@ -279,7 +279,7 @@ public class Area extends GeoObject implements Locatable
     }
 
     /**
-     * @param d set accumulatedCars.
+     * @param d double; set accumulatedCars.
      */
     public final void setAccumulatedCars(final double d)
     {
@@ -295,7 +295,7 @@ public class Area extends GeoObject implements Locatable
     }
 
     /**
-     * @param areaType set areaType.
+     * @param areaType TrafficBehaviourType; set areaType.
      */
     public final void setTrafficBehaviourType(final TrafficBehaviourType areaType)
     {
@@ -311,7 +311,7 @@ public class Area extends GeoObject implements Locatable
     }
 
     /**
-     * @param roadLength set roadLength.
+     * @param roadLength Length; set roadLength.
      */
     public void setRoadLength(Length roadLength)
     {
@@ -319,7 +319,7 @@ public class Area extends GeoObject implements Locatable
     }
 
     /**
-     * @param rel
+     * @param rel Length;
      */
     public void addRoadLength(Length rel)
     {
@@ -335,7 +335,7 @@ public class Area extends GeoObject implements Locatable
     }
 
     /**
-     * @param averageSpeed set averageSpeed.
+     * @param averageSpeed Speed; set averageSpeed.
      */
     public void setAverageSpeed(Speed averageSpeed)
     {
@@ -351,7 +351,7 @@ public class Area extends GeoObject implements Locatable
     }
 
     /**
-     * @param currentSpeed set currentSpeed.
+     * @param currentSpeed Speed; set currentSpeed.
      */
     public void setCurrentSpeed(Speed currentSpeed)
     {
@@ -367,7 +367,7 @@ public class Area extends GeoObject implements Locatable
     }
 
     /**
-     * @param increaseDemandByFactor set increaseDemandByFactor.
+     * @param increaseDemandByFactor double; set increaseDemandByFactor.
      */
     public void setIncreaseDemandByFactor(double increaseDemandByFactor)
     {
@@ -383,7 +383,7 @@ public class Area extends GeoObject implements Locatable
     }
 
     /**
-     * @param parametersNTM set parametersNTM.
+     * @param parametersNTM ParametersNTM; set parametersNTM.
      */
     public void setParametersNTM(ParametersNTM parametersNTM)
     {

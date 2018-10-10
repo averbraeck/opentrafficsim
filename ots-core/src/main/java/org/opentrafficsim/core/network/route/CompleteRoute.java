@@ -86,7 +86,7 @@ public class CompleteRoute extends Route
 
     /**
      * Determine if this Route contains the specified Link.
-     * @param link the link to check in the route.
+     * @param link Link; the link to check in the route.
      * @return whether the link is part of the route or not.
      */
     public final boolean containsLink(final Link link)

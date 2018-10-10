@@ -29,7 +29,7 @@ public final class Draw
 
     /**
      * Returns a randomly drawn element using draw weights.
-     * @param map Map&lt;E, Double&gt;; map of elements and respective weights
+     * @param map Map&lt;E, ? extends Double&gt;; map of elements and respective weights
      * @param stream StreamInterface; random number stream
      * @param <E> element type
      * @return E; randomly drawn element

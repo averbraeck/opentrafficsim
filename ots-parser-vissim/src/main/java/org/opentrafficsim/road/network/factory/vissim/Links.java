@@ -52,8 +52,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision$, by $Author$, initial
- * version Jul 25, 2015 <br>
+ * LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision$, by $Author$,
+ * initial version Jul 25, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 final class Links
@@ -66,7 +66,7 @@ final class Links
 
     /**
      * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network from there.
-     * @param parser the parser with the lists of information
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
      * @throws NetworkException when both nodes are null.
      * @throws NamingException when node animation cannot link to the animation context.
      */
@@ -336,9 +336,9 @@ final class Links
 
     /**
      * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network from there.
-     * @param linkTag the link to process
-     * @param parser the parser with the lists of information
-     * @param simulator to be able to make the animation
+     * @param linkTag LinkTag; the link to process
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param simulator OTSSimulatorInterface; to be able to make the animation
      * @throws OTSGeometryException when both nodes are null.
      * @throws NamingException when node animation cannot link to the animation context.
      * @throws NetworkException when tag type not filled
@@ -469,9 +469,9 @@ final class Links
     }
 
     /**
-     * @param linkTag the link to process
-     * @param parser the parser with the lists of information
-     * @param simulator to be able to make the animation
+     * @param linkTag LinkTag; the link to process
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; to be able to make the animation
      * @throws NetworkException when the stripe cannot be instantiated
      * @throws NamingException when the /animation/2D tree cannot be found in the context
      * @throws SAXException when the stripe type cannot be parsed correctly
@@ -587,9 +587,9 @@ final class Links
     }
 
     /**
-     * @param linkTag the link to process
-     * @param parser the parser with the lists of information
-     * @param simulator to be able to make the animation
+     * @param linkTag LinkTag; the link to process
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; to be able to make the animation
      * @throws NetworkException when the stripe cannot be instantiated
      * @throws NamingException when the /animation/2D tree cannot be found in the context
      * @throws SAXException when the stripe type cannot be parsed correctly
@@ -699,9 +699,9 @@ final class Links
     }
 
     /**
-     * @param realLinkTag
-     * @param vissimNetworkLaneParser
-     * @param simulator
+     * @param realLinkTag LinkTag;
+     * @param vissimNetworkLaneParser VissimNetworkLaneParser;
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit;
      * @throws NetworkException
      */
     public static void createSinkSensor(LinkTag realLinkTag, VissimNetworkLaneParser vissimNetworkLaneParser,

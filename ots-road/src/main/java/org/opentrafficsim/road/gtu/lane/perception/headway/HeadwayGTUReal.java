@@ -88,7 +88,7 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
 
     /**
      * Creates speed limit prospect for given GTU.
-     * @param wrappedGtu gtu to the the speed limit prospect for
+     * @param wrappedGtu LaneBasedGTU; gtu to the the speed limit prospect for
      * @return speed limit prospect for given GTU
      */
     private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGTU wrappedGtu)

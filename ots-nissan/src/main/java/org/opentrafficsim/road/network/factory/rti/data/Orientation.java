@@ -51,7 +51,7 @@ public class Orientation implements Serializable
     }
 
     /**
-     * @param yaw set yaw
+     * @param yaw float; set yaw
      */
     public void setYaw(float yaw)
     {
@@ -67,7 +67,7 @@ public class Orientation implements Serializable
     }
 
     /**
-     * @param pitch set pitch
+     * @param pitch float; set pitch
      */
     public void setPitch(float pitch)
     {
@@ -83,7 +83,7 @@ public class Orientation implements Serializable
     }
 
     /**
-     * @param roll set roll
+     * @param roll float; set roll
      */
     public void setRoll(float roll)
     {

@@ -198,7 +198,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     }
 
     /**
-     * @param simulator set simulator.
+     * @param simulator OTSSimulatorInterface; set simulator.
      */
     public final void setSimulator(final OTSSimulatorInterface simulator)
     {
@@ -207,7 +207,7 @@ public class ShortMerge extends AbstractWrappableAnimation
 
     /**
      * Main method.
-     * @param args args for main program
+     * @param args String[]; args for main program
      */
     public static void main(final String[] args)
     {
@@ -240,7 +240,7 @@ public class ShortMerge extends AbstractWrappableAnimation
     {
 
         /**
-         * @param network set network.
+         * @param network OTSNetwork; set network.
          */
         public void setNetwork(final OTSNetwork network)
         {
@@ -438,8 +438,8 @@ public class ShortMerge extends AbstractWrappableAnimation
 
         /**
          * Get lane from link by id.
-         * @param link link
-         * @param id id
+         * @param link CrossSectionLink; link
+         * @param id String; id
          * @return lane
          */
         private Lane getLane(final CrossSectionLink link, final String id)
@@ -448,18 +448,18 @@ public class ShortMerge extends AbstractWrappableAnimation
         }
 
         /**
-         * @param lane the reference lane for this generator
-         * @param generationSpeed the speed of the GTU
-         * @param id the id of the generator itself
-         * @param idGenerator the generator for the ID
-         * @param distribution the type generator for the GTU
-         * @param headwayGenerator the headway generator for the GTU
-         * @param gtuColorer the GTU colorer for animation
-         * @param roomChecker the checker to see if there is room for the GTU
-         * @param bcFactory the factory to generate parameters for the GTU
-         * @param tacticalFactory the generator for the tactical planner
-         * @param simulationTime simulation time
-         * @param stream random numbers stream
+         * @param lane Lane; the reference lane for this generator
+         * @param generationSpeed Speed; the speed of the GTU
+         * @param id String; the id of the generator itself
+         * @param idGenerator IdGenerator; the generator for the ID
+         * @param distribution Distribution&lt;LaneBasedTemplateGTUType&gt;; the type generator for the GTU
+         * @param headwayGenerator Generator&lt;Duration&gt;; the headway generator for the GTU
+         * @param gtuColorer GTUColorer; the GTU colorer for animation
+         * @param roomChecker RoomChecker; the checker to see if there is room for the GTU
+         * @param bcFactory ParameterFactory; the factory to generate parameters for the GTU
+         * @param tacticalFactory LaneBasedTacticalPlannerFactory&lt;?&gt;; the generator for the tactical planner
+         * @param simulationTime Time; simulation time
+         * @param stream StreamInterface; random numbers stream
          * @throws SimRuntimeException in case of scheduling problems
          * @throws ProbabilityException in case of an illegal probability distribution
          * @throws GTUException in case the GTU is inconsistent

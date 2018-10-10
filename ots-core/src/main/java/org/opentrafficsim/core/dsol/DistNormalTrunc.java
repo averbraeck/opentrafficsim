@@ -92,7 +92,7 @@ public class DistNormalTrunc extends DistContinuous
 
     /**
      * returns the cumulative probability of the x-value.
-     * @param x the observation x
+     * @param x double; the observation x
      * @return double the cumulative probability
      */
     public double getCumulativeProbability(final double x)
@@ -110,7 +110,7 @@ public class DistNormalTrunc extends DistContinuous
 
     /**
      * returns the cumulative probability of the x-value.
-     * @param x the observation x
+     * @param x double; the observation x
      * @return double the cumulative probability
      */
     private double getCumulativeProbabilityNotTruncated(final double x)
@@ -137,7 +137,7 @@ public class DistNormalTrunc extends DistContinuous
 
     /**
      * returns the x-value of the given cumulativePropability.
-     * @param cumulativeProbability reflects cum prob
+     * @param cumulativeProbability double; reflects cum prob
      * @return double the inverse cumulative probability
      */
     public double getInverseCumulativeProbability(final double cumulativeProbability)
@@ -184,7 +184,7 @@ public class DistNormalTrunc extends DistContinuous
 
     /**
      * Test.
-     * @param args args
+     * @param args String[]; args
      */
     public static void main(final String[] args)
     {
@@ -233,7 +233,7 @@ public class DistNormalTrunc extends DistContinuous
 
     /**
      * returns the x-value of the given cumulativePropability.
-     * @param cumulativeProbability reflects cum prob
+     * @param cumulativeProbability double; reflects cum prob
      * @return double the inverse cumulative probability
      */
     private double getInverseCumulativeProbabilityNotTruncated(final double cumulativeProbability)

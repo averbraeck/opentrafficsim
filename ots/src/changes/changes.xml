@@ -3,6 +3,11 @@
   <body>
 
     <release version="1.00.03" date="2018-XX-XX" description="POM in aimsun-proto updated; using external logger">
+      <action dev="averbraeck" type="add">
+        A program called ParamComments has been added in ots-build-tools to help enter/repair the
+        correct types in the @param entries in the method comments. All classes have been repaired 
+        using this program.
+      </action>
       <action dev="averbraeck" type="fix">
         The .classpath files have a classpathentry for /src/main/resources after a Maven Update with
         an entry 'excluding="**" kind="src"'. The exclusion means that the export of a Runnable jar 

@@ -252,7 +252,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * This method can be overridden to carry out specific behavior during the execution of the plan (e.g., scheduling of
      * triggers, entering or leaving lanes, etc.). Please bear in mind that the call to super.move() is essential, and that one
      * has to take care to handle the situation that the plan gets interrupted.
-     * @param fromLocation the last known location (initial location, or end location of the previous operational plan)
+     * @param fromLocation DirectedPoint; the last known location (initial location, or end location of the previous operational
+     *            plan)
      * @throws SimRuntimeException when scheduling of the next move fails
      * @throws OperationalPlanException when there is a problem creating a good path for the GTU
      * @throws GTUException when there is a problem with the state of the GTU when planning a path
@@ -520,7 +521,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     }
 
     /**
-     * @param maximumAcceleration set maximumAcceleration
+     * @param maximumAcceleration Acceleration; set maximumAcceleration
      */
     public final void setMaximumAcceleration(final Acceleration maximumAcceleration)
     {
@@ -541,7 +542,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     }
 
     /**
-     * @param maximumDeceleration set maximumDeceleration, stored as a negative number
+     * @param maximumDeceleration Acceleration; set maximumDeceleration, stored as a negative number
      */
     public final void setMaximumDeceleration(final Acceleration maximumDeceleration)
     {

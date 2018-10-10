@@ -73,7 +73,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param neighbour set neighbour.
+     * @param neighbour HashMap&lt;BoundedNode,Double&gt;; set neighbour.
      */
     public void setRouteFractionToNeighbours(HashMap<BoundedNode, Double> neighbour)
     {
@@ -105,7 +105,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param demandToNeighbour set demandToNeighbour.
+     * @param demandToNeighbour HashMap&lt;BoundedNode,Double&gt;; set demandToNeighbour.
      */
     public void setDemandToNeighbour(HashMap<BoundedNode, Double> demandToNeighbour)
     {
@@ -121,7 +121,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param destination set destination.
+     * @param destination NTMNode; set destination.
      */
     public void setDestination(NTMNode destination)
     {
@@ -137,7 +137,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param accumulatedCarsToDestination set accumulatedCarsToDestination.
+     * @param accumulatedCarsToDestination double; set accumulatedCarsToDestination.
      */
     public void setAccumulatedCarsToDestination(double accumulatedCarsToDestination)
     {
@@ -185,7 +185,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param fluxToNeighbour set fluxToNeighbour.
+     * @param fluxToNeighbour double; set fluxToNeighbour.
      */
     public void setFluxToNeighbour(double fluxToNeighbour)
     {
@@ -193,7 +193,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param fluxToNeighbour set fluxToNeighbour.
+     * @param fluxToNeighbour double; set fluxToNeighbour.
      */
     public void addFluxToNeighbour(double fluxToNeighbour)
     {
@@ -209,7 +209,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param departedTrips set departedTrips.
+     * @param departedTrips double; set departedTrips.
      */
     public void setDepartedTrips(double departedTrips)
     {
@@ -217,7 +217,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param addDepartedTrips
+     * @param addDepartedTrips double;
      */
     public void addDepartedTrips(double addDepartedTrips)
     {
@@ -233,7 +233,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param tripsInReservoir set tripsInReservoir.
+     * @param tripsInReservoir double; set tripsInReservoir.
      */
     public void setTripsInReservoir(double tripsInReservoir)
     {
@@ -241,7 +241,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param tripsInReservoir \
+     * @param tripsInReservoir double; \
      */
     public void addTripsInReservoir(double tripsInReservoir)
     {
@@ -257,7 +257,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param arrivedTrips set arrivedTrips.
+     * @param arrivedTrips double; set arrivedTrips.
      */
     public void setArrivedTrips(double arrivedTrips)
     {
@@ -265,7 +265,7 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param addArrivedTrips
+     * @param addArrivedTrips double;
      */
     public void addArrivedTrips(double addArrivedTrips)
     {

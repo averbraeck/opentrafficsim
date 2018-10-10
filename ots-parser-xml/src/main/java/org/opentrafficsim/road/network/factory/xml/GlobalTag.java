@@ -80,8 +80,8 @@ class GlobalTag implements Serializable
     Length laneChangeUrgeGTUColorerHorizon = null;
 
     /**
-     * @param nodeList nodeList the top-level nodes of the XML-file
-     * @param parser the parser with the lists of information
+     * @param nodeList NodeList; nodeList the top-level nodes of the XML-file
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
      * @throws NetworkException when parsing of units fails
      * @throws SAXException when parsing of GLOBAL tag fails
      */

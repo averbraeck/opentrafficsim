@@ -58,7 +58,7 @@ public interface LaneStructure
     /**
      * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
      * relative position, or as far as the lane structure goes.
-     * @param clazz Class; class of objects to find
+     * @param clazz Class&lt;T&gt;; class of objects to find
      * @param gtu LaneBasedGTU; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
@@ -72,7 +72,7 @@ public interface LaneStructure
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
      * downstream from the relative position, or as far as the lane structure goes.
      * @param lane RelativeLane; lane
-     * @param clazz Class; class of objects to find
+     * @param clazz Class&lt;T&gt;; class of objects to find
      * @param gtu LaneBasedGTU; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
@@ -85,7 +85,7 @@ public interface LaneStructure
     /**
      * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
      * relative position, or as far as the lane structure goes. Objects on links not on the route are ignored.
-     * @param clazz Class; class of objects to find
+     * @param clazz Class&lt;T&gt;; class of objects to find
      * @param gtu LaneBasedGTU; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
@@ -100,8 +100,8 @@ public interface LaneStructure
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
      * downstream from the relative position, or as far as the lane structure goes. Objects on links not on the route are
      * ignored.
-     * @param lane Lane; lane
-     * @param clazz Class; class of objects to find
+     * @param lane RelativeLane; lane
+     * @param clazz Class&lt;T&gt;; class of objects to find
      * @param gtu LaneBasedGTU; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
@@ -115,8 +115,8 @@ public interface LaneStructure
     /**
      * Retrieve objects on a lane of a specific type. Returns upstream objects from the relative position for as far as the lane
      * structure goes. Distances to upstream objects are given as positive values.
-     * @param lane Lane; lane
-     * @param clazz Class; class of objects to find
+     * @param lane RelativeLane; lane
+     * @param clazz Class&lt;T&gt;; class of objects to find
      * @param gtu LaneBasedGTU; gtu
      * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find

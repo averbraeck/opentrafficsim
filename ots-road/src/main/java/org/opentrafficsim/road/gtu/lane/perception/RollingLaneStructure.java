@@ -490,7 +490,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /**
      * Removes all records downstream of the given record from underlying data structures.
-     * @param record LaneStructureRecord; record, downstream of which to remove all records
+     * @param record RollingLaneStructureRecord; record, downstream of which to remove all records
      * @param lat LateralDirectionality; records with an adjacent record at this side are not deleted
      */
     private void removeDownstream(final RollingLaneStructureRecord record, final LateralDirectionality lat)
@@ -510,7 +510,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /**
      * Removes the record from underlying data structures.
-     * @param record LaneStructureRecord; record to remove
+     * @param record RollingLaneStructureRecord; record to remove
      */
     private void removeRecord(final RollingLaneStructureRecord record)
     {
@@ -600,7 +600,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     /**
      * Helper method for upstream and downstream expansion. This method returns all lanes that can be laterally found from the
      * input set.
-     * @param edge Set&lt;LaneStructureRecord&gt;; input set
+     * @param edge Set&lt;RollingLaneStructureRecord&gt;; input set
      * @param recordLink RecordLink; link to add between lateral records, depends on upstream or downstream search
      * @param gtuType GTUType; GTU type
      * @param fractionalPosition double; fractional position on reference link
@@ -783,7 +783,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     /**
      * Recursive method to find downstream record(s) on the upstream edge, as the edge was moved downstream and a laterally
      * connected lane was not yet in the upstream edge. All edge records are added to the edge set.
-     * @param record LaneStructureRecord; newly found adjacent record after moving the upstream edge downstream
+     * @param record RollingLaneStructureRecord; newly found adjacent record after moving the upstream edge downstream
      * @return boolean; whether a record was added to the edge, note that no record is added of the record is fully downstream
      *         of the upstream view distance
      * @throws GTUException on exception
@@ -926,7 +926,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /**
      * Expand the map to include a limited section downstream of a split, regarding links not on the route.
-     * @param set Set&lt;LaneStructureRecord&gt;; set of lanes that have been laterally found
+     * @param set Set&lt;RollingLaneStructureRecord&gt;; set of lanes that have been laterally found
      * @param gtuType GTUType; GTU type
      * @param fractionalPosition double; fractional position on reference link
      * @param route Route; route
@@ -982,7 +982,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /**
      * Expand the map to include a limited section upstream of a merge that is downstream, regarding links not on the route.
-     * @param set Set&lt;LaneStructureRecord&gt;; set of lanes that have been laterally found
+     * @param set Set&lt;RollingLaneStructureRecord&gt;; set of lanes that have been laterally found
      * @param gtuType GTUType; GTU type
      * @param fractionalPosition double; fractional position on reference link
      * @param route Route; route of the GTU
@@ -1048,7 +1048,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /**
      * Helper method of various other methods that laterally couples lanes that have been longitudinally found.
-     * @param record LaneStructureRecord; longitudinally found lane
+     * @param record RollingLaneStructureRecord; longitudinally found lane
      * @param gtuType GTUType; GTU type
      * @param nextSet Set&lt;RollingLaneStructureRecord&gt;; set of records on current build edge
      */
@@ -1086,11 +1086,11 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /**
      * Creates a lane structure record and adds it to relevant maps.
-     * @param lane lane
-     * @param direction direction
-     * @param startDistanceSource source of the start distance
-     * @param recordLink record link
-     * @param relativeLane relative lane
+     * @param lane Lane; lane
+     * @param direction GTUDirectionality; direction
+     * @param startDistanceSource RollingLaneStructureRecord; source of the start distance
+     * @param recordLink RecordLink; record link
+     * @param relativeLane RelativeLane; relative lane
      * @return created lane structure record
      */
     private RollingLaneStructureRecord constructRecord(final Lane lane, final GTUDirectionality direction,
@@ -1210,9 +1210,9 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     /**
      * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
      * relative position, or as far as the lane map goes.
-     * @param clazz class of objects to find
-     * @param gtu gtu
-     * @param pos relative position to start search from
+     * @param clazz Class&lt;T&gt;; class of objects to find
+     * @param gtu LaneBasedGTU; gtu
+     * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @return Sorted set of objects of requested type per lane
      * @throws GTUException if lane is not in current set
@@ -1231,10 +1231,10 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     /**
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
      * downstream from the relative position, or as far as the lane map goes.
-     * @param lane lane
-     * @param clazz class of objects to find
-     * @param gtu gtu
-     * @param pos relative position to start search from
+     * @param lane RelativeLane; lane
+     * @param clazz Class&lt;T&gt;; class of objects to find
+     * @param gtu LaneBasedGTU; gtu
+     * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @return Sorted set of objects of requested type
      * @throws GTUException if lane is not in current set
@@ -1287,12 +1287,12 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     /**
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
      * downstream from the relative position, or as far as the lane map goes. Objects on links not on the route are ignored.
-     * @param lane lane
-     * @param clazz class of objects to find
-     * @param gtu gtu
-     * @param pos relative position to start search from
+     * @param lane RelativeLane; lane
+     * @param clazz Class&lt;T&gt;; class of objects to find
+     * @param gtu LaneBasedGTU; gtu
+     * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
-     * @param route the route
+     * @param route Route; the route
      * @return Sorted set of objects of requested type
      * @throws GTUException if lane is not in current set
      */
@@ -1320,10 +1320,10 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /**
      * Recursive search for lane based objects downstream.
-     * @param set set to store entries into
-     * @param record current record
-     * @param clazz class of objects to find
-     * @param ds distance from reference to chosen relative position
+     * @param set SortedSet&lt;Entry&lt;T&gt;&gt;; set to store entries into
+     * @param record LaneStructureRecord; current record
+     * @param clazz Class&lt;T&gt;; class of objects to find
+     * @param ds double; distance from reference to chosen relative position
      * @param <T> type of objects to find
      */
     @SuppressWarnings("unchecked")
@@ -1377,11 +1377,11 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     /**
      * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
      * relative position, or as far as the lane map goes. Objects on links not on the route are ignored.
-     * @param clazz class of objects to find
-     * @param gtu gtu
-     * @param pos relative position to start search from
+     * @param clazz Class&lt;T&gt;; class of objects to find
+     * @param gtu LaneBasedGTU; gtu
+     * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
-     * @param route the route
+     * @param route Route; the route
      * @return Sorted set of objects of requested type per lane
      * @throws GTUException if lane is not in current set
      */
@@ -1400,10 +1400,10 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     /**
      * Retrieve objects on a lane of a specific type. Returns upstream objects from the relative position for as far as the lane
      * map goes. Distances to upstream objects are given as positive values.
-     * @param lane lane
-     * @param clazz class of objects to find
-     * @param gtu gtu
-     * @param pos relative position to start search from
+     * @param lane RelativeLane; lane
+     * @param clazz Class&lt;T&gt;; class of objects to find
+     * @param gtu LaneBasedGTU; gtu
+     * @param pos RelativePosition.TYPE; relative position to start search from
      * @param <T> type of objects to find
      * @return Sorted set of objects of requested type
      * @throws GTUException if lane is not in current set
@@ -1450,10 +1450,10 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /**
      * Recursive search for lane based objects upstream.
-     * @param set set to store entries into
-     * @param record current record
-     * @param clazz class of objects to find
-     * @param ds distance from reference to chosen relative position
+     * @param set SortedSet&lt;Entry&lt;T&gt;&gt;; set to store entries into
+     * @param record LaneStructureRecord; current record
+     * @param clazz Class&lt;T&gt;; class of objects to find
+     * @param ds Length; distance from reference to chosen relative position
      * @param <T> type of objects to find
      */
     @SuppressWarnings("unchecked")
@@ -1487,7 +1487,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /**
      * Enables visualization of this lane structure. This is purely for debugging purposes.
-     * @param gtu GTU to animate the LaneStructure off
+     * @param gtu GTU; GTU to animate the LaneStructure off
      */
     public final void visualize(final GTU gtu)
     {

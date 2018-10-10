@@ -87,7 +87,7 @@ public class OSMWay implements Serializable
 
     /**
      * Set/replace the list of way tags.
-     * @param newTags List&lt;Tag&gt;; the new list of way tags
+     * @param newTags List&lt;OSMTag&gt;; the new list of way tags
      */
     public final void setTags(final List<OSMTag> newTags)
     {

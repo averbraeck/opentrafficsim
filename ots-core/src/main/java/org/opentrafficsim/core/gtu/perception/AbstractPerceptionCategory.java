@@ -76,7 +76,7 @@ public abstract class AbstractPerceptionCategory<G extends GTU, P extends Percep
 
     /**
      * Returns the object inside a time stamped object, or {@code null} if it's null.
-     * @param object time stamped object
+     * @param object TimeStampedObject&lt;T&gt;; time stamped object
      * @param <T> type of time stamped object
      * @return the object inside a time stamped object, or {@code null} if it's null
      */

@@ -51,7 +51,7 @@ public class Position implements Serializable
     }
 
     /**
-     * @param x set x
+     * @param x float; set x
      */
     public void setX(float x)
     {
@@ -67,7 +67,7 @@ public class Position implements Serializable
     }
 
     /**
-     * @param y set y
+     * @param y float; set y
      */
     public void setY(float y)
     {
@@ -83,7 +83,7 @@ public class Position implements Serializable
     }
 
     /**
-     * @param z set z
+     * @param z float; set z
      */
     public void setZ(float z)
     {

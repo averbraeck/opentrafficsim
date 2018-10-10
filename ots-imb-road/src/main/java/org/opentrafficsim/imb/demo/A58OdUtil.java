@@ -111,10 +111,10 @@ public class A58OdUtil
     }
 
     /**
-     * @param network the network
-     * @param gtuColorer the GTU colorer
-     * @param simulator the simulator
-     * @param penetrationRate the penetration rate parameter
+     * @param network OTSNetwork; the network
+     * @param gtuColorer GTUColorer; the GTU colorer
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param penetrationRate double; the penetration rate parameter
      * @throws ProbabilityException on error with the lane-based distributions
      */
     public static void createDemand(final OTSNetwork network, final GTUColorer gtuColorer,
@@ -304,8 +304,8 @@ public class A58OdUtil
 
     /**
      * Add sinks to network.
-     * @param endNode node to add the sink to
-     * @param simulator the simulator
+     * @param endNode OTSNode; node to add the sink to
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      */
     private static void addSink(final OTSNode endNode, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
@@ -330,19 +330,19 @@ public class A58OdUtil
     }
 
     /**
-     * @param lane the reference lane for this generator
-     * @param generationSpeed the speed of the GTU
-     * @param id the id of the generator itself
-     * @param idGenerator the generator for the ID
-     * @param simulator the simulator
-     * @param network the network
-     * @param distribution the type generator for the GTU
-     * @param headwayGenerator the headway generator for the GTU
-     * @param gtuColorer the GTU colorer for animation
-     * @param roomChecker the checker to see if there is room for the GTU
-     * @param bcFactory the factory to generate parameters for the GTU
-     * @param tacticalFactory the generator for the tactical planner
-     * @param stream randum number stream
+     * @param lane Lane; the reference lane for this generator
+     * @param generationSpeed Speed; the speed of the GTU
+     * @param id String; the id of the generator itself
+     * @param idGenerator IdGenerator; the generator for the ID
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param network OTSNetwork; the network
+     * @param distribution Distribution&lt;LaneBasedTemplateGTUType&gt;; the type generator for the GTU
+     * @param headwayGenerator HeadwayGeneratorDemand; the headway generator for the GTU
+     * @param gtuColorer GTUColorer; the GTU colorer for animation
+     * @param roomChecker RoomChecker; the checker to see if there is room for the GTU
+     * @param bcFactory ParameterFactory; the factory to generate parameters for the GTU
+     * @param tacticalFactory LaneBasedTacticalPlannerFactory&lt;?&gt;; the generator for the tactical planner
+     * @param stream StreamInterface; randum number stream
      * @throws SimRuntimeException in case of scheduling problems
      * @throws ProbabilityException in case of an illegal probability distribution
      * @throws GTUException in case the GTU is inconsistent
@@ -365,8 +365,8 @@ public class A58OdUtil
     }
 
     /**
-     * @param in the input vector
-     * @param factor the multiplication factor
+     * @param in double[]; the input vector
+     * @param factor double; the multiplication factor
      * @return array with values multiplied by factor
      */
     private static double[] factorCopy(final double[] in, final double factor)
@@ -380,8 +380,8 @@ public class A58OdUtil
     }
 
     /**
-     * @param in1 the first vector
-     * @param in2 the second vector
+     * @param in1 double[]; the first vector
+     * @param in2 double[]; the second vector
      * @return sum per element of arrays
      */
     private static double[] arraySum(final double[] in1, final double[] in2)
@@ -959,9 +959,9 @@ public class A58OdUtil
         /**
          * Recursive determination of the next arrival time. Each recursion moves to the next time period. This occurs if a
          * randomly determined arrival falls outside of a time period, or when demand in a time period is 0.
-         * @param i index of time period
-         * @param start reference time from start of period i, pertains to previous arrival, or zero during recursion
-         * @param fractionRemaining remaining fraction of headway to apply due to time in earlier time periods
+         * @param i int; index of time period
+         * @param start Duration; reference time from start of period i, pertains to previous arrival, or zero during recursion
+         * @param fractionRemaining double; remaining fraction of headway to apply due to time in earlier time periods
          * @return time of next arrival
          * @throws ValueException in case of an illegal time vector
          * @throws RemoteException in case of not being able to retrieve the replication

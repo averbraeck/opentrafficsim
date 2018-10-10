@@ -70,7 +70,7 @@ public class RTIToOTSData implements Serializable
     }
 
     /**
-     * @param timeStamp set timeStamp
+     * @param timeStamp float; set timeStamp
      */
     public void setTimeStamp(float timeStamp)
     {
@@ -86,7 +86,7 @@ public class RTIToOTSData implements Serializable
     }
 
     /**
-     * @param deltaT set deltaT
+     * @param deltaT float; set deltaT
      */
     public void setDeltaT(float deltaT)
     {
@@ -102,7 +102,7 @@ public class RTIToOTSData implements Serializable
     }
 
     /**
-     * @param intersection_type set intersection_type
+     * @param intersection_type int; set intersection_type
      */
     public void setIntersection_type(int intersection_type)
     {
@@ -118,7 +118,7 @@ public class RTIToOTSData implements Serializable
     }
 
     /**
-     * @param intersection_phase set intersection_phase
+     * @param intersection_phase int; set intersection_phase
      */
     public void setIntersection_phase(int intersection_phase)
     {
@@ -134,7 +134,7 @@ public class RTIToOTSData implements Serializable
     }
 
     /**
-     * @param intersection_distance set intersection_distance
+     * @param intersection_distance float; set intersection_distance
      */
     public void setIntersection_distance(float intersection_distance)
     {
@@ -150,7 +150,7 @@ public class RTIToOTSData implements Serializable
     }
 
     /**
-     * @param egoPos set egoPos
+     * @param egoPos Position; set egoPos
      */
     public void setEgoPos(Position egoPos)
     {
@@ -166,7 +166,7 @@ public class RTIToOTSData implements Serializable
     }
 
     /**
-     * @param egoOri set egoOri
+     * @param egoOri Orientation; set egoOri
      */
     public void setEgoOri(Orientation egoOri)
     {
@@ -182,7 +182,7 @@ public class RTIToOTSData implements Serializable
     }
 
     /**
-     * @param egoVel set egoVel
+     * @param egoVel Velocity; set egoVel
      */
     public void setEgoVel(Velocity egoVel)
     {
@@ -198,7 +198,7 @@ public class RTIToOTSData implements Serializable
     }
 
     /**
-     * @param egoAngVel set egoAngVel
+     * @param egoAngVel AngularVel; set egoAngVel
      */
     public void setEgoAngVel(AngularVel egoAngVel)
     {

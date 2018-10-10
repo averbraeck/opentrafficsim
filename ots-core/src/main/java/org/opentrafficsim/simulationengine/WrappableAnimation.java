@@ -33,8 +33,8 @@ public interface WrappableAnimation
      * @param runLength Duration; the duration of the simulation
      * @param properties List&lt;Property&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must contain all the
      *            properties returned by getProperties(); any additional properties may be ignored
-     * @param rect the x, y, width and height for the window to rebuild. Use null for maximized screen.
-     * @param exitOnClose Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window.
+     * @param rect Rectangle; the x, y, width and height for the window to rebuild. Use null for maximized screen.
+     * @param exitOnClose boolean; Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window.
      * @return SimpleSimulation; the new simulation
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency
@@ -49,7 +49,7 @@ public interface WrappableAnimation
 
     /**
      * Restart (rebuild) the simulation.
-     * @param rect the x, y, width and height for the window to rebuild. Use null for maximized screen.
+     * @param rect Rectangle; the x, y, width and height for the window to rebuild. Use null for maximized screen.
      * @return SimpleSimulation; the new simulation
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency

@@ -38,7 +38,7 @@ public class TripInfoTimeDynamic extends TripInfo
     }
 
     /**
-     * @param departureTimeProfile set departureTimeProfile.
+     * @param departureTimeProfile DepartureTimeProfile; set departureTimeProfile.
      */
     public final void setDepartureTimeProfile(final DepartureTimeProfile departureTimeProfile)
     {

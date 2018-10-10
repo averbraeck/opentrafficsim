@@ -133,7 +133,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Serializable
 
     /**
      * Set the parent of this AbstractProperty.
-     * @param newParent AbstractProperty&lt;?&gt;; the new parent of this AbstractProperty
+     * @param newParent CompoundProperty; the new parent of this AbstractProperty
      */
     protected final void setParent(final CompoundProperty newParent)
     {
@@ -190,7 +190,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Serializable
         /**
          * Recursively add all properties to the list. <br>
          * Compound properties are included <b>right before</b> their contents.
-         * @param cp AbstractProperty&lt;T&gt;; the property to add (if compound it and all it's children are added)
+         * @param cp Property&lt;?&gt;; the property to add (if compound it and all it's children are added)
          */
         private void addToList(final Property<?> cp)
         {

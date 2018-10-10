@@ -495,7 +495,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         }
 
         /**
-         * @param laneNr the lane in the list.
+         * @param laneNr int; the lane in the list.
          * @return lane.
          */
         public Lane getLane(final int laneNr)

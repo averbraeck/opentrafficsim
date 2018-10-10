@@ -286,7 +286,7 @@ public class GraphTransceiver extends AbstractTransceiver
     }
 
     /**
-     * @param plot the plot to generate the PNG for
+     * @param plot AbstractOTSPlot; the plot to generate the PNG for
      * @throws IOException when the creation of the PNG has failed
      * @throws IMBException when the transmission of the IMB message fails
      * @throws SimRuntimeException when the scheduling of the next publish event fails

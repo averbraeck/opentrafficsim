@@ -63,7 +63,7 @@ public final class IDMPropertySet
 
     /**
      * Return the maximum acceleration.
-     * @param set CompoundProperty (should have been created with makeIDMPropertySet)
+     * @param set CompoundProperty; CompoundProperty (should have been created with makeIDMPropertySet)
      * @return Acceleration
      */
     public static Acceleration getA(final CompoundProperty set)
@@ -73,7 +73,7 @@ public final class IDMPropertySet
 
     /**
      * Return the maximum comfortable deceleration.
-     * @param set CompoundProperty (should have been created with makeIDMPropertySet)
+     * @param set CompoundProperty; CompoundProperty (should have been created with makeIDMPropertySet)
      * @return Acceleration
      */
     public static Acceleration getB(final CompoundProperty set)
@@ -83,7 +83,7 @@ public final class IDMPropertySet
 
     /**
      * Return the static headway.
-     * @param set CompoundProperty (should have been created with makeIDMPropertySet)
+     * @param set CompoundProperty; CompoundProperty (should have been created with makeIDMPropertySet)
      * @return Length
      */
     public static Length getS0(final CompoundProperty set)
@@ -93,7 +93,7 @@ public final class IDMPropertySet
 
     /**
      * Return the time headway.
-     * @param set CompoundProperty (should have been created with makeIDMPropertySet)
+     * @param set CompoundProperty; CompoundProperty (should have been created with makeIDMPropertySet)
      * @return Time
      */
     public static Duration getTSafe(final CompoundProperty set)

@@ -47,9 +47,9 @@ public class MetaData
     }
 
     /**
-     * @param metaDataType meta data type
+     * @param metaDataType MetaDataType&lt;T&gt;; meta data type
      * @param <T> class of meta data
-     * @param value value of meta data
+     * @param value T; value of meta data
      */
     public final <T> void put(final MetaDataType<T> metaDataType, final T value)
     {
@@ -58,7 +58,7 @@ public class MetaData
     }
 
     /**
-     * @param metaDataType meta data type
+     * @param metaDataType MetaDataType&lt;?&gt;; meta data type
      * @return whether the trajectory contains the meta data of give type
      */
     public final boolean contains(final MetaDataType<?> metaDataType)
@@ -67,7 +67,7 @@ public class MetaData
     }
 
     /**
-     * @param metaDataType meta data type
+     * @param metaDataType MetaDataType&lt;T&gt;; meta data type
      * @param <T> class of meta data
      * @return value of meta data
      */

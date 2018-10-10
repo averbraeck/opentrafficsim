@@ -335,9 +335,9 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /**
      * Returns a standard Gaussian distributed random value generated with a Wiener process.
-     * @param gtuId gtu id of neighbor
-     * @param tau error correlation parameter
-     * @param dt model time step
+     * @param gtuId String; gtu id of neighbor
+     * @param tau Duration; error correlation parameter
+     * @param dt Duration; model time step
      * @return standard Gaussian distributed random value generated with a Wiener process
      */
     private double getError(final String gtuId, final Duration tau, final Duration dt)
@@ -385,14 +385,14 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
 
     /**
      * Creates the initial erroneous values for distance, speed and acceleration.
-     * @param distance actual distance
-     * @param speed actual speed
-     * @param acceleration actual acceleration
-     * @param error random error
-     * @param distanceError error factor on distance
-     * @param speedError error factor on speed
-     * @param accelerationError error factor on acceleration
-     * @param egoSpeed own speed
+     * @param distance Length; actual distance
+     * @param speed Speed; actual speed
+     * @param acceleration Acceleration; actual acceleration
+     * @param error double; random error
+     * @param distanceError double; error factor on distance
+     * @param speedError double; error factor on speed
+     * @param accelerationError double; error factor on acceleration
+     * @param egoSpeed Speed; own speed
      * @return erroneous triplet
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -507,8 +507,8 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
         }
 
         /**
-         * @param t time
-         * @param err error
+         * @param t Time; time
+         * @param err double; error
          */
         public void set(final Time t, final double err)
         {

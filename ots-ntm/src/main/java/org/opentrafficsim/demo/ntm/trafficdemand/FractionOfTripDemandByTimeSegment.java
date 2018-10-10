@@ -49,7 +49,7 @@ public class FractionOfTripDemandByTimeSegment
     }
 
     /**
-     * @param shareOfDemand set shareOfDemand
+     * @param shareOfDemand double; set shareOfDemand
      */
     public final void setShareOfDemand(final double shareOfDemand)
     {
@@ -65,7 +65,7 @@ public class FractionOfTripDemandByTimeSegment
     }
 
     /**
-     * @param timeSinceMidnight set timeSinceMidnight
+     * @param timeSinceMidnight Time; set timeSinceMidnight
      */
     public final void setTimeSinceMidnight(final Time timeSinceMidnight)
     {
@@ -81,7 +81,7 @@ public class FractionOfTripDemandByTimeSegment
     }
 
     /**
-     * @param duration set duration
+     * @param duration Duration; set duration
      */
     public final void setDuration(final Duration duration)
     {

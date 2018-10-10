@@ -55,24 +55,24 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
 
     /**
      * Returns the current value of the gtu.
-     * @param gtu gtu
+     * @param gtu G; gtu
      * @return current value of the gtu
      */
     public abstract T getValue(final G gtu);
 
     /**
      * Returns an updated list/array/vector of the storage type, including a new value at given index.
-     * @param storage storage
-     * @param index index to store next value
-     * @param value value to add
+     * @param storage S; storage
+     * @param index int; index to store next value
+     * @param value T; value to add
      * @return updated list/array/vector of the storage type, including a new value at given index
      */
     public abstract S setValue(final S storage, final int index, final T value);
 
     /**
      * Returns a specific output value. This is used to store extended data types as generic file, i.e. text file.
-     * @param output output
-     * @param index index of value to return
+     * @param output O; output
+     * @param index int; index of value to return
      * @return the i'th output value
      * @throws SamplingException when {@code i} is out of bounds.
      */
@@ -80,8 +80,8 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
 
     /**
      * Returns a specific storage value. This is used to bypass conversion to the output type when trajectories are cut.
-     * @param storage storage
-     * @param index index of value to return
+     * @param storage S; storage
+     * @param index int; index of value to return
      * @return the i'th output value
      * @throws SamplingException when {@code i} is out of bounds.
      */
@@ -95,8 +95,8 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
 
     /**
      * Convert storage type to output type.
-     * @param storage stored data
-     * @param size size of trajectory
+     * @param storage S; stored data
+     * @param size int; size of trajectory
      * @return converted output
      */
     public abstract O convert(final S storage, final int size);
@@ -108,8 +108,8 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
      * String.format(format, value.si);
      * </pre>
      * 
-     * @param format format
-     * @param value value
+     * @param format String; format
+     * @param value T; value
      * @return formatted value
      */
     public abstract String formatValue(final String format, final T value);
@@ -117,9 +117,9 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
     /**
      * Interpolate value between two measured values. The default implementation takes a linear interpolation over time for
      * {@link DoubleScalar}, {@link FloatScalar}, {@link Double} and {@link Float}, or the closest value in time otherwise.
-     * @param value0 first value
-     * @param value1 second value
-     * @param f interpolation fraction
+     * @param value0 T; first value
+     * @param value1 T; second value
+     * @param f double; interpolation fraction
      * @param <AU> unit of value, if values are {@code DoubleScalar}
      * @param <RU> the corresponding relative unit
      * @return interpolated value

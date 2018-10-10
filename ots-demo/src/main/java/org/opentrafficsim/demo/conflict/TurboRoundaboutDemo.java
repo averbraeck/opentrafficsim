@@ -139,7 +139,7 @@ public class TurboRoundaboutDemo extends AbstractWrappableAnimation
 
         /**
          * Changes color of traffic light.
-         * @param trafficLight traffic light
+         * @param trafficLight SimpleTrafficLight; traffic light
          * @throws SimRuntimeException scheduling error
          */
         private void changePhase(final SimpleTrafficLight trafficLight) throws SimRuntimeException

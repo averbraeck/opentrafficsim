@@ -261,7 +261,7 @@ public class IMBSuperDemo implements UNITS
 
     /**
      * Regenerate the contents of the propertyPanel.
-     * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the demo-specific properties to display
+     * @param properties List&lt;Property&lt;?&gt;&gt;; the demo-specific properties to display
      */
     final void rebuildPropertyPanel(final List<Property<?>> properties)
     {
@@ -346,7 +346,7 @@ public class IMBSuperDemo implements UNITS
 
     /**
      * Create a graphical editor for an AbstractProperty.
-     * @param ap AbstractProperty; the abstract property for which an editor must be created
+     * @param ap Property&lt;?&gt;; the abstract property for which an editor must be created
      * @return JPanel
      */
     final JPanel makePropertyEditor(final Property<?> ap)

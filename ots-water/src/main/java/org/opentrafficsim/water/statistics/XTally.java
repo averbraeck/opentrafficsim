@@ -96,8 +96,8 @@ public class XTally implements Serializable
 
     /**
      * returns the confidence interval on either side of the mean.
-     * @param alpha Alpha is the significance level used to compute the confidence level. The confidence level equals 100*(1 -
-     *            alpha)%, or in other words, an alpha of 0.05 indicates a 95 percent confidence level.
+     * @param alpha double; Alpha is the significance level used to compute the confidence level. The confidence level equals
+     *            100*(1 - alpha)%, or in other words, an alpha of 0.05 indicates a 95 percent confidence level.
      * @return double[] the confidence interval of this tally
      */
     public double[] getConfidenceInterval(final double alpha)
@@ -107,9 +107,9 @@ public class XTally implements Serializable
 
     /**
      * returns the confidence interval based of the mean.
-     * @param alpha Alpha is the significance level used to compute the confidence level. The confidence level equals 100*(1 -
-     *            alpha)%, or in other words, an alpha of 0.05 indicates a 95 percent confidence level.
-     * @param side the side of the confidence interval with respect to the mean
+     * @param alpha double; Alpha is the significance level used to compute the confidence level. The confidence level equals
+     *            100*(1 - alpha)%, or in other words, an alpha of 0.05 indicates a 95 percent confidence level.
+     * @param side short; the side of the confidence interval with respect to the mean
      * @return double[] the confidence interval of this tally
      */
     public double[] getConfidenceInterval(final double alpha, final short side)
@@ -253,7 +253,7 @@ public class XTally implements Serializable
 
     /**
      * tally.
-     * @param value the value
+     * @param value double; the value
      */
     public void tally(final double value)
     {
@@ -274,8 +274,8 @@ public class XTally implements Serializable
 
     /**
      * Write statistics to an excel spreadsheet, starting on row "startRow".
-     * @param sheet the excel sheet to write to
-     * @param startRow the first row of writing
+     * @param sheet Sheet; the excel sheet to write to
+     * @param startRow int; the first row of writing
      * @return first free row after writing
      */
     public int writeToExcel(final Sheet sheet, final int startRow)

@@ -110,8 +110,8 @@ public class Stripe extends RoadMarkerAlong
     }
 
     /**
-     * @param gtuType GTU type to add permeability for.
-     * @param permeable direction(s) to add compared to the direction of the design line.
+     * @param gtuType GTUType; GTU type to add permeability for.
+     * @param permeable Permeable; direction(s) to add compared to the direction of the design line.
      */
     public final void addPermeability(final GTUType gtuType, final Permeable permeable)
     {

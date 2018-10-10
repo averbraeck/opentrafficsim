@@ -76,7 +76,7 @@ public class LinkLocation implements Serializable
     /**
      * Returns the distance to another LinkLocation. If the other location is in front of us, the distance is positive. If it is
      * behind us, it is negative.
-     * @param loc the link location to find the distance to.
+     * @param loc LinkLocation; the link location to find the distance to.
      * @return the distance to another LinkLocation.
      */
     public final Length distance(final LinkLocation loc)

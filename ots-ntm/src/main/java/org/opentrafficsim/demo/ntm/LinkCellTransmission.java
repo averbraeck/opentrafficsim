@@ -101,7 +101,7 @@ public class LinkCellTransmission extends NTMLink
     }
 
     /**
-     * @param cells set cells.
+     * @param cells ArrayList&lt;FlowCell&gt;; set cells.
      */
     public final void setCells(final ArrayList<FlowCell> cells)
     {
@@ -109,8 +109,8 @@ public class LinkCellTransmission extends NTMLink
     }
 
     /**
-     * @param link
-     * @param timeStepDurationCellTransmission
+     * @param link NTMLink;
+     * @param timeStepDurationCellTransmission Duration;
      * @return
      */
     public static final ArrayList<FlowCell> createCells(final NTMLink link, Duration timeStepDurationCellTransmission)

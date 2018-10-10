@@ -259,7 +259,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param group ButtonGroup; the buttonGroup for the new JRadioButtonMenuItem
      * @param xAxisToSelect Axis; the Axis that will become X-axis when this item is clicked
      * @param yAxisToSelect Axis; the Axis that will become Y-axis when this item is clicked
-     * @param selected Boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new JRadioButtonMenuItem
+     * @param selected boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new JRadioButtonMenuItem
      *            will <b>not</b> be selected
      * @return JRatioButtonMenuItem; the newly added item
      */
@@ -278,7 +278,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /**
      * Add the effect of one passing car to this Fundamental Diagram.
-     * @param gtu AbstractLaneBasedGTU; the GTU that passes the detection point
+     * @param gtu LaneBasedGTU; the GTU that passes the detection point
      * @throws GTUException when the speed of the GTU cannot be assessed
      */
     public final void addData(final LaneBasedGTU gtu) throws GTUException
@@ -324,7 +324,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /**
      * Notify interested parties of an event affecting this TrajectoryPlot.
-     * @param event DatasetChangedEvent
+     * @param event DatasetChangeEvent; DatasetChangedEvent
      */
     private void notifyListeners(final DatasetChangeEvent event)
     {
@@ -404,7 +404,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /**
      * Retrieve a value from the recorded samples.
-     * @param item Integer; the rank number of the sample
+     * @param item int; the rank number of the sample
      * @param axis Axis; the axis that determines which quantity to retrieve
      * @return Double; the requested value, or Double.NaN if the sample does not (yet) exist
      */

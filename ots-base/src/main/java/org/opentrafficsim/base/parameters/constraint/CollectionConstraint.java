@@ -51,7 +51,7 @@ public class CollectionConstraint<T> implements Constraint<T>
 
     /**
      * Creates a new instance with given objects.
-     * @param objs acceptable objects
+     * @param objs T...; acceptable objects
      * @param <T> type
      * @return new instance with given objects
      */

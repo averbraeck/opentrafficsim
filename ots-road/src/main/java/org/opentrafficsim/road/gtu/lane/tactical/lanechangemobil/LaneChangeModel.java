@@ -26,14 +26,14 @@ public interface LaneChangeModel
 {
     /**
      * Compute the acceleration and lane change.
-     * @param gtu GTU; the GTU for which the acceleration and lane change is computed
-     * @param sameLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the current lane (can not be null and may
+     * @param gtu LaneBasedGTU; the GTU for which the acceleration and lane change is computed
+     * @param sameLaneTraffic Collection&lt;Headway&gt;; the set of observable GTUs in the current lane (can not be null and may
      *            include the <code>gtu</code>)
-     * @param rightLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane where GTUs should drive in
-     *            the absence of other traffic (must be null if there is no such lane)
-     * @param leftLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane into which GTUs should
+     * @param rightLaneTraffic Collection&lt;Headway&gt;; the set of observable GTUs in the adjacent lane where GTUs should
+     *            drive in the absence of other traffic (must be null if there is no such lane)
+     * @param leftLaneTraffic Collection&lt;Headway&gt;; the set of observable GTUs in the adjacent lane into which GTUs should
      *            merge to overtake other traffic (must be null if there is no such lane)
-     * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
+     * @param speedLimit Speed; the local speed limit
      * @param preferredLaneRouteIncentive Acceleration; route incentive to merge to the adjacent lane where GTUs should drive in
      *            the absence of other traffic
      * @param laneChangeThreshold Acceleration; threshold that prevents lane changes that have very little benefit

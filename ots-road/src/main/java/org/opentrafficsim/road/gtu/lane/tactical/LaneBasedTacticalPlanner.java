@@ -35,7 +35,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGTU, 
 
     /**
      * Selects a lane from a possible set. This set contains all viable lanes in to which a lanes splits.
-     * @param lanes Set; set of lane directions possible
+     * @param lanes Set&lt;LaneDirection&gt;; set of lane directions possible
      * @return LaneDirection; preferred lane direction
      * @throws ParameterException in case of a missing parameter
      */

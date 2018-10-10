@@ -52,7 +52,7 @@ public class DataViewerApplication extends DSOLApplication
     private static final long serialVersionUID = 20140819L;
 
     /**
-     * @param args
+     * @param args String[];
      * @throws SimRuntimeException
      * @throws RemoteException
      * @throws NamingException
@@ -87,7 +87,7 @@ public class DataViewerApplication extends DSOLApplication
     }
 
     /**
-     * @param panel
+     * @param panel DSOLPanel&lt;Time,Duration,SimTimeDoubleUnit&gt;;
      */
     private static void addInfoTab(final DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {

@@ -56,7 +56,7 @@ public class NTMTestApplication extends DSOLApplication
     public static JTextArea textArea;
 
     /**
-     * @param args
+     * @param args String[];
      * @throws Exception
      */
     public static void main(final String[] args) throws Exception
@@ -107,7 +107,7 @@ public class NTMTestApplication extends DSOLApplication
     }
 
     /**
-     * @param panel
+     * @param panel DSOLPanel&lt;Time,Duration,SimTimeDoubleUnit&gt;;
      */
     private static void addInfoTab(final DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {

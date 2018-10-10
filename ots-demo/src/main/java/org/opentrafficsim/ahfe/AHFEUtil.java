@@ -121,21 +121,21 @@ public final class AHFEUtil
     }
 
     /**
-     * @param network the network
-     * @param gtuColorer the GTU colorer
-     * @param simulator the simulator
-     * @param replication replication number
-     * @param anticipationStrategy anticipation strategy
-     * @param reactionTime reaction time
-     * @param anticipationTime anticipation time
-     * @param truckFraction truck fraction
-     * @param simulationTime simulation time
-     * @param leftDemand demand on left highway
-     * @param rightDemand demand on right highway
-     * @param leftFraction fraction of traffic generated on left lane
-     * @param distanceError distance error
-     * @param speedError speed error
-     * @param accelerationError acceleration error
+     * @param network OTSNetwork; the network
+     * @param gtuColorer GTUColorer; the GTU colorer
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param replication int; replication number
+     * @param anticipationStrategy String; anticipation strategy
+     * @param reactionTime Duration; reaction time
+     * @param anticipationTime Duration; anticipation time
+     * @param truckFraction double; truck fraction
+     * @param simulationTime Time; simulation time
+     * @param leftDemand Frequency; demand on left highway
+     * @param rightDemand Frequency; demand on right highway
+     * @param leftFraction double; fraction of traffic generated on left lane
+     * @param distanceError double; distance error
+     * @param speedError double; speed error
+     * @param accelerationError double; acceleration error
      * @throws ValueException on value error
      * @throws ParameterException on parameter error
      * @throws GTUException on gtu error
@@ -314,8 +314,8 @@ public final class AHFEUtil
 
     /**
      * Get lane from link by id.
-     * @param link link
-     * @param id id
+     * @param link CrossSectionLink; link
+     * @param id String; id
      * @return lane
      */
     private static Lane getLane(final CrossSectionLink link, final String id)
@@ -331,20 +331,20 @@ public final class AHFEUtil
     }
 
     /**
-     * @param lane the reference lane for this generator
-     * @param generationSpeed the speed of the GTU
-     * @param id the id of the generator itself
-     * @param idGenerator the generator for the ID
-     * @param simulator the simulator
-     * @param network the network
-     * @param distribution the type generator for the GTU
-     * @param headwayGenerator the headway generator for the GTU
-     * @param gtuColorer the GTU colorer for animation
-     * @param roomChecker the checker to see if there is room for the GTU
-     * @param bcFactory the factory to generate parameters for the GTU
-     * @param tacticalFactory the generator for the tactical planner
-     * @param simulationTime simulation time
-     * @param stream random number stream
+     * @param lane Lane; the reference lane for this generator
+     * @param generationSpeed Speed; the speed of the GTU
+     * @param id String; the id of the generator itself
+     * @param idGenerator IdGenerator; the generator for the ID
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param network OTSNetwork; the network
+     * @param distribution Distribution&lt;LaneBasedTemplateGTUType&gt;; the type generator for the GTU
+     * @param headwayGenerator HeadwayGeneratorDemand; the headway generator for the GTU
+     * @param gtuColorer GTUColorer; the GTU colorer for animation
+     * @param roomChecker RoomChecker; the checker to see if there is room for the GTU
+     * @param bcFactory ParameterFactory; the factory to generate parameters for the GTU
+     * @param tacticalFactory LaneBasedTacticalPlannerFactory&lt;?&gt;; the generator for the tactical planner
+     * @param simulationTime Time; simulation time
+     * @param stream StreamInterface; random number stream
      * @throws SimRuntimeException in case of scheduling problems
      * @throws ProbabilityException in case of an illegal probability distribution
      * @throws GTUException in case the GTU is inconsistent
@@ -658,9 +658,9 @@ public final class AHFEUtil
         /**
          * Recursive determination of the next arrival time. Each recursion moves to the next time period. This occurs if a
          * randomly determined arrival falls outside of a time period, or when demand in a time period is 0.
-         * @param i index of time period
-         * @param start reference time from start of period i, pertains to previous arrival, or zero during recursion
-         * @param fractionRemaining remaining fraction of headway to apply due to time in earlier time periods
+         * @param i int; index of time period
+         * @param start Duration; reference time from start of period i, pertains to previous arrival, or zero during recursion
+         * @param fractionRemaining double; remaining fraction of headway to apply due to time in earlier time periods
          * @return time of next arrival
          * @throws ValueException in case of an illegal time vector
          * @throws RemoteException in case of not being able to retrieve the replication

@@ -112,9 +112,10 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     }
 
     /**
-     * @param strategicalPlanner the strategical planner (e.g., route determination) to use
-     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes with their directions
-     * @param initialSpeed the initial speed of the car on the lane
+     * @param strategicalPlanner LaneBasedStrategicalPlanner; the strategical planner (e.g., route determination) to use
+     * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the initial positions of the car on one or more
+     *            lanes with their directions
+     * @param initialSpeed Speed; the initial speed of the car on the lane
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation
      * @param gtuColorer GTUColorer; the GTUColorer that will be linked from the animation to determine the color (may be null
      *            in which case a default will be used)
@@ -294,7 +295,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         private OTSNetwork network = null;
 
         /**
-         * @param id set id
+         * @param id String; set id
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setId(final String id)
@@ -304,7 +305,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param gtuType set gtuType
+         * @param gtuType GTUType; set gtuType
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setGtuType(final GTUType gtuType)
@@ -314,7 +315,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param initialLongitudinalPositions set initialLongitudinalPositions
+         * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; set initialLongitudinalPositions
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setInitialLongitudinalPositions(
@@ -325,7 +326,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param initialSpeed set initialSpeed
+         * @param initialSpeed Speed; set initialSpeed
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setInitialSpeed(final Speed initialSpeed)
@@ -335,7 +336,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param length set length
+         * @param length Length; set length
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setLength(final Length length)
@@ -345,7 +346,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param width set width
+         * @param width Length; set width
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setWidth(final Length width)
@@ -355,7 +356,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param maximumSpeed set maximumSpeed
+         * @param maximumSpeed Speed; set maximumSpeed
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setMaximumSpeed(final Speed maximumSpeed)
@@ -385,7 +386,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param simulator set simulator
+         * @param simulator OTSSimulatorInterface; set simulator
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setSimulator(final OTSSimulatorInterface simulator)
@@ -395,7 +396,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param front distance of the front relative to the reference point
+         * @param front Length; distance of the front relative to the reference point
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setFront(final Length front)
@@ -405,7 +406,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param animationClass set animation class
+         * @param animationClass Class&lt;? extends Renderable2D&lt;? super LaneBasedIndividualGTU&gt;&gt;; set animation class
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setAnimationClass(
@@ -416,7 +417,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param gtuColorer set gtuColorer.
+         * @param gtuColorer GTUColorer; set gtuColorer.
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setGtuColorer(final GTUColorer gtuColorer)
@@ -426,7 +427,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param network set network
+         * @param network OTSNetwork; set network
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setNetwork(final OTSNetwork network)
@@ -525,15 +526,17 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
 
         /**
          * Build one LaneBasedIndividualCar.
-         * @param laneBasedStrategicalPlannerFactory factory for the strategical planner
-         * @param route route
-         * @param origin origin
-         * @param destination destination
+         * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends
+         *            LaneBasedStrategicalPlanner&gt;; factory for the strategical planner
+         * @param route Route; route
+         * @param origin Node; origin
+         * @param destination Node; destination
          * @return the built Car with the set properties
          * @throws Exception when not all required values have been set
          */
         public final LaneBasedIndividualGTU build(
-                final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory,
+                final LaneBasedStrategicalPlannerFactory<
+                        ? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory,
                 final Route route, final Node origin, final Node destination) throws Exception
         {
             if (null == this.id || null == this.gtuType || null == this.initialLongitudinalPositions

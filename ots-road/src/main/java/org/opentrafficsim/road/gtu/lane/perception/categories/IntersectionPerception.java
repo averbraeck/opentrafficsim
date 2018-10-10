@@ -53,14 +53,14 @@ public interface IntersectionPerception extends LaneBasedPerceptionCategory
 
     /**
      * Returns a set of traffic lights along the route. Traffic lights are sorted by headway value.
-     * @param lane lane
+     * @param lane RelativeLane; lane
      * @return set of traffic lights along the route
      */
     Iterable<HeadwayTrafficLight> getTrafficLights(RelativeLane lane);
 
     /**
      * Returns a set of conflicts along the route. Conflicts are sorted by headway value.
-     * @param lane lane
+     * @param lane RelativeLane; lane
      * @return set of conflicts along the route
      */
     PerceptionCollectable<HeadwayConflict, Conflict> getConflicts(RelativeLane lane);

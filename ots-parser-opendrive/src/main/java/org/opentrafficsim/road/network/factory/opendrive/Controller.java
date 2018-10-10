@@ -251,8 +251,8 @@ public class Controller implements Serializable
     }
 
     /**
-     * @param sequence2 sequence2
-     * @param trafficLight trafficLight
+     * @param sequence2 int; sequence2
+     * @param trafficLight SimpleTrafficLight; trafficLight
      */
     public void addTrafficLight(int sequence2, SimpleTrafficLight trafficLight)
     {

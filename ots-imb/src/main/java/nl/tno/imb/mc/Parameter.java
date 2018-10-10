@@ -320,7 +320,7 @@ public class Parameter
         /**
          * Recursively add all properties to the list. <br>
          * Compound properties are included <b>before</b> their contents.
-         * @param cp Property&lt;T&gt;; the property to add (if compound it and all it's children are added)
+         * @param cp Property&lt;?&gt;; the property to add (if compound it and all it's children are added)
          */
         private void addToList(final Property<?> cp)
         {

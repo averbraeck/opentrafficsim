@@ -43,9 +43,9 @@ class TrafficLightTag implements Serializable
 
     /**
      * Parse the TRAFFICLIGHT tag.
-     * @param node the TRAFFICLIGHT node to parse
-     * @param parser the parser with the lists of information
-     * @param linkTag the parent LINK tag
+     * @param node Node; the TRAFFICLIGHT node to parse
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param linkTag LinkTag; the parent LINK tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

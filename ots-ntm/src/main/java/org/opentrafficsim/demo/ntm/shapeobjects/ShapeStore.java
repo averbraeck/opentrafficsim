@@ -134,7 +134,7 @@ public class ShapeStore
     }
 
     /**
-     * @param file
+     * @param file File;
      * @return
      * @throws IOException
      */
@@ -222,7 +222,7 @@ public class ShapeStore
 
     /**
      * Create an output shape file name and create the new shape file
-     * @param shapes
+     * @param shapes ShapeStore;
      * @param startMap
      * @throws IOException
      */
@@ -423,7 +423,7 @@ public class ShapeStore
     }
 
     /**
-     * @param variableTypeMap set variableTypeMap.
+     * @param variableTypeMap HashMap&lt;String,String&gt;; set variableTypeMap.
      */
     public void setVariableTypeMap(HashMap<String, String> variableTypeMap)
     {
@@ -439,7 +439,7 @@ public class ShapeStore
     }
 
     /**
-     * @param attributeClassTypes set attributeClassTypes.
+     * @param attributeClassTypes HashMap&lt;String,Class&lt;? extends Object&gt;&gt;; set attributeClassTypes.
      */
     public void setAttributeClassTypes(HashMap<String, Class<? extends Object>> attributeClassTypes)
     {
@@ -455,7 +455,7 @@ public class ShapeStore
     }
 
     /**
-     * @param geoObjects set geoObjects.
+     * @param geoObjects ArrayList&lt;ShapeObject&gt;; set geoObjects.
      */
     public void setGeoObjects(ArrayList<ShapeObject> geoObjects)
     {

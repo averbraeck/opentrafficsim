@@ -55,7 +55,7 @@ public class SwitchableGTUColorer implements GTUColorer, Serializable
 
     /**
      * Replace the currently active GTUColorer.
-     * @param activeIndex the index of the new active colorer in the list (0-based).
+     * @param activeIndex int; the index of the new active colorer in the list (0-based).
      * @throws IndexOutOfBoundsException when activeIndex &lt; 0 or larger than or equal to the number of colorers.
      */
     @SuppressWarnings("checkstyle:redundantthrows")

@@ -46,7 +46,7 @@ public final class AnimationToggles
 
     /**
      * Set all animation on, and create the toggles on the left hand side.
-     * @param aws the WrappableAnimation.
+     * @param aws AbstractWrappableAnimation; the WrappableAnimation.
      */
     public static void setTextAnimationTogglesFull(final AbstractWrappableAnimation aws)
     {
@@ -72,7 +72,7 @@ public final class AnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param aws the WrappableAnimation.
+     * @param aws AbstractWrappableAnimation; the WrappableAnimation.
      */
     public static void setTextAnimationTogglesStandard(final AbstractWrappableAnimation aws)
     {
@@ -96,7 +96,7 @@ public final class AnimationToggles
 
     /**
      * Set all animation on, and create the toggles on the left hand side.
-     * @param aws the WrappableAnimation.
+     * @param aws AbstractWrappableAnimation; the WrappableAnimation.
      */
     public static void setIconAnimationTogglesFull(final AbstractWrappableAnimation aws)
     {
@@ -133,7 +133,7 @@ public final class AnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param aws the WrappableAnimation.
+     * @param aws AbstractWrappableAnimation; the WrappableAnimation.
      */
     public static void setIconAnimationTogglesStandard(final AbstractWrappableAnimation aws)
     {
@@ -170,7 +170,7 @@ public final class AnimationToggles
 
     /**
      * Set all animation on, and create the toggles on the left hand side.
-     * @param aws the WrappableAnimation.
+     * @param aws AbstractWrappableAnimation; the WrappableAnimation.
      */
     public static void showAnimationFull(final AbstractWrappableAnimation aws)
     {
@@ -196,7 +196,7 @@ public final class AnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param aws the WrappableAnimation.
+     * @param aws AbstractWrappableAnimation; the WrappableAnimation.
      */
     public static void showAnimationStandard(final AbstractWrappableAnimation aws)
     {

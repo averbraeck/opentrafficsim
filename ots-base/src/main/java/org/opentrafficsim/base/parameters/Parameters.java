@@ -16,7 +16,7 @@ public interface Parameters
 
     /**
      * Set parameter value of given parameter type.
-     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
+     * @param parameterType ParameterType&lt;T&gt;; the parameter type.
      * @param value T; new value for the parameter of type <code>parameterType</code>.
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
@@ -25,7 +25,7 @@ public interface Parameters
 
     /**
      * Set parameter value of given parameter type, store old value to allow a reset.
-     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
+     * @param parameterType ParameterType&lt;T&gt;; the parameter type.
      * @param value T; new value for the parameter of type <code>parameterType</code>.
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
@@ -34,14 +34,14 @@ public interface Parameters
 
     /**
      * Resets the parameter value to the value from before the last set. This goes only a single value back.
-     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
+     * @param parameterType ParameterType&lt;?&gt;; the parameter type.
      * @throws ParameterException If the parameter was never set.
      */
     void resetParameter(ParameterType<?> parameterType) throws ParameterException;
 
     /**
      * Get parameter of given type.
-     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type.
+     * @param parameterType ParameterType&lt;T&gt;; the parameter type.
      * @param <T> Class of value.
      * @return T; parameter of the requested type if it exists
      * @throws ParameterException If the parameter was never set.
@@ -59,7 +59,7 @@ public interface Parameters
 
     /**
      * Indicate whether the given parameter type has been set.
-     * @param parameterType AbstractParameterType&lt;T&gt;; the parameter type to check
+     * @param parameterType ParameterType&lt;?&gt;; the parameter type to check
      * @return boolean; true if <code>parameterType</code> has been set; false if <code>parameterType</code> has not been set
      */
     boolean contains(ParameterType<?> parameterType);

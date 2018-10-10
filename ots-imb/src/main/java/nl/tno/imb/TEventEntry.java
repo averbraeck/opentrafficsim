@@ -736,8 +736,8 @@ public class TEventEntry
 
     /**
      * Send an event to the framework
-     * @param aEventKind
-     * @param aEventPayload
+     * @param aEventKind int;
+     * @param aEventPayload byte[];
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int signalEvent(int aEventKind, byte[] aEventPayload)
@@ -764,8 +764,8 @@ public class TEventEntry
 
     /**
      * Send a buffer event to the framework
-     * @param aBufferID self chosen ID to separate streams of buffer events
-     * @param aBuffer
+     * @param aBufferID int; self chosen ID to separate streams of buffer events
+     * @param aBuffer byte[];
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int signalBuffer(int aBufferID, byte[] aBuffer)
@@ -775,8 +775,8 @@ public class TEventEntry
 
     /**
      * Send a buffer event to the framework
-     * @param aBufferID self chosen ID to separate streams of buffer events
-     * @param aBuffer
+     * @param aBufferID int; self chosen ID to separate streams of buffer events
+     * @param aBuffer byte[];
      * @param aEventFlags flags for special processing within the hub; not fully implemented, use 0
      * @return status of the request (TConnection.ICE_* constants)
      */
@@ -832,8 +832,8 @@ public class TEventEntry
 
     /**
      * Send a stream to the framework
-     * @param aStreamName
-     * @param aStream
+     * @param aStreamName String;
+     * @param aStream InputStream;
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int signalStream(String aStreamName, InputStream aStream)
@@ -918,9 +918,9 @@ public class TEventEntry
 
     /**
      * Send a change object event to the framework
-     * @param aAction see ACTION_* constants
-     * @param aObjectID ID of the object that has changed
-     * @param aAttribute optional name of the attribute that has changed
+     * @param aAction int; see ACTION_* constants
+     * @param aObjectID int; ID of the object that has changed
+     * @param aAttribute String; optional name of the attribute that has changed
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int signalChangeObject(int aAction, int aObjectID, String aAttribute)
@@ -952,12 +952,11 @@ public class TEventEntry
     // timers
     /**
      * Create a timer on the connected HUB
-     * @param aTimerName unique name of the timer within this event
-     * @param aStartTimeUTCorRelFT 0 means now<br>
-     *            larger than 0 means in absolute system time (UTC)<br>
+     * @param aTimerName String; unique name of the timer within this event
+     * @param aStartTimeUTCorRelFT long; 0 means now&lt;br&gt; larger than 0 means in absolute system time (UTC)<br>
      *            less than 0 means system timer relative to now
-     * @param aResolutionms the resolution of a timer tick (step) in milliseconds
-     * @param aSpeedFactor 1 means same speed as real time, 0 means the timer runs in simulation time
+     * @param aResolutionms int; the resolution of a timer tick (step) in milliseconds
+     * @param aSpeedFactor double; 1 means same speed as real time, 0 means the timer runs in simulation time
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int timerCreate(String aTimerName, long aStartTimeUTCorRelFT, int aResolutionms, double aSpeedFactor)
@@ -967,13 +966,12 @@ public class TEventEntry
 
     /**
      * Create a timer on the connected HUB
-     * @param aTimerName unique name of the timer within this event
-     * @param aStartTimeUTCorRelFT 0 means now<br>
-     *            larger than 0 means in absolute system time (UTC)<br>
+     * @param aTimerName String; unique name of the timer within this event
+     * @param aStartTimeUTCorRelFT long; 0 means now&lt;br&gt; larger than 0 means in absolute system time (UTC)<br>
      *            less than 0 means system timer relative to now
-     * @param aResolutionms the resolution of a timer tick (step) in milliseconds
-     * @param aSpeedFactor 1 means same speed as real time, 0 means the timer runs in simulation time
-     * @param aRepeatCount number of timer the timer must send a timer tick (TRC_INFINITE for infinite)
+     * @param aResolutionms int; the resolution of a timer tick (step) in milliseconds
+     * @param aSpeedFactor double; 1 means same speed as real time, 0 means the timer runs in simulation time
+     * @param aRepeatCount int; number of timer the timer must send a timer tick (TRC_INFINITE for infinite)
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int timerCreate(String aTimerName, long aStartTimeUTCorRelFT, int aResolutionms, double aSpeedFactor,
@@ -1005,7 +1003,7 @@ public class TEventEntry
 
     /**
      * Cancel a running timer; the timer is destroyed.
-     * @param aTimerName
+     * @param aTimerName String;
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int timerCancel(String aTimerName)
@@ -1015,7 +1013,7 @@ public class TEventEntry
 
     /**
      * Prepare a timer; the timer is stopped and reset to an initial state
-     * @param aTimerName
+     * @param aTimerName String;
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int timerPrepare(String aTimerName)
@@ -1025,7 +1023,7 @@ public class TEventEntry
 
     /**
      * Start or continue the timer
-     * @param aTimerName
+     * @param aTimerName String;
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int timerStart(String aTimerName)
@@ -1035,7 +1033,7 @@ public class TEventEntry
 
     /**
      * Stop or pause the timer
-     * @param aTimerName
+     * @param aTimerName String;
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int timerStop(String aTimerName)
@@ -1045,8 +1043,8 @@ public class TEventEntry
 
     /**
      * Set the relative running speed of the timer
-     * @param aTimerName
-     * @param aSpeedFactor 1 means the timer is running in real time, 0 means the timer runs in simulation time
+     * @param aTimerName String;
+     * @param aSpeedFactor double; 1 means the timer is running in real time, 0 means the timer runs in simulation time
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int timerSetSpeed(String aTimerName, double aSpeedFactor)
@@ -1063,8 +1061,8 @@ public class TEventEntry
     /**
      * Add a client name to the acknowledge list of a timer.<br>
      * All entries in this list must send an acknowledge on each timer tick for the timer to advance.
-     * @param aTimerName
-     * @param aClientName
+     * @param aTimerName String;
+     * @param aClientName String;
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int timerAcknowledgeAdd(String aTimerName, String aClientName)
@@ -1075,8 +1073,8 @@ public class TEventEntry
     /**
      * Remove a client name from the acknowledge list of a timer.<br>
      * All entries in this list must send an acknowledge on each timer tick for the timer to advance.
-     * @param aTimerName
-     * @param aClientName
+     * @param aTimerName String;
+     * @param aClientName String;
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int timerAcknowledgeRemove(String aTimerName, String aClientName)
@@ -1087,10 +1085,10 @@ public class TEventEntry
     /**
      * Acknowledge a timer tick.<br>
      * All clients on the timer acknowledge list must send an acknowledge on each timer tick for the timer to advance.
-     * @param aTimerName
-     * @param aClientName
-     * @param aProposedTimeStep clients can specify the next step that they wish. The overall lowest next step is used if the
-     *            timer is not running in real time
+     * @param aTimerName String;
+     * @param aClientName String;
+     * @param aProposedTimeStep int; clients can specify the next step that they wish. The overall lowest next step is used if
+     *            the timer is not running in real time
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int timerAcknowledge(String aTimerName, String aClientName, int aProposedTimeStep)
@@ -1109,8 +1107,8 @@ public class TEventEntry
     // log
     /**
      * Send a line to the central framework log
-     * @param aLine text to enter into the log
-     * @param aLevel severity of the entry to log. See TLogLevel for values.
+     * @param aLine String; text to enter into the log
+     * @param aLevel TLogLevel; severity of the entry to log. See TLogLevel for values.
      * @return status of the request (TConnection.ICE_* constants)
      */
     public int logWriteLn(String aLine, TLogLevel aLevel)

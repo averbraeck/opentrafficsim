@@ -21,9 +21,8 @@ public enum ContainerTransportFeeBreakdownEnum
     INLAND_TERMINAL("move inlandterminal",
             "tarief voor opslag container op de inlandterminal, horizontaal transport, en kadeoverslag (1 move)"),
 
-    SAILING_HINTERLAND("vaartarief",
-            "tarief voor het vervoeren van de container op het schip (inclusief het varen in Rtm "
-                    + "als er niet van een hub gebruik wordt gemaakt, en inclusief havengelden)"),
+    SAILING_HINTERLAND("vaartarief", "tarief voor het vervoeren van de container op het schip (inclusief het varen in Rtm "
+            + "als er niet van een hub gebruik wordt gemaakt, en inclusief havengelden)"),
 
     HUB_TERMINAL("moves hub",
             "tarief voor opslag container op de hubterminal, horizontaal transport, en kadeoverslag (2 moves)"),

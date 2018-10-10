@@ -247,7 +247,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
      * @param group ButtonGroup; the buttonGroup for the new JRadioButtonMenuItem
      * @param xAxisToSelect Axis; the Axis that will become X-axis when this item is clicked
      * @param yAxisToSelect Axis; the Axis that will become Y-axis when this item is clicked
-     * @param selected Boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new JRadioButtonMenuItem
+     * @param selected boolean; if true, the new JRadioButtonMenuItem will be selected; if false, the new JRadioButtonMenuItem
      *            will <b>not</b> be selected
      * @return JRatioButtonMenuItem; the newly added item
      */
@@ -316,7 +316,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
     /**
      * Notify interested parties of an event affecting this TrajectoryPlot.
-     * @param event DatasetChangedEvent
+     * @param event DatasetChangeEvent; DatasetChangedEvent
      */
     private void notifyListeners(final DatasetChangeEvent event)
     {
@@ -396,7 +396,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
     /**
      * Retrieve a value from the recorded samples.
-     * @param item Integer; the rank number of the sample
+     * @param item int; the rank number of the sample
      * @param axis Axis; the axis that determines which quantity to retrieve
      * @return Double; the requested value, or Double.NaN if the sample does not (yet) exist
      */

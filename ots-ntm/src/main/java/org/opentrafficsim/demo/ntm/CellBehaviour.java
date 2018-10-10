@@ -65,7 +65,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param supply set supply.
+     * @param supply double; set supply.
      */
     public final void setSupply(final double supply)
     {
@@ -81,7 +81,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param demand set demand.
+     * @param demand double; set demand.
      */
     public final void setDemand(final double demand)
     {
@@ -102,7 +102,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param arrivals set flow.
+     * @param arrivals double; set flow.
      */
     public final void setArrivals(final double arrivals)
     {
@@ -110,7 +110,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param arrivals set flow.
+     * @param arrivals double; set flow.
      */
     public final void addArrivals(final double arrivals)
     {
@@ -126,7 +126,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param accumulatedCars set accumulatedCars.
+     * @param accumulatedCars double; set accumulatedCars.
      */
     public final void setAccumulatedCars(final double accumulatedCars)
     {
@@ -134,7 +134,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param addCars add accumulatedCars.
+     * @param addCars double; add accumulatedCars.
      */
     public final void addAccumulatedCars(final double addCars)
     {
@@ -150,7 +150,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param demandToEnter set demandToEnter.
+     * @param demandToEnter double; set demandToEnter.
      */
     public final void setDemandToEnter(final double demandToEnter)
     {
@@ -158,7 +158,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param addDemandToEnter adds demandToEnter.
+     * @param addDemandToEnter double; adds demandToEnter.
      */
     public final void addDemandToEnter(final double addDemandToEnter)
     {
@@ -174,7 +174,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param tripInfoByDestinationMap set tripInfoNode.
+     * @param tripInfoByDestinationMap HashMap&lt;NTMNode,TripInfoByDestination&gt;; set tripInfoNode.
      */
     public final void setTripInfoByDestinationMap(final HashMap<NTMNode, TripInfoByDestination> tripInfoByDestinationMap)
     {
@@ -190,7 +190,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param departures set departures.
+     * @param departures double; set departures.
      */
     public void setDepartures(double departures)
     {
@@ -198,7 +198,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param departures set departures.
+     * @param departures double; set departures.
      */
     public void addDepartures(double departures)
     {
@@ -214,7 +214,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param borderCapacity set borderCapacity.
+     * @param borderCapacity HashMap&lt;BoundedNode,Frequency&gt;; set borderCapacity.
      */
     public void setBorderCapacity(HashMap<BoundedNode, Frequency> borderCapacity)
     {
@@ -222,7 +222,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param demand
+     * @param demand Frequency;
      * @param linkData set linkData.
      */
     public void addBorderDemand(BoundedNode node, Frequency demand)
@@ -248,7 +248,7 @@ public class CellBehaviour
     }
 
     /**
-     * @param borderDemand set borderDemand.
+     * @param borderDemand HashMap&lt;BoundedNode,Frequency&gt;; set borderDemand.
      */
     public void setBorderDemand(HashMap<BoundedNode, Frequency> borderDemand)
     {

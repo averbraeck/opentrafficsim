@@ -200,8 +200,8 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /**
      * Returns whether there is a gtu in the current set that is not present in the delayed set.
-     * @param delayedSet delayed set
-     * @param currentSet current set
+     * @param delayedSet Iterable&lt;? extends HeadwayGTU&gt;; delayed set
+     * @param currentSet Set&lt;? extends HeadwayGTU&gt;; current set
      * @return whether there is a gtu in the current set that is not present in the delayed set
      */
     private boolean newFirstLeaderOrFollower(final Iterable<? extends HeadwayGTU> delayedSet,
@@ -224,7 +224,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /**
      * Returns whether to override the gtu alongside boolean as true.
-     * @param lat lateral direction
+     * @param lat LateralDirectionality; lateral direction
      * @return whether to override the gtu alongside boolean as true
      */
     public final boolean isGtuAlongsideOverride(final LateralDirectionality lat)
@@ -353,7 +353,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
         /**
          * Returns a (cached) info type for a sorted set of GTU's.
-         * @param id id
+         * @param id String; id
          * @return info type
          */
         @SuppressWarnings("unchecked")
@@ -368,7 +368,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
         /**
          * Returns a (cached) info type for a sorted set of GTU's.
-         * @param id id
+         * @param id String; id
          * @return info type
          */
         @SuppressWarnings("unchecked")
@@ -383,7 +383,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
         /**
          * Returns a (cached) info type for a sorted set of GTU's.
-         * @param id id
+         * @param id String; id
          * @return info type
          */
         @SuppressWarnings("unchecked")

@@ -78,8 +78,8 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
 
     /**
      * Adds a value with given weight to the persistent.
-     * @param value the value
-     * @param weight the weight
+     * @param value T; the value
+     * @param weight W; the weight
      */
     public void addValue(T value, W weight)
     {
@@ -116,7 +116,7 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
     }
 
     /**
-     * @param alpha confidence level
+     * @param alpha double; confidence level
      * @return both-side confidence interval
      */
     public ConfidenceInterval<T> getConfidenceInterval(final double alpha)
@@ -125,8 +125,8 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
     }
 
     /**
-     * @param alpha confidence level
-     * @param side side of confidence interval
+     * @param alpha double; confidence level
+     * @param side IntervalSide; side of confidence interval
      * @return confidence interval
      */
     public ConfidenceInterval<T> getConfidenceInterval(final double alpha, final IntervalSide side)
@@ -241,7 +241,7 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
     }
 
     /**
-     * @param valueSI si value
+     * @param valueSI double; si value
      * @return instantiate typed value from si value
      */
     private final T instantiate(double valueSI)
@@ -259,7 +259,7 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
 
     /**
      * returns the x-value of the given cumulativePropability.
-     * @param cumulativeProbability reflects cum prob
+     * @param cumulativeProbability double; reflects cum prob
      * @return double the inverse cumulative probability
      */
     private double getInverseCumulativeProbability(final double cumulativeProbability)

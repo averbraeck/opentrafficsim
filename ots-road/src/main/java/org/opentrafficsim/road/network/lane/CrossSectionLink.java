@@ -175,7 +175,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
     }
 
     /**
-     * @param priority set priority.
+     * @param priority Priority; set priority.
      */
     public final void setPriority(final Priority priority)
     {

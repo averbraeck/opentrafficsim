@@ -46,7 +46,7 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
     }
 
     /**
-     * @param network change the network this GTU is registered in
+     * @param network OTSNetwork; change the network this GTU is registered in
      */
     public final void setNetwork(final OTSNetwork network)
     {

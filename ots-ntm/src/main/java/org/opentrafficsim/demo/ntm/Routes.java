@@ -36,13 +36,13 @@ public class Routes
     public static Random fRandom = new Random(seed);
 
     /**
-     * @param model
-     * @param numberOfRoutes
-     * @param weight_newRoutes
-     * @param VARIANCE
-     * @param initiateSimulation
-     * @param steps
-     * @param MAXSTEPS
+     * @param model NTMModel;
+     * @param numberOfRoutes int;
+     * @param weight_newRoutes double;
+     * @param VARIANCE double;
+     * @param initiateSimulation boolean;
+     * @param steps int;
+     * @param MAXSTEPS int;
      * @throws IOException
      */
     public static void createRoutes(NTMModel model, int numberOfRoutes, double weight_newRoutes, double VARIANCE,
@@ -280,7 +280,7 @@ public class Routes
 
     /**
      * @param fRandom
-     * @param VARIANCE
+     * @param VARIANCE double;
      * @return
      */
     public static double Gaussian(Random random, double VARIANCE)

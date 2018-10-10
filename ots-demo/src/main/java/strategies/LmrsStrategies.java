@@ -269,7 +269,7 @@ public class LmrsStrategies implements EventListenerInterface
 
     /**
      * Main method with command line arguments.
-     * @param args String[] command line arguments
+     * @param args String[]; String[] command line arguments
      */
     @SuppressWarnings("unchecked")
     public static void main(final String[] args)

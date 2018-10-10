@@ -57,9 +57,9 @@ class ArcTag implements Serializable
 
     /**
      * Parse the LINK.ARC tag.
-     * @param arcNode the XML-node to parse
-     * @param parser the parser with the lists of information
-     * @param linkTag the parent link tag
+     * @param arcNode Node; the XML-node to parse
+     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param linkTag LinkTag; the parent link tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

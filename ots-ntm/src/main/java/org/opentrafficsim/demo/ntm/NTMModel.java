@@ -375,7 +375,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param areas
+     * @param areas Map&lt;String,Area&gt;;
      * @param shpConnectors2
      * @param compressedAreas2
      * @param areas2
@@ -422,10 +422,10 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param model
-     * @param areasToUse
-     * @param centroidsToUse
-     * @param file
+     * @param model NTMModel;
+     * @param areasToUse Map&lt;String,Area&gt;;
+     * @param centroidsToUse Map&lt;String,NTMNode&gt;;
+     * @param file String;
      * @throws ParseException
      * @throws IOException
      */
@@ -481,10 +481,10 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param model
-     * @param areasToUse
-     * @param file
-     * @param fileFactor
+     * @param model NTMModel;
+     * @param areasToUse Map&lt;String,Area&gt;;
+     * @param file String;
+     * @param fileFactor String;
      * @throws IOException
      * @throws ParseException
      */
@@ -655,7 +655,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param areas set areas.
+     * @param areas Map&lt;String,Area&gt;; set areas.
      */
     public void setAreas(Map<String, Area> areas)
     {
@@ -663,7 +663,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param nodes set nodes.
+     * @param nodes Map&lt;String,NTMNode&gt;; set nodes.
      */
     public void setNodes(Map<String, NTMNode> nodes)
     {
@@ -671,7 +671,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param shpLinks set shpLinks.
+     * @param shpLinks Map&lt;String,NTMLink&gt;; set shpLinks.
      */
     public void setShpLinks(Map<String, NTMLink> shpLinks)
     {
@@ -679,7 +679,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param centroids set centroids.
+     * @param centroids Map&lt;String,NTMNode&gt;; set centroids.
      */
     public void setCentroids(Map<String, NTMNode> centroids)
     {
@@ -911,7 +911,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param settingsNTM set settingsNTM.
+     * @param settingsNTM NTMSettings; set settingsNTM.
      */
     public final void setSettingsNTM(final NTMSettings settingsNTM)
     {
@@ -927,7 +927,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param tripDemand set tripDemand.
+     * @param tripDemand TripDemand; set tripDemand.
      */
     public final void setTripDemand(TripDemand tripDemand)
     {
@@ -943,7 +943,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param departureTimeProfiles set departureTimeProfiles.
+     * @param departureTimeProfiles ArrayList&lt;DepartureTimeProfile&gt;; set departureTimeProfiles.
      */
     public final void setDepartureTimeProfiles(final ArrayList<DepartureTimeProfile> departureTimeProfiles)
     {
@@ -959,7 +959,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param flowLinks set flowLinks.
+     * @param flowLinks Map&lt;String,NTMLink&gt;; set flowLinks.
      */
     public final void setFlowLinks(final Map<String, NTMLink> flowLinks)
     {
@@ -999,7 +999,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param shpConnectors set shpConnectors.
+     * @param shpConnectors Map&lt;String,NTMLink&gt;; set shpConnectors.
      */
     public final void setShpConnectors(final Map<String, NTMLink> shpConnectors)
     {
@@ -1015,7 +1015,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param shpBigConnectors set shpBigConnectors.
+     * @param shpBigConnectors Map&lt;String,NTMLink&gt;; set shpBigConnectors.
      */
     public void setShpBigConnectors(Map<String, NTMLink> shpBigConnectors)
     {
@@ -1039,7 +1039,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param bigAreas set bigAreas.
+     * @param bigAreas Map&lt;String,Area&gt;; set bigAreas.
      */
     public void setBigAreas(Map<String, Area> bigAreas)
     {
@@ -1080,7 +1080,7 @@ public class NTMModel implements OTSModelInterface
 
     /**
      * Links that show typical highway or mainroad behaviour are specified explicitly as roads.
-     * @param shpLinks the links of this model
+     * @param shpLinks Map&lt;String,NTMLink&gt;; the links of this model
      * @return the flowLinks
      * @throws NetworkException
      */
@@ -1158,7 +1158,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param compressedAreas set compressedAreas.
+     * @param compressedAreas ShapeStore; set compressedAreas.
      */
     public void setCompressedAreas(ShapeStore compressedAreas)
     {
@@ -1174,7 +1174,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param bigCentroids set bigCentroids.
+     * @param bigCentroids Map&lt;String,NTMNode&gt;; set bigCentroids.
      */
     public void setBigCentroids(Map<String, NTMNode> bigCentroids)
     {
@@ -1190,7 +1190,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param compressedTripDemand set compressedTripDemand.
+     * @param compressedTripDemand TripDemand&lt;TripInfoTimeDynamic&gt;; set compressedTripDemand.
      */
     public void setCompressedTripDemand(TripDemand<TripInfoTimeDynamic> compressedTripDemand)
     {
@@ -1206,7 +1206,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param debugLinkList set debugLinkList.
+     * @param debugLinkList LinkedHashMap&lt;String,NTMLink&gt;; set debugLinkList.
      */
     public void setDebugLinkList(LinkedHashMap<String, NTMLink> debugLinkList)
     {
@@ -1222,7 +1222,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param nodeAreaGraphMap set nodeAreaGraphMap.
+     * @param nodeAreaGraphMap Map&lt;String,NTMNode&gt;; set nodeAreaGraphMap.
      */
     public void setNodeAreaGraphMap(Map<String, NTMNode> nodeAreaGraphMap)
     {
@@ -1238,7 +1238,7 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @param inputNTM set inputNTM.
+     * @param inputNTM InputNTM; set inputNTM.
      */
     public void setInputNTM(InputNTM inputNTM)
     {
@@ -1255,10 +1255,10 @@ public class NTMModel implements OTSModelInterface
     /*
      * // Create new Areas around highways, that show different behaviour
      *//**
-        * @param shpLinks the links of this model
-        * @param areas the intial areas
-        * @return the additional areas
-        */
+       * @param shpLinks the links of this model
+       * @param areas the intial areas
+       * @return the additional areas
+       */
     /*
      * public static Map<String, AreaNTM> createCordonFeederAreas(final Map<String, ShpLink> shpLinks, final Map<String,
      * AreaNTM> areas) { for (ShpLink shpLink : shpLinks.values()) { if (shpLink.getSpeed() > 70 && shpLink.getCapacity() >

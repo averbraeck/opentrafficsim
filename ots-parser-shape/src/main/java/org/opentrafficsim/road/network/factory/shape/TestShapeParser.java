@@ -178,9 +178,9 @@ public class TestShapeParser extends AbstractWrappableAnimation
 
         /**
          * Combine the data (split road elements and add lane-attributes).
-         * @param roadMapNWB
-         * @param laneMapNWB
-         * @param specialLaneMapNWB
+         * @param roadMapNWB Map&lt;String,AbstractNWBRoadElement&gt;;
+         * @param laneMapNWB Map&lt;String,AbstractNWBRoadElement&gt;;
+         * @param specialLaneMapNWB Map&lt;String,AbstractNWBRoadElement&gt;;
          */
         private void combineNWBMaps(Map<String, AbstractNWBRoadElement> roadMapNWB,
                 Map<String, AbstractNWBRoadElement> laneMapNWB, Map<String, AbstractNWBRoadElement> specialLaneMapNWB)
@@ -199,8 +199,8 @@ public class TestShapeParser extends AbstractWrappableAnimation
 
         /**
          * Split a road if there is a lane along a PART of this road.
-         * @param road
-         * @param segment
+         * @param road NWBRoadElement;
+         * @param segment NWBDrivingLane;
          * @return list of linestrings
          */
         private List<LineString> splitRoad(NWBRoadElement road, NWBDrivingLane segment)
@@ -225,9 +225,9 @@ public class TestShapeParser extends AbstractWrappableAnimation
 
         /**
          * Import a list of road (link) elements from a shape file
-         * @param initialDir
-         * @param fileName
-         * @param shapeIdentifier
+         * @param initialDir String;
+         * @param fileName String;
+         * @param shapeIdentifier String;
          * @return map of naames road elements
          * @throws NetworkException
          */
@@ -253,8 +253,8 @@ public class TestShapeParser extends AbstractWrappableAnimation
         }
 
         /**
-         * @param initialDir
-         * @param fileName
+         * @param initialDir String;
+         * @param fileName String;
          * @return shapefile datastore
          * @throws IOException
          */
@@ -282,7 +282,7 @@ public class TestShapeParser extends AbstractWrappableAnimation
         }
 
         /**
-         * @param dataStore
+         * @param dataStore FileDataStore;
          * @return iterator
          */
         private FeatureIterator getFeatureIterator(FileDataStore dataStore)
@@ -305,8 +305,8 @@ public class TestShapeParser extends AbstractWrappableAnimation
         }
 
         /**
-         * @param feautureIterator
-         * @param shapeIdentifier
+         * @param feautureIterator FeatureIterator;
+         * @param shapeIdentifier String;
          * @return feature attributes
          * @throws NetworkException
          */
@@ -338,7 +338,7 @@ public class TestShapeParser extends AbstractWrappableAnimation
         }
 
         /**
-         * @param feature
+         * @param feature Feature;
          * @return one road element with properties
          * @throws NetworkException
          */
@@ -372,7 +372,7 @@ public class TestShapeParser extends AbstractWrappableAnimation
         }
 
         /**
-         * @param feature
+         * @param feature Feature;
          * @return info on one driving lane
          * @throws NetworkException
          */
@@ -408,7 +408,7 @@ public class TestShapeParser extends AbstractWrappableAnimation
         }
 
         /**
-         * @param feature
+         * @param feature Feature;
          * @return info on one special lane
          * @throws NetworkException
          */
@@ -447,7 +447,7 @@ public class TestShapeParser extends AbstractWrappableAnimation
         }
 
         /**
-         * @param property
+         * @param property Property;
          * @return a double
          */
         private Double parseDouble(Property property)

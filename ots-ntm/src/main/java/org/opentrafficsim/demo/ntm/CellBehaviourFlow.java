@@ -76,9 +76,9 @@ public class CellBehaviourFlow extends CellBehaviour
 
     /**
      * Retrieves car production from network fundamental diagram.
-     * @param accumulatedCars number of cars in Cell
+     * @param accumulatedCars double; number of cars in Cell
      * @param maximumCapacity based on area information
-     * @param param kkk
+     * @param param ParametersFundamentalDiagram; kkk
      * @param numberOfLanes
      * @return carProduction
      */
@@ -98,9 +98,9 @@ public class CellBehaviourFlow extends CellBehaviour
 
     /**
      * Retrieves car production from network fundamental diagram.
-     * @param accumulatedCars number of cars in Cell
+     * @param accumulatedCars double; number of cars in Cell
      * @param maximumCapacity based on area information
-     * @param param kkk
+     * @param param ParametersFundamentalDiagram; kkk
      * @param numberOfLanes
      * @return carProduction
      */
@@ -131,7 +131,7 @@ public class CellBehaviourFlow extends CellBehaviour
     }
 
     /**
-     * @param currentSpeed set currentSpeed.
+     * @param currentSpeed Speed; set currentSpeed.
      */
     public final void setCurrentSpeed(final Speed currentSpeed)
     {
@@ -147,7 +147,7 @@ public class CellBehaviourFlow extends CellBehaviour
     }
 
     /**
-     * @param parametersFundamentalDiagram set parametersFundamentalDiagram.
+     * @param parametersFundamentalDiagram ParametersFundamentalDiagram; set parametersFundamentalDiagram.
      */
     public final void setParametersFundamentalDiagram(final ParametersFundamentalDiagram parametersFundamentalDiagram)
     {

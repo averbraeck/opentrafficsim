@@ -123,7 +123,7 @@ public class OTSShape extends OTSLine3D
     }
 
     /**
-     * @param point the point to check if it is inside the shape
+     * @param point OTSPoint3D; the point to check if it is inside the shape
      * @return whether the point is inside the shape
      */
     public final boolean contains(final OTSPoint3D point)
@@ -144,7 +144,7 @@ public class OTSShape extends OTSLine3D
     }
 
     /**
-     * @param otsShape the shape to test the intersection with
+     * @param otsShape OTSShape; the shape to test the intersection with
      * @return whether the shapes intersect or whether one shape contains the other
      */
     public final boolean intersects(final OTSShape otsShape)
@@ -246,7 +246,7 @@ public class OTSShape extends OTSLine3D
 
     /**
      * Create an OTSLine3D, while cleaning repeating successive points.
-     * @param points the coordinates of the line as OTSPoint3D
+     * @param points OTSPoint3D[]; the coordinates of the line as OTSPoint3D
      * @return the line
      * @throws OTSGeometryException when number of points &lt; 2
      */
@@ -287,7 +287,7 @@ public class OTSShape extends OTSLine3D
 
     /**
      * Small test.
-     * @param args empty
+     * @param args String[]; empty
      * @throws OTSGeometryException when construction fails
      */
     public static void main(final String[] args) throws OTSGeometryException

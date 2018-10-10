@@ -101,7 +101,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
     }
 
     /**
-     * @param url the file with the network in the agreed xml-grammar.
+     * @param url URL; the file with the network in the agreed xml-grammar.
      * @return the network with Nodes, Links, and Lanes.
      * @throws NetworkException in case of parsing problems.
      * @throws SAXException in case of parsing problems.
@@ -209,7 +209,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
     }
 
     /**
-     * @param name the name of the network
+     * @param name String; the name of the network
      * @return the OTSNetwork with the static information about the network
      * @throws NetworkException if items cannot be added to the Network
      */

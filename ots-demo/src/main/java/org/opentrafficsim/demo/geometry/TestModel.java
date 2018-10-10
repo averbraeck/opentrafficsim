@@ -146,7 +146,7 @@ public class TestModel implements OTSModelInterface, UNITS
      * </pre>
      *
      * <br>
-     * @param link link.
+     * @param link CrossSectionLink; link.
      * @throws NetworkException on network inconsistency
      * @throws OTSGeometryException on network inconsistency
      */

@@ -135,7 +135,7 @@ public abstract class ModelStarter
 
     /**
      * Start the model.
-     * @param parameters ModelParameters
+     * @param parameters ModelParameters; ModelParameters
      * @param imbConnection TConnection; connection to the IMB hub
      */
     public abstract void startModel(ModelParameters parameters, TConnection imbConnection);
@@ -152,7 +152,7 @@ public abstract class ModelStarter
 
     /**
      * The model must fill in its parameters.
-     * @param parameters ModelParameters
+     * @param parameters ModelParameters; ModelParameters
      */
     public abstract void parameterRequest(ModelParameters parameters);
 

@@ -28,7 +28,7 @@ public abstract class HistoryManager
 
     /**
      * Registers a historical.
-     * @param historical Historical; historical to register.
+     * @param historical HistoricalElement; historical to register.
      */
     public void registerHistorical(final HistoricalElement historical)
     {

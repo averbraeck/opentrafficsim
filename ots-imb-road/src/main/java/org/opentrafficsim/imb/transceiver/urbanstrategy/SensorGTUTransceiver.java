@@ -430,7 +430,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the addition of a Sensor to a Lane to a corresponding IMB message.
-     * @param event the event to transform to a NEW message.
+     * @param event EventInterface; the event to transform to a NEW message.
      * @return the NEW payload
      */
     private Object[] transformNew(final EventInterface event)
@@ -456,7 +456,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the Sensor Triggered event content to a corresponding IMB message.
-     * @param event the event to transform to a CHANGE message.
+     * @param event EventInterface; the event to transform to a CHANGE message.
      * @return the CHANGE payload
      */
     private Object[] transformChange(final EventInterface event)
@@ -482,7 +482,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
 
     /**
      * Transform the removal of a Sensor from a Lane to a corresponding IMB message.
-     * @param event the event to transform to a DELETE message.
+     * @param event EventInterface; the event to transform to a DELETE message.
      * @return the DELETE payload
      */
     private Object[] transformDelete(final EventInterface event)

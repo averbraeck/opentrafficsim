@@ -106,7 +106,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Set minimum of current and given acceleration.
-     * @param a acceleration to set if lower than current acceleration
+     * @param a Acceleration; acceleration to set if lower than current acceleration
      */
     public final void minimizeAcceleration(final Acceleration a)
     {
@@ -116,7 +116,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Check acceleration level.
-     * @param a acceleration
+     * @param a Acceleration; acceleration
      */
     private void checkAcceleration(final Acceleration a)
     {
@@ -174,7 +174,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Set left indicator intent. Intent with smallest provided distance has priority.
-     * @param distance distance to object pertaining to the turn indicator intent
+     * @param distance Length; distance to object pertaining to the turn indicator intent
      */
     public final void setIndicatorIntentLeft(final Length distance)
     {
@@ -195,7 +195,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Set right indicator intent. Intent with smallest provided distance has priority.
-     * @param distance distance to object pertaining to the turn indicator intent
+     * @param distance Length; distance to object pertaining to the turn indicator intent
      */
     public final void setIndicatorIntentRight(final Length distance)
     {
@@ -215,7 +215,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Compares distances and returns whether the given distance (and intent) can be ignored.
-     * @param distance distance to object of intent
+     * @param distance Length; distance to object of intent
      * @return whether the given distance can be ignored
      */
     private boolean compareAndIgnore(final Length distance)
@@ -251,7 +251,7 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
-     * @param gtu LaneBasedGTU to set the indicator on
+     * @param gtu LaneBasedGTU; LaneBasedGTU to set the indicator on
      * @throws GTUException if GTU does not support the indicator
      */
     public final void setTurnIndicator(final LaneBasedGTU gtu) throws GTUException

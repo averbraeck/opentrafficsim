@@ -22,7 +22,7 @@ public final class Colors
     }
 
     /**
-     * @param colorStr the color as a string.
+     * @param colorStr String; the color as a string.
      * @return the color.
      * @throws NetworkException in case of unknown model.
      */

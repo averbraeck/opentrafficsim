@@ -27,14 +27,14 @@ public interface AccelerationIncentive
 
     /**
      * Determine acceleration.
-     * @param simplePlan simple plan to set the acceleration
-     * @param lane lane on which to consider the acceleration
-     * @param gtu gtu
-     * @param perception perception
-     * @param carFollowingModel car-following model
-     * @param speed current speed
-     * @param params parameters
-     * @param speedLimitInfo speed limit info
+     * @param simplePlan SimpleOperationalPlan; simple plan to set the acceleration
+     * @param lane RelativeLane; lane on which to consider the acceleration
+     * @param gtu LaneBasedGTU; gtu
+     * @param perception LanePerception; perception
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param speed Speed; current speed
+     * @param params Parameters; parameters
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
      * @throws OperationalPlanException in case of an error
      * @throws ParameterException on missing parameter
      * @throws GTUException when there is a problem with the state of the GTU when planning a path

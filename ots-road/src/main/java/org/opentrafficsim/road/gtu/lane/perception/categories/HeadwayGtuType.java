@@ -65,10 +65,10 @@ public interface HeadwayGtuType
 
     /**
      * Creates a headway object from a GTU, downstream or upstream.
-     * @param perceivingGtu perceiving GTU
-     * @param perceivedGtu perceived GTU
-     * @param distance distance
-     * @param downstream downstream (or upstream) neighbor
+     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivedGtu LaneBasedGTU; perceived GTU
+     * @param distance Length; distance
+     * @param downstream boolean; downstream (or upstream) neighbor
      * @return headway object from a gtu
      * @throws GTUException when headway object cannot be created
      * @throws ParameterException on invalid parameter value or missing parameter
@@ -78,11 +78,11 @@ public interface HeadwayGtuType
 
     /**
      * Creates a headway object from a GTU, parallel.
-     * @param perceivingGtu perceiving GTU
-     * @param perceivedGtu perceived GTU
-     * @param overlapFront front overlap
-     * @param overlap overlap
-     * @param overlapRear rear overlap
+     * @param perceivingGtu LaneBasedGTU; perceiving GTU
+     * @param perceivedGtu LaneBasedGTU; perceived GTU
+     * @param overlapFront Length; front overlap
+     * @param overlap Length; overlap
+     * @param overlapRear Length; rear overlap
      * @return headway object from a gtu
      * @throws GTUException when headway object cannot be created
      */

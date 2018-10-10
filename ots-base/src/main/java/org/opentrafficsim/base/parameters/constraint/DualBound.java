@@ -45,8 +45,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 
     /**
      * Creates a dual bound <i>including</i> the bounds; {@code lowerBound <= value <= upperBound}.
-     * @param lowerBound AbstractDoubleScalar; lower bound value
-     * @param upperBound AbstractDoubleScalar; upper bound value
+     * @param lowerBound T; lower bound value
+     * @param upperBound T; upper bound value
      * @param <T> value type
      * @return closed dual bound
      */
@@ -83,8 +83,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 
     /**
      * Creates a dual bound <i>excluding</i> the bounds; {@code lowerBound < value < upperBound}.
-     * @param lowerBound AbstractDoubleScalar; lower bound value
-     * @param upperBound AbstractDoubleScalar; upper bound value
+     * @param lowerBound T; lower bound value
+     * @param upperBound T; upper bound value
      * @param <T> value type
      * @return open dual bound
      */
@@ -122,8 +122,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
     /**
      * Creates a dual bound <i>excluding</i> the lower bound and <i>including</i> the upper bound;
      * {@code lowerBound < value <= upperBound}.
-     * @param lowerBound AbstractDoubleScalar; lower bound value
-     * @param upperBound AbstractDoubleScalar; upper bound value
+     * @param lowerBound T; lower bound value
+     * @param upperBound T; upper bound value
      * @param <T> value type
      * @return dual bound; excluding the lower bound and including the upper bound
      */
@@ -163,8 +163,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
     /**
      * Creates a dual bound <i>including</i> the lower bound and <i>excluding</i> the upper bound;
      * {@code lowerBound <= value < upperBound}.
-     * @param lowerBound AbstractDoubleScalar; lower bound value
-     * @param upperBound AbstractDoubleScalar; upper bound value
+     * @param lowerBound T; lower bound value
+     * @param upperBound T; upper bound value
      * @param <T> value type
      * @return dual bound; including the lower bound and excluding the upper bound
      */

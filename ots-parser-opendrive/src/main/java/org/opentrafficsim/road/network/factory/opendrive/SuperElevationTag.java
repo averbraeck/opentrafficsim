@@ -50,8 +50,8 @@ class SuperElevationTag implements Serializable
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
-     * @param node the top-level road node
-     * @param parser the parser with the lists of information
+     * @param node Node; the top-level road node
+     * @param parser OpenDriveNetworkLaneParser; the parser with the lists of information
      * @return the generated RoadTag for further reference
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails

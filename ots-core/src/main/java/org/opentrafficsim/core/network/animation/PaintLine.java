@@ -36,9 +36,9 @@ public final class PaintLine
      * Paint line.
      * @param graphics Graphics2D; the graphics environment
      * @param color Color; the color to use
-     * @param width the width to use
+     * @param width double; the width to use
      * @param referencePoint DirectedPoint; the reference point
-     * @param line array of points
+     * @param line OTSLine3D; array of points
      */
     public static void paintLine(final Graphics2D graphics, final Color color, final double width,
             final DirectedPoint referencePoint, final OTSLine3D line)

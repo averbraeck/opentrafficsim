@@ -178,7 +178,7 @@ public class TrafficLightControllerFixedDuration implements TrafficLightControll
     }
 
     /**
-     * @param clearanceDuration set clearanceDuration
+     * @param clearanceDuration Duration; set clearanceDuration
      */
     public final void setClearanceDuration(final Duration clearanceDuration)
     {

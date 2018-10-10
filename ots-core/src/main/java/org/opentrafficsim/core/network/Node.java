@@ -47,13 +47,13 @@ public interface Node extends Locatable, Serializable, Identifiable
 
     /**
      * Add a link to this Node.
-     * @param link the link to add.
+     * @param link Link; the link to add.
      */
     void addLink(Link link);
 
     /**
      * Remove a link from this Node.
-     * @param link the link to remove.
+     * @param link Link; the link to remove.
      */
     void removeLink(Link link);
 
@@ -62,8 +62,8 @@ public interface Node extends Locatable, Serializable, Identifiable
 
     /**
      * Determine the links connecting from the previous link via this Node for the given GTU type.
-     * @param gtuType the GTU type to determine the next links for
-     * @param prevLink the incoming link to the Node
+     * @param gtuType GTUType; the GTU type to determine the next links for
+     * @param prevLink Link; the incoming link to the Node
      * @return a set of links connecting from the previous link via this Node for the given GTU type
      * @throws NetworkException if the incoming link is not connected to this node for the given GTU type
      */
@@ -74,8 +74,8 @@ public interface Node extends Locatable, Serializable, Identifiable
      * there is a Link from this node to toNode, and the LongitudinalDirectionality for the Link between this node and toNode is
      * FORWARD or BOTH; or there is a Link from toNode to this node, and the LongitudinalDirectionality for the Link between
      * toNode and this node is BACKWARD or BOTH for the provided GTUType.
-     * @param gtuType the GTU type to check the connection for.
-     * @param toNode the to node
+     * @param gtuType GTUType; the GTU type to check the connection for.
+     * @param toNode Node; the to node
      * @return whether two nodes are linked in the specified direction.
      */
     boolean isDirectionallyConnectedTo(GTUType gtuType, Node toNode);

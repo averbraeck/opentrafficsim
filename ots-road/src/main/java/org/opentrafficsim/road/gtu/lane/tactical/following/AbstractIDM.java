@@ -91,11 +91,12 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
      * to combine the free term with some implementation specific interaction term. The IDM free term is limited by a
      * deceleration of <tt>B0</tt> for cases where the current speed is above the desired speed. This method can be overridden
      * if the free term needs to be redefined.
-     * @param parameters Parameters.
-     * @param speed Current speed.
-     * @param desiredSpeed Desired speed.
-     * @param desiredHeadway Desired headway.
-     * @param leaders Set of leader headways (guaranteed positive) and speeds, ordered by headway (closest first).
+     * @param parameters Parameters; Parameters.
+     * @param speed Speed; Current speed.
+     * @param desiredSpeed Speed; Desired speed.
+     * @param desiredHeadway Length; Desired headway.
+     * @param leaders PerceptionIterable&lt;? extends Headway&gt;; Set of leader headways (guaranteed positive) and speeds,
+     *            ordered by headway (closest first).
      * @throws ParameterException If parameter exception occurs.
      * @return Car-following acceleration.
      */
@@ -121,12 +122,13 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 
     /**
      * Combines an interaction term with the free term. There should be at least 1 leader for this method.
-     * @param aFree Free term of acceleration.
-     * @param parameters Parameters.
-     * @param speed Current speed.
-     * @param desiredSpeed Desired speed.
-     * @param desiredHeadway Desired headway.
-     * @param leaders Set of leader headways (guaranteed positive) and speeds, ordered by headway (closest first).
+     * @param aFree Acceleration; Free term of acceleration.
+     * @param parameters Parameters; Parameters.
+     * @param speed Speed; Current speed.
+     * @param desiredSpeed Speed; Desired speed.
+     * @param desiredHeadway Length; Desired headway.
+     * @param leaders PerceptionIterable&lt;? extends Headway&gt;; Set of leader headways (guaranteed positive) and speeds,
+     *            ordered by headway (closest first).
      * @return Combination of terms into a single acceleration.
      * @throws ParameterException In case of parameter exception.
      */
@@ -135,10 +137,10 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 
     /**
      * Determines the dynamic desired headway, which is non-negative.
-     * @param parameters Parameters.
-     * @param speed Current speed.
-     * @param desiredHeadway Desired headway.
-     * @param leaderSpeed Speed of the leading vehicle.
+     * @param parameters Parameters; Parameters.
+     * @param speed Speed; Current speed.
+     * @param desiredHeadway Length; Desired headway.
+     * @param leaderSpeed Speed; Speed of the leading vehicle.
      * @return Dynamic desired headway.
      * @throws ParameterException In case of parameter exception.
      */
@@ -163,9 +165,9 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
 
     /**
      * Determines the dynamic headway term. May be used on individual leaders for multi-anticipative following.
-     * @param parameters Parameters.
-     * @param speed Current speed.
-     * @param leaderSpeed Speed of the leading vehicle.
+     * @param parameters Parameters; Parameters.
+     * @param speed Speed; Current speed.
+     * @param leaderSpeed Speed; Speed of the leading vehicle.
      * @return Dynamic headway term.
      * @throws ParameterException In case of parameter exception.
      */

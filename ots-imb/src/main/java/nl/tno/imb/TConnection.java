@@ -417,8 +417,8 @@ public class TConnection
 
     /**
      * Write a single command to the framework
-     * @param aCommand
-     * @param aPayload
+     * @param aCommand int;
+     * @param aPayload byte[];
      * @return see ICE_* constants
      */
     protected int writeCommand(int aCommand, byte[] aPayload)
@@ -485,8 +485,8 @@ public class TConnection
 
     /**
      * Main framework command dispatcher
-     * @param aCommand
-     * @param aPayload
+     * @param aCommand int;
+     * @param aPayload TByteBuffer;
      */
     private void handleCommand(int aCommand, TByteBuffer aPayload)
     {
@@ -824,7 +824,7 @@ public class TConnection
     /**
      * Set the current federation. All subscribed and published events are unsubscribed/unpublished, then the federation is
      * changed and all previously subscribed/publuished events are re-subscribed/re-published
-     * @param aFederation the new federation
+     * @param aFederation String; the new federation
      */
     public void setFederation(String aFederation)
     {
@@ -901,7 +901,7 @@ public class TConnection
 
     /**
      * Sets the state of the NAGLE algorithm on the socket
-     * @param aValue if true the NAGLE algorithm is DISABLED (default false)
+     * @param aValue boolean; if true the NAGLE algorithm is DISABLED (default false)
      * @throws SocketException
      */
     public void setNoDelay(boolean aValue) throws SocketException
@@ -925,7 +925,7 @@ public class TConnection
 
     /**
      * Sets the status of the linger option on the connected socket
-     * @param aValue if true the linger option is enabled with a linger time of 2 seconds
+     * @param aValue boolean; if true the linger option is enabled with a linger time of 2 seconds
      * @throws SocketException
      */
     public void setLinger(boolean aValue) throws SocketException
@@ -977,7 +977,7 @@ public class TConnection
 
     /**
      * Throttle down buffer events send to this client if specific flags are set on events
-     * @param aThrottle
+     * @param aThrottle int;
      */
     public void setThrottle(int aThrottle)
     {
@@ -1031,7 +1031,7 @@ public class TConnection
     /**
      * Manually reading commands when not using a reader thread. Commands are processed until the reading on the connection
      * times out
-     * @param aTimeOut
+     * @param aTimeOut int;
      * @throws SocketException
      */
     public void readCommandsNonThreaded(int aTimeOut) throws SocketException
@@ -1077,7 +1077,7 @@ public class TConnection
 
     /**
      * Changes the owner id
-     * @param aValue the new owner id
+     * @param aValue int; the new owner id
      */
     public void setOwnerID(int aValue)
     {
@@ -1096,7 +1096,7 @@ public class TConnection
 
     /**
      * Changes the owner name
-     * @param aValue the new owner name
+     * @param aValue String; the new owner name
      */
     public void setOwnerName(String aValue)
     {
@@ -1122,7 +1122,7 @@ public class TConnection
     // subscribe/publish
     /**
      * Subscribe to the specified event
-     * @param aEventName the event name to subscribe to (it will be prefixed with the current federation)
+     * @param aEventName String; the event name to subscribe to (it will be prefixed with the current federation)
      * @return event entry that is to be used to assign the handler for the received events
      */
     public TEventEntry subscribe(String aEventName)
@@ -1132,8 +1132,8 @@ public class TConnection
 
     /**
      * Subscribe to the specified event
-     * @param aEventName the event name to subscribe to
-     * @param aUseFederationPrefix if true the given event name will be prefixed with the current federation
+     * @param aEventName String; the event name to subscribe to
+     * @param aUseFederationPrefix boolean; if true the given event name will be prefixed with the current federation
      * @return event entry that is to be used to assign the handler for the received events
      */
     public TEventEntry subscribe(String aEventName, boolean aUseFederationPrefix)
@@ -1146,7 +1146,7 @@ public class TConnection
 
     /**
      * Publishes on the specified event
-     * @param aEventName the event name to publish on (it will be prefixed with the current federation)
+     * @param aEventName String; the event name to publish on (it will be prefixed with the current federation)
      * @return event entry that is to be used to signal events on
      */
     public TEventEntry publish(String aEventName)
@@ -1156,8 +1156,8 @@ public class TConnection
 
     /**
      * Publishes on the specified event
-     * @param aEventName the event name to publish on
-     * @param aUseFederationPrefix if true the given event name will be prefixed with the current federation
+     * @param aEventName String; the event name to publish on
+     * @param aUseFederationPrefix boolean; if true the given event name will be prefixed with the current federation
      * @return event entry that is to be used to signal events on
      */
     public TEventEntry publish(String aEventName, boolean aUseFederationPrefix)
@@ -1170,7 +1170,7 @@ public class TConnection
 
     /**
      * Unsubscribe from the specified event
-     * @param aEventName the event name to unsubscribe from (it will be prefixed with the current federation)
+     * @param aEventName String; the event name to unsubscribe from (it will be prefixed with the current federation)
      */
     public void unSubscribe(String aEventName)
     {
@@ -1179,8 +1179,8 @@ public class TConnection
 
     /**
      * Unsubscribe from the specified event
-     * @param aEventName the event name to unsubscribe from
-     * @param aUseFederationPrefix if true the given event name will be prefixed with the current federation
+     * @param aEventName String; the event name to unsubscribe from
+     * @param aUseFederationPrefix boolean; if true the given event name will be prefixed with the current federation
      */
     public void unSubscribe(String aEventName, boolean aUseFederationPrefix)
     {
@@ -1191,7 +1191,7 @@ public class TConnection
 
     /**
      * Unpublish on the specified event.
-     * @param aEventName the event name to unpublish on (it will be prefixed with the current federation)
+     * @param aEventName String; the event name to unpublish on (it will be prefixed with the current federation)
      */
     public void unPublish(String aEventName)
     {
@@ -1200,8 +1200,8 @@ public class TConnection
 
     /**
      * Unpublish on the specified event.
-     * @param aEventName the event name to unpublish on
-     * @param aUseFederationPrefix if true the given event name will be prefixed with the current federation
+     * @param aEventName String; the event name to unpublish on
+     * @param aUseFederationPrefix boolean; if true the given event name will be prefixed with the current federation
      */
     public void unPublish(String aEventName, boolean aUseFederationPrefix)
     {
@@ -1213,9 +1213,9 @@ public class TConnection
     /**
      * Send an event to the framework. This is the simple way to send events. More performance can be gained by using the
      * returned event entry from publish().
-     * @param aEventName
-     * @param aEventKind
-     * @param aEventPayload
+     * @param aEventName String;
+     * @param aEventKind int;
+     * @param aEventPayload TByteBuffer;
      * @return result of the command (see ICE_* constants)
      */
     public int signalEvent(String aEventName, int aEventKind, TByteBuffer aEventPayload)
@@ -1226,10 +1226,10 @@ public class TConnection
     /**
      * Send an event to the framework. This is the simple way to send events. More performance can be gained by using the
      * returned event entry from publish().
-     * @param aEventName
-     * @param aEventKind
-     * @param aEventPayload
-     * @param aUseFederationPrefix if true the given event name will be prefixed with the current federation
+     * @param aEventName String;
+     * @param aEventKind int;
+     * @param aEventPayload TByteBuffer;
+     * @param aUseFederationPrefix boolean; if true the given event name will be prefixed with the current federation
      * @return result of the command (see ICE_* constants)
      */
     public int signalEvent(String aEventName, int aEventKind, TByteBuffer aEventPayload, boolean aUseFederationPrefix)
@@ -1244,9 +1244,9 @@ public class TConnection
     /**
      * Send a buffer event to the framework. This is the simple way to send events. More performance can be gained by using the
      * returned event entry from publish().
-     * @param aEventName
-     * @param aBufferID
-     * @param aBuffer
+     * @param aEventName String;
+     * @param aBufferID int;
+     * @param aBuffer byte[];
      * @return result of the command (see ICE_* constants)
      */
     public int signalBuffer(String aEventName, int aBufferID, byte[] aBuffer)
@@ -1257,11 +1257,11 @@ public class TConnection
     /**
      * Send a buffer event to the framework. This is the simple way to send events. More performance can be gained by using the
      * returned event entry from publish().
-     * @param aEventName
-     * @param aBufferID
-     * @param aBuffer
-     * @param aEventFlags
-     * @param aUseFederationPrefix if true the given event name will be prefixed with the current federation
+     * @param aEventName String;
+     * @param aBufferID int;
+     * @param aBuffer byte[];
+     * @param aEventFlags int;
+     * @param aUseFederationPrefix boolean; if true the given event name will be prefixed with the current federation
      * @return result of the command (see ICE_* constants)
      */
     public int signalBuffer(String aEventName, int aBufferID, byte[] aBuffer, int aEventFlags, boolean aUseFederationPrefix)
@@ -1276,10 +1276,10 @@ public class TConnection
     /**
      * Send a ChangeObject event to the framework This is the simple way to send events. More performance can be gained by using
      * the returned event entry from publish().
-     * @param aEventName
-     * @param aAction
-     * @param aObjectID
-     * @param aAttribute
+     * @param aEventName String;
+     * @param aAction int;
+     * @param aObjectID int;
+     * @param aAttribute String;
      * @return result of the command (see ICE_* constants)
      */
     public int signalChangeObject(String aEventName, int aAction, int aObjectID, String aAttribute)
@@ -1290,11 +1290,11 @@ public class TConnection
     /**
      * Send a ChangeObject event to the framework This is the simple way to send events. More performance can be gained by using
      * the returned event entry from publish().
-     * @param aEventName
-     * @param aAction
-     * @param aObjectID
-     * @param aAttribute
-     * @param aUseFederationPrefix if true the given event name will be prefixed with the current federation
+     * @param aEventName String;
+     * @param aAction int;
+     * @param aObjectID int;
+     * @param aAttribute String;
+     * @param aUseFederationPrefix boolean; if true the given event name will be prefixed with the current federation
      * @return result of the command (see ICE_* constants)
      */
     public int signalChangeObject(String aEventName, int aAction, int aObjectID, String aAttribute,
@@ -1309,9 +1309,9 @@ public class TConnection
 
     /**
      * Send a stream to the framework
-     * @param aEventName
-     * @param aStreamName name of the stream to identify the stream by the receiver
-     * @param aStream
+     * @param aEventName String;
+     * @param aStreamName String; name of the stream to identify the stream by the receiver
+     * @param aStream InputStream;
      * @return result of the command (see ICE_* constants)
      */
     public int signalStream(String aEventName, String aStreamName, InputStream aStream)
@@ -1321,10 +1321,10 @@ public class TConnection
 
     /**
      * Send a stream to the framework
-     * @param aEventName
-     * @param aStreamName
-     * @param aStream
-     * @param aUseFederationPrefix
+     * @param aEventName String;
+     * @param aStreamName String;
+     * @param aStream InputStream;
+     * @param aUseFederationPrefix boolean;
      * @return result of the command (see ICE_* constants)
      */
     public int signalStream(String aEventName, String aStreamName, InputStream aStream, boolean aUseFederationPrefix)
@@ -1349,7 +1349,7 @@ public class TConnection
 
     /**
      * Set the callback handler for framework variable changes
-     * @param aValue
+     * @param aValue TOnVariable;
      */
     public void setOnVariable(TOnVariable aValue)
     {
@@ -1365,8 +1365,8 @@ public class TConnection
 
     /**
      * Set the value of a global framework variable
-     * @param aVarName
-     * @param aVarValue
+     * @param aVarName String;
+     * @param aVarValue String;
      */
     public void setVariableValue(String aVarName, String aVarValue)
     {
@@ -1381,8 +1381,8 @@ public class TConnection
 
     /**
      * Set the value of a global framework variable
-     * @param aVarName
-     * @param aVarValue
+     * @param aVarName String;
+     * @param aVarValue TByteBuffer;
      */
     public void setVariableValue(String aVarName, TByteBuffer aVarValue)
     {
@@ -1397,9 +1397,9 @@ public class TConnection
 
     /**
      * Set the value of a global framework variable
-     * @param aVarName
-     * @param aVarValue
-     * @param aVarPrefix
+     * @param aVarName String;
+     * @param aVarValue String;
+     * @param aVarPrefix TVarPrefix;
      */
     public void setVariableValue(String aVarName, String aVarValue, TVarPrefix aVarPrefix)
     {
@@ -1416,9 +1416,9 @@ public class TConnection
 
     /**
      * Set the value of a global framework variable
-     * @param aVarName
-     * @param aVarValue
-     * @param aVarPrefix
+     * @param aVarName String;
+     * @param aVarValue TByteBuffer;
+     * @param aVarPrefix TVarPrefix;
      */
     public void setVariableValue(String aVarName, TByteBuffer aVarValue, TVarPrefix aVarPrefix)
     {
@@ -1446,7 +1446,7 @@ public class TConnection
 
     /**
      * Set the callback handler for status updates
-     * @param aValue
+     * @param aValue TOnStatusUpdate;
      */
     public void setOnStatusUpdate(TOnStatusUpdate aValue)
     {
@@ -1466,8 +1466,8 @@ public class TConnection
 
     /**
      * Update the central status for this client
-     * @param aProgress the progress, if available, from 0 to 100 or counting down to 0
-     * @param aStatus the current status of the client (see STATUS_* constants)
+     * @param aProgress int; the progress, if available, from 0 to 100 or counting down to 0
+     * @param aStatus int; the current status of the client (see STATUS_* constants)
      * @throws InterruptedException
      */
     public void updateStatus(int aProgress, int aStatus) throws InterruptedException
@@ -1515,7 +1515,7 @@ public class TConnection
     // TODO: delegates
     /**
      * Subscribe to focus events and registers the callback handler for these events.
-     * @param aOnFocus callback event handler
+     * @param aOnFocus TEventEntry.TOnFocus; callback event handler
      */
     public void subscribeOnFocus(TEventEntry.TOnFocus aOnFocus)
     {
@@ -1526,8 +1526,8 @@ public class TConnection
 
     /**
      * Signal a new focus point to the framework
-     * @param aX
-     * @param aY
+     * @param aX double;
+     * @param aY double;
      * @return result of the command (see ICE_* constants)
      */
     public int signalFocus(double aX, double aY)
@@ -1551,7 +1551,7 @@ public class TConnection
     // IMB 2 change federation
     /**
      * Subscribe to federation change events and register the callback handler for these events
-     * @param aOnChangeFederation
+     * @param aOnChangeFederation TEventEntry.TOnChangeFederation;
      */
     public void subscribeOnFederationChange(TEventEntry.TOnChangeFederation aOnChangeFederation)
     {
@@ -1562,8 +1562,8 @@ public class TConnection
 
     /**
      * Signal a new federation to the framework
-     * @param aNewFederationID
-     * @param aNewFederation
+     * @param aNewFederationID int;
+     * @param aNewFederation String;
      * @return result of the command (see ICE_* constants)
      */
     public int signalChangeFederation(int aNewFederationID, String aNewFederation)
@@ -1579,9 +1579,9 @@ public class TConnection
     // log
     /**
      * Log an entry to the framework
-     * @param aLogEventName
-     * @param aLine
-     * @param aLevel
+     * @param aLogEventName String;
+     * @param aLine String;
+     * @param aLevel TEventEntry.TLogLevel;
      * @return result of the command (see ICE_* constants)
      */
     public int logWriteLn(String aLogEventName, String aLine, TEventEntry.TLogLevel aLevel)
@@ -1627,8 +1627,8 @@ public class TConnection
 
     /**
      * Query the framework for registered event names
-     * @param aEventNameFilter
-     * @param aEventFilters
+     * @param aEventNameFilter String;
+     * @param aEventFilters int;
      * @return result of the command (see ICE_* constants)
      */
     public int requestEventname(String aEventNameFilter, int aEventFilters)

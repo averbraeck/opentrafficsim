@@ -9,7 +9,7 @@ import org.opentrafficsim.road.network.factory.rti.data.OTSToRTIData;
 public class PackUDPData
 {
     /**
-     * @param data data to pack
+     * @param data OTSToRTIData; data to pack
      * @return packed bytes
      */
     static byte[] pack(OTSToRTIData data)
@@ -93,7 +93,7 @@ public class PackUDPData
     }
 
     /**
-     * @param value value to pack
+     * @param value float; value to pack
      * @return byte array
      */
     public static byte[] packFloat(float value)
@@ -102,7 +102,7 @@ public class PackUDPData
     }
 
     /**
-     * @param value value to pack
+     * @param value long; value to pack
      * @return byte array
      */
     public static byte[] packLong(long value)
@@ -111,7 +111,7 @@ public class PackUDPData
     }
 
     /**
-     * @param value value to pack
+     * @param value int; value to pack
      * @return byte array
      */
     private static byte[] packInt(int value)

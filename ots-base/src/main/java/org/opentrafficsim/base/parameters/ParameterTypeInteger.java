@@ -97,8 +97,8 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
 
     /**
      * Method to overwrite for checks with constraints.
-     * @param value Value to check with constraints.
-     * @param params Set of parameters.
+     * @param value int; Value to check with constraints.
+     * @param params Parameters; Set of parameters.
      * @throws ParameterException If the value does not comply with constraints.
      */
     public void check(final int value, final Parameters params) throws ParameterException

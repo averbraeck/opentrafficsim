@@ -390,7 +390,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Return the time when the GTU will reach the given distance.
-     * @param distance the distance to calculate the time for
+     * @param distance Length; the distance to calculate the time for
      * @return the time it will take to have traveled the given distance
      */
     public final Time timeAtDistance(final Length distance)
@@ -417,7 +417,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the location at the given time.
-     * @param time the absolute time to look for a location
+     * @param time Time; the absolute time to look for a location
      * @return the location at the given time.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -445,7 +445,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the speed of the GTU after the given duration since the start of the plan.
-     * @param time the relative time to look for a location
+     * @param time Duration; the relative time to look for a location
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -456,7 +456,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the speed of the GTU at the given time.
-     * @param time the absolute time to look for a location
+     * @param time Time; the absolute time to look for a location
      * @return the location at the given time.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -468,7 +468,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the acceleration of the GTU after the given duration since the start of the plan.
-     * @param time the relative time to look for a location
+     * @param time Duration; the relative time to look for a location
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -479,7 +479,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the acceleration of the GTU at the given time.
-     * @param time the absolute time to look for a location
+     * @param time Time; the absolute time to look for a location
      * @return the location at the given time.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -491,7 +491,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the location after the given duration since the start of the plan.
-     * @param time the relative time to look for a location
+     * @param time Duration; the relative time to look for a location
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -503,8 +503,8 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the location after the given duration since the start of the plan.
-     * @param time the relative time to look for a location
-     * @param pos relative position
+     * @param time Time; the relative time to look for a location
+     * @param pos RelativePosition; relative position
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -517,7 +517,7 @@ public class OperationalPlan implements Serializable
     /**
      * Calculate the distance traveled as part of this plan after the given duration since the start of the plan. This method
      * returns the traveled distance as a double in SI units.
-     * @param duration the relative time to calculate the traveled distance
+     * @param duration Duration; the relative time to calculate the traveled distance
      * @return the distance traveled as part of this plan after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -528,7 +528,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the distance traveled as part of this plan after the given duration since the start of the plan.
-     * @param duration the relative time to calculate the traveled distance
+     * @param duration Duration; the relative time to calculate the traveled distance
      * @return the distance traveled as part of this plan after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -540,7 +540,7 @@ public class OperationalPlan implements Serializable
     /**
      * Calculate the distance traveled as part of this plan at the given absolute time. This method returns the traveled
      * distance as a double in SI units.
-     * @param time the absolute time to calculate the traveled distance for as part of this plan
+     * @param time Time; the absolute time to calculate the traveled distance for as part of this plan
      * @return the distance traveled as part of this plan at the given time
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -627,7 +627,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the distance traveled as part of this plan at the given absolute time.
-     * @param time the absolute time to calculate the traveled distance for as part of this plan
+     * @param time Time; the absolute time to calculate the traveled distance for as part of this plan
      * @return the distance traveled as part of this plan at the given time
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -778,21 +778,21 @@ public class OperationalPlan implements Serializable
 
         /**
          * Calculate the distance covered by a GTU in this segment after relative time t.
-         * @param t the relative time since starting this segment for which to calculate the distance covered
+         * @param t double; the relative time since starting this segment for which to calculate the distance covered
          * @return distance covered
          */
         abstract double distanceSI(double t);
 
         /**
          * Calculate the speed of a GTU in this segment after relative time t.
-         * @param t the relative time since starting this segment for which to calculate the speed
+         * @param t double; the relative time since starting this segment for which to calculate the speed
          * @return speed at relative time t
          */
         abstract double speedSI(double t);
 
         /**
          * Calculate the acceleration of a GTU in this segment after relative time t.
-         * @param t the relative time since starting this segment for which to calculate the acceleration
+         * @param t double; the relative time since starting this segment for which to calculate the acceleration
          * @return acceleration at relative time t
          */
         abstract double accelerationSI(double t);
@@ -806,7 +806,7 @@ public class OperationalPlan implements Serializable
         /**
          * Calculate the time it takes for the GTU to travel from the start of this Segment to the specified distance within
          * this Segment.
-         * @param distance the distance for which the travel time has to be calculated
+         * @param distance Length; the distance for which the travel time has to be calculated
          * @return the time at distance
          */
         abstract Duration timeAtDistance(final Length distance);

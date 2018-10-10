@@ -224,7 +224,7 @@ public class OSMLink implements Serializable, Identifiable
 
     /**
      * Set the one way status of this OSMLink.
-     * @param isOneWay the new value for the one way status of this OSMLink
+     * @param isOneWay boolean; the new value for the one way status of this OSMLink
      */
     public final void setOneway(final boolean isOneWay)
     {
@@ -252,7 +252,7 @@ public class OSMLink implements Serializable, Identifiable
 
     /**
      * Add an OSMTag to this Link.
-     * @param tag Tag; the OSMTag that must be added
+     * @param tag OSMTag; the OSMTag that must be added
      */
     public final void addTag(final OSMTag tag)
     {

@@ -74,7 +74,7 @@ public class Category implements Serializable
 
     /**
      * Returns the i'th object.
-     * @param i index of the object
+     * @param i int; index of the object
      * @return the i'th object
      * @throws IndexOutOfBoundsException if index i is out of bounds
      */
@@ -95,7 +95,7 @@ public class Category implements Serializable
 
     /**
      * Returns the object of this category pertaining to the specified class from the category.
-     * @param clazz Class; class from categorization to get the category object for
+     * @param clazz Class&lt;T&gt;; class from categorization to get the category object for
      * @param <T> type of the object
      * @return Object; object of this category pertaining to the specified class from the category
      */

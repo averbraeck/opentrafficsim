@@ -57,7 +57,7 @@ public abstract class Sampler<G extends GtuDataInterface>
     private Set<SpaceTimeRegion> spaceTimeRegions = new LinkedHashSet<>();
 
     /**
-     * @param spaceTimeRegion space-time region
+     * @param spaceTimeRegion SpaceTimeRegion; space-time region
      * @throws IllegalStateException if data is not available from the requested start time
      */
     public final void registerSpaceTimeRegion(final SpaceTimeRegion spaceTimeRegion)
@@ -97,21 +97,21 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Schedules the start of recording for a given lane-direction.
-     * @param time time to start recording
-     * @param kpiLaneDirection lane-direction to start recording
+     * @param time Time; time to start recording
+     * @param kpiLaneDirection KpiLaneDirection; lane-direction to start recording
      */
     public abstract void scheduleStartRecording(final Time time, final KpiLaneDirection kpiLaneDirection);
 
     /**
      * Schedules the stop of recording for a given lane-direction.
-     * @param time time to stop recording
-     * @param kpiLaneDirection lane-direction to stop recording
+     * @param time Time; time to stop recording
+     * @param kpiLaneDirection KpiLaneDirection; lane-direction to stop recording
      */
     public abstract void scheduleStopRecording(final Time time, final KpiLaneDirection kpiLaneDirection);
 
     /**
      * Registers meta data types that will be stored with the trajectories.
-     * @param metaDataTypes meta data types to register
+     * @param metaDataTypes Set&lt;MetaDataType&lt;?&gt;&gt;; meta data types to register
      */
     public final void registerMetaDataTypes(final Set<MetaDataType<?>> metaDataTypes)
     {
@@ -121,7 +121,7 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Registers extended data type that will be stored with the trajectories.
-     * @param extendedDataType extended data type to register
+     * @param extendedDataType ExtendedDataType&lt;?,?,?,G&gt;; extended data type to register
      */
     public final void registerExtendedDataType(final ExtendedDataType<?, ?, ?, G> extendedDataType)
     {
@@ -131,7 +131,7 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Whether this sampler has the given extended data type registered to it.
-     * @param extendedDataType extended data type
+     * @param extendedDataType ExtendedDataType&lt;?,?,?,?&gt;; extended data type
      * @return whether this sampler has the given extended data type registered to it
      */
     public boolean contains(final ExtendedDataType<?, ?, ?, ?> extendedDataType)
@@ -141,7 +141,7 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Start recording at the given time (which should be the current time) on the given lane direction.
-     * @param kpiLaneDirection lane direction
+     * @param kpiLaneDirection KpiLaneDirection; lane direction
      */
     public final void startRecording(final KpiLaneDirection kpiLaneDirection)
     {
@@ -156,13 +156,13 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Adds listeners to start recording.
-     * @param kpiLaneDirection lane direction to initialize recording for
+     * @param kpiLaneDirection KpiLaneDirection; lane direction to initialize recording for
      */
     public abstract void initRecording(final KpiLaneDirection kpiLaneDirection);
 
     /**
      * Stop recording at given lane direction.
-     * @param kpiLaneDirection lane direction
+     * @param kpiLaneDirection KpiLaneDirection; lane direction
      */
     public final void stopRecording(final KpiLaneDirection kpiLaneDirection)
     {
@@ -176,18 +176,18 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Remove listeners to stop recording.
-     * @param kpiLaneDirection lane direction to finalize recording for
+     * @param kpiLaneDirection KpiLaneDirection; lane direction to finalize recording for
      */
     public abstract void finalizeRecording(final KpiLaneDirection kpiLaneDirection);
 
     /**
      * Creates a trajectory with the current snapshot of a GTU.
-     * @param kpiLaneDirection lane direction the gtu is at
-     * @param position position of the gtu on the lane
-     * @param speed speed of the gtu
-     * @param acceleration acceleration of the gtu
-     * @param time current time
-     * @param gtu gtu
+     * @param kpiLaneDirection KpiLaneDirection; lane direction the gtu is at
+     * @param position Length; position of the gtu on the lane
+     * @param speed Speed; speed of the gtu
+     * @param acceleration Acceleration; acceleration of the gtu
+     * @param time Time; current time
+     * @param gtu G; gtu
      */
     public final void processGtuAddEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
@@ -218,12 +218,12 @@ public abstract class Sampler<G extends GtuDataInterface>
     /**
      * Adds a new snapshot of a GTU to its recording trajectory, if recorded. This method may be invoked on GTU that are not
      * being recorded; the event will then be ignored.
-     * @param kpiLaneDirection lane direction the gtu is at
-     * @param position position of the gtu on the lane
-     * @param speed speed of the gtu
-     * @param acceleration acceleration of the gtu
-     * @param time current time
-     * @param gtu gtu
+     * @param kpiLaneDirection KpiLaneDirection; lane direction the gtu is at
+     * @param position Length; position of the gtu on the lane
+     * @param speed Speed; speed of the gtu
+     * @param acceleration Acceleration; acceleration of the gtu
+     * @param time Time; current time
+     * @param gtu G; gtu
      */
     public final void processGtuMoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
@@ -243,12 +243,12 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Finalizes a trajectory with the current snapshot of a GTU.
-     * @param kpiLaneDirection lane direction the gtu is at
-     * @param position position of the gtu on the lane
-     * @param speed speed of the gtu
-     * @param acceleration acceleration of the gtu
-     * @param time current time
-     * @param gtu gtu
+     * @param kpiLaneDirection KpiLaneDirection; lane direction the gtu is at
+     * @param position Length; position of the gtu on the lane
+     * @param speed Speed; speed of the gtu
+     * @param acceleration Acceleration; acceleration of the gtu
+     * @param time Time; current time
+     * @param gtu G; gtu
      */
     public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
@@ -259,8 +259,8 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Finalizes a trajectory.
-     * @param kpiLaneDirection lane direction the gtu is at
-     * @param gtu gtu
+     * @param kpiLaneDirection KpiLaneDirection; lane direction the gtu is at
+     * @param gtu G; gtu
      */
     public final void processGtuRemoveEvent(final KpiLaneDirection kpiLaneDirection, final G gtu)
     {
@@ -278,7 +278,7 @@ public abstract class Sampler<G extends GtuDataInterface>
     }
 
     /**
-     * @param gtu gtu to return meta data for
+     * @param gtu G; gtu to return meta data for
      * @param <T> underlying type of a meta data type
      * @return meta data for the given gtu
      */
@@ -299,7 +299,7 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Returns whether there is data for the give lane direction.
-     * @param kpiLaneDirection lane direction
+     * @param kpiLaneDirection KpiLaneDirection; lane direction
      * @return whether there is data for the give lane direction
      */
     public final boolean contains(final KpiLaneDirection kpiLaneDirection)
@@ -309,7 +309,7 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Returns the trajectory group of given lane direction.
-     * @param kpiLaneDirection lane direction
+     * @param kpiLaneDirection KpiLaneDirection; lane direction
      * @return trajectory group of given lane direction, {@code null} if none
      */
     public final TrajectoryGroup getTrajectoryGroup(final KpiLaneDirection kpiLaneDirection)
@@ -319,7 +319,7 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Write the contents of the sampler in to a file. By default this is zipped and numeric data is formated %.3f.
-     * @param file file
+     * @param file String; file
      */
     public final void writeToFile(final String file)
     {
@@ -328,9 +328,9 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Write the contents of the sampler in to a file.
-     * @param file file
-     * @param format number format, as used in {@code String.format()}
-     * @param compression how to compress the data
+     * @param file String; file
+     * @param format String; number format, as used in {@code String.format()}
+     * @param compression CompressionMethod; how to compress the data
      */
     public final void writeToFile(final String file, final String format, final CompressionMethod compression)
     {
@@ -498,7 +498,7 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Cast value to type for meta data.
-     * @param value value object to cast
+     * @param value Object; value object to cast
      * @return cast value
      */
     @SuppressWarnings("unchecked")
@@ -509,9 +509,9 @@ public abstract class Sampler<G extends GtuDataInterface>
 
     /**
      * Cast value to type for extended data.
-     * @param extendedData extended data of trajectory in output form
-     * @param extendedDataType extended data type
-     * @param i index of value to return
+     * @param extendedData Map&lt;ExtendedDataType&lt;?,?,?,?&gt;,Object&gt;; extended data of trajectory in output form
+     * @param extendedDataType ExtendedDataType&lt;?,?,?,?&gt;; extended data type
+     * @param i int; index of value to return
      * @return cast value
      * @throws SamplingException when the found index is out of bounds
      */

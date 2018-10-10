@@ -75,8 +75,8 @@ public class RouteGeneratorProbability implements RouteGenerator
 
     /**
      * Add demand for route to 'to' node.
-     * @param to destination node
-     * @param demand demand
+     * @param to OTSNode; destination node
+     * @param demand double[]; demand
      */
     public void addDemand(final OTSNode to, final double[] demand)
     {

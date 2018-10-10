@@ -153,7 +153,7 @@ public class Distribution<O> implements Generator<O>, Serializable
     /**
      * Replace the generator at the specified position.
      * @param index int; the position of the generator that must be replaced
-     * @param generator FrequencyAndObject; the new generator and the frequency (or probability)
+     * @param generator FrequencyAndObject&lt;O&gt;; the new generator and the frequency (or probability)
      * @return this
      * @throws ProbabilityException when the frequency (or probability) &lt; 0, or when index is &lt; 0 or &gt;= size
      */

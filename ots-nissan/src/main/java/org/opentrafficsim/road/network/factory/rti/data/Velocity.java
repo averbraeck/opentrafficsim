@@ -32,7 +32,7 @@ public class Velocity implements Serializable
     }
 
     /**
-     * @param vx set vx
+     * @param vx float; set vx
      */
     public void setVx(float vx)
     {
@@ -48,7 +48,7 @@ public class Velocity implements Serializable
     }
 
     /**
-     * @param vy set vy
+     * @param vy float; set vy
      */
     public void setVy(float vy)
     {
@@ -64,7 +64,7 @@ public class Velocity implements Serializable
     }
 
     /**
-     * @param vz set vz
+     * @param vz float; set vz
      */
     public void setVz(float vz)
     {

@@ -25,8 +25,8 @@ public final class XMLParser
     }
 
     /**
-     * @param nodeList the list of nodes to process
-     * @param tag the tag to look for, e.g., LINK
+     * @param nodeList NodeList; the list of nodes to process
+     * @param tag String; the tag to look for, e.g., LINK
      * @return the nodes (which can contain nodeLists themselves) with the given tag
      */
     public static List<Node> getNodes(final NodeList nodeList, final String tag)

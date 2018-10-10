@@ -62,9 +62,9 @@ class PolyLineTag implements Serializable
 
     /**
      * Parse the LINK.POLYLINE tag.
-     * @param coords the XML-node to parse
-     * @param parser the parser with the lists of information
-     * @param linkTag the parent link tag
+     * @param coords String; the XML-node to parse
+     * @param parser VissimNetworkLaneParser; the parser with the lists of information
+     * @param linkTag LinkTag; the parent link tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
@@ -78,7 +78,7 @@ class PolyLineTag implements Serializable
 
     /**
      * Parse a coordinate with (x,y) or (x,y,z).
-     * @param cs the string containing the coordinate.
+     * @param cs String; the string containing the coordinate.
      * @return a Point3d containing the x,y or x,y,z values.
      */
     public static OTSPoint3D[] parseVertices(final String cs)

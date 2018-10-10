@@ -115,7 +115,7 @@ public final class ODApplier
      * </table>
      * @param network OTSNetwork; network
      * @param od ODMatrix; OD matrix
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @param odOptions ODOptions; options for vehicle generation
      * @return Map&lt;String, GeneratorObjects&gt; map of generator id's and created generator objects mainly for testing
      * @throws ParameterException if a parameter is missing
@@ -429,7 +429,7 @@ public final class ODApplier
 
     /**
      * Returns a sorted map.
-     * @param map Map; input map
+     * @param map Map&lt;K, V&gt;; input map
      * @param <K> key type (implemented for cleaner code only)
      * @param <V> value type (implemented for cleaner code only)
      * @return Map; sorted map
@@ -594,7 +594,7 @@ public final class ODApplier
 
         /**
          * Randomly draws a child node.
-         * @param time Duration; simulation time
+         * @param time Time; simulation time
          * @return K; randomly drawn child node
          */
         public K draw(final Time time)

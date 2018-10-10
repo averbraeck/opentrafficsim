@@ -55,15 +55,15 @@ public class CsvFileReader
 {
     /**
      * Class reads the demand and others from .csv type of files.
-     * @param csvFileName name of file
-     * @param csvSplitBy : token that defines how to split a line
-     * @param csvSplitByTwo : two tokens that defines how to split a line
-     * @param centroids sources of traffic
-     * @param links roads
-     * @param connectors artificial roads connecting the links and centroids
-     * @param settingsNTM the parameters of the NTM
-     * @param profiles departure profile of Trips
-     * @param areas the NTM model areas
+     * @param csvFileName String; name of file
+     * @param csvSplitBy String; : token that defines how to split a line
+     * @param csvSplitByTwo String; : two tokens that defines how to split a line
+     * @param centroids Map&lt;String,NTMNode&gt;; sources of traffic
+     * @param links Map&lt;String,NTMLink&gt;; roads
+     * @param connectors Map&lt;String,NTMLink&gt;; artificial roads connecting the links and centroids
+     * @param settingsNTM NTMSettings; the parameters of the NTM
+     * @param profiles ArrayList&lt;DepartureTimeProfile&gt;; departure profile of Trips
+     * @param areas Map&lt;String,Area&gt;; the NTM model areas
      * @return the TripDemand (nested HashMap: <origin, map<destination, tripinformation>>
      * @throws IOException
      * @throws Throwable
@@ -420,9 +420,9 @@ public class CsvFileReader
     }
 
     /**
-     * @param csvFileName
-     * @param csvSplitBy
-     * @param csvSplitInternalBy
+     * @param csvFileName String;
+     * @param csvSplitBy String;
+     * @param csvSplitInternalBy String;
      * @return an ArrayList<DepartureTimeProfile<?>>
      * @throws IOException
      * @throws ParseException
@@ -556,9 +556,9 @@ public class CsvFileReader
     }
 
     /**
-     * @param csvFileName
-     * @param csvSplitBy
-     * @param csvSplitInternalBy
+     * @param csvFileName String;
+     * @param csvSplitBy String;
+     * @param csvSplitInternalBy String;
      * @return an ArrayList<DepartureTimeProfile<?>>
      * @throws IOException
      * @throws ParseException
@@ -822,7 +822,7 @@ public class CsvFileReader
     }
 
     /**
-     * @param name
+     * @param name String;
      * @return name without quotes
      */
     public static String removeQuotes(final String name)

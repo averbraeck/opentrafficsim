@@ -103,7 +103,7 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
     /**
      * Add a Property at a specified position.
      * @param index int; the position where the Property must be added
-     * @param ap Property; the property to add
+     * @param ap Property&lt;?&gt;; the property to add
      * @throws PropertyException when this CompoundProperty is read-only, or index is out of range
      */
     public final void add(final int index, final Property<?> ap) throws PropertyException
@@ -145,7 +145,7 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
 
     /**
      * Add a Property at the end of the list.
-     * @param ap Property; the property to add
+     * @param ap Property&lt;?&gt;; the property to add
      * @throws PropertyException when this CompoundProperty is read-only
      */
     public final void add(final Property<?> ap) throws PropertyException
@@ -179,7 +179,7 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
 
     /**
      * Remove a property from this CompoundProperty.
-     * @param removeMe AbstractProperty the property that must be removed
+     * @param removeMe Property&lt;?&gt;; AbstractProperty the property that must be removed
      * @throws PropertyException when the supplied property cannot be removed (probably because it is not part of this
      *             CompoundProperty)
      */
@@ -205,9 +205,9 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
 
     /**
      * Update the property group when this CompoundProperty is added or removed from another CompoundProperty.
-     * @param newPropertyGroup Map&lt;String, AbstractProperty&lt;?&gt;&gt;; if non-null; this is the property group of the new
-     *            parent which we are now part of and we must use that in lieu of our own; if null; we are being removed from
-     *            our parent and we must rebuild our own property group
+     * @param newPropertyGroup Map&lt;String, Property&lt;?&gt;&gt;; if non-null; this is the property group of the new parent
+     *            which we are now part of and we must use that in lieu of our own; if null; we are being removed from our
+     *            parent and we must rebuild our own property group
      */
     protected final void setPropertyGroup(final Map<String, Property<?>> newPropertyGroup)
     {

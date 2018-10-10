@@ -114,8 +114,8 @@ public class Container implements Serializable
     }
 
     /**
-     * @param costEnum cost category
-     * @param cost cost to add
+     * @param costEnum ContainerTransportCostBreakdownEnum; cost category
+     * @param cost double; cost to add
      */
     public final void addTransportCost(final ContainerTransportCostBreakdownEnum costEnum, final double cost)
     {
@@ -123,8 +123,8 @@ public class Container implements Serializable
     }
 
     /**
-     * @param feeEnum cost category
-     * @param fee the fee to add
+     * @param feeEnum ContainerTransportFeeBreakdownEnum; cost category
+     * @param fee double; the fee to add
      */
     public final void addTransportFee(final ContainerTransportFeeBreakdownEnum feeEnum, final double fee)
     {
@@ -132,8 +132,8 @@ public class Container implements Serializable
     }
 
     /**
-     * @param co2Enum CO2 category
-     * @param kgCO2 the amount of CO2 to add
+     * @param co2Enum ContainerTransportCO2BreakdownEnum; CO2 category
+     * @param kgCO2 double; the amount of CO2 to add
      */
     public final void addTransportKgCO2(final ContainerTransportCO2BreakdownEnum co2Enum, final double kgCO2)
     {
@@ -141,8 +141,8 @@ public class Container implements Serializable
     }
 
     /**
-     * @param timeEnum time category
-     * @param time the time in hours to add
+     * @param timeEnum ContainerTransportTimeBreakdownEnum; time category
+     * @param time double; the time in hours to add
      */
     public final void addTransportTime(final ContainerTransportTimeBreakdownEnum timeEnum, final double time)
     {
@@ -150,7 +150,7 @@ public class Container implements Serializable
     }
 
     /**
-     * @param costEnum cost category
+     * @param costEnum ContainerTransportCostBreakdownEnum; cost category
      * @return costs of this cost breakdown category until now
      */
     public final double getTransportCost(final ContainerTransportCostBreakdownEnum costEnum)
@@ -159,7 +159,7 @@ public class Container implements Serializable
     }
 
     /**
-     * @param feeEnum cost category
+     * @param feeEnum ContainerTransportFeeBreakdownEnum; cost category
      * @return fee until now of this cost breakdown category until now
      */
     public final double getTransportFee(final ContainerTransportFeeBreakdownEnum feeEnum)
@@ -168,7 +168,7 @@ public class Container implements Serializable
     }
 
     /**
-     * @param co2Enum CO2 category
+     * @param co2Enum ContainerTransportCO2BreakdownEnum; CO2 category
      * @return kg CO2 of this CO2 breakdown category until now
      */
     public final double getTransportKgCO2(final ContainerTransportCO2BreakdownEnum co2Enum)
@@ -177,7 +177,7 @@ public class Container implements Serializable
     }
 
     /**
-     * @param timeEnum time category
+     * @param timeEnum ContainerTransportTimeBreakdownEnum; time category
      * @return the time in hours
      */
     public final double getTransportTime(final ContainerTransportTimeBreakdownEnum timeEnum)
@@ -319,7 +319,7 @@ public class Container implements Serializable
     }
 
     /**
-     * @param terminalFrom the terminalFrom to set
+     * @param terminalFrom Terminal; the terminalFrom to set
      */
     public final void setTerminalFrom(final Terminal terminalFrom)
     {
@@ -327,7 +327,7 @@ public class Container implements Serializable
     }
 
     /**
-     * @param terminalTo the terminalTo to set
+     * @param terminalTo Terminal; the terminalTo to set
      */
     public final void setTerminalTo(final Terminal terminalTo)
     {
@@ -335,7 +335,7 @@ public class Container implements Serializable
     }
 
     /**
-     * @param terminalLastStacked the terminalCurrent to set
+     * @param terminalLastStacked Terminal; the terminalCurrent to set
      */
     public final void setTerminalLastStacked(final Terminal terminalLastStacked)
     {

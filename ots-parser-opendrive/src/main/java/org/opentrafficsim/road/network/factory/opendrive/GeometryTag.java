@@ -77,8 +77,8 @@ class GeometryTag implements Serializable
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
-     * @param node the top-level road node
-     * @param parser the parser with the lists of information
+     * @param node Node; the top-level road node
+     * @param parser OpenDriveNetworkLaneParser; the parser with the lists of information
      * @return the generated RoadTag for further reference
      * @throws SAXException when parsing of the tag fails
      */
@@ -121,8 +121,8 @@ class GeometryTag implements Serializable
     }
 
     /**
-     * @param network the network
-     * @param geometryTag the tag with the info for the node.
+     * @param network Network; the network
+     * @param geometryTag GeometryTag; the tag with the info for the node.
      * @return a constructed node
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */

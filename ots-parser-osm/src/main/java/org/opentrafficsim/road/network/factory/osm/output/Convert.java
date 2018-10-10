@@ -84,7 +84,7 @@ public final class Convert
     private static double baseX = Double.NaN;
 
     /**
-     * @param c Coordinate in WGS84
+     * @param c Coordinate; Coordinate in WGS84
      * @return Coordinate in Geocentric Cartesian system
      * @throws FactoryException on ???
      * @throws TransformException on problems with the coordinate transformation
@@ -117,8 +117,8 @@ public final class Convert
 
     /**
      * This method converts an OSM link to an OTS link.
-     * @param network the network
-     * @param link OSM Link to be converted
+     * @param network Network; the network
+     * @param link OSMLink; OSM Link to be converted
      * @param simulator OTSSimulatorInterface; the simulator that will animate the generates lanes (if it happens to be an
      *            instance of AnimatorInterface)
      * @return OTS Link
@@ -168,8 +168,8 @@ public final class Convert
 
     /**
      * This method converts an OSM node to an OTS node.
-     * @param network the network
-     * @param node OSM Node to be converted
+     * @param network Network; the network
+     * @param node OSMNode; OSM Node to be converted
      * @return OTS Node
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique
      */
@@ -240,7 +240,7 @@ public final class Convert
 
     /**
      * Determine the positions of the various lanes on an OSMLink.
-     * @param osmLink - The OSM Link on which the conversion is based.
+     * @param osmLink OSMLink; - The OSM Link on which the conversion is based.
      * @param warningListener WarningListener; the warning listener that receives warning events
      * @return Map&lt;Double, LaneAttributes&gt;; the lane structure
      * @throws NetworkException on failure
@@ -481,10 +481,10 @@ public final class Convert
 
     /**
      * Calculates the actual offsets of the individual lanes.
-     * @param structure - Sorted Map of Lane Positions and Attributes
-     * @param osmLink - The osmLink on which the conversion is based.
-     * @param forwards - Number of forwards oriented lanes.
-     * @param backwards - Number of backwards oriented lanes.
+     * @param structure SortedMap&lt;Integer,LaneAttributes&gt;; - Sorted Map of Lane Positions and Attributes
+     * @param osmLink OSMLink; - The osmLink on which the conversion is based.
+     * @param forwards Integer; - Number of forwards oriented lanes.
+     * @param backwards Integer; - Number of backwards oriented lanes.
      * @param warningListener WarningListener; the warning listener that receives warning events
      * @return Map containing the lane structure with offsets.
      * @throws NetworkException on failure
@@ -624,7 +624,7 @@ public final class Convert
      * This method creates lanes out of an OSM link LaneTypes are not yet extensive and can be further increased through Tags
      * provided by OSM. The standard lane width of 3.05 is an estimation based on the European width limitation for vehicles
      * (2.55m) + 25cm each side.
-     * @param network the network
+     * @param network Network; the network
      * @param osmlink Link OSMLink; the OSM link to make lanes for
      * @param simulator OTSSimulatorInterface; the simulator that will animate the generates lanes (if it happens to be an
      *            instance of AnimatorInterface)
@@ -697,7 +697,7 @@ public final class Convert
 
     /**
      * This method creates a LaneType which supports all GTUTypes that have been specified in the GTUType List "GTUs".
-     * @param gtuTypes List&lt;GTUType&lt;String&gt;&gt;; list of GTUTypes
+     * @param gtuTypes List&lt;GTUType&gt;; list of GTUTypes
      * @return LaneType permeable for all of the specific GTUTypes
      */
     public static LaneType makeLaneType(final List<GTUType> gtuTypes)
@@ -734,8 +734,8 @@ public final class Convert
 
     /**
      * Identify Links that are sources or sinks.
-     * @param nodes List of Nodes
-     * @param links List of Links
+     * @param nodes List&lt;OSMNode&gt;; List of Nodes
+     * @param links List&lt;OSMLink&gt;; List of Links
      * @return List of Links which are candidates for becoming sinks/sources.
      */
     private static ArrayList<OSMLink> findBoundaryLinks(final List<OSMNode> nodes, final List<OSMLink> links)
@@ -774,7 +774,7 @@ public final class Convert
     }
 
     /**
-     * @param net The OSM network which is to be searched for Sinks and Sources.
+     * @param net OSMNetwork; The OSM network which is to be searched for Sinks and Sources.
      * @param progressListener ProgressListener; the progress listener that will receive progress events
      * @return Network with all possible sinks and sources tagged.
      */
@@ -921,7 +921,7 @@ class LaneAttributes implements Serializable
     }
 
     /**
-     * @param width set width.
+     * @param width Double; set width.
      */
     public void setWidth(final Double width)
     {

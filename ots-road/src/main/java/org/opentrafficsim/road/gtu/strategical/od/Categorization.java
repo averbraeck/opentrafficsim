@@ -77,7 +77,7 @@ public class Categorization implements Serializable, Identifiable
 
     /**
      * Returns the i'th class.
-     * @param i index of the class
+     * @param i int; index of the class
      * @return the i'th class
      * @throws IndexOutOfBoundsException if index i is out of bounds
      */
@@ -99,7 +99,7 @@ public class Categorization implements Serializable, Identifiable
 
     /**
      * Returns whether the categorization contains a class that is, or is a sub type of, the given class.
-     * @param clazz Class; class to check
+     * @param clazz Class&lt;?&gt;; class to check
      * @return whether the categorization contains a class that is, or is a sub type of, the given class
      */
     public final boolean entails(final Class<?> clazz)
