@@ -3,6 +3,10 @@
   <body>
 
     <release version="1.00.03" date="2018-XX-XX" description="POM in aimsun-proto updated; using external logger">
+      <action dev="averbraeck" type="fix">
+        The destroy() method of DefaultCarAnimation is repaired to not call Renderable2D.destroy()
+        twice.
+      </action>
       <action dev="averbraeck" type="add">
         A program called ParamComments has been added in ots-build-tools to help enter/repair the
         correct types in the @param entries in the method comments. All classes have been repaired 
