@@ -37,7 +37,7 @@ public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, HashSe
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param c Collection; initial collection
+     * @param c Collection&lt;? extends E&gt;; initial collection
      */
     public HistoricalHashSet(final HistoryManager historyManager, final Collection<? extends E> c)
     {

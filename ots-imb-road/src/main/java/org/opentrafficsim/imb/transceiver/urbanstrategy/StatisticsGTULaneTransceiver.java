@@ -410,7 +410,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         private List<TrajectoryGroup> sourceGroups;
 
         /**
-         * @param time time of statistics
+         * @param time double; time of statistics
          */
         public StatisticsRunnable(final double time)
         {
@@ -418,8 +418,8 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         }
 
         /**
-         * @param time time of statistics
-         * @param sourceGroups groups
+         * @param time double; time of statistics
+         * @param sourceGroups List&lt;TrajectoryGroup&gt;; groups
          */
         public StatisticsRunnable(final double time, final List<TrajectoryGroup> sourceGroups)
         {

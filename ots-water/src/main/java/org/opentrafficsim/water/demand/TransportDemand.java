@@ -44,8 +44,8 @@ public class TransportDemand implements Serializable
     private Map<Terminal, Map<Terminal, DemandCell>> demandMap = new HashMap<Terminal, Map<Terminal, DemandCell>>();
 
     /**
-     * @param simulator the simulator for scheduling the demand
-     * @param operatingArea the region for which this demand holds
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator for scheduling the demand
+     * @param operatingArea Region; the region for which this demand holds
      */
     public TransportDemand(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Region operatingArea)
     {
@@ -219,12 +219,13 @@ public class TransportDemand implements Serializable
         private Map<Company, Double> fractionOwners = new HashMap<Company, Double>();
 
         /**
-         * @param terminalFrom origin terminal
-         * @param terminalTo destination terminal
-         * @param numberAnnual annual number of containers per year
-         * @param fraction20ft fraction of 20 ft containers (rest is 40 ft)
-         * @param fractionEmpty fraction of empty containers (rest is full)
-         * @param fractionOwners map of owners with fraction (adding up to 1.0) indicating who owns the containers
+         * @param terminalFrom Terminal; origin terminal
+         * @param terminalTo Terminal; destination terminal
+         * @param numberAnnual int; annual number of containers per year
+         * @param fraction20ft double; fraction of 20 ft containers (rest is 40 ft)
+         * @param fractionEmpty double; fraction of empty containers (rest is full)
+         * @param fractionOwners Map&lt;Company,Double&gt;; map of owners with fraction (adding up to 1.0) indicating who owns
+         *            the containers
          */
         public DemandCell(final Terminal terminalFrom, final Terminal terminalTo, final int numberAnnual,
                 final double fraction20ft, final double fractionEmpty, final Map<Company, Double> fractionOwners)

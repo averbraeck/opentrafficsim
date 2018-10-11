@@ -37,7 +37,7 @@ public class HistoricalLinkedHashMap<K, V> extends AbstractHistoricalMap<K, V, L
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param m Map; initial map
+     * @param m Map&lt;? extends K, ? extends V&gt;; initial map
      */
     public HistoricalLinkedHashMap(final HistoryManager historyManager, final Map<? extends K, ? extends V> m)
     {

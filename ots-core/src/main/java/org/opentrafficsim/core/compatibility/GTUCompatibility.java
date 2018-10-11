@@ -44,8 +44,8 @@ public class GTUCompatibility<I extends HierarchicalType<I> & Compatibility<GTUT
     /**
      * Construct a new Compatibility and deep copy the allowed and forbidden sets for both directions from an existing
      * Compatibility.
-     * @param original Compatibility; the Compatibility from which the allowed and forbidden sets for both directions will be
-     *            copied
+     * @param original GTUCompatibility&lt;I&gt;; the Compatibility from which the allowed and forbidden sets for both
+     *            directions will be copied
      */
     public GTUCompatibility(final GTUCompatibility<I> original)
     {

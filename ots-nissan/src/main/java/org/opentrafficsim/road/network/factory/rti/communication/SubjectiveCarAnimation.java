@@ -33,8 +33,8 @@ public class SubjectiveCarAnimation extends Renderable2D implements Serializable
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
-     * @param source the Car to draw
-     * @param simulator the simulator to schedule on
+     * @param source SubjectiveCar; the Car to draw
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */

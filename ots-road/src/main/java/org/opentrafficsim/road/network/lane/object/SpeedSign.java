@@ -52,14 +52,14 @@ public class SpeedSign extends AbstractLaneBasedObject
     /**
      * Construct a new SpeedSign.
      * @param id String; the id of the new SpeedSign
-     * @param lane Lane on/over which the SpeedSign is positioned
+     * @param lane Lane; Lane on/over which the SpeedSign is positioned
      * @param direction LongitudinalDirectionality; driving direction for which the new SpeedSign applies
      * @param longitudinalPosition Length; the longitudinal position along the lane of the new SpeedSign
      * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
      * @param speed Speed; the speed limit shown by the new SpeedSign
-     * @param gtuType GTU type that should obey the speed sign
-     * @param startTimeOfDay start time-of-day
-     * @param endTimeOfDay end time-of-day
+     * @param gtuType GTUType; GTU type that should obey the speed sign
+     * @param startTimeOfDay Duration; start time-of-day
+     * @param endTimeOfDay Duration; end time-of-day
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -85,13 +85,13 @@ public class SpeedSign extends AbstractLaneBasedObject
 
     /**
      * Speed sign active all day.
-     * @param id id
-     * @param lane lane
-     * @param direction direction
-     * @param longitudinalPosition longitudinal position
-     * @param simulator simulator
-     * @param speed speed
-     * @param gtuType GTU type
+     * @param id String; id
+     * @param lane Lane; lane
+     * @param direction LongitudinalDirectionality; direction
+     * @param longitudinalPosition Length; longitudinal position
+     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param speed Speed; speed
+     * @param gtuType GTUType; GTU type
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,
@@ -103,14 +103,14 @@ public class SpeedSign extends AbstractLaneBasedObject
 
     /**
      * Speed sign for all GTU types.
-     * @param id id
-     * @param lane lane
-     * @param direction direction
-     * @param longitudinalPosition longitudinal position
-     * @param simulator simulator
-     * @param speed speed
-     * @param startTimeOfDay start time-of-day
-     * @param endTimeOfDay end time-of-day
+     * @param id String; id
+     * @param lane Lane; lane
+     * @param direction LongitudinalDirectionality; direction
+     * @param longitudinalPosition Length; longitudinal position
+     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param speed Speed; speed
+     * @param startTimeOfDay Duration; start time-of-day
+     * @param endTimeOfDay Duration; end time-of-day
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -123,12 +123,12 @@ public class SpeedSign extends AbstractLaneBasedObject
 
     /**
      * Speed sign active all day for all GTU types.
-     * @param id id
-     * @param lane lane
-     * @param direction direction
-     * @param longitudinalPosition longitudinal position
-     * @param simulator simulator
-     * @param speed speed
+     * @param id String; id
+     * @param lane Lane; lane
+     * @param direction LongitudinalDirectionality; direction
+     * @param longitudinalPosition Length; longitudinal position
+     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param speed Speed; speed
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public SpeedSign(final String id, final Lane lane, final LongitudinalDirectionality direction,

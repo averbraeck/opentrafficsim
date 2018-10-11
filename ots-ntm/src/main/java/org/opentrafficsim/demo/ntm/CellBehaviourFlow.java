@@ -37,8 +37,8 @@ public class CellBehaviourFlow extends CellBehaviour
     private ParametersFundamentalDiagram parametersFundamentalDiagram;
 
     /**
-     * @param parametersFD contains a set of params
-     * @param area that contains this behaviour
+     * @param parametersFD ParametersFundamentalDiagram; contains a set of params
+     * @param area Area; that contains this behaviour
      */
     public CellBehaviourFlow(final Area area, ParametersFundamentalDiagram parametersFD)
     {

@@ -353,7 +353,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
         private List<Lane> path = new ArrayList<>();
 
         /**
-         * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the user modified properties for the model
+         * @param properties List&lt;Property&lt;?&gt;&gt;; the user modified properties for the model
          */
         LaneSimulationModel(final List<Property<?>> properties)
         {

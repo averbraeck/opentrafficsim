@@ -37,7 +37,7 @@ public class HistoricalPriorityQueue<E> extends AbstractHistoricalQueue<E, Prior
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param c Collection; initial collection
+     * @param c Collection&lt;? extends E&gt;; initial collection
      */
     public HistoricalPriorityQueue(final HistoryManager historyManager, final Collection<? extends E> c)
     {

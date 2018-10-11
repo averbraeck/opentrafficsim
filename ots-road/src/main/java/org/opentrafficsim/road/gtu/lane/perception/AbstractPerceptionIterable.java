@@ -56,7 +56,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
     /**
      * Constructor.
      * @param perceivingGtu LaneBasedGTU; perceiving GTU
-     * @param root R; root record
+     * @param root LaneRecord&lt;?&gt;; root record
      * @param initialPosition Length; initial position
      * @param downstream boolean; search downstream (or upstream)
      * @param maxDistance Length; max distance to search

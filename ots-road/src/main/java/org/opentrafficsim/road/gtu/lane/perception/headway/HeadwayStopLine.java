@@ -21,7 +21,7 @@ public final class HeadwayStopLine extends AbstractHeadwayCopy
 
     /**
      * Construct a new HeadwayStopLine.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */

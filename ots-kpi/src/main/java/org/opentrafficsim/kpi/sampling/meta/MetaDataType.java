@@ -27,7 +27,7 @@ public abstract class MetaDataType<T> implements Identifiable
     private final String id;
 
     /**
-     * @param id id
+     * @param id String; id
      */
     public MetaDataType(final String id)
     {

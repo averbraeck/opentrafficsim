@@ -276,7 +276,7 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         private StreamInterface stream = new MersenneTwister(1234); // Use a fixed seed for the demos
 
         /**
-         * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
+         * @param userModifiedProperties List&lt;Property&lt;?&gt;&gt;; the (possibly user modified) properties
          */
         XMLNetworkModel(final List<Property<?>> userModifiedProperties)
         {

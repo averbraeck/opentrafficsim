@@ -277,7 +277,7 @@ public interface OvertakingConditions
         private final Speed rightOvertakingSpeedMax;
 
         /**
-         * @param rightOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
+         * @param rightOvertakingSpeedMax Speed; the speed under which overtaking on the "wrong" side is allowed
          */
         public LeftAlwaysRightSpeed(final Speed rightOvertakingSpeedMax)
         {
@@ -319,7 +319,7 @@ public interface OvertakingConditions
         private final Speed leftOvertakingSpeedMax;
 
         /**
-         * @param leftOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
+         * @param leftOvertakingSpeedMax Speed; the speed under which overtaking on the "wrong" side is allowed
          */
         public RightAlwaysLeftSpeed(final Speed leftOvertakingSpeedMax)
         {
@@ -373,8 +373,9 @@ public interface OvertakingConditions
          * Provide a collection of GTUs that can overtake another collection of GTUs on the left, but not vice versa. Example:
          * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}.
-         * @param overtakingGTUTypes the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
-         * @param overtakenGTUTYpes the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         * @param overtakingGTUTypes Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR,
+         *            TRUCK.
+         * @param overtakenGTUTYpes Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
          */
         public LeftSet(final Collection<GTUType> overtakingGTUTypes, final Collection<GTUType> overtakenGTUTYpes)
         {
@@ -433,8 +434,8 @@ public interface OvertakingConditions
          * Provide a collection of GTUs that can overtake another collection of GTUs on the right, but not vice versa. Example:
          * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}.
-         * @param overtakingGTUs the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
-         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         * @param overtakingGTUs Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
+         * @param overtakenGTUs Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
          */
         public RightSet(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs)
         {
@@ -497,9 +498,9 @@ public interface OvertakingConditions
          * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}. In addition, overtaking on the other side is allowed under a
          * given driving speed.
-         * @param overtakingGTUs the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
-         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
-         * @param rightOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
+         * @param overtakingGTUs Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
+         * @param overtakenGTUs Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         * @param rightOvertakingSpeedMax Speed; the speed under which overtaking on the "wrong" side is allowed
          */
         public LeftSetRightSpeed(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs,
                 final Speed rightOvertakingSpeedMax)
@@ -567,9 +568,9 @@ public interface OvertakingConditions
          * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}. In addition, overtaking on the other side is allowed under a
          * given driving speed.
-         * @param overtakingGTUs the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
-         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
-         * @param leftOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
+         * @param overtakingGTUs Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
+         * @param overtakenGTUs Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         * @param leftOvertakingSpeedMax Speed; the speed under which overtaking on the "wrong" side is allowed
          */
         public RightSetLeftSpeed(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs,
                 final Speed leftOvertakingSpeedMax)

@@ -29,10 +29,10 @@ public class TConnection
     // constructors
     /**
      * Create an IMB connection to the framework
-     * @param aRemoteHost IP address or DNS name of the IMB hub to connect to
-     * @param aRemotePort TCP port of the IMB hub to connect to
-     * @param aOwnerName optional description of the connecting client
-     * @param aOwnerID optional id of the connecting client
+     * @param aRemoteHost String; IP address or DNS name of the IMB hub to connect to
+     * @param aRemotePort int; TCP port of the IMB hub to connect to
+     * @param aOwnerName String; optional description of the connecting client
+     * @param aOwnerID int; optional id of the connecting client
      * @param aFederation federation to connect with; this is default prefixed to subscribed and published event names
      */
     public TConnection(String aRemoteHost, int aRemotePort, String aOwnerName, int aOwnerID, String aFederation)
@@ -42,12 +42,13 @@ public class TConnection
 
     /**
      * Create an IMB connection to the framework
-     * @param aRemoteHost IP address or DNS name of the IMB hub to connect to
-     * @param aRemotePort TCP port of the IMB hub to connect to
-     * @param aOwnerName optional description of the connecting client
-     * @param aOwnerID optional id of the connecting client
+     * @param aRemoteHost String; IP address or DNS name of the IMB hub to connect to
+     * @param aRemotePort int; TCP port of the IMB hub to connect to
+     * @param aOwnerName String; optional description of the connecting client
+     * @param aOwnerID int; optional id of the connecting client
      * @param aFederation federation to connect with; this is default prefixed to subscribed and published event names
-     * @param aStartReadingThread use an internal reader thread for processing events and commands from the connected hub
+     * @param aStartReadingThread boolean; use an internal reader thread for processing events and commands from the connected
+     *            hub
      */
     public TConnection(String aRemoteHost, int aRemotePort, String aOwnerName, int aOwnerID, String aFederation,
             boolean aStartReadingThread)

@@ -73,9 +73,9 @@ public class Region extends AbstractNamed implements Comparable<Region>
     private static StreamInterface randomStream = null;
 
     /**
-     * @param name the name of the region
+     * @param name String; the name of the region
      * @param superRegion the region of which this region is part; can be null
-     * @param center the coordinate that denotes the center of the region
+     * @param center Coordinate; the coordinate that denotes the center of the region
      */
     public Region(final String name, final Region superRegion, final Coordinate center)
     {

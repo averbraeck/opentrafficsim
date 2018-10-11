@@ -25,7 +25,7 @@ public class OperationalPlanException extends Exception
     }
 
     /**
-     * @param message exception message
+     * @param message String; exception message
      */
     public OperationalPlanException(final String message)
     {
@@ -33,7 +33,7 @@ public class OperationalPlanException extends Exception
     }
 
     /**
-     * @param cause exception that triggered this exception
+     * @param cause Throwable; exception that triggered this exception
      */
     public OperationalPlanException(final Throwable cause)
     {
@@ -41,8 +41,8 @@ public class OperationalPlanException extends Exception
     }
 
     /**
-     * @param message exception message
-     * @param cause exception that triggered this exception
+     * @param message String; exception message
+     * @param cause Throwable; exception that triggered this exception
      */
     public OperationalPlanException(final String message, final Throwable cause)
     {
@@ -50,10 +50,10 @@ public class OperationalPlanException extends Exception
     }
 
     /**
-     * @param message exception message
-     * @param cause exception that triggered this exception
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
+     * @param message String; exception message
+     * @param cause Throwable; exception that triggered this exception
+     * @param enableSuppression boolean; whether or not suppression is enabled or disabled
+     * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
     public OperationalPlanException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)

@@ -46,7 +46,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
 
     /**
      * Construct a DirectedLaneChangeModel.
-     * @param perception the perception.
+     * @param perception LanePerception; the perception.
      */
     public AbstractDirectedLaneChangeModel(final LanePerception perception)
     {

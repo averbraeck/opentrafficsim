@@ -128,18 +128,18 @@ public class Area extends GeoObject implements Locatable
     private double accumulatedCars;
 
     /**
-     * @param geometry the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232 ...
-     * @param centroidNr
-     * @param name NAME class java.lang.String 70 Oostduinen
-     * @param gemeente GEMEENTEVM class java.lang.String sGravenhage
-     * @param gebied GEBIEDSNAA class java.lang.String Studiegebied
-     * @param regio REGIO class java.lang.String Den_Haag
-     * @param dhb DHB class java.lang.Double 70.0
-     * @param centroid Centroid as a Point
-     * @param trafficBehaviourType
-     * @param roadLength
-     * @param averageSpeed
-     * @param increaseDemandByFactor
+     * @param geometry Geometry; the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232 ...
+     * @param centroidNr String;
+     * @param name String; NAME class java.lang.String 70 Oostduinen
+     * @param gemeente String; GEMEENTEVM class java.lang.String sGravenhage
+     * @param gebied String; GEBIEDSNAA class java.lang.String Studiegebied
+     * @param regio String; REGIO class java.lang.String Den_Haag
+     * @param dhb double; DHB class java.lang.Double 70.0
+     * @param centroid Coordinate; Centroid as a Point
+     * @param trafficBehaviourType TrafficBehaviourType;
+     * @param roadLength Length;
+     * @param averageSpeed Speed;
+     * @param increaseDemandByFactor double;
      */
     public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente, final String gebied,
             final String regio, final double dhb, final Coordinate centroid, final TrafficBehaviourType trafficBehaviourType,

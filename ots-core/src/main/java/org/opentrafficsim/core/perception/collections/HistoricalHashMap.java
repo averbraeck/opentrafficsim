@@ -37,7 +37,7 @@ public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, HashMap
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param m Map; initial map
+     * @param m Map&lt;? extends K, ? extends V&gt;; initial map
      */
     public HistoricalHashMap(final HistoryManager historyManager, final Map<? extends K, ? extends V> m)
     {

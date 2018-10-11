@@ -51,25 +51,30 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
     private final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist;
 
     /**
-     * @param name the name of the generator
-     * @param gtuType the type of GTU to generate
-     * @param gtuClass the gtu class to instantiate
-     * @param initialSpeedDist distribution of the initial speed of the GTU
-     * @param interarrivelTimeDist distribution of the interarrival time
-     * @param maxGTUs maximum number of GTUs to generate
-     * @param startTime start time of generation (delayed start)
-     * @param endTime end time of generation
-     * @param simulator simulator to schedule next arrival events
-     * @param lengthDist distribution of the length of the GTU
-     * @param widthDist distribution of the width of the GTU
-     * @param maximumSpeedDist distribution of the maximum speed of the GTU
-     * @param lane Lane on which newly GTUs are placed
-     * @param position position on the lane, relative to the design line of the link
-     * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
-     * @param gtuColorer the GTUColorer to use
-     * @param strategicalPlannerFactory the lane-based strategical planner factory to use
-     * @param routeGenerator route generator
-     * @param network the network to register the GTU into
+     * @param name String; the name of the generator
+     * @param gtuType GTUType; the type of GTU to generate
+     * @param gtuClass Class&lt;?&gt;; the gtu class to instantiate
+     * @param initialSpeedDist ContinuousDistDoubleScalar.Rel&lt;Speed,SpeedUnit&gt;; distribution of the initial speed of the
+     *            GTU
+     * @param interarrivelTimeDist ContinuousDistDoubleScalar.Rel&lt;Duration,DurationUnit&gt;; distribution of the interarrival
+     *            time
+     * @param maxGTUs long; maximum number of GTUs to generate
+     * @param startTime Time; start time of generation (delayed start)
+     * @param endTime Time; end time of generation
+     * @param simulator OTSSimulatorInterface; simulator to schedule next arrival events
+     * @param lengthDist ContinuousDistDoubleScalar.Rel&lt;Length,LengthUnit&gt;; distribution of the length of the GTU
+     * @param widthDist ContinuousDistDoubleScalar.Rel&lt;Length,LengthUnit&gt;; distribution of the width of the GTU
+     * @param maximumSpeedDist ContinuousDistDoubleScalar.Rel&lt;Speed,SpeedUnit&gt;; distribution of the maximum speed of the
+     *            GTU
+     * @param lane Lane; Lane on which newly GTUs are placed
+     * @param position Length; position on the lane, relative to the design line of the link
+     * @param direction GTUDirectionality; the direction on the lane in which the GTU has to be generated (DIR_PLUS, or
+     *            DIR_MINUS)
+     * @param gtuColorer GTUColorer; the GTUColorer to use
+     * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends LaneBasedStrategicalPlanner&gt;; the
+     *            lane-based strategical planner factory to use
+     * @param routeGenerator RouteGenerator; route generator
+     * @param network OTSNetwork; the network to register the GTU into
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")

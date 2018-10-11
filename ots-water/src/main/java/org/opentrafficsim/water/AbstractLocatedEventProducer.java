@@ -33,7 +33,7 @@ public abstract class AbstractLocatedEventProducer extends EventProducer impleme
     private Coordinate coordinate;
 
     /**
-     * @param coordinate the coordinate
+     * @param coordinate Coordinate; the coordinate
      */
     public AbstractLocatedEventProducer(final Coordinate coordinate)
     {

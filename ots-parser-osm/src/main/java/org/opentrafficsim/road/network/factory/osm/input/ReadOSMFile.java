@@ -43,9 +43,9 @@ public final class ReadOSMFile implements Serializable
 
     /**
      * @param location String; the location of the OSM file
-     * @param wantedTags List&lt;Tag&gt;; the list of wanted tags
+     * @param wantedTags List&lt;OSMTag&gt;; the list of wanted tags
      * @param filteredKeys List&lt;String&gt;; the list of filtered keys
-     * @param progressListener ProgressListener
+     * @param progressListener ProgressListener; ProgressListener
      * @throws URISyntaxException when <cite>location</cite> is not a valid URL
      * @throws FileNotFoundException when the OSM file can not be found
      * @throws MalformedURLException when <cite>location</cite> is not valid

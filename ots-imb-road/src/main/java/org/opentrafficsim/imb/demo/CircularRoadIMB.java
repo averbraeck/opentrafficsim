@@ -433,9 +433,9 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
     OTSIMBConnector imbConnector;
 
     /**
-     * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
-     * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
-     * @param network Network; the network
+     * @param properties List&lt;Property&lt;?&gt;&gt;; the properties
+     * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
+     * @param network OTSNetwork; the network
      */
     RoadSimulationModelIMB(final List<Property<?>> properties, final GTUColorer gtuColorer, final OTSNetwork network)
     {
@@ -857,12 +857,12 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         private static final long serialVersionUID = 20150130L;
 
         /**
-         * @param lane the lane of the sensor.
-         * @param position the position of the sensor
+         * @param lane Lane; the lane of the sensor.
+         * @param position Length; the position of the sensor
          * @param triggerPosition RelativePosition.TYPE; the relative position type (e.g., FRONT, REAR) of the vehicle that
          *            triggers the sensor.
-         * @param id the id of the sensor.
-         * @param simulator the simulator to enable animation.
+         * @param id String; the id of the sensor.
+         * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to enable animation.
          * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
          * @throws OTSGeometryException when the geometry of the sensor cannot be calculated, e.g. when the lane width is zero,
          *             or the position is beyond or before the lane length

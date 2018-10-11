@@ -40,7 +40,8 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory
 
     /**
      * Constructor with car-following model factory.
-     * @param carFollowingModelFactory car following model factory
+     * @param carFollowingModelFactory CarFollowingModelFactory&lt;? extends GTUFollowingModelOld&gt;; car following model
+     *            factory
      */
     public LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(
             final CarFollowingModelFactory<? extends GTUFollowingModelOld> carFollowingModelFactory)
@@ -51,7 +52,7 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory
 
     /**
      * Constructor with fixed stateless car-following and lane change model.
-     * @param carFollowingModel car following model
+     * @param carFollowingModel GTUFollowingModelOld; car following model
      */
     public LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(final GTUFollowingModelOld carFollowingModel)
     {

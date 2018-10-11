@@ -29,8 +29,8 @@ public abstract class AbstractNamedLocated extends AbstractLocated implements Na
     private String name;
 
     /**
-     * @param name the name
-     * @param location the location
+     * @param name String; the name
+     * @param location DirectedPoint; the location
      */
     public AbstractNamedLocated(final String name, final DirectedPoint location)
     {

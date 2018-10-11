@@ -58,7 +58,7 @@ public class StochasticDistractionModel implements EventListenerInterface
     /**
      * Constructor. This model will react to GTU's being created in simulation and apply distractions.
      * @param allowMultiTasking boolean; whether to allow multi-tasking
-     * @param distractions List; list of distractions
+     * @param distractions List&lt;Distraction&gt;; list of distractions
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @param network OTSNetwork; network
      */

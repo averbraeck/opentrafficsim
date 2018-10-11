@@ -28,7 +28,7 @@ public enum DirectionEnum
     private final String description;
 
     /**
-     * @param description description of the enum
+     * @param description String; description of the enum
      */
     private DirectionEnum(final String description)
     {

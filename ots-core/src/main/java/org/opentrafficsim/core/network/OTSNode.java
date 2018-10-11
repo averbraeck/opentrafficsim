@@ -71,11 +71,11 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /**
      * Construction of a Node.
-     * @param network the network.
-     * @param id the id of the Node.
-     * @param point the point with usually an x and y setting.
-     * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
-     * @param slope the slope as an angle. Horizontal is 0 degrees.
+     * @param network Network; the network.
+     * @param id String; the id of the Node.
+     * @param point OTSPoint3D; the point with usually an x and y setting.
+     * @param direction Direction; the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
+     * @param slope Angle; the slope as an angle. Horizontal is 0 degrees.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
     public OTSNode(final Network network, final String id, final OTSPoint3D point, final Direction direction, final Angle slope)
@@ -98,9 +98,9 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /**
      * Construction of a Node.
-     * @param network the network.
-     * @param id the id of the Node.
-     * @param point the point with usually an x and y setting.
+     * @param network Network; the network.
+     * @param id String; the id of the Node.
+     * @param point OTSPoint3D; the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
     public OTSNode(final Network network, final String id, final OTSPoint3D point) throws NetworkException

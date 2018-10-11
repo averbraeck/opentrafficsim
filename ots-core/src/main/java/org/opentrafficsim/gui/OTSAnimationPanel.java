@@ -138,10 +138,10 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
      * @param extent Rectangle2D; bottom left corner, length and width of the area (world) to animate.
-     * @param size the size to be used for the animation.
-     * @param simulator the simulator or animator of the model.
-     * @param wrappableAnimation the builder and rebuilder of the simulation, based on properties.
-     * @param gtuColorer the colorer to use for the GTUs.
+     * @param size Dimension; the size to be used for the animation.
+     * @param simulator SimpleAnimator; the simulator or animator of the model.
+     * @param wrappableAnimation WrappableAnimation; the builder and rebuilder of the simulation, based on properties.
+     * @param gtuColorer GTUColorer; the colorer to use for the GTUs.
      * @param network OTSNetwork; network
      * @throws RemoteException when notification of the animation panel fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
@@ -626,7 +626,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
         private OTSAnimationPanel panel;
 
         /**
-         * @param panel the OTSControlpanel container.
+         * @param panel OTSAnimationPanel; the OTSControlpanel container.
          */
         public DisposeOnCloseThread(final OTSAnimationPanel panel)
         {
@@ -807,7 +807,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
          * Constructor.
          * @param extent Rectangle2D; home extent
          * @param size Dimension; size
-         * @param simulator SimulatorInterface; simulator
+         * @param simulator SimulatorInterface&lt;?, ?, ?&gt;; simulator
          * @param network OTSNetwork; network
          * @throws RemoteException on remote animation error
          */

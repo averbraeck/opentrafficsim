@@ -34,11 +34,11 @@ public class SpaceTimeRegion
     private final Time endTime;
 
     /**
-     * @param laneDirection lane direction
-     * @param startPosition start position
-     * @param endPosition end position
-     * @param startTime start time
-     * @param endTime end time
+     * @param laneDirection KpiLaneDirection; lane direction
+     * @param startPosition Length; start position
+     * @param endPosition Length; end position
+     * @param startTime Time; start time
+     * @param endTime Time; end time
      * @throws IllegalArgumentException if start time is larger than end time
      */
     public SpaceTimeRegion(final KpiLaneDirection laneDirection, final Length startPosition, final Length endPosition,

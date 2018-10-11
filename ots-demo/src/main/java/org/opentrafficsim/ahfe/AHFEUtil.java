@@ -391,9 +391,10 @@ public final class AHFEUtil
 
         /**
          * Constructor with car-following model class. The class should have an accessible empty constructor.
-         * @param carFollowingModelFactory factory of the car-following model
-         * @param defaultCarFollowingParameters default set of parameters for the car-following model
-         * @param perceptionFactory perception factory
+         * @param carFollowingModelFactory CarFollowingModelFactory&lt;? extends CarFollowingModel&gt;; factory of the
+         *            car-following model
+         * @param defaultCarFollowingParameters Parameters; default set of parameters for the car-following model
+         * @param perceptionFactory PerceptionFactory; perception factory
          * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
          */
         LMRSFactoryAHFE(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
@@ -464,7 +465,7 @@ public final class AHFEUtil
 
         /**
          * Constructor.
-         * @param anticipation anticipation form.
+         * @param anticipation Anticipation; anticipation form.
          */
         DelayedPerceptionFactory(final Anticipation anticipation)
         {
@@ -573,9 +574,9 @@ public final class AHFEUtil
         private static final String HEADWAY_STREAM = "headwayGeneration";
 
         /**
-         * @param timeVector a time vector
-         * @param demandVector the corresponding demand vector
-         * @param simulator the simulator
+         * @param timeVector TimeVector; a time vector
+         * @param demandVector FrequencyVector; the corresponding demand vector
+         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
          */
         public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
                 final SimulatorInterface.TimeDoubleUnit simulator)
@@ -584,10 +585,10 @@ public final class AHFEUtil
         }
 
         /**
-         * @param timeVector a time vector
-         * @param demandVector the corresponding demand vector
-         * @param simulator the simulator
-         * @param interpolation interpolation type
+         * @param timeVector TimeVector; a time vector
+         * @param demandVector FrequencyVector; the corresponding demand vector
+         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param interpolation Interpolation; interpolation type
          */
         public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
                 final SimulatorInterface.TimeDoubleUnit simulator, final Interpolation interpolation)

@@ -51,9 +51,9 @@ public class OTSPoint3D implements Locatable, Serializable
 
     /**
      * The x, y and z in the point are assumed to be in meters relative to an origin.
-     * @param x x-coordinate
-     * @param y y-coordinate
-     * @param z z-coordinate
+     * @param x double; x-coordinate
+     * @param y double; y-coordinate
+     * @param z double; z-coordinate
      */
     public OTSPoint3D(final double x, final double y, final double z)
     {
@@ -71,7 +71,7 @@ public class OTSPoint3D implements Locatable, Serializable
     }
 
     /**
-     * @param point a point to "clone".
+     * @param point OTSPoint3D; a point to "clone".
      */
     public OTSPoint3D(final OTSPoint3D point)
     {
@@ -134,8 +134,8 @@ public class OTSPoint3D implements Locatable, Serializable
 
     /**
      * The x and y in the point are assumed to be in meters relative to an origin. z will be set to 0.
-     * @param x x-coordinate
-     * @param y y-coordinate
+     * @param x double; x-coordinate
+     * @param y double; y-coordinate
      */
     public OTSPoint3D(final double x, final double y)
     {

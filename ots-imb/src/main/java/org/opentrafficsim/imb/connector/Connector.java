@@ -95,7 +95,7 @@ public interface Connector
 
         /**
          * Construct a
-         * @param eventEntry
+         * @param eventEntry int;
          */
         IMBEventType(final int eventEntry)
         {

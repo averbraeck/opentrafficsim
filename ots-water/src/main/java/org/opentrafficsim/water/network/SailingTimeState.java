@@ -31,9 +31,9 @@ public class SailingTimeState
     private String reason;
 
     /**
-     * @param sailingTime the sailing time
-     * @param fits does the ship fit the waterway?
-     * @param reason if not, what is the reason?
+     * @param sailingTime Duration; the sailing time
+     * @param fits boolean; does the ship fit the waterway?
+     * @param reason String; if not, what is the reason?
      */
     public SailingTimeState(final Duration sailingTime, final boolean fits, final String reason)
     {

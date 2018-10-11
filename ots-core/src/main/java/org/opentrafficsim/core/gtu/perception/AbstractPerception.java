@@ -39,7 +39,7 @@ public abstract class AbstractPerception<G extends GTU> implements Perception<G>
 
     /**
      * Construct perception.
-     * @param gtu GTU
+     * @param gtu G; GTU
      */
     public AbstractPerception(final G gtu)
     {

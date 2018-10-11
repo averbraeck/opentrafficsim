@@ -33,8 +33,8 @@ public class ShpLinkAnimation extends Renderable2D
     private Color color;
 
     /**
-     * @param source
-     * @param simulator
+     * @param source NTMLink;
+     * @param simulator SimulatorInterface.TimeDoubleUnit;
      * @throws NamingException
      * @throws RemoteException
      */

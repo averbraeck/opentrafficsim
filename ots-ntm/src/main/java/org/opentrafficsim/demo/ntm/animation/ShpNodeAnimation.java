@@ -25,8 +25,8 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 public class ShpNodeAnimation extends Renderable2D
 {
     /**
-     * @param source
-     * @param simulator
+     * @param source NTMNode;
+     * @param simulator SimulatorInterface.TimeDoubleUnit;
      * @throws NamingException
      * @throws RemoteException
      */

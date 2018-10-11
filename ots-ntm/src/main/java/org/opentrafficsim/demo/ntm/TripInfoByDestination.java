@@ -48,10 +48,10 @@ public class TripInfoByDestination
     private double fluxToNeighbour;
 
     /**
-     * @param routeFractionToNeighbours
-     * @param accumulatedCarsToNeighbour
-     * @param demandToNeighbour
-     * @param destination
+     * @param routeFractionToNeighbours HashMap&lt;BoundedNode,Double&gt;;
+     * @param accumulatedCarsToNeighbour HashMap&lt;BoundedNode,Double&gt;;
+     * @param demandToNeighbour HashMap&lt;BoundedNode,Double&gt;;
+     * @param destination NTMNode;
      */
     public TripInfoByDestination(HashMap<BoundedNode, Double> routeFractionToNeighbours,
             HashMap<BoundedNode, Double> accumulatedCarsToNeighbour, HashMap<BoundedNode, Double> demandToNeighbour,

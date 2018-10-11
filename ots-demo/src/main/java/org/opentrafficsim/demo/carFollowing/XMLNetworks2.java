@@ -262,7 +262,7 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
 
     /**
-     * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
+     * @param userModifiedProperties List&lt;Property&lt;?&gt;&gt;; the (possibly user modified) properties
      */
     XMLNetwork2Model(final List<Property<?>> userModifiedProperties)
     {

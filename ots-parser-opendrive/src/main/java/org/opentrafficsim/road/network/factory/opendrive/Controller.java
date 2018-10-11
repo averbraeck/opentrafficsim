@@ -46,8 +46,8 @@ public class Controller implements Serializable
     private Map<Integer, Set<SimpleTrafficLight>> trafficLights = new HashMap<Integer, Set<SimpleTrafficLight>>();
 
     /**
-     * @param name the name of the OnOffTrafficLight
-     * @param simulator the simulator to avoid NullPointerExceptions
+     * @param name String; the name of the OnOffTrafficLight
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to avoid NullPointerExceptions
      * @throws GTUException when GTU cannot be created.
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws NetworkException when the GTU cannot be placed on the given lane

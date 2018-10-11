@@ -160,11 +160,10 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     /**
      * Graph a Fundamental Diagram.
      * @param caption String; the caption shown above the graphing area.
-     * @param aggregationTime DoubleScalarRel&lt;TimeUnit&gt;; the aggregation of the detector that generates the data for this
-     *            Fundamental diagram
+     * @param aggregationTime Duration; the aggregation of the detector that generates the data for this Fundamental diagram
      * @param lane Lane; the Lane on which the traffic will be sampled
      * @param detectedGTUTypes Compatible; specifies the GTU types that will be used to compose this fundamental diagram
-     * @param simulator the simulator to schedule the sampling on
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the sampling on
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException in case scheduling of the sampler fails
      */
@@ -525,9 +524,9 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
         private final double flow;
 
         /**
-         * @param meanSpeed mean speed observed during this sample [m/s]
-         * @param density density [veh/m]
-         * @param flow [veh/s]
+         * @param meanSpeed double; mean speed observed during this sample [m/s]
+         * @param density double; density [veh/m]
+         * @param flow double; [veh/s]
          */
         Sample(final double meanSpeed, final double density, final double flow)
         {
@@ -578,7 +577,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
         /**
          * Construct a new FlowSensor.
-         * @param lane the lane for which to build the FlowSensor
+         * @param lane Lane; the lane for which to build the FlowSensor
          * @param detectedGTUTypes Compatible; specifies the GTU types that will be counted by this FlowSensor
          * @throws NetworkException when the position on the lane is out of bounds
          */

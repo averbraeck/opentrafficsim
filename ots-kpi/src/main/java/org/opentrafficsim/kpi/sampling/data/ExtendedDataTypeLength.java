@@ -25,7 +25,7 @@ public abstract class ExtendedDataTypeLength<G extends GtuDataInterface>
 
     /**
      * Constructor setting the id.
-     * @param id id
+     * @param id String; id
      */
     public ExtendedDataTypeLength(String id)
     {

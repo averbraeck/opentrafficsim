@@ -47,15 +47,15 @@ public class Lock extends Obstacle implements OperatedObstacle
     private Duration estimatedAverageLockageTime;
 
     /**
-     * @param simulator the simulator to schedule on
-     * @param name the name of the lock
-     * @param waterwayLocation the location along the waterway
-     * @param numberChambers the number of lock chambers
-     * @param operationHoursPerDay hours per day
-     * @param operationDaysPerWeek days per week
-     * @param length the length
-     * @param width the width
-     * @param cargoPriority does cargo have priority?
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule on
+     * @param name String; the name of the lock
+     * @param waterwayLocation WaterwayLocation; the location along the waterway
+     * @param numberChambers int; the number of lock chambers
+     * @param operationHoursPerDay int; hours per day
+     * @param operationDaysPerWeek int; days per week
+     * @param length Length; the length
+     * @param width Length; the width
+     * @param cargoPriority boolean; does cargo have priority?
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lock(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final String name,

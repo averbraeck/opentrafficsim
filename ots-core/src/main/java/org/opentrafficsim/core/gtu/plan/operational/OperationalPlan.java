@@ -91,12 +91,13 @@ public class OperationalPlan implements Serializable
 
     /**
      * Construct an operational plan.
-     * @param gtu the GTU for debugging purposes
-     * @param path the path to follow from a certain time till a certain time. The path should have <i>at least</i> the length
-     * @param startTime the absolute start time when we start executing the path
-     * @param startSpeed the GTU speed when we start executing the path
-     * @param operationalPlanSegmentList the segments that make up the path with an acceleration, constant speed or deceleration
-     *            profile
+     * @param gtu GTU; the GTU for debugging purposes
+     * @param path OTSLine3D; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
+     *            least&lt;/i&gt; the length
+     * @param startTime Time; the absolute start time when we start executing the path
+     * @param startSpeed Speed; the GTU speed when we start executing the path
+     * @param operationalPlanSegmentList List&lt;Segment&gt;; the segments that make up the path with an acceleration, constant
+     *            speed or deceleration profile
      * @throws OperationalPlanException when the path is too short for the operation
      */
     public OperationalPlan(final GTU gtu, final OTSLine3D path, final Time startTime, final Speed startSpeed,
@@ -149,10 +150,10 @@ public class OperationalPlan implements Serializable
 
     /**
      * Build a plan where the GTU will wait for a certain time.
-     * @param gtu the GTU for debugging purposes
-     * @param waitPoint the point at which the GTU will wait
-     * @param startTime the current time or a time in the future when the plan should start
-     * @param duration the waiting time
+     * @param gtu GTU; the GTU for debugging purposes
+     * @param waitPoint DirectedPoint; the point at which the GTU will wait
+     * @param startTime Time; the current time or a time in the future when the plan should start
+     * @param duration Duration; the waiting time
      * @throws OperationalPlanException when construction of a waiting path fails
      */
     public OperationalPlan(final GTU gtu, final DirectedPoint waitPoint, final Time startTime, final Duration duration)
@@ -735,7 +736,7 @@ public class OperationalPlan implements Serializable
         protected Speed v0;
 
         /**
-         * @param duration the duration of the acceleration or speed for this segment
+         * @param duration Duration; the duration of the acceleration or speed for this segment
          */
         public Segment(final Duration duration)
         {
@@ -874,8 +875,8 @@ public class OperationalPlan implements Serializable
         private final Acceleration acceleration;
 
         /**
-         * @param duration the duration of the constant acceleration for this segment
-         * @param acceleration the acceleration for the given duration
+         * @param duration Duration; the duration of the constant acceleration for this segment
+         * @param acceleration Acceleration; the acceleration for the given duration
          */
         public AccelerationSegment(final Duration duration, final Acceleration acceleration)
         {
@@ -987,7 +988,7 @@ public class OperationalPlan implements Serializable
         private static final long serialVersionUID = 20151114L;
 
         /**
-         * @param duration the duration of the constant speed for this segment
+         * @param duration Duration; the duration of the constant speed for this segment
          */
         public SpeedSegment(final Duration duration)
         {

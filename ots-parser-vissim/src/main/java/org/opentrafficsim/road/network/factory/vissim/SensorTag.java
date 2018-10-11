@@ -71,7 +71,7 @@ class SensorTag implements Serializable
     Boolean activeOnThisLink = true;
 
     /**
-     * @param sensorTag
+     * @param sensorTag SensorTag;
      */
     public SensorTag(SensorTag sensorTag)
     {

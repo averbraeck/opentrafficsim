@@ -57,9 +57,9 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
 
     /**
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
-     * @param gtu the observed GTU, can not be null.
+     * @param gtu LaneBasedGTU; the observed GTU, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @param facingSameDirection whether the GTU is facing the same direction.
+     * @param facingSameDirection boolean; whether the GTU is facing the same direction.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
     public HeadwayGTUReal(final LaneBasedGTU gtu, final Length distance, final boolean facingSameDirection) throws GTUException
@@ -71,11 +71,11 @@ public class HeadwayGTUReal extends AbstractHeadway implements HeadwayGTU
 
     /**
      * Construct a new Headway information object, for a GTU parallel with us.
-     * @param gtu the observed GTU, can not be null.
+     * @param gtu LaneBasedGTU; the observed GTU, can not be null.
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
-     * @param facingSameDirection whether the GTU is facing the same direction.
+     * @param facingSameDirection boolean; whether the GTU is facing the same direction.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayGTUReal(final LaneBasedGTU gtu, final Length overlapFront, final Length overlap, final Length overlapRear,

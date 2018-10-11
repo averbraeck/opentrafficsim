@@ -105,9 +105,10 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
 
     /**
      * Create a new Lane type with a compatibility set.
-     * @param id the id of the lane type.
-     * @param compatibility the collection of compatible GTUTypes for this LaneType. Compatibility is solely determined by a
-     *            specific lane type, and independent of compatibility in super or sub types.
+     * @param id String; the id of the lane type.
+     * @param compatibility GTUCompatibility&lt;LaneType&gt;; the collection of compatible GTUTypes for this LaneType.
+     *            Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub
+     *            types.
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
     private LaneType(final String id, final GTUCompatibility<LaneType> compatibility) throws NullPointerException
@@ -139,10 +140,11 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
 
     /**
      * Create a new Lane type with a compatibility set.
-     * @param id the id of the lane type.
-     * @param parent parent type
-     * @param compatibility the collection of compatible GTUTypes for this LaneType. Compatibility is solely determined by a
-     *            specific lane type, and independent of compatibility in super or sub types.
+     * @param id String; the id of the lane type.
+     * @param parent LaneType; parent type
+     * @param compatibility GTUCompatibility&lt;LaneType&gt;; the collection of compatible GTUTypes for this LaneType.
+     *            Compatibility is solely determined by a specific lane type, and independent of compatibility in super or sub
+     *            types.
      * @throws NullPointerException if either the id is null, or the compatibilitySet is null
      */
     public LaneType(final String id, final LaneType parent, final GTUCompatibility<LaneType> compatibility)

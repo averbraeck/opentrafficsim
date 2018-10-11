@@ -32,9 +32,9 @@ public class ShoulderAnimation extends Renderable2D<Shoulder> implements Seriali
     private final Color color;
 
     /**
-     * @param source s
-     * @param simulator s
-     * @param color the color to draw the shoulder with
+     * @param source Shoulder; s
+     * @param simulator SimulatorInterface.TimeDoubleUnit; s
+     * @param color Color; the color to draw the shoulder with
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */

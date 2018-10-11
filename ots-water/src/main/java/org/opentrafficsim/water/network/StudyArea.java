@@ -32,7 +32,7 @@ public class StudyArea implements Serializable
     private List<Terminal> terminals = new ArrayList<Terminal>();
 
     /**
-     * @param code code
+     * @param code String; code
      */
     public StudyArea(final String code)
     {

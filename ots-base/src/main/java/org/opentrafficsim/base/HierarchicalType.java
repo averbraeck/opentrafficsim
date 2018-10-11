@@ -29,7 +29,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Ty
 
     /**
      * Constructor for creating the top level types in subclasses.
-     * @param id The id of the type to make it identifiable.
+     * @param id String; The id of the type to make it identifiable.
      * @throws NullPointerException if the id is null
      */
     protected HierarchicalType(final String id) throws NullPointerException
@@ -41,7 +41,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T>> extends Ty
 
     /**
      * Constructor.
-     * @param id The id of the type to make it identifiable.
+     * @param id String; The id of the type to make it identifiable.
      * @param parent T; parent type
      * @throws NullPointerException if the id is null
      */

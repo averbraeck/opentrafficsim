@@ -42,8 +42,8 @@ public class Axis implements Serializable
 
     /**
      * Create a new AxisDefinition.
-     * @param minimumValue DoubleScalar; the minimum value along this axis
-     * @param maximumValue DoubleScalar; the maximum value along this axis
+     * @param minimumValue DoubleScalarInterface; the minimum value along this axis
+     * @param maximumValue DoubleScalarInterface; the maximum value along this axis
      * @param granularities double[]; the aggregation values along this axis (all values must be an integer multiple of the
      *            first value)
      * @param initialGranularity double; initial aggregation value (must be one of the values in granularities)

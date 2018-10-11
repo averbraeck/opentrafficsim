@@ -23,15 +23,15 @@ public class NWBSpecialLane extends AbstractNWBRoadElement
 
     /**
      * Specific lane types such as on-ramp and off-ramp or lanes at weaving area
-     * @param myGeom
-     * @param startNode
-     * @param endNode
-     * @param roadId
-     * @param beginDistance
-     * @param endDistance
-     * @param laneType
-     * @param numberOfLanes
-     * @param sideCode
+     * @param myGeom Geometry;
+     * @param startNode OTSNode;
+     * @param endNode OTSNode;
+     * @param roadId String;
+     * @param beginDistance Double;
+     * @param endDistance Double;
+     * @param laneType String;
+     * @param numberOfLanes Integer;
+     * @param sideCode String;
      */
     public NWBSpecialLane(Geometry myGeom, OTSNode startNode, OTSNode endNode, String roadId, Double beginDistance,
             Double endDistance, String laneType, Integer numberOfLanes, String sideCode)

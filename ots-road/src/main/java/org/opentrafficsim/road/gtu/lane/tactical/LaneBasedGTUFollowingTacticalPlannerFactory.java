@@ -35,7 +35,7 @@ public class LaneBasedGTUFollowingTacticalPlannerFactory
 
     /**
      * Constructor with fixed stateless car-following and lane change model.
-     * @param carFollowingModel car following model
+     * @param carFollowingModel GTUFollowingModelOld; car following model
      */
     public LaneBasedGTUFollowingTacticalPlannerFactory(final GTUFollowingModelOld carFollowingModel)
     {

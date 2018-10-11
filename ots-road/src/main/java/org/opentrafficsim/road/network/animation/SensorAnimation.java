@@ -47,7 +47,7 @@ public class SensorAnimation extends AbstractLineAnimation<SingleSensor>
 
     /**
      * Construct a SensorAnimation.
-     * @param sensor Sensor; the Sensor to draw
+     * @param sensor SingleSensor; the Sensor to draw
      * @param sensorPosition Length; the position of the sensor on the lane to determine the width of the lane at that point
      * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
      * @param color Color; the display color of the sensor

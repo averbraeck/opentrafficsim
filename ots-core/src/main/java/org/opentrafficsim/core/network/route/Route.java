@@ -42,7 +42,7 @@ public class Route implements Serializable, Identifiable
 
     /**
      * Create an empty route.
-     * @param id the name of the route.
+     * @param id String; the name of the route.
      */
     public Route(final String id)
     {
@@ -52,8 +52,8 @@ public class Route implements Serializable, Identifiable
 
     /**
      * Create a route based on an initial list of nodes. <br>
-     * @param nodes the initial list of nodes.
-     * @param id the name of the route.
+     * @param nodes List&lt;Node&gt;; the initial list of nodes.
+     * @param id String; the name of the route.
      */
     public Route(final String id, final List<Node> nodes)
     {

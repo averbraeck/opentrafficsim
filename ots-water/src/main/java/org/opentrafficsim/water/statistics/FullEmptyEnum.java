@@ -28,7 +28,7 @@ public enum FullEmptyEnum
     private final String description;
 
     /**
-     * @param description description of the enum
+     * @param description String; description of the enum
      */
     private FullEmptyEnum(final String description)
     {

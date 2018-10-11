@@ -37,9 +37,9 @@ public class NextSplitInfo implements Serializable
     private final Set<Lane> correctCurrentLanes;
 
     /**
-     * @param nextSplitNode the first subsequent node at which the route splits.
-     * @param correctCurrentLanes the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered that
-     *            lead us in the direction of the route provided by the strategical planner.
+     * @param nextSplitNode Node; the first subsequent node at which the route splits.
+     * @param correctCurrentLanes Set&lt;Lane&gt;; the lane(s) and/or adjacent lane(s) on which the reference point of the GTU
+     *            is registered that lead us in the direction of the route provided by the strategical planner.
      */
     public NextSplitInfo(final Node nextSplitNode, final Set<Lane> correctCurrentLanes)
     {
@@ -47,10 +47,11 @@ public class NextSplitInfo implements Serializable
     }
 
     /**
-     * @param nextSplitNode the first subsequent node at which the route splits.
-     * @param correctCurrentLanes the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered that
-     *            lead us in the direction of the route provided by the strategical planner.
-     * @param requiredDirection required direction for lane changes for this split, beyond lane on current link
+     * @param nextSplitNode Node; the first subsequent node at which the route splits.
+     * @param correctCurrentLanes Set&lt;Lane&gt;; the lane(s) and/or adjacent lane(s) on which the reference point of the GTU
+     *            is registered that lead us in the direction of the route provided by the strategical planner.
+     * @param requiredDirection LateralDirectionality; required direction for lane changes for this split, beyond lane on
+     *            current link
      */
     public NextSplitInfo(final Node nextSplitNode, final Set<Lane> correctCurrentLanes,
             final LateralDirectionality requiredDirection)

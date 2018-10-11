@@ -165,12 +165,11 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Graph a Fundamental Diagram.
      * @param caption String; the caption shown above the graphing area.
-     * @param aggregationTime DoubleScalarRel&lt;TimeUnit&gt;; the aggregation of the detector that generates the data for this
-     *            Fundamental diagram
+     * @param aggregationTime Duration; the aggregation of the detector that generates the data for this Fundamental diagram
      * @param lane Lane; the Lane on which the traffic will be sampled
-     * @param position DoubleScalarRel&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
+     * @param position Length; longitudinal position of the detector on the Lane
      * @param detectedGTUTypes Compatible; the types of GTU that will be used to compose this fundamental diagram
-     * @param simulator the simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @throws NetworkException on network inconsistency
      */
     public FundamentalDiagram(final String caption, final Duration aggregationTime, final Lane lane, final Length position,
@@ -600,7 +599,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * @param lane Lane; the Lane on which the new FundamentalDiagramSensor is to be added
          * @param longitudinalPosition Length; longitudinal position on the Lane of the new FundamentalDiagramSensor
          * @param detectedGTUTypes Compatible; the GTU types that the new FundamentalDiagramSensor will register
-         * @param simulator simulator to allow animation
+         * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator to allow animation
          * @throws NetworkException on network inconsistency
          */
         FundamentalDiagramSensor(final Lane lane, final Length longitudinalPosition, final Compatible detectedGTUTypes,

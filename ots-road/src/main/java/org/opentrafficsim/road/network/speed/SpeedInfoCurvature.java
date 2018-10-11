@@ -30,7 +30,7 @@ public class SpeedInfoCurvature implements Serializable
 
     /**
      * Constructor with curvature radius.
-     * @param radius curvature radius
+     * @param radius Length; curvature radius
      * @throws NullPointerException if radius is null
      */
     public SpeedInfoCurvature(final Length radius)

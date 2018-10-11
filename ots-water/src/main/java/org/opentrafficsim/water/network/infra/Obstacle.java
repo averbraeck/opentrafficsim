@@ -27,8 +27,8 @@ public abstract class Obstacle extends AbstractNamedLocated
     private final WaterwayLocation waterwayLocation;
 
     /**
-     * @param name the name of the obstacle
-     * @param waterwayLocation location of the obstacle along the waterway
+     * @param name String; the name of the obstacle
+     * @param waterwayLocation WaterwayLocation; location of the obstacle along the waterway
      */
     public Obstacle(final String name, final WaterwayLocation waterwayLocation)
     {

@@ -25,7 +25,7 @@ public class ConfigurationErrorsException extends Exception
     }
 
     /**
-     * @param message String
+     * @param message String; String
      */
     public ConfigurationErrorsException(final String message)
     {
@@ -33,7 +33,7 @@ public class ConfigurationErrorsException extends Exception
     }
 
     /**
-     * @param cause Throwable
+     * @param cause Throwable; Throwable
      */
     public ConfigurationErrorsException(final Throwable cause)
     {
@@ -41,8 +41,8 @@ public class ConfigurationErrorsException extends Exception
     }
 
     /**
-     * @param message String
-     * @param cause Throwable
+     * @param message String; String
+     * @param cause Throwable; Throwable
      */
     public ConfigurationErrorsException(final String message, final Throwable cause)
     {

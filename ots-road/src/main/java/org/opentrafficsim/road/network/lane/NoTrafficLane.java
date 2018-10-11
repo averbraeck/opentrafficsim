@@ -43,7 +43,7 @@ public class NoTrafficLane extends Lane
     }
 
     /**
-     * @param parentLink Cross Section Link to which the element belongs.
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
      * @param lateralOffsetAtStart Length; the lateral offset of the design line of the new CrossSectionLink with respect to the
      *            design line of the parent Link at the start of the parent Link
@@ -64,7 +64,7 @@ public class NoTrafficLane extends Lane
     }
 
     /**
-     * @param parentLink Cross Section Link to which the element belongs.
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
      * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the design
      *            line of the parent Link
@@ -80,12 +80,12 @@ public class NoTrafficLane extends Lane
     }
 
     /**
-     * @param parentLink Cross Section Link to which the element belongs.
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0. If
-     *            there are more slices, the last one should be at the length of the design line. If not, a NetworkException is
-     *            thrown.
+     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; The offsets and widths at positions along the line, relative to
+     *            the design line of the parent link. If there is just one with and offset, there should just be one element in
+     *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
+     *            If not, a NetworkException is thrown.
      * @throws OTSGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */

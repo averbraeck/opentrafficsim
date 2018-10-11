@@ -18,7 +18,7 @@ public class GtuTypeData implements GtuTypeDataInterface
     private final String gtuTypeName;
 
     /**
-     * @param gtuTypeName gtu type name
+     * @param gtuTypeName String; gtu type name
      */
     public GtuTypeData(final String gtuTypeName)
     {

@@ -25,7 +25,7 @@ public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedSt
     private final LaneBasedGTU gtu;
 
     /**
-     * @param gtu GTU
+     * @param gtu LaneBasedGTU; GTU
      */
     public AbstractLaneBasedStrategicalPlanner(final LaneBasedGTU gtu)
     {

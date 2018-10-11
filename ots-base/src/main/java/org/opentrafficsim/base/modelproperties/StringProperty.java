@@ -25,7 +25,7 @@ public class StringProperty extends AbstractProperty<String> implements Serializ
      * @param key String; the unique key of the new property
      * @param shortName String; the short name of the new StringProperty
      * @param description String; description of the new StringProperty (may use HTML mark up)
-     * @param initialValue Integer; the initial value of the new StringProperty
+     * @param initialValue String; the initial value of the new StringProperty
      * @param readOnly boolean; if true this StringProperty can not be altered
      * @param displayPriority int; the displayPriority of the new StringProperty
      */

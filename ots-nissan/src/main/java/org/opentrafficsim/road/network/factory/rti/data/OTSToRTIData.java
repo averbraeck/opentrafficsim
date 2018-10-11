@@ -56,7 +56,7 @@ public class OTSToRTIData implements Serializable
     private List<Velocity> objVel = new ArrayList<Velocity>();// global reference frame
 
     /**
-     * @param rtiCars cars to prepare for RTI software
+     * @param rtiCars List&lt;LaneBasedIndividualGTU&gt;; cars to prepare for RTI software
      * @throws RemoteException on unability to retrieve the location of one of the cars
      */
     public OTSToRTIData(List<LaneBasedIndividualGTU> rtiCars) throws RemoteException

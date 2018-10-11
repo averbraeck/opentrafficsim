@@ -46,7 +46,7 @@ public class PerceptionIterableSet<H extends Headway> implements PerceptionItera
 
     /**
      * Creates an iterable from a sorted set.
-     * @param headways SortedSet; set of headway
+     * @param headways SortedSet&lt;H&gt;; set of headway
      */
     public PerceptionIterableSet(final SortedSet<H> headways)
     {

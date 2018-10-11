@@ -35,9 +35,9 @@ public class SinkSensor extends AbstractSensor
     private static final long serialVersionUID = 20150130L;
 
     /**
-     * @param lane the lane that triggers the deletion of the GTU.
-     * @param position the position of the sensor
-     * @param simulator the simulator to enable animation.
+     * @param lane Lane; the lane that triggers the deletion of the GTU.
+     * @param position Length; the position of the sensor
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public SinkSensor(final Lane lane, final Length position, final DEVSSimulatorInterface.TimeDoubleUnit simulator)
@@ -55,11 +55,11 @@ public class SinkSensor extends AbstractSensor
     }
 
     /**
-     * @param dummy1 dummy
-     * @param lane the lane that triggers the deletion of the GTU.
-     * @param position the position of the sensor
-     * @param dummy2 dummy
-     * @param simulator the simulator to enable animation.
+     * @param dummy1 String; dummy
+     * @param lane Lane; the lane that triggers the deletion of the GTU.
+     * @param position Length; the position of the sensor
+     * @param dummy2 RelativePosition.TYPE; dummy
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to enable animation.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public SinkSensor(final String dummy1, final Lane lane, final Length position, final RelativePosition.TYPE dummy2,

@@ -38,9 +38,9 @@ public class PickList<T> extends ParameterType<T>
      * Construct a new PickList and fill it with the provided items.
      * @param id String; id of the new PickList
      * @param description String; description of the new PickList
-     * @param firstItem PickList&lt;T&gt; the first item to add to the new PickList
-     * @param additionalItems PickList&lt;T&gt;...; any additional items to add to the new PickList; the reason for putting the
-     *            first item in a separate argument is to ensure that this constructor cannot construct a PickList with zero
+     * @param firstItem PickListItem&lt;T&gt;; PickList&lt;T&gt; the first item to add to the new PickList
+     * @param additionalItems PickListItem&lt;T&gt;...; any additional items to add to the new PickList; the reason for putting
+     *            the first item in a separate argument is to ensure that this constructor cannot construct a PickList with zero
      *            items
      * @throws ParameterException when the ids of the items are not all distinct
      */
@@ -61,7 +61,7 @@ public class PickList<T> extends ParameterType<T>
      * Construct a new PickList and fill it with the provided items.
      * @param id String; id of the new PickList
      * @param description String; description of the new PickList
-     * @param items List&lt;PickListItem&gt;; the items to add to the new PickList
+     * @param items List&lt;PickListItem&lt;T&gt;&gt;; the items to add to the new PickList
      * @throws ParameterException when the ids of the items are not all distinct
      */
     @SuppressWarnings("unchecked")

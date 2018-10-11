@@ -43,7 +43,7 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param tripInfo information for all non-empty OD-pairs
+     * @param tripInfo Map&lt;String,Map&lt;String,TripInformation&gt;&gt;; information for all non-empty OD-pairs
      */
     public TripDemand(final Map<String, Map<String, TripInformation>> tripInfo)
     {

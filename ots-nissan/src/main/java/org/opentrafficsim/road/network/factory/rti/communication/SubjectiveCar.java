@@ -40,11 +40,11 @@ public class SubjectiveCar extends AbstractGTU
     private Length width;
 
     /**
-     * @param id car id
-     * @param type GTU type
-     * @param simulator simulator
-     * @param initialLocation location
-     * @param network the network in which the subjective car will be registered
+     * @param id String; car id
+     * @param type GTUType; GTU type
+     * @param simulator OTSSimulatorInterface; simulator
+     * @param initialLocation DirectedPoint; location
+     * @param network OTSNetwork; the network in which the subjective car will be registered
      * @throws GTUException when GTU cannot be initialized
      * @throws SimRuntimeException when operational plan execution or perception execution cannot be scheduled
      * @throws NamingException when animation cannot be registered

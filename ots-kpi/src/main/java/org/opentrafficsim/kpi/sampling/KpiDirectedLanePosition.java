@@ -34,7 +34,7 @@ public class KpiDirectedLanePosition implements Serializable
 
     /**
      * Construct a new DirectedLanePosition.
-     * @param lane Lane; the lane for the position
+     * @param lane LaneDataInterface; the lane for the position
      * @param position Length; the position on the lane, relative to the cross section link (design line)
      * @param gtuDirection KpiGtuDirectionality; the direction the vehicle is driving to -- either in the direction of the
      *            design line, or against it

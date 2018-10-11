@@ -34,7 +34,7 @@ public class CrossSection implements Serializable
 
     /**
      * Constructor with set of directed lane positions.
-     * @param directedLanePositions set of lane locations
+     * @param directedLanePositions Set&lt;KpiDirectedLanePosition&gt;; set of lane locations
      */
     public CrossSection(final Set<KpiDirectedLanePosition> directedLanePositions)
     {
@@ -44,9 +44,9 @@ public class CrossSection implements Serializable
 
     /**
      * Constructor with link and direction.
-     * @param link link
-     * @param direction direction
-     * @param fraction fraction on link
+     * @param link LinkDataInterface; link
+     * @param direction KpiGtuDirectionality; direction
+     * @param fraction double; fraction on link
      * @throws SamplingException if an input is null
      */
     public CrossSection(final LinkDataInterface link, final KpiGtuDirectionality direction, final double fraction)

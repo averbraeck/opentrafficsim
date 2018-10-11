@@ -52,8 +52,8 @@ public enum ContainerTransportCostBreakdownEnum
     private final String explanation;
 
     /**
-     * @param description short description of the statistic
-     * @param explanation longer description of the statistic
+     * @param description String; short description of the statistic
+     * @param explanation String; longer description of the statistic
      */
     private ContainerTransportCostBreakdownEnum(final String description, final String explanation)
     {

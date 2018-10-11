@@ -40,7 +40,7 @@ public class DirectEgoPerception<G extends GTU, P extends Perception<G>> extends
     private TimeStampedObject<Length> width;
 
     /**
-     * @param perception perception
+     * @param perception P; perception
      */
     public DirectEgoPerception(final P perception)
     {

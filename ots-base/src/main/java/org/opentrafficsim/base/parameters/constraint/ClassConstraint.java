@@ -20,7 +20,7 @@ public class ClassConstraint<T> extends CollectionConstraint<Class<? extends T>>
 {
 
     /**
-     * @param classes acceptable classes
+     * @param classes Collection&lt;Class&lt;? extends T&gt;&gt;; acceptable classes
      */
     private ClassConstraint(final Collection<Class<? extends T>> classes)
     {

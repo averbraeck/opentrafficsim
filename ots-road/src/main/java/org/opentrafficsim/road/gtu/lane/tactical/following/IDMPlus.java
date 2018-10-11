@@ -37,8 +37,8 @@ public class IDMPlus extends AbstractIDM
 
     /**
      * Constructor with modular models for desired headway and desired speed.
-     * @param desiredHeadwayModel desired headway model
-     * @param desiredSpeedModel desired speed model
+     * @param desiredHeadwayModel DesiredHeadwayModel; desired headway model
+     * @param desiredSpeedModel DesiredSpeedModel; desired speed model
      */
     public IDMPlus(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
     {

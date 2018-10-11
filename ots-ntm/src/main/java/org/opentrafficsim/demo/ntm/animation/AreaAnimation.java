@@ -38,9 +38,9 @@ public class AreaAnimation extends Renderable2D
     private Color colorBorder;
 
     /**
-     * @param source
-     * @param simulator
-     * @param width
+     * @param source Area;
+     * @param simulator SimulatorInterface.TimeDoubleUnit;
+     * @param width float;
      * @param traffic
      * @throws NamingException
      * @throws RemoteException

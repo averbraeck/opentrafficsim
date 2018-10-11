@@ -40,7 +40,7 @@ public class HistoricalVector<E> extends AbstractHistoricalList<E, Vector<E>>
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param c Collection; initial collection
+     * @param c Collection&lt;? extends E&gt;; initial collection
      */
     public HistoricalVector(final HistoryManager historyManager, final Collection<? extends E> c)
     {

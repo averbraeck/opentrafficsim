@@ -40,7 +40,7 @@ public class TTCRoomChecker implements RoomChecker
 
     /**
      * Constructor.
-     * @param ttc time to collision
+     * @param ttc Duration; time to collision
      */
     public TTCRoomChecker(final Duration ttc)
     {

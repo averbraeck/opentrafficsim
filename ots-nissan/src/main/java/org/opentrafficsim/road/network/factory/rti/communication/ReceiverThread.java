@@ -49,10 +49,10 @@ public class ReceiverThread extends Thread
     OTSNetwork network;
 
     /**
-     * @param simulator the simulator
-     * @param carType the GTU type
-     * @param rtiCars the list of cars in the RTI software
-     * @param network the network
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param carType GTUType; the GTU type
+     * @param rtiCars List&lt;LaneBasedIndividualGTU&gt;; the list of cars in the RTI software
+     * @param network OTSNetwork; the network
      * @throws SocketException when communication fails
      */
     @SuppressFBWarnings("IL_INFINITE_LOOP")

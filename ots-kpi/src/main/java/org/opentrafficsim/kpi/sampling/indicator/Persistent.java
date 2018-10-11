@@ -52,7 +52,7 @@ public final class Persistent<U extends Unit<U>, T extends AbstractDoubleScalarR
 
     /**
      * Constructor.
-     * @param unit unit, does't matter which one, so long it belongs to the right quantity
+     * @param unit U; unit, does't matter which one, so long it belongs to the right quantity
      */
     public Persistent(final U unit)
     {

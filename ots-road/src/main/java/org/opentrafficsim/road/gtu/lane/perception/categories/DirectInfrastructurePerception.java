@@ -83,7 +83,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     private Route route;
 
     /**
-     * @param perception perception
+     * @param perception LanePerception; perception
      */
     public DirectInfrastructurePerception(final LanePerception perception)
     {
@@ -396,6 +396,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @param legal boolean; legal, or physical otherwise
      * @param possibilityMap
+     *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
      *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;; legal
      *            or physical possibility map
      * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section

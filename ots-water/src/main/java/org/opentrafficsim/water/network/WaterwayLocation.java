@@ -42,8 +42,8 @@ public class WaterwayLocation implements Locatable, Serializable
     private final DirectedPoint location;
 
     /**
-     * @param waterway the waterway
-     * @param position position along the waterway, in the direction of the design line
+     * @param waterway Waterway; the waterway
+     * @param position Length; position along the waterway, in the direction of the design line
      */
     public WaterwayLocation(final Waterway waterway, final Length position)
     {

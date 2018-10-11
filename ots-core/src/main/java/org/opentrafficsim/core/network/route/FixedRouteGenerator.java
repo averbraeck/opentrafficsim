@@ -22,7 +22,7 @@ public class FixedRouteGenerator extends ConstantGenerator<Route> implements Rou
 
     /**
      * Construct a new FixedRouteGenerator.
-     * @param route the CompleteRoute to generate
+     * @param route Route; the CompleteRoute to generate
      */
     public FixedRouteGenerator(final Route route)
     {

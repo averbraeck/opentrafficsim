@@ -94,8 +94,8 @@ public class TrafficLightSensor extends EventProducer
      * @param laneB Lane; the lane of the B detection point of this traffic light sensor
      * @param positionB Length; the position of the B detection point of this traffic light sensor
      * @param intermediateLanes List&lt;Lane&gt;; list of intermediate lanes
-     * @param entryPosition RelativePosition; the position on the GTUs that trigger the entry events
-     * @param exitPosition RelativePosition; the position on the GTUs that trigger the exit events
+     * @param entryPosition TYPE; the position on the GTUs that trigger the entry events
+     * @param exitPosition TYPE; the position on the GTUs that trigger the exit events
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @param compatible Compatible; object that checks that the detector detects a GTU.
      * @throws NetworkException when the network is inconsistent.

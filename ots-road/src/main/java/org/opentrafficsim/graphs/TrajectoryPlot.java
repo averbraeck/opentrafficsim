@@ -129,9 +129,9 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
     /**
      * Create a new TrajectoryPlot.
      * @param caption String; the text to show above the TrajectoryPlot
-     * @param sampleInterval DoubleScalarRel&lt;TimeUnit&gt;; the time between samples of this TrajectoryPlot, or null in which
-     *            case the GTUs are sampled whenever they fire a MOVE_EVENT
-     * @param path ArrayList&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
+     * @param sampleInterval Duration; the time between samples of this TrajectoryPlot, or null in which case the GTUs are
+     *            sampled whenever they fire a MOVE_EVENT
+     * @param path List&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      */
     public TrajectoryPlot(final String caption, final Duration sampleInterval, final List<Lane> path,

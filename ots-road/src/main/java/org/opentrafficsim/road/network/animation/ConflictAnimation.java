@@ -36,8 +36,8 @@ public class ConflictAnimation extends AbstractLineAnimation<Conflict> implement
     private static final long serialVersionUID = 20161207L;
 
     /**
-     * @param source the conflict to draw
-     * @param simulator the simulator to schedule on
+     * @param source Conflict; the conflict to draw
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */

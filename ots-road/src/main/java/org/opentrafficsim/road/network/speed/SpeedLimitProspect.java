@@ -442,9 +442,9 @@ public class SpeedLimitProspect implements Serializable
 
         /**
          * Constructor.
-         * @param distance location of the speed info
-         * @param speedLimitType speed limit type
-         * @param speedInfo speed info
+         * @param distance Length; location of the speed info
+         * @param speedLimitType SpeedLimitType&lt;T&gt;; speed limit type
+         * @param speedInfo T; speed info
          */
         SpeedLimitEntry(final Length distance, final SpeedLimitType<T> speedLimitType, final T speedInfo)
         {

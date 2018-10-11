@@ -40,8 +40,8 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLight>
 
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
-     * @param trafficLight the CSEBlock to draw
-     * @param simulator the simulator to schedule on
+     * @param trafficLight TrafficLight; the CSEBlock to draw
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */

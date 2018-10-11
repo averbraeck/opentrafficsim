@@ -34,8 +34,8 @@ public abstract class LaneBasedObjectIterable<H extends Headway, L extends LaneB
     /**
      * Constructor.
      * @param perceivingGtu LaneBasedGTU; perceiving GTU
-     * @param clazz Class&lt;H&gt;; class of lane based objects to return
-     * @param root LaneRecord; root record
+     * @param clazz Class&lt;L&gt;; class of lane based objects to return
+     * @param root LaneRecord&lt;?&gt;; root record
      * @param initialPosition Length; initial position
      * @param maxDistance Length; max distance to search
      * @param relativePosition RelativePosition; relative position

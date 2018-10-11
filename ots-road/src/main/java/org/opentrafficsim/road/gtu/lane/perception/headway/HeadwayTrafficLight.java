@@ -29,8 +29,8 @@ public class HeadwayTrafficLight extends AbstractHeadwayCopy
     /**
      * Construct a new Headway information object, for a traffic light ahead of us (or behind us, although that does not seem
      * very useful).
-     * @param trafficLight the traffic light object for further observation, can not be null.
-     * @param distance the distance to the traffic light, distance cannot be null.
+     * @param trafficLight TrafficLight; the traffic light object for further observation, can not be null.
+     * @param distance Length; the distance to the traffic light, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayTrafficLight(final TrafficLight trafficLight, final Length distance) throws GTUException

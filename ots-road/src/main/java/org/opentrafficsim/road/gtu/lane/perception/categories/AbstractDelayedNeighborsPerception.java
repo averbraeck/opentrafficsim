@@ -93,7 +93,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
     /**
      * Constructor.
-     * @param perception perception
+     * @param perception LanePerception; perception
      */
     public AbstractDelayedNeighborsPerception(final LanePerception perception)
     {
@@ -344,7 +344,7 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
         /**
          * Construct new info.
-         * @param id id
+         * @param id String; id
          */
         public NeighborsInfoType(final String id)
         {

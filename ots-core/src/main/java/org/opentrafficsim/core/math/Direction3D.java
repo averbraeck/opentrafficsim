@@ -31,7 +31,7 @@ public class Direction3D implements Serializable
     private final DirectionVector rotation;
 
     /**
-     * @param rotation the angles in 3D (RPY coded)
+     * @param rotation DirectionVector; the angles in 3D (RPY coded)
      * @throws ValueException in case the vector does not have exactly three elements
      */
     public Direction3D(final DirectionVector rotation) throws ValueException
@@ -44,9 +44,9 @@ public class Direction3D implements Serializable
     }
 
     /**
-     * @param roll (phi) the rotation around the x-axis
-     * @param pitch (theta) the rotation around the y-axis
-     * @param yaw (psi) the rotation around the z-axis
+     * @param roll Direction; (phi) the rotation around the x-axis
+     * @param pitch Direction; (theta) the rotation around the y-axis
+     * @param yaw Direction; (psi) the rotation around the z-axis
      * @throws ValueException in case the units are incorrect
      */
     public Direction3D(final Direction roll, final Direction pitch, final Direction yaw) throws ValueException
@@ -55,10 +55,10 @@ public class Direction3D implements Serializable
     }
 
     /**
-     * @param roll (phi) the rotation around the x-axis
-     * @param pitch (theta) the rotation around the y-axis
-     * @param yaw (psi) the rotation around the z-axis
-     * @param unit the unit of the RPY parameters
+     * @param roll double; (phi) the rotation around the x-axis
+     * @param pitch double; (theta) the rotation around the y-axis
+     * @param yaw double; (psi) the rotation around the z-axis
+     * @param unit DirectionUnit; the unit of the RPY parameters
      * @throws ValueException in case the units are incorrect
      */
     public Direction3D(final double roll, final double pitch, final double yaw, final DirectionUnit unit) throws ValueException

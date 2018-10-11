@@ -36,7 +36,8 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /**
      * Constructor with factory for tactical planners.
-     * @param tacticalPlannerFactory factory for tactical planners
+     * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
+     *            tactical planners
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory)
@@ -47,8 +48,9 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /**
      * Constructor with factory for tactical planners.
-     * @param tacticalPlannerFactory factory for tactical planners
-     * @param routeSupplier route supplier
+     * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
+     *            tactical planners
+     * @param routeSupplier RouteSupplier; route supplier
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
@@ -60,8 +62,9 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /**
      * Constructor with factory for tactical planners.
-     * @param tacticalPlannerFactory factory for tactical planners
-     * @param parametersFactory factory for parameters
+     * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
+     *            tactical planners
+     * @param parametersFactory ParameterFactory; factory for parameters
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
@@ -73,9 +76,10 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /**
      * Constructor with factory for tactical planners.
-     * @param tacticalPlannerFactory factory for tactical planners
-     * @param parametersFactory factory for parameters
-     * @param routeSupplier route supplier
+     * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
+     *            tactical planners
+     * @param parametersFactory ParameterFactory; factory for parameters
+     * @param routeSupplier RouteSupplier; route supplier
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,

@@ -21,7 +21,7 @@ public class NodeData implements NodeDataInterface
     private final Node node;
 
     /**
-     * @param node node
+     * @param node Node; node
      */
     public NodeData(final Node node)
     {

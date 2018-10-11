@@ -30,12 +30,12 @@ public abstract class AbstractNWBRoadElement
     private Double endDistance;
 
     /**
-     * @param myGeom
-     * @param startNode
-     * @param endNode
-     * @param roadId
-     * @param beginDistance
-     * @param endDistance
+     * @param myGeom Geometry;
+     * @param startNode OTSNode;
+     * @param endNode OTSNode;
+     * @param roadId String;
+     * @param beginDistance Double;
+     * @param endDistance Double;
      */
     public AbstractNWBRoadElement(Geometry myGeom, OTSNode startNode, OTSNode endNode, String roadId, Double beginDistance,
             Double endDistance)

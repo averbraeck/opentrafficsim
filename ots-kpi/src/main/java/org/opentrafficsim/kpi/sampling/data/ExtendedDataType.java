@@ -36,7 +36,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
 
     /**
      * Constructor setting the id.
-     * @param id id
+     * @param id String; id
      */
     public ExtendedDataType(final String id)
     {

@@ -41,7 +41,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Serializable
     /**
      * Construct a new AbstractProperty.
      * @param key String; unique (within this property tree) name of the new AbstractProperty
-     * @param displayPriority sorting order when properties are displayed to the user
+     * @param displayPriority int; sorting order when properties are displayed to the user
      * @param shortName String; concise description of the property
      * @param description String; long description of the property (may use HTML markup)
      */
@@ -178,7 +178,7 @@ public abstract class AbstractProperty<T> implements Property<T>, Serializable
 
         /**
          * Construct a new PropertyIterator.
-         * @param ap AbstractProperty; root of the tree to iterate over
+         * @param ap Property&lt;T&gt;; root of the tree to iterate over
          */
         PropertyIterator(final Property<T> ap)
         {

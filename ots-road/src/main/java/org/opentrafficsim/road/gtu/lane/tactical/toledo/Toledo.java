@@ -81,8 +81,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Constructor.
-     * @param carFollowingModel Car-following model.
-     * @param gtu GTU
+     * @param carFollowingModel CarFollowingModel; Car-following model.
+     * @param gtu LaneBasedGTU; GTU
      */
     public Toledo(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu)
     {
@@ -829,10 +829,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         private final Speed speed;
 
         /**
-         * @param utility utility of gap
-         * @param length length of the gap
-         * @param distance distance towards the gap
-         * @param speed speed of the vehicle in front or behind the gap, always the closest
+         * @param utility double; utility of gap
+         * @param length Length; length of the gap
+         * @param distance Length; distance towards the gap
+         * @param speed Speed; speed of the vehicle in front or behind the gap, always the closest
          */
         GapInfo(final double utility, final Length length, final Length distance, final Speed speed)
         {
@@ -909,8 +909,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         private final boolean acceptable;
 
         /**
-         * @param emu emu
-         * @param acceptable whether gap is acceptable
+         * @param emu double; emu
+         * @param acceptable boolean; whether gap is acceptable
          */
         GapAcceptanceInfo(final double emu, final boolean acceptable)
         {

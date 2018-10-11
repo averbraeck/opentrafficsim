@@ -178,7 +178,7 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     }
 
     /**
-     * @param id The id of the GTUType to make it identifiable.
+     * @param id String; The id of the GTUType to make it identifiable.
      * @throws NullPointerException if the id is null
      */
     private GTUType(final String id) throws NullPointerException
@@ -187,7 +187,7 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     }
 
     /**
-     * @param id The id of the GTUType to make it identifiable.
+     * @param id String; The id of the GTUType to make it identifiable.
      * @param parent GTUType; parent GTU type
      * @throws NullPointerException if the id is null
      */

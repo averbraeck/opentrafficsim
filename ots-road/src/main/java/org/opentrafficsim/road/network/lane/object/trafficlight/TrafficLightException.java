@@ -26,7 +26,7 @@ public class TrafficLightException extends Exception
 
     /**
      * Construct a TrafficLightException.
-     * @param message the explanation of the exception
+     * @param message String; the explanation of the exception
      */
     public TrafficLightException(final String message)
     {
@@ -35,7 +35,7 @@ public class TrafficLightException extends Exception
 
     /**
      * Construct a TrafficLightException.
-     * @param cause the Throwable causing this exception
+     * @param cause Throwable; the Throwable causing this exception
      */
     public TrafficLightException(final Throwable cause)
     {
@@ -43,8 +43,8 @@ public class TrafficLightException extends Exception
     }
 
     /**
-     * @param message the explanation of the exception
-     * @param cause the Throwable causing this exception
+     * @param message String; the explanation of the exception
+     * @param cause Throwable; the Throwable causing this exception
      */
     public TrafficLightException(final String message, final Throwable cause)
     {
@@ -52,10 +52,10 @@ public class TrafficLightException extends Exception
     }
 
     /**
-     * @param message the explanation of the exception
-     * @param cause the Throwable causing this exception
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
+     * @param message String; the explanation of the exception
+     * @param cause Throwable; the Throwable causing this exception
+     * @param enableSuppression boolean; whether or not suppression is enabled or disabled
+     * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
     public TrafficLightException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)

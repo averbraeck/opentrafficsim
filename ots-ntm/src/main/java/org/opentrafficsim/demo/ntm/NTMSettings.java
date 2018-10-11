@@ -68,18 +68,18 @@ public class NTMSettings
     private String path;
 
     /**
-     * @param startTime
-     * @param durationOfSimulation
-     * @param descriptionProject
-     * @param timeStepDurationNTM
-     * @param timeStepDurationCTM
-     * @param reRouteTimeInterval
-     * @param numberOfRoutes
-     * @param weightNewRoutes
-     * @param varianceRoutes
-     * @param reRoute
-     * @param path
-     * @param scalingFactorDemand
+     * @param startTime Calendar;
+     * @param durationOfSimulation Duration;
+     * @param descriptionProject String;
+     * @param timeStepDurationNTM Duration;
+     * @param timeStepDurationCTM Duration;
+     * @param reRouteTimeInterval Duration;
+     * @param numberOfRoutes int;
+     * @param weightNewRoutes double;
+     * @param varianceRoutes double;
+     * @param reRoute boolean;
+     * @param path String;
+     * @param scalingFactorDemand double;
      */
     public NTMSettings(Calendar startTime, Duration durationOfSimulation, String descriptionProject,
             Duration timeStepDurationNTM, Duration timeStepDurationCTM, Duration reRouteTimeInterval, int numberOfRoutes,
@@ -109,8 +109,8 @@ public class NTMSettings
     }
 
     /**
-     * @param timeStepDurationNTM
-     * @param timeStepDurationCTM
+     * @param timeStepDurationNTM Duration;
+     * @param timeStepDurationCTM Duration;
      */
     public NTMSettings(Duration timeStepDurationNTM, Duration timeStepDurationCTM)
     {
@@ -119,7 +119,7 @@ public class NTMSettings
     }
 
     /**
-     * @param timeStepDurationNTM
+     * @param timeStepDurationNTM Duration;
      */
     public NTMSettings(Duration timeStepDurationNTM)
     {

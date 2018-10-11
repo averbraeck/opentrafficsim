@@ -26,7 +26,7 @@ public class LinkData implements LinkDataInterface
     private final CrossSectionLink link;
 
     /**
-     * @param link wrapped link
+     * @param link CrossSectionLink; wrapped link
      */
     public LinkData(final CrossSectionLink link)
     {

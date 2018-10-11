@@ -80,12 +80,12 @@ public class ODMatrix implements Serializable, Identifiable
 
     /**
      * Constructs an OD matrix.
-     * @param id id
-     * @param origins origin nodes
-     * @param destinations destination nodes
-     * @param categorization categorization of data
-     * @param globalTimeVector default time
-     * @param globalInterpolation interpolation of demand data
+     * @param id String; id
+     * @param origins List&lt;Node&gt;; origin nodes
+     * @param destinations List&lt;Node&gt;; destination nodes
+     * @param categorization Categorization; categorization of data
+     * @param globalTimeVector TimeVector; default time
+     * @param globalInterpolation Interpolation; interpolation of demand data
      * @throws NullPointerException if any input is null
      */
     public ODMatrix(final String id, final List<Node> origins, final List<Node> destinations,

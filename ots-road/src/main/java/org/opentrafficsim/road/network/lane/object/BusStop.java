@@ -56,11 +56,11 @@ public class BusStop extends AbstractLaneBasedObject
     private Set<Conflict> conflicts = null;
 
     /**
-     * @param id id
-     * @param lane lane
-     * @param longitudinalPosition position
-     * @param name name of stop
-     * @param simulator the simulator to schedule on
+     * @param id String; id
+     * @param lane Lane; lane
+     * @param longitudinalPosition Length; position
+     * @param name String; name of stop
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final String name,

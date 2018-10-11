@@ -46,7 +46,7 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
      * Construct a new ParameterTypeDuration without default value, with check.
      * @param id String; short name of the new ParameterTypeDuration
      * @param description String; parameter description or full name of the new ParameterTypeDuration
-     * @param constraint Constraint for parameter values
+     * @param constraint Constraint&lt;? super Duration&gt;; Constraint for parameter values
      */
     public ParameterTypeDuration(final String id, final String description, final Constraint<? super Duration> constraint)
     {
@@ -57,8 +57,8 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
      * Construct a new ParameterTypeDuration with default value and check.
      * @param id String; short name of the new ParameterTypeDuration
      * @param description String; parameter description or full name of the new ParameterTypeDuration
-     * @param defaultValue Default value of the new ParameterTypeDuration
-     * @param constraint Constraint for parameter values
+     * @param defaultValue Duration; Default value of the new ParameterTypeDuration
+     * @param constraint Constraint&lt;? super Duration&gt;; Constraint for parameter values
      */
     public ParameterTypeDuration(final String id, final String description, final Duration defaultValue,
             final Constraint<? super Duration> constraint)

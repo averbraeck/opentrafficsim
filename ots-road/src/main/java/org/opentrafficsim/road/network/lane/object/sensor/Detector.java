@@ -330,7 +330,7 @@ public class Detector extends AbstractSensor
      * @param length Length; length
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @param aggregation Duration; aggregation period
-     * @param measurements DetectorMeasurement...; measurements to obtain
+     * @param measurements DetectorMeasurement&lt;?, ?&gt;...; measurements to obtain
      * @throws NetworkException on network exception
      */
     public Detector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,

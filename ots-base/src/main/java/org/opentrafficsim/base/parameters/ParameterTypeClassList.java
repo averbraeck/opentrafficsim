@@ -25,9 +25,9 @@ public class ParameterTypeClassList<T> extends ParameterType<List<Class<? extend
 
     /**
      * Constructor without default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
+     * @param id String; Short name of parameter.
+     * @param description String; Parameter description or full name.
+     * @param valueClass Class&lt;List&lt;Class&lt;? extends T&gt;&gt;&gt;; Class of the value.
      */
     public ParameterTypeClassList(final String id, final String description, final Class<List<Class<? extends T>>> valueClass)
     {
@@ -36,10 +36,10 @@ public class ParameterTypeClassList<T> extends ParameterType<List<Class<? extend
 
     /**
      * Constructor with default value, without check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param defaultValue Default value.
+     * @param id String; Short name of parameter.
+     * @param description String; Parameter description or full name.
+     * @param valueClass Class&lt;List&lt;Class&lt;? extends T&gt;&gt;&gt;; Class of the value.
+     * @param defaultValue List&lt;Class&lt;? extends T&gt;&gt;; Default value.
      */
     public ParameterTypeClassList(final String id, final String description, final Class<List<Class<? extends T>>> valueClass,
             final List<Class<? extends T>> defaultValue)
@@ -49,10 +49,10 @@ public class ParameterTypeClassList<T> extends ParameterType<List<Class<? extend
 
     /**
      * Constructor without default value, with check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param constraint Constraint for parameter values.
+     * @param id String; Short name of parameter.
+     * @param description String; Parameter description or full name.
+     * @param valueClass Class&lt;List&lt;Class&lt;? extends T&gt;&gt;&gt;; Class of the value.
+     * @param constraint Constraint&lt;? super List&lt;Class&lt;? extends T&gt;&gt;&gt;; Constraint for parameter values.
      */
     public ParameterTypeClassList(final String id, final String description, final Class<List<Class<? extends T>>> valueClass,
             final Constraint<? super List<Class<? extends T>>> constraint)
@@ -62,11 +62,11 @@ public class ParameterTypeClassList<T> extends ParameterType<List<Class<? extend
 
     /**
      * Constructor with default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param defaultValue Default value.
-     * @param constraint Constraint for parameter values.
+     * @param id String; Short name of parameter.
+     * @param description String; Parameter description or full name.
+     * @param valueClass Class&lt;List&lt;Class&lt;? extends T&gt;&gt;&gt;; Class of the value.
+     * @param defaultValue List&lt;Class&lt;? extends T&gt;&gt;; Default value.
+     * @param constraint Constraint&lt;? super List&lt;Class&lt;? extends T&gt;&gt;&gt;; Constraint for parameter values.
      */
     public ParameterTypeClassList(final String id, final String description, final Class<List<Class<? extends T>>> valueClass,
             final List<Class<? extends T>> defaultValue, final Constraint<? super List<Class<? extends T>>> constraint)

@@ -26,7 +26,7 @@ public class SamplingException extends Exception
     }
 
     /**
-     * @param message String
+     * @param message String; String
      */
     public SamplingException(final String message)
     {
@@ -34,7 +34,7 @@ public class SamplingException extends Exception
     }
 
     /**
-     * @param cause Throwable
+     * @param cause Throwable; Throwable
      */
     public SamplingException(final Throwable cause)
     {
@@ -42,8 +42,8 @@ public class SamplingException extends Exception
     }
 
     /**
-     * @param message String
-     * @param cause Throwable
+     * @param message String; String
+     * @param cause Throwable; Throwable
      */
     public SamplingException(final String message, final Throwable cause)
     {

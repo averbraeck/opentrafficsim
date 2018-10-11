@@ -22,7 +22,7 @@ public class LaneData implements LaneDataInterface
     private final Lane lane;
 
     /**
-     * @param lane wrapped lane
+     * @param lane Lane; wrapped lane
      */
     public LaneData(final Lane lane)
     {

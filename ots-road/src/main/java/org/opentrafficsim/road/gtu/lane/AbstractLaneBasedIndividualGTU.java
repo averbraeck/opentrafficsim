@@ -38,13 +38,13 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
 
     /**
      * Construct a new AbstractLaneBasedIndividualGTU.
-     * @param id the id of the GTU
-     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
-     * @param length the maximum length of the GTU (parallel with driving direction)
-     * @param width the maximum width of the GTU (perpendicular to driving direction)
-     * @param maximumSpeed the maximum speed of the GTU (in the driving direction)
-     * @param simulator the simulator
-     * @param network the network that the GTU is initially registered in
+     * @param id String; the id of the GTU
+     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param length Length; the maximum length of the GTU (parallel with driving direction)
+     * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
+     * @param maximumSpeed Speed; the maximum speed of the GTU (in the driving direction)
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param network OTSNetwork; the network that the GTU is initially registered in
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")

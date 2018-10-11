@@ -33,8 +33,8 @@ public class DepartureTimeProfile
     }
 
     /**
-     * @param departureTimeProfile
-     * @param name Name of the profile
+     * @param departureTimeProfile NavigableMap&lt;Time,FractionOfTripDemandByTimeSegment&gt;;
+     * @param name String; Name of the profile
      */
     public DepartureTimeProfile(final NavigableMap<Time, FractionOfTripDemandByTimeSegment> departureTimeProfile,
             final String name)

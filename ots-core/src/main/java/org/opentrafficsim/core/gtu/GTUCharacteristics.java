@@ -48,7 +48,7 @@ public class GTUCharacteristics implements Serializable
      * @param gtuType GTUType; type of the (not yet constructed) GTU
      * @param length Length; the length of the (non yet constructed) GTU
      * @param width Length; the width of the (non yet constructed) GTU
-     * @param maximumSpeed Length; the maximum speed of the (non yet constructed) GTU
+     * @param maximumSpeed Speed; the maximum speed of the (non yet constructed) GTU
      * @param maximumAcceleration Acceleration; maximum acceleration
      * @param maximumDeceleration Acceleration; maximum deceleration
      * @param front Length; front position relative to the reference position

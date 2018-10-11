@@ -51,7 +51,7 @@ public class Parameter
     /**
      * Construct a Boolean parameter.
      * @param name String; the name of the new Boolean parameter
-     * @param value String; the value of the new Boolean parameter
+     * @param value Boolean; the value of the new Boolean parameter
      */
     public Parameter(final String name, final Boolean value)
     {
@@ -63,7 +63,7 @@ public class Parameter
     /**
      * Construct a new integer parameter.
      * @param name String; name of the new integer parameter
-     * @param value double; value of the new integer parameter
+     * @param value int; value of the new integer parameter
      */
     public Parameter(final String name, final int value)
     {
@@ -308,7 +308,7 @@ public class Parameter
 
         /**
          * Construct a new PropertyIterator.
-         * @param ap Property; root of the tree to iterate over
+         * @param ap Property&lt;?&gt;; root of the tree to iterate over
          */
         PropertyIterator(final Property<?> ap)
         {

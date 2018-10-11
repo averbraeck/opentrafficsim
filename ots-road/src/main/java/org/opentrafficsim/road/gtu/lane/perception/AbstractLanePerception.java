@@ -57,7 +57,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
 
     /**
      * Create a new LanePerception module without mental module.
-     * @param gtu GTU
+     * @param gtu LaneBasedGTU; GTU
      */
     public AbstractLanePerception(final LaneBasedGTU gtu)
     {
@@ -67,7 +67,7 @@ public abstract class AbstractLanePerception extends AbstractPerception<LaneBase
 
     /**
      * Create a new LanePerception module with mental module.
-     * @param gtu GTU
+     * @param gtu LaneBasedGTU; GTU
      * @param mental Mental; mental module
      */
     public AbstractLanePerception(final LaneBasedGTU gtu, final Mental mental)

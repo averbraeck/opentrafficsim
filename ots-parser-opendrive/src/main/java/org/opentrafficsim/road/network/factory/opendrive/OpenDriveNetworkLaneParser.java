@@ -93,7 +93,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
     public Map<Object, Renderable2D> animationMap = new HashMap<>();
 
     /**
-     * @param simulator the simulator for creating the animation. Null if no animation needed.
+     * @param simulator OTSSimulatorInterface; the simulator for creating the animation. Null if no animation needed.
      */
     public OpenDriveNetworkLaneParser(final OTSSimulatorInterface simulator)
     {

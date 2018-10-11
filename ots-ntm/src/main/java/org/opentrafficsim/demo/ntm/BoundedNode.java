@@ -56,10 +56,10 @@ public class BoundedNode extends NTMNode
 
     /**
      * /**
-     * @param centroid the center of the area for the simplified graph.
-     * @param nr Node number
-     * @param area the area to which the node belongs.
-     * @param behaviourType describes behaviour of the node depending on its type
+     * @param centroid Coordinate; the center of the area for the simplified graph.
+     * @param nr String; Node number
+     * @param area Area; the area to which the node belongs.
+     * @param behaviourType TrafficBehaviourType; describes behaviour of the node depending on its type
      * @param parametersNTM
      * @throws NetworkException
      */

@@ -40,8 +40,8 @@ import nl.tudelft.simulation.event.Event;
 public class DataViewerApplication extends DSOLApplication
 {
     /**
-     * @param title
-     * @param panel
+     * @param title String;
+     * @param panel DSOLPanel&lt;Time,Duration,SimTimeDoubleUnit&gt;;
      */
     public DataViewerApplication(String title, DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {

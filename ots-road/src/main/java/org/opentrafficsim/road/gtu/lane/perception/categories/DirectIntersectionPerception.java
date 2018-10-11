@@ -83,8 +83,8 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
     private final HeadwayGtuType headwayGtuType;
 
     /**
-     * @param perception perception
-     * @param headwayGtuType type of headway gtu to generate
+     * @param perception LanePerception; perception
+     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
      */
     public DirectIntersectionPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
     {

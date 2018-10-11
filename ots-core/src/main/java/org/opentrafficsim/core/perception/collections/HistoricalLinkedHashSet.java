@@ -37,7 +37,7 @@ public class HistoricalLinkedHashSet<E> extends AbstractHistoricalCollection<E, 
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param c Collection; initial collection
+     * @param c Collection&lt;? extends E&gt;; initial collection
      */
     public HistoricalLinkedHashSet(final HistoryManager historyManager, final Collection<? extends E> c)
     {

@@ -11,14 +11,16 @@ import java.util.List;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.CallableDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 /**
- * Utility to clean the .classfile files for all projects; the excludes=** will be removed. Run this class only from
- * Eclipse!<br>
+ * Utility to add or update the type foe each parameter in the javadoc of all java files in /src/main/java in all or in selected
+ * projects in the workspace. Run this utility only from Eclipse!<br>
  * <br>
  * Copyright (c) 2003-2018 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
  * for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>. The
@@ -98,7 +100,7 @@ public class ParamComments
         this.lines = Files.readAllLines(Paths.get(javaFile.toURI()), StandardCharsets.UTF_8);
         FileInputStream in = new FileInputStream(javaFile.toURI().getPath());
         CompilationUnit cu = JavaParser.parse(in);
-        cu.accept(new MethodVisitor(this), null);
+        cu.accept(new CodeVisitor(this), null);
         if (this.changed)
         {
             Files.write(Paths.get(javaFile.toURI()), this.lines);
@@ -131,20 +133,33 @@ public class ParamComments
     }
 
     /**
-     * Simple visitor implementation for visiting MethodDeclaration nodes.
+     * Simple visitor implementation for visiting MethodDeclaration and ConstructorDeclaration nodes.
      */
-    protected static class MethodVisitor extends VoidVisitorAdapter<Void>
+    protected static class CodeVisitor extends VoidVisitorAdapter<Void>
     {
         /** access to the lines of the file and to changed toggle. */
         private ParamComments paramComments;
 
         /**
-         * Constructor.
-         * @param paramComments class
+         * Constructor of the code visitor.
+         * @param paramComments ParamComments; class to be processed
          */
-        protected MethodVisitor(final ParamComments paramComments)
+        protected CodeVisitor(final ParamComments paramComments)
         {
             this.paramComments = paramComments;
+        }
+
+        @Override
+        /**
+         * {@inheritDoc} <br>
+         * This method will be called for all constructors in this CompilationUnit, including constructors of inner classes.
+         */
+        public void visit(final ConstructorDeclaration constructorDeclaration, final Void arg)
+        {
+            System.out.println("\n------\nCONSTRUCTOR\n" + "   " + constructorDeclaration.getName() + " : "
+                    + constructorDeclaration.getDeclarationAsString());
+            processDeclaration(constructorDeclaration);
+            super.visit(constructorDeclaration, arg);
         }
 
         @Override
@@ -156,21 +171,31 @@ public class ParamComments
         {
             System.out
                     .println("\n------\n" + "   " + methodDeclaration.getName() + " : " + methodDeclaration.getTypeAsString());
-            for (Parameter parameter : methodDeclaration.getParameters())
+            processDeclaration(methodDeclaration);
+            super.visit(methodDeclaration, arg);
+        }
+
+        /**
+         * Carry out the changes in the method comments or constructor comments.
+         * @param callableDeclaration CallableDeclaration&lt;?&gt;; the method declaration or constructor declaration
+         */
+        private void processDeclaration(final CallableDeclaration<?> callableDeclaration)
+        {
+            for (Parameter parameter : callableDeclaration.getParameters())
             {
                 System.out.println("      " + parameter.getNameAsString() + " : " + parameter.getTypeAsString()
                         + (parameter.isVarArgs() ? "..." : ""));
             }
-            if (methodDeclaration.getComment().isPresent())
+            if (callableDeclaration.getComment().isPresent())
             {
-                System.out.print(methodDeclaration.getComment().get());
-                String parserComment = methodDeclaration.getComment().get().toString();
+                System.out.print(callableDeclaration.getComment().get());
+                String parserComment = callableDeclaration.getComment().get().toString();
                 if (parserComment.contains("@param"))
                 {
                     // see how we would rebuild the comment
-                    if (methodDeclaration.getComment().get().toJavadocComment().isPresent())
+                    if (callableDeclaration.getComment().get().toJavadocComment().isPresent())
                     {
-                        JavadocComment comment = methodDeclaration.getComment().get().toJavadocComment().get();
+                        JavadocComment comment = callableDeclaration.getComment().get().toJavadocComment().get();
                         String[] commentLines = parserComment.split("\n");
                         for (String line : commentLines)
                         {
@@ -200,7 +225,7 @@ public class ParamComments
                                         : line.indexOf(' ', paramIndex + 7);
                                 String varName = line.substring(paramIndex + 6, varEndIndex).trim();
                                 boolean found = false;
-                                for (Parameter parameter : methodDeclaration.getParameters())
+                                for (Parameter parameter : callableDeclaration.getParameters())
                                 {
                                     if (parameter.getNameAsString().equals(varName))
                                     {
@@ -261,7 +286,6 @@ public class ParamComments
                     }
                 }
             }
-            super.visit(methodDeclaration, arg);
         }
     }
 }

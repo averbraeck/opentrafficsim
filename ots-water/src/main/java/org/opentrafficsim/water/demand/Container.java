@@ -78,11 +78,11 @@ public class Container implements Serializable
     private float[] transportTime = new float[ContainerTransportTimeBreakdownEnum.values().length];
 
     /**
-     * @param simulator the simulator
-     * @param terminalFrom origin terminal
-     * @param terminalTo destination terminal
-     * @param empty empty or full
-     * @param shippingLine shipping line of the container
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
+     * @param terminalFrom Terminal; origin terminal
+     * @param terminalTo Terminal; destination terminal
+     * @param empty boolean; empty or full
+     * @param shippingLine ShippingLine; shipping line of the container
      */
     public Container(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Terminal terminalFrom,
             final Terminal terminalTo, final boolean empty, final ShippingLine shippingLine)

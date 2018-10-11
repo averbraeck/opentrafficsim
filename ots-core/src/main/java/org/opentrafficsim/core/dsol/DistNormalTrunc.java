@@ -49,9 +49,9 @@ public class DistNormalTrunc extends DistContinuous
     /**
      * constructs a normal distribution with mu=0 and sigma=1. Errors of various types, e.g., in the impact point of a bomb;
      * quantities that are the sum of a large number of other quantities by the virtue of the central limit theorem.
-     * @param stream the numberstream
-     * @param min minimum x-value of the distribution
-     * @param max maximum x-value of the distribution
+     * @param stream StreamInterface; the numberstream
+     * @param min double; minimum x-value of the distribution
+     * @param max double; maximum x-value of the distribution
      */
     public DistNormalTrunc(final StreamInterface stream, final double min, final double max)
     {
@@ -60,11 +60,11 @@ public class DistNormalTrunc extends DistContinuous
 
     /**
      * constructs a normal distribution with mu and sigma.
-     * @param stream the numberstream
-     * @param mu the medium
-     * @param sigma the standard deviation
-     * @param min minimum x-value of the distribution
-     * @param max maximum x-value of the distribution
+     * @param stream StreamInterface; the numberstream
+     * @param mu double; the medium
+     * @param sigma double; the standard deviation
+     * @param min double; minimum x-value of the distribution
+     * @param max double; maximum x-value of the distribution
      */
     public DistNormalTrunc(final StreamInterface stream, final double mu, final double sigma, final double min,
             final double max)

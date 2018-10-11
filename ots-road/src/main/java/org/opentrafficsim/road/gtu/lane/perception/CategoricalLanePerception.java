@@ -21,7 +21,7 @@ public class CategoricalLanePerception extends AbstractLanePerception
     private static final long serialVersionUID = 20160729L;
 
     /**
-     * @param gtu GTU
+     * @param gtu LaneBasedGTU; GTU
      */
     public CategoricalLanePerception(final LaneBasedGTU gtu)
     {
@@ -29,8 +29,8 @@ public class CategoricalLanePerception extends AbstractLanePerception
     }
 
     /**
-     * @param gtu GTU
-     * @param mental Mental
+     * @param gtu LaneBasedGTU; GTU
+     * @param mental Mental; Mental
      */
     public CategoricalLanePerception(final LaneBasedGTU gtu, final Mental mental)
     {

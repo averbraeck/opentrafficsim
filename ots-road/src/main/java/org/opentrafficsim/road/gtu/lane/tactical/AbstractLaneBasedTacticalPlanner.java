@@ -79,9 +79,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 
     /**
      * Instantiates a tactical planner.
-     * @param carFollowingModel car-following model
-     * @param gtu GTU
-     * @param lanePerception perception
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param gtu LaneBasedGTU; GTU
+     * @param lanePerception LanePerception; perception
      */
     public AbstractLaneBasedTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu,
             final LanePerception lanePerception)

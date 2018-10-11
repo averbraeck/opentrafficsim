@@ -27,7 +27,7 @@ public class BooleanProperty extends AbstractProperty<Boolean> implements Serial
      * @param key String; the unique key of the new property
      * @param shortName String; the short name of the new BooleanProperty
      * @param description String; description of the new BooleanProperty (may use HTML mark up)
-     * @param initialValue Integer; the initial value of the new BooleanProperty
+     * @param initialValue Boolean; the initial value of the new BooleanProperty
      * @param readOnly boolean; if true this BooleanProperty can not be altered
      * @param displayPriority int; the displayPriority of the new BooleanProperty
      * @throws PropertyException if <cite>key</cite> is already in use

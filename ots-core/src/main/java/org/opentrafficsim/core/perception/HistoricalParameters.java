@@ -134,7 +134,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
         private final Object value;
 
         /**
-         * @param parameter ParameterType; parameter
+         * @param parameter ParameterType&lt;T&gt;; parameter
          * @param value T; parameter value
          * @param <T> parameter value type
          */
@@ -187,7 +187,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
         /**
          * Constructor. New value is not required, as it's not required to restore the state from before the change.
          * @param time double; time of event
-         * @param parameterType ParameterType; parameter type
+         * @param parameterType ParameterType&lt;T&gt;; parameter type
          * @param parameters Parameters; parameters
          * @param <T> parameter value type
          */

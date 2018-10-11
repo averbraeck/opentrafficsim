@@ -52,10 +52,10 @@ public class SplitFraction
 
     /**
      * Constructor.
-     * @param node node
-     * @param interpolation interpolation
-     * @param random random stream
-     * @param simulator simulator
+     * @param node Node; node
+     * @param interpolation Interpolation; interpolation
+     * @param random StreamInterface; random stream
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      */
     public SplitFraction(final Node node, final Interpolation interpolation, final StreamInterface random,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator)

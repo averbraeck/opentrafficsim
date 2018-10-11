@@ -149,8 +149,8 @@ public interface LaneStructure
         private final T laneBasedObject;
 
         /**
-         * @param distance distance to lane based object
-         * @param laneBasedObject lane based object
+         * @param distance Length; distance to lane based object
+         * @param laneBasedObject T; lane based object
          */
         public Entry(final Length distance, final T laneBasedObject)
         {

@@ -43,7 +43,7 @@ public class XCounter implements Serializable
 
     /**
      * constructs a new CounterTest.
-     * @param description the description for this counter
+     * @param description String; the description for this counter
      */
     public XCounter(final String description)
     {

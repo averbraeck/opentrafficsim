@@ -36,10 +36,10 @@ public class LinkData implements LinkDataInterface
     private final Length length;
 
     /**
-     * @param linkName wrapped link name
-     * @param startNode data of start node
-     * @param endNode data of end node
-     * @param length the length
+     * @param linkName String; wrapped link name
+     * @param startNode NodeData; data of start node
+     * @param endNode NodeData; data of end node
+     * @param length Length; the length
      */
     public LinkData(final String linkName, final NodeData startNode, final NodeData endNode, final Length length)
     {

@@ -47,8 +47,8 @@ public class SimpleOperationalPlan implements Serializable
     private final Duration duration;
 
     /**
-     * @param acceleration acceleration
-     * @param duration duration
+     * @param acceleration Acceleration; acceleration
+     * @param duration Duration; duration
      */
     public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration)
     {
@@ -56,9 +56,9 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
-     * @param acceleration acceleration
-     * @param duration duration
-     * @param laneChangeDirection lane change direction, may be {@code null}.
+     * @param acceleration Acceleration; acceleration
+     * @param duration Duration; duration
+     * @param laneChangeDirection LateralDirectionality; lane change direction, may be {@code null}.
      */
     public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration,
             final LateralDirectionality laneChangeDirection)

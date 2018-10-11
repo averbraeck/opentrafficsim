@@ -184,10 +184,10 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
 
     /**
      * Clone a CrossSectionElement for a new network.
-     * @param newCrossSectionLink the new link to which the clone belongs
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
-     * @param cse the element to clone from
+     * @param newCrossSectionLink CrossSectionLink; the new link to which the clone belongs
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
+     * @param animation boolean; whether to (re)create animation or not
+     * @param cse CrossSectionElement; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */

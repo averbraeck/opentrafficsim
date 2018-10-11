@@ -41,7 +41,7 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param c Collection; initial collection
+     * @param c Collection&lt;? extends E&gt;; initial collection
      */
     public HistoricalLinkedList(final HistoryManager historyManager, final Collection<? extends E> c)
     {

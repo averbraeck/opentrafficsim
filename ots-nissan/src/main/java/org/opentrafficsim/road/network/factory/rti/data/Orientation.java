@@ -18,9 +18,9 @@ public class Orientation implements Serializable
     private float roll; // position[m]
 
     /**
-     * @param rotX rotX
-     * @param rotY rotY
-     * @param rotZ rotZ
+     * @param rotX double; rotX
+     * @param rotY double; rotY
+     * @param rotZ double; rotZ
      */
     public Orientation(double rotX, double rotY, double rotZ)
     {

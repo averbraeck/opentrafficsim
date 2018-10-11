@@ -37,7 +37,7 @@ public class CompoundProperty extends AbstractProperty<List<Property<?>>> implem
      * @param key String; the unique key of the new property
      * @param shortName String; the short name of the new CompoundProperty
      * @param description String; description of the new CompoundProperty (may use HTML mark up)
-     * @param initialValue Integer; the initial value of the new CompoundProperty
+     * @param initialValue List&lt;Property&lt;?&gt;&gt;; the initial value of the new CompoundProperty
      * @param readOnly boolean; if true this CompoundProperty can not be altered
      * @param displayPriority int; the display priority of the new CompoundProperty
      * @throws PropertyException if <cite>key</cite> is already in use

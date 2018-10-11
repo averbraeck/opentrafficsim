@@ -32,7 +32,7 @@ public abstract class AbstractPerceptionCategory<G extends GTU, P extends Percep
 
     /**
      * Constructor setting the perception.
-     * @param perception perception
+     * @param perception P; perception
      */
     public AbstractPerceptionCategory(final P perception)
     {

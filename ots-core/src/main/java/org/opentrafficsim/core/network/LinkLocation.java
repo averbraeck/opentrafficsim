@@ -28,8 +28,9 @@ public class LinkLocation implements Serializable
     private final double fractionalLongitudinalPosition;
 
     /**
-     * @param link The link of the location of a point relative to the GTU.
-     * @param fractionalLongitudinalPosition The fractional position (between 0.0 and 1.0) of the reference point on the link.
+     * @param link Link; The link of the location of a point relative to the GTU.
+     * @param fractionalLongitudinalPosition double; The fractional position (between 0.0 and 1.0) of the reference point on the
+     *            link.
      */
     public LinkLocation(final Link link, final double fractionalLongitudinalPosition)
     {
@@ -39,8 +40,8 @@ public class LinkLocation implements Serializable
     }
 
     /**
-     * @param link The link of the location of a point relative to the GTU.
-     * @param position The position as a length of the reference point on the link.
+     * @param link Link; The link of the location of a point relative to the GTU.
+     * @param position Length; The position as a length of the reference point on the link.
      */
     public LinkLocation(final Link link, final Length position)
     {

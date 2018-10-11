@@ -874,9 +874,9 @@ public class A58OdUtil
         private static final String HEADWAY_STREAM = "headwayGeneration";
 
         /**
-         * @param timeVector a time vector
-         * @param demandVector the corresponding demand vector
-         * @param simulator the simulator
+         * @param timeVector TimeVector; a time vector
+         * @param demandVector FrequencyVector; the corresponding demand vector
+         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
          */
         public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
                 final SimulatorInterface.TimeDoubleUnit simulator)
@@ -885,10 +885,10 @@ public class A58OdUtil
         }
 
         /**
-         * @param timeVector a time vector
-         * @param demandVector the corresponding demand vector
-         * @param simulator the simulator
-         * @param interpolation interpolation type
+         * @param timeVector TimeVector; a time vector
+         * @param demandVector FrequencyVector; the corresponding demand vector
+         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
+         * @param interpolation Interpolation; interpolation type
          */
         public HeadwayGeneratorDemand(final TimeVector timeVector, final FrequencyVector demandVector,
                 final SimulatorInterface.TimeDoubleUnit simulator, final Interpolation interpolation)

@@ -40,7 +40,7 @@ public class Acceleration3D implements Serializable
 
     /**
      * Construct a new Acceleration3D from vector of strongly typed Cartesian coordinates.
-     * @param acceleration the accelerations in 3D (YPR coded)
+     * @param acceleration AccelerationVector; the accelerations in 3D (YPR coded)
      * @throws ValueException in case the vector does not have exactly three elements
      */
     public Acceleration3D(final AccelerationVector acceleration) throws ValueException
@@ -55,9 +55,9 @@ public class Acceleration3D implements Serializable
 
     /**
      * Construct a new Acceleration3D from three strongly typed Cartesian coordinates.
-     * @param x the acceleration in the x-direction
-     * @param y the acceleration in the y-direction
-     * @param z the acceleration in the z-direction
+     * @param x Acceleration; the acceleration in the x-direction
+     * @param y Acceleration; the acceleration in the y-direction
+     * @param z Acceleration; the acceleration in the z-direction
      * @throws ValueException in case the units are incorrect
      */
     public Acceleration3D(final Acceleration x, final Acceleration y, final Acceleration z) throws ValueException
@@ -68,10 +68,10 @@ public class Acceleration3D implements Serializable
 
     /**
      * Construct a new Acceleration3D from three double Cartesian coordinates and a acceleration unit.
-     * @param x the acceleration in the x-direction
-     * @param y the acceleration in the y-direction
-     * @param z the acceleration in the z-direction
-     * @param unit the unit of the xyz parameters
+     * @param x double; the acceleration in the x-direction
+     * @param y double; the acceleration in the y-direction
+     * @param z double; the acceleration in the z-direction
+     * @param unit AccelerationUnit; the unit of the xyz parameters
      * @throws ValueException in case the units are incorrect
      */
     public Acceleration3D(final double x, final double y, final double z, final AccelerationUnit unit) throws ValueException

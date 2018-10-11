@@ -40,11 +40,11 @@ public class StaticObjectAnimation extends Renderable2D implements Serializable
     private boolean fill;
 
     /**
-     * @param source Static Object
-     * @param simulator simulator
-     * @param width width of the contour line to draw
-     * @param color color of the contour line / fill
-     * @param fill fill internal or not
+     * @param source StaticObject; Static Object
+     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param width float; width of the contour line to draw
+     * @param color Color; color of the contour line / fill
+     * @param fill boolean; fill internal or not
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */

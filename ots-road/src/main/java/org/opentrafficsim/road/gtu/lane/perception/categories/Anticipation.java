@@ -127,9 +127,9 @@ public interface Anticipation
         private final Acceleration acceleration;
 
         /**
-         * @param headway headway
-         * @param speed speed
-         * @param acceleration acceleration
+         * @param headway Length; headway
+         * @param speed Speed; speed
+         * @param acceleration Acceleration; acceleration
          */
         NeighborTriplet(final Length headway, final Speed speed, final Acceleration acceleration)
         {

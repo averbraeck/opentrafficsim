@@ -65,8 +65,8 @@ public class LinkCellTransmission extends NTMLink
     }
 
     /**
-     * @param link original Link
-     * @param cells to add
+     * @param link NTMLink; original Link
+     * @param cells ArrayList&lt;FlowCell&gt;; to add
      * @throws NetworkException
      */
     public LinkCellTransmission(final NTMLink link, final ArrayList<FlowCell> cells) throws NetworkException
@@ -78,10 +78,10 @@ public class LinkCellTransmission extends NTMLink
     }
 
     /**
-     * @param link original Link
-     * @param startNode
-     * @param endNode
-     * @param cells to add
+     * @param link NTMLink; original Link
+     * @param startNode BoundedNode;
+     * @param endNode BoundedNode;
+     * @param cells ArrayList&lt;FlowCell&gt;; to add
      * @throws NetworkException
      */
     public LinkCellTransmission(final NTMLink link, BoundedNode startNode, BoundedNode endNode, final ArrayList<FlowCell> cells)

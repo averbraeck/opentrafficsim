@@ -24,8 +24,8 @@ public class NodeData implements NodeDataInterface
     private final CartesianPoint position;
 
     /**
-     * @param nodeName name of the node
-     * @param position position of the node
+     * @param nodeName String; name of the node
+     * @param position CartesianPoint; position of the node
      */
     public NodeData(final String nodeName, final CartesianPoint position)
     {

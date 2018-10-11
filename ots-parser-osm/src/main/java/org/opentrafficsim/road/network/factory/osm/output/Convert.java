@@ -848,9 +848,9 @@ class LaneAttributes implements Serializable
     private Length width;
 
     /**
-     * @param lt - LaneType
-     * @param c - Color
-     * @param d - LongitudinalDIrectionality
+     * @param lt LaneType; - LaneType
+     * @param c Color; - Color
+     * @param d LongitudinalDirectionality; - LongitudinalDIrectionality
      */
     LaneAttributes(final LaneType lt, final Color c, final LongitudinalDirectionality d)
     {
@@ -867,10 +867,10 @@ class LaneAttributes implements Serializable
     }
 
     /**
-     * @param laneType - LaneType
-     * @param color - Color
-     * @param directionality - LongitudinalDIrectionality
-     * @param width - width
+     * @param laneType LaneType; - LaneType
+     * @param color Color; - Color
+     * @param directionality LongitudinalDirectionality; - LongitudinalDIrectionality
+     * @param width Double; - width
      */
     LaneAttributes(final LaneType laneType, final Color color, final LongitudinalDirectionality directionality,
             final Double width)

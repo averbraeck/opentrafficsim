@@ -39,15 +39,16 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     private Generator<Speed> initialSpeedGenerator;
 
     /**
-     * @param gtuType The GTUType to make it identifiable.
-     * @param lengthGenerator Generator&lt;Length&gt; generator for the length of the GTU type (parallel with driving
-     *            direction).
+     * @param gtuType GTUType; The GTUType to make it identifiable.
+     * @param lengthGenerator Generator&lt;Length&gt;; Generator&lt;Length&gt; generator for the length of the GTU type
+     *            (parallel with driving direction).
      * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
      *            direction).
      * @param maximumSpeedGenerator Generator&lt;Speed&gt;; generator for the maximum speed of the GTU type (in the driving
      *            direction).
-     * @param strategicalPlannerFactory Factory for the strategical planner (e.g., route determination)
-     * @param routeGenerator route generator
+     * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; Factory for the strategical planner (e.g.,
+     *            route determination)
+     * @param routeGenerator RouteGenerator; route generator
      * @throws NullPointerException when one or more parameters are null
      */
     @SuppressWarnings("checkstyle:parameternumber")

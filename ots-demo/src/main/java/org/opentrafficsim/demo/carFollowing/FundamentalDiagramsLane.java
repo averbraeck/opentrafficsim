@@ -268,7 +268,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         private Random randomGenerator = new Random(12345);
 
         /**
-         * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
+         * @param properties List&lt;Property&lt;?&gt;&gt;; the properties
          */
         FundamentalDiagramLanePlotsModel(final List<Property<?>> properties)
         {

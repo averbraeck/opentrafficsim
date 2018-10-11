@@ -35,7 +35,7 @@ public class MetaData
     }
 
     /**
-     * @param metaData meta data to copy into new meta data
+     * @param metaData MetaData; meta data to copy into new meta data
      */
     public MetaData(final MetaData metaData)
     {

@@ -63,8 +63,8 @@ public class OTSSimulationPanel extends JPanel
 
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
-     * @param simulator the simulator or animator of the model.
-     * @param wrappableAnimation the builder and rebuilder of the simulation, based on properties.
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator or animator of the model.
+     * @param wrappableAnimation WrappableAnimation; the builder and rebuilder of the simulation, based on properties.
      * @throws RemoteException when communications to a remote machine fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
@@ -183,7 +183,7 @@ public class OTSSimulationPanel extends JPanel
         private static final long serialVersionUID = 20180206L;
 
         /**
-         * @param tabPlacement tabPlacement
+         * @param tabPlacement int; tabPlacement
          */
         AppearanceControlTabbedContentPane(final int tabPlacement)
         {

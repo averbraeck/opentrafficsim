@@ -41,8 +41,8 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
 
     /**
      * Constructor for subclasses.
-     * @param requiredNumberOfLaneChanges required number of lane changes
-     * @param deadEnd whether the need to change lane comes from a dead-end
+     * @param requiredNumberOfLaneChanges int; required number of lane changes
+     * @param deadEnd boolean; whether the need to change lane comes from a dead-end
      */
     protected InfrastructureLaneChangeInfo(final int requiredNumberOfLaneChanges, final boolean deadEnd)
     {
@@ -55,10 +55,10 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
 
     /**
      * Constructor.
-     * @param requiredNumberOfLaneChanges required number of lane changes
-     * @param record record who's end defines the remaining distance
-     * @param relativePosition critical relative position (i.e. nose when driving forward)
-     * @param deadEnd whether the need to change lane comes from a dead-end
+     * @param requiredNumberOfLaneChanges int; required number of lane changes
+     * @param record LaneStructureRecord; record who's end defines the remaining distance
+     * @param relativePosition RelativePosition; critical relative position (i.e. nose when driving forward)
+     * @param deadEnd boolean; whether the need to change lane comes from a dead-end
      * @param lat LateralDirectionality; lateral directionality of required lane changes
      * @throws IllegalArgumentException if required number of lane changes or remaining distance is negative
      * @throws NullPointerException if remaining distance is null
@@ -194,7 +194,7 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
         private static final long serialVersionUID = 20180214L;
 
         /**
-         * @param deadEnd whether the need to change lane comes from a dead-end
+         * @param deadEnd boolean; whether the need to change lane comes from a dead-end
          */
         InfrastructureLaneChangeInfoInaccessibleLane(final boolean deadEnd)
         {

@@ -24,8 +24,8 @@ public class ConfidenceInterval<T extends AbstractDoubleScalarRel<?, T>>
     private final T upperValue;
 
     /**
-     * @param lowerValue lower confidence value
-     * @param upperValue upper confidence value
+     * @param lowerValue T; lower confidence value
+     * @param upperValue T; upper confidence value
      */
     ConfidenceInterval(final T lowerValue, final T upperValue)
     {

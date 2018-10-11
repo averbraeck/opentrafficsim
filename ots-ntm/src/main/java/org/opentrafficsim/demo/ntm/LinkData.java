@@ -27,11 +27,11 @@ public class LinkData
     private String typeWeg;
 
     /**
-     * @param name
-     * @param linkTag
-     * @param wegtype
-     * @param typeWegVak
-     * @param typeWeg
+     * @param name String;
+     * @param linkTag String;
+     * @param wegtype String;
+     * @param typeWegVak String;
+     * @param typeWeg String;
      */
     public LinkData(String name, String linkTag, String wegtype, String typeWegVak, String typeWeg)
     {

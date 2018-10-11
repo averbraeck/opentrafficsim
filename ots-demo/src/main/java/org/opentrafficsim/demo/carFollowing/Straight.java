@@ -390,7 +390,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
         private Random randomGenerator = new Random(12345);
 
         /**
-         * @param properties the user settable properties
+         * @param properties List&lt;Property&lt;?&gt;&gt;; the user settable properties
          */
         StraightModel(final List<Property<?>> properties)
         {

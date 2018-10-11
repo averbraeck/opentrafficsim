@@ -60,7 +60,7 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
-     * @param simulator simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
      * @throws NullPointerException if the simulator is {@code null}
      */
     public RoadSampler(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
@@ -72,8 +72,8 @@ public class RoadSampler extends Sampler<GtuData> implements EventListenerInterf
 
     /**
      * Constructor which uses the given frequency to determine the sampling interval.
-     * @param simulator simulator
-     * @param frequency sampling frequency
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+     * @param frequency Frequency; sampling frequency
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
      */

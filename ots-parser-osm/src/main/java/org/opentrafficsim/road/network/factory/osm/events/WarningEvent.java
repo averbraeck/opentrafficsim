@@ -22,8 +22,8 @@ public class WarningEvent extends EventObject
     private String warning;
 
     /**
-     * @param source of the WarningEvent.
-     * @param warn Textual description of the warning.
+     * @param source Object; of the WarningEvent.
+     * @param warn String; Textual description of the warning.
      */
     public WarningEvent(final Object source, final String warn)
     {

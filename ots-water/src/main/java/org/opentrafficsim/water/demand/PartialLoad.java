@@ -48,12 +48,12 @@ public class PartialLoad implements Serializable
     private Company owner;
 
     /**
-     * @param terminalFrom origin terminal
-     * @param terminalTo destination terminal
-     * @param number number of containers
-     * @param twentyFt 20 ft?
-     * @param empty empty?
-     * @param owner who owns the container
+     * @param terminalFrom Terminal; origin terminal
+     * @param terminalTo Terminal; destination terminal
+     * @param number int; number of containers
+     * @param twentyFt boolean; 20 ft?
+     * @param empty boolean; empty?
+     * @param owner Company; who owns the container
      */
     public PartialLoad(final Terminal terminalFrom, final Terminal terminalTo, final int number, final boolean twentyFt,
             final boolean empty, final Company owner)

@@ -66,8 +66,8 @@ public enum SailingServiceTimeBreakdownEnum
     private final String explanation;
 
     /**
-     * @param description the short description of the enum
-     * @param explanation the long explanation of the enum
+     * @param description String; the short description of the enum
+     * @param explanation String; the long explanation of the enum
      */
     private SailingServiceTimeBreakdownEnum(final String description, final String explanation)
     {

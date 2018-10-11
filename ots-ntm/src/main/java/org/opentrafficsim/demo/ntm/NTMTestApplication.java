@@ -39,8 +39,8 @@ import nl.tudelft.simulation.event.Event;
 public class NTMTestApplication extends DSOLApplication
 {
     /**
-     * @param title
-     * @param panel
+     * @param title String;
+     * @param panel DSOLPanel&lt;Time,Duration,SimTimeDoubleUnit&gt;;
      */
     public NTMTestApplication(String title, DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {

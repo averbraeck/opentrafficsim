@@ -25,9 +25,9 @@ public class ParameterTypeNumeric<T extends Number> extends ParameterType<T> imp
 
     /**
      * Constructor without default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
+     * @param id String; Short name of parameter.
+     * @param description String; Parameter description or full name.
+     * @param valueClass Class&lt;T&gt;; Class of the value.
      */
     public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass)
     {
@@ -36,10 +36,10 @@ public class ParameterTypeNumeric<T extends Number> extends ParameterType<T> imp
 
     /**
      * Constructor with default value, without check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param defaultValue Default value.
+     * @param id String; Short name of parameter.
+     * @param description String; Parameter description or full name.
+     * @param valueClass Class&lt;T&gt;; Class of the value.
+     * @param defaultValue T; Default value.
      */
     public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass, final T defaultValue)
     {
@@ -48,10 +48,10 @@ public class ParameterTypeNumeric<T extends Number> extends ParameterType<T> imp
 
     /**
      * Constructor without default value, with check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param constraint Constraint for parameter values.
+     * @param id String; Short name of parameter.
+     * @param description String; Parameter description or full name.
+     * @param valueClass Class&lt;T&gt;; Class of the value.
+     * @param constraint Constraint&lt;? super T&gt;; Constraint for parameter values.
      */
     public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass,
             final Constraint<? super T> constraint)
@@ -61,11 +61,11 @@ public class ParameterTypeNumeric<T extends Number> extends ParameterType<T> imp
 
     /**
      * Constructor with default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param defaultValue Default value.
-     * @param constraint Constraint for parameter values.
+     * @param id String; Short name of parameter.
+     * @param description String; Parameter description or full name.
+     * @param valueClass Class&lt;T&gt;; Class of the value.
+     * @param defaultValue T; Default value.
+     * @param constraint Constraint&lt;? super T&gt;; Constraint for parameter values.
      */
     public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass, final T defaultValue,
             final Constraint<? super T> constraint)
