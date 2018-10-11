@@ -108,7 +108,6 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         final LaneBasedGTU car = getSource();
-
         if (car.isDestroyed())
         {
             if (!this.isDestroyed)
@@ -120,8 +119,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
                 catch (@SuppressWarnings("unused") Exception e)
                 {
                     System.err.println("Error while destroying GTU " + car.getId());
+                    e.printStackTrace();
                 }
-                this.isDestroyed = true;
             }
             return;
         }
@@ -192,6 +191,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     @Override
     public final void destroy() throws NamingException
     {
+        this.isDestroyed = true;
         super.destroy();
         this.text.destroy();
     }
