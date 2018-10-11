@@ -28,8 +28,8 @@ public class LinkDirection implements Serializable
     private final GTUDirectionality direction;
 
     /**
-     * @param link the link
-     * @param direction the direction on the link, with or against the design line
+     * @param link Link; the link
+     * @param direction GTUDirectionality; the direction on the link, with or against the design line
      */
     public LinkDirection(final Link link, final GTUDirectionality direction)
     {

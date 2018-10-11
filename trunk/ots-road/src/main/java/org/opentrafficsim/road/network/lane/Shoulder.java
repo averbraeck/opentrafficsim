@@ -26,12 +26,12 @@ public class Shoulder extends CrossSectionElement
     private static final long serialVersionUID = 20140819L;
 
     /**
-     * @param parentLink Cross Section Link to which the element belongs.
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param lateralPositionStart the lateral start position compared to the linear geometry of the Cross Section Link.
-     * @param lateralPositionEnd the lateral end position compared to the linear geometry of the Cross Section Link
-     * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
-     * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
+     * @param lateralPositionStart Length; the lateral start position compared to the linear geometry of the Cross Section Link.
+     * @param lateralPositionEnd Length; the lateral end position compared to the linear geometry of the Cross Section Link
+     * @param beginWidth Length; start width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
+     * @param endWidth Length; end width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
@@ -43,10 +43,10 @@ public class Shoulder extends CrossSectionElement
     }
 
     /**
-     * @param parentLink Cross Section Link to which the element belongs.
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param lateralPosition the lateral start position compared to the linear geometry of the Cross Section Link.
-     * @param width the shoulder width, positioned <i>symmetrically around</i> the lateral start position.
+     * @param lateralPosition Length; the lateral start position compared to the linear geometry of the Cross Section Link.
+     * @param width Length; the shoulder width, positioned &lt;i&gt;symmetrically around&lt;/i&gt; the lateral start position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
@@ -57,12 +57,12 @@ public class Shoulder extends CrossSectionElement
     }
 
     /**
-     * @param parentLink Cross Section Link to which the element belongs.
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0. If
-     *            there are more slices, the last one should be at the length of the design line. If not, a NetworkException is
-     *            thrown.
+     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; The offsets and widths at positions along the line, relative to
+     *            the design line of the parent link. If there is just one with and offset, there should just be one element in
+     *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
+     *            If not, a NetworkException is thrown.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
@@ -74,10 +74,10 @@ public class Shoulder extends CrossSectionElement
 
     /**
      * Clone a Shoulder for a new network.
-     * @param newParentLink the new link to which the clone belongs
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
-     * @param cse the element to clone from
+     * @param newParentLink CrossSectionLink; the new link to which the clone belongs
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
+     * @param animation boolean; whether to (re)create animation or not
+     * @param cse Shoulder; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */

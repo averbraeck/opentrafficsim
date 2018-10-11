@@ -53,7 +53,7 @@ public enum TextWeight
     private final Number value;
 
     /**
-     * @param value the corresponding TextAttribute constant
+     * @param value Number; the corresponding TextAttribute constant
      */
     TextWeight(final Number value)
     {

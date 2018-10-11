@@ -30,9 +30,9 @@ public class ParametersNTM extends ParametersFundamentalDiagram
     private final Length roadLength;
 
     /**
-     * @param accCritical
-     * @param freeSpeed
-     * @param roadLength
+     * @param accCritical ArrayList&lt;Double&gt;;
+     * @param freeSpeed Speed;
+     * @param roadLength Length;
      */
     public ParametersNTM(ArrayList<Double> accCritical, Speed freeSpeed, Length roadLength)
     {
@@ -45,9 +45,9 @@ public class ParametersNTM extends ParametersFundamentalDiagram
     }
 
     /**
-     * @param accCritical
-     * @param capacityPerLaneLength
-     * @param roadLength
+     * @param accCritical ArrayList&lt;Double&gt;;
+     * @param capacityPerLaneLength double;
+     * @param roadLength Length;
      */
     public ParametersNTM(ArrayList<Double> accCritical, double capacityPerLaneLength, Length roadLength)
     {
@@ -61,7 +61,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
     }
 
     /**
-     * @param accCritical
+     * @param accCritical ArrayList&lt;Double&gt;;
      * @param capacityPerLaneLength
      * @param roadLength
      */
@@ -75,8 +75,8 @@ public class ParametersNTM extends ParametersFundamentalDiagram
 
     /**
      * @param accCritical
-     * @param freeSpeed
-     * @param roadLength
+     * @param freeSpeed Speed;
+     * @param roadLength Length;
      */
     public ParametersNTM(Speed freeSpeed, Length roadLength)
     {

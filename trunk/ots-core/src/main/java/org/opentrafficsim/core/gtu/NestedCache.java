@@ -33,7 +33,7 @@ public class NestedCache<T>
 
     /**
      * Constructor.
-     * @param types Class...; types
+     * @param types Class&lt;?&gt;...; types
      */
     public NestedCache(final Class<?>... types)
     {

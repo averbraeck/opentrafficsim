@@ -190,7 +190,7 @@ public abstract class ModelEvent implements SelfWrapper
 
         /**
          * Construct a new ModelCommand
-         * @param value
+         * @param value int;
          */
         private ModelCommand(final int value)
         {
@@ -249,7 +249,7 @@ class ChangeEvent extends ModelEvent
     /**
      * Construct a new ChangeEvent from uid, state and federation parameters.
      * @param uid int; the uid of the new ChangeEvent
-     * @param state int; the state of the new ChangeEvent
+     * @param state ModelState; the state of the new ChangeEvent
      * @param federation String; the federation of the new ChangeEvent
      */
     public ChangeEvent(final int uid, final ModelState state, final String federation)
@@ -393,7 +393,7 @@ class NewEvent extends ModelEvent
     /**
      * Construct a new NewEvent.
      * @param uid int; the uid
-     * @param modelName string; the name of the model
+     * @param modelName String; the name of the model
      * @param controller String; the name of the controller (?)
      * @param priority int; the priority
      * @param state ModelState; the state of the model

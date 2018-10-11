@@ -72,14 +72,14 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
 
     /**
      * Construct a new LaneBasedIndividualCar.
-     * @param id ID; the id of the GTU
-     * @param gtuType GTUTYpe; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param id String; the id of the GTU
+     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
      * @param length Length; the maximum length of the GTU (parallel with driving direction)
      * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
      * @param front Length; front distance relative to the reference position
      * @param simulator OTSSimulatorInterface; the simulator
-     * @param network the network that the GTU is initially registered in
+     * @param network OTSNetwork; the network that the GTU is initially registered in
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws GTUException when a parameter is invalid
      */
@@ -527,6 +527,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         /**
          * Build one LaneBasedIndividualCar.
          * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends
+         *            LaneBasedStrategicalPlanner&gt;; LaneBasedStrategicalPlannerFactory&lt;? extends
          *            LaneBasedStrategicalPlanner&gt;; factory for the strategical planner
          * @param route Route; route
          * @param origin Node; origin

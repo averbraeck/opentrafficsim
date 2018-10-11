@@ -37,7 +37,7 @@ public class MetaDataSet
     }
 
     /**
-     * @param metaDataSet set of meta data to copy into new meta data set
+     * @param metaDataSet MetaDataSet; set of meta data to copy into new meta data set
      */
     public MetaDataSet(final MetaDataSet metaDataSet)
     {

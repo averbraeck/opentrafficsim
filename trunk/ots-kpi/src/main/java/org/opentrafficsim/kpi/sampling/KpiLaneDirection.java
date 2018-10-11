@@ -29,8 +29,8 @@ public class KpiLaneDirection implements Serializable
     private final KpiGtuDirectionality direction;
 
     /**
-     * @param lane the lane
-     * @param direction the direction to drive on this lane
+     * @param lane LaneDataInterface; the lane
+     * @param direction KpiGtuDirectionality; the direction to drive on this lane
      */
     public KpiLaneDirection(final LaneDataInterface lane, final KpiGtuDirectionality direction)
     {

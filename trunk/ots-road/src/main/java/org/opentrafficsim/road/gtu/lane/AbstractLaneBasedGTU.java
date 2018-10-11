@@ -168,10 +168,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /**
      * Construct a Lane Based GTU.
-     * @param id the id of the GTU
-     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
-     * @param simulator to initialize the move method and to get the current time
-     * @param network the network that the GTU is initially registered in
+     * @param id String; the id of the GTU
+     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param simulator OTSSimulatorInterface; to initialize the move method and to get the current time
+     * @param network OTSNetwork; the network that the GTU is initially registered in
      * @throws GTUException when initial values are not correct
      */
     public AbstractLaneBasedGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,

@@ -302,8 +302,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         private final SimulatorInterface.TimeDoubleUnit simulator;
 
         /**
-         * @param demand demand
-         * @param simulator simulator
+         * @param demand Frequency; demand
+         * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
          */
         HeadwayGenerator(final Frequency demand, final SimulatorInterface.TimeDoubleUnit simulator)
         {
@@ -364,9 +364,9 @@ public class BusStreetDemo extends AbstractWrappableAnimation
         private final Duration longDwellTime = new Duration(60.0, DurationUnit.SI);
 
         /**
-         * @param simulator simulator
-         * @param probabilities probabilities
-         * @param network network
+         * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; simulator
+         * @param probabilities double[]; probabilities
+         * @param network OTSNetwork; network
          */
         public CharacteristicsGenerator(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final double[] probabilities,
                 final OTSNetwork network)

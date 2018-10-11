@@ -27,8 +27,8 @@ public class XmlParserException extends Exception
     }
 
     /**
-     * @param message message
-     * @param cause cause
+     * @param message String; message
+     * @param cause Throwable; cause
      */
     public XmlParserException(String message, Throwable cause)
     {
@@ -36,7 +36,7 @@ public class XmlParserException extends Exception
     }
 
     /**
-     * @param message messge
+     * @param message String; messge
      */
     public XmlParserException(String message)
     {
@@ -44,7 +44,7 @@ public class XmlParserException extends Exception
     }
 
     /**
-     * @param cause cause
+     * @param cause Throwable; cause
      */
     public XmlParserException(Throwable cause)
     {

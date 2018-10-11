@@ -27,8 +27,8 @@ public class WaterwayLink
     private WaterwayLocation waterwayLocation2;
 
     /**
-     * @param waterwayLocation1 from waterway location
-     * @param waterwayLocation2 to waterway location
+     * @param waterwayLocation1 WaterwayLocation; from waterway location
+     * @param waterwayLocation2 WaterwayLocation; to waterway location
      */
     public WaterwayLink(final WaterwayLocation waterwayLocation1, final WaterwayLocation waterwayLocation2)
     {

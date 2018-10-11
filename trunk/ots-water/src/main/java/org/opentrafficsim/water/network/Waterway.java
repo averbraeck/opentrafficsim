@@ -48,14 +48,14 @@ public class Waterway extends OTSLink
 
     /**
      * Construct a new waterway.
-     * @param network the network.
-     * @param id the waterway id
-     * @param name the name
-     * @param startNode start node (directional)
-     * @param endNode end node (directional)
-     * @param linkType Link type to indicate compatibility with GTU types
-     * @param designLine the OTSLine3D design line of the Link
-     * @param simulator the simulator to schedule events on
+     * @param network Network; the network.
+     * @param id String; the waterway id
+     * @param name String; the name
+     * @param startNode OTSNode; start node (directional)
+     * @param endNode OTSNode; end node (directional)
+     * @param linkType LinkType; Link type to indicate compatibility with GTU types
+     * @param designLine OTSLine3D; the OTSLine3D design line of the Link
+     * @param simulator OTSSimulatorInterface; the simulator to schedule events on
      * @throws NetworkException when waterway with this id already exists
      */
     @SuppressWarnings("checkstyle:parameternumber")

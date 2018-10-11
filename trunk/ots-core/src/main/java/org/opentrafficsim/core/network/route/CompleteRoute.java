@@ -31,8 +31,8 @@ public class CompleteRoute extends Route
 
     /**
      * Create an empty route for the given GTUType.
-     * @param id the name of the route
-     * @param gtuType the GTUType for which this is a route
+     * @param id String; the name of the route
+     * @param gtuType GTUType; the GTUType for which this is a route
      */
     public CompleteRoute(final String id, final GTUType gtuType)
     {
@@ -43,9 +43,9 @@ public class CompleteRoute extends Route
     /**
      * Create a route based on an initial list of nodes. <br>
      * This constructor makes a defensive copy of the provided List.
-     * @param id the name of the route.
-     * @param gtuType the GTUType for which this is a route
-     * @param nodes the initial list of nodes.
+     * @param id String; the name of the route.
+     * @param gtuType GTUType; the GTUType for which this is a route
+     * @param nodes List&lt;Node&gt;; the initial list of nodes.
      * @throws NetworkException if intermediate nodes are missing in the route.
      */
     public CompleteRoute(final String id, final GTUType gtuType, final List<Node> nodes) throws NetworkException

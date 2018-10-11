@@ -44,7 +44,7 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
     private final DirectInfrastructurePerception infrastructureCategory;
 
     /**
-     * @param perception perception
+     * @param perception LanePerception; perception
      */
     public ToledoPerception(final LanePerception perception)
     {

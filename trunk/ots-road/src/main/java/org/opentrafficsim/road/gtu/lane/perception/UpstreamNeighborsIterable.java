@@ -40,7 +40,7 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
     /**
      * Constructor.
      * @param perceivingGtu LaneBasedGTU; perceiving GTU
-     * @param root R; root record
+     * @param root LaneRecord&lt;?&gt;; root record
      * @param initialPosition Length; position on the root record
      * @param maxDistance Length; maximum distance to search
      * @param relativePosition RelativePosition; position to which distance are calculated by subclasses

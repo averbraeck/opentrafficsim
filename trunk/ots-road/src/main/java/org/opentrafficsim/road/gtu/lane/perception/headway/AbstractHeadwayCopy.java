@@ -54,13 +54,13 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
 
     /**
      * Construct a new Headway information object, for an object in front, behind, or in parallel with us. <br>
-     * @param objectType the perceived object type, can be null if object type unknown.
-     * @param id the id of the object for comparison purposes, can not be null.
-     * @param distance the distance to the other object
-     * @param length the length of the other object, can be null if not applicable.
-     * @param overlapFront the front-front distance to the other object
-     * @param overlap the 'center' overlap with the other object
-     * @param overlapRear the rear-rear distance to the other object
+     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
+     * @param id String; the id of the object for comparison purposes, can not be null.
+     * @param distance Length; the distance to the other object
+     * @param length Length; the length of the other object, can be null if not applicable.
+     * @param overlapFront Length; the front-front distance to the other object
+     * @param overlap Length; the 'center' overlap with the other object
+     * @param overlapRear Length; the rear-rear distance to the other object
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
@@ -82,8 +82,8 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
 
     /**
      * Construct a new Headway information object, for a moving object ahead of us or behind us.
-     * @param objectType the perceived object type, can be null if object type unknown.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
@@ -97,8 +97,8 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
 
     /**
      * Construct a new Headway information object, for a non-moving object ahead of us or behind us.
-     * @param objectType the perceived object type, can be null if object type unknown.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
@@ -109,8 +109,8 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
 
     /**
      * Construct a new Headway information object, for a moving object parallel with us.
-     * @param objectType the perceived object type, can be null if object type unknown.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
@@ -127,8 +127,8 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
 
     /**
      * Construct a new Headway information object, for a non-moving object parallel with us.
-     * @param objectType the perceived object type, can be null if object type unknown.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
@@ -142,8 +142,8 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
 
     /**
      * Construct a new Headway information object, for a moving object ahead of us or behind us.
-     * @param objectType the perceived object type, can be null if object type unknown.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
@@ -159,8 +159,8 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
 
     /**
      * Construct a new Headway information object, for a non-moving object ahead of us or behind us.
-     * @param objectType the perceived object type, can be null if object type unknown.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param length the length of the other object; if this constructor is used, length cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
@@ -174,8 +174,8 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
 
     /**
      * Construct a new Headway information object, for a moving object parallel with us.
-     * @param objectType the perceived object type, can be null if object type unknown.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
@@ -195,8 +195,8 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
 
     /**
      * Construct a new Headway information object, for a non-moving object parallel with us.
-     * @param objectType the perceived object type, can be null if object type unknown.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.

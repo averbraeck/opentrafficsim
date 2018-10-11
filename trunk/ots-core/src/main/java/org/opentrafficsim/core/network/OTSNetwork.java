@@ -81,7 +81,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /**
      * Construction of an empty network.
-     * @param id the network id.
+     * @param id String; the network id.
      */
     public OTSNetwork(final String id)
     {

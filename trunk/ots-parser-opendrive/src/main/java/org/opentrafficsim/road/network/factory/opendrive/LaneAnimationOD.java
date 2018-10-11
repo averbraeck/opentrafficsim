@@ -41,9 +41,9 @@ public class LaneAnimationOD extends Renderable2D implements Serializable
     private final Color color;
 
     /**
-     * @param source s
-     * @param simulator s
-     * @param color color of the lane.
+     * @param source Lane; s
+     * @param simulator SimulatorInterface.TimeDoubleUnit; s
+     * @param color Color; color of the lane.
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */

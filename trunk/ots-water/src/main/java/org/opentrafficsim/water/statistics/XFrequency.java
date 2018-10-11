@@ -44,7 +44,7 @@ public class XFrequency implements Serializable
     private Object semaphore = new Object();
 
     /**
-     * @param description the description of the statistic
+     * @param description String; the description of the statistic
      */
     public XFrequency(String description)
     {

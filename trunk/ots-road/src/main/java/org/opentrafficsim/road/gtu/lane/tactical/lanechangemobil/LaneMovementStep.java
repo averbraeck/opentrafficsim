@@ -45,7 +45,7 @@ public class LaneMovementStep implements Serializable
 
     /**
      * Construct a new LaneChangeModelResult.
-     * @param gfmr GTUFollowingModelResult; the acceleration and duration of validity of this result.
+     * @param gfmr AccelerationStep; the acceleration and duration of validity of this result.
      * @param laneChange LateralDirectionality; this has one of the values:
      *            <table summary="">
      *            <tr>

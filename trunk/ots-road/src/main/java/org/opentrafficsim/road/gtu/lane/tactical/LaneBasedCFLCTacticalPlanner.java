@@ -95,9 +95,9 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /**
      * Instantiated a tactical planner with GTU following and lane change behavior.
-     * @param carFollowingModel Car-following model.
-     * @param laneChangeModel Lane change model.
-     * @param gtu GTU
+     * @param carFollowingModel GTUFollowingModelOld; Car-following model.
+     * @param laneChangeModel LaneChangeModel; Lane change model.
+     * @param gtu LaneBasedGTU; GTU
      */
     public LaneBasedCFLCTacticalPlanner(final GTUFollowingModelOld carFollowingModel, final LaneChangeModel laneChangeModel,
             final LaneBasedGTU gtu)

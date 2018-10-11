@@ -45,9 +45,9 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
     private Text text;
 
     /**
-     * @param link Link
-     * @param simulator simulator
-     * @param width width
+     * @param link Link; Link
+     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+     * @param width float; width
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
@@ -156,13 +156,13 @@ public class LinkAnimation extends Renderable2D<Link> implements ClonableRendera
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source the object for which the text is displayed
-         * @param text the text to display
-         * @param dx the horizontal movement of the text, in meters
-         * @param dy the vertical movement of the text, in meters
-         * @param textPlacement where to place the text
-         * @param color the color of the text
-         * @param simulator the simulator
+         * @param source Locatable; the object for which the text is displayed
+         * @param text String; the text to display
+         * @param dx float; the horizontal movement of the text, in meters
+         * @param dy float; the vertical movement of the text, in meters
+         * @param textPlacement TextAlignment; where to place the text
+         * @param color Color; the color of the text
+         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */

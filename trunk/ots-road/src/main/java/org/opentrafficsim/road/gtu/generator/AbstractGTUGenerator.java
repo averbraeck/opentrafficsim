@@ -129,22 +129,26 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
     private final Bounds bounds;
 
     /**
-     * @param name the name of the generator
-     * @param simulator the simulator to schedule the start of the generation
-     * @param gtuType the type of GTU to generate
-     * @param gtuClass the GTU class to instantiate
-     * @param initialSpeedDist distribution of the initial speed of the GTU
-     * @param interarrivelTimeDist distribution of the interarrival time
-     * @param maxGTUs maximum number of GTUs to generate
-     * @param startTime start time of generation (delayed start)
-     * @param endTime end time of generation
-     * @param lane the lane to generate the GTU on
-     * @param position position on the lane, relative to the design line of the link
-     * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
-     * @param gtuColorer the GTUColorer to use
-     * @param strategicalPlannerFactory the lane-based strategical planner factory to use
-     * @param routeGenerator route generator
-     * @param network the network to register the generated GTUs into
+     * @param name String; the name of the generator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule the start of the generation
+     * @param gtuType GTUType; the type of GTU to generate
+     * @param gtuClass Class&lt;?&gt;; the GTU class to instantiate
+     * @param initialSpeedDist ContinuousDistDoubleScalar.Rel&lt;Speed,SpeedUnit&gt;; distribution of the initial speed of the
+     *            GTU
+     * @param interarrivelTimeDist ContinuousDistDoubleScalar.Rel&lt;Duration,DurationUnit&gt;; distribution of the interarrival
+     *            time
+     * @param maxGTUs long; maximum number of GTUs to generate
+     * @param startTime Time; start time of generation (delayed start)
+     * @param endTime Time; end time of generation
+     * @param lane Lane; the lane to generate the GTU on
+     * @param position Length; position on the lane, relative to the design line of the link
+     * @param direction GTUDirectionality; the direction on the lane in which the GTU has to be generated (DIR_PLUS, or
+     *            DIR_MINUS)
+     * @param gtuColorer GTUColorer; the GTUColorer to use
+     * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends LaneBasedStrategicalPlanner&gt;; the
+     *            lane-based strategical planner factory to use
+     * @param routeGenerator RouteGenerator; route generator
+     * @param network OTSNetwork; the network to register the generated GTUs into
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")

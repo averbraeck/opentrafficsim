@@ -25,14 +25,14 @@ public class CapacityOTSLink extends OTSLink implements Capacity
 
     /**
      * Construct a new link.
-     * @param network the network.
-     * @param id the link id
-     * @param startNode start node (directional)
-     * @param endNode end node (directional)
-     * @param linkType Link type to indicate compatibility with GTU types
-     * @param designLine the OTSLine3D design line of the Link
-     * @param simulator the simulator on which events can be scheduled
-     * @param capacity link capacity in GTUs per hour // XXX per direction? which GTUType?
+     * @param network Network; the network.
+     * @param id String; the link id
+     * @param startNode Node; start node (directional)
+     * @param endNode Node; end node (directional)
+     * @param linkType LinkType; Link type to indicate compatibility with GTU types
+     * @param designLine OTSLine3D; the OTSLine3D design line of the Link
+     * @param simulator OTSSimulatorInterface; the simulator on which events can be scheduled
+     * @param capacity Frequency; link capacity in GTUs per hour // XXX per direction? which GTUType?
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
@@ -47,10 +47,10 @@ public class CapacityOTSLink extends OTSLink implements Capacity
 
     /**
      * Clone a link for a new network.
-     * @param newNetwork the new network to which the clone belongs
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
-     * @param link the link to clone from
+     * @param newNetwork Network; the new network to which the clone belongs
+     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
+     * @param animation boolean; whether to (re)create animation or not
+     * @param link CapacityOTSLink; the link to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */

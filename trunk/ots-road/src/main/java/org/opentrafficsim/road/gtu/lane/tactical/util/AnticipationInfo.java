@@ -37,8 +37,8 @@ public final class AnticipationInfo implements Serializable
     private final Speed endSpeed;
 
     /**
-     * @param duration duration of movement
-     * @param endSpeed end speed of movement
+     * @param duration Duration; duration of movement
+     * @param endSpeed Speed; end speed of movement
      */
     public AnticipationInfo(final Duration duration, final Speed endSpeed)
     {

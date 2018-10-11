@@ -46,8 +46,8 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
 
     /**
      * Transformation from: https://en.wikipedia.org/wiki/Geographic_coordinate_system.
-     * @param latCenter the latitude of the center point (0, 0)
-     * @param lonCenter the longitude of the center point (0, 0)
+     * @param latCenter double; the latitude of the center point (0, 0)
+     * @param lonCenter double; the longitude of the center point (0, 0)
      */
     public CoordinateTransformLonLatToXY(final double lonCenter, final double latCenter)
     {

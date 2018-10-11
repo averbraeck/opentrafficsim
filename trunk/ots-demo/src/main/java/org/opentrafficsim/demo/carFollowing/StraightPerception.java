@@ -405,7 +405,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
         private Random randomGenerator = new Random(12345);
 
         /**
-         * @param properties the user settable properties
+         * @param properties List&lt;Property&lt;?&gt;&gt;; the user settable properties
          */
         StraightPerceptionModel(final List<Property<?>> properties)
         {
@@ -712,13 +712,13 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
             private Duration perceptionInterval = new Duration(0.5, DurationUnit.SECOND);
 
             /**
-             * @param id ID; the id of the GTU
+             * @param id String; the id of the GTU
              * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
              * @param length Length; the maximum length of the GTU (parallel with driving direction)
              * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
              * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
-             * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
-             * @param network the network that the GTU is initially registered in
+             * @param simulator OTSSimulatorInterface; the simulator
+             * @param network OTSNetwork; the network that the GTU is initially registered in
              * @throws NamingException if an error occurs when adding the animation handler
              * @throws NetworkException when the GTU cannot be placed on the given lane
              * @throws SimRuntimeException when the move method cannot be scheduled
@@ -767,8 +767,8 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
 
             /**
              * Instantiated a tactical planner with just GTU following behavior and no lane changes.
-             * @param carFollowingModel Car-following model.
-             * @param gtu GTU
+             * @param carFollowingModel GTUFollowingModelOld; Car-following model.
+             * @param gtu LaneBasedGTU; GTU
              */
             GTUFollowingTacticalPlannerNoPerceive(final GTUFollowingModelOld carFollowingModel, final LaneBasedGTU gtu)
             {

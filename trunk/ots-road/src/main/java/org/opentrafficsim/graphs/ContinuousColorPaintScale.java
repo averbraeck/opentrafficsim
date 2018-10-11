@@ -37,9 +37,10 @@ public class ContinuousColorPaintScale implements PaintScale, Serializable
 
     /**
      * Create a new ContinuousColorPaintScale.
-     * @param format Format string to render the value under the mouse in a human readable format
-     * @param bounds Double[] array of boundary values (all values must be distinct and the number of values must be &gt;= 2)
-     * @param boundColors Color[] array of the colors to use at the boundary values (must have same size as bounds)
+     * @param format String; Format string to render the value under the mouse in a human readable format
+     * @param bounds double[]; Double[] array of boundary values (all values must be distinct and the number of values must be
+     *            &gt;= 2)
+     * @param boundColors Color[]; Color[] array of the colors to use at the boundary values (must have same size as bounds)
      * @throws OTSSimulationException when bounds are wrong
      */
     ContinuousColorPaintScale(final String format, final double[] bounds, final Color[] boundColors)

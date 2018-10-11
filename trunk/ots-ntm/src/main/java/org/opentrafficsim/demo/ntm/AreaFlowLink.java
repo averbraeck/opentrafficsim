@@ -29,21 +29,21 @@ public class AreaFlowLink extends Area
     private int indexCell;
 
     /**
-     * @param geometry
-     * @param centroidNr
-     * @param name
-     * @param gemeente
-     * @param gebied
-     * @param regio
-     * @param dhb
-     * @param centroid
-     * @param trafficBehaviourType
-     * @param roadLength
-     * @param averageSpeed
-     * @param increaseDemandByFactor
-     * @param parametersNTM
-     * @param flowLink
-     * @param indexCell
+     * @param geometry Geometry;
+     * @param centroidNr String;
+     * @param name String;
+     * @param gemeente String;
+     * @param gebied String;
+     * @param regio String;
+     * @param dhb double;
+     * @param centroid Coordinate;
+     * @param trafficBehaviourType TrafficBehaviourType;
+     * @param roadLength Length;
+     * @param averageSpeed Speed;
+     * @param increaseDemandByFactor double;
+     * @param parametersNTM ParametersNTM;
+     * @param flowLink LinkCellTransmission;
+     * @param indexCell int;
      */
     public AreaFlowLink(Geometry geometry, String centroidNr, String name, String gemeente, String gebied, String regio,
             double dhb, Coordinate centroid, TrafficBehaviourType trafficBehaviourType, Length roadLength, Speed averageSpeed,

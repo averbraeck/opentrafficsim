@@ -29,7 +29,7 @@ public abstract class AbstractNamedEventProducer extends EventProducer implement
     private String name;
 
     /**
-     * @param name the name
+     * @param name String; the name
      */
     public AbstractNamedEventProducer(final String name)
     {

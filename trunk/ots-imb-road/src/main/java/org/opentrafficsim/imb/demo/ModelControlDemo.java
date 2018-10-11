@@ -121,9 +121,9 @@ public class ModelControlDemo extends ModelStarter
     private CircularRoadIMB model = null;
 
     /**
-     * @param args the command line arguments
-     * @param providedModelName the model name
-     * @param providedModelId the model id
+     * @param args String[]; the command line arguments
+     * @param providedModelName String; the model name
+     * @param providedModelId int; the model id
      * @throws IMBException when connection with the IMB bus fails
      */
     public ModelControlDemo(String[] args, String providedModelName, int providedModelId) throws IMBException
@@ -485,9 +485,9 @@ public class ModelControlDemo extends ModelStarter
         private JFrame frame;
 
         /**
-         * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
-         * @param network Network; the network
-         * @param properties AbstractProperty; properties that configure this simulation
+         * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
+         * @param network OTSNetwork; the network
+         * @param properties List&lt;Property&lt;?&gt;&gt;; properties that configure this simulation
          * @param imbConnector IMBConnector; connection to the IMB hub
          * @throws PropertyException XXX not thrown
          */
@@ -1017,12 +1017,12 @@ public class ModelControlDemo extends ModelStarter
             private static final long serialVersionUID = 20150130L;
 
             /**
-             * @param lane the lane of the sensor.
-             * @param position the position of the sensor
+             * @param lane Lane; the lane of the sensor.
+             * @param position Length; the position of the sensor
              * @param triggerPosition RelativePosition.TYPE; the relative position type (e.g., FRONT, REAR) of the vehicle that
              *            triggers the sensor.
-             * @param id the id of the sensor.
-             * @param simulator the simulator to enable animation.
+             * @param id String; the id of the sensor.
+             * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to enable animation.
              * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
              * @throws OTSGeometryException when the geometry of the sensor cannot be calculated, e.g. when the lane width is
              *             zero, or the position is beyond or before the lane length

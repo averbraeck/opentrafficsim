@@ -66,8 +66,8 @@ public class ShapeStore
     /**
      * @param variableName
      * @param geometries
-     * @param variableTypeMap
-     * @param attributeClassTypes
+     * @param variableTypeMap HashMap&lt;String,String&gt;;
+     * @param attributeClassTypes HashMap&lt;String,Class&lt;? extends Object&gt;&gt;;
      */
     public ShapeStore(ArrayList<ShapeObject> geoObjects, ArrayList<String> variableNames,
             HashMap<String, String> variableTypeMap, HashMap<String, Class<? extends Object>> attributeClassTypes)

@@ -26,7 +26,7 @@ public class MeanIntensity extends AbstractIndicator<Frequency>
     private final TotalTravelDistance travelDistance;
 
     /**
-     * @param travelDistance travel distance indicator
+     * @param travelDistance TotalTravelDistance; travel distance indicator
      */
     public MeanIntensity(final TotalTravelDistance travelDistance)
     {

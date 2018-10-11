@@ -315,8 +315,8 @@ public class Convert
         final double x, y;
 
         /**
-         * @param x x
-         * @param y y
+         * @param x double; x
+         * @param y double; y
          */
         public Coordinate(double x, double y)
         {

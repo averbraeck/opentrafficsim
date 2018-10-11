@@ -39,7 +39,7 @@ public class Speed3D implements Serializable
 
     /**
      * Construct a new Speed3D from vector of strongly typed Cartesian coordinates.
-     * @param speed the speeds in 3D (YPR coded)
+     * @param speed SpeedVector; the speeds in 3D (YPR coded)
      * @throws ValueException in case the vector does not have exactly three elements
      */
     public Speed3D(final SpeedVector speed) throws ValueException
@@ -54,9 +54,9 @@ public class Speed3D implements Serializable
 
     /**
      * Construct a new Speed3D from three strongly typed Cartesian coordinates.
-     * @param x the speed in the x-direction
-     * @param y the speed in the y-direction
-     * @param z the speed in the z-direction
+     * @param x Speed; the speed in the x-direction
+     * @param y Speed; the speed in the y-direction
+     * @param z Speed; the speed in the z-direction
      * @throws ValueException in case the units are incorrect
      */
     public Speed3D(final Speed x, final Speed y, final Speed z) throws ValueException
@@ -67,10 +67,10 @@ public class Speed3D implements Serializable
 
     /**
      * Construct a new Speed3D from three double Cartesian coordinates and a speed unit.
-     * @param x the speed in the x-direction
-     * @param y the speed in the y-direction
-     * @param z the speed in the z-direction
-     * @param unit the unit of the xyz parameters
+     * @param x double; the speed in the x-direction
+     * @param y double; the speed in the y-direction
+     * @param z double; the speed in the z-direction
+     * @param unit SpeedUnit; the unit of the xyz parameters
      * @throws ValueException in case the units are incorrect
      */
     public Speed3D(final double x, final double y, final double z, final SpeedUnit unit) throws ValueException

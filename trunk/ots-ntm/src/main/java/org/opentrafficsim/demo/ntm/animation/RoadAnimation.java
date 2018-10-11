@@ -30,8 +30,8 @@ public class RoadAnimation extends Renderable2D
     private Color color;
 
     /**
-     * @param source
-     * @param simulator
+     * @param source ShapeObject;
+     * @param simulator SimulatorInterface.TimeDoubleUnit;
      * @throws NamingException
      * @throws RemoteException
      */

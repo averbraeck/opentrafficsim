@@ -37,9 +37,9 @@ public class LongProperty extends AbstractProperty<Long>
      * @param displayPriority int; display property
      * @param shortName String; shortName
      * @param description String; description
-     * @param initialValue Long; initial value
-     * @param minValue Long; minimum value
-     * @param maxValue Long; maximum value
+     * @param initialValue long; initial value
+     * @param minValue long; minimum value
+     * @param maxValue long; maximum value
      * @param formatString String; format string
      * @param readOnly boolean; read-only
      */

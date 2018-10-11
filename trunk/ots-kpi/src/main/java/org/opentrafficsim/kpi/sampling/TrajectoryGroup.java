@@ -40,8 +40,8 @@ public class TrajectoryGroup
 
     /**
      * Constructor without length specification. The complete lane will be used.
-     * @param startTime start time of trajectories
-     * @param laneDirection lane direction
+     * @param startTime Time; start time of trajectories
+     * @param laneDirection KpiLaneDirection; lane direction
      */
     public TrajectoryGroup(final Time startTime, final KpiLaneDirection laneDirection)
     {
@@ -49,10 +49,10 @@ public class TrajectoryGroup
     }
 
     /**
-     * @param startTime start time of trajectory group
-     * @param startPosition start position
-     * @param endPosition end position
-     * @param laneDirection lane direction
+     * @param startTime Time; start time of trajectory group
+     * @param startPosition Length; start position
+     * @param endPosition Length; end position
+     * @param laneDirection KpiLaneDirection; lane direction
      */
     public TrajectoryGroup(final Time startTime, final Length startPosition, final Length endPosition,
             final KpiLaneDirection laneDirection)

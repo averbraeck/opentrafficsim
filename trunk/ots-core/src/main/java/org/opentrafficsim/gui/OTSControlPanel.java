@@ -116,7 +116,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
-     * @param simulator SimpleSimulator; the simulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @param wrappableAnimation WrappableAnimation; if non-null, the restart button should work
      * @throws RemoteException when simulator cannot be accessed for listener attachment
      */
@@ -202,7 +202,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             private static final long serialVersionUID = 20180206L;
 
             /**
-             * @param loadIcon icon
+             * @param loadIcon Icon; icon
              */
             AppearanceControlButton(final Icon loadIcon)
             {
@@ -314,7 +314,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         private OTSControlPanel panel;
 
         /**
-         * @param panel the OTSControlpanel container.
+         * @param panel OTSControlPanel; the OTSControlpanel container.
          */
         public DisposeOnCloseThread(final OTSControlPanel panel)
         {
@@ -757,7 +757,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
          *            value)
          * @param initialValue double; the initially selected value on the scale
          * @param ticksPerDecade int; the number of steps per decade
-         * @param simulator SimpleSimulator; the simulator to change the speed of
+         * @param simulator DEVSSimulatorInterface&lt;?, ?, ?&gt;; the simulator to change the speed of
          */
         TimeWarpPanel(final double minimum, final double maximum, final double initialValue, final int ticksPerDecade,
                 final DEVSSimulatorInterface<?, ?, ?> simulator)

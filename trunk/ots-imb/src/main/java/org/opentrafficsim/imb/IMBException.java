@@ -59,8 +59,8 @@ public class IMBException extends Exception
      * @param message String; the message to display as part of the exception.
      * @param cause Throwable; the event that caused this event to happen (A null value is permitted, and indicates that the
      *            cause is nonexistent or unknown.)
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
+     * @param enableSuppression boolean; whether or not suppression is enabled or disabled
+     * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
     public IMBException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)

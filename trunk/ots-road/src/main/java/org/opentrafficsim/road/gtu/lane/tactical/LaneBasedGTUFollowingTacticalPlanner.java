@@ -46,8 +46,8 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
     /**
      * Instantiate a tactical planner with just GTU following behavior and no lane changes.
-     * @param carFollowingModel Car-following model.
-     * @param gtu GTU
+     * @param carFollowingModel GTUFollowingModelOld; Car-following model.
+     * @param gtu LaneBasedGTU; GTU
      */
     public LaneBasedGTUFollowingTacticalPlanner(final GTUFollowingModelOld carFollowingModel, final LaneBasedGTU gtu)
     {

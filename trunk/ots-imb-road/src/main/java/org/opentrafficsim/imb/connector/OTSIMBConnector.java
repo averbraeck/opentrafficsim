@@ -31,8 +31,8 @@ public class OTSIMBConnector extends IMBConnector
      * @param host String; the host that runs the IMB hub server
      * @param port int; the port number on the IMB hub host
      * @param modelName String; the name used to register on the hub host
-     * @param modelId integer; usually 1
-     * @param federation string; usually "OTS_RT"
+     * @param modelId int; usually 1
+     * @param federation String; usually "OTS_RT"
      * @throws IMBException when a connection to the IMB hub could not be established
      */
     public OTSIMBConnector(final String host, final int port, final String modelName, final int modelId,
@@ -42,7 +42,7 @@ public class OTSIMBConnector extends IMBConnector
     }
 
     /**
-     * @param connection the IMB connection
+     * @param connection TConnection; the IMB connection
      * @throws IMBException in case of connection problems
      */
     public OTSIMBConnector(TConnection connection) throws IMBException

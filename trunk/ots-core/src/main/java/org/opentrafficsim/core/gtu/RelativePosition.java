@@ -59,10 +59,10 @@ public class RelativePosition implements Serializable
     private final int hash;
 
     /**
-     * @param dx positive x is in the normal direction of movement.
-     * @param dy positive y is left compared to the normal direction of movement (seen from the top).
-     * @param dz positive z is up.
-     * @param type type of relative position (FRONT, BACK, etc.).
+     * @param dx Length; positive x is in the normal direction of movement.
+     * @param dy Length; positive y is left compared to the normal direction of movement (seen from the top).
+     * @param dz Length; positive z is up.
+     * @param type TYPE; type of relative position (FRONT, BACK, etc.).
      */
     public RelativePosition(final Length dx, final Length dy, final Length dz, final TYPE type)
     {
@@ -76,7 +76,7 @@ public class RelativePosition implements Serializable
     }
 
     /**
-     * @param p a relative position to make a deep copy of.
+     * @param p RelativePosition; a relative position to make a deep copy of.
      */
     public RelativePosition(final RelativePosition p)
     {
@@ -218,7 +218,7 @@ public class RelativePosition implements Serializable
         private final int hash;
 
         /**
-         * @param name the type name.
+         * @param name String; the type name.
          */
         public TYPE(final String name)
         {

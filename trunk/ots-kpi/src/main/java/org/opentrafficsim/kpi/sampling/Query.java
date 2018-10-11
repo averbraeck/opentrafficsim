@@ -61,10 +61,10 @@ public final class Query implements Identifiable
     private final List<SpaceTimeRegion> spaceTimeRegions = new ArrayList<>();
 
     /**
-     * @param sampler sampler
-     * @param id id
-     * @param description description
-     * @param metaDataSet meta data
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param id String; id
+     * @param description String; description
+     * @param metaDataSet MetaDataSet; meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet)
@@ -73,11 +73,11 @@ public final class Query implements Identifiable
     }
 
     /**
-     * @param sampler sampler
-     * @param id id
-     * @param description description
-     * @param metaDataSet meta data
-     * @param interval interval to gather statistics over
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param id String; id
+     * @param description String; description
+     * @param metaDataSet MetaDataSet; meta data
+     * @param interval Duration; interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet,
@@ -87,11 +87,11 @@ public final class Query implements Identifiable
     }
 
     /**
-     * @param sampler sampler
-     * @param id id
-     * @param description description
-     * @param metaDataSet meta data
-     * @param updateFrequency update frequency
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param id String; id
+     * @param description String; description
+     * @param metaDataSet MetaDataSet; meta data
+     * @param updateFrequency Frequency; update frequency
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet,
@@ -101,12 +101,12 @@ public final class Query implements Identifiable
     }
 
     /**
-     * @param sampler sampler
-     * @param id id
-     * @param description description
-     * @param metaDataSet meta data
-     * @param updateFrequency update frequency
-     * @param interval interval to gather statistics over
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param id String; id
+     * @param description String; description
+     * @param metaDataSet MetaDataSet; meta data
+     * @param updateFrequency Frequency; update frequency
+     * @param interval Duration; interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet,
@@ -125,9 +125,9 @@ public final class Query implements Identifiable
     }
 
     /**
-     * @param sampler sampler
-     * @param description description
-     * @param metaDataSet meta data
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param description String; description
+     * @param metaDataSet MetaDataSet; meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet)
@@ -136,10 +136,10 @@ public final class Query implements Identifiable
     }
 
     /**
-     * @param sampler sampler
-     * @param description description
-     * @param metaDataSet meta data
-     * @param interval interval to gather statistics over
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param description String; description
+     * @param metaDataSet MetaDataSet; meta data
+     * @param interval Duration; interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet, final Duration interval)
@@ -148,10 +148,10 @@ public final class Query implements Identifiable
     }
 
     /**
-     * @param sampler sampler
-     * @param description description
-     * @param metaDataSet meta data
-     * @param updateFrequency update frequency
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param description String; description
+     * @param metaDataSet MetaDataSet; meta data
+     * @param updateFrequency Frequency; update frequency
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet,
@@ -161,11 +161,11 @@ public final class Query implements Identifiable
     }
 
     /**
-     * @param sampler sampler
-     * @param description description
-     * @param metaDataSet meta data
-     * @param updateFrequency update frequency
-     * @param interval interval to gather statistics over
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param description String; description
+     * @param metaDataSet MetaDataSet; meta data
+     * @param updateFrequency Frequency; update frequency
+     * @param interval Duration; interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
     public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet,

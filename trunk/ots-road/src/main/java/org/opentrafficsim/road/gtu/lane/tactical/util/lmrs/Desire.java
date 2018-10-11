@@ -31,8 +31,8 @@ public class Desire implements Serializable
 
     /**
      * Constructor which sets the supplied desire. Desire is limited to a maximum of 1.
-     * @param left Left desire.
-     * @param right Right desire.
+     * @param left double; Left desire.
+     * @param right double; Right desire.
      */
     public Desire(final double left, final double right)
     {
@@ -42,8 +42,8 @@ public class Desire implements Serializable
 
     /**
      * Constructor which sets the supplied desire. Desire is limited to a maximum of 1.
-     * @param left Left desire.
-     * @param right Right desire.
+     * @param left Dimensionless; Left desire.
+     * @param right Dimensionless; Right desire.
      */
     public Desire(final Dimensionless left, final Dimensionless right)
     {

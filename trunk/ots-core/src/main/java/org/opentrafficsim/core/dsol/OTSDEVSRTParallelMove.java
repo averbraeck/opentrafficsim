@@ -40,7 +40,7 @@ public class OTSDEVSRTParallelMove extends DEVSRealTimeClock<Time, Duration, Sim
 
     /**
      * Create a new OTSRealTimeClock.
-     * @param moveThreads The number of move threads to use
+     * @param moveThreads int; The number of move threads to use
      */
     public OTSDEVSRTParallelMove(final int moveThreads)
     {

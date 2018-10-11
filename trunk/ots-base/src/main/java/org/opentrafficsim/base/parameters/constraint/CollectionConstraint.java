@@ -25,7 +25,7 @@ public class CollectionConstraint<T> implements Constraint<T>
     protected final Collection<T> objects;
 
     /**
-     * @param objects acceptable objects
+     * @param objects Collection&lt;T&gt;; acceptable objects
      */
     public CollectionConstraint(final Collection<T> objects)
     {

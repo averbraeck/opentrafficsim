@@ -37,7 +37,7 @@ public class HistoricalTreeSet<E> extends AbstractHistoricalNavigableSet<E, Tree
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param c Collection; initial collection
+     * @param c Collection&lt;? extends E&gt;; initial collection
      */
     public HistoricalTreeSet(final HistoryManager historyManager, final Collection<? extends E> c)
     {

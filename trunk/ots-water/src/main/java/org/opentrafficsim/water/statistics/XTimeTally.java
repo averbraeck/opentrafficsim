@@ -28,8 +28,8 @@ public class XTimeTally extends XTally
     private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /**
-     * @param description description of the statistic
-     * @param simulator the simulator
+     * @param description String; description of the statistic
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      */
     public XTimeTally(String description, DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {

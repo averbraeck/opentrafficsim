@@ -100,8 +100,8 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
     private final DistNormal norm;
 
     /**
-     * @param perception perception
-     * @param anticipation anticipation
+     * @param perception LanePerception; perception
+     * @param anticipation Anticipation; anticipation
      */
     public DelayedNeighborsPerception(final LanePerception perception, final Anticipation anticipation)
     {

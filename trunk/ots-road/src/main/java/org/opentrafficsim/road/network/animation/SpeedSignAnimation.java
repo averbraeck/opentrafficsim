@@ -41,8 +41,8 @@ public class SpeedSignAnimation extends Renderable2D<SpeedSign> implements Seria
     private static final double EDGE = 1.3;
 
     /**
-     * @param source speed sign
-     * @param simulator simulator
+     * @param source SpeedSign; speed sign
+     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */

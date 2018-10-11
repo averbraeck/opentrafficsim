@@ -34,18 +34,18 @@ public class NWBRoadElement extends AbstractNWBRoadElement
 
     /**
      * A road element from the Dutch NDW road map
-     * @param myGeom
-     * @param startNode
-     * @param endNode
-     * @param roadId
-     * @param beginDistance
-     * @param endDistance
-     * @param junctionIdBegin
-     * @param junctionIdEnd
-     * @param adminDirection
-     * @param drivingDirection
-     * @param beginKM
-     * @param endKM
+     * @param myGeom Geometry;
+     * @param startNode OTSNode;
+     * @param endNode OTSNode;
+     * @param roadId String;
+     * @param beginDistance Double;
+     * @param endDistance Double;
+     * @param junctionIdBegin String;
+     * @param junctionIdEnd String;
+     * @param adminDirection String;
+     * @param drivingDirection String;
+     * @param beginKM Double;
+     * @param endKM Double;
      */
     public NWBRoadElement(Geometry myGeom, OTSNode startNode, OTSNode endNode, String roadId, Double beginDistance,
             Double endDistance, String junctionIdBegin, String junctionIdEnd, String adminDirection, String drivingDirection,

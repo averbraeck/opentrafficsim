@@ -42,9 +42,9 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     private final Length height;
 
     /**
-     * @param id the id
-     * @param geometry the top-level 2D outline of the object
-     * @param height the height of the object
+     * @param id String; the id
+     * @param geometry OTSLine3D; the top-level 2D outline of the object
+     * @param height Length; the height of the object
      */
     public StaticObject(final String id, final OTSLine3D geometry, final Length height)
     {
@@ -60,8 +60,8 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
     }
 
     /**
-     * @param id the id
-     * @param geometry the top-level 2D outline of the object
+     * @param id String; the id
+     * @param geometry OTSLine3D; the top-level 2D outline of the object
      */
     public StaticObject(final String id, final OTSLine3D geometry)
     {

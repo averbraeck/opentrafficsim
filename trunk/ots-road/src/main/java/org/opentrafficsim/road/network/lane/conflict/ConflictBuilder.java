@@ -616,9 +616,9 @@ public final class ConflictBuilder
         private final int combo;
 
         /**
-         * @param fraction1 fraction on lane 1
-         * @param fraction2 fraction on lane 1
-         * @param combo edge combination number
+         * @param fraction1 double; fraction on lane 1
+         * @param fraction2 double; fraction on lane 1
+         * @param combo int; edge combination number
          */
         Intersection(final double fraction1, final double fraction2, final int combo)
         {
@@ -826,7 +826,7 @@ public final class ConflictBuilder
 
         /**
          * Constructor with width.
-         * @param width double; width
+         * @param width Length; width
          */
         public FixedWidthGenerator(final Length width)
         {

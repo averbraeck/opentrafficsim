@@ -189,9 +189,9 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
     }
 
     /**
-     * @param source s
-     * @param simulator s
-     * @param type t
+     * @param source Stripe; s
+     * @param simulator SimulatorInterface.TimeDoubleUnit; s
+     * @param type TYPE; t
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      * @throws OTSGeometryException when something is very wrong with the geometry of the line

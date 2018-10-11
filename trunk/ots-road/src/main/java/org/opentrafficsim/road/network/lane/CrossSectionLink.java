@@ -67,11 +67,11 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * Construction of a cross section link.
      * @param network Network; the network
      * @param id String; the link id.
-     * @param startNode OTSNode; the start node (directional).
-     * @param endNode OTSNode; the end node (directional).
+     * @param startNode Node; the start node (directional).
+     * @param endNode Node; the end node (directional).
      * @param linkType LinkType; the link type
      * @param designLine OTSLine3D; the design line of the Link
-     * @param simulator the simulator on which events can be scheduled
+     * @param simulator OTSSimulatorInterface; the simulator on which events can be scheduled
      * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
@@ -87,10 +87,10 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
     /**
      * Clone a CrossSectionLink for a new network.
-     * @param newNetwork the new network to which the clone belongs
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
-     * @param link the link to clone from
+     * @param newNetwork Network; the new network to which the clone belongs
+     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
+     * @param animation boolean; whether to (re)create animation or not
+     * @param link CrossSectionLink; the link to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */

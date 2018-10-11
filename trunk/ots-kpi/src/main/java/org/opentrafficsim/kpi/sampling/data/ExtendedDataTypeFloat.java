@@ -31,7 +31,7 @@ public abstract class ExtendedDataTypeFloat<U extends Unit<U>, T extends Abstrac
 {
     /**
      * Constructor setting the id.
-     * @param id id
+     * @param id String; id
      */
     public ExtendedDataTypeFloat(final String id)
     {

@@ -50,7 +50,7 @@ public class LaneAnimation extends Renderable2D<Lane> implements ClonableRendera
      * Animate a Lane.
      * @param lane Lane; the lane
      * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
-     * @param color Color of the lane.
+     * @param color Color; Color of the lane.
      * @param drawCenterLine boolean; whether to draw the center line or not
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure

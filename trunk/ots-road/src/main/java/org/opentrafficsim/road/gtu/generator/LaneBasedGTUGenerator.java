@@ -124,8 +124,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
      * @param generatorPositions GeneratorPositions; location and initial direction provider for all generated GTUs
      * @param network OTSNetwork; the OTS network that owns the generated GTUs
      * @param simulator OTSSimulatorInterface; simulator
-     * @param roomChecker LaneBasedGTUGenerator.RoomChecker; the way that this generator checks that there is sufficient room to
-     *            place a new GTU
+     * @param roomChecker RoomChecker; the way that this generator checks that there is sufficient room to place a new GTU
      * @param idGenerator IdGenerator; id generator
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
      * @throws ProbabilityException pe

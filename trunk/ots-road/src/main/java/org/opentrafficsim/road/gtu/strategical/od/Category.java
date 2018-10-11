@@ -34,7 +34,7 @@ public class Category implements Serializable
     private final List<Object> objects = new ArrayList<>();
 
     /**
-     * @param categorization categorization
+     * @param categorization Categorization; categorization
      */
     private Category(final Categorization categorization)
     {
@@ -43,9 +43,9 @@ public class Category implements Serializable
     }
 
     /**
-     * @param categorization categorization
-     * @param object1 1st object
-     * @param objects other objects
+     * @param categorization Categorization; categorization
+     * @param object1 Object; 1st object
+     * @param objects Object...; other objects
      * @throws IllegalArgumentException if the objects do not comply with the categorization
      * @throws NullPointerException if any input is null
      */

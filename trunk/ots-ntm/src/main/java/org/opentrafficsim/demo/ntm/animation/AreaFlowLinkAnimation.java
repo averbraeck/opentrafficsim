@@ -40,9 +40,9 @@ public class AreaFlowLinkAnimation extends Renderable2D
     private Color colorBorder;
 
     /**
-     * @param source
-     * @param simulator
-     * @param width
+     * @param source AreaFlowLink;
+     * @param simulator SimulatorInterface.TimeDoubleUnit;
+     * @param width float;
      * @param traffic
      * @throws NamingException
      * @throws RemoteException

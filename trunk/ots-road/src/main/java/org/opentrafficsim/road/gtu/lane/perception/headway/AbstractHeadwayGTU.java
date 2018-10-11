@@ -63,16 +63,16 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
 
     /**
      * Construct a new Headway information object, for a moving GTU ahead of us or behind us.
-     * @param id the id of the GTU for comparison purposes, can not be null.
-     * @param gtuType the perceived GTU Type, or null if unknown.
+     * @param id String; the id of the GTU for comparison purposes, can not be null.
+     * @param gtuType GTUType; the perceived GTU Type, or null if unknown.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @param facingSameDirection whether the GTU is facing the same direction.
+     * @param facingSameDirection boolean; whether the GTU is facing the same direction.
      * @param length the (perceived) length of the other object; can not be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
-     * @param desiredSpeed desired speed
-     * @param gtuStatus the observable characteristics of the GTU.
+     * @param desiredSpeed Speed; desired speed
+     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -97,11 +97,11 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
      * @param id String; the id of the GTU for comparison purposes, can not be null.
      * @param gtuType GTUType; the perceived GTU Type, or null if unknown.
      * @param distance Length; the distance to the other GTU; if this constructor is used, distance cannot be null.
-     * @param facingSameDirection whether the GTU is facing the same direction.
+     * @param facingSameDirection boolean; whether the GTU is facing the same direction.
      * @param length the (perceived) length of the other object; can not be null.
      * @param width the (perceived) width of the other object; can not be null.
-     * @param desiredSpeed desired speed
-     * @param gtuStatus the observable characteristics of the GTU.
+     * @param desiredSpeed Speed; desired speed
+     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayGTU(final String id, final GTUType gtuType, final Length distance, final boolean facingSameDirection,
@@ -121,18 +121,18 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
 
     /**
      * Construct a new Headway information object, for a moving GTU parallel with us.
-     * @param id the id of the GTU for comparison purposes, can not be null.
-     * @param gtuType the perceived GTU Type, or null if unknown.
+     * @param id String; the id of the GTU for comparison purposes, can not be null.
+     * @param gtuType GTUType; the perceived GTU Type, or null if unknown.
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
-     * @param facingSameDirection whether the GTU is facing the same direction.
+     * @param facingSameDirection boolean; whether the GTU is facing the same direction.
      * @param length the (perceived) length of the other object; can not be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param speed the (perceived) speed of the other GTU; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other GTU; can be null if unknown.
-     * @param desiredSpeed desired speed
-     * @param gtuStatus the observable characteristics of the GTU.
+     * @param desiredSpeed Speed; desired speed
+     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -155,16 +155,16 @@ public abstract class AbstractHeadwayGTU extends AbstractHeadwayCopy implements 
 
     /**
      * Construct a new Headway information object, for a non-moving GTU parallel with us.
-     * @param id the id of the GTU for comparison purposes, can not be null.
-     * @param gtuType the perceived GTU Type, or null if unknown.
+     * @param id String; the id of the GTU for comparison purposes, can not be null.
+     * @param gtuType GTUType; the perceived GTU Type, or null if unknown.
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
-     * @param facingSameDirection whether the GTU is facing the same direction.
+     * @param facingSameDirection boolean; whether the GTU is facing the same direction.
      * @param length the (perceived) length of the other object; can not be null.
      * @param width the (perceived) width of the other object; can not be null.
-     * @param desiredSpeed desired speed
-     * @param gtuStatus the observable characteristics of the GTU.
+     * @param desiredSpeed Speed; desired speed
+     * @param gtuStatus GTUStatus...; the observable characteristics of the GTU.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")

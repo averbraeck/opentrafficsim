@@ -70,7 +70,7 @@ public abstract class ExpansionNetwork extends OTSNetwork
     private static final long serialVersionUID = 20150104L;
 
     /**
-     * @param id the network id.
+     * @param id String; the network id.
      */
     public ExpansionNetwork(final String id)
     {

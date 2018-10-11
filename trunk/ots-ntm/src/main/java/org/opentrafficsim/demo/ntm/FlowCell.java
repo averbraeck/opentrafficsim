@@ -56,11 +56,11 @@ public class FlowCell implements Locatable
     private CellBehaviourFlow cellBehaviour;
 
     /**
-     * @param cellLength
-     * @param maxCapacity
-     * @param speed
-     * @param numberOfLanes
-     * @param behaviourType
+     * @param cellLength Length;
+     * @param maxCapacity Frequency;
+     * @param speed Speed;
+     * @param numberOfLanes int;
+     * @param behaviourType TrafficBehaviourType;
      */
     public FlowCell(final Length cellLength, final Frequency maxCapacity, Speed speed, final int numberOfLanes,
             final TrafficBehaviourType behaviourType)

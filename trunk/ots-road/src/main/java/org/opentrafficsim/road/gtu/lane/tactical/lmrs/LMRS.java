@@ -94,13 +94,13 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
 
     /**
      * Constructor setting the car-following model.
-     * @param carFollowingModel Car-following model.
-     * @param gtu GTU
-     * @param lanePerception perception
-     * @param synchronization type of synchronization
-     * @param cooperation type of cooperation
-     * @param gapAcceptance gap-acceptance
-     * @param tailGating tail gating
+     * @param carFollowingModel CarFollowingModel; Car-following model.
+     * @param gtu LaneBasedGTU; GTU
+     * @param lanePerception LanePerception; perception
+     * @param synchronization Synchronization; type of synchronization
+     * @param cooperation Cooperation; type of cooperation
+     * @param gapAcceptance GapAcceptance; gap-acceptance
+     * @param tailGating Tailgating; tail gating
      */
     public LMRS(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu, final LanePerception lanePerception,
             final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,

@@ -194,9 +194,9 @@ public class N201IMB extends AbstractWrappableAnimation
         private GisRenderable2D gisMap;
 
         /**
-         * @param modelProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
-         * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
-         * @param network Network; the network
+         * @param modelProperties List&lt;Property&lt;?&gt;&gt;; the properties
+         * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
+         * @param network OTSNetwork; the network
          */
         N201Model(final List<Property<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
         {
@@ -315,8 +315,8 @@ public class N201IMB extends AbstractWrappableAnimation
         final double dy;
 
         /**
-         * @param dx x transform
-         * @param dy y transform
+         * @param dx double; x transform
+         * @param dy double; y transform
          */
         public CoordinateTransformRD(final double dx, final double dy)
         {

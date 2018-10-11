@@ -284,7 +284,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param lateralOffset Length; the lateral offset of the design line of the new CrossSectionLink with respect to the design
      *            line of the parent Link
      * @param width Length; width, positioned <i>symmetrically around</i> the design line
-     * @param laneType type of lane to deduce compatibility with GTU types
+     * @param laneType LaneType; type of lane to deduce compatibility with GTU types
      * @param speedLimitMap Map&lt;GTUType, Speed&gt;; the speed limit on this lane, specified per GTU Type
      * @param overtakingConditions OvertakingConditions; the conditions for overtaking another GTU, viewed from this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
@@ -367,7 +367,7 @@ public class Lane extends CrossSectionElement implements Serializable
      *            If not, a NetworkException is thrown.
      * @param laneType LaneType; the type of lane to deduce compatibility with GTU types
      * @param speedLimit Speed; the speed limit on this lane
-     * @param overtakingConditions OvertakingCondition; the conditions for overtaking another GTU, viewed from this lane
+     * @param overtakingConditions OvertakingConditions; the conditions for overtaking another GTU, viewed from this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
@@ -387,10 +387,10 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * Clone a Lane for a new network.
-     * @param newParentLink the new link to which the clone belongs
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
-     * @param cse the element to clone from
+     * @param newParentLink CrossSectionLink; the new link to which the clone belongs
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
+     * @param animation boolean; whether to (re)create animation or not
+     * @param cse Lane; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */

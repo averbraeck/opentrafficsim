@@ -36,7 +36,7 @@ public class HeadwayObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a moving object ahead of us or behind us.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
@@ -50,7 +50,7 @@ public class HeadwayObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a non-moving object ahead of us or behind us.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
@@ -61,7 +61,7 @@ public class HeadwayObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a moving object parallel with us.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
@@ -77,7 +77,7 @@ public class HeadwayObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a non-moving object parallel with us.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
@@ -91,9 +91,9 @@ public class HeadwayObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a moving object ahead of us or behind us.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @param length the length of the other object, can be null of unknown.
+     * @param length Length; the length of the other object, can be null of unknown.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
@@ -106,9 +106,9 @@ public class HeadwayObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a non-moving object ahead of us or behind us.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @param length the length of the other object, can be null of unknown.
+     * @param length Length; the length of the other object, can be null of unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length distance, final Length length) throws GTUException
@@ -118,11 +118,11 @@ public class HeadwayObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a moving object parallel with us.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
-     * @param length the length of the other object, can be null of unknown.
+     * @param length Length; the length of the other object, can be null of unknown.
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
@@ -135,11 +135,11 @@ public class HeadwayObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a non-moving object parallel with us.
-     * @param id the id of the object for comparison purposes, can not be null.
+     * @param id String; the id of the object for comparison purposes, can not be null.
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
-     * @param length the length of the other object, can be null of unknown.
+     * @param length Length; the length of the other object, can be null of unknown.
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     public HeadwayObject(final String id, final Length overlapFront, final Length overlap, final Length overlapRear,

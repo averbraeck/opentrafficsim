@@ -58,8 +58,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
-     * @param gtu the Car to draw
-     * @param simulator the simulator to schedule on
+     * @param gtu LaneBasedGTU; the Car to draw
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
@@ -71,8 +71,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
-     * @param gtu the Car to draw
-     * @param simulator the simulator to schedule on
+     * @param gtu LaneBasedGTU; the Car to draw
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
      * @param gtuColorer GTUColorer; the GTUColorer that determines what fill color to use
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
@@ -242,13 +242,13 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         private boolean isTextDestroyed = false;
 
         /**
-         * @param source the object for which the text is displayed
-         * @param text the text to display
-         * @param dx the horizontal movement of the text, in meters
-         * @param dy the vertical movement of the text, in meters
-         * @param textAlignment where to place the text
-         * @param color the color of the text
-         * @param simulator the simulator
+         * @param source Locatable; the object for which the text is displayed
+         * @param text String; the text to display
+         * @param dx float; the horizontal movement of the text, in meters
+         * @param dy float; the vertical movement of the text, in meters
+         * @param textAlignment TextAlignment; where to place the text
+         * @param color Color; the color of the text
+         * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */

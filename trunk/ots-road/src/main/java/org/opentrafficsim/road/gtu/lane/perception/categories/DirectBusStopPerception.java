@@ -47,7 +47,7 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
     private TimeStampedObject<PerceptionCollectable<HeadwayBusStop, BusStop>> busStops;
 
     /**
-     * @param perception perception
+     * @param perception LanePerception; perception
      */
     public DirectBusStopPerception(final LanePerception perception)
     {

@@ -74,7 +74,7 @@ public class XTally implements Serializable
     public static final short RIGTH_SIDE_CONFIDENCE = 1;
 
     /**
-     * @param description description of the statistic
+     * @param description String; description of the statistic
      */
     public XTally(final String description)
     {

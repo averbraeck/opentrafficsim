@@ -37,7 +37,7 @@ public class HistoricalTreeMap<K, V> extends AbstractHistoricalNavigableMap<K, V
     /**
      * Constructor.
      * @param historyManager HistoryManager; history manager
-     * @param m Map; initial map
+     * @param m Map&lt;? extends K, ? extends V&gt;; initial map
      */
     public HistoricalTreeMap(final HistoryManager historyManager, final Map<? extends K, ? extends V> m)
     {

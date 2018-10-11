@@ -56,7 +56,7 @@ public class OSMParser implements Sink, Serializable
 
     /**
      * Construct a new OSMParser and set wantedTags and filteredKeys in one call.
-     * @param wantedTags List&lt;Tab&gt;; the list of wantedTags
+     * @param wantedTags List&lt;OSMTag&gt;; the list of wantedTags
      * @param filteredKeys List&lt;String&gt;; the list of filtered keys
      */
     public OSMParser(final List<OSMTag> wantedTags, final List<String> filteredKeys)

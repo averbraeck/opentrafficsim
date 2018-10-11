@@ -94,7 +94,7 @@ public class XmlOdParser implements Serializable
      * Constructor.
      * @param simulator OTSSimulatorInterface; simulator
      * @param network OTSNetwork; network
-     * @param gtuTypes Set; set of GTU types
+     * @param gtuTypes Set&lt;GTUType&gt;; set of GTU types
      */
     public XmlOdParser(final OTSSimulatorInterface simulator, final OTSNetwork network, final Set<GTUType> gtuTypes)
     {

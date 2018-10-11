@@ -66,8 +66,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     /**
      * Constructor for a strategical planner without route. This can only be used if the network does not have splits, or split
      * fractions are used.
-     * @param fixedTacticalPlanner the tactical planner to use for the GTU
-     * @param gtu GTU
+     * @param fixedTacticalPlanner LaneBasedTacticalPlanner; the tactical planner to use for the GTU
+     * @param gtu LaneBasedGTU; GTU
      * @throws GTUException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu)
@@ -78,11 +78,11 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /**
      * Constructor for a strategical planner with route.
-     * @param fixedTacticalPlanner the tactical planner to use for the GTU
-     * @param route the route to drive
-     * @param gtu GTU
-     * @param origin origin node
-     * @param destination destination node
+     * @param fixedTacticalPlanner LaneBasedTacticalPlanner; the tactical planner to use for the GTU
+     * @param route Route; the route to drive
+     * @param gtu LaneBasedGTU; GTU
+     * @param origin Node; origin node
+     * @param destination Node; destination node
      * @throws GTUException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final Route route,
@@ -93,11 +93,11 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /**
      * Constructor for a strategical planner with route supplier.
-     * @param fixedTacticalPlanner the tactical planner to use for the GTU
-     * @param gtu GTU
-     * @param origin origin node
-     * @param destination destination node
-     * @param routeSupplier route supplier
+     * @param fixedTacticalPlanner LaneBasedTacticalPlanner; the tactical planner to use for the GTU
+     * @param gtu LaneBasedGTU; GTU
+     * @param origin Node; origin node
+     * @param destination Node; destination node
+     * @param routeSupplier RouteSupplier; route supplier
      * @throws GTUException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final LaneBasedGTU gtu,
@@ -109,12 +109,12 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     /**
      * Constructor for a strategical planner with route. If the route is {@code null}, a shortest path to the destination is
      * derived.
-     * @param fixedTacticalPlanner the tactical planner to use for the GTU
-     * @param route the route to drive
-     * @param gtu GTU
-     * @param origin origin node
-     * @param destination destination node
-     * @param routeSupplier route supplier
+     * @param fixedTacticalPlanner LaneBasedTacticalPlanner; the tactical planner to use for the GTU
+     * @param route Route; the route to drive
+     * @param gtu LaneBasedGTU; GTU
+     * @param origin Node; origin node
+     * @param destination Node; destination node
+     * @param routeSupplier RouteSupplier; route supplier
      * @throws GTUException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final Route route,

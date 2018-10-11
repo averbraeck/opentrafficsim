@@ -33,8 +33,8 @@ import nl.tudelft.simulation.event.Event;
 public class ShapeTestApplication extends DSOLApplication implements UNITS
 {
     /**
-     * @param title String title of the application window
-     * @param panel DSOLPanel
+     * @param title String; String title of the application window
+     * @param panel DSOLPanel&lt;Time,Duration,SimTimeDoubleUnit&gt;; DSOLPanel
      */
     public ShapeTestApplication(final String title, final DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {

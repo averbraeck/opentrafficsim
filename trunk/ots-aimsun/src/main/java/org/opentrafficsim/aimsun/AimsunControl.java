@@ -83,8 +83,8 @@ public class AimsunControl extends AbstractWrappableAnimation
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException,
-            ValueException, ParameterException, SimRuntimeException
+    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException, ValueException,
+            ParameterException, SimRuntimeException
     {
         String ip = null;
         Integer port = null;
@@ -184,8 +184,8 @@ public class AimsunControl extends AbstractWrappableAnimation
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    private void commandLoop(final Socket socket) throws IOException, NetworkException, OTSGeometryException,
-            NamingException, ValueException, ParameterException, SimRuntimeException
+    private void commandLoop(final Socket socket) throws IOException, NetworkException, OTSGeometryException, NamingException,
+            ValueException, ParameterException, SimRuntimeException
     {
         System.out.println("Entering command loop");
         InputStream inputStream = socket.getInputStream();
@@ -201,9 +201,8 @@ public class AimsunControl extends AbstractWrappableAnimation
                 byte[] sizeBytes = new byte[4];
                 // inputStream.read(sizeBytes);
                 fillBuffer(inputStream, sizeBytes);
-                int size =
-                        ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
-                                + (sizeBytes[3] & 0xff);
+                int size = ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
+                        + (sizeBytes[3] & 0xff);
                 System.out.println("expecting message of " + size + " bytes");
                 byte[] buffer = new byte[size];
                 // inputStream.read(buffer);
@@ -231,9 +230,8 @@ public class AimsunControl extends AbstractWrappableAnimation
                         Duration warmupDuration = new Duration(createSimulation.getWarmUpTime(), DurationUnit.SECOND);
                         try
                         {
-                            SimpleAnimator animator =
-                                    buildAnimator(Time.ZERO, warmupDuration, runDuration, new ArrayList<Property<?>>(),
-                                            null, true);
+                            SimpleAnimator animator = buildAnimator(Time.ZERO, warmupDuration, runDuration,
+                                    new ArrayList<Property<?>>(), null, true);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
                         }
                         catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception1)
@@ -470,8 +468,8 @@ public class AimsunControl extends AbstractWrappableAnimation
             {
                 this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), true);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                    | GTUException | OTSGeometryException | ValueException | ParameterException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException | ValueException | ParameterException exception)
             {
                 exception.printStackTrace();
                 throw new SimRuntimeException(exception);

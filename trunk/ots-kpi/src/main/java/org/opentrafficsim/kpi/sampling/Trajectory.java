@@ -82,10 +82,10 @@ public final class Trajectory<G extends GtuDataInterface>
     private final KpiLaneDirection kpiLaneDirection;
 
     /**
-     * @param gtu GTU of this trajectory, only the id is stored.
-     * @param metaData meta data
-     * @param extendedData types of extended data
-     * @param kpiLaneDirection direction of travel
+     * @param gtu GtuDataInterface; GTU of this trajectory, only the id is stored.
+     * @param metaData MetaData; meta data
+     * @param extendedData Set&lt;ExtendedDataType&lt;?,?,?,G&gt;&gt;; types of extended data
+     * @param kpiLaneDirection KpiLaneDirection; direction of travel
      */
     public Trajectory(final GtuDataInterface gtu, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?, G>> extendedData,
             final KpiLaneDirection kpiLaneDirection)
@@ -95,10 +95,10 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * Private constructor for creating subsets.
-     * @param gtuId GTU id
-     * @param metaData meta data
-     * @param extendedData types of extended data
-     * @param kpiLaneDirection direction of travel
+     * @param gtuId String; GTU id
+     * @param metaData MetaData; meta data
+     * @param extendedData Set&lt;ExtendedDataType&lt;?,?,?,G&gt;&gt;; types of extended data
+     * @param kpiLaneDirection KpiLaneDirection; direction of travel
      */
     private Trajectory(final String gtuId, final MetaData metaData, final Set<ExtendedDataType<?, ?, ?, G>> extendedData,
             final KpiLaneDirection kpiLaneDirection)
@@ -776,10 +776,10 @@ public final class Trajectory<G extends GtuDataInterface>
         public final double fTo;
 
         /**
-         * @param from from index, rounded down
-         * @param fFrom from index, fraction
-         * @param to to index, rounded down
-         * @param fTo to index, fraction
+         * @param from int; from index, rounded down
+         * @param fFrom double; from index, fraction
+         * @param to int; to index, rounded down
+         * @param fTo double; to index, fraction
          */
         Boundaries(final int from, final double fFrom, final int to, final double fTo)
         {

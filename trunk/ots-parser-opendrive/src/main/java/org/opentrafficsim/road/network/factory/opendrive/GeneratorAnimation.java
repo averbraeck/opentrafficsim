@@ -42,9 +42,9 @@ public class GeneratorAnimation extends Renderable2D implements Serializable
 
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
-     * @param lane the lane where the generator is
-     * @param position the position on the lane
-     * @param simulator the simulator to schedule on
+     * @param lane Lane; the lane where the generator is
+     * @param position Length; the position on the lane
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      * @throws OTSGeometryException if position out of bounds
@@ -86,8 +86,8 @@ public class GeneratorAnimation extends Renderable2D implements Serializable
         private double width;
 
         /**
-         * @param lane the lane where the generator is
-         * @param position the position on the lane
+         * @param lane Lane; the lane where the generator is
+         * @param position Length; the position on the lane
          * @throws OTSGeometryException on position out of bounds
          */
         public GenPos(final Lane lane, final Length position) throws OTSGeometryException

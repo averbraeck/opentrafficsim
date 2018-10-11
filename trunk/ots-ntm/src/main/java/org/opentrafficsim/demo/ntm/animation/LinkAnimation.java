@@ -32,9 +32,9 @@ public class LinkAnimation extends Renderable2D
     private final float width;
 
     /**
-     * @param link
-     * @param simulator
-     * @param width
+     * @param link NTMLink;
+     * @param simulator SimulatorInterface.TimeDoubleUnit;
+     * @param width float;
      * @throws NamingException
      * @throws RemoteException
      */

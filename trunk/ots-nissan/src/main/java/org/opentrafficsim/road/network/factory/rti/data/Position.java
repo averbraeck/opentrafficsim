@@ -18,9 +18,9 @@ public class Position implements Serializable
     private float z; // position[m]
 
     /**
-     * @param y2 x
-     * @param x2 y
-     * @param z2 z
+     * @param y2 double; x
+     * @param x2 double; y
+     * @param z2 double; z
      */
     public Position(double y2, double x2, double z2)
     {

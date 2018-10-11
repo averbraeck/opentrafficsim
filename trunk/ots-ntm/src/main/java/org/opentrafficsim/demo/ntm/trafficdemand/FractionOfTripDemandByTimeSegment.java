@@ -29,9 +29,9 @@ public class FractionOfTripDemandByTimeSegment
     private double shareOfDemand;
 
     /**
-     * @param timeSinceMidnight by time of day (HH:MM:SS)
-     * @param duration length of this time segment
-     * @param shareOfDemand amount of trips of this segment relatively to the total simulation period
+     * @param timeSinceMidnight Time; by time of day (HH:MM:SS)
+     * @param duration Duration; length of this time segment
+     * @param shareOfDemand double; amount of trips of this segment relatively to the total simulation period
      */
     public FractionOfTripDemandByTimeSegment(final Time timeSinceMidnight, final Duration duration, final double shareOfDemand)
     {

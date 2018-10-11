@@ -43,13 +43,14 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /**
      * Construct an operational plan with or without a lane change.
-     * @param gtu the GTU for debugging purposes
-     * @param path the path to follow from a certain time till a certain time. The path should have <i>at least</i> the length
-     * @param startTime the absolute start time when we start executing the path
-     * @param startSpeed the GTU speed when we start executing the path
-     * @param operationalPlanSegmentList the segments that make up the path with an acceleration, constant speed or deceleration
-     *            profile
-     * @param deviative whether the path is not along lane center lines
+     * @param gtu LaneBasedGTU; the GTU for debugging purposes
+     * @param path OTSLine3D; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
+     *            least&lt;/i&gt; the length
+     * @param startTime Time; the absolute start time when we start executing the path
+     * @param startSpeed Speed; the GTU speed when we start executing the path
+     * @param operationalPlanSegmentList List&lt;Segment&gt;; the segments that make up the path with an acceleration, constant
+     *            speed or deceleration profile
+     * @param deviative boolean; whether the path is not along lane center lines
      * @throws OperationalPlanException when the path is too short for the operation
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -62,11 +63,11 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /**
      * Build a plan where the GTU will wait for a certain time. Of course no lane change takes place.
-     * @param gtu the GTU for debugging purposes
-     * @param waitPoint the point at which the GTU will wait
-     * @param startTime the current time or a time in the future when the plan should start
-     * @param duration the waiting time
-     * @param deviative whether the path is not along lane center lines
+     * @param gtu LaneBasedGTU; the GTU for debugging purposes
+     * @param waitPoint DirectedPoint; the point at which the GTU will wait
+     * @param startTime Time; the current time or a time in the future when the plan should start
+     * @param duration Duration; the waiting time
+     * @param deviative boolean; whether the path is not along lane center lines
      * @throws OperationalPlanException when construction of a waiting path fails
      */
     public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final DirectedPoint waitPoint, final Time startTime,

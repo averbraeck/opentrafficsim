@@ -78,8 +78,8 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     private final HeadwayGtuType headwayGtuType;
 
     /**
-     * @param perception perception
-     * @param headwayGtuType type of headway gtu to generate
+     * @param perception LanePerception; perception
+     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
      */
     public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
     {
@@ -616,7 +616,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
 
         /**
          * Constructor.
-         * @param base SortedSet; base set of GTU's at distance
+         * @param base SortedSet&lt;DistanceGTU&gt;; base set of GTU's at distance
          * @param headwayGtuType HeadwayGtuType; headway type for perceived GTU's
          * @param perceivingGtu LaneBasedGTU; perceiving GTU
          * @param downstream boolean; whether the GTU's are downstream

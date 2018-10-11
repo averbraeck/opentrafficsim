@@ -28,7 +28,7 @@ public class OTSReplication extends Replication<Time, Duration, SimTimeDoubleUni
     private HistoryManager historyManager;
 
     /**
-     * @param experiment Experiment
+     * @param experiment Experiment&lt;Time,Duration,SimTimeDoubleUnit&gt;; Experiment
      * @throws NamingException when the context for the replication cannot be created
      */
     public OTSReplication(final Experiment<Time, Duration, SimTimeDoubleUnit> experiment) throws NamingException
@@ -41,7 +41,7 @@ public class OTSReplication extends Replication<Time, Duration, SimTimeDoubleUni
      * @param id String; id of the new OTSReplication
      * @param startTime SimTimeDoubleUnit; the start time of the new OTSReplication
      * @param warmupPeriod Duration; the warmup period of the new OTSReplication
-     * @param runLength DoubleScalarRel&lt;TimeUnit&gt;; the run length of the new OTSReplication
+     * @param runLength Duration; the run length of the new OTSReplication
      * @param model OTSModelInterface; the model
      * @throws NamingException when the context for the replication cannot be created
      */

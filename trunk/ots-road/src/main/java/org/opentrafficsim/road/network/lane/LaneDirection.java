@@ -38,8 +38,8 @@ public class LaneDirection implements Serializable
     private final GTUDirectionality direction;
 
     /**
-     * @param lane the lane
-     * @param direction the direction to drive on this lane
+     * @param lane Lane; the lane
+     * @param direction GTUDirectionality; the direction to drive on this lane
      */
     public LaneDirection(final Lane lane, final GTUDirectionality direction)
     {

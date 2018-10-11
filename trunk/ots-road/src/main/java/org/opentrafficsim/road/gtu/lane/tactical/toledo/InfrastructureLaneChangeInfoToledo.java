@@ -31,9 +31,9 @@ public class InfrastructureLaneChangeInfoToledo extends InfrastructureLaneChange
     private final int splitNumber;
 
     /**
-     * @param requiredNumberOfLaneChanges number of lane changes
-     * @param record record
-     * @param splitNumber number of the split along the road
+     * @param requiredNumberOfLaneChanges int; number of lane changes
+     * @param record LaneStructureRecord; record
+     * @param splitNumber int; number of the split along the road
      * @throws GTUException if the split number is below 1
      */
     public InfrastructureLaneChangeInfoToledo(final int requiredNumberOfLaneChanges, final LaneStructureRecord record,

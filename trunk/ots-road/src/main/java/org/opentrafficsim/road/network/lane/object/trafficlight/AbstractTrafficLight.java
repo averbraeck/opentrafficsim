@@ -37,10 +37,10 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
 
     /**
      * Construct an AbstractTrafficLight with specified elevation.
-     * @param id traffic light id
-     * @param lane lane where the traffic light is located
-     * @param longitudinalPosition position of the traffic light on the lane, in the design direction
-     * @param simulator the simulator for animation and timed events
+     * @param id String; traffic light id
+     * @param lane Lane; lane where the traffic light is located
+     * @param longitudinalPosition Length; position of the traffic light on the lane, in the design direction
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator for animation and timed events
      * @param height Length; the elevation of the traffic light
      * @throws NetworkException on failure to place the object
      */
@@ -57,10 +57,10 @@ public abstract class AbstractTrafficLight extends AbstractLaneBasedObject imple
 
     /**
      * Construct an AbstractTrafficLight at default elevation (use only on roads at elevation 0).
-     * @param id traffic light id
-     * @param lane lane where the traffic light is located
-     * @param longitudinalPosition position of the traffic light on the lane, in the design direction
-     * @param simulator the simulator for animation and timed events
+     * @param id String; traffic light id
+     * @param lane Lane; lane where the traffic light is located
+     * @param longitudinalPosition Length; position of the traffic light on the lane, in the design direction
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator for animation and timed events
      * @throws NetworkException on failure to place the object
      */
     public AbstractTrafficLight(final String id, final Lane lane, final Length longitudinalPosition,

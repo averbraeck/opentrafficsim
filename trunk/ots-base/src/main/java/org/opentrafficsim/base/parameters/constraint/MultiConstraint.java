@@ -46,7 +46,7 @@ public class MultiConstraint<T> implements Constraint<T>
 
     /**
      * Constructor.
-     * @param constraints constraints
+     * @param constraints Set&lt;Constraint&lt;T&gt;&gt;; constraints
      */
     public MultiConstraint(final Set<Constraint<T>> constraints)
     {

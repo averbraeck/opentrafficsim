@@ -49,9 +49,9 @@ public class TextProperties implements Serializable
 
     /**
      * Construct a set of text properties for animation with alignment, color and size.
-     * @param textAlignment the text alignment (LEFT, CENTER or RIGHT)
-     * @param color the color of the text
-     * @param fontSize the size of the font (in units of the animation, e.g., meters)
+     * @param textAlignment TextAlignment; the text alignment (LEFT, CENTER or RIGHT)
+     * @param color Color; the color of the text
+     * @param fontSize float; the size of the font (in units of the animation, e.g., meters)
      */
     public TextProperties(final TextAlignment textAlignment, final Color color, final float fontSize)
     {
@@ -60,11 +60,11 @@ public class TextProperties implements Serializable
 
     /**
      * Construct a set of text properties for animation with alignment, color and size.
-     * @param textAlignment the text alignment (LEFT, CENTER or RIGHT)
-     * @param color the color of the text, e.g., Color.RED
-     * @param fontSize the size of the font (in units of the animation, e.g., meters)
-     * @param font the name of the font, e.g., specified as Font.SERIF
-     * @param textAttributes a map of text attributes to set, e.g., UNDERLINE or WEIGHT
+     * @param textAlignment TextAlignment; the text alignment (LEFT, CENTER or RIGHT)
+     * @param color Color; the color of the text, e.g., Color.RED
+     * @param fontSize float; the size of the font (in units of the animation, e.g., meters)
+     * @param font String; the name of the font, e.g., specified as Font.SERIF
+     * @param textAttributes Map&lt;TextAttribute,Object&gt;; a map of text attributes to set, e.g., UNDERLINE or WEIGHT
      */
     public TextProperties(final TextAlignment textAlignment, final Color color, final float fontSize, final String font,
             final Map<TextAttribute, Object> textAttributes)

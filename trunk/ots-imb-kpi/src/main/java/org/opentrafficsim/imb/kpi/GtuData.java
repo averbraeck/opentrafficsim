@@ -27,9 +27,9 @@ public class GtuData implements GtuDataInterface
     private final RouteData route;
 
     /**
-     * @param id the id
-     * @param gtuType the gtu type
-     * @param route the route
+     * @param id String; the id
+     * @param gtuType GtuTypeData; the gtu type
+     * @param route RouteData; the route
      */
     public GtuData(final String id, final GtuTypeData gtuType, final RouteData route)
     {

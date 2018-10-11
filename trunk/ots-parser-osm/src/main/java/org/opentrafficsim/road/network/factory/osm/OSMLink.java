@@ -55,7 +55,7 @@ public class OSMLink implements Serializable, Identifiable
      * Construct a new OSMLink.
      * @param fromNode OSMNode; the OSMNode where this OSMLinks begins
      * @param toNode OSMNode; the OSMNode where this OSMLink ends
-     * @param tags List&lt;OSMTab&gt;; the OSMTags (inherited from the OSMWay that causes this OSMLink to be constructed)
+     * @param tags List&lt;OSMTag&gt;; the OSMTags (inherited from the OSMWay that causes this OSMLink to be constructed)
      * @param length double; the length of the new OSMLink
      * @param warningListener WarningListener; the warning listener that will receive warning events
      */
@@ -158,8 +158,8 @@ public class OSMLink implements Serializable, Identifiable
      * Construct a new OSMLink with specified number of lanes and forward lanes.
      * @param startNode OSMNode; the start OSMNode of the new OSMLink
      * @param endNode OSMNode; the end OSMNode of the new OSMLink
-     * @param tags List of Tags inherited from way
-     * @param length length of link
+     * @param tags List&lt;OSMTag&gt;; List of Tags inherited from way
+     * @param length double; length of link
      * @param lanes byte; the total number of lanes
      * @param flanes byte; the number of forward lanes
      */

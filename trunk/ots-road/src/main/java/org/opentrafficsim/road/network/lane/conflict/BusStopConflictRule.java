@@ -33,7 +33,7 @@ public class BusStopConflictRule implements ConflictRule
 
     /**
      * Constructor.
-     * @param simulator simulator
+     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
      */
     public BusStopConflictRule(final SimulatorInterface.TimeDoubleUnit simulator)
     {

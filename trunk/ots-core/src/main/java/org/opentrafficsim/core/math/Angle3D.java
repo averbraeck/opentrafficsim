@@ -31,7 +31,7 @@ public class Angle3D implements Serializable
     private final AngleVector rotation;
 
     /**
-     * @param rotation the angles of the rotation in 3D (RPY coded)
+     * @param rotation AngleVector; the angles of the rotation in 3D (RPY coded)
      * @throws ValueException in case the vector does not have exactly three elements
      */
     public Angle3D(final AngleVector rotation) throws ValueException
@@ -44,9 +44,9 @@ public class Angle3D implements Serializable
     }
 
     /**
-     * @param roll (phi) the rotation around the x-axis
-     * @param pitch (theta) the rotation around the y-axis
-     * @param yaw (psi) the rotation around the z-axis
+     * @param roll Angle; (phi) the rotation around the x-axis
+     * @param pitch Angle; (theta) the rotation around the y-axis
+     * @param yaw Angle; (psi) the rotation around the z-axis
      * @throws ValueException in case the units are incorrect
      */
     public Angle3D(final Angle roll, final Angle pitch, final Angle yaw) throws ValueException
@@ -55,10 +55,10 @@ public class Angle3D implements Serializable
     }
 
     /**
-     * @param roll (phi) the rotation around the x-axis
-     * @param pitch (theta) the rotation around the y-axis
-     * @param yaw (psi) the rotation around the z-axis
-     * @param unit the unit of the RPY parameters
+     * @param roll double; (phi) the rotation around the x-axis
+     * @param pitch double; (theta) the rotation around the y-axis
+     * @param yaw double; (psi) the rotation around the z-axis
+     * @param unit AngleUnit; the unit of the RPY parameters
      * @throws ValueException in case the units are incorrect
      */
     public Angle3D(final double roll, final double pitch, final double yaw, final AngleUnit unit) throws ValueException

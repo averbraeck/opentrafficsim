@@ -26,7 +26,7 @@ public class MeanDensity extends AbstractIndicator<LinearDensity>
     private final TotalTravelTime travelTime;
 
     /**
-     * @param travelTime travel time indicator
+     * @param travelTime TotalTravelTime; travel time indicator
      */
     public MeanDensity(final TotalTravelTime travelTime)
     {

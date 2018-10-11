@@ -81,21 +81,23 @@ public class HeadwayConflict extends AbstractHeadwayCopy
 
     /**
      * Constructor.
-     * @param conflictType conflict type
-     * @param conflictPriority conflict priority
-     * @param conflictRuleType conflict rule type
-     * @param id id
-     * @param distance distance
-     * @param length length of the conflict
-     * @param conflictingLength length of the conflict on the conflicting lane
-     * @param upstreamConflictingGTUs conflicting GTU's upstream of the <i>start</i> of the conflict
-     * @param downstreamConflictingGTUs conflicting GTU's downstream of the <i>start</i> of the conflict
-     * @param conflictingVisibility visibility on the conflicting lane within which conflicting vehicles are visible
-     * @param conflictingSpeedLimit speed limit on the conflicting lane
-     * @param conflictingLink conflicting link
-     * @param width width progression of conflict
-     * @param stopLine stop line on the own lane
-     * @param conflictingStopLine stop line on the conflicting lane
+     * @param conflictType ConflictType; conflict type
+     * @param conflictPriority ConflictPriority; conflict priority
+     * @param conflictRuleType Class&lt;? extends ConflictRule&gt;; conflict rule type
+     * @param id String; id
+     * @param distance Length; distance
+     * @param length Length; length of the conflict
+     * @param conflictingLength Length; length of the conflict on the conflicting lane
+     * @param upstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; conflicting GTU's upstream of the
+     *            &lt;i&gt;start&lt;/i&gt; of the conflict
+     * @param downstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; conflicting GTU's downstream of
+     *            the &lt;i&gt;start&lt;/i&gt; of the conflict
+     * @param conflictingVisibility Length; visibility on the conflicting lane within which conflicting vehicles are visible
+     * @param conflictingSpeedLimit Speed; speed limit on the conflicting lane
+     * @param conflictingLink CrossSectionLink; conflicting link
+     * @param width Width; width progression of conflict
+     * @param stopLine HeadwayStopLine; stop line on the own lane
+     * @param conflictingStopLine HeadwayStopLine; stop line on the conflicting lane
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -134,19 +136,21 @@ public class HeadwayConflict extends AbstractHeadwayCopy
 
     /**
      * Constructor without stop lines.
-     * @param conflictType conflict type
-     * @param conflictPriority conflict priority
-     * @param conflictRuleType conflict rule type
-     * @param id id
-     * @param distance distance
-     * @param length length of the conflict
-     * @param conflictingLength length of the conflict on the conflicting lane
-     * @param upstreamConflictingGTUs conflicting GTU's upstream of the <i>start</i> of the conflict
-     * @param downstreamConflictingGTUs conflicting GTU's downstream of the <i>start</i> of the conflict
-     * @param conflictingVisibility visibility on the conflicting lane within which conflicting vehicles are visible
-     * @param conflictingSpeedLimit speed limit on the conflicting lane
-     * @param conflictingLink conflicting link
-     * @param width width progression of conflict
+     * @param conflictType ConflictType; conflict type
+     * @param conflictPriority ConflictPriority; conflict priority
+     * @param conflictRuleType Class&lt;? extends ConflictRule&gt;; conflict rule type
+     * @param id String; id
+     * @param distance Length; distance
+     * @param length Length; length of the conflict
+     * @param conflictingLength Length; length of the conflict on the conflicting lane
+     * @param upstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; conflicting GTU's upstream of the
+     *            &lt;i&gt;start&lt;/i&gt; of the conflict
+     * @param downstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGTU,LaneBasedGTU&gt;; conflicting GTU's downstream of
+     *            the &lt;i&gt;start&lt;/i&gt; of the conflict
+     * @param conflictingVisibility Length; visibility on the conflicting lane within which conflicting vehicles are visible
+     * @param conflictingSpeedLimit Speed; speed limit on the conflicting lane
+     * @param conflictingLink CrossSectionLink; conflicting link
+     * @param width Width; width progression of conflict
      * @throws GTUException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")

@@ -102,7 +102,7 @@ public class IMBSampler extends Sampler
 
     /**
      * Constructor with listeners for nodes, links, lanes and gtu's.
-     * @param imbConnector IMB connection
+     * @param imbConnector IMBConnector; IMB connection
      * @throws IMBException on connection error
      */
     public IMBSampler(IMBConnector imbConnector) throws IMBException
@@ -286,8 +286,8 @@ public class IMBSampler extends Sampler
         private final IMBConnector imbConnector;
 
         /**
-         * @param sampler the sampler
-         * @param imbConnector the connector
+         * @param sampler IMBSampler; the sampler
+         * @param imbConnector IMBConnector; the connector
          */
         public GTUTransceiver(final IMBSampler sampler, final IMBConnector imbConnector)
         {
@@ -391,8 +391,8 @@ public class IMBSampler extends Sampler
         private final IMBConnector imbConnector;
 
         /**
-         * @param sampler the sampler
-         * @param imbConnector the connector
+         * @param sampler IMBSampler; the sampler
+         * @param imbConnector IMBConnector; the connector
          */
         public NodeTransceiver(final IMBSampler sampler, final IMBConnector imbConnector)
         {
@@ -467,8 +467,8 @@ public class IMBSampler extends Sampler
         private final IMBConnector imbConnector;
 
         /**
-         * @param sampler the sampler
-         * @param imbConnector the connector
+         * @param sampler IMBSampler; the sampler
+         * @param imbConnector IMBConnector; the connector
          */
         public LinkTransceiver(final IMBSampler sampler, final IMBConnector imbConnector)
         {
@@ -558,8 +558,8 @@ public class IMBSampler extends Sampler
         private final IMBConnector imbConnector;
 
         /**
-         * @param sampler the sampler
-         * @param imbConnector the connector
+         * @param sampler IMBSampler; the sampler
+         * @param imbConnector IMBConnector; the connector
          */
         public LaneTransceiver(final IMBSampler sampler, final IMBConnector imbConnector)
         {

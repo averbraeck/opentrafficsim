@@ -19,8 +19,8 @@ public class Terminal extends AbstractNamedLocated
 {
 
     /**
-     * @param name the terminal name
-     * @param location the terminal location
+     * @param name String; the terminal name
+     * @param location DirectedPoint; the terminal location
      */
     public Terminal(String name, DirectedPoint location)
     {

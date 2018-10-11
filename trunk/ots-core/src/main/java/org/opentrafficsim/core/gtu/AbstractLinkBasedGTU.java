@@ -23,10 +23,10 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
     private OTSNetwork network;
 
     /**
-     * @param id the id of the GTU
-     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
-     * @param simulator the simulator to schedule plan changes on
-     * @param network the network in which this GTU is (initially) registered
+     * @param id String; the id of the GTU
+     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param simulator OTSSimulatorInterface; the simulator to schedule plan changes on
+     * @param network OTSNetwork; the network in which this GTU is (initially) registered
      * @throws GTUException when the construction of the original waiting path fails
      */
     @SuppressWarnings("checkstyle:parameternumber")

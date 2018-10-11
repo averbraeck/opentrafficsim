@@ -111,17 +111,17 @@ public class AHFESimulation extends AbstractWrappableSimulation
     Sampler<GtuData> sampler;
 
     /**
-     * @param replication replication
-     * @param anticipationStrategy anticipation strategy
-     * @param reactionTime reaction time
-     * @param anticipationTime anticipation time
-     * @param truckFraction truck fraction
-     * @param distanceError distance error
-     * @param speedError speed error
-     * @param accelerationError acceleration error
-     * @param leftFraction left demand
-     * @param rightDemand right demand
-     * @param leftDemand left fraction, per road
+     * @param replication Integer; replication
+     * @param anticipationStrategy String; anticipation strategy
+     * @param reactionTime Duration; reaction time
+     * @param anticipationTime Duration; anticipation time
+     * @param truckFraction double; truck fraction
+     * @param distanceError double; distance error
+     * @param speedError double; speed error
+     * @param accelerationError double; acceleration error
+     * @param leftFraction double; left demand
+     * @param rightDemand Frequency; right demand
+     * @param leftDemand Frequency; left fraction, per road
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AHFESimulation(final Integer replication, final String anticipationStrategy, final Duration reactionTime,

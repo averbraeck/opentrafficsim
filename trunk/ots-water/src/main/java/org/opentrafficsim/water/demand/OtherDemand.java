@@ -40,7 +40,7 @@ public class OtherDemand implements Dynamic, Serializable
     private Set<OtherDemandCell> otherDemandSet = new HashSet<OtherDemandCell>();
 
     /**
-     * @param simulator the finulator
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the finulator
      */
     public OtherDemand(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {
@@ -102,10 +102,10 @@ public class OtherDemand implements Dynamic, Serializable
         private ShipType shipType;
 
         /**
-         * @param origin the origin location
-         * @param destination the destination location
-         * @param annualMoves the annual number of moves
-         * @param shipType the type of ship to use
+         * @param origin WaterwayLocation; the origin location
+         * @param destination WaterwayLocation; the destination location
+         * @param annualMoves int; the annual number of moves
+         * @param shipType ShipType; the type of ship to use
          */
         public OtherDemandCell(final WaterwayLocation origin, final WaterwayLocation destination, final int annualMoves,
                 final ShipType shipType)

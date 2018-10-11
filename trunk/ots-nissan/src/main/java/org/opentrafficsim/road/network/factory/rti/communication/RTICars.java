@@ -24,13 +24,13 @@ public class RTICars extends LaneBasedIndividualGTU
     private DirectedPoint current = new DirectedPoint(0, 0, 0, 0, 0, 0);
 
     /**
-     * @param valueOf car id
-     * @param carType GTU type
-     * @param carLength car length
-     * @param width car width
-     * @param maxSpeed maximum speed of the car
-     * @param simulator the simulator
-     * @param network the network on which the car will be registered
+     * @param valueOf String; car id
+     * @param carType GTUType; GTU type
+     * @param carLength Length; car length
+     * @param width Length; car width
+     * @param maxSpeed Speed; maximum speed of the car
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param network OTSNetwork; the network on which the car will be registered
      * @throws GTUException on GTU inconsistency
      * @throws NamingException when animation cannot be registered
      * @throws OperationalPlanException when plan retrieval fails

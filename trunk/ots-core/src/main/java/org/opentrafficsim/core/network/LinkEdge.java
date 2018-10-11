@@ -32,7 +32,7 @@ public class LinkEdge<LINK extends Link> extends DefaultWeightedEdge
     private LINK link;
 
     /**
-     * @param link the edge to take into the graph.
+     * @param link LINK; the edge to take into the graph.
      */
     public LinkEdge(final LINK link)
     {

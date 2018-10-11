@@ -28,9 +28,9 @@ public class FixedBridge extends Obstacle implements HeightRestricted
     private Length maxHeight;
 
     /**
-     * @param name the name of the bridge
-     * @param waterwayLocation the location on the waterway
-     * @param maxHeight the max sailing height to pass the bridge
+     * @param name String; the name of the bridge
+     * @param waterwayLocation WaterwayLocation; the location on the waterway
+     * @param maxHeight Length; the max sailing height to pass the bridge
      */
     public FixedBridge(final String name, final WaterwayLocation waterwayLocation, final Length maxHeight)
     {
@@ -39,10 +39,10 @@ public class FixedBridge extends Obstacle implements HeightRestricted
     }
 
     /**
-     * @param name the name of the bridge
-     * @param waterway the waterway
-     * @param km the location on the waterway
-     * @param maxHeight the max sailing height to pass the bridge
+     * @param name String; the name of the bridge
+     * @param waterway Waterway; the waterway
+     * @param km Length; the location on the waterway
+     * @param maxHeight Length; the max sailing height to pass the bridge
      */
     public FixedBridge(final String name, final Waterway waterway, final Length km, final Length maxHeight)
     {

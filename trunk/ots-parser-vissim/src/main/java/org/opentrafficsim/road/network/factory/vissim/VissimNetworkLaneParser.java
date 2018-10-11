@@ -116,7 +116,7 @@ public class VissimNetworkLaneParser implements Serializable
     private int upperLinkNr = 1;
 
     /**
-     * @param simulator the simulator for creating the animation. Null if no animation needed.
+     * @param simulator OTSSimulatorInterface; the simulator for creating the animation. Null if no animation needed.
      */
     public VissimNetworkLaneParser(final OTSSimulatorInterface simulator)
     {

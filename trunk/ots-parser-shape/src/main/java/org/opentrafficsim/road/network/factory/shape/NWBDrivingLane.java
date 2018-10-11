@@ -23,15 +23,15 @@ public class NWBDrivingLane extends AbstractNWBRoadElement
     private String sideCode;
 
     /**
-     * @param myGeom
-     * @param startNode
-     * @param endNode
-     * @param roadId
-     * @param beginDistance
-     * @param endDistance
-     * @param startNumberOfLanes
-     * @param endNumberOfLanes
-     * @param sideCode
+     * @param myGeom Geometry;
+     * @param startNode OTSNode;
+     * @param endNode OTSNode;
+     * @param roadId String;
+     * @param beginDistance Double;
+     * @param endDistance Double;
+     * @param startNumberOfLanes Integer;
+     * @param endNumberOfLanes Integer;
+     * @param sideCode String;
      */
     public NWBDrivingLane(Geometry myGeom, OTSNode startNode, OTSNode endNode, String roadId, Double beginDistance,
             Double endDistance, Integer startNumberOfLanes, Integer endNumberOfLanes, String sideCode)

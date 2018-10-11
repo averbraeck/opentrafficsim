@@ -39,11 +39,12 @@ public class LaneBasedGTUCharacteristics extends GTUCharacteristics
     /**
      * Construct a new set of lane based GTU characteristics.
      * @param gtuCharacteristics GTUCharacteristics; characteristics of the super GTU type to be used for the GTU
-     * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory; the strategical planner for the GTU
-     * @param route route
-     * @param origin origin
-     * @param destination destination
-     * @param vehicleModel vehicle model
+     * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; the strategical planner for the
+     *            GTU
+     * @param route Route; route
+     * @param origin Node; origin
+     * @param destination Node; destination
+     * @param vehicleModel VehicleModel; vehicle model
      */
     public LaneBasedGTUCharacteristics(final GTUCharacteristics gtuCharacteristics,
             final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route,

@@ -32,7 +32,7 @@ public class OTSShape extends OTSLine3D
 
     /**
      * Construct a new OTSShape (closed shape).
-     * @param points the array of points to construct this OTSLine3D from.
+     * @param points OTSPoint3D...; the array of points to construct this OTSLine3D from.
      * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -43,7 +43,7 @@ public class OTSShape extends OTSLine3D
 
     /**
      * Construct a new OTSShape (closed shape) from an array of Coordinate.
-     * @param coordinates the array of coordinates to construct this OTSLine3D from
+     * @param coordinates Coordinate[]; the array of coordinates to construct this OTSLine3D from
      * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -54,7 +54,7 @@ public class OTSShape extends OTSLine3D
 
     /**
      * Construct a new OTSShape (closed shape) from a LineString.
-     * @param lineString the lineString to construct this OTSLine3D from.
+     * @param lineString LineString; the lineString to construct this OTSLine3D from.
      * @throws OTSGeometryException when the provided LineString does not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -65,7 +65,7 @@ public class OTSShape extends OTSLine3D
 
     /**
      * Construct a new OTSShape (closed shape) from a Geometry.
-     * @param geometry the geometry to construct this OTSLine3D from
+     * @param geometry Geometry; the geometry to construct this OTSLine3D from
      * @throws OTSGeometryException when the provided Geometry do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -76,7 +76,7 @@ public class OTSShape extends OTSLine3D
 
     /**
      * Construct a new OTSShape (closed shape) from a List&lt;OTSPoint3D&gt;.
-     * @param pointList the list of points to construct this OTSLine3D from.
+     * @param pointList List&lt;OTSPoint3D&gt;; the list of points to construct this OTSLine3D from.
      * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -87,7 +87,7 @@ public class OTSShape extends OTSLine3D
 
     /**
      * Construct a new OTSShape (closed shape) from a Path2D.
-     * @param path the Path2D to construct this OTSLine3D from.
+     * @param path Path2D; the Path2D to construct this OTSLine3D from.
      * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */

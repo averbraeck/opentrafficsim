@@ -28,7 +28,7 @@ public class ProgressEvent extends EventObject
     /**
      * Construct a new ProgressEvent.
      * @param source Object; the object from which the event originates
-     * @param description The progress information in a String
+     * @param description String; The progress information in a String
      */
     public ProgressEvent(final Object source, final String description)
     {

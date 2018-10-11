@@ -38,7 +38,7 @@ public class ShapeObject implements Locatable
 
     /**
      * @param theGeom
-     * @param values
+     * @param values ArrayList&lt;String&gt;;
      */
     public ShapeObject(Geometry geometry, ArrayList<String> values)
     {

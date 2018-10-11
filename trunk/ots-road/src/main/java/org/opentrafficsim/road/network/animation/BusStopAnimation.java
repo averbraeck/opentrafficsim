@@ -37,8 +37,8 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStop> implements 
     private final Text text;
 
     /**
-     * @param source source
-     * @param simulator simulator
+     * @param source BusStop; source
+     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */

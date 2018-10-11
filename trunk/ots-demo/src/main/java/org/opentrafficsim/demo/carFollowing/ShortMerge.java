@@ -503,7 +503,7 @@ public class ShortMerge extends AbstractWrappableAnimation
         private final Frequency demand;
 
         /**
-         * @param demand demand
+         * @param demand Frequency; demand
          */
         HeadwayGenerator(final Frequency demand)
         {

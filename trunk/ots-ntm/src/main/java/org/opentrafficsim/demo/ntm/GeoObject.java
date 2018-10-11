@@ -42,7 +42,7 @@ public class GeoObject
     private final Set<GeoObject> touchingAreas = new HashSet<>();
 
     /**
-     * @param geometry
+     * @param geometry Geometry;
      */
     public GeoObject(final Geometry geometry)
     {

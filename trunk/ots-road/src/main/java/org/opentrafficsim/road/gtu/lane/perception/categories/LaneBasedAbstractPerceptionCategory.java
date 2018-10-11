@@ -36,7 +36,7 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
     public static final Acceleration MAX_RED_DECELERATION = new Acceleration(-5, AccelerationUnit.METER_PER_SECOND_2);
 
     /**
-     * @param perception perception
+     * @param perception LanePerception; perception
      */
     public LaneBasedAbstractPerceptionCategory(final LanePerception perception)
     {

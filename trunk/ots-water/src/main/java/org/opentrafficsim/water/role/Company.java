@@ -22,9 +22,9 @@ public class Company extends AbstractNamedLocated
     final String code;
 
     /**
-     * @param code code
-     * @param name name
-     * @param location location
+     * @param code String; code
+     * @param name String; name
+     * @param location DirectedPoint; location
      */
     public Company(final String code, final String name, final DirectedPoint location)
     {

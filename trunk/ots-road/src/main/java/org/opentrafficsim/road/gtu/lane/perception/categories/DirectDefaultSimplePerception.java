@@ -97,7 +97,7 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     private TimeStampedObject<LanePathInfo> lanePathInfo;
 
     /**
-     * @param perception perception
+     * @param perception LanePerception; perception
      */
     public DirectDefaultSimplePerception(final LanePerception perception)
     {

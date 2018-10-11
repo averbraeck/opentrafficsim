@@ -30,7 +30,7 @@ public class HeadwayDistance implements Headway
     /**
      * Construct a new Headway information object with just a distance, without any further information about the object; it
      * assumes a speed of 0 at the headway, so it also good to store information about a lane drop.
-     * @param distance the distance that needs to be stored.
+     * @param distance double; the distance that needs to be stored.
      */
     public HeadwayDistance(final double distance)
     {
@@ -40,7 +40,7 @@ public class HeadwayDistance implements Headway
     /**
      * Construct a new Headway information object with just a distance, without any further information about the object; it
      * assumes a speed of 0 at the headway, so it also good to store information about a lane drop.
-     * @param distance the distance that needs to be stored.
+     * @param distance Length; the distance that needs to be stored.
      */
     public HeadwayDistance(final Length distance)
     {

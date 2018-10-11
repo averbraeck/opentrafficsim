@@ -29,8 +29,8 @@ public abstract class AbstractNamedLocatedEventProducer extends AbstractLocatedE
     private String name;
 
     /**
-     * @param name the name
-     * @param coordinate the coordinate
+     * @param name String; the name
+     * @param coordinate Coordinate; the coordinate
      */
     public AbstractNamedLocatedEventProducer(final String name, final Coordinate coordinate)
     {

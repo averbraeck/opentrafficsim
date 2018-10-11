@@ -36,10 +36,10 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObject> extends R
 
     /**
      * Construct the line animation.
-     * @param source source
-     * @param simulator the simulator to schedule on
-     * @param length length of the line, as fraction of the lane width
-     * @param width line width
+     * @param source T; source
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator to schedule on
+     * @param length double; length of the line, as fraction of the lane width
+     * @param width Length; line width
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */

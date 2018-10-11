@@ -42,7 +42,7 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
     private static final long serialVersionUID = 20170217L;
 
     /**
-     * @param perception perception
+     * @param perception LanePerception; perception
      */
     public AbstractDelayedPerceptionCategory(final LanePerception perception)
     {
@@ -209,8 +209,8 @@ public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstrac
 
         /**
          * Constructor.
-         * @param id id
-         * @param delayParameter delay parameter type
+         * @param id String; id
+         * @param delayParameter ParameterTypeDuration; delay parameter type
          */
         public DelayedInfoType(final String id, final ParameterTypeDuration delayParameter)
         {

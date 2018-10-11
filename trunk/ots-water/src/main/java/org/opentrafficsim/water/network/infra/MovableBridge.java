@@ -46,13 +46,13 @@ public class MovableBridge extends FixedBridge implements OperatedObstacle
     private Duration waitingTime;
 
     /**
-     * @param simulator the simulator to schedule on
-     * @param name the name of the bridge
-     * @param waterwayLocation the location along a waterway
-     * @param operationHoursPerDay hours per day operated
-     * @param operationDaysPerWeek days per week operated
-     * @param maxHeightClosed max height when bridge is closed
-     * @param maxHeightOpened max height when bridge is opened
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule on
+     * @param name String; the name of the bridge
+     * @param waterwayLocation WaterwayLocation; the location along a waterway
+     * @param operationHoursPerDay int; hours per day operated
+     * @param operationDaysPerWeek int; days per week operated
+     * @param maxHeightClosed Length; max height when bridge is closed
+     * @param maxHeightOpened Length; max height when bridge is opened
      */
     public MovableBridge(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final String name,
             final WaterwayLocation waterwayLocation, final int operationHoursPerDay, final int operationDaysPerWeek,
@@ -73,14 +73,14 @@ public class MovableBridge extends FixedBridge implements OperatedObstacle
     }
 
     /**
-     * @param simulator the simulator to schedule on
-     * @param name the name of the bridge
-     * @param waterway the waterway
-     * @param distance the distance along the waterway in the design direction
-     * @param operationHoursPerDay hours per day operated
-     * @param operationDaysPerWeek days per week operated
-     * @param maxHeightClosed max height when bridge is closed
-     * @param maxHeightOpened max height when bridge is opened
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule on
+     * @param name String; the name of the bridge
+     * @param waterway Waterway; the waterway
+     * @param distance Length; the distance along the waterway in the design direction
+     * @param operationHoursPerDay int; hours per day operated
+     * @param operationDaysPerWeek int; days per week operated
+     * @param maxHeightClosed Length; max height when bridge is closed
+     * @param maxHeightOpened Length; max height when bridge is opened
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public MovableBridge(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final String name, final Waterway waterway,

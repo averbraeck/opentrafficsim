@@ -32,8 +32,8 @@ public class SpeedLimitType<T> extends Type<SpeedLimitType<T>> implements Serial
 
     /**
      * Constructor.
-     * @param id id of this speed limit type, which must be unique
-     * @param infoClass class of the info related to this speed limit type
+     * @param id String; id of this speed limit type, which must be unique
+     * @param infoClass Class&lt;T&gt;; class of the info related to this speed limit type
      * @throws NullPointerException if id or info class is null
      */
     public SpeedLimitType(final String id, final Class<T> infoClass)

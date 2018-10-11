@@ -31,7 +31,7 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
 
     /**
      * Constructor.
-     * @param gtu GTU
+     * @param gtu LaneBasedGTU; GTU
      */
     public LaneBasedStrategicalPlannerNone(final LaneBasedGTU gtu)
     {

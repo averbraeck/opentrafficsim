@@ -37,7 +37,7 @@ public class SimpleSimulator extends DEVSSimulator.TimeDoubleUnit implements OTS
 
     /**
      * Create a simulation engine without animation; the easy way. PauseOnError is set to true;
-     * @param startTime SimTimeDoubleUnit; the start time of the simulation
+     * @param startTime Time; the start time of the simulation
      * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
      *            this is)
      * @param runLength Duration; the duration of the simulation

@@ -48,9 +48,9 @@ public class SchedulableMethod implements Serializable
 
     /**
      * The constructor of the schedulable method stores the object and method to invoke with its arguments.
-     * @param target reflects the object on which the method must be invoked.
-     * @param method reflects the method to invoke
-     * @param args reflects the argumenst the method to invoke with
+     * @param target Object; reflects the object on which the method must be invoked.
+     * @param method String; reflects the method to invoke
+     * @param args Object[]; reflects the argumenst the method to invoke with
      */
     public SchedulableMethod(final Object target, final String method, final Object[] args)
     {

@@ -54,8 +54,8 @@ public class CellBehaviourNTM extends CellBehaviour
     private Area area;
 
     /**
-     * @param parametersNTM contains a set of params
-     * @param area that contains this behaviour
+     * @param parametersNTM ParametersNTM; contains a set of params
+     * @param area Area; that contains this behaviour
      */
     public CellBehaviourNTM(final Area area, final ParametersNTM parametersNTM)
     {

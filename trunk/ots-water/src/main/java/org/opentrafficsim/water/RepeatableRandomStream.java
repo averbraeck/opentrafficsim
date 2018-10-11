@@ -32,7 +32,7 @@ public final class RepeatableRandomStream extends Java2Random
 
     /**
      * Do not instantiate from outside.
-     * @param seed the seed to instantiate the stream.
+     * @param seed long; the seed to instantiate the stream.
      */
     private RepeatableRandomStream(final long seed)
     {

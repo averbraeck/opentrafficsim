@@ -388,8 +388,8 @@ public class ParameterFactoryByType implements ParameterFactory
         private final T value;
 
         /**
-         * @param parameterType the parameter type
-         * @param value the fixed value
+         * @param parameterType ParameterType&lt;T&gt;; the parameter type
+         * @param value T; the fixed value
          */
         FixedEntry(final ParameterType<T> parameterType, final T value)
         {
@@ -444,8 +444,8 @@ public class ParameterFactoryByType implements ParameterFactory
         private final double value;
 
         /**
-         * @param parameterType the parameter type
-         * @param value the fixed value
+         * @param parameterType ParameterTypeDouble; the parameter type
+         * @param value double; the fixed value
          */
         FixedEntryDouble(final ParameterTypeDouble parameterType, final double value)
         {
@@ -502,8 +502,8 @@ public class ParameterFactoryByType implements ParameterFactory
         private final ContinuousDistDoubleScalar.Rel<T, U> distribution;
 
         /**
-         * @param parameterType the parameter type
-         * @param distribution the distribution of the parameter
+         * @param parameterType ParameterType&lt;T&gt;; the parameter type
+         * @param distribution ContinuousDistDoubleScalar.Rel&lt;T,U&gt;; the distribution of the parameter
          */
         DistributedEntry(final ParameterType<T> parameterType, final ContinuousDistDoubleScalar.Rel<T, U> distribution)
         {
@@ -557,8 +557,8 @@ public class ParameterFactoryByType implements ParameterFactory
         private final DistContinuous distribution;
 
         /**
-         * @param parameterType the parameter type
-         * @param distribution parameter distribution
+         * @param parameterType ParameterTypeDouble; the parameter type
+         * @param distribution DistContinuous; parameter distribution
          */
         DistributedEntryDouble(final ParameterTypeDouble parameterType, final DistContinuous distribution)
         {

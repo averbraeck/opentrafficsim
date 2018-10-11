@@ -110,13 +110,13 @@ public abstract class ContourPlot extends AbstractOTSPlot
      * Create a new ContourPlot.
      * @param caption String; text to show above the plotting area
      * @param xAxis Axis; the X (time) axis
-     * @param path ArrayList&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
-     * @param redValue Double; contour value that will be rendered in Red
-     * @param yellowValue Double; contour value that will be rendered in Yellow
-     * @param greenValue Double; contour value that will be rendered in Green
+     * @param path List&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
+     * @param redValue double; contour value that will be rendered in Red
+     * @param yellowValue double; contour value that will be rendered in Yellow
+     * @param greenValue double; contour value that will be rendered in Green
      * @param valueFormat String; format string for the contour values
      * @param legendFormat String; format string for the captions in the color legend
-     * @param legendStep Double; increment between color legend entries
+     * @param legendStep double; increment between color legend entries
      * @throws OTSSimulationException when the scale cannot be generated
      */
     public ContourPlot(final String caption, final Axis xAxis, final List<Lane> path, final double redValue,

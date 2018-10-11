@@ -33,7 +33,7 @@ public class ModelParameters implements SelfWrapper
 
     /**
      * Construct ModelParameters from a IMB ByteBuffer
-     * @param payload
+     * @param payload TByteBuffer;
      * @throws IMBException
      */
     public ModelParameters(TByteBuffer payload) throws IMBException

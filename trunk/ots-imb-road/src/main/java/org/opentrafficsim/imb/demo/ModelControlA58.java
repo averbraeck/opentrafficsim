@@ -112,9 +112,9 @@ public class ModelControlA58 extends ModelStarter
     Thread startThread;
 
     /**
-     * @param args the command line args
-     * @param providedModelName the model name
-     * @param providedModelId the model id
+     * @param args String[]; the command line args
+     * @param providedModelName String; the model name
+     * @param providedModelId int; the model id
      * @throws IMBException when IMB connection fails
      */
     public ModelControlA58(String[] args, String providedModelName, int providedModelId) throws IMBException
@@ -336,7 +336,7 @@ public class ModelControlA58 extends ModelStarter
         TConnection imbConnection;
 
         /**
-         * @param imbConnection IMB connection
+         * @param imbConnection TConnection; IMB connection
          */
         public A58Animation(TConnection imbConnection)
         {
@@ -413,9 +413,9 @@ public class ModelControlA58 extends ModelStarter
         OTSIMBConnector imbConnector;
 
         /**
-         * @param imbConnection the connection to the IMB bus
-         * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
-         * @param network Network; the network
+         * @param imbConnection TConnection; the connection to the IMB bus
+         * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
+         * @param network OTSNetwork; the network
          */
         A58Model(TConnection imbConnection, final GTUColorer gtuColorer, final OTSNetwork network)
         {
@@ -609,8 +609,8 @@ public class ModelControlA58 extends ModelStarter
         final double dy;
 
         /**
-         * @param dx x transform
-         * @param dy y transform
+         * @param dx double; x transform
+         * @param dy double; y transform
          */
         public CoordinateTransformRD(final double dx, final double dy)
         {

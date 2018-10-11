@@ -31,10 +31,13 @@ public class Stripe extends RoadMarkerAlong
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
-     * @param parentLink Cross Section Link to which the element belongs
-     * @param lateralCenterPositionStart the lateral start position compared to the linear geometry of the Cross Section Link
-     * @param lateralCenterPositionEnd the lateral start position compared to the linear geometry of the Cross Section Link
-     * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs
+     * @param lateralCenterPositionStart Length; the lateral start position compared to the linear geometry of the Cross Section
+     *            Link
+     * @param lateralCenterPositionEnd Length; the lateral start position compared to the linear geometry of the Cross Section
+     *            Link
+     * @param width Length; positioned &lt;i&gt;symmetrically around&lt;/i&gt; the center line given by the
+     *            lateralCenterPosition.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
@@ -48,12 +51,15 @@ public class Stripe extends RoadMarkerAlong
      * Helper constructor that immediately provides permeability for a number of GTU classes.<br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
-     * @param parentLink Cross Section Link to which the element belongs
-     * @param lateralCenterPositionStart the lateral start position compared to the linear geometry of the Cross Section Link
-     * @param lateralCenterPositionEnd the lateral start position compared to the linear geometry of the Cross Section Link
-     * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition
-     * @param gtuTypes the GTU types for which the permeability is defined
-     * @param permeable one of the enums of Stripe.Permeable to define the permeability
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs
+     * @param lateralCenterPositionStart Length; the lateral start position compared to the linear geometry of the Cross Section
+     *            Link
+     * @param lateralCenterPositionEnd Length; the lateral start position compared to the linear geometry of the Cross Section
+     *            Link
+     * @param width Length; positioned &lt;i&gt;symmetrically around&lt;/i&gt; the center line given by the
+     *            lateralCenterPosition
+     * @param gtuTypes Set&lt;GTUType&gt;; the GTU types for which the permeability is defined
+     * @param permeable Permeable; one of the enums of Stripe.Permeable to define the permeability
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
@@ -72,12 +78,12 @@ public class Stripe extends RoadMarkerAlong
      * Helper constructor that immediately provides permeability for all GTU classes.<br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
-     * @param parentLink Cross Section Link to which the element belongs
-     * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
-     *            link. If there is just one with and offset, there should just be one element in the list with Length = 0. If
-     *            there are more slices, the last one should be at the length of the design line. If not, a NetworkException is
-     *            thrown.
-     * @param permeable one of the enums of Stripe.Permeable to define the permeability
+     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs
+     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; The offsets and widths at positions along the line, relative to
+     *            the design line of the parent link. If there is just one with and offset, there should just be one element in
+     *            the list with Length = 0. If there are more slices, the last one should be at the length of the design line.
+     *            If not, a NetworkException is thrown.
+     * @param permeable Permeable; one of the enums of Stripe.Permeable to define the permeability
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
@@ -91,10 +97,10 @@ public class Stripe extends RoadMarkerAlong
 
     /**
      * Clone a Stripe for a new network.
-     * @param newParentLink the new link to which the clone belongs
-     * @param newSimulator the new simulator for this network
-     * @param animation whether to (re)create animation or not
-     * @param cse the element to clone from
+     * @param newParentLink CrossSectionLink; the new link to which the clone belongs
+     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
+     * @param animation boolean; whether to (re)create animation or not
+     * @param cse Stripe; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */

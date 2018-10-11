@@ -56,7 +56,7 @@ class SignalHeadTag implements Serializable
     String laneName;
 
     /**
-     * @param signalHeadTag
+     * @param signalHeadTag SignalHeadTag;
      */
     public SignalHeadTag(SignalHeadTag signalHeadTag)
     {

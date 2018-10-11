@@ -53,10 +53,10 @@ public final class LmrsData implements DesireBased, Synchronizable
     private String syncVehicle;
 
     /**
-     * @param synchronization synchronization
-     * @param cooperation cooperation
-     * @param gapAcceptance gap-acceptance
-     * @param tailGating tail gating
+     * @param synchronization Synchronization; synchronization
+     * @param cooperation Cooperation; cooperation
+     * @param gapAcceptance GapAcceptance; gap-acceptance
+     * @param tailGating Tailgating; tail gating
      */
     public LmrsData(final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,
             final Tailgating tailGating)

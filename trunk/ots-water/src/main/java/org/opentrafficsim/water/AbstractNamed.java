@@ -27,7 +27,7 @@ public abstract class AbstractNamed implements Named
     private String name;
 
     /**
-     * @param name the name
+     * @param name String; the name
      */
     public AbstractNamed(final String name)
     {

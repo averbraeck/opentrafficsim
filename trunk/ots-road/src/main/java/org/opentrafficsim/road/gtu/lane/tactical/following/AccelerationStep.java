@@ -34,7 +34,7 @@ public class AccelerationStep implements Serializable
 
     /**
      * Create a new GTUFollowingModelResult.
-     * @param acceleration DoubleScalarAbs&lt;AccelerationUnit&gt;; computed acceleration
+     * @param acceleration Acceleration; computed acceleration
      * @param validUntil Time; time when this result expires
      * @param duration Duration; duration of the time step
      */

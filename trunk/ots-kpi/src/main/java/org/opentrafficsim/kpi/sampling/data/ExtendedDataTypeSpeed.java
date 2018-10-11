@@ -25,7 +25,7 @@ public abstract class ExtendedDataTypeSpeed<G extends GtuDataInterface>
 
     /**
      * Constructor setting the id.
-     * @param id id
+     * @param id String; id
      */
     public ExtendedDataTypeSpeed(String id)
     {

@@ -27,9 +27,9 @@ public class ModelControlKPI extends ModelStarter
     private Thread kpiThread;
 
     /**
-     * @param args model starter command line arguments
-     * @param providedModelName name of the model
-     * @param providedModelId id of the model
+     * @param args String[]; model starter command line arguments
+     * @param providedModelName String; name of the model
+     * @param providedModelId int; id of the model
      * @throws IMBException in case of IMB error
      */
     public ModelControlKPI(String[] args, String providedModelName, int providedModelId) throws IMBException

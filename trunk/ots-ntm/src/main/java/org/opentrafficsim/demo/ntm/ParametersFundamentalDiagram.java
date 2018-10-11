@@ -45,9 +45,9 @@ public class ParametersFundamentalDiagram
     }
 
     /**
-     * @param freeSpeed
-     * @param capacity
-     * @param numberOfLanes
+     * @param freeSpeed Speed;
+     * @param capacity Frequency;
+     * @param numberOfLanes int;
      */
     public ParametersFundamentalDiagram(final Speed freeSpeed, final Frequency capacity, final int numberOfLanes)
     {

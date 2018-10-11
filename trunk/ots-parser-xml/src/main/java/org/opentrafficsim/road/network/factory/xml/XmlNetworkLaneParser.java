@@ -152,7 +152,7 @@ public class XmlNetworkLaneParser implements Serializable
     List<String> xmlComments = new ArrayList<>();
 
     /**
-     * @param simulator the simulator for creating the animation. Null if no animation needed.
+     * @param simulator OTSSimulatorInterface; the simulator for creating the animation. Null if no animation needed.
      */
     public XmlNetworkLaneParser(final OTSSimulatorInterface simulator)
     {
@@ -163,8 +163,8 @@ public class XmlNetworkLaneParser implements Serializable
     }
 
     /**
-     * @param simulator the simulator for creating the animation. Null if no animation needed.
-     * @param colorer GTU colorer
+     * @param simulator OTSSimulatorInterface; the simulator for creating the animation. Null if no animation needed.
+     * @param colorer GTUColorer; GTU colorer
      */
     public XmlNetworkLaneParser(final OTSSimulatorInterface simulator, final GTUColorer colorer)
     {

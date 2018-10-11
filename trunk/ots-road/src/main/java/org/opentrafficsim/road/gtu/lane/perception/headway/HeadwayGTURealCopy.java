@@ -57,19 +57,19 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
 
     /**
      * Protected constructor for moved copies or subclasses.
-     * @param id id
-     * @param gtuType GTU type
-     * @param distance distance
-     * @param length length
-     * @param width width
-     * @param speed speed
-     * @param acceleration acceleration
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speedLimitInfo speed limit info
-     * @param route route
-     * @param desiredSpeed desired speed
-     * @param gtuStatus gtu status
+     * @param id String; id
+     * @param gtuType GTUType; GTU type
+     * @param distance Length; distance
+     * @param length Length; length
+     * @param width Length; width
+     * @param speed Speed; speed
+     * @param acceleration Acceleration; acceleration
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param parameters Parameters; parameters
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param route Route; route
+     * @param desiredSpeed Speed; desired speed
+     * @param gtuStatus GTUStatus...; gtu status
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -87,21 +87,21 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
 
     /**
      * Protected constructor for moved copies or subclasses.
-     * @param id id
-     * @param gtuType GTU type
+     * @param id String; id
+     * @param gtuType GTUType; GTU type
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.
-     * @param length length
-     * @param width width
-     * @param speed speed
-     * @param acceleration acceleration
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speedLimitInfo speed limit info
-     * @param route route
-     * @param desiredSpeed desired speed
-     * @param gtuStatus gtu status
+     * @param length Length; length
+     * @param width Length; width
+     * @param speed Speed; speed
+     * @param acceleration Acceleration; acceleration
+     * @param carFollowingModel CarFollowingModel; car-following model
+     * @param parameters Parameters; parameters
+     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param route Route; route
+     * @param desiredSpeed Speed; desired speed
+     * @param gtuStatus GTUStatus...; gtu status
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -121,7 +121,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
 
     /**
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
-     * @param gtu the observed GTU, can not be null.
+     * @param gtu LaneBasedGTU; the observed GTU, can not be null.
      * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
      * @throws GTUException when id is null, objectType is null, or parameters are inconsistent
      */
@@ -137,7 +137,7 @@ public class HeadwayGTURealCopy extends AbstractHeadwayGTU
 
     /**
      * Construct a new Headway information object, for a GTU parallel with us.
-     * @param gtu the observed GTU, can not be null.
+     * @param gtu LaneBasedGTU; the observed GTU, can not be null.
      * @param overlapFront the front-front distance to the other GTU; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other GTU; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other GTU; if this constructor is used, this value cannot be null.

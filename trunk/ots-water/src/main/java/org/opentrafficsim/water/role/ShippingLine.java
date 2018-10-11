@@ -17,9 +17,9 @@ public class ShippingLine extends Company
 {
 
     /**
-     * @param code code
-     * @param name name
-     * @param location location
+     * @param code String; code
+     * @param name String; name
+     * @param location DirectedPoint; location
      */
     public ShippingLine(final String code, final String name, final DirectedPoint location)
     {

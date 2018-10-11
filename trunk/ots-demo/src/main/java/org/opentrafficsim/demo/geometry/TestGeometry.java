@@ -37,8 +37,8 @@ public class TestGeometry extends DSOLApplication implements UNITS
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param title t
-     * @param panel p
+     * @param title String; t
+     * @param panel DSOLPanel&lt;Time,Duration,SimTimeDoubleUnit&gt;; p
      */
     public TestGeometry(final String title, final DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel)
     {

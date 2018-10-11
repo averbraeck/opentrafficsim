@@ -26,8 +26,9 @@ public abstract class RoadMarkerAcross implements Serializable
     private final Length longitudinalPosition;
 
     /**
-     * @param crossSectionElement Cross section element for which this is a road marker. Usually this will be a Lane.
-     * @param longitudinalPosition Longitudinal position on the cross section element.
+     * @param crossSectionElement CrossSectionElement; Cross section element for which this is a road marker. Usually this will
+     *            be a Lane.
+     * @param longitudinalPosition Length; Longitudinal position on the cross section element.
      */
     public RoadMarkerAcross(final CrossSectionElement crossSectionElement, final Length longitudinalPosition)
     {

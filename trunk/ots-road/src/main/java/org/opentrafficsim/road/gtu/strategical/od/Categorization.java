@@ -37,7 +37,7 @@ public class Categorization implements Serializable, Identifiable
     private final List<Class<?>> classes = new ArrayList<>();
 
     /**
-     * @param id id
+     * @param id String; id
      */
     private Categorization(final String id)
     {
@@ -46,9 +46,9 @@ public class Categorization implements Serializable, Identifiable
     }
 
     /**
-     * @param id Id
-     * @param class1 1st class
-     * @param classes other classes
+     * @param id String; Id
+     * @param class1 Class&lt;?&gt;; 1st class
+     * @param classes Class&lt;?&gt;...; other classes
      * @throws IllegalArgumentException if any class is given multiple times
      * @throws NullPointerException if any input is null
      */

@@ -46,7 +46,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     private final Generator<Acceleration> maxDeceleration;
 
     /**
-     * @param gtuType GTUType, the GTUType to make it identifiable.
+     * @param gtuType GTUType; GTUType, the GTUType to make it identifiable.
      * @param lengthGenerator Generator&lt;Length&gt;; generator for the length of the GTU type (parallel with driving
      *            direction).
      * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
@@ -63,7 +63,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     }
 
     /**
-     * @param gtuType GTUType, the GTUType to make it identifiable.
+     * @param gtuType GTUType; GTUType, the GTUType to make it identifiable.
      * @param lengthGenerator Generator&lt;Length&gt;; generator for the length of the GTU type (parallel with driving
      *            direction).
      * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving

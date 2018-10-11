@@ -26,7 +26,7 @@ public class OpenDriveNetworkWriter implements Serializable
     private String output = null;
 
     /**
-     * @param network the network
+     * @param network OTSNetwork; the network
      */
     public OpenDriveNetworkWriter(OTSNetwork network)
     {

@@ -21,7 +21,7 @@ public class RouteData implements RouteDataInterface
     private final Route route;
 
     /**
-     * @param route route
+     * @param route Route; route
      */
     public RouteData(final Route route)
     {

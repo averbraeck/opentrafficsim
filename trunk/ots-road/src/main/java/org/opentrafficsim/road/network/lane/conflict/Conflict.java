@@ -124,17 +124,17 @@ public final class Conflict extends AbstractLaneBasedObject
     /////////////////////////////////////////////////////////////////
 
     /**
-     * @param lane lane where this conflict starts
-     * @param longitudinalPosition position of start of conflict on lane
-     * @param length length of the conflict along the lane centerline
-     * @param direction GTU direction
-     * @param geometry geometry of conflict
-     * @param conflictRule conflict rule, i.e. determines priority, give way, stop or all-stop
-     * @param conflictType conflict type, i.e. crossing, merge or split
-     * @param simulator the simulator for animation and timed events
-     * @param permitted whether the conflict is permitted in traffic light control
-     * @param gtuType gtu type
-     * @param cloneLock lock object for cloning a pair of conflicts
+     * @param lane Lane; lane where this conflict starts
+     * @param longitudinalPosition Length; position of start of conflict on lane
+     * @param length Length; length of the conflict along the lane centerline
+     * @param direction GTUDirectionality; GTU direction
+     * @param geometry OTSLine3D; geometry of conflict
+     * @param conflictRule ConflictRule; conflict rule, i.e. determines priority, give way, stop or all-stop
+     * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
+     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator for animation and timed events
+     * @param permitted boolean; whether the conflict is permitted in traffic light control
+     * @param gtuType GTUType; gtu type
+     * @param cloneLock Object; lock object for cloning a pair of conflicts
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -426,10 +426,10 @@ public final class Conflict extends AbstractLaneBasedObject
         private final Conflict conflict;
 
         /**
-         * @param conflict conflict
-         * @param lane lane
-         * @param direction valid direction
-         * @param longitudinalPosition position
+         * @param conflict Conflict; conflict
+         * @param lane Lane; lane
+         * @param direction LongitudinalDirectionality; valid direction
+         * @param longitudinalPosition Length; position
          * @throws NetworkException on network exception
          * @throws OTSGeometryException does not happen
          */
@@ -653,7 +653,7 @@ public final class Conflict extends AbstractLaneBasedObject
          * @param headwayGtuType HeadwayGtuType; HeadwayGTU type
          * @param visibility Length; guaranteed visibility
          * @param downstream boolean; downstream (or upstream) neighbors
-         * @param base AbstractPerceptionIterable; base iterable from the conflict
+         * @param base AbstractPerceptionIterable&lt;HeadwayGTU, LaneBasedGTU, Integer&gt;; base iterable from the conflict
          */
         ConflictGtuIterable(final LaneBasedGTU perceivingGtu, final HeadwayGtuType headwayGtuType, final Length visibility,
                 final boolean downstream, final AbstractPerceptionIterable<HeadwayGTU, LaneBasedGTU, Integer> base)

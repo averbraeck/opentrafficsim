@@ -46,8 +46,8 @@ public class XPersistent extends XTally
     private double lastValue = Double.NaN;
 
     /**
-     * @param description description of the statistic
-     * @param simulator the simulator
+     * @param description String; description of the statistic
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      */
     public XPersistent(String description, DEVSSimulatorInterface.TimeDoubleUnit simulator)
     {

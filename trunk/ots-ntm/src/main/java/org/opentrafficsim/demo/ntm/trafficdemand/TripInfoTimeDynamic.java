@@ -20,8 +20,8 @@ public class TripInfoTimeDynamic extends TripInfo
     private DepartureTimeProfile departureTimeProfile;
 
     /**
-     * @param numberOfTrips amount of....
-     * @param departureTimeProfile provides the division of trips by time segments
+     * @param numberOfTrips double; amount of....
+     * @param departureTimeProfile DepartureTimeProfile; provides the division of trips by time segments
      */
     public TripInfoTimeDynamic(final double numberOfTrips, final DepartureTimeProfile departureTimeProfile)
     {

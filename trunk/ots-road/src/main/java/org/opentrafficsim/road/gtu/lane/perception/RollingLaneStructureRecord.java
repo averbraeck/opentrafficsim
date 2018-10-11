@@ -98,7 +98,7 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
      * Constructor.
      * @param lane Lane; lane
      * @param direction GTUDirectionality; direction of travel for the GTU
-     * @param startDistanceSource LaneStructureRecord; record on which the start distance is based
+     * @param startDistanceSource RollingLaneStructureRecord; record on which the start distance is based
      * @param recordLink RecordLink; link type to source
      */
     public RollingLaneStructureRecord(final Lane lane, final GTUDirectionality direction,
@@ -115,9 +115,9 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
     }
 
     /**
-     * @param lane the lane of the LSR
-     * @param direction the direction on which we process this lane
-     * @param startDistance distance to start of the record, negative for backwards
+     * @param lane Lane; the lane of the LSR
+     * @param direction GTUDirectionality; the direction on which we process this lane
+     * @param startDistance Length; distance to start of the record, negative for backwards
      */
     public RollingLaneStructureRecord(final Lane lane, final GTUDirectionality direction, final Length startDistance)
     {

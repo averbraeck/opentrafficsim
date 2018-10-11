@@ -34,7 +34,7 @@ public abstract class AbstractLocated implements Located
     private final DirectedPoint location;
 
     /**
-     * @param location the directed point of the location
+     * @param location DirectedPoint; the directed point of the location
      */
     public AbstractLocated(final DirectedPoint location)
     {

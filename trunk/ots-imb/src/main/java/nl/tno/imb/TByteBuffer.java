@@ -28,7 +28,7 @@ public class TByteBuffer
 
     /**
      * Constructor: create byte buffer of the specified length
-     * @param aLength length in bytes of the buffer to create
+     * @param aLength int; length in bytes of the buffer to create
      */
     public TByteBuffer(int aLength)
     {
@@ -45,7 +45,7 @@ public class TByteBuffer
 
     /**
      * Constructor: create byte buffer as copy of the specified byte array
-     * @param aBuffer
+     * @param aBuffer byte[];
      */
     public TByteBuffer(byte[] aBuffer)
     {

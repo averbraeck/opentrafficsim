@@ -41,9 +41,9 @@ public class BusSchedule extends Route
     private final Map<String, Time> actualDeparturesConflict = new HashMap<>();
 
     /**
-     * @param id id
-     * @param nodes nodes
-     * @param line line of the bus schedule
+     * @param id String; id
+     * @param nodes List&lt;Node&gt;; nodes
+     * @param line String; line of the bus schedule
      */
     public BusSchedule(final String id, final List<Node> nodes, final String line)
     {
@@ -52,8 +52,8 @@ public class BusSchedule extends Route
     }
 
     /**
-     * @param id id
-     * @param line line of the bus schedule
+     * @param id String; id
+     * @param line String; line of the bus schedule
      */
     public BusSchedule(final String id, final String line)
     {
@@ -208,9 +208,9 @@ public class BusSchedule extends Route
         private final boolean forceSchedule;
 
         /**
-         * @param departureTime departure time
-         * @param dwellTime dwell time
-         * @param forceSchedule whether to wait until departure time
+         * @param departureTime Time; departure time
+         * @param dwellTime Duration; dwell time
+         * @param forceSchedule boolean; whether to wait until departure time
          */
         BusStopInfo(final Time departureTime, final Duration dwellTime, final boolean forceSchedule)
         {

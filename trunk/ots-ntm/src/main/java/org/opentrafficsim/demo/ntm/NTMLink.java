@@ -221,7 +221,7 @@ public class NTMLink extends CapacityOTSLink
     }
 
     /**
-     * @param link
+     * @param link NTMLink;
      * @throws NetworkException
      */
     public NTMLink(final NTMLink link) throws NetworkException

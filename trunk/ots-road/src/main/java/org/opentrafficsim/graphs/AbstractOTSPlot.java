@@ -70,7 +70,7 @@ public abstract class AbstractOTSPlot extends JFrame
     /**
      * Construct a new AbstractOTSPlot.
      * @param caption String; the caption of the graph window
-     * @param path List&lt;Lane&gt; the lanes for which the plot is made
+     * @param path List&lt;Lane&gt;; List&lt;Lane&gt; the lanes for which the plot is made
      */
     public AbstractOTSPlot(final String caption, final List<Lane> path)
     {

@@ -41,7 +41,8 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
 
     /**
      * Constructor with factory for tactical planners.
-     * @param tacticalPlannerFactory factory for tactical planners
+     * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
+     *            tactical planners
      */
     public AbstractLaneBasedStrategicalPlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory)
@@ -52,8 +53,9 @@ public abstract class AbstractLaneBasedStrategicalPlannerFactory<T extends LaneB
 
     /**
      * Constructor with factory for tactical planners.
-     * @param tacticalPlannerFactory factory for tactical planners
-     * @param parametersFactory factory for parameters
+     * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
+     *            tactical planners
+     * @param parametersFactory ParameterFactory; factory for parameters
      */
     public AbstractLaneBasedStrategicalPlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,

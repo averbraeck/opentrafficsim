@@ -25,7 +25,7 @@ public abstract class ExtendedDataTypeDuration<G extends GtuDataInterface>
 
     /**
      * Constructor setting the id.
-     * @param id id
+     * @param id String; id
      */
     public ExtendedDataTypeDuration(String id)
     {

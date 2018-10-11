@@ -59,9 +59,9 @@ public class NTMNode extends OTSNode implements Comparable<NTMNode>
     // private final long id;
 
     /**
-     * @param nr to Identify
-     * @param point ...
-     * @param behaviourType describes traffic behaviour of units moving through the "node"
+     * @param nr String; to Identify
+     * @param point Coordinate; ...
+     * @param behaviourType TrafficBehaviourType; describes traffic behaviour of units moving through the "node"
      * @throws NetworkException
      */
     public NTMNode(final Network network, String nr, Coordinate point, TrafficBehaviourType behaviourType)

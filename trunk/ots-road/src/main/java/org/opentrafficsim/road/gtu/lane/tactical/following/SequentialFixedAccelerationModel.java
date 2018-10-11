@@ -47,8 +47,8 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
 
     /**
      * Construct a SequentialFixedAccelerationModel with empty list of FixedAccelerationModel steps.
-     * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
-     * @param maximumSafeDeceleration specified maximum safe deceleration
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator (needed to obtain the current simulation time)
+     * @param maximumSafeDeceleration Acceleration; specified maximum safe deceleration
      */
     public SequentialFixedAccelerationModel(final DEVSSimulatorInterface.TimeDoubleUnit simulator,
             final Acceleration maximumSafeDeceleration)
@@ -59,8 +59,8 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
 
     /**
      * Construct a SequentialFixedAccelerationModel and load it with a list of FixedAccelerationModel steps.
-     * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
-     * @param maximumSafeDeceleration specified maximum safe deceleration
+     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator (needed to obtain the current simulation time)
+     * @param maximumSafeDeceleration Acceleration; specified maximum safe deceleration
      * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
      */
     public SequentialFixedAccelerationModel(final DEVSSimulatorInterface.TimeDoubleUnit simulator,
