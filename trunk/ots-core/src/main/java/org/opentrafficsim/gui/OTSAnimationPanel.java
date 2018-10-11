@@ -504,6 +504,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     public final void actionPerformed(final ActionEvent actionEvent)
     {
         String actionCommand = actionEvent.getActionCommand();
+        // System.out.println("Action command is " + actionCommand);
         try
         {
             if (actionCommand.equals("Home"))
