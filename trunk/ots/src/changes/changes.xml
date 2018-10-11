@@ -6,7 +6,8 @@
       <action dev="averbraeck" type="add">
         A program called ParamComments has been added in ots-build-tools to help enter/repair the
         correct types in the @param entries in the method comments. All classes have been repaired 
-        using this program.
+        using this program. After running the utility, do a refresh on all projects, 
+        followed by a Source - Format.
       </action>
       <action dev="averbraeck" type="fix">
         The .classpath files have a classpathentry for /src/main/resources after a Maven Update with
