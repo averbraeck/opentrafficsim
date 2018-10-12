@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -14,10 +16,21 @@ import java.util.ArrayList;
 import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions;
@@ -28,6 +41,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
@@ -35,21 +49,13 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.xml.sax.SAXException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -193,23 +199,17 @@ public class AimsunControl extends AbstractWrappableAnimation
         String error = null;
         while (true)
         {
-            // byte[] in = new byte[1];
-            // inputStream.read(in);
-            // System.out.println(String.format("Got byte %02x", in[0]));
             try
             {
                 byte[] sizeBytes = new byte[4];
-                // inputStream.read(sizeBytes);
                 fillBuffer(inputStream, sizeBytes);
                 int size = ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
                         + (sizeBytes[3] & 0xff);
                 System.out.println("expecting message of " + size + " bytes");
                 byte[] buffer = new byte[size];
-                // inputStream.read(buffer);
                 fillBuffer(inputStream, buffer);
                 AimsunControlProtoBuf.OTSMessage message = AimsunControlProtoBuf.OTSMessage.parseFrom(buffer);
 
-                // AimsunControlProtoBuf.OTSMessage message = AimsunControlProtoBuf.OTSMessage.parseDelimitedFrom(inputStream);
                 if (null == message)
                 {
                     System.out.println("Connection terminated; exiting");
@@ -233,6 +233,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                             SimpleAnimator animator = buildAnimator(Time.ZERO, warmupDuration, runDuration,
                                     new ArrayList<Property<?>>(), null, true);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
+                            animator.setSpeedFactor(1000.0, true);
                         }
                         catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception1)
                         {
@@ -252,7 +253,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                         }
                         AimsunControlProtoBuf.SimulateUntil simulateUntil = message.getSimulateUntil();
                         Time stopTime = new Time(simulateUntil.getTime(), TimeUnit.BASE_SECOND);
-                        System.out.print("Simulate until " + stopTime + " ");
+                        System.out.println("Simulate until " + stopTime + " ");
                         DEVSSimulator<Time, ?, ?> simulator = (DEVSSimulator<Time, ?, ?>) this.model.getSimulator();
                         try
                         {
@@ -268,9 +269,31 @@ public class AimsunControl extends AbstractWrappableAnimation
                                 try
                                 {
                                     Thread.sleep(10);
+                                    // System.out.println("Simulation time is now " + simulator.getSimulatorTime());
                                     if (Integer.toBinaryString(attempt).matches("10*"))
                                     {
                                         System.out.print(".");
+                                    }
+                                    if (attempt % 1000 == 0)
+                                    {
+                                        ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
+                                        long[] threadIds = mxBean.findDeadlockedThreads();
+                                        if (null == threadIds)
+                                        {
+                                            System.out.println("Hmmm... There are no dead locked threads");
+                                        }
+                                        else
+                                        {
+                                            for (long threadId : threadIds)
+                                            {
+                                                System.out.println("Thread id of dead locked thread is " + threadId);
+                                            }
+                                        }
+                                        // System.out.println(mxBean);
+                                        System.out.println("Simulator time is " + simulator.getSimulatorTime());
+                                        System.out.println("Kicking simulator...");
+                                        simulator.stop();
+                                        simulator.runUpTo(stopTime);
                                     }
                                 }
                                 catch (InterruptedException ie)
@@ -305,14 +328,6 @@ public class AimsunControl extends AbstractWrappableAnimation
                             resultBuilder.setGtuPositions(gtuPositions);
                             AimsunControlProtoBuf.OTSMessage result = resultBuilder.build();
                             transmitMessage(result, outputStream);
-                            /*
-                             * size = result.getSerializedSize(); System.out.print("Transmitting " +
-                             * this.model.getNetwork().getGTUs().size() + " GTU positions encoded in " + size + " bytes ... ");
-                             * sizeBytes[0] = (byte) ((size >> 24) & 0xff); sizeBytes[1] = (byte) ((size >> 16) & 0xff);
-                             * sizeBytes[2] = (byte) ((size >> 8) & 0xff); sizeBytes[3] = (byte) (size & 0xff);
-                             * outputStream.write(sizeBytes); buffer = new byte[size]; buffer = result.toByteArray();
-                             * outputStream.write(buffer); System.out.println("Done");
-                             */
                         }
                         catch (SimRuntimeException | OperationalPlanException exception)
                         {
@@ -460,13 +475,24 @@ public class AimsunControl extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = (OTSSimulatorInterface) theSimulator;
+            try
+            {
+                this.simulator.addListener(this, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT);
+                this.simulator.addListener(this, SimulatorInterface.TIME_CHANGED_EVENT);
+            }
+            catch (RemoteException exception1)
+            {
+                exception1.printStackTrace();
+            }
             // URL url = URLResource.getResource("/aimsun/singleRoad.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             @SuppressWarnings("synthetic-access")
             String xml = AimsunControl.this.networkXML;
             try
             {
-                this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), true);
+                this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), false);
+                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, (OTSSimulatorInterface) theSimulator,
+                        new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
                     | OTSGeometryException | ValueException | ParameterException exception)
@@ -485,9 +511,9 @@ public class AimsunControl extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public void notify(final EventInterface event) throws RemoteException
+        public void notify(EventInterface event) throws RemoteException
         {
-            // TODO: WIP
+            System.out.println("Received event " + event);
         }
 
         /** {@inheritDoc} */
