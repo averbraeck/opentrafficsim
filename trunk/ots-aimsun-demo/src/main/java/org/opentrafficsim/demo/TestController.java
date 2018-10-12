@@ -121,7 +121,7 @@ public final class TestController
         System.out.println("Sending CREATESIMULATION message");
         sendProtoMessage(outputStream,
                 AimsunControlProtoBuf.OTSMessage.newBuilder().setCreateSimulation(createSimulationBuilder.build()).build());
-        // Simulate 10 seconds in 0.5 second steps
+        // Simulate 3600 seconds in 1 second steps
         for (int step = 1; step <= 3600; step++)
         {
             AimsunControlProtoBuf.SimulateUntil simulateUntil =
