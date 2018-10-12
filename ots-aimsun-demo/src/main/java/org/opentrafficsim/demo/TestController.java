@@ -96,7 +96,8 @@ public final class TestController
         createSimulationBuilder.setRunTime(3600d);
         createSimulationBuilder.setWarmUpTime(0d);
         // String network = URLResource.getResource("/aimsun/singleRoad.xml").toString(); // wrong; fix later
-        String networkResource = "/aimsun/singleRoad.xml";
+        // String networkResource = "/aimsun/singleRoad.xml";
+        String networkResource = "d:/AimsunOtsNetwork.xml";
         String network = null; // IOUtils.toString(URLResource.getResource(networkResource));
         URL networkURL = URLResource.getResource(networkResource);
         if (null == networkURL)
@@ -121,16 +122,20 @@ public final class TestController
         sendProtoMessage(outputStream,
                 AimsunControlProtoBuf.OTSMessage.newBuilder().setCreateSimulation(createSimulationBuilder.build()).build());
         // Simulate 10 seconds in 0.5 second steps
-        for (int step = 0; step <= 20; step++)
+        for (int step = 1; step <= 3600; step++)
         {
             AimsunControlProtoBuf.SimulateUntil simulateUntil =
-                    AimsunControlProtoBuf.SimulateUntil.newBuilder().setTime(0.5d * step).build();
+                    AimsunControlProtoBuf.SimulateUntil.newBuilder().setTime(1d * step).build();
             System.out.println("Sending simulate up to step " + step + " command");
             sendProtoMessage(outputStream,
                     AimsunControlProtoBuf.OTSMessage.newBuilder().setSimulateUntil(simulateUntil).build());
             System.out.println("Receive reply");
             AimsunControlProtoBuf.OTSMessage reply = receiveProtoMessage(inputStream);
             System.out.println("Received " + reply);
+            if (reply.getGtuPositions().getStatus().startsWith("FAILED"))
+            {
+                break;
+            }
         }
         try
         {
@@ -162,9 +167,9 @@ public final class TestController
         outputStream.write(sizeBytes);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         message.writeTo(CodedOutputStream.newInstance(baos));
-        // byte[] buffer = new byte[size];
-        // buffer = message.toByteArray();
-        outputStream.write(baos.toByteArray());
+        byte[] buffer = new byte[size];
+        buffer = message.toByteArray();
+        outputStream.write(buffer);
         // System.out.println("Done");
     }
 
