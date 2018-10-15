@@ -131,7 +131,7 @@ public final class TestController
                     AimsunControlProtoBuf.OTSMessage.newBuilder().setSimulateUntil(simulateUntil).build());
             System.out.println("Receive reply");
             AimsunControlProtoBuf.OTSMessage reply = receiveProtoMessage(inputStream);
-            System.out.println("Received " + reply);
+            // System.out.println("Received " + reply);
             if (reply.getGtuPositions().getStatus().startsWith("FAILED"))
             {
                 break;
