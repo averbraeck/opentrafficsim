@@ -1,5 +1,8 @@
 package org.opentrafficsim.graphs;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -17,10 +20,17 @@ import javax.swing.JPopupMenu;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYAnnotation;
+import org.jfree.chart.annotations.XYLineAnnotation;
+import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
@@ -71,6 +81,9 @@ public class XFundamentalDiagram extends XAbstractPlot implements XYDataset
     /** Updater for update times. */
     private final XGraphUpdater<Time> graphUpdater;
 
+    /** Property for chart listener to provide time info for status label. */
+    private String timeInfo = "";
+
     /**
      * Constructor.
      * @param caption String; caption
@@ -99,7 +112,7 @@ public class XFundamentalDiagram extends XAbstractPlot implements XYDataset
         setChart(createChart());
 
         // setup updater to do the actual work in another thread
-        this.graphUpdater = new XGraphUpdater<>("Fundamental diagram worker", Thread.currentThread(), (t) -> 
+        this.graphUpdater = new XGraphUpdater<>("Fundamental diagram worker", Thread.currentThread(), (t) ->
         {
             if (this.source != null)
             {
@@ -182,8 +195,7 @@ public class XFundamentalDiagram extends XAbstractPlot implements XYDataset
                     Quantity old = XFundamentalDiagram.this.rangeQuantity;
                     XFundamentalDiagram.this.rangeQuantity = XFundamentalDiagram.this.otherQuantity;
                     XFundamentalDiagram.this.otherQuantity = old;
-                    getChart().getXYPlot().getRangeAxis()
-                            .setLabel("\u2192 " + XFundamentalDiagram.this.rangeQuantity.label());
+                    getChart().getXYPlot().getRangeAxis().setLabel("\u2192 " + XFundamentalDiagram.this.rangeQuantity.label());
                     getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
                 }
             }
@@ -282,7 +294,77 @@ public class XFundamentalDiagram extends XAbstractPlot implements XYDataset
     protected String getStatusLabel(final double domainValue, final double rangeValue)
     {
         return this.domainQuantity.format(domainValue) + ", " + this.rangeQuantity.format(rangeValue) + ", "
-                + this.otherQuantity.format(this.domainQuantity.computeOther(this.rangeQuantity, domainValue, rangeValue));
+                + this.otherQuantity.format(this.domainQuantity.computeOther(this.rangeQuantity, domainValue, rangeValue))
+                + this.timeInfo;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected ChartMouseListener getChartMouseListener()
+    {
+        return new ChartMouseListener()
+        {
+            /** {@inheritDoc} */
+            @SuppressWarnings("unchecked")
+            @Override
+            public void chartMouseClicked(final ChartMouseEvent event)
+            {
+                // remove any line annotations
+                for (XYAnnotation annotation : ((List<XYAnnotation>) getChart().getXYPlot().getAnnotations()))
+                {
+                    if (annotation instanceof XYLineAnnotation)
+                    {
+                        getChart().getXYPlot().removeAnnotation(annotation);
+                    }
+                }
+                // add line annotation for each item in series if the user clicked in an item
+                if (event.getEntity() instanceof XYItemEntity)
+                {
+                    XYItemEntity itemEntity = (XYItemEntity) event.getEntity();
+                    int series = itemEntity.getSeriesIndex();
+                    for (int i = 0; i < getItemCount(series) - 1; i++)
+                    {
+                        XYLineAnnotation annotation = new XYLineAnnotation(getXValue(series, i), getYValue(series, i),
+                                getXValue(series, i + 1), getYValue(series, i + 1), new BasicStroke(1.0f), Color.WHITE);
+                        getChart().getXYPlot().addAnnotation(annotation);
+                    }
+                }
+            }
+
+            /** {@inheritDoc} */
+            @SuppressWarnings({ "synthetic-access", "unchecked" })
+            @Override
+            public void chartMouseMoved(final ChartMouseEvent event)
+            {
+                // set text annotation and status text to time of item
+                if (event.getEntity() instanceof XYItemEntity)
+                {
+                    // create time info for status label
+                    XYItemEntity itemEntity = (XYItemEntity) event.getEntity();
+                    int series = itemEntity.getSeriesIndex();
+                    int item = itemEntity.getItem();
+                    double t = item * XFundamentalDiagram.this.source.getUpdateInterval().si;
+                    XFundamentalDiagram.this.timeInfo = String.format(", %.0fs", t);
+                    XYTextAnnotation textAnnotation =
+                            new XYTextAnnotation(String.format("%.0fs", t), getXValue(series, item), getYValue(series, item));
+                    textAnnotation.setTextAnchor(TextAnchor.BOTTOM_RIGHT);
+                    textAnnotation.setFont(textAnnotation.getFont().deriveFont(14.0f).deriveFont(Font.BOLD));
+                    getChart().getXYPlot().addAnnotation(textAnnotation);
+                }
+                // remove texts when mouse is elsewhere
+                else
+                {
+                    for (XYAnnotation annotation : ((List<XYAnnotation>) getChart().getXYPlot().getAnnotations()))
+                    {
+                        if (annotation instanceof XYTextAnnotation)
+                        {
+                            getChart().getXYPlot().removeAnnotation(annotation);
+                        }
+                    }
+                    XFundamentalDiagram.this.timeInfo = "";
+                }
+            }
+        };
     }
 
     /**
@@ -538,7 +620,7 @@ public class XFundamentalDiagram extends XAbstractPlot implements XYDataset
                     Time.ZERO, Time.createSI(Double.MAX_VALUE)));
             lanes.add(laneDirection);
 
-            // info per kpi lane direaction 
+            // info per kpi lane direaction
             poss.add(laneDirection.getPositionInDirection(pos.getPosition()));
             lastConsecutivelyAssignedTrajectories.put(laneDirection, -1);
             assignedTrajectories.put(laneDirection, new TreeSet<>());
@@ -549,7 +631,9 @@ public class XFundamentalDiagram extends XAbstractPlot implements XYDataset
         {
             // internal data
             private int period = -1;
+
             private int[][] count = new int[nSeries][10];
+
             private double[][] speed = new double[nSeries][10];
 
             /** {@inheritDoc} */
@@ -580,7 +664,7 @@ public class XFundamentalDiagram extends XAbstractPlot implements XYDataset
                         this.speed[i] = XPlotUtil.ensureCapacity(this.speed[i], nextPeriod + 1);
                     }
                 }
-                
+
                 // loop positions and trajectories
                 Time startTime = time.minus(aggregationTime);
                 double v = 0.0;
@@ -637,7 +721,7 @@ public class XFundamentalDiagram extends XAbstractPlot implements XYDataset
                         this.count[i][nextPeriod] = c;
                         this.speed[i][nextPeriod] = c == 0 ? Float.NaN : v / c;
                     }
-                    
+
                     // consolidate list of assigned trajectories in 'all up to n' and 'these specific ones beyond n'
                     if (!assigned.isEmpty())
                     {

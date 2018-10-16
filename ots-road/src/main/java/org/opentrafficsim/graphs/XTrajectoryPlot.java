@@ -73,7 +73,7 @@ public class XTrajectoryPlot extends XAbstractSamplerPlot implements XYDataset
         setChart(createChart());
 
         // setup updater to do the actual work in another thread
-        this.graphUpdater = new XGraphUpdater<>("Trajectories worker", Thread.currentThread(), (t) -> 
+        this.graphUpdater = new XGraphUpdater<>("Trajectories worker", Thread.currentThread(), (t) ->
         {
             for (KpiLaneDirection lane : getPath())
             {
