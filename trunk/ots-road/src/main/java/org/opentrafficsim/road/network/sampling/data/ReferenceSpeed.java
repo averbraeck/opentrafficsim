@@ -22,6 +22,9 @@ import org.opentrafficsim.road.network.sampling.GtuData;
 public class ReferenceSpeed extends ExtendedDataTypeSpeed<GtuData>
 {
 
+    /** Single instance. */
+    public static final ReferenceSpeed INSTANCE = new ReferenceSpeed(); 
+    
     /**
      * 
      */

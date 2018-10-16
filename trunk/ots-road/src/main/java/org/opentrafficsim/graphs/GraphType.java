@@ -27,7 +27,13 @@ public enum GraphType
 
     /** Contour plot: flow. */
     FLOW_CONTOUR,
+    
+    /** Contour plot: delay. */
+    DELAY_CONTOUR,
 
     /** Fundamental diagram. */
-    FUNDAMENTAL_DIAGRAM;
+    FUNDAMENTAL_DIAGRAM,
+    
+    /** Any other graph. */
+    OTHER,
 }

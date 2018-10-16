@@ -35,7 +35,7 @@ abstract class PointerHandler implements MouseListener, MouseMotionListener
     public void mouseMoved(final MouseEvent mouseEvent)
     {
         final ChartPanel cp = (ChartPanel) mouseEvent.getSource();
-        final XYPlot plot = (XYPlot) cp.getChart().getPlot();
+        final XYPlot plot = cp.getChart().getXYPlot();
         // Show a cross hair cursor while the mouse is on the graph
         final boolean showCrossHair = cp.getScreenDataArea().contains(mouseEvent.getPoint());
         if (cp.getHorizontalAxisTrace() != showCrossHair)

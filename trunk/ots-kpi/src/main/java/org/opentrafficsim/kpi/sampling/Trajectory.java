@@ -229,6 +229,36 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Returns the last index with a position smaller than or equal to the given position.
+     * @param position float; position
+     * @return int; last index with a position smaller than or equal to the given position
+     */
+    public int binarySearchX(final float position)
+    {
+        if (this.x[0] >= position)
+        {
+            return 0;
+        }
+        int index = Arrays.binarySearch(this.x, 0, this.size, position);
+        return index < 0 ? - index - 2 : index;
+    }
+
+    /**
+     * Returns the last index with a time smaller than or equal to the given time.
+     * @param time float; time
+     * @return int; last index with a time smaller than or equal to the given time
+     */
+    public int binarySearchT(final float time)
+    {
+        if (this.t[0] >= time)
+        {
+            return 0;
+        }
+        int index = Arrays.binarySearch(this.t, 0, this.size, time);
+        return index < 0 ? - index - 2 : index;
+    }
+
+    /**
      * Returns {@code x} value of a single sample.
      * @param index int; index
      * @return {@code x} value of a single sample
@@ -460,6 +490,53 @@ public final class Trajectory<G extends GtuDataInterface>
     }
 
     /**
+     * Returns a space-time view of this trajectory. This is much more efficient than {@code subSet()} as no trajectory is
+     * copied. The limitation is that only distance and time (and mean speed) in the space-time view can be obtained.
+     * @param startPosition start position
+     * @param endPosition end position
+     * @param startTime start time
+     * @param endTime end time
+     * @return space-time view of this trajectory
+     */
+    @SuppressWarnings("synthetic-access")
+    public SpaceTimeView getSpaceTimeView(final Length startPosition, final Length endPosition, final Time startTime,
+            final Time endTime)
+    {
+        if (size() == 0)
+        {
+            return new SpaceTimeView(Length.ZERO, Duration.ZERO);
+        }
+        Length length0 = this.kpiLaneDirection.getPositionInDirection(startPosition);
+        Length length1 = this.kpiLaneDirection.getPositionInDirection(endPosition);
+        Boundaries bounds = spaceBoundaries(length0, length1).intersect(timeBoundaries(startTime, endTime));
+        double xFrom;
+        double tFrom;
+        if (bounds.fFrom > 0.0)
+        {
+            xFrom = this.x[bounds.from] * (1 - bounds.fFrom) + this.x[bounds.from + 1] * bounds.fFrom;
+            tFrom = this.t[bounds.from] * (1 - bounds.fFrom) + this.t[bounds.from + 1] * bounds.fFrom;
+        }
+        else
+        {
+            xFrom = this.x[bounds.from];
+            tFrom = this.t[bounds.from];
+        }
+        double xTo;
+        double tTo;
+        if (bounds.fTo > 0.0)
+        {
+            xTo = this.x[bounds.to] * (1 - bounds.fTo) + this.x[bounds.to + 1] * bounds.fTo;
+            tTo = this.t[bounds.to] * (1 - bounds.fTo) + this.t[bounds.to + 1] * bounds.fTo;
+        }
+        else
+        {
+            xTo = this.x[bounds.to];
+            tTo = this.t[bounds.to];
+        }
+        return new SpaceTimeView(Length.createSI(xTo - xFrom), Duration.createSI(tTo - tFrom));
+    }
+
+    /**
      * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
      * and the subset is from the start.
      * @param startPosition Length; start position
@@ -476,12 +553,15 @@ public final class Trajectory<G extends GtuDataInterface>
         Length length1 = this.kpiLaneDirection.getPositionInDirection(endPosition);
         Throw.when(length0.gt(length1), IllegalArgumentException.class,
                 "Start position should be smaller than end position in the direction of travel");
+        if (this.size == 0)
+        {
+            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
+        }
         return subSet(spaceBoundaries(length0, length1));
     }
 
     /**
-     * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
-     * and the subset is from the start.
+     * Copies the trajectory but with a subset of the data.
      * @param startTime Time; start time
      * @param endTime Time; end time
      * @return subset of the trajectory
@@ -493,12 +573,15 @@ public final class Trajectory<G extends GtuDataInterface>
         Throw.whenNull(startTime, "Start time may not be null");
         Throw.whenNull(endTime, "End time may not be null");
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
+        if (this.size == 0)
+        {
+            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
+        }
         return subSet(timeBoundaries(startTime, endTime));
     }
 
     /**
-     * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
-     * and the subset is from the start.
+     * Copies the trajectory but with a subset of the data.
      * @param startPosition Length; start position
      * @param endPosition Length; end position
      * @param startTime Time; start time
@@ -519,6 +602,10 @@ public final class Trajectory<G extends GtuDataInterface>
         Throw.whenNull(startTime, "Start time may not be null");
         Throw.whenNull(endTime, "End time may not be null");
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
+        if (this.size == 0)
+        {
+            return new Trajectory<>(this.gtuId, this.metaData, this.extendedData.keySet(), this.kpiLaneDirection);
+        }
         return subSet(spaceBoundaries(length0, length1).intersect(timeBoundaries(startTime, endTime)));
     }
 
@@ -534,30 +621,25 @@ public final class Trajectory<G extends GtuDataInterface>
         {
             return new Boundaries(0, 0.0, 0, 0.0);
         }
-        int from = 0;
-        double fFrom = 0;
         // to float needed as x is in floats and due to precision fTo > 1 may become true
         float startPos = (float) startPosition.si;
         float endPos = (float) endPosition.si;
-        while (startPos > this.x[from + 1] && from < this.size - 1)
-        {
-            from++;
-        }
-        if (this.x[from] < startPos)
-        {
-            fFrom = (startPos - this.x[from]) / (this.x[from + 1] - this.x[from]);
-        }
-        int to = this.size - 1;
-        double fTo = 0;
-        while (endPos < this.x[to] && to > 0)
-        {
-            to--;
-        }
-        if (to < this.size - 1)
-        {
-            fTo = (endPos - this.x[to]) / (this.x[to + 1] - this.x[to]);
-        }
-        return new Boundaries(from, fFrom, to, fTo);
+        Boundary from = getBoundaryAtPosition(startPos, false);
+        Boundary to = getBoundaryAtPosition(endPos, true);
+        return new Boundaries(from.index, from.fraction, to.index, to.fraction);
+//        int from = binarySearchX(startPos);
+//        double fFrom = 0;
+//        if (this.x[from] < startPos)
+//        {
+//            fFrom = (startPos - this.x[from]) / (this.x[from + 1] - this.x[from]);
+//        }
+//        int to = binarySearchX(endPos);
+//        double fTo = 0;
+//        if (to < this.size - 1)
+//        {
+//            fTo = (endPos - this.x[to]) / (this.x[to + 1] - this.x[to]);
+//        }
+//        return new Boundaries(from, fFrom, to, fTo);
     }
 
     /**
@@ -572,30 +654,119 @@ public final class Trajectory<G extends GtuDataInterface>
         {
             return new Boundaries(0, 0.0, 0, 0.0);
         }
-        int from = 0;
-        double fFrom = 0;
         // to float needed as x is in floats and due to precision fTo > 1 may become true
         float startTim = (float) startTime.si;
         float endTim = (float) endTime.si;
-        while (startTim > this.t[from + 1] && from < this.size - 1)
+          Boundary from = getBoundaryAtTime(startTim, false);
+          Boundary to = getBoundaryAtTime(endTim, true);
+          return new Boundaries(from.index, from.fraction, to.index, to.fraction);
+//        int from = binarySearchT(startTim);
+//        double fFrom = 0;
+//        if (this.t[from] < startTim)
+//        {
+//            fFrom = (startTim - this.t[from]) / (this.t[from + 1] - this.t[from]);
+//        }
+//        int to = binarySearchT(endTim);
+//        double fTo = 0;
+//        if (to < this.size - 1)
+//        {
+//            fTo = (endTim - this.t[to]) / (this.t[to + 1] - this.t[to]);
+//        }
+//        return new Boundaries(from, fFrom, to, fTo);
+    }
+    
+    /**
+     * Returns the boundary at the given position.
+     * @param position float; position
+     * @param end boolean; whether the end of a range is searched
+     * @return Boundary; boundary at the given position
+     */
+    private Boundary getBoundaryAtPosition(final float position, final boolean end)
+    {
+        int index = binarySearchX(position);
+        double fraction = 0;
+        if (end ? index < this.size - 1 : this.x[index] < position)
         {
-            from++;
+            fraction = (position - this.x[index]) / (this.x[index + 1] - this.x[index]);
         }
-        if (this.t[from] < startTim)
+        return new Boundary(index, fraction);
+    }
+    
+    /**
+     * Returns the boundary at the given time.
+     * @param time float; time
+     * @param end boolean; whether the end of a range is searched
+     * @return Boundary; boundary at the given time
+     */
+    private Boundary getBoundaryAtTime(final float time, final boolean end)
+    {
+        int index = binarySearchT(time);
+        double fraction = 0;
+        if (end ? index < this.size - 1 : this.t[index] < time)
         {
-            fFrom = (startTim - this.t[from]) / (this.t[from + 1] - this.t[from]);
+            fraction = (time - this.t[index]) / (this.t[index + 1] - this.t[index]);
         }
-        int to = this.size - 1;
-        double fTo = 0;
-        while (endTim < this.t[to] && to > 0)
-        {
-            to--;
-        }
-        if (to < this.size - 1)
-        {
-            fTo = (endTim - this.t[to]) / (this.t[to + 1] - this.t[to]);
-        }
-        return new Boundaries(from, fFrom, to, fTo);
+        return new Boundary(index, fraction);
+    }
+    
+    /**
+     * Returns an interpolated time at the given position.
+     * @param position Length; position
+     * @return Time; interpolated time at the given position
+     */
+    public Time getTimeAtPosition(final Length position)
+    {
+        return Time.createSI(getBoundaryAtPosition((float) position.si, false).getValue(this.t));
+    }
+    
+    /**
+     * Returns an interpolated speed at the given position.
+     * @param position Length; position
+     * @return Speed; interpolated speed at the given position
+     */
+    public Speed getSpeedAtPosition(final Length position)
+    {
+        return Speed.createSI(getBoundaryAtPosition((float) position.si, false).getValue(this.v));
+    }
+    
+    /**
+     * Returns an interpolated acceleration at the given position.
+     * @param position Length; position
+     * @return Acceleration; interpolated acceleration at the given position
+     */
+    public Acceleration getAccelerationAtPosition(final Length position)
+    {
+        return Acceleration.createSI(getBoundaryAtPosition((float) position.si, false).getValue(this.a));
+    }
+    
+    /**
+     * Returns an interpolated position at the given time.
+     * @param time Length; time
+     * @return Length; interpolated position at the given time
+     */
+    public Length getPositionAtTime(final Time time)
+    {
+        return Length.createSI(getBoundaryAtTime((float) time.si, false).getValue(this.x));
+    }
+    
+    /**
+     * Returns an interpolated speed at the given time.
+     * @param time Length; time
+     * @return Speed; interpolated speed at the given time
+     */
+    public Speed getSpeedAtTime(final Time time)
+    {
+        return Speed.createSI(getBoundaryAtTime((float) time.si, false).getValue(this.v));
+    }
+    
+    /**
+     * Returns an interpolated acceleration at the given time.
+     * @param time Length; time
+     * @return Acceleration; interpolated acceleration at the given time
+     */
+    public Acceleration getAccelerationAtTime(final Time time)
+    {
+        return Acceleration.createSI(getBoundaryAtTime((float) time.si, false).getValue(this.a));
     }
 
     /**
@@ -647,7 +818,7 @@ public final class Trajectory<G extends GtuDataInterface>
                 {
                     if (nBefore == 1)
                     {
-                        edt.setValue(toList, j,
+                        toList = edt.setValue(toList, j,
                                 ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
                                         edt.getStorageValue(fromList, bounds.from),
                                         edt.getStorageValue(fromList, bounds.from + 1), bounds.fFrom));
@@ -655,12 +826,12 @@ public final class Trajectory<G extends GtuDataInterface>
                     }
                     for (int i = bounds.from + 1; i < bounds.to; i++)
                     {
-                        edt.setValue(toList, j, edt.getStorageValue(fromList, i));
+                        toList = edt.setValue(toList, j, edt.getStorageValue(fromList, i));
                         j++;
                     }
                     if (nAfter == 1)
                     {
-                        edt.setValue(toList, j,
+                        toList = edt.setValue(toList, j,
                                 ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
                                         edt.getStorageValue(fromList, bounds.to), edt.getStorageValue(fromList, bounds.to + 1),
                                         bounds.fTo));
@@ -748,6 +919,63 @@ public final class Trajectory<G extends GtuDataInterface>
 
     /**
      * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 15 okt. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public class Boundary
+    {
+        /** Rounded-down index. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
+        public final int index;
+
+        /** Fraction. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
+        public final double fraction;
+
+        /**
+         * @param index rounded down index
+         * @param fraction fraction
+         */
+        Boundary(final int index, final double fraction)
+        {
+            this.index = index;
+            this.fraction = fraction;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "Boundary [index=" + this.index + ", fraction=" + this.fraction + "]";
+        }
+        
+        /**
+         * Returns the value at the boundary in the array.
+         * @param array float[] array
+         * @return double; value at the boundary in the array
+         */
+        public double getValue(final float[] array)
+        {
+            if (this.fraction == 0.0)
+            {
+                return array[this.index];
+            }
+            if (this.fraction == 1.0)
+            {
+                return array[this.index + 1];
+            }
+            return (1 - this.fraction) * array[this.index] + this.fraction * array[this.index + 1];
+        }
+    }
+
+    /**
+     * <p>
      * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -805,6 +1033,12 @@ public final class Trajectory<G extends GtuDataInterface>
          */
         public Boundaries intersect(final Boundaries boundaries)
         {
+            if (this.to < boundaries.from || boundaries.to < this.from
+                    || this.to == boundaries.from && this.fTo < boundaries.fFrom
+                    || boundaries.to == this.from && boundaries.fTo < this.fFrom)
+            {
+                return new Boundaries(0, 0.0, 0, 0.0); // no overlap
+            }
             int newFrom;
             double newFFrom;
             if (this.from > boundaries.from || this.from == boundaries.from && this.fFrom > boundaries.fFrom)
@@ -839,6 +1073,57 @@ public final class Trajectory<G extends GtuDataInterface>
             return "Boundaries [from=" + this.from + ", fFrom=" + this.fFrom + ", to=" + this.to + ", fTo=" + this.fTo + "]";
         }
 
+    }
+
+    /**
+     * Space-time view of a trajectory. This supplies distance and time (and mean speed) in a space-time box.
+     * <p>
+     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 5 okt. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static class SpaceTimeView
+    {
+
+        /** Distance. */
+        final Length distance;
+
+        /** Time. */
+        final Duration time;
+
+        /**
+         * Constructor.
+         * @param distance Length; distance
+         * @param time Duration; time
+         */
+        private SpaceTimeView(final Length distance, final Duration time)
+        {
+            this.distance = distance;
+            this.time = time;
+        }
+
+        /**
+         * Returns the distance.
+         * @return Length; distance
+         */
+        public final Length getDistance()
+        {
+            return this.distance;
+        }
+
+        /**
+         * Returns the time.
+         * @return Duration; time
+         */
+        public final Duration getTime()
+        {
+            return this.time;
+        }
     }
 
 }

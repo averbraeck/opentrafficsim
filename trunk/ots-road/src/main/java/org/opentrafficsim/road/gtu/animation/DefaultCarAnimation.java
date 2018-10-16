@@ -3,9 +3,9 @@ package org.opentrafficsim.road.gtu.animation;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -56,6 +56,27 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     /** Hashcode. */
     private final int hashCode;
 
+    /** GTU outline. */
+    private final Rectangle2D.Double rectangle;
+
+    /** Front indicator (white circle). */
+    private final Ellipse2D.Double frontIndicator;
+
+    /** Left indicator. */
+    private final Rectangle2D.Double leftIndicator;
+
+    /** Right indicator. */
+    private final Rectangle2D.Double rightIndicator;
+
+    /** Left brake light. */
+    private final Rectangle2D.Double leftBrake;
+
+    /** Right brake light. */
+    private final Rectangle2D.Double rightBrake;
+
+    /** Dot if zoomed out. */
+    private final RectangularShape dot;
+
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
      * @param gtu LaneBasedGTU; the Car to draw
@@ -92,6 +113,22 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         }
 
         this.text = new Text(gtu, gtu.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator);
+
+        // set shapes
+        final double length = gtu.getLength().si;
+        final double lFront = gtu.getFront().getDx().si;
+        final double lRear = gtu.getRear().getDx().si;
+        final double width = gtu.getWidth().si;
+        final double w2 = width / 2;
+        final double w4 = width / 4;
+        this.rectangle = new Rectangle2D.Double(lRear, -w2, length, width);
+        this.frontIndicator = new Ellipse2D.Double(lFront - w2 - w4, -w4, w2, w2);
+        this.leftIndicator = new Rectangle2D.Double(lFront - w4, -w2, w4, w4);
+        this.rightIndicator = new Rectangle2D.Double(lFront - w4, w2 - w4, w4, w4);
+        this.leftBrake = new Rectangle2D.Double(lRear, w2 - w4, w4, w4);
+        this.rightBrake = new Rectangle2D.Double(lRear, -w2, w4, w4);
+        this.dot = gtu.getGTUType().isOfType(GTUType.TRUCK) ? new Rectangle2D.Double(0, 0, 0, 0)
+                : new Ellipse2D.Double(0, 0, 0, 0);
     }
 
     /**
@@ -107,8 +144,8 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        final LaneBasedGTU car = getSource();
-        if (car.isDestroyed())
+        final LaneBasedGTU gtu = getSource();
+        if (gtu.isDestroyed())
         {
             if (!this.isDestroyed)
             {
@@ -118,7 +155,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
                 }
                 catch (@SuppressWarnings("unused") Exception e)
                 {
-                    System.err.println("Error while destroying GTU " + car.getId());
+                    System.err.println("Error while destroying GTU " + gtu.getId());
                     e.printStackTrace();
                 }
             }
@@ -130,59 +167,43 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
         // Math.pow(graphics.getTransform().getScaleY(), 2));
         if (scale > 1)
         {
-            final double length = car.getLength().si;
-            final double lFront = car.getFront().getDx().si;
-            final double lRear = car.getRear().getDx().si;
-            final double width = car.getWidth().si;
-            final double w2 = width / 2;
-            final double w4 = width / 4;
-            graphics.setColor(this.gtuColorer.getColor(car));
+            graphics.setColor(this.gtuColorer.getColor(gtu));
             BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
             graphics.setStroke(new BasicStroke(0));
-            Rectangle2D rectangle = new Rectangle2D.Double(lRear, -w2, length, width);
-            graphics.draw(rectangle);
-            graphics.fill(rectangle);
+            graphics.fill(this.rectangle);
 
             // Draw a white disk at the front to indicate which side faces forward
             graphics.setColor(Color.WHITE);
-            Ellipse2D.Double frontIndicator = new Ellipse2D.Double(lFront - w2 - w4, -w4, w2, w2);
-            graphics.draw(frontIndicator);
-            graphics.fill(frontIndicator);
+            graphics.fill(this.frontIndicator);
 
             // turn indicator lights
             graphics.setColor(Color.YELLOW);
-            if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isLeftOrBoth())
+            if (gtu.getTurnIndicatorStatus() != null && gtu.getTurnIndicatorStatus().isLeftOrBoth())
             {
-                Rectangle2D.Double leftIndicator = new Rectangle2D.Double(lFront - w4, -w2, w4, w4);
-                graphics.fill(leftIndicator);
+                graphics.fill(this.leftIndicator);
             }
-            if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isRightOrBoth())
+            if (gtu.getTurnIndicatorStatus() != null && gtu.getTurnIndicatorStatus().isRightOrBoth())
             {
-                Rectangle2D.Double rightIndicator = new Rectangle2D.Double(lFront - w4, w2 - w4, w4, w4);
-                graphics.fill(rightIndicator);
+                graphics.fill(this.rightIndicator);
             }
 
             // braking lights
-            graphics.setColor(Color.RED);
-            if (car.isBrakingLightsOn())
+            if (gtu.isBrakingLightsOn())
             {
-                Rectangle2D.Double leftBrake = new Rectangle2D.Double(lRear, w2 - w4, w4, w4);
-                Rectangle2D.Double rightBrake = new Rectangle2D.Double(lRear, -w2, w4, w4);
                 graphics.setColor(Color.RED);
-                graphics.fill(leftBrake);
-                graphics.fill(rightBrake);
+                graphics.fill(this.leftBrake);
+                graphics.fill(this.rightBrake);
             }
             graphics.setStroke(saveStroke);
         }
         else
         {
             // zoomed out, draw as marker with 7px diameter
-            graphics.setColor(this.gtuColorer.getColor(car));
+            graphics.setColor(this.gtuColorer.getColor(gtu));
             double w = 7.0 / Math.sqrt(scale);
             double x = -w / 2.0;
-            Shape shape = car.getGTUType().isOfType(GTUType.TRUCK) ? new Rectangle2D.Double(x, x, w, w)
-                    : new Ellipse2D.Double(x, x, w, w);
-            graphics.fill(shape);
+            this.dot.setFrame(x, x, w, w);
+            graphics.fill(this.dot);
         }
 
     }
@@ -218,6 +239,14 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     public int hashCode()
     {
         return this.hashCode;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object object)
+    {
+        // only here to prevent a 'hashCode without equals' warning 
+        return super.equals(object);
     }
 
     /**
