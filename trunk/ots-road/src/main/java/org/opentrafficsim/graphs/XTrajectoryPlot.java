@@ -330,7 +330,7 @@ public class XTrajectoryPlot extends XAbstractSamplerPlot implements XYDataset
          */
         public final double getT(final int item)
         {
-            return Try.assign(() -> this.trajectory.getT(item),
+            return Try.assign(() -> (double) this.trajectory.getT(item),
                     "Unexpected exception while obtaining time value from trajectory for plotting.");
         }
 
