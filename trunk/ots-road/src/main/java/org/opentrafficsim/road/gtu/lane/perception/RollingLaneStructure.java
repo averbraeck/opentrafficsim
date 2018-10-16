@@ -204,6 +204,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
      * @param gtuType GTUType; GTU type
      * @throws GTUException on a problem while updating the structure
      */
+    @Override
     public final void update(final DirectedLanePosition pos, final Route route, final GTUType gtuType) throws GTUException
     {
 
@@ -1135,6 +1136,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
      * @param lane RelativeLane; lane
      * @return first record on the given lane, or {@code null} if no such record
      */
+    @Override
     public final RollingLaneStructureRecord getFirstRecord(final RelativeLane lane)
     {
         if (this.firstRecords.containsKey(lane))
@@ -1217,6 +1219,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
      * @return Sorted set of objects of requested type per lane
      * @throws GTUException if lane is not in current set
      */
+    @Override
     public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjects(final Class<T> clazz,
             final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GTUException
     {
@@ -1239,6 +1242,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
      * @return Sorted set of objects of requested type
      * @throws GTUException if lane is not in current set
      */
+    @Override
     @SuppressWarnings("unchecked")
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjects(final RelativeLane lane,
             final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GTUException
@@ -1296,6 +1300,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
      * @return Sorted set of objects of requested type
      * @throws GTUException if lane is not in current set
      */
+    @Override
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjectsOnRoute(final RelativeLane lane,
             final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos, final Route route)
             throws GTUException
@@ -1385,6 +1390,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
      * @return Sorted set of objects of requested type per lane
      * @throws GTUException if lane is not in current set
      */
+    @Override
     public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(
             final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos, final Route route)
             throws GTUException
@@ -1408,6 +1414,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
      * @return Sorted set of objects of requested type
      * @throws GTUException if lane is not in current set
      */
+    @Override
     @SuppressWarnings("unchecked")
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(final RelativeLane lane,
             final Class<T> clazz, final LaneBasedGTU gtu, final RelativePosition.TYPE pos) throws GTUException
