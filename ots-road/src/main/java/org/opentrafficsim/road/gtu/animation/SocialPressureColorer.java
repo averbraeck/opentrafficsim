@@ -27,13 +27,13 @@ public class SocialPressureColorer implements GTUColorer
     private static final List<LegendEntry> LEGEND;
 
     /** No pressure color. */
-    private final static Color NONE = Color.WHITE;
+    private static final Color NONE = Color.WHITE;
 
     /** Full pressure color. */
-    private final static Color FULL = Color.RED;
+    private static final Color FULL = Color.RED;
 
     /** Not applicable color. */
-    private final static Color NA = Color.YELLOW;
+    private static final Color NA = Color.YELLOW;
 
     static
     {
