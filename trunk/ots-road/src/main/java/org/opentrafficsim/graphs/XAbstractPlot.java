@@ -32,6 +32,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -271,6 +272,11 @@ public abstract class XAbstractPlot extends JFrame implements Identifiable, Data
                 }
             }
         };
+        ChartMouseListener chartListener = getChartMouseListener();
+        if (chartListener != null)
+        {
+            chartPanel.addChartMouseListener(chartListener);
+        }
 
         // pointer handler
         final PointerHandler ph = new PointerHandler()
@@ -367,6 +373,15 @@ public abstract class XAbstractPlot extends JFrame implements Identifiable, Data
     protected void applyAutoBoundRange(final Plot plot)
     {
         //
+    }
+
+    /**
+     * Overridable; may return a chart listener.
+     * @return ChartMouseListener, {@code null} by default
+     */
+    protected ChartMouseListener getChartMouseListener()
+    {
+        return null;
     }
 
     /**
