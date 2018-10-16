@@ -45,6 +45,15 @@ import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.graphs.XAbstractPlot;
+import org.opentrafficsim.graphs.XContourDataPool;
+import org.opentrafficsim.graphs.XContourPlotAcceleration;
+import org.opentrafficsim.graphs.XContourPlotDensity;
+import org.opentrafficsim.graphs.XContourPlotFlow;
+import org.opentrafficsim.graphs.XContourPlotSpeed;
+import org.opentrafficsim.graphs.XFundamentalDiagram;
+import org.opentrafficsim.graphs.XFundamentalDiagram.Quantity;
+import org.opentrafficsim.graphs.XTrajectoryPlot;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -67,7 +76,9 @@ import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
@@ -92,6 +103,9 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class CircularRoad extends AbstractWrappableAnimation implements UNITS
 {
+    /** Use new version of plots. */
+    private static final boolean NEW_PLOTS = true; // TODO remove old plots and this
+
     /** */
     private static final long serialVersionUID = 1L;
 
@@ -122,20 +136,30 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
         List<Property<?>> outputProperties = new ArrayList<>();
         for (int lane = 1; lane <= 2; lane++)
         {
+            int index = lane - 1;
             String laneId = String.format("Lane %d ", lane);
-            outputProperties.add(new BooleanProperty(laneId + "Density", laneId + " Density", laneId + "Density contour plot",
-                    true, false, 0));
-            outputProperties
-                    .add(new BooleanProperty(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, false, 1));
-            outputProperties.add(
+            outputProperties.add(index, new BooleanProperty(laneId + "Density", laneId + " Density",
+                    laneId + "Density contour plot", true, false, 0));
+            index += lane;
+            outputProperties.add(index,
+                    new BooleanProperty(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, false, 1));
+            index += lane;
+            outputProperties.add(index,
                     new BooleanProperty(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot", true, false, 2));
-            outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + " Acceleration",
+            index += lane;
+            outputProperties.add(index, new BooleanProperty(laneId + "Acceleration", laneId + " Acceleration",
                     laneId + "Acceleration contour plot", true, false, 3));
-            outputProperties.add(new BooleanProperty(laneId + "Fixed Sample Rate Trajectories", laneId + " FSR Trajectories",
-                    laneId + "Trajectory (time/distance) diagram", true, false, 4));
-            outputProperties.add(new BooleanProperty(laneId + "Variable Sample Rate Trajectories", laneId + " VSR Trajectories",
-                    laneId + "Trajectory (time/distance) diagram", true, false, 5));
+            index += lane;
+            outputProperties.add(index, new BooleanProperty(laneId + "Fixed Sample Rate Trajectories",
+                    laneId + " FSR Trajectories", laneId + "Trajectory (time/distance) diagram", true, false, 4));
+            // index += lane;
+            // outputProperties.add(index, new BooleanProperty(laneId + "Variable Sample Rate Trajectories",
+            // laneId + " VSR Trajectories", laneId + "Trajectory (time/distance) diagram", true, false, 5));
         }
+        outputProperties.add(new BooleanProperty("Fundamental diagram aggregated",
+                "Fundamental diagram aggregated", "Fundamental diagram aggregated", true, false, 5));
+        outputProperties.add(new BooleanProperty("Fundamental diagram",
+                "Fundamental diagram", "Fundamental diagram", true, false, 5));
         this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
     }
@@ -258,57 +282,156 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
         TablePanel charts = new TablePanel(columns, rows);
 
-        for (int i = 0; i < graphCount; i++)
+        if (NEW_PLOTS)
         {
-            String graphName = graphs.get(i).getKey();
-            Container container = null;
-            LaneBasedGTUSampler graph;
-            int pos = graphName.indexOf(' ') + 1;
-            String laneNumberText = graphName.substring(pos, pos + 1);
-            int lane = Integer.parseInt(laneNumberText) - 1;
-
-            if (graphName.contains("Trajectories"))
+            // test
+            List<Lane> lanes = this.model.getPath(0);
+            List<LaneDirection> path0 = new ArrayList<>(lanes.size());
+            for (Lane l : lanes)
             {
-                Duration sampleInterval = graphName.contains("Variable Sample Rate") ? null : new Duration(0.2, SECOND);
-                TrajectoryPlot tp = new TrajectoryPlot(graphName, sampleInterval, this.model.getPath(lane), simulator);
-                tp.setTitle("Trajectory Graph");
-                tp.setExtendedState(Frame.MAXIMIZED_BOTH);
-                graph = tp;
-                container = tp.getContentPane();
+                path0.add(new LaneDirection(l, GTUDirectionality.DIR_PLUS));
             }
-            else
+            lanes = this.model.getPath(1);
+            List<LaneDirection> path1 = new ArrayList<>(lanes.size());
+            for (Lane l : lanes)
             {
-                ContourPlot cp;
-                if (graphName.contains("Density"))
+                path1.add(new LaneDirection(l, GTUDirectionality.DIR_PLUS));
+            }
+            RoadSampler sampler = new RoadSampler(simulator);
+            XContourDataPool dataPool0 = new XContourDataPool(sampler, path0);
+            XContourDataPool dataPool1 = new XContourDataPool(sampler, path1);
+            Duration updateInterval = Duration.createSI(10.0);
+
+            for (int i = 0; i < graphCount; i++)
+            {
+                String graphName = graphs.get(i).getKey();
+                XAbstractPlot plot = null;
+                List<LaneDirection> path = null;
+                XContourDataPool dataPool = null;
+                if (!graphName.contains("Fundamental diagram"))
                 {
-                    cp = new DensityContourPlot(graphName, this.model.getPath(lane));
-                    cp.setTitle("Density Contour Graph");
+                    int pos = graphName.indexOf(' ') + 1;
+                    String laneNumberText = graphName.substring(pos, pos + 1);
+                    int lane = Integer.parseInt(laneNumberText) - 1;
+                    path = lane == 0 ? path0 : path1;
+                    dataPool = lane == 0 ? dataPool0 : dataPool1;
                 }
-                else if (graphName.contains("Speed"))
+                
+                if (graphName.contains("Trajectories"))
                 {
-                    cp = new SpeedContourPlot(graphName, this.model.getPath(lane));
-                    cp.setTitle("Speed Contour Graph");
+                    plot = new XTrajectoryPlot(graphName, updateInterval, simulator, sampler, path);
                 }
-                else if (graphName.contains("Flow"))
+                else if (graphName.contains("Fundamental diagram"))
                 {
-                    cp = new FlowContourPlot(graphName, this.model.getPath(lane));
-                    cp.setTitle("Flow Contour Graph");
-                }
-                else if (graphName.contains("Acceleration"))
-                {
-                    cp = new AccelerationContourPlot(graphName, this.model.getPath(lane));
-                    cp.setTitle("Acceleration Contour Graph");
+                    List<DirectedLanePosition> positions = new ArrayList<>();
+                    try
+                    {
+                        positions.add(
+                                new DirectedLanePosition(path0.get(0).getLane(), Length.ZERO, path0.get(0).getDirection()));
+                        positions.add(
+                                new DirectedLanePosition(path1.get(0).getLane(), Length.ZERO, path1.get(0).getDirection()));
+                    }
+                    catch (GTUException exception)
+                    {
+                        throw new RuntimeException(exception);
+                    }
+                    if (graphName.contains("aggregated"))
+                    {
+                        plot = new XFundamentalDiagram(graphName, Quantity.DENSITY, Quantity.FLOW, simulator, sampler,
+                                positions, true, Duration.createSI(60.0));
+                    }
+                    else
+                    {
+                        plot = new XFundamentalDiagram(graphName, Quantity.FLOW, Quantity.SPEED, simulator, sampler,
+                                positions, false, Duration.createSI(60.0));
+                    }
                 }
                 else
                 {
-                    throw new Error("Unhandled type of contourplot: " + graphName);
+                    if (graphName.contains("Density"))
+                    {
+                        plot = new XContourPlotDensity(graphName, simulator, dataPool);
+                    }
+                    else if (graphName.contains("Speed"))
+                    {
+                        plot = new XContourPlotSpeed(graphName, simulator, dataPool);
+                    }
+                    else if (graphName.contains("Flow"))
+                    {
+                        plot = new XContourPlotFlow(graphName, simulator, dataPool);
+                    }
+                    else if (graphName.contains("Acceleration"))
+                    {
+                        plot = new XContourPlotAcceleration(graphName, simulator, dataPool);
+                    }
+                    else
+                    {
+                        throw new Error("Unhandled type of contourplot: " + graphName);
+                    }
                 }
-                graph = cp;
-                container = cp.getContentPane();
+                // Add the container to the matrix
+                charts.setCell(plot.getContentPane(), i % columns, i / columns);
             }
-            // Add the container to the matrix
-            charts.setCell(container, i % columns, i / columns);
-            this.model.getPlots().add(graph);
+        }
+        else
+        {
+            for (int i = 0; i < graphCount; i++)
+            {
+                String graphName = graphs.get(i).getKey();
+                Container container = null;
+                LaneBasedGTUSampler graph;
+                int pos = graphName.indexOf(' ') + 1;
+                String laneNumberText = graphName.substring(pos, pos + 1);
+                int lane = Integer.parseInt(laneNumberText) - 1;
+
+                if (graphName.contains("Trajectories"))
+                {
+                    Duration sampleInterval = graphName.contains("Variable Sample Rate") ? null : new Duration(0.2, SECOND);
+                    TrajectoryPlot tp = new TrajectoryPlot(graphName, sampleInterval, this.model.getPath(lane), simulator);
+                    tp.setTitle("Trajectory Graph");
+                    tp.setExtendedState(Frame.MAXIMIZED_BOTH);
+                    graph = tp;
+                    container = tp.getContentPane();
+                }
+                else if (graphName.contains("Fundamental diagram"))
+                {
+                    // no
+                    continue;
+                }
+                else
+                {
+                    ContourPlot cp;
+                    if (graphName.contains("Density"))
+                    {
+                        cp = new DensityContourPlot(graphName, this.model.getPath(lane));
+                        cp.setTitle("Density Contour Graph");
+                    }
+                    else if (graphName.contains("Speed"))
+                    {
+                        cp = new SpeedContourPlot(graphName, this.model.getPath(lane));
+                        cp.setTitle("Speed Contour Graph");
+                    }
+                    else if (graphName.contains("Flow"))
+                    {
+                        cp = new FlowContourPlot(graphName, this.model.getPath(lane));
+                        cp.setTitle("Flow Contour Graph");
+                    }
+                    else if (graphName.contains("Acceleration"))
+                    {
+                        cp = new AccelerationContourPlot(graphName, this.model.getPath(lane));
+                        cp.setTitle("Acceleration Contour Graph");
+                    }
+                    else
+                    {
+                        throw new Error("Unhandled type of contourplot: " + graphName);
+                    }
+                    graph = cp;
+                    container = cp.getContentPane();
+                }
+                // Add the container to the matrix
+                charts.setCell(container, i % columns, i / columns);
+                this.model.getPlots().add(graph);
+            }
         }
         addTab(getTabCount(), "statistics", charts);
     }

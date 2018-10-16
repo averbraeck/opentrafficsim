@@ -900,15 +900,17 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
          */
         final synchronized void zoomVertical(final double factor, final int mouseX, final int mouseY)
         {
-            double minX = this.extent.getMinX();
-            Point2D mwc = Renderable2DInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
-                    this.getSize());
-            double minY = mwc.getY() - (mwc.getY() - this.extent.getMinY()) * factor;
-            double w = this.extent.getWidth();
-            double h = this.extent.getHeight() * factor;
-
-            this.extent.setRect(minX, minY, w, h);
-            this.repaint();
+            // TODO allow vertical and horizontal zoom when DSOL supports it in getScreenCoordinates() and getWorldCoordinates()
+            this.zoom(factor, mouseX, mouseY);
+            // double minX = this.extent.getMinX();
+            // Point2D mwc = Renderable2DInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
+            // this.getSize());
+            // double minY = mwc.getY() - (mwc.getY() - this.extent.getMinY()) * factor;
+            // double w = this.extent.getWidth();
+            // double h = this.extent.getHeight() * factor;
+            //
+            // this.extent.setRect(minX, minY, w, h);
+            // this.repaint();
         }
 
         /**
@@ -919,15 +921,16 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
          */
         final synchronized void zoomHorizontal(final double factor, final int mouseX, final int mouseY)
         {
-            double minY = this.extent.getMinY();
-            Point2D mwc = Renderable2DInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
-                    this.getSize());
-            double minX = mwc.getX() - (mwc.getX() - this.extent.getMinX()) * factor;
-            double w = this.extent.getWidth() * factor;
-            double h = this.extent.getHeight();
-
-            this.extent.setRect(minX, minY, w, h);
-            this.repaint();
+            this.zoom(factor, mouseX, mouseY);
+            // double minY = this.extent.getMinY();
+            // Point2D mwc = Renderable2DInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
+            // this.getSize());
+            // double minX = mwc.getX() - (mwc.getX() - this.extent.getMinX()) * factor;
+            // double w = this.extent.getWidth() * factor;
+            // double h = this.extent.getHeight();
+            //
+            // this.extent.setRect(minX, minY, w, h);
+            // this.repaint();
         }
 
         /**
@@ -986,7 +989,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                     double w = this.extent.getWidth();
                     double h = this.extent.getHeight();
                     this.extent = new Rectangle2D.Double(point.getX() - w / 2, point.getY() - h / 2, w, h);
-                }
+                } 
             }
             super.paintComponent(g);
         }
