@@ -58,6 +58,9 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /** FontSize the size of the font; default = 2.0 (meters). */
     private final float fontSize;
+    
+    /** Minimum font size to trigger scaling. */
+    private final float minFontSize;
 
     /** The animation implementation. */
     private final AnimationImpl animationImpl;
@@ -76,13 +79,14 @@ public abstract class TextAnimation implements Locatable, Serializable
      * @param textAlignment TextAlignment; where to place the text
      * @param color Color; the color of the text
      * @param fontSize float; the size of the font; default = 2.0 (meters)
+     * @param minFontSize float; minimum font size to trigger scaling
      * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final Locatable source, final String text, final float dx, final float dy,
-            final TextAlignment textAlignment, final Color color, final float fontSize,
+            final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
             final SimulatorInterface.TimeDoubleUnit simulator) throws RemoteException, NamingException
     {
         this.source = source;
@@ -92,6 +96,7 @@ public abstract class TextAnimation implements Locatable, Serializable
         this.textAlignment = textAlignment;
         this.color = color;
         this.fontSize = fontSize;
+        this.minFontSize = minFontSize;
 
         this.font = new Font("SansSerif", Font.PLAIN, 2);
         if (this.fontSize != 2.0f)
@@ -117,7 +122,7 @@ public abstract class TextAnimation implements Locatable, Serializable
             final TextAlignment textAlignment, final Color color, final SimulatorInterface.TimeDoubleUnit simulator)
             throws RemoteException, NamingException
     {
-        this(source, text, dx, dy, textAlignment, color, 2.0f, simulator);
+        this(source, text, dx, dy, textAlignment, color, 2.0f, 12.0f, simulator);
     }
 
     /** {@inheritDoc} */
@@ -146,18 +151,30 @@ public abstract class TextAnimation implements Locatable, Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        graphics.setFont(this.font);
+        double scale = Math.sqrt(graphics.getTransform().getDeterminant());
+        Rectangle2D scaledFontRectangle;
         synchronized (this.font)
         {
-            if (this.fontRectangle == null)
+            if (scale < this.minFontSize)
             {
+                graphics.setFont(this.font.deriveFont((float) (this.minFontSize / scale)));
                 FontMetrics fm = graphics.getFontMetrics();
-                this.fontRectangle = fm.getStringBounds(this.text, graphics);
+                scaledFontRectangle = fm.getStringBounds(this.text, graphics);
+            }
+            else
+            {
+                graphics.setFont(this.font);
+                if (this.fontRectangle == null)
+                {
+                    FontMetrics fm = graphics.getFontMetrics();
+                    this.fontRectangle = fm.getStringBounds(this.text, graphics);
+                }
+                scaledFontRectangle = this.fontRectangle;
             }
             graphics.setColor(this.color);
             float dxText =
                     this.textAlignment.equals(TextAlignment.LEFT) ? 0.0f : this.textAlignment.equals(TextAlignment.CENTER)
-                            ? (float) -this.fontRectangle.getWidth() / 2.0f : (float) -this.fontRectangle.getWidth();
+                            ? (float) -scaledFontRectangle.getWidth() / 2.0f : (float) -scaledFontRectangle.getWidth();
             graphics.drawString(this.text, dxText + this.dx, this.fontSize / 2.0f - this.dy);
         }
     }
@@ -400,7 +417,7 @@ public abstract class TextAnimation implements Locatable, Serializable
         {
             return false;
         }
-
+        
         /** {@inheritDoc} */
         @Override
         public final String toString()
