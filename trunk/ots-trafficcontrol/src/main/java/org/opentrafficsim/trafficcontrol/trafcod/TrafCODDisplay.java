@@ -55,8 +55,9 @@ public class TrafCODDisplay extends JPanel implements MouseMotionListener, Mouse
 
     /**
      * Construct a new TrafCODDisplay.
-     * @param image BufferedImage; the background image. This constructor does not make a deep copy of the image. Please do not
-     *            modify the image after calling this constructor
+     * @param image BufferedImage; the background image. This constructor does <b>not</b> make a deep copy of the image.
+     *            Modifications of the image after calling this constructor might have <i>interesting</i> consequences, but
+     *            should not result in crashes.
      */
     public TrafCODDisplay(final BufferedImage image)
     {
