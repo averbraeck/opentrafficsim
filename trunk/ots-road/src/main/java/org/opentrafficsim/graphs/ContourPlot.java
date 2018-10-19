@@ -240,7 +240,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
         {
             exception.printStackTrace();
         }
-        return null; // NOTREACHED
+        return null; // NOTREACHED? Nonsense; simply call this method with index = -2 // PK
     }
 
     /**
@@ -595,7 +595,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
 
     /**
      * Add data for a GTU on a lane to this graph.
-     * @param gtu LaneBasedGTU; the gtu to add the data for
+     * @param gtu LaneBasedGTU; the GTU to add the data for
      * @param lane Lane; the lane on which the GTU is registered
      */
     protected final void addData(final LaneBasedGTU gtu, final Lane lane)
@@ -737,7 +737,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
     /**
      * Increase storage for sample data. <br>
      * This is only implemented for the time axis.
-     * @param newUpperLimit DoubleScalarInterface; DoubleScalar&lt;?&gt; new upper limit for the X range
+     * @param newUpperLimit DoubleScalarInterface; new upper limit for the X range
      */
     public abstract void extendXRange(DoubleScalarInterface newUpperLimit);
 
@@ -745,8 +745,8 @@ public abstract class ContourPlot extends AbstractOTSPlot
      * Increment the data of one bin.
      * @param timeBin int; the rank of the bin on the time-scale
      * @param distanceBin int; the rank of the bin on the distance-scale
-     * @param duration double; the time spent in this bin
-     * @param distanceCovered double; the distance covered in this bin
+     * @param duration double; the time spent in this bin in seconds
+     * @param distanceCovered double; the distance covered in this bin in meters
      * @param acceleration double; the average acceleration in this bin
      */
     public abstract void incrementBinData(int timeBin, int distanceBin, double duration, double distanceCovered,
