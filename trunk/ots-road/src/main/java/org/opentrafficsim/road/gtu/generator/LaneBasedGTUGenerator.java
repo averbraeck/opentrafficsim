@@ -49,6 +49,8 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.event.EventType;
 import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -65,15 +67,20 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGenerator
+public class LaneBasedGTUGenerator extends EventProducer implements Serializable, Identifiable, GTUGenerator
 {
     /** */
     private static final long serialVersionUID = 20160000L;
+    
+    /**
+     * Event of a generated GTU.
+     * Payload: LaneBasedIndividualGTU
+     */
+    public static final EventType GTU_GENERATED_EVENT = new EventType("GENERATOR.GTU_GENERATED");
 
     /** FIFO for templates that have not been generated yet due to insufficient room/headway, per position, and per link. */
-    private final Map<CrossSectionLink,
-            Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>>> unplacedTemplates =
-                    new LinkedHashMap<>();
+    private final Map<CrossSectionLink, Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>>> unplacedTemplates =
+            new LinkedHashMap<>();
 
     /** Name of the GTU generator. */
     private final String id;
@@ -130,6 +137,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
      * @throws ProbabilityException pe
      * @throws ParameterException if drawing from the interarrival generator fails
      */
+    @SuppressWarnings("parameternumber")
     public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
             final GTUColorer gtuColorer, final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final OTSNetwork network, final OTSSimulatorInterface simulator,
@@ -174,7 +182,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     {
         synchronized (this.unplacedTemplates)
         {
-            this.generatedGTUs++;
+            // this.generatedGTUs++;
             LaneBasedGTUCharacteristics characteristics = this.laneBasedGTUCharacteristicsGenerator.draw();
             GTUType gtuType = characteristics.getGTUType();
             // gather information on number of unplaced templates per lane, and per link, for the drawing of a new position
@@ -195,23 +203,18 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
                     this.generatorPositions.speedLimit(gtuType), characteristics.getMaximumSpeed());
             GeneratorLanePosition lanePosition =
                     this.generatorPositions.draw(gtuType, unplaced, desiredSpeed, characteristics.getRoute());
-            // add template in the right map location
-            if (!this.unplacedTemplates.containsKey(lanePosition.getLink()))
+
+            // skip if disabled at this lane-direction
+            Set<LaneDirection> lanes = new LinkedHashSet<>();
+            for (DirectedLanePosition pos : lanePosition.getPosition())
             {
-                this.unplacedTemplates.put(lanePosition.getLink(), new LinkedHashMap<>());
+                lanes.add(pos.getLaneDirection());
             }
-            Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>> linkMap =
-                    this.unplacedTemplates.get(lanePosition.getLink());
-            if (!linkMap.containsKey(lanePosition))
+            if (Collections.disjoint(this.disabled, lanes))
             {
-                linkMap.put(lanePosition, new LinkedList<>());
+                queueGtu(lanePosition, characteristics);
             }
-            Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue = linkMap.get(lanePosition);
-            queue.add(new TimeStampedObject<LaneBasedGTUCharacteristics>(characteristics, this.simulator.getSimulatorTime()));
-            if (queue.size() == 1)
-            {
-                this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { lanePosition });
-            }
+
         }
         Duration headway = this.interarrivelTimeGenerator.draw();
         if (headway != null)
@@ -237,18 +240,6 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
         TimeStampedObject<LaneBasedGTUCharacteristics> timedCharacteristics;
         Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue =
                 this.unplacedTemplates.get(position.getLink()).get(position);
-
-        // skip if disabled at this lane-direction
-        Set<LaneDirection> lanes = new LinkedHashSet<>();
-        for (DirectedLanePosition pos : position.getPosition())
-        {
-            lanes.add(pos.getLaneDirection());
-        }
-        if (!Collections.disjoint(this.disabled, lanes))
-        {
-            queue.remove();
-            return;
-        }
 
         synchronized (queue)
         {
@@ -288,6 +279,70 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     }
 
     /**
+     * Adds a GTU to the generation queue. This method ignores whether vehicle generation is enabled at the location. This
+     * allows an external party to govern (over some time) what vehicles are generated.
+     * @param characteristics LaneBasedGTUCharacteristics; characteristics of GTU to add to the queue
+     * @param position Set&lt;LaneDirection&gt;; position to generate the GTU at
+     */
+    public final void queueGtu(final LaneBasedGTUCharacteristics characteristics, final Set<LaneDirection> position)
+    {
+        // first find the correct GeneratorLanePosition
+        GeneratorLanePosition genPosition = null;
+        Set<LaneDirection> genSet = new LinkedHashSet<>();
+        for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
+        {
+            for (DirectedLanePosition dirPos : lanePosition.getPosition())
+            {
+                genSet.add(dirPos.getLaneDirection());
+            }
+            if (genSet.equals(position))
+            {
+                genPosition = lanePosition;
+                break;
+            }
+            genSet.clear();
+        }
+        Throw.when(genPosition == null, IllegalStateException.class, "Position %s is not part of the generation.", position);
+        try
+        {
+            queueGtu(genPosition, characteristics);
+        }
+        catch (SimRuntimeException exception)
+        {
+            throw new RuntimeException("Unexpected exception while scheduling tryToPlace event.", exception);
+        }
+    }
+
+    /**
+     * Places the characteristics in the queue pertaining to the position, and schedules a call to {@code tryToPlace} now if the
+     * queue length is 1.
+     * @param lanePosition GeneratorLanePosition; position to generate the GTU at
+     * @param characteristics LaneBasedGTUCharacteristics; characteristics of GTU to add to the queue
+     * @throws SimRuntimeException when an event is scheduled in the past
+     */
+    private void queueGtu(final GeneratorLanePosition lanePosition, final LaneBasedGTUCharacteristics characteristics)
+            throws SimRuntimeException
+    {
+        if (!this.unplacedTemplates.containsKey(lanePosition.getLink()))
+        {
+            this.unplacedTemplates.put(lanePosition.getLink(), new LinkedHashMap<>());
+        }
+        Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGTUCharacteristics>>> linkMap =
+                this.unplacedTemplates.get(lanePosition.getLink());
+        if (!linkMap.containsKey(lanePosition))
+        {
+            linkMap.put(lanePosition, new LinkedList<>());
+        }
+        Queue<TimeStampedObject<LaneBasedGTUCharacteristics>> queue = linkMap.get(lanePosition);
+        queue.add(new TimeStampedObject<>(characteristics, this.simulator.getSimulatorTime()));
+        if (queue.size() == 1)
+        {
+            this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { lanePosition });
+        }
+    }
+
+    /**
+     * Places a GTU, regardless of whether it has room. The user of this method should verify this is the case.
      * @param characteristics LaneBasedGTUCharacteristics; characteristics
      * @param position Set&lt;DirectedLanePosition&gt;; position
      * @param speed Speed; speed
@@ -297,7 +352,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
      * @throws SimRuntimeException on exception
      * @throws OTSGeometryException on exception
      */
-    final void placeGtu(final LaneBasedGTUCharacteristics characteristics, final Set<DirectedLanePosition> position,
+    public final void placeGtu(final LaneBasedGTUCharacteristics characteristics, final Set<DirectedLanePosition> position,
             final Speed speed) throws NamingException, GTUException, NetworkException, SimRuntimeException, OTSGeometryException
     {
         String gtuId = this.idGenerator.nextId();
@@ -312,6 +367,8 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
                 characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
                         characteristics.getOrigin(), characteristics.getDestination()),
                 position, speed, DefaultCarAnimation.class, this.gtuColorer);
+        this.generatedGTUs++;
+        fireEvent(GTU_GENERATED_EVENT, gtu);
     }
 
     /**
@@ -374,14 +431,6 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     }
 
     /**
-     * @param generatedGTUs long; set generatedGTUs.
-     */
-    public final void setGeneratedGTUs(final long generatedGTUs)
-    {
-        this.generatedGTUs = generatedGTUs;
-    }
-
-    /**
      * Retrieve the id of this LaneBasedGTUGenerator.
      * @return String; the id of this LaneBasedGTUGenerator
      */
@@ -402,7 +451,7 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
 
     /**
      * Disable the vehicle generator during the specific time. Underlying processes such as drawing characteristics and headways
-     * are continued, but simply will not result in the actual generation of a GTU.
+     * are continued, but simply will not result in the queuing of the GTU.
      * @param start Time; start time
      * @param end Time; end time
      * @param laneDirections Set&lt;LaneDirection&gt;; lanes to disable generation on
@@ -422,6 +471,8 @@ public class LaneBasedGTUGenerator implements Serializable, Identifiable, GTUGen
     @SuppressWarnings("unused")
     private void disable(final Set<LaneDirection> laneDirections)
     {
+        Throw.when(this.disabled != null && !this.disabled.isEmpty(), IllegalStateException.class,
+                "Disabling a generator that is already disabled is not allowed.");
         this.disabled = laneDirections;
     }
 

@@ -45,10 +45,10 @@ public abstract class TextAnimation implements Locatable, Serializable
     private String text;
 
     /** The horizontal movement of the text, in meters. */
-    private final float dx;
+    private float dx;
 
     /** The vertical movement of the text, in meters. */
-    private final float dy;
+    private float dy;
 
     /** Whether to center or not. */
     private final TextAlignment textAlignment;
@@ -230,6 +230,17 @@ public abstract class TextAnimation implements Locatable, Serializable
     protected final float getDy()
     {
         return this.dy;
+    }
+    
+    /**
+     * Sets a new offset.
+     * @param x float; dx
+     * @param y float; dy
+     */
+    protected final void setXY(final float x, final float y)
+    {
+        this.dx = x;
+        this.dy = y;
     }
 
     /**

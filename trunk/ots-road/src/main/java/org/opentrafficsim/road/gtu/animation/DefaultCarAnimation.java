@@ -57,25 +57,25 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     private final int hashCode;
 
     /** GTU outline. */
-    private final Rectangle2D.Double rectangle;
+    private Rectangle2D.Double rectangle;
 
     /** Front indicator (white circle). */
-    private final Ellipse2D.Double frontIndicator;
+    private Ellipse2D.Double frontIndicator;
 
     /** Left indicator. */
-    private final Rectangle2D.Double leftIndicator;
+    private Rectangle2D.Double leftIndicator;
 
     /** Right indicator. */
-    private final Rectangle2D.Double rightIndicator;
+    private Rectangle2D.Double rightIndicator;
 
     /** Left brake light. */
-    private final Rectangle2D.Double leftBrake;
+    private Rectangle2D.Double leftBrake;
 
     /** Right brake light. */
-    private final Rectangle2D.Double rightBrake;
+    private Rectangle2D.Double rightBrake;
 
     /** Dot if zoomed out. */
-    private final RectangularShape dot;
+    private RectangularShape dot;
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
@@ -114,21 +114,6 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
 
         this.text = new Text(gtu, gtu.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator);
 
-        // set shapes
-        final double length = gtu.getLength().si;
-        final double lFront = gtu.getFront().getDx().si;
-        final double lRear = gtu.getRear().getDx().si;
-        final double width = gtu.getWidth().si;
-        final double w2 = width / 2;
-        final double w4 = width / 4;
-        this.rectangle = new Rectangle2D.Double(lRear, -w2, length, width);
-        this.frontIndicator = new Ellipse2D.Double(lFront - w2 - w4, -w4, w2, w2);
-        this.leftIndicator = new Rectangle2D.Double(lFront - w4, -w2, w4, w4);
-        this.rightIndicator = new Rectangle2D.Double(lFront - w4, w2 - w4, w4, w4);
-        this.leftBrake = new Rectangle2D.Double(lRear, w2 - w4, w4, w4);
-        this.rightBrake = new Rectangle2D.Double(lRear, -w2, w4, w4);
-        this.dot = gtu.getGTUType().isOfType(GTUType.TRUCK) ? new Rectangle2D.Double(0, 0, 0, 0)
-                : new Ellipse2D.Double(0, 0, 0, 0);
     }
 
     /**
@@ -145,6 +130,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         final LaneBasedGTU gtu = getSource();
+
         if (gtu.isDestroyed())
         {
             if (!this.isDestroyed)
@@ -160,6 +146,26 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
                 }
             }
             return;
+        }
+
+        if (this.rectangle == null)
+        {
+            // set shapes, this is done in paint() and not the constructor, as the super constructor binds to context causing
+            // paint commands before the shapes are calculated in the constructor
+            final double length = gtu.getLength().si;
+            final double lFront = gtu.getFront().getDx().si;
+            final double lRear = gtu.getRear().getDx().si;
+            final double width = gtu.getWidth().si;
+            final double w2 = width / 2;
+            final double w4 = width / 4;
+            this.rectangle = new Rectangle2D.Double(lRear, -w2, length, width);
+            this.frontIndicator = new Ellipse2D.Double(lFront - w2 - w4, -w4, w2, w2);
+            this.leftIndicator = new Rectangle2D.Double(lFront - w4, -w2, w4, w4);
+            this.rightIndicator = new Rectangle2D.Double(lFront - w4, w2 - w4, w4, w4);
+            this.leftBrake = new Rectangle2D.Double(lRear, w2 - w4, w4, w4);
+            this.rightBrake = new Rectangle2D.Double(lRear, -w2, w4, w4);
+            this.dot = gtu.getGTUType().isOfType(GTUType.TRUCK) ? new Rectangle2D.Double(0, 0, 0, 0)
+                    : new Ellipse2D.Double(0, 0, 0, 0);
         }
 
         double scale = graphics.getTransform().getDeterminant();
@@ -240,12 +246,12 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     {
         return this.hashCode;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Object object)
     {
-        // only here to prevent a 'hashCode without equals' warning 
+        // only here to prevent a 'hashCode without equals' warning
         return super.equals(object);
     }
 

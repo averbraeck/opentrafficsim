@@ -40,6 +40,7 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.graphs.PointerHandler;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -204,7 +205,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
             /** {@inheritDoc} */
             @Override
-            void updateHint(final double domainValue, final double rangeValue)
+            public void updateHint(final double domainValue, final double rangeValue)
             {
                 if (Double.isNaN(domainValue))
                 {

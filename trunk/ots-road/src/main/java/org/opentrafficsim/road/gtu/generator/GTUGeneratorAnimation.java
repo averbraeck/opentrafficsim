@@ -9,8 +9,12 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import org.opentrafficsim.core.animation.TextAlignment;
+import org.opentrafficsim.core.animation.TextAnimation;
+
+import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface.TimeDoubleUnit;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -24,23 +28,26 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class GTUGeneratorAnimation extends Renderable2D<GTUGenerator>
+public class GTUGeneratorAnimation extends TextAnimation
 {
 
+    /** */
+    private static final long serialVersionUID = 20181018L;
+    
     /** Default font. */
     private static final Font FONT = new Font("SansSerif", Font.PLAIN, 4);
 
     /**
      * Constructor.
      * @param source GTUGenerator; generator
-     * @param simulator SimulatorInterface&lt;?, ?, ?&gt;; simulator
+     * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
-    public GTUGeneratorAnimation(final GTUGenerator source, final SimulatorInterface<?, ?, ?> simulator)
+    public GTUGeneratorAnimation(final GTUGenerator source, final SimulatorInterface.TimeDoubleUnit simulator)
             throws NamingException, RemoteException
     {
-        super(source, simulator);
+        super(source, "", 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, simulator);
     }
 
     /** {@inheritDoc} */
@@ -50,11 +57,21 @@ public class GTUGeneratorAnimation extends Renderable2D<GTUGenerator>
         graphics.setColor(Color.BLACK);
         graphics.setFont(FONT);
         DirectedPoint p = getSource().getLocation();
-        Map<DirectedPoint, Integer> map = getSource().getQueueLengths();
+        Map<DirectedPoint, Integer> map = ((GTUGenerator) getSource()).getQueueLengths();
         for (DirectedPoint lanePosition : map.keySet())
         {
-            graphics.drawString(map.get(lanePosition) + "", (int) (lanePosition.x - p.x), (int) (-lanePosition.y + p.y));
+            setText(map.get(lanePosition).toString());
+            setXY((float) (lanePosition.x - p.x), (float) (lanePosition.y - p.y));
+            super.paint(graphics, observer);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TextAnimation clone(final Locatable newSource, final TimeDoubleUnit newSimulator)
+            throws RemoteException, NamingException
+    {
+        return new GTUGeneratorAnimation((GTUGenerator) newSource, newSimulator);
     }
 
 }

@@ -31,9 +31,21 @@ import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.graphs.GraphCrossSection;
+import org.opentrafficsim.core.graphs.GraphPath;
+import org.opentrafficsim.core.graphs.XAbstractPlot;
+import org.opentrafficsim.core.graphs.XContourDataPool;
+import org.opentrafficsim.core.graphs.XContourPlotAcceleration;
+import org.opentrafficsim.core.graphs.XContourPlotDensity;
+import org.opentrafficsim.core.graphs.XContourPlotFlow;
+import org.opentrafficsim.core.graphs.XContourPlotSpeed;
+import org.opentrafficsim.core.graphs.XFundamentalDiagram;
+import org.opentrafficsim.core.graphs.XFundamentalDiagram.Quantity;
+import org.opentrafficsim.core.graphs.XTrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.DirectedLinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -42,18 +54,11 @@ import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
 import org.opentrafficsim.graphs.FlowContourPlot;
+import org.opentrafficsim.graphs.GraphLaneUtil;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
-import org.opentrafficsim.graphs.XAbstractPlot;
-import org.opentrafficsim.graphs.XContourDataPool;
-import org.opentrafficsim.graphs.XContourPlotAcceleration;
-import org.opentrafficsim.graphs.XContourPlotDensity;
-import org.opentrafficsim.graphs.XContourPlotFlow;
-import org.opentrafficsim.graphs.XContourPlotSpeed;
-import org.opentrafficsim.graphs.XFundamentalDiagram;
-import org.opentrafficsim.graphs.XFundamentalDiagram.Quantity;
-import org.opentrafficsim.graphs.XTrajectoryPlot;
+import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -78,6 +83,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -156,10 +162,10 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
             // outputProperties.add(index, new BooleanProperty(laneId + "Variable Sample Rate Trajectories",
             // laneId + " VSR Trajectories", laneId + "Trajectory (time/distance) diagram", true, false, 5));
         }
-        outputProperties.add(new BooleanProperty("Fundamental diagram aggregated",
-                "Fundamental diagram aggregated", "Fundamental diagram aggregated", true, false, 5));
-        outputProperties.add(new BooleanProperty("Fundamental diagram",
-                "Fundamental diagram", "Fundamental diagram", true, false, 5));
+        outputProperties.add(new BooleanProperty("Fundamental diagram aggregated", "Fundamental diagram aggregated",
+                "Fundamental diagram aggregated", true, false, 5));
+        outputProperties
+                .add(new BooleanProperty("Fundamental diagram", "Fundamental diagram", "Fundamental diagram", true, false, 5));
         this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
     }
@@ -285,84 +291,97 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
         if (NEW_PLOTS)
         {
             // test
-            List<Lane> lanes = this.model.getPath(0);
-            List<LaneDirection> path0 = new ArrayList<>(lanes.size());
-            for (Lane l : lanes)
+            GraphPath<KpiLaneDirection> path01;
+            GraphPath<KpiLaneDirection> path1;
+            try
             {
-                path0.add(new LaneDirection(l, GTUDirectionality.DIR_PLUS));
+                List<String> names = new ArrayList<>();
+                names.add("Left lane");
+                names.add("Right lane");
+                List<LaneDirection> start = new ArrayList<>();
+                start.add(new LaneDirection(this.model.getPath(0).get(0), GTUDirectionality.DIR_PLUS));
+                start.add(new LaneDirection(this.model.getPath(1).get(0), GTUDirectionality.DIR_PLUS));
+                path01 = GraphLaneUtil.createPath(names, start);
+                path1 = GraphLaneUtil.createPath(names.get(1), start.get(1));
             }
-            lanes = this.model.getPath(1);
-            List<LaneDirection> path1 = new ArrayList<>(lanes.size());
-            for (Lane l : lanes)
+            catch (NetworkException exception)
             {
-                path1.add(new LaneDirection(l, GTUDirectionality.DIR_PLUS));
+                throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
             }
             RoadSampler sampler = new RoadSampler(simulator);
-            XContourDataPool dataPool0 = new XContourDataPool(sampler, path0);
-            XContourDataPool dataPool1 = new XContourDataPool(sampler, path1);
+            XContourDataPool<GtuData> dataPool01 = new XContourDataPool<>(sampler, path01);
+            XContourDataPool<GtuData> dataPool1 = new XContourDataPool<>(sampler, path1);
             Duration updateInterval = Duration.createSI(10.0);
 
             for (int i = 0; i < graphCount; i++)
             {
                 String graphName = graphs.get(i).getKey();
                 XAbstractPlot plot = null;
-                List<LaneDirection> path = null;
-                XContourDataPool dataPool = null;
+                GraphPath<KpiLaneDirection> path = null;
+                XContourDataPool<GtuData> dataPool = null;
                 if (!graphName.contains("Fundamental diagram"))
                 {
                     int pos = graphName.indexOf(' ') + 1;
                     String laneNumberText = graphName.substring(pos, pos + 1);
                     int lane = Integer.parseInt(laneNumberText) - 1;
-                    path = lane == 0 ? path0 : path1;
-                    dataPool = lane == 0 ? dataPool0 : dataPool1;
+                    path = lane == 0 ? path01 : path1;
+                    dataPool = lane == 0 ? dataPool01 : dataPool1;
                 }
-                
+
                 if (graphName.contains("Trajectories"))
                 {
-                    plot = new XTrajectoryPlot(graphName, updateInterval, simulator, sampler, path);
+                    plot = new XTrajectoryPlot<>(graphName, updateInterval, simulator, sampler, path);
                 }
                 else if (graphName.contains("Fundamental diagram"))
                 {
-                    List<DirectedLanePosition> positions = new ArrayList<>();
+                    List<KpiLaneDirection> lanes = new ArrayList<>();
+                    List<Length> positions = new ArrayList<>();
+                    lanes.add(path01.get(0).getSource(0));
+                    lanes.add(path1.get(0).getSource(0));
+                    positions.add(Length.ZERO);
+                    positions.add(Length.ZERO);
+                    List<String> names = new ArrayList<>();
+                    names.add("Left lane");
+                    names.add("Right lane");
+                    DirectedLinkPosition linkPosition = new DirectedLinkPosition(this.model.getPath(0).get(0).getParentLink(),
+                            0.0, GTUDirectionality.DIR_PLUS);
+                    GraphCrossSection<KpiLaneDirection> crossSection;
                     try
                     {
-                        positions.add(
-                                new DirectedLanePosition(path0.get(0).getLane(), Length.ZERO, path0.get(0).getDirection()));
-                        positions.add(
-                                new DirectedLanePosition(path1.get(0).getLane(), Length.ZERO, path1.get(0).getDirection()));
+                        crossSection = GraphLaneUtil.createCrossSection(names, linkPosition);
                     }
-                    catch (GTUException exception)
+                    catch (NetworkException exception)
                     {
                         throw new RuntimeException(exception);
                     }
                     if (graphName.contains("aggregated"))
                     {
                         plot = new XFundamentalDiagram(graphName, Quantity.DENSITY, Quantity.FLOW, simulator, sampler,
-                                positions, true, Duration.createSI(60.0));
+                                crossSection, true, Duration.createSI(60.0));
                     }
                     else
                     {
                         plot = new XFundamentalDiagram(graphName, Quantity.FLOW, Quantity.SPEED, simulator, sampler,
-                                positions, false, Duration.createSI(60.0));
+                                crossSection, false, Duration.createSI(60.0));
                     }
                 }
                 else
                 {
                     if (graphName.contains("Density"))
                     {
-                        plot = new XContourPlotDensity(graphName, simulator, dataPool);
+                        plot = new XContourPlotDensity<>(graphName, simulator, dataPool);
                     }
                     else if (graphName.contains("Speed"))
                     {
-                        plot = new XContourPlotSpeed(graphName, simulator, dataPool);
+                        plot = new XContourPlotSpeed<>(graphName, simulator, dataPool);
                     }
                     else if (graphName.contains("Flow"))
                     {
-                        plot = new XContourPlotFlow(graphName, simulator, dataPool);
+                        plot = new XContourPlotFlow<>(graphName, simulator, dataPool);
                     }
                     else if (graphName.contains("Acceleration"))
                     {
-                        plot = new XContourPlotAcceleration(graphName, simulator, dataPool);
+                        plot = new XContourPlotAcceleration<>(graphName, simulator, dataPool);
                     }
                     else
                     {

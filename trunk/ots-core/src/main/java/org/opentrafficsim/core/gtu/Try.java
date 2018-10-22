@@ -609,7 +609,7 @@ public final class Try
         {
             formattedMessage = where + String.format(message, args);
         }
-        catch (IllegalFormatException exception)
+        catch (@SuppressWarnings("unused") IllegalFormatException exception)
         {
             formattedMessage = where + message + " [FormatException; args=" + argList + "]";
         }

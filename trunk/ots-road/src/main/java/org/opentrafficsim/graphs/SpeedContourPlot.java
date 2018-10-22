@@ -10,6 +10,7 @@ import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.vector.MutablePositionVector;
 import org.djunits.value.vdouble.vector.MutableTimeVector;
+import org.opentrafficsim.core.graphs.GraphType;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 

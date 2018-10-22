@@ -5,7 +5,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 /**
@@ -115,7 +115,7 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
     public HeadwayGTU perceive(final LaneBasedGTU perceivingGtu, final LaneBasedGTU object, final Length distance)
             throws GTUException, ParameterException
     {
-        return this.headwayGtuType.createHeadwayGtu(perceivingGtu, object, distance.neg(), false);
+        return this.headwayGtuType.createUpstreamGtu(perceivingGtu, object, distance.neg());
     }
 
 }
