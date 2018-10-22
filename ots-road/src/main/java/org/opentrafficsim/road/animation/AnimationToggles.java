@@ -6,7 +6,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
-import org.opentrafficsim.road.gtu.generator.GTUGenerator;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
 import org.opentrafficsim.road.network.animation.BusStopAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.SensorAnimation;
@@ -65,7 +65,7 @@ public final class AnimationToggles
         aws.addToggleAnimationButtonText("Light", TrafficLight.class, "Show/hide traffic lights", true);
         aws.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide sensors Ids", false);
         aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", false);
-        aws.addToggleAnimationButtonText("Generator", GTUGenerator.class, "Show/hide generators", false);
+        aws.addToggleAnimationButtonText("Generator", GTUGeneratorAnimation.class, "Show/hide generators", false);
         aws.addToggleAnimationButtonText("Bus", BusStop.class, "Show/hide bus stops", false);
         aws.addToggleAnimationButtonText("BusId", BusStopAnimation.Text.class, "Show/hide bus stop Ids", false);
     }
@@ -91,7 +91,7 @@ public final class AnimationToggles
         aws.addToggleAnimationButtonText("Light", TrafficLight.class, "Show/hide traffic lights", true);
         aws.addToggleAnimationButtonText("LightId", TrafficLightAnimation.Text.class, "Show/hide sensors Ids", false);
         aws.addToggleAnimationButtonText("Conflict", Conflict.class, "Show/hide conflicts", false);
-        aws.addToggleAnimationButtonText("Generator", GTUGenerator.class, "Show/hide generators", false);
+        aws.addToggleAnimationButtonText("Generator", GTUGeneratorAnimation.class, "Show/hide generators", false);
     }
 
     /**
@@ -124,8 +124,8 @@ public final class AnimationToggles
                 "Show/hide sensors Ids", false, true);
         aws.addToggleAnimationButtonIcon("Conflict", Conflict.class, "/icons/Conflict24.png", "Show/hide conflicts", false,
                 false);
-        aws.addToggleAnimationButtonIcon("Generator", GTUGenerator.class, "/icons/Generator24.png", "Show/hide generators",
-                false, false);
+        aws.addToggleAnimationButtonIcon("Generator", GTUGeneratorAnimation.class, "/icons/Generator24.png",
+                "Show/hide generators", false, false);
         aws.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
         aws.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops", false,
                 true);
@@ -161,8 +161,8 @@ public final class AnimationToggles
                 "Show/hide sensors Ids", false, true);
         aws.addToggleAnimationButtonIcon("Conflict", Conflict.class, "/icons/Conflict24.png", "Show/hide conflicts", false,
                 false);
-        aws.addToggleAnimationButtonIcon("Generator", GTUGenerator.class, "/icons/Generator24.png", "Show/hide generators",
-                false, false);
+        aws.addToggleAnimationButtonIcon("Generator", GTUGeneratorAnimation.class, "/icons/Generator24.png",
+                "Show/hide generators", false, false);
         aws.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", false, false);
         aws.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops", false,
                 true);
@@ -191,7 +191,7 @@ public final class AnimationToggles
         aws.showAnimationClass(Conflict.class);
         aws.hideAnimationClass(BusStop.class);
         aws.hideAnimationClass(BusStopAnimation.Text.class);
-        aws.showAnimationClass(GTUGenerator.class);
+        aws.showAnimationClass(GTUGeneratorAnimation.class);
     }
 
     /**
@@ -217,7 +217,7 @@ public final class AnimationToggles
         aws.hideAnimationClass(Conflict.class);
         aws.hideAnimationClass(BusStop.class);
         aws.hideAnimationClass(BusStopAnimation.Text.class);
-        aws.hideAnimationClass(GTUGenerator.class);
+        aws.hideAnimationClass(GTUGeneratorAnimation.class);
     }
 
 }

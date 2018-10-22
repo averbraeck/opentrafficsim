@@ -15,6 +15,7 @@ import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.graphs.GraphType;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.event.EventType;

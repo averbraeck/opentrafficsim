@@ -26,11 +26,6 @@
     </dependency>
 
     <dependency>
-      <groupId>opentrafficsim</groupId>
-      <artifactId>ots-kpi</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
     </dependency>

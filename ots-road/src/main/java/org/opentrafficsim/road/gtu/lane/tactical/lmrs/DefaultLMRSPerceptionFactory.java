@@ -12,8 +12,8 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 
 /**
  * Perception factory with EgoPerception, InfrastructurePerception, NeighborsPerception and IntersectionPerception.

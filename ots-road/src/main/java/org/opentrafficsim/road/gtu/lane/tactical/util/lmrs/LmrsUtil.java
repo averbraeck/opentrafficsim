@@ -30,7 +30,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
@@ -215,6 +215,13 @@ public final class LmrsUtil implements LmrsParameters
                     }
                     laneChange.setBoundary(boundary);
                 }
+                params.setParameter(DLEFT, 0.0);
+                params.setParameter(DRIGHT, 0.0);
+            }
+            else
+            {
+                params.setParameter(DLEFT, desire.getLeft());
+                params.setParameter(DRIGHT, desire.getRight());
             }
 
             // take action if we cannot change lane
@@ -260,8 +267,6 @@ public final class LmrsUtil implements LmrsParameters
             {
                 lmrsData.synchronizationState = State.NONE;
             }
-            params.setParameter(DLEFT, desire.getLeft());
-            params.setParameter(DRIGHT, desire.getRight());
 
             // cooperate
             aSync = lmrsData.getCooperation().cooperate(perception, params, sli, carFollowingModel, LateralDirectionality.LEFT,

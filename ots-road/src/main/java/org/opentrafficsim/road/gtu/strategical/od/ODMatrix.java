@@ -88,7 +88,7 @@ public class ODMatrix implements Serializable, Identifiable
      * @param globalInterpolation Interpolation; interpolation of demand data
      * @throws NullPointerException if any input is null
      */
-    public ODMatrix(final String id, final List<Node> origins, final List<Node> destinations,
+    public ODMatrix(final String id, final List<? extends Node> origins, final List<? extends Node> destinations,
             final Categorization categorization, final TimeVector globalTimeVector, final Interpolation globalInterpolation)
     {
         Throw.whenNull(id, "Id may not be null.");

@@ -145,7 +145,7 @@ public class LinkDirection implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final String toString()
+    public String toString()
     {
         return "LinkDirection [link=" + this.link + ", direction=" + this.direction + "]";
     }

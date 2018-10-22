@@ -95,7 +95,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     protected List<Property<?>> savedUserModifiedProperties;
 
     /** Properties for the frame appearance (not simulation related). */
-    protected Properties frameProperties;
+    private Properties frameProperties;
 
     /** Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -223,6 +223,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         frame.addWindowListener(new WindowAdapter()
         {
             /** {@inheritDoce} */
+            @SuppressWarnings("synthetic-access")
             @Override
             public void windowClosing(final WindowEvent windowEvent)
             {
@@ -362,6 +363,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         check.addMouseListener(new MouseAdapter()
         {
             /** {@inheritDoc} */
+            @SuppressWarnings("synthetic-access")
             @Override
             public void mouseClicked(final MouseEvent e)
             {

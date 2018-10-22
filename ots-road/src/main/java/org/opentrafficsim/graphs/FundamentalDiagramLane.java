@@ -37,6 +37,7 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.graphs.PointerHandler;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -192,7 +193,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
             /** {@inheritDoc} */
             @Override
-            void updateHint(final double domainValue, final double rangeValue)
+            public void updateHint(final double domainValue, final double rangeValue)
             {
                 if (Double.isNaN(domainValue))
                 {

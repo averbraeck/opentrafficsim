@@ -14,10 +14,16 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.opentrafficsim.core.animation.EGTF.Converter;
 import org.opentrafficsim.core.animation.EGTF.Quantity;
-import org.opentrafficsim.graphs.XContourDataPool.ContourDataType;
+import org.opentrafficsim.core.graphs.GraphType;
+import org.opentrafficsim.core.graphs.XAbstractContourPlot;
+import org.opentrafficsim.core.graphs.XBoundsPaintScale;
+import org.opentrafficsim.core.graphs.XContourDataPool;
+import org.opentrafficsim.core.graphs.XContourDataPool.ContourDataType;
+import org.opentrafficsim.core.graphs.GraphUtil;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
+import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
@@ -39,7 +45,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class XContourPlotDelay extends XAbstractContourPlot<Duration>
+public class XContourPlotDelay extends XAbstractContourPlot<Duration, GtuData>
 {
 
     /** */
@@ -65,25 +71,30 @@ public class XContourPlotDelay extends XAbstractContourPlot<Duration>
     });
 
     /** Contour data type. */
-    private static final ContourDataType<Duration> CONTOUR_DATA_TYPE = new ContourDataType<Duration>()
+    private static final ContourDataType<Duration, Duration> CONTOUR_DATA_TYPE = new ContourDataType<Duration, Duration>()
     {
         /** {@inheritDoc} */
         @Override
-        public double calculateValue(final List<TrajectoryGroup> trajectories, final List<Length> startDistances,
-                final Length xFrom, final Length xTo, final Time tFrom, final Time tTo)
+        public Duration identity()
+        {
+            return Duration.ZERO;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Duration processSeries(final Duration intermediate, final List<TrajectoryGroup> trajectories,
+                final List<Length> xFrom, final List<Length> xTo, final Time tFrom, final Time tTo)
         {
             double sumActualTime = 0.0;
             double sumRefTime = 0.0;
             for (int i = 0; i < trajectories.size(); i++)
             {
                 TrajectoryGroup trajectoryGroup = trajectories.get(i);
-                Length x0 = xFrom.minus(startDistances.get(i));
-                Length x1 = xTo.minus(startDistances.get(i));
                 for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
                 {
-                    if (XPlotUtil.considerTrajectory(trajectory, tFrom, tTo))
+                    if (GraphUtil.considerTrajectory(trajectory, tFrom, tTo))
                     {
-                        trajectory = trajectory.subSet(x0, x1, tFrom, tTo);
+                        trajectory = trajectory.subSet(xFrom.get(i), xTo.get(i), tFrom, tTo);
                         try
                         {
                             FloatSpeedVector ref = trajectory.getExtendedData(ReferenceSpeed.INSTANCE);
@@ -102,7 +113,14 @@ public class XContourPlotDelay extends XAbstractContourPlot<Duration>
                     }
                 }
             }
-            return sumActualTime - sumRefTime;
+            return Duration.createSI(intermediate.si + sumActualTime - sumRefTime);
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public Duration finalize(final Duration intermediate)
+        {
+            return intermediate;
         }
 
         /** {@inheritDoc} */
@@ -118,9 +136,10 @@ public class XContourPlotDelay extends XAbstractContourPlot<Duration>
      * Constructor.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataPool; data pool
+     * @param dataPool ContourDataPool&lt;G&gt;; data pool
      */
-    public XContourPlotDelay(final String caption, final OTSSimulatorInterface simulator, final XContourDataPool dataPool)
+    public XContourPlotDelay(final String caption, final OTSSimulatorInterface simulator,
+            final XContourDataPool<GtuData> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",
                 "delay %.1f /km");
@@ -161,7 +180,7 @@ public class XContourPlotDelay extends XAbstractContourPlot<Duration>
 
     /** {@inheritDoc} */
     @Override
-    protected ContourDataType<Duration> getContourDataType()
+    protected ContourDataType<Duration, Duration> getContourDataType()
     {
         return CONTOUR_DATA_TYPE;
     }

@@ -33,7 +33,6 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.LinkType;
@@ -61,8 +60,8 @@ import org.opentrafficsim.road.network.animation.StripeAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation.TYPE;
 import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
@@ -96,7 +95,7 @@ public class ODApplierExample extends AbstractWrappableAnimation
 {
 
     /** Lane based or not. */
-    static final boolean LANE_BASED = true;
+    static final boolean LANE_BASED = false;
 
     /** Simulation period. */
     static final Duration PERIOD = new Duration(60.0, DurationUnit.MINUTE);
@@ -343,13 +342,12 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 // platoons
                 String id = LANE_BASED ? "A21" : "A";
                 Lane platoonLane = LANE_BASED ? lane1 : lane0;
-                Set<DirectedLanePosition> position = new HashSet<>();
-                position.add(new DirectedLanePosition(platoonLane, Length.ZERO, GTUDirectionality.DIR_PLUS));
-                Platoons platoons = new Platoons(generatedObjects.get(id).getGenerator(),
-                        odOptions.get(ODOptions.GTU_TYPE, null, null, null), this.simulator, streams.get("generation"),
-                        position);
+                Set<LaneDirection> position = new HashSet<>();
+                position.add(new LaneDirection(platoonLane, GTUDirectionality.DIR_PLUS));
+                Platoons<Category> platoons = Platoons.ofCategory(odOptions.get(ODOptions.GTU_TYPE, null, null, null),
+                        this.simulator, streams.get("generation"), position);
                 platoons.addPlatoon(Time.createSI(60), Time.createSI(90));
-                platoons.fixInfo(nodeA, nodeB, platoonCategory, new Speed(90, SpeedUnit.KM_PER_HOUR));
+                platoons.fixInfo(nodeA, nodeB, platoonCategory);
                 for (double t = 62; t < 90; t += 2)
                 {
                     platoons.addGtu(Time.createSI(t));
@@ -359,11 +357,11 @@ public class ODApplierExample extends AbstractWrappableAnimation
                 {
                     platoons.addGtu(Time.createSI(t));
                 }
-                platoons.start();
+                platoons.start(generatedObjects.get(id).getGenerator());
 
             }
             catch (NetworkException | OTSGeometryException | NamingException | ValueException | ParameterException
-                    | GTUException | RemoteException exception)
+                    | RemoteException exception)
             {
                 exception.printStackTrace();
             }

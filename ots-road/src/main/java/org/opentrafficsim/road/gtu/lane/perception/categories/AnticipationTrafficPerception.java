@@ -16,6 +16,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationSpeed.SpeedSet;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 
 /**
  * Traffic perception using neighbors perception. Speed is anticipated as in the LMRS. Density is simply distance of the

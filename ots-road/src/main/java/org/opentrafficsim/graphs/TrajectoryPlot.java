@@ -35,6 +35,8 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
+import org.opentrafficsim.core.graphs.GraphType;
+import org.opentrafficsim.core.graphs.PointerHandler;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -255,7 +257,7 @@ public class TrajectoryPlot extends AbstractOTSPlot implements XYDataset, LaneBa
         {
             /** {@inheritDoc} */
             @Override
-            void updateHint(final double domainValue, final double rangeValue)
+            public void updateHint(final double domainValue, final double rangeValue)
             {
                 if (Double.isNaN(domainValue))
                 {

@@ -31,6 +31,7 @@ import org.jfree.data.DomainOrder;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.graphs.PointerHandler;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;

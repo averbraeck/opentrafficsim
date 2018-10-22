@@ -27,7 +27,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LaneDirectionRecord;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
-import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
 import org.opentrafficsim.road.network.animation.ConflictAnimation;
@@ -551,10 +551,26 @@ public final class Conflict extends AbstractLaneBasedObject
 
         /** {@inheritDoc} */
         @Override
-        public ConflictGtu createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+                final Length distance) throws GTUException, ParameterException
+        {
+            throw new UnsupportedOperationException("ConflictGtuType is a pass-through type, no actual perception is allowed.");
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+                final Length distance) throws GTUException, ParameterException
+        {
+            throw new UnsupportedOperationException("ConflictGtuType is a pass-through type, no actual perception is allowed.");
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public ConflictGtu createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
                 final Length overlapFront, final Length overlap, final Length overlapRear) throws GTUException
         {
-            return new ConflictGtu(perceivedGtu, overlapFront, overlap, overlapRear);
+            throw new UnsupportedOperationException("ConflictGtuType is a pass-through type, no actual perception is allowed.");
         }
     }
 
@@ -609,16 +625,32 @@ public final class Conflict extends AbstractLaneBasedObject
                 {
                     overlap = overlap.minus(overlapRear); // subtract rear being past the conflict start
                 }
-                return createHeadwayGtu(perceivingGtu, perceivedGtu, overlapFront, overlap, overlapRear);
+                return createParallelGtu(perceivingGtu, perceivedGtu, overlapFront, overlap, overlapRear);
             }
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+                final Length distance) throws GTUException, ParameterException
+        {
+            throw new UnsupportedOperationException("OverlapHeadway is a pass-through type, no actual perception is allowed.");
         }
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGTU createHeadwayGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+        public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+                final Length distance) throws GTUException, ParameterException
+        {
+            throw new UnsupportedOperationException("OverlapHeadway is a pass-through type, no actual perception is allowed.");
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public HeadwayGTU createParallelGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
                 final Length overlapFront, final Length overlap, final Length overlapRear) throws GTUException
         {
-            return this.wrappedType.createHeadwayGtu(perceivingGtu, perceivedGtu, overlapFront, overlap, overlapRear);
+            return this.wrappedType.createParallelGtu(perceivingGtu, perceivedGtu, overlapFront, overlap, overlapRear);
         }
     }
 

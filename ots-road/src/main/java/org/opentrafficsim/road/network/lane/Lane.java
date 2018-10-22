@@ -435,7 +435,8 @@ public class Lane extends CrossSectionElement implements Serializable
             final GTUDirectionality drivingDirection, final boolean legal)
     {
         NestedCache<Set<Lane>> cache = direction.isLeft() ? this.leftNeighbours : this.rightNeighbours;
-        return cache.getValue(() -> {
+        return cache.getValue(() ->
+        {
             Set<Lane> lanes = new LinkedHashSet<>(1);
             for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
             {
@@ -1113,7 +1114,8 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             return null;
         }
-        int[] search = lineSearch((int index) -> {
+        int[] search = lineSearch((int index) ->
+        {
             LaneBasedGTU gtu = list.get(index);
             return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
         }, list.size(), position.si);
@@ -1297,7 +1299,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * Lane has multiple "outgoing" Links, and there are multiple lanes that match the lateral position of this lane.<br>
      * The next lanes can differ per GTU type. For instance, a lane where cars and buses are allowed can have a next lane where
      * only buses are allowed, forcing the cars to leave that lane.
-     * @param gtuType the GTU type for which we return the next lanes.
+     * @param gtuType the GTU type for which we return the next lanes, use {@code null} to return all next lanes and their
+     *            design direction
      * @return set of Lanes following this lane for the given GTU type.
      */
     // TODO this should return something immutable
@@ -1330,7 +1333,7 @@ public class Lane extends CrossSectionElement implements Serializable
                             {
                                 // Would the GTU move in the design line direction or against it?
                                 // TODO And is it aligned with its next lane?
-                                if (lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_PLUS))
+                                if (gtuType == null || lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_PLUS))
                                 {
                                     laneMap.put(lane, GTUDirectionality.DIR_PLUS);
                                 }
@@ -1349,7 +1352,8 @@ public class Lane extends CrossSectionElement implements Serializable
                                 {
                                     laneMap.put(lane, GTUDirectionality.DIR_PLUS);
                                 }
-                                else if (lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_MINUS))// getDirectionality(gtuType).isBackwardOrBoth())
+                                else if (gtuType == null
+                                        || lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_MINUS))// getDirectionality(gtuType).isBackwardOrBoth())
                                 {
                                     laneMap.put(lane, GTUDirectionality.DIR_MINUS);
                                 }
@@ -1374,7 +1378,8 @@ public class Lane extends CrossSectionElement implements Serializable
      * lateral position of this lane.<br>
      * The previous lanes can differ per GTU type. For instance, a lane where cars and buses are allowed can be preceded by a
      * lane where only buses are allowed.
-     * @param gtuType the GTU type for which we return the next lanes.
+     * @param gtuType the GTU type for which we return the next lanes, use {@code null} to return all prev lanes and their
+     *            design direction
      * @return set of Lanes following this lane for the given GTU type.
      */
     // TODO this should return something immutable
@@ -1410,7 +1415,8 @@ public class Lane extends CrossSectionElement implements Serializable
                                 {
                                     laneMap.put(lane, GTUDirectionality.DIR_PLUS);
                                 }
-                                else if (lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_MINUS))// getDirectionality(gtuType).isBackwardOrBoth())
+                                else if (gtuType == null
+                                        || lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_MINUS))// getDirectionality(gtuType).isBackwardOrBoth())
                                 {
                                     laneMap.put(lane, GTUDirectionality.DIR_MINUS);
                                 }
@@ -1421,7 +1427,7 @@ public class Lane extends CrossSectionElement implements Serializable
                             {
                                 // does the GTU move in the design line direction or against it?
                                 // TODO And is it aligned with its next lane?
-                                if (lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_PLUS))// getDirectionality(gtuType).isForwardOrBoth())
+                                if (gtuType == null || lane.getLaneType().isCompatible(gtuType, GTUDirectionality.DIR_PLUS))// getDirectionality(gtuType).isForwardOrBoth())
                                 {
                                     laneMap.put(lane, GTUDirectionality.DIR_PLUS);
                                 }
@@ -1447,7 +1453,8 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final Map<Lane, GTUDirectionality> downstreamLanes(final GTUDirectionality direction, final GTUType gtuType)
     {
-        return this.downLanes.getValue(() -> {
+        return this.downLanes.getValue(() ->
+        {
             Map<Lane, GTUDirectionality> downMap =
                     new LinkedHashMap<>(direction.isPlus() ? nextLanes(gtuType) : prevLanes(gtuType)); // safe copy
             Node downNode = direction.isPlus() ? getParentLink().getEndNode() : getParentLink().getStartNode();
@@ -1474,7 +1481,8 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final Map<Lane, GTUDirectionality> upstreamLanes(final GTUDirectionality direction, final GTUType gtuType)
     {
-        return this.upLanes.getValue(() -> {
+        return this.upLanes.getValue(() ->
+        {
             Map<Lane, GTUDirectionality> upMap =
                     new LinkedHashMap<>(direction.isPlus() ? prevLanes(gtuType) : nextLanes(gtuType)); // safe copy
             Node upNode = direction.isPlus() ? getParentLink().getStartNode() : getParentLink().getEndNode();
@@ -1755,7 +1763,8 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final int indexOfGtu(final LaneBasedGTU gtu)
     {
-        return Collections.binarySearch(this.gtuList, gtu, (gtu1, gtu2) -> {
+        return Collections.binarySearch(this.gtuList, gtu, (gtu1, gtu2) ->
+        {
             try
             {
                 return gtu1.position(this, gtu1.getReference()).compareTo(gtu2.position(this, gtu2.getReference()));
@@ -1775,7 +1784,8 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final int indexOfGtu(final LaneBasedGTU gtu, final Time time)
     {
-        return Collections.binarySearch(getGtuList(time), gtu, (gtu1, gtu2) -> {
+        return Collections.binarySearch(getGtuList(time), gtu, (gtu1, gtu2) ->
+        {
             try
             {
                 return Double.compare(gtu1.fractionalPosition(this, gtu1.getReference(), time),

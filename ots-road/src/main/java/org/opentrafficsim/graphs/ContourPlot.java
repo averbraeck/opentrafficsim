@@ -42,6 +42,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYZDataset;
+import org.opentrafficsim.core.graphs.PointerHandler;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -310,7 +311,7 @@ public abstract class ContourPlot extends AbstractOTSPlot
         {
             /** {@inheritDoc} */
             @Override
-            void updateHint(final double domainValue, final double rangeValue)
+            public void updateHint(final double domainValue, final double rangeValue)
             {
                 if (Double.isNaN(domainValue))
                 {
