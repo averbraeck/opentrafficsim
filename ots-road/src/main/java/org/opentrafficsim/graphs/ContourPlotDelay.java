@@ -15,10 +15,10 @@ import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.opentrafficsim.core.animation.EGTF.Converter;
 import org.opentrafficsim.core.animation.EGTF.Quantity;
 import org.opentrafficsim.core.graphs.GraphType;
-import org.opentrafficsim.core.graphs.XAbstractContourPlot;
-import org.opentrafficsim.core.graphs.XBoundsPaintScale;
-import org.opentrafficsim.core.graphs.XContourDataPool;
-import org.opentrafficsim.core.graphs.XContourDataPool.ContourDataType;
+import org.opentrafficsim.core.graphs.AbstractContourPlot;
+import org.opentrafficsim.core.graphs.BoundsPaintScale;
+import org.opentrafficsim.core.graphs.ContourDataSource;
+import org.opentrafficsim.core.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.core.graphs.GraphUtil;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -37,7 +37,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * the cell, and the resulting value is in the same unit as t. So if D = 50/km, then measuring this state over 2km and during 3
  * hours gives 50 * 2 * 3 = 300h of delay.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 okt. 2018 <br>
@@ -45,7 +45,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class XContourPlotDelay extends XAbstractContourPlot<Duration, GtuData>
+public class ContourPlotDelay extends AbstractContourPlot<Duration, GtuData>
 {
 
     /** */
@@ -115,7 +115,7 @@ public class XContourPlotDelay extends XAbstractContourPlot<Duration, GtuData>
             }
             return Duration.createSI(intermediate.si + sumActualTime - sumRefTime);
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public Duration finalize(final Duration intermediate)
@@ -136,10 +136,10 @@ public class XContourPlotDelay extends XAbstractContourPlot<Duration, GtuData>
      * Constructor.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataPool&lt;G&gt;; data pool
+     * @param dataPool ContourDataSource&lt;G&gt;; data pool
      */
-    public XContourPlotDelay(final String caption, final OTSSimulatorInterface simulator,
-            final XContourDataPool<GtuData> dataPool)
+    public ContourPlotDelay(final String caption, final OTSSimulatorInterface simulator,
+            final ContourDataSource<GtuData> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",
                 "delay %.1f /km");
@@ -150,11 +150,11 @@ public class XContourPlotDelay extends XAbstractContourPlot<Duration, GtuData>
      * Creates a paint scale from red, via yellow to green.
      * @return ContinuousColorPaintScale; paint scale
      */
-    private static XBoundsPaintScale createPaintScale()
+    private static BoundsPaintScale createPaintScale()
     {
         double[] boundaries = { 0.0, 0.05, 0.2 };
-        Color[] colorValues = XBoundsPaintScale.GREEN_RED;
-        return new XBoundsPaintScale(boundaries, colorValues);
+        Color[] colorValues = BoundsPaintScale.GREEN_RED;
+        return new BoundsPaintScale(boundaries, colorValues);
     }
 
     /** {@inheritDoc} */

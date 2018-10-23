@@ -2,9 +2,6 @@ package org.opentrafficsim.demo.carFollowing;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.awt.Frame;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
@@ -28,13 +25,17 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.graphs.GraphPath;
+import org.opentrafficsim.core.graphs.AbstractPlot;
+import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.graphs.GraphLaneUtil;
+import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -48,9 +49,11 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
@@ -58,7 +61,6 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -151,18 +153,27 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("synthetic-access")
     @Override
     protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException
     {
         TablePanel charts = new TablePanel(1, 1);
-        Duration sampleInterval = new Duration(0.5, SECOND);
-        List<Lane> path = new ArrayList<>();
-        path.add(this.model.getLane());
-        TrajectoryPlot tp = new TrajectoryPlot("Trajectory Plot", sampleInterval, path, simulator);
-        tp.setTitle("Density Contour Graph");
-        tp.setExtendedState(Frame.MAXIMIZED_BOTH);
-        this.model.setTrajectoryPlot(tp);
-        charts.setCell(tp.getContentPane(), 0, 0);
+        GraphPath<KpiLaneDirection> graphPath;
+        try
+        {
+            graphPath =
+                    GraphLaneUtil.createSingleLanePath("Path", new LaneDirection(this.model.lane, GTUDirectionality.DIR_PLUS));
+        }
+        catch (NetworkException exception)
+        {
+            throw new OTSSimulationException(exception);
+        }
+        RoadSampler sampler = new RoadSampler(simulator);
+        Duration updateInterval = Duration.createSI(10.0);
+
+        AbstractPlot plot = new TrajectoryPlot<>("Trajectory Graph", updateInterval, simulator, sampler, graphPath);
+
+        charts.setCell(plot.getContentPane(), 0, 0);
         addTab(getTabCount(), "statistics", charts);
     }
 
@@ -240,15 +251,13 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
         private Length maximumDistance = new Length(5000, METER);
 
         /** The Lane containing the simulated Cars. */
-        private Lane lane;
+        private  Lane lane;
 
         /** The speed limit. */
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
-        /** The trajectory plot. */
-        private TrajectoryPlot trajectoryPlot;
-
         /** User settable properties. */
+        @SuppressWarnings("hiding")
         private List<Property<?>> properties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
@@ -276,7 +285,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
                 LaneType laneType = LaneType.TWO_WAY_LANE;
                 this.lane =
                         LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
-                CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null, simulator);
+                CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null, this.simulator);
                 // No overtaking, single (sink) lane
                 Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                         this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
@@ -354,11 +363,6 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
                 this.simulator.scheduleEventAbs(new Time(300, TimeUnit.BASE_SECOND), this, this, "createBlock", null);
                 // Remove the block at t = 7 minutes
                 this.simulator.scheduleEventAbs(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
-                // Schedule regular updates of the graph
-                for (int t = 1; t <= 1800; t++)
-                {
-                    this.simulator.scheduleEventAbs(new Time(t - 0.001, TimeUnit.BASE_SECOND), this, this, "drawGraph", null);
-                }
             }
             catch (SimRuntimeException exception)
             {
@@ -451,14 +455,6 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
         }
 
         /**
-         * Notify the contour plots that the underlying data has changed.
-         */
-        protected final void drawGraph()
-        {
-            this.trajectoryPlot.reGraph();
-        }
-
-        /**
          * @return minimum distance of the simulation
          */
         public final Length getMinimumDistance()
@@ -472,14 +468,6 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
         public final Length getMaximumDistance()
         {
             return this.maximumDistance;
-        }
-
-        /**
-         * @param trajectoryPlot TrajectoryPlot; TrajectoryPlot
-         */
-        public final void setTrajectoryPlot(final TrajectoryPlot trajectoryPlot)
-        {
-            this.trajectoryPlot = trajectoryPlot;
         }
 
         /**

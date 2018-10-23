@@ -30,12 +30,12 @@ import nl.tudelft.simulation.language.Throw;
 
 /**
  * Renderer for blocks that are filled with bidirectionally interpolated colors. It extends a {@code XYBlockRenderer} and
- * requires a small extension of the underlying dataset ({@code XXYInterpolatedDataset}). The interpolation is performed in the
+ * requires a small extension of the underlying dataset ({@code XYInterpolatedDataset}). The interpolation is performed in the
  * {@code drawItem} method. This class imposes two constraints on the functionality of the super class: i) no BlockAnchor may be
  * set as this is tightly related to the interpolation, and ii) only paint scales of type {@code ColorPaintScale} can be used,
  * as the interpolation obtains pixel colors from it.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 8 okt. 2018 <br>
@@ -43,7 +43,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class XXYInterpolatedBlockRenderer extends XYBlockRenderer
+public class XYInterpolatedBlockRenderer extends XYBlockRenderer
 {
 
     /** */
@@ -53,25 +53,25 @@ public class XXYInterpolatedBlockRenderer extends XYBlockRenderer
     private boolean interpolate = true;
 
     /** Dataset that allows retrieving surrounding value for interpolation. */
-    private final XXYInterpolatedDataset xyInterpolatedDataset;
+    private final XYInterpolatedDataset xyInterpolatedDataset;
 
     /**
      * @param xyInterpolatedDataset XYInterpolatedDataset; dataset that allows retrieving surrounding value for interpolation
      */
-    public XXYInterpolatedBlockRenderer(final XXYInterpolatedDataset xyInterpolatedDataset)
+    public XYInterpolatedBlockRenderer(final XYInterpolatedDataset xyInterpolatedDataset)
     {
         super(); // offsets and initial paint scale
         this.xyInterpolatedDataset = xyInterpolatedDataset;
     }
 
     /**
-     * {@inheritDoc} throws UnsupportedOperationException if the paint scale is not of type XColorPaintScale
+     * {@inheritDoc} throws UnsupportedOperationException if the paint scale is not of type ColorPaintScale
      */
     @Override
     public void setPaintScale(final PaintScale scale)
     {
-        Throw.when(!(scale instanceof XColorPaintScale), UnsupportedOperationException.class,
-                "Class XYInterpolatedBlockRenderer requires a XColorPaintScale.");
+        Throw.when(!(scale instanceof ColorPaintScale), UnsupportedOperationException.class,
+                "Class XYInterpolatedBlockRenderer requires a ColorPaintScale.");
         super.setPaintScale(scale);
     }
 

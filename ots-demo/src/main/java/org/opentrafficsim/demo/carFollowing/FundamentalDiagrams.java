@@ -2,9 +2,7 @@ package org.opentrafficsim.demo.carFollowing;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.awt.Frame;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
@@ -25,17 +23,18 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.graphs.FundamentalDiagram;
+import org.opentrafficsim.core.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.graphs.FundamentalDiagram;
+import org.opentrafficsim.graphs.GraphLaneUtil;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -52,6 +51,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
@@ -59,7 +59,6 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -157,23 +156,24 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(4, panelsPerRow);
+        RoadSampler sampler = new RoadSampler(simulator);
         for (int plotNumber = 0; plotNumber < 10; plotNumber++)
         {
             Length detectorLocation = new Length(400 + 500 * plotNumber, METER);
-            FundamentalDiagram fd;
+            String name = "Fundamental Diagram at " + detectorLocation.getSI() + "m";
+            FundamentalDiagram graph;
             try
             {
-                fd = new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m", new Duration(1, MINUTE),
-                        this.model.getLane(), detectorLocation, Compatible.EVERYTHING, simulator);
-                fd.setTitle("Density Contour Graph");
-                fd.setExtendedState(Frame.MAXIMIZED_BOTH);
-                this.model.getFundamentalDiagrams().add(fd);
-                charts.setCell(fd.getContentPane(), plotNumber / panelsPerRow, plotNumber % panelsPerRow);
+                graph = new FundamentalDiagram(name, Quantity.DENSITY, Quantity.FLOW, simulator, sampler,
+                        GraphLaneUtil.createCrossSection(name,
+                                new DirectedLanePosition(this.model.getLane(), detectorLocation, GTUDirectionality.DIR_PLUS)),
+                        false, Duration.createSI(60.0), false);
             }
-            catch (NetworkException exception)
+            catch (NetworkException | GTUException exception)
             {
-                exception.printStackTrace();
+                throw new OTSSimulationException(exception);
             }
+            charts.setCell(graph.getContentPane(), plotNumber / panelsPerRow, plotNumber % panelsPerRow);
         }
         addTab(getTabCount(), "statistics", charts);
     }
@@ -256,9 +256,6 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
         /** The speed limit. */
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
-        /** The fundamental diagram plots. */
-        private List<FundamentalDiagram> fundamentalDiagrams = new ArrayList<>();
-
         /** User settable properties. */
         private List<Property<?>> fundamentalDiagramProperties = null;
 
@@ -287,7 +284,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 LaneType laneType = LaneType.TWO_WAY_LANE;
                 this.lane =
                         LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
-                CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null, simulator);
+                CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null, this.simulator);
                 // No overtaking, single lane
                 Lane sinkLane = new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                         this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
@@ -367,11 +364,6 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 this.simulator.scheduleEventAbs(new Time(300, TimeUnit.BASE_SECOND), this, this, "createBlock", null);
                 // Remove the block at t = 7 minutes
                 this.simulator.scheduleEventAbs(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
-                // Schedule regular updates of the graph
-                for (int t = 1; t <= 1800; t++)
-                {
-                    this.simulator.scheduleEventAbs(new Time(t - 0.001, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
-                }
             }
             catch (SimRuntimeException exception)
             {
@@ -457,18 +449,6 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
             }
         }
 
-        /**
-        * 
-        */
-        protected final void drawGraphs()
-        {
-            // Notify the Fundamental Diagram plots that the underlying data has changed
-            for (FundamentalDiagram fd : this.fundamentalDiagrams)
-            {
-                fd.reGraph();
-            }
-        }
-
         /** {@inheritDoc} */
         @Override
         public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
@@ -481,14 +461,6 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
         public OTSNetwork getNetwork()
         {
             return this.network;
-        }
-
-        /**
-         * @return fundamentalDiagramPlots
-         */
-        public final List<FundamentalDiagram> getFundamentalDiagrams()
-        {
-            return this.fundamentalDiagrams;
         }
 
         /**

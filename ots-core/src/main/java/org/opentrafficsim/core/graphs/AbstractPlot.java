@@ -55,7 +55,7 @@ import nl.tudelft.simulation.event.EventType;
  * Super class of all plots. This schedules regular updates, creates menus and deals with listeners. There are a number of
  * delegate methods for sub classes to implement.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 4 okt. 2018 <br>
@@ -63,7 +63,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class XAbstractPlot extends JFrame implements Identifiable, Dataset
+public abstract class AbstractPlot extends JFrame implements Identifiable, Dataset
 {
 
     /** */
@@ -127,7 +127,7 @@ public abstract class XAbstractPlot extends JFrame implements Identifiable, Data
      * @param simulator OTSSimulatorInterface; simulator
      * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
      */
-    public XAbstractPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
+    public AbstractPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
             final Duration delay)
     {
         this.caption = caption;
@@ -198,7 +198,7 @@ public abstract class XAbstractPlot extends JFrame implements Identifiable, Data
 
                 // create setting components
                 JLabel fontSizeLabel = new JLabel("font size");
-                JTextField fontSize = new JTextField("16");
+                JTextField fontSize = new JTextField("32"); // by default, give more space for labels in a png export
                 fontSize.setToolTipText("Font size of title (other fonts are scaled)");
                 fontSize.setPreferredSize(new Dimension(40, 20));
                 JTextField width = new JTextField("960");
@@ -233,11 +233,11 @@ public abstract class XAbstractPlot extends JFrame implements Identifiable, Data
                     double fs; // relative scale
                     try
                     {
-                        fs = Double.parseDouble(fontSize.getText()) / 16.0;
+                        fs = Double.parseDouble(fontSize.getText());
                     }
                     catch (@SuppressWarnings("unused") NumberFormatException exception)
                     {
-                        fs = 1.0;
+                        fs = 16.0;
                     }
                     int w;
                     try
@@ -258,20 +258,7 @@ public abstract class XAbstractPlot extends JFrame implements Identifiable, Data
                         h = getHeight();
                     }
                     OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(filename)));
-                    // to double the font size, we halve the base dimensions
-                    // JFreeChart will the assign more area (relatively) to the fixed actual font size
-                    double baseWidth = w / fs;
-                    double baseHeight = h / fs;
-                    // this code is from ChartUtils.writeScaledChartAsPNG
-                    BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-                    Graphics2D g2 = image.createGraphics();
-                    // to compensate for the base dimensions which are not w x h, we scale the drawing
-                    AffineTransform saved = g2.getTransform();
-                    g2.transform(AffineTransform.getScaleInstance(w / baseWidth, h / baseHeight));
-                    chart.draw(g2, new Rectangle2D.Double(0, 0, baseWidth, baseHeight), null, null);
-                    g2.setTransform(saved);
-                    g2.dispose();
-                    out.write(ChartUtils.encodeAsPNG(image));
+                    out.write(encodeAsPng(w, h, fs));
                     out.close();
                 }
             }
@@ -314,11 +301,11 @@ public abstract class XAbstractPlot extends JFrame implements Identifiable, Data
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                XAbstractPlot.this.detach.setEnabled(false);
-                JFrame window = new JFrame(XAbstractPlot.this.caption);
+                AbstractPlot.this.detach.setEnabled(false);
+                JFrame window = new JFrame(AbstractPlot.this.caption);
                 window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
                 window.add(chartPanel, BorderLayout.CENTER);
-                window.add(XAbstractPlot.this.statusLabel, BorderLayout.SOUTH);
+                window.add(AbstractPlot.this.statusLabel, BorderLayout.SOUTH);
                 window.addWindowListener(new WindowAdapter()
                 {
                     /** {@inheritDoc} */
@@ -326,19 +313,45 @@ public abstract class XAbstractPlot extends JFrame implements Identifiable, Data
                     public void windowClosing(@SuppressWarnings("hiding") final WindowEvent e)
                     {
                         add(chartPanel, BorderLayout.CENTER);
-                        add(XAbstractPlot.this.statusLabel, BorderLayout.SOUTH);
-                        XAbstractPlot.this.detach.setEnabled(true);
-                        XAbstractPlot.this.getContentPane().validate();
-                        XAbstractPlot.this.getContentPane().repaint();
+                        add(AbstractPlot.this.statusLabel, BorderLayout.SOUTH);
+                        AbstractPlot.this.detach.setEnabled(true);
+                        AbstractPlot.this.getContentPane().validate();
+                        AbstractPlot.this.getContentPane().repaint();
                     }
                 });
                 window.pack();
                 window.setVisible(true);
-                XAbstractPlot.this.getContentPane().repaint();
+                AbstractPlot.this.getContentPane().repaint();
             }
         });
         popupMenu.add(this.detach);
         addPopUpMenuItems(popupMenu);
+    }
+
+    /**
+     * Returns the chart as a byte array representing a png image.
+     * @param width int; width
+     * @param height int; height
+     * @param fontSize double; font size (16 is the original on screen size)
+     * @return byte[]; the chart as a byte array representing a png image
+     * @throws IOException on IO exception
+     */
+    public byte[] encodeAsPng(final int width, final int height, final double fontSize) throws IOException
+    {
+        // to double the font size, we halve the base dimensions
+        // JFreeChart will the assign more area (relatively) to the fixed actual font size
+        double baseWidth = width / (fontSize / 16);
+        double baseHeight = height / (fontSize / 16);
+        // this code is from ChartUtils.writeScaledChartAsPNG
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+        // to compensate for the base dimensions which are not w x h, we scale the drawing
+        AffineTransform saved = g2.getTransform();
+        g2.transform(AffineTransform.getScaleInstance(width / baseWidth, height / baseHeight));
+        getChart().draw(g2, new Rectangle2D.Double(0, 0, baseWidth, baseHeight), null, null);
+        g2.setTransform(saved);
+        g2.dispose();
+        return ChartUtils.encodeAsPNG(image);
     }
 
     /** {@inheritDoc} */

@@ -10,7 +10,7 @@ import nl.tudelft.simulation.dsol.logger.SimLogger;
  * The GrapghUpdater can be used to repeatedly offer a value that is automatically processed in order of offering in a parallel
  * Thread.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 13 okt. 2018 <br>
@@ -19,7 +19,7 @@ import nl.tudelft.simulation.dsol.logger.SimLogger;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <T> type of value in queue
  */
-public class XGraphUpdater<T>
+public class GraphUpdater<T>
 {
 
     /** Queue of update times for executing Thread. */
@@ -31,7 +31,7 @@ public class XGraphUpdater<T>
      * @param invokingThread Thread; invoking thread, the worker will stop when this thread is interrupted
      * @param updater Updater&lt;T&gt;; updater to perform with the queued value
      */
-    public XGraphUpdater(final String workerName, final Thread invokingThread, final Updater<T> updater)
+    public GraphUpdater(final String workerName, final Thread invokingThread, final Updater<T> updater)
     {
         new Thread(new Runnable()
         {
@@ -44,7 +44,7 @@ public class XGraphUpdater<T>
                 {
                     try
                     {
-                        T t = XGraphUpdater.this.queue.poll(5, TimeUnit.SECONDS);
+                        T t = GraphUpdater.this.queue.poll(5, TimeUnit.SECONDS);
                         if (t != null)
                         {
                             updater.update(t);
@@ -72,7 +72,7 @@ public class XGraphUpdater<T>
     /**
      * Functional interface for updates to perform.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

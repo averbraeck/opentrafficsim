@@ -2,16 +2,16 @@ package org.opentrafficsim.core.graphs;
 
 import java.awt.Color;
 
-import org.djunits.unit.FrequencyUnit;
-import org.djunits.value.vdouble.scalar.Frequency;
-import org.opentrafficsim.core.graphs.XContourDataPool.ContourDataType;
+import org.djunits.unit.LinearDensityUnit;
+import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.opentrafficsim.core.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
- * Contour plot for flow.
+ * Contour plot for density.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 okt. 2018 <br>
@@ -20,7 +20,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <G> sampler GTU data type
  */
-public class XContourPlotFlow<G extends GtuDataInterface> extends XAbstractContourPlot<Frequency, G>
+public class ContourPlotDensity<G extends GtuDataInterface> extends AbstractContourPlot<LinearDensity, G>
 {
 
     /** */
@@ -30,51 +30,51 @@ public class XContourPlotFlow<G extends GtuDataInterface> extends XAbstractConto
      * Constructor.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataPool&lt;G&gt;; data pool
+     * @param dataPool ContourDataSource&lt;G&gt;; data pool
      */
-    public XContourPlotFlow(final String caption, final OTSSimulatorInterface simulator, final XContourDataPool<G> dataPool)
+    public ContourPlotDensity(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<G> dataPool)
     {
-        super(caption, simulator, dataPool, createPaintScale(), new Frequency(500.0, FrequencyUnit.PER_HOUR), "%.0f/h",
-                "flow %.1f veh/h");
+        super(caption, simulator, dataPool, createPaintScale(), new LinearDensity(30.0, LinearDensityUnit.PER_KILOMETER),
+                "%.0f/km", "density %.1f veh/km");
     }
 
     /**
      * Creates a paint scale from red, via yellow to green.
      * @return ContinuousColorPaintScale; paint scale
      */
-    private static XBoundsPaintScale createPaintScale()
+    private static BoundsPaintScale createPaintScale()
     {
-        double[] boundaries = { 0.0, 500.0 / 3600, 1000.0 / 3600, 1500.0 / 3600, 2000.0 / 3600, 2500.0 / 3600, 3000.0 / 3600 };
-        Color[] colorValues = XBoundsPaintScale.hue(7);
-        return new XBoundsPaintScale(boundaries, colorValues);
+        double[] boundaries = { 0.0, 20.0 / 1000, 150.0 / 1000 };
+        Color[] colorValues = BoundsPaintScale.GREEN_RED;
+        return new BoundsPaintScale(boundaries, colorValues);
     }
 
     /** {@inheritDoc} */
     @Override
     public GraphType getGraphType()
     {
-        return GraphType.FLOW_CONTOUR;
+        return GraphType.DENSITY_CONTOUR;
     }
 
     /** {@inheritDoc} */
     @Override
     protected double scale(final double si)
     {
-        return FrequencyUnit.PER_HOUR.getScale().fromStandardUnit(si);
+        return LinearDensityUnit.PER_KILOMETER.getScale().fromStandardUnit(si);
     }
 
     /** {@inheritDoc} */
     @Override
     protected double getValue(final int item, final double cellLength, final double cellSpan)
     {
-        return getDataPool().getTotalDistance(item) / (cellLength * cellSpan);
+        return getDataPool().getTotalTime(item) / (cellLength * cellSpan);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected ContourDataType<Frequency, ?> getContourDataType()
+    protected ContourDataType<LinearDensity, ?> getContourDataType()
     {
-        return null; // flow is present by default
+        return null; // density is present by default
     }
 
 }

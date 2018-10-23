@@ -12,7 +12,7 @@ import nl.tudelft.simulation.language.Throw;
 /**
  * Paint scale interpolating between colors at values.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 8 okt. 2018 <br>
@@ -20,7 +20,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class XBoundsPaintScale implements XColorPaintScale, Serializable
+public class BoundsPaintScale implements ColorPaintScale, Serializable
 {
 
     /** 3-color scale from green to red. */
@@ -45,7 +45,7 @@ public class XBoundsPaintScale implements XColorPaintScale, Serializable
      * @param boundColors Color[]; colors at bounds
      * @throws IllegalArgumentException if less than 2 bounds, unequal number of bounds and colors, or duplicate bounds
      */
-    public XBoundsPaintScale(final double[] bounds, final Color[] boundColors) throws IllegalArgumentException
+    public BoundsPaintScale(final double[] bounds, final Color[] boundColors) throws IllegalArgumentException
     {
         Throw.when(bounds.length < 2, IllegalArgumentException.class, "bounds must have >= 2 entries");
         Throw.when(bounds.length != boundColors.length, IllegalArgumentException.class,

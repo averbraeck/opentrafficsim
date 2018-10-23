@@ -5,8 +5,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +39,14 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.DomainOrder;
+import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.kpi.sampling.Trajectory;
+import org.opentrafficsim.kpi.sampling.Trajectory.SpaceTimeView;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
@@ -51,7 +55,7 @@ import nl.tudelft.simulation.language.Throw;
 /**
  * Fundamental diagram from various sources.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 okt. 2018 <br>
@@ -59,7 +63,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDataset
+public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 {
 
     /** */
@@ -72,7 +76,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
     public static final int[] DEFAULT_UPDATE_FREQUENCIES = new int[] { 1, 2, 3, 5, 10 };
 
     /** Source providing the data. */
-    private final Source source;
+    private final FdSource source;
 
     /** Quantity on domain axis. */
     private Quantity domainQuantity;
@@ -87,7 +91,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
     private final List<String> seriesLabels = new ArrayList<>();
 
     /** Updater for update times. */
-    private final XGraphUpdater<Time> graphUpdater;
+    private final GraphUpdater<Time> graphUpdater;
 
     /** Property for chart listener to provide time info for status label. */
     private String timeInfo = "";
@@ -106,8 +110,8 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
      * @param simulator OTSSimulatorInterface; simulator
      * @param source Source; source providing the data
      */
-    public XFundamentalDiagram(final String caption, final Quantity domainQuantity, final Quantity rangeQuantity,
-            final OTSSimulatorInterface simulator, final Source source)
+    public FundamentalDiagram(final String caption, final Quantity domainQuantity, final Quantity rangeQuantity,
+            final OTSSimulatorInterface simulator, final FdSource source)
     {
         super(caption, source.getUpdateInterval(), simulator, source.getDelay());
         Throw.when(domainQuantity.equals(rangeQuantity), IllegalArgumentException.class,
@@ -129,7 +133,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
         setLowerRangeBound(0.0);
 
         // setup updater to do the actual work in another thread
-        this.graphUpdater = new XGraphUpdater<>("Fundamental diagram worker", Thread.currentThread(), (t) ->
+        this.graphUpdater = new GraphUpdater<>("Fundamental diagram worker", Thread.currentThread(), (t) ->
         {
             if (this.source != null)
             {
@@ -146,18 +150,39 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
      * @param rangeQuantity Quantity; initial quantity on the range axis
      * @param simulator OTSSimulatorInterface; simulator
      * @param sampler Sampler&lt;?&gt;; sampler
-     * @param crossSection List&lt;KpiLaneDirection&gt;; lanes
+     * @param crossSection GraphCrossSection&lt;KpiLaneDirection&gt;; lanes
+     * @param aggregateLanes boolean; whether to aggregate the positions
+     * @param aggregationTime Duration; aggregation time (and update time)
+     * @param harmonic boolean; harmonic mean
+     */
+    @SuppressWarnings("parameternumber")
+    public FundamentalDiagram(final String caption, final Quantity domainQuantity, final Quantity rangeQuantity,
+            final OTSSimulatorInterface simulator, final Sampler<?> sampler,
+            final GraphCrossSection<KpiLaneDirection> crossSection, final boolean aggregateLanes,
+            final Duration aggregationTime, final boolean harmonic)
+    {
+        this(caption, domainQuantity, rangeQuantity, simulator,
+                sourceFromSampler(sampler, crossSection, aggregateLanes, aggregationTime, harmonic));
+    }
+
+    /**
+     * Constructor using a sampler as source.
+     * @param caption String; caption
+     * @param domainQuantity Quantity; initial quantity on the domain axis
+     * @param rangeQuantity Quantity; initial quantity on the range axis
+     * @param simulator OTSSimulatorInterface; simulator
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param path GraphPath&lt;KpiLaneDirection&gt;; lanes
      * @param aggregateLanes boolean; whether to aggregate the positions
      * @param aggregationTime Duration; aggregation time (and update time)
      */
     @SuppressWarnings("parameternumber")
-    public XFundamentalDiagram(final String caption, final Quantity domainQuantity, final Quantity rangeQuantity,
-            final OTSSimulatorInterface simulator, final Sampler<?> sampler,
-            final GraphCrossSection<KpiLaneDirection> crossSection, final boolean aggregateLanes,
-            final Duration aggregationTime)
+    public FundamentalDiagram(final String caption, final Quantity domainQuantity, final Quantity rangeQuantity,
+            final OTSSimulatorInterface simulator, final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path,
+            final boolean aggregateLanes, final Duration aggregationTime)
     {
         this(caption, domainQuantity, rangeQuantity, simulator,
-                sourceFromSampler(sampler, crossSection, aggregateLanes, aggregationTime));
+                sourceFromSampler(sampler, path, aggregateLanes, aggregationTime));
     }
 
     /**
@@ -178,7 +203,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
             @Override
             public boolean isSeriesVisible(final int series)
             {
-                return XFundamentalDiagram.this.laneVisible.get(series);
+                return FundamentalDiagram.this.laneVisible.get(series);
             }
 
         }; // XYDotRenderer doesn't support different markers
@@ -248,18 +273,18 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
                 {
                     if (((AxisEntity) event.getEntity()).getAxis().equals(getChart().getXYPlot().getDomainAxis()))
                     {
-                        Quantity old = XFundamentalDiagram.this.domainQuantity;
-                        XFundamentalDiagram.this.domainQuantity = XFundamentalDiagram.this.otherQuantity;
-                        XFundamentalDiagram.this.otherQuantity = old;
-                        getChart().getXYPlot().getDomainAxis().setLabel(XFundamentalDiagram.this.domainQuantity.label());
+                        Quantity old = FundamentalDiagram.this.domainQuantity;
+                        FundamentalDiagram.this.domainQuantity = FundamentalDiagram.this.otherQuantity;
+                        FundamentalDiagram.this.otherQuantity = old;
+                        getChart().getXYPlot().getDomainAxis().setLabel(FundamentalDiagram.this.domainQuantity.label());
                         getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
                     }
                     else
                     {
-                        Quantity old = XFundamentalDiagram.this.rangeQuantity;
-                        XFundamentalDiagram.this.rangeQuantity = XFundamentalDiagram.this.otherQuantity;
-                        XFundamentalDiagram.this.otherQuantity = old;
-                        getChart().getXYPlot().getRangeAxis().setLabel(XFundamentalDiagram.this.rangeQuantity.label());
+                        Quantity old = FundamentalDiagram.this.rangeQuantity;
+                        FundamentalDiagram.this.rangeQuantity = FundamentalDiagram.this.otherQuantity;
+                        FundamentalDiagram.this.otherQuantity = old;
+                        getChart().getXYPlot().getRangeAxis().setLabel(FundamentalDiagram.this.rangeQuantity.label());
                         getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
                     }
                 }
@@ -281,11 +306,50 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
                     XYItemEntity itemEntity = (XYItemEntity) event.getEntity();
                     int series = itemEntity.getSeriesIndex();
                     int item = itemEntity.getItem();
-                    double t = item * XFundamentalDiagram.this.source.getUpdateInterval().si;
-                    XFundamentalDiagram.this.timeInfo = String.format(", %.0fs", t);
-                    XYTextAnnotation textAnnotation =
-                            new XYTextAnnotation(String.format("%.0fs", t), getXValue(series, item), getYValue(series, item));
-                    textAnnotation.setTextAnchor(TextAnchor.TOP_RIGHT);
+                    double t = item * FundamentalDiagram.this.source.getUpdateInterval().si;
+                    FundamentalDiagram.this.timeInfo = String.format(", %.0fs", t);
+                    double x = getXValue(series, item);
+                    double y = getYValue(series, item);
+                    Range domain = getChart().getXYPlot().getDomainAxis().getRange();
+                    Range range = getChart().getXYPlot().getRangeAxis().getRange();
+                    TextAnchor anchor;
+                    if (range.getUpperBound() - y < y - range.getLowerBound())
+                    {
+                        // upper half
+                        if (domain.getUpperBound() - x < x - domain.getLowerBound())
+                        {
+                            // upper right quadrant
+                            anchor = TextAnchor.TOP_RIGHT;
+                        }
+                        else
+                        {
+                            // upper left quadrant, can't use TOP_LEFT as text will be under mouse pointer
+                            if ((range.getUpperBound() - y)
+                                    / (range.getUpperBound() - range.getLowerBound()) < (x - domain.getLowerBound())
+                                            / (domain.getUpperBound() - domain.getLowerBound()))
+                            {
+                                // closer to top (at least relatively) so move text down
+                                anchor = TextAnchor.TOP_RIGHT;
+                            }
+                            else
+                            {
+                                // closer to left (at least relatively) so move text right
+                                anchor = TextAnchor.BOTTOM_LEFT;
+                            }
+                        }
+                    }
+                    else if (domain.getUpperBound() - x < x - domain.getLowerBound())
+                    {
+                        // lower right quadrant
+                        anchor = TextAnchor.BOTTOM_RIGHT;
+                    }
+                    else
+                    {
+                        // lower left quadrant
+                        anchor = TextAnchor.BOTTOM_LEFT;
+                    }
+                    XYTextAnnotation textAnnotation = new XYTextAnnotation(String.format("%.0fs", t), x, y);
+                    textAnnotation.setTextAnchor(anchor);
                     textAnnotation.setFont(textAnnotation.getFont().deriveFont(14.0f).deriveFont(Font.BOLD));
                     getChart().getXYPlot().addAnnotation(textAnnotation);
                 }
@@ -299,7 +363,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
                             getChart().getXYPlot().removeAnnotation(annotation);
                         }
                     }
-                    XFundamentalDiagram.this.timeInfo = "";
+                    FundamentalDiagram.this.timeInfo = "";
                 }
             }
         };
@@ -327,16 +391,16 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
                 public void actionPerformed(final ActionEvent e)
                 {
 
-                    if ((int) (.5 + XFundamentalDiagram.this.source.getAggregationPeriod().si
-                            / XFundamentalDiagram.this.source.getUpdateInterval().si) != f)
+                    if ((int) (.5 + FundamentalDiagram.this.source.getAggregationPeriod().si
+                            / FundamentalDiagram.this.source.getUpdateInterval().si) != f)
                     {
-                        Duration interval = Duration.createSI(XFundamentalDiagram.this.source.getAggregationPeriod().si / f);
-                        XFundamentalDiagram.this.setUpdateInterval(interval);
+                        Duration interval = Duration.createSI(FundamentalDiagram.this.source.getAggregationPeriod().si / f);
+                        FundamentalDiagram.this.setUpdateInterval(interval);
                         // the above setUpdateInterval also recalculates the virtual last update time
                         // add half an interval to avoid any rounding issues
-                        XFundamentalDiagram.this.source.setUpdateInterval(interval,
-                                XFundamentalDiagram.this.getUpdateTime().plus(interval.multiplyBy(0.5)),
-                                XFundamentalDiagram.this);
+                        FundamentalDiagram.this.source.setUpdateInterval(interval,
+                                FundamentalDiagram.this.getUpdateTime().plus(interval.multiplyBy(0.5)),
+                                FundamentalDiagram.this);
                         getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
                         getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
                         notifyPlotChange();
@@ -363,27 +427,29 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
             item.setSelected(t == this.source.getAggregationPeriod().si);
             item.addActionListener(new ActionListener()
             {
+
                 /** {@inheritDoc} */
                 @SuppressWarnings("synthetic-access")
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    if (XFundamentalDiagram.this.source.getAggregationPeriod().si != t)
+                    if (FundamentalDiagram.this.source.getAggregationPeriod().si != t)
                     {
-                        int n = (int) (0.5 + XFundamentalDiagram.this.source.getAggregationPeriod().si
-                                / XFundamentalDiagram.this.source.getUpdateInterval().si);
+                        int n = (int) (0.5 + FundamentalDiagram.this.source.getAggregationPeriod().si
+                                / FundamentalDiagram.this.source.getUpdateInterval().si);
                         Duration period = Duration.createSI(t);
-                        XFundamentalDiagram.this.setUpdateInterval(period.divideBy(n));
+                        FundamentalDiagram.this.setUpdateInterval(period.divideBy(n));
                         // add half an interval to avoid any rounding issues
-                        XFundamentalDiagram.this.source.setAggregationPeriod(period);
-                        XFundamentalDiagram.this.source.setUpdateInterval(period.divideBy(n),
-                                XFundamentalDiagram.this.getUpdateTime().plus(period.divideBy(n).multiplyBy(0.5)),
-                                XFundamentalDiagram.this);
+                        FundamentalDiagram.this.source.setAggregationPeriod(period);
+                        FundamentalDiagram.this.source.setUpdateInterval(period.divideBy(n),
+                                FundamentalDiagram.this.getUpdateTime().plus(period.divideBy(n).multiplyBy(0.5)),
+                                FundamentalDiagram.this);
                         getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
                         getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
                         notifyPlotChange();
                     }
                 }
+
             });
             aggGroup.add(item);
             aggMenu.add(item);
@@ -489,7 +555,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
     /**
      * Quantity enum defining density, flow and speed.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -519,7 +585,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
 
             /** {@inheritDoc} */
             @Override
-            public double getValue(final Source src, final int series, final int item)
+            public double getValue(final FdSource src, final int series, final int item)
             {
                 return 1000 * src.getDensity(series, item);
             }
@@ -552,7 +618,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
 
             /** {@inheritDoc} */
             @Override
-            public double getValue(final Source src, final int series, final int item)
+            public double getValue(final FdSource src, final int series, final int item)
             {
                 return 3600 * src.getFlow(series, item);
             }
@@ -585,7 +651,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
 
             /** {@inheritDoc} */
             @Override
-            public double getValue(final Source src, final int series, final int item)
+            public double getValue(final FdSource src, final int series, final int item)
             {
                 return 3.6 * src.getSpeed(series, item);
             }
@@ -619,7 +685,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
          * @param item item; item number in series
          * @return double; scaled value in presentation unit
          */
-        public abstract double getValue(Source src, int series, int item);
+        public abstract double getValue(FdSource src, int series, int item);
 
         /**
          * Compute the value of the 3rd quantity.
@@ -635,7 +701,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
     /**
      * Data source for a fundamental diagram.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -644,7 +710,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public interface Source
+    public interface FdSource
     {
         /**
          * Returns the possible intervals.
@@ -676,7 +742,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
          * @param time Time; time until which data has to be recalculated
          * @param fd FundamentalDiagram; the fundamental diagram to notify when data is ready
          */
-        void setUpdateInterval(Duration interval, Time time, XFundamentalDiagram fd);
+        void setUpdateInterval(Duration interval, Time time, FundamentalDiagram fd);
 
         /**
          * The aggregation period.
@@ -753,28 +819,167 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
      * @param crossSection GraphCrossSection&lt;KpiLaneDirection&gt;; cross section
      * @param aggregateLanes boolean; whether to aggregate the positions
      * @param aggregationTime Duration; aggregation time (and update time)
+     * @param harmonic boolean; harmonic mean
      * @return Source; source for a fundamental diagram from a sampler and positions
      */
     @SuppressWarnings("methodlength")
-    public static Source sourceFromSampler(final Sampler<?> sampler, final GraphCrossSection<KpiLaneDirection> crossSection,
-            final boolean aggregateLanes, final Duration aggregationTime)
+    public static FdSource sourceFromSampler(final Sampler<?> sampler, final GraphCrossSection<KpiLaneDirection> crossSection,
+            final boolean aggregateLanes, final Duration aggregationTime, final boolean harmonic)
     {
-        return new SamplerSource(sampler, crossSection, aggregateLanes, aggregationTime);
+        return new CrossSectionSamplerFdSource<>(sampler, crossSection, aggregateLanes, aggregationTime, harmonic);
     }
 
     /**
-     * Fundamental diagram source from sampler.
+     * Creates a {@code Source} from a sampler and positions.
+     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param path GraphPath&lt;KpiLaneDirection&gt;; cross section
+     * @param aggregateLanes boolean; whether to aggregate the positions
+     * @param aggregationTime Duration; aggregation time (and update time)
+     * @return Source; source for a fundamental diagram from a sampler and positions
+     */
+    public static FdSource sourceFromSampler(final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path,
+            final boolean aggregateLanes, final Duration aggregationTime)
+    {
+        return new PathSamplerFdSource<>(sampler, path, aggregateLanes, aggregationTime);
+    }
+
+    /**
+     * Fundamental diagram source based on a cross section.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 21 okt. 2018 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 23 okt. 2018 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * @param <S> underlying source type
      */
-    private static class SamplerSource implements Source
+    private static class CrossSectionSamplerFdSource<S extends GraphCrossSection<? extends KpiLaneDirection>>
+            extends AbstractSpaceSamplerFdSource<S>
+    {
+        /** Harmonic mean. */
+        private final boolean harmonic;
+
+        /**
+         * Constructor.
+         * @param sampler Sampler&lt;?&gt;; sampler
+         * @param crossSection S; cross section
+         * @param aggregateLanes boolean; whether to aggregate the lanes
+         * @param aggregationPeriod Duration; initial aggregation {@link Period}
+         * @param harmonic boolean; harmonic mean
+         */
+        CrossSectionSamplerFdSource(final Sampler<?> sampler, final S crossSection, final boolean aggregateLanes,
+                final Duration aggregationPeriod, final boolean harmonic)
+        {
+            super(sampler, crossSection, aggregateLanes, aggregationPeriod);
+            this.harmonic = harmonic;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void getMeasurements(final Trajectory<?> trajectory, final Time startTime, final Time endTime,
+                final Length length, final int series, final double[] measurements)
+        {
+            Length x = getSpace().position(series);
+            if (GraphUtil.considerTrajectory(trajectory, x, x))
+            {
+                // detailed check
+                Time t = trajectory.getTimeAtPosition(x);
+                if (t.si >= startTime.si && t.si < endTime.si)
+                {
+                    measurements[0] = 1; // first = count
+                    measurements[1] = // second = sum of (inverted) speeds
+                            this.harmonic ? 1.0 / trajectory.getSpeedAtPosition(x).si : trajectory.getSpeedAtPosition(x).si;
+                }
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getVehicleCount(final double first, final double second)
+        {
+            return first; // is divided by aggregation period by caller
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getSpeed(final double first, final double second)
+        {
+            return this.harmonic ? first / second : second / first;
+        }
+    }
+
+    /**
+     * Fundamental diagram source based on a path. Density, speed and flow over the entire path are calculated per lane.
+     * <p>
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 23 okt. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * @param <S> underlying source type
+     */
+    private static class PathSamplerFdSource<S extends GraphPath<? extends KpiLaneDirection>>
+            extends AbstractSpaceSamplerFdSource<S>
+    {
+        /**
+         * Constructor.
+         * @param sampler Sampler&lt;?&gt;; sampler
+         * @param path S; path
+         * @param aggregateLanes boolean; whether to aggregate the lanes
+         * @param aggregationPeriod Duration; initial aggregation period
+         */
+        PathSamplerFdSource(final Sampler<?> sampler, final S path, final boolean aggregateLanes,
+                final Duration aggregationPeriod)
+        {
+            super(sampler, path, aggregateLanes, aggregationPeriod);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void getMeasurements(final Trajectory<?> trajectory, final Time startTime, final Time endTime,
+                final Length length, final int sereies, final double[] measurements)
+        {
+            SpaceTimeView stv = trajectory.getSpaceTimeView(Length.ZERO, length, startTime, endTime);
+            measurements[0] = stv.getDistance().si; // first = total traveled distance
+            measurements[1] = stv.getTime().si; // second = total traveled time
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getVehicleCount(final double first, final double second)
+        {
+            return first / getSpace().getTotalLength().si; // is divided by aggregation period by caller
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getSpeed(final double first, final double second)
+        {
+            return first / second;
+        }
+    }
+
+    /**
+     * Abstract class that deals with updating and recalculating the fundamental diagram.
+     * <p>
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 23 okt. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * @param <S> underlying source type
+     */
+    private abstract static class AbstractSpaceSamplerFdSource<S extends AbstractGraphSpace<? extends KpiLaneDirection>>
+            implements FdSource
     {
         /** Period number of last calculated period. */
         private int periodNumber = -1;
@@ -788,11 +993,11 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
         /** Number of series. */
         private final int nSeries;
 
-        /** Flow data. */
-        private int[][] count;
+        /** First data. */
+        private double[][] firstMeasurement;
 
-        /** Speed data. */
-        private double[][] speed;
+        /** Second data. */
+        private double[][] secondMeasurement;
 
         /** Whether the plot is in a process such that the data is invalid for the current draw of the plot. */
         private boolean invalid = false;
@@ -800,8 +1005,8 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
         /** The sampler. */
         private final Sampler<?> sampler;
 
-        /** Lanes. */
-        private final GraphCrossSection<KpiLaneDirection> crossSection;
+        /** Space. */
+        private final S space;
 
         /** Whether to aggregate the lanes. */
         private final boolean aggregateLanes;
@@ -815,21 +1020,20 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
         /**
          * Constructor.
          * @param sampler Sampler&lt;?&gt;; sampler
-         * @param crossSection GraphCrossSection&lt;KpiLaneDirection&gt;; cross section
+         * @param space S; space
          * @param aggregateLanes boolean; whether to aggregate the lanes
          * @param aggregationPeriod Duration; initial aggregation period
          */
-        SamplerSource(final Sampler<?> sampler, final GraphCrossSection<KpiLaneDirection> crossSection,
-                final boolean aggregateLanes, final Duration aggregationPeriod)
+        AbstractSpaceSamplerFdSource(final Sampler<?> sampler, final S space, final boolean aggregateLanes,
+                final Duration aggregationPeriod)
         {
             this.sampler = sampler;
-            this.crossSection = crossSection;
+            this.space = space;
             this.aggregateLanes = aggregateLanes;
-            this.nSeries = aggregateLanes ? 1 : crossSection.getNumberOfSeries();
+            this.nSeries = aggregateLanes ? 1 : space.getNumberOfSeries();
             // create and register kpi lane directions
-            for (int i = 0; i < crossSection.getNumberOfSeries(); i++)
+            for (KpiLaneDirection laneDirection : space)
             {
-                KpiLaneDirection laneDirection = crossSection.getSource(i);
                 sampler.registerSpaceTimeRegion(new SpaceTimeRegion(laneDirection, Length.ZERO,
                         laneDirection.getLaneData().getLength(), Time.ZERO, Time.createSI(Double.MAX_VALUE)));
 
@@ -840,8 +1044,17 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
 
             this.updateInterval = aggregationPeriod;
             this.aggregationPeriod = aggregationPeriod;
-            this.count = new int[this.nSeries][10];
-            this.speed = new double[this.nSeries][10];
+            this.firstMeasurement = new double[this.nSeries][10];
+            this.secondMeasurement = new double[this.nSeries][10];
+        }
+
+        /**
+         * Returns the space.
+         * @return S; space
+         */
+        protected S getSpace()
+        {
+            return this.space;
         }
 
         /** {@inheritDoc} */
@@ -853,12 +1066,8 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
 
         /** {@inheritDoc} */
         @Override
-        public void setUpdateInterval(final Duration interval, final Time time, final XFundamentalDiagram fd)
+        public void setUpdateInterval(final Duration interval, final Time time, final FundamentalDiagram fd)
         {
-            if (Double.isInfinite(interval.si))
-            {
-                System.out.println("hmmm");
-            }
             if (this.updateInterval != interval)
             {
                 this.updateInterval = interval;
@@ -888,35 +1097,39 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
          * @param time Time; time up to which recalculation is required
          * @param fd FundamentalDiagram; fundamental diagram to notify
          */
-        public void recalculate(final Time time, final XFundamentalDiagram fd)
+        private void recalculate(final Time time, final FundamentalDiagram fd)
         {
             new Thread(new Runnable()
             {
                 @SuppressWarnings("synthetic-access")
                 public void run()
                 {
-                    synchronized (SamplerSource.this)
+                    synchronized (AbstractSpaceSamplerFdSource.this)
                     {
-                        SamplerSource.this.invalid = true; // an active plot draw will now request data on invalid items
-                        SamplerSource.this.periodNumber = -1;
-                        SamplerSource.this.updateInterval = getUpdateInterval();
-                        SamplerSource.this.count = new int[SamplerSource.this.nSeries][10];
-                        SamplerSource.this.speed = new double[SamplerSource.this.nSeries][10];
-                        SamplerSource.this.lastConsecutivelyAssignedTrajectories.clear();
-                        SamplerSource.this.assignedTrajectories.clear();
-                        for (KpiLaneDirection lane : SamplerSource.this.crossSection)
+                        // an active plot draw will now request data on invalid items
+                        AbstractSpaceSamplerFdSource.this.invalid = true;
+                        AbstractSpaceSamplerFdSource.this.periodNumber = -1;
+                        AbstractSpaceSamplerFdSource.this.updateInterval = getUpdateInterval();
+                        AbstractSpaceSamplerFdSource.this.firstMeasurement =
+                                new double[AbstractSpaceSamplerFdSource.this.nSeries][10];
+                        AbstractSpaceSamplerFdSource.this.secondMeasurement =
+                                new double[AbstractSpaceSamplerFdSource.this.nSeries][10];
+                        AbstractSpaceSamplerFdSource.this.lastConsecutivelyAssignedTrajectories.clear();
+                        AbstractSpaceSamplerFdSource.this.assignedTrajectories.clear();
+                        for (KpiLaneDirection lane : AbstractSpaceSamplerFdSource.this.space)
                         {
-                            SamplerSource.this.lastConsecutivelyAssignedTrajectories.put(lane, -1);
-                            SamplerSource.this.assignedTrajectories.put(lane, new TreeSet<>());
+                            AbstractSpaceSamplerFdSource.this.lastConsecutivelyAssignedTrajectories.put(lane, -1);
+                            AbstractSpaceSamplerFdSource.this.assignedTrajectories.put(lane, new TreeSet<>());
                         }
-                        while ((SamplerSource.this.periodNumber + 1) * getUpdateInterval().si
-                                + SamplerSource.this.aggregationPeriod.si <= time.si)
+                        while ((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
+                                + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si <= time.si)
                         {
-                            increaseTime(Time.createSI((SamplerSource.this.periodNumber + 1) * getUpdateInterval().si
-                                    + SamplerSource.this.aggregationPeriod.si));
+                            increaseTime(
+                                    Time.createSI((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
+                                            + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si));
                             fd.notifyPlotChange();
                         }
-                        SamplerSource.this.invalid = false;
+                        AbstractSpaceSamplerFdSource.this.invalid = false;
                     }
                 }
             }, "Fundamental diagram recalculation").start();
@@ -941,86 +1154,89 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
 
             // ensure capacity
             int nextPeriod = this.periodNumber + 1;
-            if (nextPeriod >= this.count[0].length - 1)
+            if (nextPeriod >= this.firstMeasurement[0].length - 1)
             {
                 for (int i = 0; i < this.nSeries; i++)
                 {
-                    this.count[i] = GraphUtil.ensureCapacity(this.count[i], nextPeriod + 1);
-                    this.speed[i] = GraphUtil.ensureCapacity(this.speed[i], nextPeriod + 1);
+                    this.firstMeasurement[i] = GraphUtil.ensureCapacity(this.firstMeasurement[i], nextPeriod + 1);
+                    this.secondMeasurement[i] = GraphUtil.ensureCapacity(this.secondMeasurement[i], nextPeriod + 1);
                 }
             }
 
             // loop positions and trajectories
             Time startTime = time.minus(this.aggregationPeriod);
-            double v = 0.0;
-            int c = 0;
-            for (int series = 0; series < this.crossSection.getNumberOfSeries(); series++)
+            double first = 0;
+            double second = 0.0;
+            for (int series = 0; series < this.space.getNumberOfSeries(); series++)
             {
-                KpiLaneDirection lane = this.crossSection.getSource(series);
-                TrajectoryGroup trajectoryGroup = this.sampler.getTrajectoryGroup(lane);
-                int last = this.lastConsecutivelyAssignedTrajectories.get(lane);
-                SortedSet<Integer> assigned = this.assignedTrajectories.get(lane);
-                if (!this.aggregateLanes)
+                Iterator<? extends KpiLaneDirection> it = this.space.iterator(series);
+                while (it.hasNext())
                 {
-                    v = 0.0;
-                    c = 0;
-                }
-                Length x = this.crossSection.position(series);
-                int i = 0;
-                for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
-                {
-                    // we can skip all assigned trajectories, which are all up to and including 'last' and all in 'assigned'
-                    try
+                    KpiLaneDirection lane = it.next();
+                    TrajectoryGroup trajectoryGroup = this.sampler.getTrajectoryGroup(lane);
+                    int last = this.lastConsecutivelyAssignedTrajectories.get(lane);
+                    SortedSet<Integer> assigned = this.assignedTrajectories.get(lane);
+                    if (!this.aggregateLanes)
                     {
-                        if (i > last && !assigned.contains(i))
+                        first = 0.0;
+                        second = 0.0;
+                    }
+
+                    // Length x = this.crossSection.position(series);
+                    int i = 0;
+                    for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
+                    {
+                        // we can skip all assigned trajectories, which are all up to and including 'last' and all in 'assigned'
+                        try
                         {
-                            // quickly filter
-                            if (GraphUtil.considerTrajectory(trajectory, startTime, time)
-                                    && GraphUtil.considerTrajectory(trajectory, x, x))
+                            if (i > last && !assigned.contains(i))
                             {
-                                // detailed check
-                                Time t = trajectory.getTimeAtPosition(x);
-                                if (t.si >= startTime.si && t.si < time.si)
+                                // quickly filter
+                                if (GraphUtil.considerTrajectory(trajectory, startTime, time))
                                 {
-                                    c++; // is this allowed in java ;)?
-                                    v += trajectory.getSpeedAtPosition(x).si;
+                                    double[] measurements = new double[2];
+                                    getMeasurements(trajectory, startTime, time, lane.getLaneData().getLength(), series,
+                                            measurements);
+                                    first += measurements[0];
+                                    second += measurements[1];
+                                }
+                                if (trajectory.getT(trajectory.size() - 1) < startTime.si - getDelay().si)
+                                {
+                                    assigned.add(i);
                                 }
                             }
-                            if (trajectory.getT(trajectory.size() - 1) < startTime.si - getDelay().si)
-                            {
-                                assigned.add(i);
-                            }
+                            i++;
                         }
-                        i++;
+                        catch (SamplingException exception)
+                        {
+                            throw new RuntimeException("Unexpected exception while counting trajectories.", exception);
+                        }
                     }
-                    catch (SamplingException exception)
+                    if (!this.aggregateLanes)
                     {
-                        throw new RuntimeException("Unexpected exception while counting trajectories.", exception);
+                        this.firstMeasurement[series][nextPeriod] = first;
+                        this.secondMeasurement[series][nextPeriod] = second;
                     }
-                }
-                if (!this.aggregateLanes)
-                {
-                    this.count[series][nextPeriod] = c;
-                    this.speed[series][nextPeriod] = c == 0 ? Float.NaN : v / c;
-                }
 
-                // consolidate list of assigned trajectories in 'all up to n' and 'these specific ones beyond n'
-                if (!assigned.isEmpty())
-                {
-                    int possibleNextLastAssigned = assigned.first();
-                    while (possibleNextLastAssigned == last + 1) // consecutive or very first
+                    // consolidate list of assigned trajectories in 'all up to n' and 'these specific ones beyond n'
+                    if (!assigned.isEmpty())
                     {
-                        last = possibleNextLastAssigned;
-                        assigned.remove(possibleNextLastAssigned);
-                        possibleNextLastAssigned = assigned.isEmpty() ? -1 : assigned.first();
+                        int possibleNextLastAssigned = assigned.first();
+                        while (possibleNextLastAssigned == last + 1) // consecutive or very first
+                        {
+                            last = possibleNextLastAssigned;
+                            assigned.remove(possibleNextLastAssigned);
+                            possibleNextLastAssigned = assigned.isEmpty() ? -1 : assigned.first();
+                        }
+                        this.lastConsecutivelyAssignedTrajectories.put(lane, last);
                     }
-                    this.lastConsecutivelyAssignedTrajectories.put(lane, last);
                 }
             }
             if (this.aggregateLanes)
             {
-                this.count[0][nextPeriod] = c / this.crossSection.getNumberOfSeries();
-                this.speed[0][nextPeriod] = c == 0 ? Float.NaN : v / c;
+                // whatever we measured, it was summed and can be normalized per line like this
+                this.firstMeasurement[0][nextPeriod] = first / this.space.getNumberOfSeries();
+                this.secondMeasurement[0][nextPeriod] = second / this.space.getNumberOfSeries();
             }
             this.periodNumber = nextPeriod;
         }
@@ -1043,7 +1259,7 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
             {
                 return "Aggregate";
             }
-            return this.crossSection.getName(series);
+            return this.space.getName(series);
         }
 
         /** {@inheritDoc} */
@@ -1055,32 +1271,69 @@ public class XFundamentalDiagram extends XAbstractBoundedPlot implements XYDatas
 
         /** {@inheritDoc} */
         @Override
-        public double getFlow(final int series, final int item)
+        public final double getFlow(final int series, final int item)
         {
             if (this.invalid)
             {
                 return Double.NaN;
             }
-            return this.count[series][item] / this.aggregationPeriod.si;
+            return getVehicleCount(this.firstMeasurement[series][item], this.secondMeasurement[series][item])
+                    / this.aggregationPeriod.si;
         }
 
         /** {@inheritDoc} */
         @Override
-        public double getDensity(final int series, final int item)
+        public final double getDensity(final int series, final int item)
         {
             return getFlow(series, item) / getSpeed(series, item);
         }
 
         /** {@inheritDoc} */
         @Override
-        public double getSpeed(final int series, final int item)
+        public final double getSpeed(final int series, final int item)
         {
             if (this.invalid)
             {
                 return Double.NaN;
             }
-            return this.speed[series][item];
+            return getSpeed(this.firstMeasurement[series][item], this.secondMeasurement[series][item]);
         }
+
+        /**
+         * Returns the first and the second measurement of a trajectory. For a cross-section this is 1 and the vehicle speed if
+         * the trajectory crosses the location, and for a path it is the traveled distance and the traveled time. If the
+         * trajectory didn't cross the cross section or space-time range, both should be 0.
+         * @param trajectory Trajectory&lt;?&gt;; trajectory
+         * @param startTime Time; start time of aggregation period
+         * @param endTime Time; end time of aggregation period
+         * @param length Length; length of the section (to cut off possible lane overshoot of trajectories)
+         * @param series int; series number in the section
+         * @param measurements double[]; array with length 2 to place the first and second measurement in
+         */
+        protected abstract void getMeasurements(Trajectory<?> trajectory, Time startTime, Time endTime, Length length,
+                int series, double[] measurements);
+
+        /**
+         * Returns the vehicle count of two related measurement values. For a cross section: vehicle count & sum of speeds (or
+         * sum of inverted speeds for the harmonic mean). For a path: total traveled distance & total traveled time.
+         * <p>
+         * The value will be divided by the aggregation time to calculate flow. Hence, for a cross section the first measurement
+         * should be returned, while for a path the first measurement divided by the section length should be returned. That
+         * will end up to equate to {@code q = sum(x)/XT}.
+         * @param first double; first measurement value
+         * @param second double; second measurement value
+         * @return double; flow
+         */
+        protected abstract double getVehicleCount(double first, double second);
+
+        /**
+         * Returns the speed of two related measurement values. For a cross section: vehicle count & sum of speeds (or sum of
+         * inverted speeds for the harmonic mean). For a path: total traveled distance & total traveled time.
+         * @param first double; first measurement value
+         * @param second double; second measurement value
+         * @return double; speed
+         */
+        protected abstract double getSpeed(double first, double second);
 
     }
 

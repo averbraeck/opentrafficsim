@@ -2,9 +2,6 @@ package org.opentrafficsim.demo.carFollowing;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.awt.Container;
-import java.awt.Frame;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,7 +11,6 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -33,19 +29,22 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.graphs.GraphPath;
+import org.opentrafficsim.core.graphs.AbstractPlot;
+import org.opentrafficsim.core.graphs.ContourDataSource;
+import org.opentrafficsim.core.graphs.ContourPlotAcceleration;
+import org.opentrafficsim.core.graphs.ContourPlotDensity;
+import org.opentrafficsim.core.graphs.ContourPlotFlow;
+import org.opentrafficsim.core.graphs.ContourPlotSpeed;
+import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.graphs.AccelerationContourPlot;
-import org.opentrafficsim.graphs.ContourPlot;
-import org.opentrafficsim.graphs.DensityContourPlot;
-import org.opentrafficsim.graphs.FlowContourPlot;
-import org.opentrafficsim.graphs.LaneBasedGTUSampler;
-import org.opentrafficsim.graphs.SpeedContourPlot;
-import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.graphs.GraphLaneUtil;
+import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -59,7 +58,10 @@ import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.sampling.GtuData;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
@@ -67,7 +69,6 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -220,53 +221,51 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
         TablePanel charts = new TablePanel(columns, rows);
 
+        GraphPath<KpiLaneDirection> path;
+        try
+        {
+            path = GraphLaneUtil.createPath("Lane", new LaneDirection(this.model.getPath().get(0), GTUDirectionality.DIR_PLUS));
+        }
+        catch (NetworkException exception)
+        {
+            throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
+        }
+        RoadSampler sampler = new RoadSampler(simulator);
+        ContourDataSource<GtuData> dataPool = new ContourDataSource<>(sampler, path);
         for (int i = 0; i < graphCount; i++)
         {
+
             String graphName = graphs.get(i).getKey();
-            Container container = null;
-            LaneBasedGTUSampler graph;
+            AbstractPlot plot = null;
             if (graphName.equals("TrajectoryPlot"))
             {
-                TrajectoryPlot tp =
-                        new TrajectoryPlot("TrajectoryPlot", new Duration(0.5, SECOND), this.model.getPath(), simulator);
-                tp.setTitle("Trajectory Graph");
-                tp.setExtendedState(Frame.MAXIMIZED_BOTH);
-                graph = tp;
-                container = tp.getContentPane();
+                plot = new TrajectoryPlot<>(graphName, Duration.createSI(10.0), simulator, sampler, path);
             }
             else
             {
-                ContourPlot cp;
-                if (graphName.equals("DensityPlot"))
+                if (graphName.contains("DensityPlot"))
                 {
-                    cp = new DensityContourPlot("DensityPlot", this.model.getPath());
-                    cp.setTitle("Density Contour Graph");
+                    plot = new ContourPlotDensity<>(graphName, simulator, dataPool);
                 }
-                else if (graphName.equals("SpeedPlot"))
+                else if (graphName.contains("SpeedPlot"))
                 {
-                    cp = new SpeedContourPlot("SpeedPlot", this.model.getPath());
-                    cp.setTitle("Speed Contour Graph");
+                    plot = new ContourPlotSpeed<>(graphName, simulator, dataPool);
                 }
-                else if (graphName.equals("FlowPlot"))
+                else if (graphName.contains("FlowPlot"))
                 {
-                    cp = new FlowContourPlot("FlowPlot", this.model.getPath());
-                    cp.setTitle("Flow Contour Graph");
+                    plot = new ContourPlotFlow<>(graphName, simulator, dataPool);
                 }
-                else if (graphName.equals("AccelerationPlot"))
+                else if (graphName.contains("AccelerationPlot"))
                 {
-                    cp = new AccelerationContourPlot("AccelerationPlot", this.model.getPath());
-                    cp.setTitle("Acceleration Contour Graph");
+                    plot = new ContourPlotAcceleration<>(graphName, simulator, dataPool);
                 }
                 else
                 {
-                    throw new OTSSimulationException("Unhandled type of contourplot: " + graphName);
+                    throw new Error("Unhandled type of contourplot: " + graphName);
                 }
-                graph = cp;
-                container = cp.getContentPane();
             }
             // Add the container to the matrix
-            charts.setCell(container, i % columns, i / columns);
-            this.model.getPlots().add(graph);
+            charts.setCell(plot.getContentPane(), i % columns, i / columns);
         }
         addTab(getTabCount(), "statistics", charts);
     }
@@ -337,13 +336,8 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
         /** The speed limit. */
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
-        /** The contour plots. */
-        private List<LaneBasedGTUSampler> contourPlots = new ArrayList<>();
-
-        /** The trajectory plot. */
-        private List<TrajectoryPlot> trajectoryPlots = new ArrayList<>();
-
         /** User settable properties. */
+        @SuppressWarnings("hiding")
         private List<Property<?>> properties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
@@ -516,8 +510,6 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
                     generateCar(this.lane2, new Length(pos, METER));
                     pos += actualHeadway;
                 }
-                // Schedule regular updates of the graph
-                this.simulator.scheduleEventAbs(new Time(0.999, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
                     | PropertyException exception)
@@ -532,32 +524,6 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
         public List<Lane> getPath()
         {
             return new ArrayList<>(this.path);
-        }
-
-        /**
-         * Notify the contour plots that the underlying data has changed.
-         */
-        protected final void drawGraphs()
-        {
-            for (LaneBasedGTUSampler contourPlot : this.contourPlots)
-            {
-                contourPlot.reGraph();
-            }
-            for (TrajectoryPlot trajectoryPlot : this.trajectoryPlots)
-            {
-                trajectoryPlot.reGraph();
-            }
-            // Re schedule this method
-            try
-            {
-                this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND),
-                        this, this, "drawGraphs", null);
-            }
-            catch (SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-
         }
 
         /**
@@ -609,22 +575,6 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
         public OTSNetwork getNetwork()
         {
             return this.network;
-        }
-
-        /**
-         * @return contourPlots
-         */
-        public final List<LaneBasedGTUSampler> getPlots()
-        {
-            return this.contourPlots;
-        }
-
-        /**
-         * @return trajectoryPlots
-         */
-        public final List<TrajectoryPlot> getTrajectoryPlots()
-        {
-            return this.trajectoryPlots;
         }
 
         /**

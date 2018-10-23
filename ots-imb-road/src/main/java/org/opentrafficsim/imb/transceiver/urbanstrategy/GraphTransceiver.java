@@ -5,15 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.core.graphs.AbstractContourPlot;
+import org.opentrafficsim.core.graphs.AbstractPlot;
+import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.graphs.AbstractOTSPlot;
-import org.opentrafficsim.graphs.ContourPlot;
-import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
-import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -230,12 +229,12 @@ public class GraphTransceiver extends AbstractTransceiver
      * @param network Network; the network
      * @param width int; the width of the graph, in pixels
      * @param height int; the height of the graph, in pixels
-     * @param plot AbstractOTSPlot; the graph
+     * @param plot AbstractPlot; the graph
      * @param transmissionInterval Duration; the interval between generation of graphs
      * @throws IMBException when the message cannot be posted, or the scheduling of the publish event fails
      */
     public GraphTransceiver(final Connector connector, OTSSimulatorInterface simulator, Network network, final int width,
-            final int height, final AbstractOTSPlot plot, final Duration transmissionInterval) throws IMBException
+            final int height, final AbstractPlot plot, final Duration transmissionInterval) throws IMBException
     {
         super("Graph", connector, simulator);
         this.network = network;
@@ -252,25 +251,27 @@ public class GraphTransceiver extends AbstractTransceiver
         newMessage.add(plot.getGraphType().toString());
         if (plot instanceof TrajectoryPlot)
         {
-            Duration interval = ((TrajectoryPlot) plot).getSampleInterval();
+            // WS this could be anything, including GTU move events
+            Duration interval = null; // ((TrajectoryPlot<?>) plot).getSampleInterval(); // should be Duration
             newMessage.add(interval == null ? 0.0d : interval.si);
         }
-        else if (plot instanceof ContourPlot)
+        else if (plot instanceof AbstractContourPlot)
         {
-            newMessage.add(((ContourPlot) plot).getXAxis().getCurrentGranularity());
+            newMessage.add(((AbstractContourPlot<?, ?>) plot).getTimeGranularity());
         }
         else
         {
             newMessage.add(0.0d);
         }
-        newMessage.add(plot instanceof ContourPlot ? ((ContourPlot) plot).getYAxis().getCurrentGranularity() : 0.0d);
+        newMessage.add(plot instanceof AbstractContourPlot ? ((AbstractContourPlot<?, ?>) plot).getSpaceGranularity() : 0.0d);
         newMessage.add(this.network.getId());
-        newMessage.add(plot.getPath().size());
-        for (Lane lane : plot.getPath())
-        {
-            newMessage.add(lane.getParentLink().getId());
-            newMessage.add(lane.getId());
-        }
+        newMessage.add(0); // WS not all plots have a path
+        // newMessage.add(plot.getPath().size());
+        // for (Lane lane : plot.getPath())
+        // {
+        // newMessage.add(lane.getParentLink().getId());
+        // newMessage.add(lane.getId());
+        // }
         newMessage.add(transmissionInterval.si);
 
         getConnector().postIMBMessage("Graph", IMBEventType.NEW, newMessage.toArray());
@@ -286,14 +287,14 @@ public class GraphTransceiver extends AbstractTransceiver
     }
 
     /**
-     * @param plot AbstractOTSPlot; the plot to generate the PNG for
+     * @param plot AbstractPlot; the plot to generate the PNG for
      * @throws IOException when the creation of the PNG has failed
      * @throws IMBException when the transmission of the IMB message fails
      * @throws SimRuntimeException when the scheduling of the next publish event fails
      */
-    public void makePNG(final AbstractOTSPlot plot) throws IOException, IMBException, SimRuntimeException
+    public void makePNG(final AbstractPlot plot) throws IOException, IMBException, SimRuntimeException
     {
-        byte[] png = plot.generatePNG(this.width, this.height);
+        byte[] png = plot.encodeAsPng(this.width, this.height, 32.0);
         getConnector().postIMBMessage("Graph", IMBEventType.CHANGE,
                 new Object[] { getSimulator().getSimulatorTime().si, plot.getId(), this.width, this.height, png });
         getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "makePNG", new Object[] { plot });

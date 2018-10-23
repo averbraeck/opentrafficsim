@@ -3,12 +3,15 @@ package org.opentrafficsim.core.graphs;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.WeightedMeanAndSum;
-import org.opentrafficsim.core.graphs.GraphPath.Section;
 
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
+import nl.tudelft.simulation.immutablecollections.ImmutableList;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -16,7 +19,7 @@ import nl.tudelft.simulation.language.Throw;
  * source objects depending on the number of series. For example, a 3-lane road may result in a few sections each having 3
  * series. Graphs can aggregate the series, or show multiple series.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 19 okt. 2018 <br>
@@ -25,11 +28,8 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <S> underlying type of path sections
  */
-public class GraphPath<S> implements Iterable<Section<S>>
+public class GraphPath<S> extends AbstractGraphSpace<S>
 {
-
-    /** Series names. */
-    private final List<String> seriesNames;
 
     /** Sections. */
     private final List<Section<S>> sections;
@@ -67,7 +67,7 @@ public class GraphPath<S> implements Iterable<Section<S>>
      */
     public GraphPath(final List<String> seriesNames, final List<Section<S>> sections)
     {
-        this.seriesNames = seriesNames;
+        super(seriesNames);
         this.sections = sections;
         Length start = Length.ZERO;
         for (Section<S> section : sections)
@@ -82,25 +82,6 @@ public class GraphPath<S> implements Iterable<Section<S>>
             mean.add(section.getSpeedLimit().si, section.getLength().si);
         }
         this.speedLimit = Speed.createSI(mean.getMean());
-    }
-
-    /**
-     * Returns the name of the series.
-     * @param series int; series
-     * @return String; name of the series
-     */
-    public final String getName(final int series)
-    {
-        return this.seriesNames.get(series);
-    }
-
-    /**
-     * Returns the number of series.
-     * @return int; number of series
-     */
-    public final int getNumberOfSeries()
-    {
-        return this.seriesNames.size();
     }
 
     /**
@@ -145,15 +126,73 @@ public class GraphPath<S> implements Iterable<Section<S>>
 
     /** {@inheritDoc} */
     @Override
-    public Iterator<Section<S>> iterator()
+    public Iterator<S> iterator()
     {
-        return this.sections.iterator();
+        return new Iterator<S>()
+        {
+
+            /** Section iterator. */
+            private Iterator<Section<S>> sectionIterator = getSections().iterator();
+
+            /** Source object iterator per section. */
+            private Iterator<S> sourceIterator = this.sectionIterator.hasNext() ? this.sectionIterator.next().iterator() : null;
+
+            /** {@inheritDoc} */
+            @Override
+            public boolean hasNext()
+            {
+                if (this.sourceIterator != null && this.sourceIterator.hasNext())
+                {
+                    return true;
+                }
+                while (this.sectionIterator.hasNext())
+                {
+                    Iterator<S> it = this.sectionIterator.next().iterator();
+                    if (it.hasNext())
+                    {
+                        this.sourceIterator = it;
+                        return true;
+                    }
+                }
+                this.sourceIterator = null;
+                return false;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public S next()
+            {
+                Throw.when(!hasNext(), NoSuchElementException.class, "No more element left.");
+                return this.sourceIterator.next();
+            }
+        };
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Iterator<S> iterator(final int series)
+    {
+        List<S> list = new ArrayList<>();
+        for (Section<S> section : this.sections)
+        {
+            list.add(section.getSource(series));
+        }
+        return new ImmutableArrayList<>(list, Immutable.WRAP).iterator();
+    }
+    
+    /**
+     * Returns an immutable list of the sections.
+     * @return ImmutableList&lt;Section&lt;S&gt;&gt;; sections
+     */
+    public ImmutableList<Section<S>> getSections()
+    {
+        return new ImmutableArrayList<>(this.sections, Immutable.WRAP);
+    }
+    
     /**
      * Interface for sections.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

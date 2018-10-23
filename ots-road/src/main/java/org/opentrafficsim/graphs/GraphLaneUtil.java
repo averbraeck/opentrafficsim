@@ -33,7 +33,7 @@ import nl.tudelft.simulation.language.Throw;
 /**
  * Utilities to create {@code GraphPath}s and {@GraphCrossSection}s for graphs, based on lanes.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 19 okt. 2018 <br>
@@ -238,6 +238,56 @@ public final class GraphLaneUtil
             }
         }
         return new GraphPath<>(names, sections);
+    }
+
+    /**
+     * Creates a single-lane path.
+     * @param name String; name
+     * @param lane LaneDirection; lane
+     * @return GraphPath&lt;KpiLaneDirection&gt; path
+     * @throws NetworkException when a lane does not have any set speed limit
+     */
+    public static GraphPath<KpiLaneDirection> createSingleLanePath(final String name, final LaneDirection lane)
+            throws NetworkException
+    {
+        List<KpiLaneDirection> lanes = new ArrayList<>();
+        lanes.add(new KpiLaneDirection(new LaneData(lane.getLane()),
+                lane.getDirection().isPlus() ? KpiGtuDirectionality.DIR_PLUS : KpiGtuDirectionality.DIR_MINUS));
+        List<Section<KpiLaneDirection>> sections = new ArrayList<>();
+        Speed speed = lane.getLane().getLowestSpeedLimit();
+        sections.add(new Section<KpiLaneDirection>()
+        {
+
+            /** {@inheritDoc} */
+            @Override
+            public Iterator<KpiLaneDirection> iterator()
+            {
+                return lanes.iterator();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Length getLength()
+            {
+                return lane.getLength();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Speed getSpeedLimit()
+            {
+                return speed;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public KpiLaneDirection getSource(final int series)
+            {
+                return lanes.get(0);
+            }
+
+        });
+        return new GraphPath<>(name, sections);
     }
 
     /**
