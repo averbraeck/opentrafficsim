@@ -41,7 +41,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 /**
  * Plot of trajectories along a path.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 13 okt. 2018 <br>
@@ -50,7 +50,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <G> sampler GTU data type
  */
-public class XTrajectoryPlot<G extends GtuDataInterface> extends XAbstractSamplerPlot<G> implements XYDataset
+public class TrajectoryPlot<G extends GtuDataInterface> extends AbstractSamplerPlot<G> implements XYDataset
 {
     /** */
     private static final long serialVersionUID = 20181013L;
@@ -68,7 +68,7 @@ public class XTrajectoryPlot<G extends GtuDataInterface> extends XAbstractSample
     private static final Shape LEGEND_LINE = new CubicCurve2D.Float(-20, 7, -10, -7, 0, 7, 20, -7);
 
     /** Updater for update times. */
-    private final XGraphUpdater<Time> graphUpdater;
+    private final GraphUpdater<Time> graphUpdater;
 
     /** Counter of the number of trajectories imported per lane. */
     private final Map<KpiLaneDirection, Integer> knownTrajectories = new LinkedHashMap<>();
@@ -90,7 +90,7 @@ public class XTrajectoryPlot<G extends GtuDataInterface> extends XAbstractSample
 
     static
     {
-        Color[] c = XBoundsPaintScale.hue(6);
+        Color[] c = BoundsPaintScale.hue(6);
         COLORMAP = new Color[] { c[0], c[4], c[2], c[1], c[3], c[5] };
         float lw = 0.4f;
         STROKES = new BasicStroke[] { new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f),
@@ -107,7 +107,7 @@ public class XTrajectoryPlot<G extends GtuDataInterface> extends XAbstractSample
      * @param sampler Sampler&lt;G&gt;; road sampler
      * @param path GraphPath&lt;KpiLaneDirection&gt;; path
      */
-    public XTrajectoryPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
+    public TrajectoryPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
             final Sampler<G> sampler, final GraphPath<KpiLaneDirection> path)
     {
         super(caption, updateInterval, simulator, sampler, path, Duration.ZERO);
@@ -121,9 +121,9 @@ public class XTrajectoryPlot<G extends GtuDataInterface> extends XAbstractSample
         setChart(createChart());
 
         // setup updater to do the actual work in another thread
-        this.graphUpdater = new XGraphUpdater<>("Trajectories worker", Thread.currentThread(), (t) ->
+        this.graphUpdater = new GraphUpdater<>("Trajectories worker", Thread.currentThread(), (t) ->
         {
-            for (Section<KpiLaneDirection> section : path)
+            for (Section<KpiLaneDirection> section : path.getSections())
             {
                 Length startDistance = path.getStartDistance(section);
                 for (int i = 0; i < path.getNumberOfSeries(); i++)
@@ -335,7 +335,7 @@ public class XTrajectoryPlot<G extends GtuDataInterface> extends XAbstractSample
     /**
      * Extension of a line renderer to select a color based on GTU ID, and to overrule an unused shape to save memory.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -366,7 +366,7 @@ public class XTrajectoryPlot<G extends GtuDataInterface> extends XAbstractSample
         public boolean isSeriesVisible(final int series)
         {
             int[] n = getLaneAndSeriesNumber(series);
-            return XTrajectoryPlot.this.laneVisible.get(n[0]);
+            return TrajectoryPlot.this.laneVisible.get(n[0]);
         }
 
         /** {@inheritDoc} */
@@ -374,12 +374,12 @@ public class XTrajectoryPlot<G extends GtuDataInterface> extends XAbstractSample
         @Override
         public Stroke getSeriesStroke(final int series)
         {
-            if (XTrajectoryPlot.this.curves.size() == 1)
+            if (TrajectoryPlot.this.curves.size() == 1)
             {
                 return STROKES[0];
             }
             int[] n = getLaneAndSeriesNumber(series);
-            return XTrajectoryPlot.this.strokes.get(n[0]).get(n[1]);
+            return TrajectoryPlot.this.strokes.get(n[0]).get(n[1]);
         }
 
         /** {@inheritDoc} */
@@ -387,7 +387,7 @@ public class XTrajectoryPlot<G extends GtuDataInterface> extends XAbstractSample
         @Override
         public Paint getSeriesPaint(final int series)
         {
-            if (XTrajectoryPlot.this.curves.size() == 1)
+            if (TrajectoryPlot.this.curves.size() == 1)
             {
                 String gtuId = getTrajectory(series).getGtuId();
                 for (int pos = gtuId.length(); --pos >= 0;)
@@ -441,7 +441,7 @@ public class XTrajectoryPlot<G extends GtuDataInterface> extends XAbstractSample
      * Class containing a trajectory with an offset. Takes care of bits that are before and beyond the lane without affecting
      * the trajectory itself.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.WeightedMeanAndSum;
 import org.opentrafficsim.core.animation.EGTF.Converter;
 import org.opentrafficsim.core.animation.EGTF.Quantity;
-import org.opentrafficsim.core.graphs.XContourDataPool.ContourDataType;
+import org.opentrafficsim.core.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -22,7 +22,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 /**
  * Contour plot for acceleration.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 10 okt. 2018 <br>
@@ -31,7 +31,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <G> sampler GTU data type
  */
-public class XContourPlotAcceleration<G extends GtuDataInterface> extends XAbstractContourPlot<Acceleration, G>
+public class ContourPlotAcceleration<G extends GtuDataInterface> extends AbstractContourPlot<Acceleration, G>
 {
 
     /** */
@@ -116,10 +116,10 @@ public class XContourPlotAcceleration<G extends GtuDataInterface> extends XAbstr
      * Constructor.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataPool&lt;G&gt;; data pool
+     * @param dataPool ContourDataSource&lt;G&gt;; data pool
      */
-    public XContourPlotAcceleration(final String caption, final OTSSimulatorInterface simulator,
-            final XContourDataPool<G> dataPool)
+    public ContourPlotAcceleration(final String caption, final OTSSimulatorInterface simulator,
+            final ContourDataSource<G> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Acceleration(1.0, AccelerationUnit.SI), "%.0fm/s\u00B2",
                 "acceleration %.2f m/s\u00B2");
@@ -129,11 +129,11 @@ public class XContourPlotAcceleration<G extends GtuDataInterface> extends XAbstr
      * Creates a paint scale from red, via yellow to green.
      * @return ContinuousColorPaintScale; paint scale
      */
-    private static XBoundsPaintScale createPaintScale()
+    private static BoundsPaintScale createPaintScale()
     {
         double[] boundaries = { -3.0, -1.5, 0.0, 1.0, 2.0 };
-        Color[] colorValues = XBoundsPaintScale.reverse(XBoundsPaintScale.GREEN_RED_DARK);
-        return new XBoundsPaintScale(boundaries, colorValues);
+        Color[] colorValues = BoundsPaintScale.reverse(BoundsPaintScale.GREEN_RED_DARK);
+        return new BoundsPaintScale(boundaries, colorValues);
     }
 
     /** {@inheritDoc} */

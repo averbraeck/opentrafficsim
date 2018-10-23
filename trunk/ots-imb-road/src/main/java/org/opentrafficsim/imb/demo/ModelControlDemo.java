@@ -19,7 +19,6 @@ import javax.swing.SwingUtilities;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -47,7 +46,6 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.IMBConnector;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.GTUTransceiver;
@@ -454,9 +452,6 @@ public class ModelControlDemo extends ModelStarter
         /** The speed limit. */
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
-        /** The plots. */
-        private List<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
-
         /** User settable properties. */
         private final List<Property<?>> properties;
 
@@ -858,8 +853,6 @@ public class ModelControlDemo extends ModelStarter
                         pos += actualHeadway;
                     }
                 }
-                // Schedule regular updates of the graph
-                this.simulator.scheduleEventAbs(new Time(9.999, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
                     | PropertyException exception)
@@ -888,28 +881,6 @@ public class ModelControlDemo extends ModelStarter
                 exception.printStackTrace();
             }
             this.frame.dispose();
-        }
-
-        /**
-         * Notify the contour plots that the underlying data has changed.
-         */
-        protected final void drawGraphs()
-        {
-            for (LaneBasedGTUSampler plot : this.plots)
-            {
-                plot.reGraph();
-            }
-            // Re schedule this method
-            try
-            {
-                this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 10, TimeUnit.BASE_SECOND),
-                        this, this, "drawGraphs", null);
-            }
-            catch (SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-
         }
 
         /**
@@ -958,14 +929,6 @@ public class ModelControlDemo extends ModelStarter
         public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
         {
             return this.simulator;
-        }
-
-        /**
-         * @return plots
-         */
-        public final List<LaneBasedGTUSampler> getPlots()
-        {
-            return this.plots;
         }
 
         /**

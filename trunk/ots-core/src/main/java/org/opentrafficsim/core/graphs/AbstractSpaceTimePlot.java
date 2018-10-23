@@ -19,7 +19,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * Plots with space-time. This class adds some zoom control, where a user can manually select a zoom range, or the plot
  * automatically zooms over the entire space range, and either the entire or some most recent fixed period in time.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 14 okt. 2018 <br>
@@ -27,7 +27,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class XAbstractSpaceTimePlot extends XAbstractBoundedPlot
+public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
 {
 
     /** */
@@ -53,7 +53,7 @@ public abstract class XAbstractSpaceTimePlot extends XAbstractBoundedPlot
      * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */
-    public XAbstractSpaceTimePlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
+    public AbstractSpaceTimePlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
             final Duration delay, final Time initialEnd)
     {
         super(caption, updateInterval, simulator, delay);
@@ -79,10 +79,10 @@ public abstract class XAbstractSpaceTimePlot extends XAbstractBoundedPlot
             @Override
             public void axisChanged(final AxisChangeEvent event)
             {
-                if (!XAbstractSpaceTimePlot.this.virtualAutoBounds)
+                if (!AbstractSpaceTimePlot.this.virtualAutoBounds)
                 {
                     // the axis was changed, but not by a command from this class, auto bounds should be disabled
-                    XAbstractSpaceTimePlot.this.autoBoundAxes = false;
+                    AbstractSpaceTimePlot.this.autoBoundAxes = false;
                 }
             }
         });
@@ -101,7 +101,7 @@ public abstract class XAbstractSpaceTimePlot extends XAbstractBoundedPlot
             public void actionPerformed(final ActionEvent e)
             {
                 boolean fix = ((JCheckBoxMenuItem) e.getSource()).isSelected();
-                XAbstractSpaceTimePlot.this.fixedDomainRange =
+                AbstractSpaceTimePlot.this.fixedDomainRange =
                         fix ? getChart().getXYPlot().getDomainAxis().getRange().getLength() : null;
                 notifyPlotChange();
             }

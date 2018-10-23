@@ -2,11 +2,8 @@ package org.opentrafficsim.demo.carFollowing;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.awt.Container;
-import java.awt.Frame;
 import java.io.IOException;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -41,6 +38,14 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.graphs.GraphPath;
+import org.opentrafficsim.core.graphs.AbstractPlot;
+import org.opentrafficsim.core.graphs.ContourDataSource;
+import org.opentrafficsim.core.graphs.ContourPlotAcceleration;
+import org.opentrafficsim.core.graphs.ContourPlotDensity;
+import org.opentrafficsim.core.graphs.ContourPlotFlow;
+import org.opentrafficsim.core.graphs.ContourPlotSpeed;
+import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -50,19 +55,16 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.graphs.AccelerationContourPlot;
-import org.opentrafficsim.graphs.ContourPlot;
-import org.opentrafficsim.graphs.DensityContourPlot;
-import org.opentrafficsim.graphs.FlowContourPlot;
-import org.opentrafficsim.graphs.LaneBasedGTUSampler;
-import org.opentrafficsim.graphs.SpeedContourPlot;
-import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.graphs.GraphLaneUtil;
+import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
@@ -77,9 +79,12 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.sampling.GtuData;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
@@ -88,7 +93,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
@@ -263,55 +267,53 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
         int columns = (int) Math.ceil(Math.sqrt(graphCount));
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
         TablePanel charts = new TablePanel(columns, rows);
+        GraphPath<KpiLaneDirection> graphPath;
+        try
+        {
+            graphPath = GraphLaneUtil.createSingleLanePath("Path",
+                    new LaneDirection(this.model.getPath().get(0), GTUDirectionality.DIR_PLUS));
+        }
+        catch (NetworkException exception)
+        {
+            throw new OTSSimulationException(exception);
+        }
+        RoadSampler sampler = new RoadSampler(simulator);
+        ContourDataSource<GtuData> dataPool = new ContourDataSource<>(sampler, graphPath);
+        Duration updateInterval = Duration.createSI(10.0);
 
         for (int i = 0; i < graphCount; i++)
         {
             String graphName = graphs.get(i).getKey();
-            Container container = null;
-            LaneBasedGTUSampler graph;
-            if (graphName.contains("Trajectories"))
+            AbstractPlot plot = null;
+            if (graphName.contains("TrajectoryPlot"))
             {
-                List<Lane> path = new ArrayList<>();
-                path.add(this.model.getLane());
-                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Duration(0.5, SECOND), path, simulator);
-                tp.setTitle("Trajectory Graph");
-                tp.setExtendedState(Frame.MAXIMIZED_BOTH);
-                graph = tp;
-                container = tp.getContentPane();
+                plot = new TrajectoryPlot<>("Trajectory Graph", updateInterval, simulator, sampler, graphPath);
             }
             else
             {
-                ContourPlot cp;
                 if (graphName.contains("DensityPlot"))
                 {
-                    cp = new DensityContourPlot("DensityPlot", this.model.getPath());
-                    cp.setTitle("Density Contour Graph");
+                    plot = new ContourPlotDensity<>(graphName, simulator, dataPool);
                 }
                 else if (graphName.contains("SpeedPlot"))
                 {
-                    cp = new SpeedContourPlot("SpeedPlot", this.model.getPath());
-                    cp.setTitle("Speed Contour Graph");
+                    plot = new ContourPlotSpeed<>(graphName, simulator, dataPool);
                 }
                 else if (graphName.contains("FlowPlot"))
                 {
-                    cp = new FlowContourPlot("FlowPlot", this.model.getPath());
-                    cp.setTitle("Flow Contour Graph");
+                    plot = new ContourPlotFlow<>(graphName, simulator, dataPool);
                 }
                 else if (graphName.contains("AccelerationPlot"))
                 {
-                    cp = new AccelerationContourPlot("AccelerationPlot", this.model.getPath());
-                    cp.setTitle("Acceleration Contour Graph");
+                    plot = new ContourPlotAcceleration<>(graphName, simulator, dataPool);
                 }
                 else
                 {
                     throw new Error("Unhandled type of contourplot: " + graphName);
                 }
-                graph = cp;
-                container = cp.getContentPane();
             }
             // Add the container to the matrix
-            charts.setCell(container, i % columns, i / columns);
-            this.model.getPlots().add(graph);
+            charts.setCell(plot.getContentPane(), i % columns, i / columns);
         }
         addTab(getTabCount(), "statistics", charts);
     }
@@ -333,6 +335,18 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                 + "time 420s. This blockade simulates a bridge opening.<br>"
                 + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br>"
                 + "Selected trajectory and contour plots are generated during the simulation.</html>";
+    }
+
+    /**
+     * Create perception.
+     * @param gtu LaneBasedGTU; gtu
+     * @return LanePerception; perception
+     */
+    private LanePerception createPerception(final LaneBasedGTU gtu)
+    {
+        LanePerception perception = new CategoricalLanePerception(gtu);
+        perception.addPerceptionCategory(new DirectDefaultSimplePerception(perception));
+        return perception;
     }
 
     /**
@@ -395,10 +409,8 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
         /** The Lane that contains the simulated Cars. */
         private Lane lane;
 
-        /** The contour plots. */
-        private List<LaneBasedGTUSampler> plots = new ArrayList<>();
-
         /** User settable properties. */
+        @SuppressWarnings("hiding")
         private List<Property<?>> properties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
@@ -448,6 +460,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                 LaneType laneType = LaneType.TWO_WAY_LANE;
                 this.lane =
                         LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
+                new SinkSensor(this.lane, this.lane.getLength().minus(Length.createSI(100.0)), this.simulator);
                 this.path.add(this.lane);
                 CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null, this.simulator);
                 // No overtaking, single lane
@@ -521,6 +534,8 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                             }
                             else if (ap.getKey().contains("Truck"))
                             {
+                                // WS this block was empty, demo was never finished?
+
                             }
                             else
                             {
@@ -543,27 +558,11 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                 this.simulator.scheduleEventAbs(new Time(300, TimeUnit.BASE_SECOND), this, this, "createBlock", null);
                 // Remove the block at t = 7 minutes
                 this.simulator.scheduleEventAbs(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
-                // Schedule regular updates of the graphs
-                for (int t = 1; t <= 1800; t++)
-                {
-                    this.simulator.scheduleEventAbs(new Time(t - 0.001, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
-                }
             }
             catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException
                     | PropertyException exception)
             {
                 exception.printStackTrace();
-            }
-        }
-
-        /**
-         * Notify the contour plots that the underlying data has changed.
-         */
-        protected final void drawGraphs()
-        {
-            for (LaneBasedGTUSampler plot : this.plots)
-            {
-                plot.reGraph();
             }
         }
 
@@ -620,7 +619,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                 if (generateTruck)
                 {
                     Acceleration a = new Acceleration(0.5, AccelerationUnit.METER_PER_SECOND_2); // max acceleration
-                    Acceleration b = new Acceleration(1.25, AccelerationUnit.METER_PER_SECOND_2); // max xomfortable
+                    Acceleration b = new Acceleration(1.25, AccelerationUnit.METER_PER_SECOND_2); // max comfortable
                                                                                                   // deceleration
                     Length s0 = new Length(4, LengthUnit.METER); // headway distance
                     Duration tSafe = new Duration(2.0, DurationUnit.SECOND); // time headway
@@ -629,7 +628,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                 else
                 {
                     Acceleration a = new Acceleration(2.0, AccelerationUnit.METER_PER_SECOND_2); // max acceleration
-                    Acceleration b = new Acceleration(3, AccelerationUnit.METER_PER_SECOND_2); // max xomfortable deceleration
+                    Acceleration b = new Acceleration(3, AccelerationUnit.METER_PER_SECOND_2); // max comfortable deceleration
                     Length s0 = new Length(2.0, LengthUnit.METER); // headway distance
                     Duration tSafe = new Duration(1.0, DurationUnit.SECOND); // time headway
                     gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
@@ -666,14 +665,6 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
         public OTSNetwork getNetwork()
         {
             return this.network;
-        }
-
-        /**
-         * @return contourPlots
-         */
-        public final List<LaneBasedGTUSampler> getPlots()
-        {
-            return this.plots;
         }
 
         /**
@@ -752,7 +743,20 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
              */
             public void perceive() throws SimRuntimeException, GTUException, NetworkException, ParameterException
             {
-                getTacticalPlanner().getPerception().perceive();
+                // WS need to check if destroyed
+                if (isDestroyed())
+                {
+                    return;
+                }
+                // WS this clearly goes wrong before initialization
+                try
+                {
+                    getTacticalPlanner().getPerception().perceive();
+                }
+                catch (@SuppressWarnings("unused") NullPointerException exception)
+                {
+                    //
+                }
                 getSimulator().scheduleEventRel(this.perceptionInterval, this, this, "perceive", null);
             }
         }
@@ -770,9 +774,10 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
              * @param carFollowingModel GTUFollowingModelOld; Car-following model.
              * @param gtu LaneBasedGTU; GTU
              */
+            @SuppressWarnings("synthetic-access")
             GTUFollowingTacticalPlannerNoPerceive(final GTUFollowingModelOld carFollowingModel, final LaneBasedGTU gtu)
             {
-                super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
+                super(carFollowingModel, gtu, createPerception(gtu));
             }
 
             /** {@inheritDoc} */
@@ -801,7 +806,17 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
 
                 // look at the conditions for headway
                 DefaultSimplePerception simplePerception = getPerception().getPerceptionCategory(DefaultSimplePerception.class);
-                Headway headwayGTU = simplePerception.getForwardHeadwayGTU();
+                Headway headwayGTU;
+                try
+                {
+                    headwayGTU = simplePerception.getForwardHeadwayGTU();
+                }
+                catch (@SuppressWarnings("unused") NullPointerException exception)
+                {
+                    // WJ can't obtain the headway if we never perceived anything yet
+                    simplePerception.updateAll();
+                    headwayGTU = simplePerception.getForwardHeadwayGTU();
+                }
                 AccelerationStep accelerationStep = null;
                 if (headwayGTU.getDistance().le(maxDistance))
                 {

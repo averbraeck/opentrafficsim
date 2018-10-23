@@ -20,7 +20,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * path, consisting of a list of lanes. Start distance along the path for each lane is provided to sub classes using
  * {@code getStartDistance(KpiLaneDirection)}. Total length is obtained using {@code getEndLocation()}.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 4 okt. 2018 <br>
@@ -29,7 +29,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <G> sampler GTU data type
  */
-public abstract class XAbstractSamplerPlot<G extends GtuDataInterface> extends XAbstractSpaceTimePlot
+public abstract class AbstractSamplerPlot<G extends GtuDataInterface> extends AbstractSpaceTimePlot
 {
 
     /** */
@@ -56,13 +56,13 @@ public abstract class XAbstractSamplerPlot<G extends GtuDataInterface> extends X
      * @param path GraphPath; path
      * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
      */
-    public XAbstractSamplerPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
+    public AbstractSamplerPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
             final Sampler<G> sampler, final GraphPath<KpiLaneDirection> path, final Duration delay)
     {
         super(caption, updateInterval, simulator, delay, DEFAULT_INITIAL_UPPER_TIME_BOUND);
         this.sampler = sampler;
         this.path = path;
-        for (Section<KpiLaneDirection> section : path)
+        for (Section<KpiLaneDirection> section : path.getSections())
         {
             for (KpiLaneDirection kpiLaneDirection : section)
             {
@@ -87,7 +87,7 @@ public abstract class XAbstractSamplerPlot<G extends GtuDataInterface> extends X
         if (this.lastUpdateTime.get(series) == null || this.lastUpdateTime.get(series).lt(getUpdateTime()))
         {
             List<TrajectoryGroup> cache = new ArrayList<>();
-            for (Section<KpiLaneDirection> section : getPath())
+            for (Section<KpiLaneDirection> section : getPath().getSections())
             {
                 cache.add(this.sampler.getTrajectoryGroup(section.getSource(series)));
             }

@@ -32,12 +32,12 @@ import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.language.Throw;
 
 /**
- * Class that contains data for contour plots. One data pool can be shared between contour plots, in which case the granularity,
- * path, sampler, update interval, and whether the data is smoothed (EGTF) are equal between the plots.
+ * Class that contains data for contour plots. One data source can be shared between contour plots, in which case the
+ * granularity, path, sampler, update interval, and whether the data is smoothed (EGTF) are equal between the plots.
  * <p>
- * By default the pool contains traveled time and traveled distance per cell.
+ * By default the source contains traveled time and traveled distance per cell.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 5 okt. 2018 <br>
@@ -46,7 +46,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <G> sampler GTU data type
  */
-public class XContourDataPool<G extends GtuDataInterface>
+public class ContourDataSource<G extends GtuDataInterface>
 {
 
     // *************************
@@ -116,7 +116,7 @@ public class XContourDataPool<G extends GtuDataInterface>
     private final Axis timeAxis;
 
     /** Registered plots. */
-    private Set<XAbstractContourPlot<?, G>> plots = new LinkedHashSet<>();
+    private Set<AbstractContourPlot<?, G>> plots = new LinkedHashSet<>();
 
     // *****************
     // *** PLOT DATA ***
@@ -170,7 +170,7 @@ public class XContourDataPool<G extends GtuDataInterface>
     // *****************************
 
     /** Updater for update times. */
-    private final XGraphUpdater<Time> graphUpdater;
+    private final GraphUpdater<Time> graphUpdater;
 
     /** Whether any command since or during the last update asks for a complete redo. */
     private boolean redo = true;
@@ -196,11 +196,11 @@ public class XContourDataPool<G extends GtuDataInterface>
      * @param sampler Sampler&lt;G&gt;; sampler
      * @param path GraphPath&lt;KpiLaneDirection&gt;; path
      */
-    public XContourDataPool(final Sampler<G> sampler, final GraphPath<KpiLaneDirection> path)
+    public ContourDataSource(final Sampler<G> sampler, final GraphPath<KpiLaneDirection> path)
     {
         this(sampler, Duration.createSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
                 DEFAULT_TIME_GRANULARITIES, DEFAULT_TIME_GRANULARITY_INDEX, DEFAULT_LOWER_TIME_BOUND,
-                XAbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND);
+                AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND);
     }
 
     /**
@@ -216,7 +216,7 @@ public class XContourDataPool<G extends GtuDataInterface>
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */
     @SuppressWarnings("parameternumber")
-    public XContourDataPool(final Sampler<G> sampler, final Duration delay, final GraphPath<KpiLaneDirection> path,
+    public ContourDataSource(final Sampler<G> sampler, final Duration delay, final GraphPath<KpiLaneDirection> path,
             final double[] spaceGranularity, final int initSpaceIndex, final double[] timeGranularity, final int initTimeIndex,
             final Time start, final Time initialEnd)
     {
@@ -232,7 +232,7 @@ public class XContourDataPool<G extends GtuDataInterface>
         this.vc = Speed.min(path.getSpeedLimit().multiplyBy(VC_FACRTOR), MAX_C_FREE);
 
         // setup updater to do the actual work in another thread
-        this.graphUpdater = new XGraphUpdater<>("DataPool worker", Thread.currentThread(), (t) -> update(t));
+        this.graphUpdater = new GraphUpdater<>("Contour Data Source worker", Thread.currentThread(), (t) -> update(t));
     }
 
     // ************************************
@@ -240,7 +240,7 @@ public class XContourDataPool<G extends GtuDataInterface>
     // ************************************
 
     /**
-     * Returns the sampler for an {@code AbstractContourPlot} using this {@code ContourDataPool}.
+     * Returns the sampler for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
      * @return Sampler&lt;G&gt;; the sampler
      */
     public final Sampler<G> getSampler()
@@ -249,7 +249,7 @@ public class XContourDataPool<G extends GtuDataInterface>
     }
 
     /**
-     * Returns the update interval for an {@code AbstractContourPlot} using this {@code ContourDataPool}.
+     * Returns the update interval for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
      * @return Duration; update interval
      */
     final Duration getUpdateInterval()
@@ -258,7 +258,7 @@ public class XContourDataPool<G extends GtuDataInterface>
     }
 
     /**
-     * Returns the delay for an {@code AbstractContourPlot} using this {@code ContourDataPool}.
+     * Returns the delay for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
      * @return Duration; delay
      */
     final Duration getDelay()
@@ -267,7 +267,7 @@ public class XContourDataPool<G extends GtuDataInterface>
     }
 
     /**
-     * Returns the path for an {@code AbstractContourPlot} using this {@code ContourDataPool}.
+     * Returns the path for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
      * @return GraphPath&lt;KpiLaneDirection&gt;; the path
      */
     final GraphPath<KpiLaneDirection> getPath()
@@ -279,7 +279,7 @@ public class XContourDataPool<G extends GtuDataInterface>
      * Register a contour plot to this data pool. The contour constructor will do this.
      * @param contourPlot AbstractContourPlot; contour plot
      */
-    final void registerContourPlot(final XAbstractContourPlot<?, G> contourPlot)
+    final void registerContourPlot(final AbstractContourPlot<?, G> contourPlot)
     {
         ContourDataType<?, ?> contourDataType = contourPlot.getContourDataType();
         if (contourDataType != null)
@@ -374,7 +374,7 @@ public class XContourDataPool<G extends GtuDataInterface>
         if (updateTime.si > this.timeAxis.maxValue)
         {
             this.timeAxis.setMaxValue(updateTime.si);
-            for (XAbstractContourPlot<?, ?> plot : this.plots)
+            for (AbstractContourPlot<?, ?> plot : this.plots)
             {
                 plot.setUpperDomainBound(updateTime.si);
             }
@@ -395,7 +395,7 @@ public class XContourDataPool<G extends GtuDataInterface>
         if (dimension.equals(Dimension.DISTANCE))
         {
             this.desiredSpaceGranularity = granularity;
-            for (XAbstractContourPlot<?, G> contourPlot : XContourDataPool.this.plots)
+            for (AbstractContourPlot<?, G> contourPlot : ContourDataSource.this.plots)
             {
                 contourPlot.setSpaceGranularityRadioButton(granularity);
             }
@@ -403,7 +403,7 @@ public class XContourDataPool<G extends GtuDataInterface>
         else
         {
             this.desiredTimeGranularity = granularity;
-            for (XAbstractContourPlot<?, G> contourPlot : XContourDataPool.this.plots)
+            for (AbstractContourPlot<?, G> contourPlot : ContourDataSource.this.plots)
             {
                 contourPlot.setUpdateInterval(Duration.createSI(granularity));
                 contourPlot.setTimeGranularityRadioButton(granularity);
@@ -425,7 +425,7 @@ public class XContourDataPool<G extends GtuDataInterface>
             {
                 this.timeAxis.setInterpolate(interpolate);
                 this.spaceAxis.setInterpolate(interpolate);
-                for (XAbstractContourPlot<?, G> contourPlot : XContourDataPool.this.plots)
+                for (AbstractContourPlot<?, G> contourPlot : ContourDataSource.this.plots)
                 {
                     contourPlot.setInterpolation(interpolate);
                 }
@@ -445,7 +445,7 @@ public class XContourDataPool<G extends GtuDataInterface>
             synchronized (this)
             {
                 this.smooth = smooth;
-                for (XAbstractContourPlot<?, G> contourPlot : XContourDataPool.this.plots)
+                for (AbstractContourPlot<?, G> contourPlot : ContourDataSource.this.plots)
                 {
                     contourPlot.setSmoothing(smooth);
                 }
@@ -505,7 +505,7 @@ public class XContourDataPool<G extends GtuDataInterface>
     @SuppressWarnings({ "synthetic-access", "methodlength" })
     private void update(final Time t)
     {
-        Throw.when(this.plots.isEmpty(), IllegalStateException.class, "ContourDataPool is used, but not by a contour plot!");
+        Throw.when(this.plots.isEmpty(), IllegalStateException.class, "ContourDataSource is used, but not by a contour plot!");
 
         if (t.si < this.toTime.si)
         {
@@ -617,7 +617,7 @@ public class XContourDataPool<G extends GtuDataInterface>
                     public void notifyProgress(final EgtfEvent event)
                     {
                         // check stop (explicit use of property, not locally stored value)
-                        if (XContourDataPool.this.redo)
+                        if (ContourDataSource.this.redo)
                         {
                             // plots need to be redone
                             event.interrupt(); // stop the EGTF
@@ -692,7 +692,7 @@ public class XContourDataPool<G extends GtuDataInterface>
                 {
                     // obtain trajectories
                     List<TrajectoryGroup> trajectories = new ArrayList<>();
-                    for (Section<KpiLaneDirection> section : getPath())
+                    for (Section<KpiLaneDirection> section : getPath().getSections())
                     {
                         trajectories.add(this.sampler.getTrajectoryGroup(section.getSource(series)));
                     }
@@ -881,8 +881,8 @@ public class XContourDataPool<G extends GtuDataInterface>
     private <T extends Number> void addAdditionalDataToFilter(final ContourDataType<T, ?> contourDataType, final Length x,
             final Time t, final Float val)
     {
-        XContourDataPool.this.egtf.addPointData((DataStream<T>) XContourDataPool.this.additionalStreams.get(contourDataType), x,
-                t, (T) val);
+        ContourDataSource.this.egtf.addPointData((DataStream<T>) ContourDataSource.this.additionalStreams.get(contourDataType),
+                x, t, (T) val);
     }
 
     /**
@@ -909,7 +909,7 @@ public class XContourDataPool<G extends GtuDataInterface>
      */
     private void setStatusLabel(final String status)
     {
-        for (XAbstractContourPlot<?, G> plot : XContourDataPool.this.plots)
+        for (AbstractContourPlot<?, G> plot : ContourDataSource.this.plots)
         {
             plot.setStatusLabel(status);
         }
@@ -1003,7 +1003,7 @@ public class XContourDataPool<G extends GtuDataInterface>
     /**
      * Enum to refer to either the distance or time axis.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -1020,7 +1020,7 @@ public class XContourDataPool<G extends GtuDataInterface>
             /** {@inheritDoc} */
             @SuppressWarnings("synthetic-access")
             @Override
-            protected Axis getAxis(final XContourDataPool<?> dataPool)
+            protected Axis getAxis(final ContourDataSource<?> dataPool)
             {
                 return dataPool.spaceAxis;
             }
@@ -1032,7 +1032,7 @@ public class XContourDataPool<G extends GtuDataInterface>
             /** {@inheritDoc} */
             @SuppressWarnings("synthetic-access")
             @Override
-            protected Axis getAxis(final XContourDataPool<?> dataPool)
+            protected Axis getAxis(final ContourDataSource<?> dataPool)
             {
                 return dataPool.timeAxis;
             }
@@ -1040,16 +1040,16 @@ public class XContourDataPool<G extends GtuDataInterface>
 
         /**
          * Returns the {@code Axis} object.
-         * @param dataPool ContourDataPool; data pool
+         * @param dataPool ContourDataSource; data pool
          * @return Axis; axis
          */
-        protected abstract Axis getAxis(XContourDataPool<?> dataPool);
+        protected abstract Axis getAxis(ContourDataSource<?> dataPool);
     }
 
     /**
      * Class to store and determine axis information such as granularity, ticks, and range.
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
@@ -1203,7 +1203,7 @@ public class XContourDataPool<G extends GtuDataInterface>
      * Interface for data types of which a contour plot can be made. Using this class, the data pool can determine and store
      * cell values for a variable set of additional data types (besides total distance, total time and speed).
      * <p>
-     * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

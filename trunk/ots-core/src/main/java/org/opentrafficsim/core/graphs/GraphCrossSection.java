@@ -7,12 +7,15 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.graphs.GraphPath.Section;
 
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
+
 /**
  * A {@code GraphCrossSection} defines the location of graphs. It has one section having one or more source objects depending on
  * the number of series. For example, a 3-lane road may result in a section with 3 series. Graphs can aggregate the series, or
  * show multiple series.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 22 okt. 2018 <br>
@@ -21,11 +24,8 @@ import org.opentrafficsim.core.graphs.GraphPath.Section;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <S> underlying type of path sections
  */
-public class GraphCrossSection<S> implements Iterable<S>
+public class GraphCrossSection<S> extends AbstractGraphSpace<S>
 {
-
-    /** Series names. */
-    private final List<String> seriesNames;
 
     /** Section. */
     private final Section<S> section;
@@ -66,28 +66,9 @@ public class GraphCrossSection<S> implements Iterable<S>
      */
     public GraphCrossSection(final List<String> seriesNames, final Section<S> section, final List<Length> positions)
     {
-        this.seriesNames = seriesNames;
+        super(seriesNames);
         this.section = section;
         this.positions = positions;
-    }
-
-    /**
-     * Returns the name of the series.
-     * @param series int; series
-     * @return String; name of the series
-     */
-    public final String getName(final int series)
-    {
-        return this.seriesNames.get(series);
-    }
-
-    /**
-     * Returns the number of series.
-     * @return int; number of series
-     */
-    public final int getNumberOfSeries()
-    {
-        return this.seriesNames.size();
     }
 
     /**
@@ -98,6 +79,15 @@ public class GraphCrossSection<S> implements Iterable<S>
     public S getSource(final int series)
     {
         return this.section.getSource(series);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Iterator<S> iterator(final int series)
+    {
+        List<S> list = new ArrayList<>();
+        list.add(this.section.getSource(series));
+        return new ImmutableArrayList<>(list, Immutable.WRAP).iterator();
     }
 
     /**

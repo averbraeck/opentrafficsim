@@ -19,19 +19,19 @@ import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.DomainOrder;
-import org.opentrafficsim.core.graphs.XContourDataPool.ContourDataType;
-import org.opentrafficsim.core.graphs.XContourDataPool.Dimension;
+import org.opentrafficsim.core.graphs.ContourDataSource.ContourDataType;
+import org.opentrafficsim.core.graphs.ContourDataSource.Dimension;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.language.Throw;
 
 /**
- * Class for contour plots. The data that is plotted is stored in a {@code ContourDataPool}, which may be shared among several
+ * Class for contour plots. The data that is plotted is stored in a {@code ContourDataSource}, which may be shared among several
  * contour plots along the same path. This abstract class takes care of the interactions between the plot and the data pool. Sub
  * classes only need to specify a few plot specific variables and functionalities.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 4 okt. 2018 <br>
@@ -41,15 +41,15 @@ import nl.tudelft.simulation.language.Throw;
  * @param <Z> z-value type
  * @param <G> sampler GTU data type
  */
-public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataInterface> extends XAbstractSamplerPlot<G>
-        implements XXYInterpolatedDataset
+public abstract class AbstractContourPlot<Z extends Number, G extends GtuDataInterface> extends AbstractSamplerPlot<G>
+        implements XYInterpolatedDataset
 {
 
     /** */
     private static final long serialVersionUID = 20181004L;
 
     /** Color scale for the graph. */
-    private final XBoundsPaintScale paintScale;
+    private final BoundsPaintScale paintScale;
 
     /** Difference of successive values in the legend. */
     private final Z legendStep;
@@ -61,7 +61,7 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
     private final String valueFormat;
 
     /** Data pool. */
-    private final XContourDataPool<G> dataPool;
+    private final ContourDataSource<G> dataPool;
 
     /** Map to set time granularity. */
     private Map<JRadioButtonMenuItem, Double> timeGranularityButtons = new LinkedHashMap<>();
@@ -76,20 +76,20 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
     private JCheckBoxMenuItem interpolateCheckBox;
 
     /** Block renderer in chart. */
-    private XXYInterpolatedBlockRenderer blockRenderer = null;
+    private XYInterpolatedBlockRenderer blockRenderer = null;
 
     /**
      * Constructor with specified paint scale.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataPool&lt;G&gt;; data pool
+     * @param dataPool ContourDataSource&lt;G&gt;; data pool
      * @param paintScale BoundsPaintScale; paint scale
      * @param legendStep Z; increment between color legend entries
      * @param legendFormat String; format string for the captions in the color legend
      * @param valueFormat String; format string used to create status label (under the mouse)
      */
-    public XAbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final XContourDataPool<G> dataPool,
-            final XBoundsPaintScale paintScale, final Z legendStep, final String legendFormat, final String valueFormat)
+    public AbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<G> dataPool,
+            final BoundsPaintScale paintScale, final Z legendStep, final String legendFormat, final String valueFormat)
     {
         super(caption, dataPool.getUpdateInterval(), simulator, dataPool.getSampler(), dataPool.getPath(), dataPool.getDelay());
         dataPool.registerContourPlot(this);
@@ -98,7 +98,7 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
         this.legendStep = legendStep;
         this.legendFormat = legendFormat;
         this.valueFormat = valueFormat;
-        this.blockRenderer = new XXYInterpolatedBlockRenderer(this);
+        this.blockRenderer = new XYInterpolatedBlockRenderer(this);
         this.blockRenderer.setPaintScale(this.paintScale);
         this.blockRenderer.setBlockHeight(dataPool.getGranularity(Dimension.DISTANCE));
         this.blockRenderer.setBlockWidth(dataPool.getGranularity(Dimension.TIME));
@@ -109,7 +109,7 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
      * Constructor with default paint scale.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataPool&lt;G&gt;; data pool
+     * @param dataPool ContourDataSource&lt;G&gt;; data pool
      * @param legendStep Z; increment between color legend entries
      * @param legendFormat String; format string for the captions in the color legend
      * @param minValue Z; minimum value
@@ -117,7 +117,7 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
      * @param valueFormat String; format string used to create status label (under the mouse)
      */
     @SuppressWarnings("parameternumber")
-    public XAbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final XContourDataPool<G> dataPool,
+    public AbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<G> dataPool,
             final Z legendStep, final String legendFormat, final Z minValue, final Z maxValue, final String valueFormat)
     {
         this(caption, simulator, dataPool, createPaintScale(minValue, maxValue), legendStep, legendFormat, valueFormat);
@@ -129,14 +129,14 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
      * @param maxValue Number; maximum value
      * @return BoundsPaintScale; default paint scale
      */
-    private static XBoundsPaintScale createPaintScale(final Number minValue, final Number maxValue)
+    private static BoundsPaintScale createPaintScale(final Number minValue, final Number maxValue)
     {
         Throw.when(minValue.doubleValue() >= maxValue.doubleValue(), IllegalArgumentException.class,
                 "Minimum value %s is below or equal to maxumum value %s.", minValue, maxValue);
         double[] boundaries =
                 { minValue.doubleValue(), (minValue.doubleValue() + maxValue.doubleValue()) / 2.0, maxValue.doubleValue() };
         Color[] colorValues = { Color.RED, Color.YELLOW, Color.GREEN };
-        return new XBoundsPaintScale(boundaries, colorValues);
+        return new BoundsPaintScale(boundaries, colorValues);
     }
 
     /**
@@ -185,7 +185,7 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                XAbstractContourPlot.this.dataPool.setSmooth(((JCheckBoxMenuItem) e.getSource()).isSelected());
+                AbstractContourPlot.this.dataPool.setSmooth(((JCheckBoxMenuItem) e.getSource()).isSelected());
                 notifyPlotChange();
             }
         });
@@ -199,8 +199,8 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
             public void actionPerformed(final ActionEvent e)
             {
                 boolean interpolate = ((JCheckBoxMenuItem) e.getSource()).isSelected();
-                XAbstractContourPlot.this.blockRenderer.setInterpolate(interpolate);
-                XAbstractContourPlot.this.dataPool.setInterpolate(interpolate);
+                AbstractContourPlot.this.blockRenderer.setInterpolate(interpolate);
+                AbstractContourPlot.this.dataPool.setInterpolate(interpolate);
                 notifyPlotChange();
             }
         });
@@ -241,15 +241,13 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
                 {
                     if (command.equalsIgnoreCase("setSpaceGranularity"))
                     {
-                        double granularity = XAbstractContourPlot.this.spaceGranularityButtons.get(actionEvent.getSource());
-                        // XAbstractContourPlot.this.blockRenderer.setBlockHeight(granularity);
-                        XAbstractContourPlot.this.dataPool.setGranularity(Dimension.DISTANCE, granularity);
+                        double granularity = AbstractContourPlot.this.spaceGranularityButtons.get(actionEvent.getSource());
+                        AbstractContourPlot.this.dataPool.setGranularity(Dimension.DISTANCE, granularity);
                     }
                     else if (command.equalsIgnoreCase("setTimeGranularity"))
                     {
-                        double granularity = XAbstractContourPlot.this.timeGranularityButtons.get(actionEvent.getSource());
-                        // XAbstractContourPlot.this.blockRenderer.setBlockWidth(granularity);
-                        XAbstractContourPlot.this.dataPool.setGranularity(Dimension.TIME, granularity);
+                        double granularity = AbstractContourPlot.this.timeGranularityButtons.get(actionEvent.getSource());
+                        AbstractContourPlot.this.dataPool.setGranularity(Dimension.TIME, granularity);
                     }
                     else
                     {
@@ -261,6 +259,24 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
             group.add(item);
         }
         return result;
+    }
+    
+    /**
+     * Returns the time granularity, just for information.
+     * @return double; time granularity
+     */
+    public double getTimeGranularity()
+    {
+        return this.dataPool.getGranularity(Dimension.TIME);
+    }
+    
+    /**
+     * Returns the space granularity, just for information.
+     * @return double; space granularity
+     */
+    public double getSpaceGranularity()
+    {
+        return this.dataPool.getGranularity(Dimension.DISTANCE);
     }
 
     /**
@@ -313,9 +329,9 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
 
     /**
      * Returns the data pool for sub classes.
-     * @return ContourDataPool; data pool for subclasses
+     * @return ContourDataSource; data pool for subclasses
      */
-    protected final XContourDataPool<G> getDataPool()
+    protected final ContourDataSource<G> getDataPool()
     {
         return this.dataPool;
     }
@@ -453,7 +469,7 @@ public abstract class XAbstractContourPlot<Z extends Number, G extends GtuDataIn
     protected abstract double scale(double si);
 
     /**
-     * Returns the contour data type for use in a {@code ContourDataPool}.
+     * Returns the contour data type for use in a {@code ContourDataSource}.
      * @return CountorDataType; contour data type
      */
     protected abstract ContourDataType<Z, ?> getContourDataType();

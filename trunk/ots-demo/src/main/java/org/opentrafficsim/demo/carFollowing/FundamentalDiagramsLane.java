@@ -2,7 +2,6 @@ package org.opentrafficsim.demo.carFollowing;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.awt.Frame;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -25,17 +24,18 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.graphs.FundamentalDiagram;
+import org.opentrafficsim.core.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.graphs.FundamentalDiagramLane;
+import org.opentrafficsim.graphs.GraphLaneUtil;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -49,9 +49,11 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
@@ -59,7 +61,6 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
@@ -157,25 +158,25 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(3, panelsPerRow);
-        for (int plotNumber = 0; plotNumber < 9; plotNumber++)
+        RoadSampler sampler = new RoadSampler(simulator);
+        for (int plotNumber = 0; plotNumber < this.model.getNumberOfLanes(); plotNumber++)
         {
-            FundamentalDiagramLane fd;
+            Lane lane = this.model.getLane(plotNumber);
+            int xs = (int) lane.getParentLink().getStartNode().getPoint().x;
+            int xe = (int) lane.getParentLink().getEndNode().getPoint().x;
+            String name = "Fundamental Diagram for [" + xs + ", " + xe + "] m";
+            FundamentalDiagram graph;
             try
             {
-                Lane lane = this.model.getLane(plotNumber);
-                int xs = (int) lane.getParentLink().getStartNode().getPoint().x;
-                int xe = (int) lane.getParentLink().getEndNode().getPoint().x;
-                fd = new FundamentalDiagramLane("Fundamental Diagram for [" + xs + ", " + xe + "] m", new Duration(1.0, SECOND),
-                        lane, Compatible.EVERYTHING, (DEVSSimulatorInterface.TimeDoubleUnit) this.model.getSimulator());
-                fd.setTitle("Fundamental Diagram Graph");
-                fd.setExtendedState(Frame.MAXIMIZED_BOTH);
-                this.model.getFundamentalDiagrams().add(fd);
-                charts.setCell(fd.getContentPane(), plotNumber / panelsPerRow, plotNumber % panelsPerRow);
+                graph = new FundamentalDiagram(name, Quantity.DENSITY, Quantity.FLOW, simulator, sampler,
+                        GraphLaneUtil.createSingleLanePath(name, new LaneDirection(lane, GTUDirectionality.DIR_PLUS)), false,
+                        Duration.createSI(60.0));
             }
-            catch (NetworkException | SimRuntimeException exception)
+            catch (NetworkException exception)
             {
-                exception.printStackTrace();
+                throw new OTSSimulationException(exception);
             }
+            charts.setCell(graph.getContentPane(), plotNumber / panelsPerRow, plotNumber % panelsPerRow);
         }
         addTab(getTabCount(), "statistics", charts);
     }
@@ -258,9 +259,6 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         /** The speed limit. */
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
-        /** The fundamental diagram plots. */
-        private List<FundamentalDiagramLane> fundamentalDiagramsLane = new ArrayList<>();
-
         /** User settable properties. */
         private List<Property<?>> fundamentalDiagramsLaneProperties = null;
 
@@ -289,7 +287,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 {
                     OTSNode next = new OTSNode(this.network, "Node " + (laneNr + 1),
                             new OTSPoint3D(node.getPoint().x + this.laneLength.si, 0, 0));
-                    Lane lane = LaneFactory.makeLane(this.network, "Lane", node, next, null, laneType, this.speedLimit,
+                    Lane lane = LaneFactory.makeLane(this.network, "Lane" + laneNr, node, next, null, laneType, this.speedLimit,
                             this.simulator);
                     this.lanes.add(lane);
                     node = next;
@@ -313,7 +311,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 if (p instanceof SelectionProperty)
                 {
                     SelectionProperty sp = (SelectionProperty) p;
-                    if ("CarGollowingModel".equals(sp.getKey()))
+                    if ("CarFollowingModel".equals(sp.getKey()))
                     {
                         String modelName = sp.getValue();
                         if (modelName.equals("IDM"))
@@ -374,12 +372,6 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 this.simulator.scheduleEventAbs(new Time(1000, TimeUnit.BASE_SECOND), this, this, "createBlock", null);
                 // Remove the block at t = 7 minutes
                 this.simulator.scheduleEventAbs(new Time(1200, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
-                // Schedule regular updates of the graph
-                for (int t = 1; t <= this.simulator.getReplication().getTreatment().getRunLength().si / 25; t++)
-                {
-                    this.simulator.scheduleEventAbs(new Time(25 * t - 0.001, TimeUnit.BASE_SECOND), this, this, "drawGraphs",
-                            null);
-                }
             }
             catch (SimRuntimeException exception)
             {
@@ -460,18 +452,6 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
             }
         }
 
-        /**
-        * 
-        */
-        protected final void drawGraphs()
-        {
-            // Notify the Fundamental Diagram plots that the underlying data has changed
-            for (FundamentalDiagramLane fd : this.fundamentalDiagramsLane)
-            {
-                fd.reGraph();
-            }
-        }
-
         /** {@inheritDoc} */
         @Override
         public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
@@ -487,20 +467,20 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         }
 
         /**
-         * @return fundamentalDiagramPlots
-         */
-        public final List<FundamentalDiagramLane> getFundamentalDiagrams()
-        {
-            return this.fundamentalDiagramsLane;
-        }
-
-        /**
          * @param laneNr int; the lane in the list.
          * @return lane.
          */
         public Lane getLane(final int laneNr)
         {
             return this.lanes.get(laneNr);
+        }
+
+        /**
+         * @return int; nubmer of lanes
+         */
+        public int getNumberOfLanes()
+        {
+            return this.lanes.size();
         }
     }
 }

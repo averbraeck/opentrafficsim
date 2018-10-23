@@ -14,7 +14,7 @@ import nl.tudelft.simulation.language.Throw;
  * Plot that allows hard bounds to be set, with upper and lower bound independent. Manual zooming and auto ranges are bounded
  * within the bounds.
  * <p>
- * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 21 okt. 2018 <br>
@@ -22,7 +22,7 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class XAbstractBoundedPlot extends XAbstractPlot
+public abstract class AbstractBoundedPlot extends AbstractPlot
 {
 
     /** */
@@ -47,7 +47,7 @@ public abstract class XAbstractBoundedPlot extends XAbstractPlot
      * @param simulator OTSSimulatorInterface; simulator
      * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
      */
-    public XAbstractBoundedPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
+    public AbstractBoundedPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
             final Duration delay)
     {
         super(caption, updateInterval, simulator, delay);
@@ -78,8 +78,8 @@ public abstract class XAbstractBoundedPlot extends XAbstractPlot
                     return;
                 }
                 this.listen = false;
-                constrainAxis(xyPlot.getDomainAxis(), XAbstractBoundedPlot.this.lowerDomainBound,
-                        XAbstractBoundedPlot.this.upperDomainBound);
+                constrainAxis(xyPlot.getDomainAxis(), AbstractBoundedPlot.this.lowerDomainBound,
+                        AbstractBoundedPlot.this.upperDomainBound);
                 this.listen = true;
             }
         });
@@ -98,8 +98,8 @@ public abstract class XAbstractBoundedPlot extends XAbstractPlot
                     return;
                 }
                 this.listen = false;
-                constrainAxis(xyPlot.getRangeAxis(), XAbstractBoundedPlot.this.lowerRangeBound,
-                        XAbstractBoundedPlot.this.upperRangeBound);
+                constrainAxis(xyPlot.getRangeAxis(), AbstractBoundedPlot.this.lowerRangeBound,
+                        AbstractBoundedPlot.this.upperRangeBound);
                 this.listen = true;
             }
         });

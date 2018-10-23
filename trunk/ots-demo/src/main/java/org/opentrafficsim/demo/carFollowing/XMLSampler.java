@@ -2,8 +2,6 @@ package org.opentrafficsim.demo.carFollowing;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.awt.Container;
-import java.awt.Frame;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,7 +14,6 @@ import javax.naming.NamingException;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
@@ -39,6 +36,9 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.graphs.GraphPath;
+import org.opentrafficsim.core.graphs.AbstractPlot;
+import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -54,8 +54,8 @@ import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.graphs.LaneBasedGTUSampler;
-import org.opentrafficsim.graphs.TrajectoryPlot;
+import org.opentrafficsim.graphs.GraphLaneUtil;
+import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
@@ -87,16 +87,17 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -119,9 +120,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class XMLSampler extends AbstractWrappableAnimation implements UNITS
 {
-
-    /** Sample interval for our trajectories. */
-    static final Duration SAMPLEINTERVAL = new Duration(0.1, DurationUnit.SECOND);
 
     /** */
     private static final long serialVersionUID = 20160422L;
@@ -179,16 +177,24 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         int columns = 1;
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
         TablePanel charts = new TablePanel(columns, rows);
+        RoadSampler sampler = new RoadSampler(simulator);
+        Duration updateInterval = Duration.createSI(10.0);
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
-            TrajectoryPlot tp = new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Duration(0.5, SECOND),
-                    this.model.getPath(graphIndex), simulator);
-            tp.setTitle("Trajectory Graph");
-            tp.setExtendedState(Frame.MAXIMIZED_BOTH);
-            LaneBasedGTUSampler graph = tp;
-            Container container = tp.getContentPane();
-            charts.setCell(container, graphIndex % columns, graphIndex / columns);
-            this.model.getPlots().add(graph);
+            List<LaneDirection> start = new ArrayList<>();
+            start.add(new LaneDirection(this.model.getPath(graphIndex).get(0), GTUDirectionality.DIR_PLUS));
+            GraphPath<KpiLaneDirection> path;
+            try
+            {
+                path = GraphLaneUtil.createPath("name", start.get(0));
+            }
+            catch (NetworkException exception)
+            {
+                throw new RuntimeException(exception);
+            }
+            AbstractPlot plot =
+                    new TrajectoryPlot<>("Trajectories on lane " + (graphIndex + 1), updateInterval, simulator, sampler, path);
+            charts.setCell(plot.getContentPane(), graphIndex % columns, graphIndex / columns);
         }
         addTab(getTabCount(), "statistics", charts);
     }
@@ -230,9 +236,6 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
 
         /** The network. */
         private final OTSNetwork network = new OTSNetwork("network");
-
-        /** The plots. */
-        private List<LaneBasedGTUSampler> plots = new ArrayList<>();
 
         /** User settable properties. */
         private List<Property<?>> props = null;
@@ -315,14 +318,6 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         public final int pathCount()
         {
             return this.paths.size();
-        }
-
-        /**
-         * @return plots
-         */
-        public final List<LaneBasedGTUSampler> getPlots()
-        {
-            return this.plots;
         }
 
         /** {@inheritDoc} */
@@ -666,8 +661,6 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                         lane = lane.nextLanes(this.gtuType).keySet().iterator().next();
                     }
                 }
-                this.simulator.scheduleEventAbs(new Time(0.999, TimeUnit.BASE_SECOND), this, this, "drawGraphs", null);
-                this.simulator.scheduleEventRel(SAMPLEINTERVAL, this, this, "sampleGTUs", null);
             }
             catch (NamingException | NetworkException | GTUException | OTSGeometryException | ProbabilityException
                     | PropertyException | ParameterException exception1)
@@ -895,28 +888,6 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         }
 
         /**
-         * Notify the contour plots that the underlying data has changed.
-         */
-        protected final void drawGraphs()
-        {
-            for (LaneBasedGTUSampler plot : this.plots)
-            {
-                plot.reGraph();
-            }
-            // Re schedule this method
-            try
-            {
-                this.simulator.scheduleEventAbs(new Time(this.simulator.getSimulatorTime().getSI() + 1, TimeUnit.BASE_SECOND),
-                        this, this, "drawGraphs", null);
-            }
-            catch (SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-
-        }
-
-        /**
          * Generate cars at a fixed rate (implemented by re-scheduling this method).
          * @param lane Lane; the lane on which the generated cars are placed
          */
@@ -1027,25 +998,5 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
             }
         }
 
-        /**
-         * Sample the GTU positions.
-         */
-        @SuppressWarnings("unused")
-        private void sampleGTUs()
-        {
-            System.out.println("sampleGTUs called, the time is " + this.simulator.getSimulatorTime() + ", the network contains "
-                    + this.knownGTUs.size() + " GTUs");
-            // TODO sample the GTU positions and figure out the TTC etc.
-            // This will make use of this.knownGTUs
-            // Re-schedule this method
-            try
-            {
-                this.simulator.scheduleEventRel(SAMPLEINTERVAL, this, this, "sampleGTUs", null);
-            }
-            catch (SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
     }
 }
