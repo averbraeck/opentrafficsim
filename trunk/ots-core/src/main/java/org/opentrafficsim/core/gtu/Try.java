@@ -819,7 +819,6 @@ public final class Try
         try
         {
             execution.execute();
-            fail(message);
         }
         catch (Throwable cause)
         {
@@ -829,7 +828,9 @@ public final class Try
                         + "), but got (" + cause.getClass().getSimpleName() + ").");
             }
             // expected to fail
+            return;
         }
+        fail(message);
     }
 
     /**
