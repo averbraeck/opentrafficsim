@@ -101,8 +101,8 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
@@ -282,7 +282,7 @@ public class LmrsStrategies implements EventListenerInterface
         boolean autorun = false;
         String suffix = "";
         long seed = 1L;
-        double sigma = 0.25;
+        double sigma = 0.1; //0.25;
         double vGain = 3.3789;
         // 25km/h -> 3.3789
         // 35km/h -> 3.7153
