@@ -24,11 +24,11 @@ import nl.tudelft.simulation.language.Throw;
  */
 public class WeightedMeanAndSum<V extends Number, W extends Number>
 {
-    /** Cumulative upper value of weighted mean devision, i.e. weighted sum. */
-    private double upper;
+    /** Cumulative numerator of weighted mean fraction, i.e. weighted sum. */
+    private double numerator;
 
-    /** Cumulative lower value of weighted mean devision, i.e. sum of weights. */
-    private double lower;
+    /** Cumulative denominator of weighted mean fraction, i.e. sum of weights. */
+    private double denominator;
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ public class WeightedMeanAndSum<V extends Number, W extends Number>
      */
     public final double getMean()
     {
-        return this.upper / this.lower;
+        return this.numerator / this.denominator;
     }
 
     /**
@@ -53,7 +53,7 @@ public class WeightedMeanAndSum<V extends Number, W extends Number>
      */
     public final double getSum()
     {
-        return this.upper;
+        return this.numerator;
     }
 
     /**
@@ -62,7 +62,7 @@ public class WeightedMeanAndSum<V extends Number, W extends Number>
      */
     public final double getWeightSum()
     {
-        return this.lower;
+        return this.denominator;
     }
 
     /**
@@ -73,17 +73,17 @@ public class WeightedMeanAndSum<V extends Number, W extends Number>
      */
     public final WeightedMeanAndSum<V, W> add(final V value, final W weight)
     {
-        this.upper += weight.doubleValue() * value.doubleValue();
-        this.lower += weight.doubleValue();
+        this.numerator += weight.doubleValue() * value.doubleValue();
+        this.denominator += weight.doubleValue();
         return this;
     }
 
     /**
      * Adds a weighted value for each element. Note that iteration order is pivotal in correct operations. This method should
-     * not be used with instance of {@code HashMap} or {@code HashSet}.
+     * not be used with instances of {@code HashMap} or {@code HashSet}.
      * @param values Iterable&lt;V&gt;; values
-     * @param weights Iterable&lt;V&gt;; weights
-     * @return this WeightedMeanAndSum for method chaining
+     * @param weights Iterable&lt;W&gt;; weights
+     * @return this WeightedMeanAndSum&lt;V, W&gt; for method chaining
      * @throw IllegalArgumentException if the number of values and weights are unequal
      */
     public final WeightedMeanAndSum<V, W> add(final Iterable<V> values, final Iterable<W> weights)
@@ -103,7 +103,7 @@ public class WeightedMeanAndSum<V extends Number, W extends Number>
      * Adds a weighted value for each element.
      * @param values V[]; values
      * @param weights W[]; weights
-     * @return this WeightedMeanAndSum for method chaining
+     * @return this WeightedMeanAndSum&lt;V, W&gt; for method chaining
      */
     public final WeightedMeanAndSum<V, W> add(final V[] values, final W[] weights)
     {
@@ -118,7 +118,7 @@ public class WeightedMeanAndSum<V extends Number, W extends Number>
     /**
      * Adds each weighted value from a map.
      * @param map Map&lt;V, W&gt;; map
-     * @return this WeightedMeanAndSum for method chaining
+     * @return this WeightedMeanAndSum&lt;V, W&gt; for method chaining
      */
     public final WeightedMeanAndSum<V, W> add(final Map<V, W> map)
     {
@@ -133,7 +133,7 @@ public class WeightedMeanAndSum<V extends Number, W extends Number>
      * Adds each value with a weight given by a function.
      * @param collection Collection&lt;V&gt;; values
      * @param weights Function&lt;V, W&gt;; weights
-     * @return this WeightedMeanAndSum for method chaining
+     * @return this WeightedMeanAndSum&lt;V, W&gt; for method chaining
      */
     public final WeightedMeanAndSum<V, W> add(final Collection<V> collection, final Function<V, W> weights)
     {
@@ -150,7 +150,7 @@ public class WeightedMeanAndSum<V extends Number, W extends Number>
      * @param values Function&lt;V, W&gt;; values
      * @param weights Function&lt;V, W&gt;; weights
      * @param <S> type of source object
-     * @return this WeightedMeanAndSum for method chaining
+     * @return this WeightedMeanAndSum&lt;V, W&gt; for method chaining
      */
     public final <S> WeightedMeanAndSum<V, W> add(final Collection<S> collection, final Function<S, V> values,
             final Function<S, W> weights)
