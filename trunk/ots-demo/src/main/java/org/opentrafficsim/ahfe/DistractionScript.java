@@ -25,7 +25,6 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -60,12 +59,12 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.perception.categories.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.Estimation;
-import org.opentrafficsim.road.gtu.lane.perception.categories.HeadwayGtuType.PerceivedHeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType.PerceivedHeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
@@ -269,9 +268,9 @@ public final class DistractionScript extends AbstractSimulationScript
 
     /**
      * Register a link to the sampler, so data is sampled there.
-     * @param linkData LinkData; link data
-     * @param startDistance Length; start distance on link
-     * @param endDistance Length; end distance on link
+     * @param linkData link data
+     * @param startDistance start distance on link
+     * @param endDistance end distance on link
      */
     private void registerLinkToSampler(final LinkData linkData, final Length startDistance, final Length endDistance)
     {
