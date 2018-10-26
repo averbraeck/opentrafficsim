@@ -249,7 +249,7 @@ public abstract class Platoons<T>
         for (Map.Entry<Time, Time> entry : this.periods.entrySet())
         {
             Time start = entry.getKey();
-            Throw.when(prevEnd != null && prevEnd.le(start), IllegalStateException.class, "Platoons are overlapping.");
+            Throw.when(prevEnd != null && start.le(prevEnd), IllegalStateException.class, "Platoons are overlapping.");
             prevEnd = entry.getValue();
             this.gen.disable(start, prevEnd, this.position);
         }
