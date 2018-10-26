@@ -12,14 +12,15 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.animation.EGTF;
-import org.opentrafficsim.core.animation.EGTF.Converter;
-import org.opentrafficsim.core.animation.EGTF.DataSource;
-import org.opentrafficsim.core.animation.EGTF.DataStream;
-import org.opentrafficsim.core.animation.EGTF.EgtfEvent;
-import org.opentrafficsim.core.animation.EGTF.EgtfListener;
-import org.opentrafficsim.core.animation.EGTF.Filter;
-import org.opentrafficsim.core.animation.EGTF.Quantity;
+import org.opentrafficsim.core.egtf.Converter;
+import org.opentrafficsim.core.egtf.DataSource;
+import org.opentrafficsim.core.egtf.DataStream;
+import org.opentrafficsim.core.egtf.EGTF;
+import org.opentrafficsim.core.egtf.EgtfEvent;
+import org.opentrafficsim.core.egtf.EgtfListener;
+import org.opentrafficsim.core.egtf.Filter;
+import org.opentrafficsim.core.egtf.Quantity;
+import org.opentrafficsim.core.egtf.typed.TypedQuantity;
 import org.opentrafficsim.core.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -69,17 +70,17 @@ public class ContourDataSource<G extends GtuDataInterface>
     protected static final Time DEFAULT_LOWER_TIME_BOUND = Time.ZERO;
 
     /**
-     * Total kernel size relative to sigma and tau. This factor is determined through -log(1 - p) with p = 95%. This means that
-     * the cumulative exponential distribution has 95% at 3 times sigma or tau. Note that due to a coordinate change in the
+     * Total kernel size relative to sigma and tau. This factor is determined through -log(1 - p) with p ~= 99%. This means that
+     * the cumulative exponential distribution has 99% at 5 times sigma or tau. Note that due to a coordinate change in the
      * Adaptive Smoothing Method, the actual cumulative distribution is slightly different. Hence, this is just a heuristic.
      */
-    private static final int KERNEL_FACTOR = 3;
+    private static final int KERNEL_FACTOR = 5;
 
     /** Spatial kernel size. Larger value may be used when using a large granularity. */
-    private static final Length SIGMA = Length.createSI(100);
+    private static final Length SIGMA = Length.createSI(300);
 
     /** Temporal kernel size. Larger value may be used when using a large granularity. */
-    private static final Duration TAU = Duration.createSI(10);
+    private static final Duration TAU = Duration.createSI(30);
 
     /** Maximum free flow propagation speed. */
     private static final Speed MAX_C_FREE = new Speed(80.0, SpeedUnit.KM_PER_HOUR);
@@ -588,26 +589,26 @@ public class ContourDataSource<G extends GtuDataInterface>
             if (smooth0)
             {
                 // create the filter
-                this.egtf = new EGTF(C_CONG, this.cFree, DELTA_V, this.vc);
+                this.egtf = new EGTF(C_CONG.si, this.cFree.si, DELTA_V.si, this.vc.si);
 
                 // create data source and its data streams for speed, distance traveled, time traveled, and additional
                 DataSource generic = this.egtf.getDataSource("generic");
-                generic.addSpeedStream(Quantity.SPEED, Speed.ZERO, Speed.ZERO);
-                generic.addNonSpeedStream(this.travelTimeQuantity);
-                generic.addNonSpeedStream(this.travelDistanceQuantity);
-                this.speedStream = generic.getStream(Quantity.SPEED);
+                generic.addStream(TypedQuantity.SPEED, Speed.createSI(1.0), Speed.createSI(1.0));
+                generic.addStreamSI(this.travelTimeQuantity, 1.0, 1.0);
+                generic.addStreamSI(this.travelDistanceQuantity, 1.0, 1.0);
+                this.speedStream = generic.getStream(TypedQuantity.SPEED);
                 this.travelTimeStream = generic.getStream(this.travelTimeQuantity);
                 this.travelDistanceStream = generic.getStream(this.travelDistanceQuantity);
                 for (ContourDataType<?, ?> contourDataType : this.additionalData.keySet())
                 {
-                    this.additionalStreams.put(contourDataType, generic.addNonSpeedStream(contourDataType.getQuantity()));
+                    this.additionalStreams.put(contourDataType, generic.addStreamSI(contourDataType.getQuantity(), 1.0, 1.0));
                 }
 
                 // in principle we use sigma and tau, unless the data is so rough, we need more (granularity / 2).
                 Duration tau2 = Duration.createSI(Math.max(TAU.si, timeGranularity / 2));
                 Length sigma2 = Length.createSI(Math.max(SIGMA.si, spaceGranularity / 2));
                 // for maximum space and time range, increase sigma and tau by KERNEL_FACTOR, beyond which both kernels diminish
-                this.egtf.setKernel(tau2.multiplyBy(KERNEL_FACTOR), sigma2.multiplyBy(KERNEL_FACTOR), sigma2, tau2);
+                this.egtf.setKernelSI(sigma2.si * KERNEL_FACTOR, tau2.si * KERNEL_FACTOR, sigma2.si, tau2.si);
 
                 // add listener to provide a filter status update and to possibly stop the filter when the plot is invalidated
                 this.egtf.addListener(new EgtfListener()
@@ -771,15 +772,17 @@ public class ContourDataSource<G extends GtuDataInterface>
                 if (smooth0)
                 {
                     // center of cell
-                    Length xDat = Length.createSI((xFrom.si + xTo.si) / 2.0);
-                    Time tDat = Time.createSI((tFrom.si + tTo.si) / 2.0);
+                    double xDat = (xFrom.si + xTo.si) / 2.0;
+                    double tDat = (tFrom.si + tTo.si) / 2.0;
                     // speed data is implicit as totalDistance/totalTime, but the EGTF needs it explicitly
-                    this.egtf.addPointData(this.speedStream, xDat, tDat, Speed.createSI(totalDistance / totalTime));
-                    this.egtf.addPointData(this.travelDistanceStream, xDat, tDat, Length.createSI(totalDistance));
-                    this.egtf.addPointData(this.travelTimeStream, xDat, tDat, Duration.createSI(totalTime));
+                    this.egtf.addPointDataSI(this.speedStream, xDat, tDat, totalDistance / totalTime);
+                    this.egtf.addPointDataSI(this.travelDistanceStream, xDat, tDat, totalDistance);
+                    this.egtf.addPointDataSI(this.travelTimeStream, xDat, tDat, totalTime);
                     for (ContourDataType<?, ?> contourDataType : this.additionalStreams.keySet())
                     {
-                        addAdditionalDataToFilter(contourDataType, xDat, tDat, this.additionalData.get(contourDataType)[i][j]);
+                        ContourDataSource.this.egtf.addPointDataSI(
+                                ContourDataSource.this.additionalStreams.get(contourDataType), xDat, tDat,
+                                this.additionalData.get(contourDataType)[i][j]);
                     }
                 }
 
@@ -867,22 +870,6 @@ public class ContourDataSource<G extends GtuDataInterface>
             final ContourDataType<?, ?> contourDataType)
     {
         return ((ContourDataType<?, I>) contourDataType).finalize((I) additionalIntermediate.get(contourDataType)).floatValue();
-    }
-
-    /**
-     * Helper method to deal with generics. It sets a value of some additional type in the smoothing filter.
-     * @param contourDataType ContourDataType&lt;T&gt;; the type of data, e.g. acceleration, travel time delay, etc.
-     * @param x Length; measurement location
-     * @param t Time; measurement time
-     * @param val Float; measured value
-     * @param <T> type of data
-     */
-    @SuppressWarnings("unchecked") // type and data consistent through additionalStreams
-    private <T extends Number> void addAdditionalDataToFilter(final ContourDataType<T, ?> contourDataType, final Length x,
-            final Time t, final Float val)
-    {
-        ContourDataSource.this.egtf.addPointData((DataStream<T>) ContourDataSource.this.additionalStreams.get(contourDataType),
-                x, t, (T) val);
     }
 
     /**
