@@ -130,14 +130,14 @@ public class EgtfTest
                 assertFalse("Flow filtered with additional FCD data is not equal to uniform input flow", qCom2[i][j] != 0.5);
             }
         }
-        printMatrix(vDet, "vDet");
-        printMatrix(vCom1, "vCom1");
-        printMatrix(vCom12, "vCom12");
-        printMatrix(vCom2, "vCom2");
-        printMatrix(qDet, "qDet");
-        printMatrix(qCom1, "qCom1");
-        printMatrix(qCom12, "qCom12");
-        printMatrix(qCom2, "qCom2");
+//        printMatrix(vDet, "vDet");
+//        printMatrix(vCom1, "vCom1");
+//        printMatrix(vCom12, "vCom12");
+//        printMatrix(vCom2, "vCom2");
+//        printMatrix(qDet, "qDet");
+//        printMatrix(qCom1, "qCom1");
+//        printMatrix(qCom12, "qCom12");
+//        printMatrix(qCom2, "qCom2");
     }
 
     /**
