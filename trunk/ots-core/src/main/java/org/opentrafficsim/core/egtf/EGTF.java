@@ -162,7 +162,7 @@ public class EGTF
     }
 
     /**
-     * Adds data.
+     * Adds point data.
      * @param dataStream DataStream; data stream of the data
      * @param location double; location in [m]
      * @param time double; time in [s]
@@ -178,7 +178,7 @@ public class EGTF
     }
 
     /**
-     * Adds data.
+     * Adds vector data.
      * @param dataStream DataStream; data stream of the data
      * @param location double[]; locations in [m]
      * @param time double[]; times in [s]
@@ -202,7 +202,7 @@ public class EGTF
     }
 
     /**
-     * Adds data.
+     * Adds grid data.
      * @param dataStream DataStream; data stream of the data
      * @param location double[]; locations in [m]
      * @param time double[]; times in [s]
@@ -295,7 +295,7 @@ public class EGTF
      * Sets a kernel with limited range and provided shape. The shape allows using non-exponential kernels.
      * @param xMax double; maximum spatial range
      * @param tMax double; maximum temporal range
-     * @param shape Shape; shape of the kernel
+     * @param shape KernelShape; shape of the kernel
      */
     public synchronized void setKernelSI(final double xMax, final double tMax, final KernelShape shape)
     {
@@ -356,7 +356,7 @@ public class EGTF
      * Returns filtered data.
      * @param location double[]; location of output grid in [m]
      * @param time double[]; time of output grid in [s]
-     * @param quantities Quantity...; quantities to calculate filtered data of
+     * @param quantities Quantity&lt;?, ?&gt;...; quantities to calculate filtered data of
      * @return Filter; filtered data, {@code null} when interrupted
      */
     @SuppressWarnings("synthetic-access")
@@ -494,7 +494,7 @@ public class EGTF
         }
         notifyListeners(1.0);
 
-        return new Filter(location, time, map);
+        return new FilterDouble(location, time, map);
     }
 
     // *********************
