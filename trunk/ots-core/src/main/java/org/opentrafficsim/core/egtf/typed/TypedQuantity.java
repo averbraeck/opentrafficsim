@@ -3,8 +3,11 @@ package org.opentrafficsim.core.egtf.typed;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.Unit;
+import org.djunits.value.Scalar;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
+import org.djunits.value.vdouble.matrix.DoubleMatrixInterface;
 import org.djunits.value.vdouble.matrix.FrequencyMatrix;
 import org.djunits.value.vdouble.matrix.LinearDensityMatrix;
 import org.djunits.value.vdouble.matrix.SpeedMatrix;
@@ -15,6 +18,7 @@ import org.opentrafficsim.core.egtf.Converter;
 import org.opentrafficsim.core.egtf.Quantity;
 
 /**
+ * Quantities for a strongly-typed context.
  * <p>
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -23,10 +27,11 @@ import org.opentrafficsim.core.egtf.Quantity;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <U> unit of data
  * @param <T> data type
  * @param <K> grid output format
  */
-public class TypedQuantity<T extends Number, K> extends Quantity<T, K>
+public class TypedQuantity<U extends Unit<U>, T extends Scalar<U>, K extends DoubleMatrixInterface<U>> extends Quantity<T, K>
 {
     /** Standard quantity for speed. */
     public static final Quantity<Speed, SpeedMatrix> SPEED = new TypedQuantity<>("Speed", true, new Converter<SpeedMatrix>()
