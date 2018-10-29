@@ -68,12 +68,15 @@ public class MeansTests
         ArithmeticMean<Double, Double> am = new ArithmeticMean<Double, Double>();
         assertEquals("Initial sum is 0", 0, am.getSum(), 0.00000);
         assertEquals("Initial sum of weights is 0", 0, am.getSumOfWeights(), 0.00000);
+        assertTrue("Initial mean is NaN", Double.isNaN(am.getMean()));
         HarmonicMean<Double, Double> hm = new HarmonicMean<Double, Double>();
         assertEquals("Initial sum is 0", 0, hm.getSum(), 0.00000);
         assertEquals("Initial sum of weights is 0", 0, hm.getSumOfWeights(), 0.00000);
+        assertTrue("Initial mean is NaN", Double.isNaN(hm.getMean()));
         GeometricMean<Double, Double> gm = new GeometricMean<Double, Double>();
         assertEquals("Initial sum is 0", 0, gm.getSum(), 0.00000);
         assertEquals("Initial sum of weights is 0", 0, gm.getSumOfWeights(), 0.00000);
+        assertTrue("Initial mean is NaN", Double.isNaN(gm.getMean()));
         double sum = 0;
         double sumWeights = 0;
         double recipSum = 0;
