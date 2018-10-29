@@ -113,6 +113,15 @@ public class MeansTests
         am = new ArithmeticMean<Double, Double>();
         hm = new HarmonicMean<Double, Double>();
         gm = new GeometricMean<Double, Double>();
+        am.add(testValues[0], 123.456);
+        hm.add(testValues[0], 123.456);
+        gm.add(testValues[0], 123.456);
+        assertEquals("One value, any weight has mean equal to value", testValues[0], am.getMean(), testValues[0] / 99999999);
+        assertEquals("One value, any weight has mean equal to value", testValues[0], hm.getMean(), testValues[0] / 99999999);
+        assertEquals("One value, any weight has mean equal to value", testValues[0], gm.getMean(), testValues[0] / 99999999);
+        am = new ArithmeticMean<Double, Double>();
+        hm = new HarmonicMean<Double, Double>();
+        gm = new GeometricMean<Double, Double>();
         assertEquals("add returns object for method chaining", am, am.add(testValues, testWeights));
         assertEquals("arithmetic mean", sum / sumWeights, am.getMean(), sum / sumWeights / 99999999);
         hm.add(testValues, testWeights);
