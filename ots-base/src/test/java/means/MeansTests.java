@@ -78,6 +78,7 @@ public class MeansTests
         double sumWeights = 0;
         double recipSum = 0;
         double product = 1;
+        double geometricMean = 0;
         Map<Double, Double> map = new HashMap<>();
         for (int i = 0; i < testValues.length; i++)
         {
@@ -91,18 +92,24 @@ public class MeansTests
             recipSum += testWeight / testValue;
             product *= Math.pow(testValue, testWeight);
             sumWeights += testWeight;
+            if (0 == i)
+            {
+                assertEquals("mean of one value equals value", testValue, am.getMean(), testValue / 99999999);
+                assertEquals("mean of one value equals value", testValue, hm.getMean(), testValue / 99999999);
+                assertEquals("mean of one value equals value", testValue, gm.getMean(), testValue / 99999999);
+            }
             assertEquals("sum", sum, am.getSum(), sum / 99999999);
             assertEquals("sum of weights", sumWeights, am.getSumOfWeights(), sumWeights / 99999999);
             assertEquals("arithmetic mean", sum / sumWeights, am.getMean(), sum / sumWeights / 99999999);
             assertEquals("sum", recipSum, hm.getSum(), recipSum / 99999999);
             assertEquals("sum of weights", sumWeights, hm.getSumOfWeights(), sumWeights / 99999999);
             assertEquals("harmonic mean", sumWeights / recipSum, hm.getMean(), sumWeights / recipSum / 999999999);
+            geometricMean = Math.pow(product, 1 / sumWeights);
+            assertEquals("check with alternative way to compute geometric mean", geometricMean, gm.getMean(),
+                    geometricMean / 99999999);
         }
         System.out.println("arithmetic mean=" + am.getMean() + ", harmonic mean=" + hm.getMean() + ", geometric mean="
                 + gm.getMean());
-        double geometricMean = Math.pow(product, 1 / sumWeights);
-        assertEquals("check with alternative way to compute geometric mean", geometricMean, gm.getMean(),
-                geometricMean / 99999999);
         am = new ArithmeticMean<Double, Double>();
         hm = new HarmonicMean<Double, Double>();
         gm = new GeometricMean<Double, Double>();
