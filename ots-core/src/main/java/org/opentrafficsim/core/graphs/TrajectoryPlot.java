@@ -435,6 +435,14 @@ public class TrajectoryPlot<G extends GtuDataInterface> extends AbstractSamplerP
             XYItemEntity entity = new XYItemEntity(hotspot2, dataset, series, item, tip, url);
             entities.add(entity);
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "XYLineAndShapeRendererID []";
+        }
+        
     }
 
     /**
@@ -577,6 +585,15 @@ public class TrajectoryPlot<G extends GtuDataInterface> extends AbstractSamplerP
             return "OffsetTrajectory [trajectory=" + this.trajectory + ", offset=" + this.offset + "]";
         }
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TrajectoryPlot [graphUpdater=" + this.graphUpdater + ", knownTrajectories=" + this.knownTrajectories
+                + ", curves=" + this.curves + ", strokes=" + this.strokes + ", curvesPerLane=" + this.curvesPerLane
+                + ", legend=" + this.legend + ", laneVisible=" + this.laneVisible + "]";
     }
 
 }

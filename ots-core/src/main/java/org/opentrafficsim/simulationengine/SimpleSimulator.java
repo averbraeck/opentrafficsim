@@ -91,4 +91,11 @@ public class SimpleSimulator extends DEVSSimulator.TimeDoubleUnit implements OTS
         return (OTSReplication) super.getReplication();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "SimpleSimulator [lastReplication=" + this.lastReplication + "]";
+    }
+
 }

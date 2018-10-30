@@ -92,4 +92,11 @@ public class GraphUpdater<T>
         void update(T t);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "GraphUpdater [queue=" + this.queue + "]";
+    }
+
 }

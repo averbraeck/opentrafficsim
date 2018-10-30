@@ -77,4 +77,11 @@ public class ContourPlotFlow<G extends GtuDataInterface> extends AbstractContour
         return null; // flow is present by default
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ContourPlotFlow []";
+    }
+
 }

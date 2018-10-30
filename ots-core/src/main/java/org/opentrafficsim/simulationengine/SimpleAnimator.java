@@ -94,4 +94,11 @@ public class SimpleAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements 
         return (OTSReplication) super.getReplication();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "SimpleAnimator [lastReplication=" + this.lastReplication + "]";
+    }
+
 }

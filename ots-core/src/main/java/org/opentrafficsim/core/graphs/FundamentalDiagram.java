@@ -909,6 +909,14 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         {
             return this.harmonic ? first / second : second / first;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "CrossSectionSamplerFdSource [harmonic=" + this.harmonic + "]";
+        }
+        
     }
 
     /**
@@ -963,6 +971,14 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         {
             return first / second;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "PathSamplerFdSource []";
+        }
+        
     }
 
     /**
@@ -1335,6 +1351,16 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
          */
         protected abstract double getSpeed(double first, double second);
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "FundamentalDiagram [source=" + this.source + ", domainQuantity=" + this.domainQuantity + ", rangeQuantity="
+                + this.rangeQuantity + ", otherQuantity=" + this.otherQuantity + ", seriesLabels=" + this.seriesLabels
+                + ", graphUpdater=" + this.graphUpdater + ", timeInfo=" + this.timeInfo + ", legend=" + this.legend
+                + ", laneVisible=" + this.laneVisible + "]";
     }
 
 }

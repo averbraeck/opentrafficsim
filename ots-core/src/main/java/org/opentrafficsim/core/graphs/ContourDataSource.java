@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.graphs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1184,6 +1185,15 @@ public class ContourDataSource<G extends GtuDataInterface>
             }
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "Axis [minValue=" + this.minValue + ", maxValue=" + this.maxValue + ", granularity=" + this.granularity
+                    + ", granularities=" + Arrays.toString(this.granularities) + ", interpolate=" + this.interpolate
+                    + ", ticks=" + Arrays.toString(this.ticks) + "]";
+        }
+
     }
 
     /**
@@ -1234,6 +1244,23 @@ public class ContourDataSource<G extends GtuDataInterface>
          * @return Quantity&lt;Z, ?&gt;; quantity that is being plotted on the z-axis for the EGTF filter
          */
         Quantity<Z, ?> getQuantity();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ContourDataSource [sampler=" + this.sampler + ", updateInterval=" + this.updateInterval + ", delay="
+                + this.delay + ", path=" + this.path + ", spaceAxis=" + this.spaceAxis + ", timeAxis=" + this.timeAxis
+                + ", plots=" + this.plots + ", distance=" + Arrays.toString(this.distance) + ", time="
+                + Arrays.toString(this.time) + ", additionalData=" + this.additionalData + ", smooth=" + this.smooth
+                + ", cFree=" + this.cFree + ", vc=" + this.vc + ", egtf=" + this.egtf + ", speedStream=" + this.speedStream
+                + ", travelTimeStream=" + this.travelTimeStream + ", travelDistanceStream=" + this.travelDistanceStream
+                + ", travelTimeQuantity=" + this.travelTimeQuantity + ", travelDistanceQuantity="
+                + this.travelDistanceQuantity + ", additionalStreams=" + this.additionalStreams + ", graphUpdater="
+                + this.graphUpdater + ", redo=" + this.redo + ", toTime=" + this.toTime + ", readyItems=" + this.readyItems
+                + ", desiredSpaceGranularity=" + this.desiredSpaceGranularity + ", desiredTimeGranularity="
+                + this.desiredTimeGranularity + "]";
     }
 
 }

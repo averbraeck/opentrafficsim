@@ -310,4 +310,12 @@ public class XYInterpolatedBlockRenderer extends XYBlockRenderer
         return 0.5 * (adjacentCorner1 + adjacentCorner2);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "XYInterpolatedBlockRenderer [interpolate=" + this.interpolate + ", xyInterpolatedDataset="
+                + this.xyInterpolatedDataset + "]";
+    }
+
 }
