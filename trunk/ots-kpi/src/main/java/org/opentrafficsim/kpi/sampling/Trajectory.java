@@ -1124,6 +1124,13 @@ public final class Trajectory<G extends GtuDataInterface>
         {
             return this.time;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "SpaceTimeView [distance=" + this.distance + ", time=" + this.time + "]";
+        }
     }
 
 }
