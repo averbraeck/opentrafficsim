@@ -107,4 +107,11 @@ public class GraphCrossSection<S> extends AbstractGraphSpace<S>
         return this.section.iterator();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "GraphCrossSection [section=" + this.section + ", positions=" + this.positions + "]";
+    }
+
 }

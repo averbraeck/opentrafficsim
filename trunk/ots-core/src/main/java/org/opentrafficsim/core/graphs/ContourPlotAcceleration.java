@@ -164,4 +164,11 @@ public class ContourPlotAcceleration<G extends GtuDataInterface> extends Abstrac
         return CONTOUR_DATA_TYPE;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ContourPlotAcceleration []";
+    }
+
 }

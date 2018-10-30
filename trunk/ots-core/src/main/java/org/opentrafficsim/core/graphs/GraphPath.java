@@ -224,4 +224,12 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
         S getSource(int series);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "GraphPath [sections=" + this.sections + ", startDistances=" + this.startDistances + ", totalLength="
+                + this.totalLength + ", speedLimit=" + this.speedLimit + "]";
+    }
+
 }

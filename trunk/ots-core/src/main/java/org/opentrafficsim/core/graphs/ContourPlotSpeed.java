@@ -77,4 +77,11 @@ public class ContourPlotSpeed<G extends GtuDataInterface> extends AbstractContou
         return null; // speed is present by default
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ContourPlotSpeed []";
+    }
+
 }

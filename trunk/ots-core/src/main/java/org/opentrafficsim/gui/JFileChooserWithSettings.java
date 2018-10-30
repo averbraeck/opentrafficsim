@@ -55,4 +55,12 @@ public class JFileChooserWithSettings extends JFileChooser
             index++;
         }
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "JFileChooserWithSettings []";
+    }
+    
 }

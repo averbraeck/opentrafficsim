@@ -77,4 +77,11 @@ public class ContourPlotDensity<G extends GtuDataInterface> extends AbstractCont
         return null; // density is present by default
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ContourPlotDensity []";
+    }
+
 }
