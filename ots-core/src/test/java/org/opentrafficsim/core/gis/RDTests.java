@@ -1,14 +1,13 @@
 package org.opentrafficsim.core.gis;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Locale;
 
 import org.junit.Test;
-import org.ojalgo.type.format.TransformationFormat;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Test the Dutch RD to and from WGS84 transformations.
