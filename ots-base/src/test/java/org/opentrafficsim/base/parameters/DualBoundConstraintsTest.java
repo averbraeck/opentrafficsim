@@ -63,7 +63,7 @@ public class DualBoundConstraintsTest
         }
         else
         {
-            DualBound db = create(low, high, includeLow, includeHigh);
+            DualBound<Double> db = create(low, high, includeLow, includeHigh);
             // if (includeLow)
             // {
             // assertTrue("DoubleBound includes low", db.includesLowerBound());
@@ -132,7 +132,7 @@ public class DualBoundConstraintsTest
      * @param includeHigh whether to include the upper bound
      * @return dual bound depending on exclusion
      */
-    private DualBound create(final double low, final double high, final boolean includeLow, final boolean includeHigh)
+    private DualBound<Double> create(final double low, final double high, final boolean includeLow, final boolean includeHigh)
     {
         if (includeLow && includeHigh)
         {
