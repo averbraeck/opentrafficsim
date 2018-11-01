@@ -25,7 +25,7 @@ public class HarmonicMean<V extends Number, W extends Number> extends AbstractMe
 
     /** {@inheritDoc} */
     @Override
-    public final HarmonicMean<V, W> add(final V value, final W weight)
+    public final HarmonicMean<V, W> addImpl(final V value, final Number weight)
     {
         increment(weight.doubleValue() / value.doubleValue(), weight.doubleValue());
         return this;

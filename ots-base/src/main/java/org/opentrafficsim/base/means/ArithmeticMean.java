@@ -23,9 +23,8 @@ public class ArithmeticMean<V extends Number, W extends Number> extends Abstract
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
-    public final ArithmeticMean<V, W> add(final V value, final W weight)
+    public final ArithmeticMean<V, W> addImpl(final V value, final Number weight)
     {
         increment(weight.doubleValue() * value.doubleValue(), weight.doubleValue());
         return this;
