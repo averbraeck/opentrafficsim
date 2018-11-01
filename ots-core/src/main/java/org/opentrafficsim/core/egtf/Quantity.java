@@ -156,6 +156,13 @@ public class Quantity<T extends Number, K>
             super(name, Converter.SI);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "SI []";
+        }
+
     }
 
 }

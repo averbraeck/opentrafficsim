@@ -109,4 +109,12 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U>, K extends Dou
     {
         super(name, speed, converter);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TypedQuantity []";
+    }
+    
 }

@@ -83,4 +83,11 @@ public class TypedFilter implements Filter
         return this.filter.get(quantity);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TypedFilter [filter=" + this.filter + "]";
+    }
+
 }
