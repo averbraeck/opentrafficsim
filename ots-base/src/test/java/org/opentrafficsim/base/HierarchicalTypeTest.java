@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -46,10 +47,36 @@ public class HierarchicalTypeTest
         st3 = new SubType("id2");
         assertFalse("other subtype with same name but no parent is not equal", st2.equals(st3));
         assertFalse("other subtype with same name but no parent is not equal", st3.equals(st2));
+        st3 = new SubType("id3", st2);
+        SubType different = new SubType("different");
+        assertNull("No common ancestor", different.commonAncestor(st3));
+        assertNull("No common ancestor", st3.commonAncestor(different));
+        SubType common = new SubType("common", st2);
+        assertEquals("Common ancestor", st2, common.commonAncestor(st3));
+        assertEquals("Common ancestor", st2, st3.commonAncestor(common));
+        assertTrue("toString method returns something descriptive", common.toString().startsWith("SubType "));
+        try
+        {
+            new SubType(null, common);
+            fail("Constructor with null for type name should have thrown a NullPointerException");
+        }
+        catch (NullPointerException npe)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            new SubType(null);
+            fail("Constructor with null for type name should have thrown a NullPointerException");
+        }
+        catch (NullPointerException npe)
+        {
+            // Ignore expected exception
+        }
     }
 
     /**
-     * Extend class so we can access anything.
+     * Extend the HierarchicalType class so we instantiate (and then test) things.
      */
     static class SubType extends HierarchicalType<SubType>
     {
@@ -73,6 +100,14 @@ public class HierarchicalTypeTest
         SubType(final String id) throws NullPointerException
         {
             super(id);
+        }
+
+        /** {@inheritDoc} */
+        @SuppressWarnings("checkstyle:designforextension")
+        @Override
+        public String toString()
+        {
+            return "SubType [id=" + getId() + ", parent=" + getParent() + "]";
         }
 
     }
