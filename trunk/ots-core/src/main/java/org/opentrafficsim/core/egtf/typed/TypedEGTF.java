@@ -170,4 +170,11 @@ public class TypedEGTF extends EGTF
         return new TypedFilter(filterSI(location.getValuesSI(), time.getValuesSI(), quantities));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "TypedEGTF []";
+    }
+
 }

@@ -621,6 +621,15 @@ public class EGTF
         {
             return this.denominatorFree;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "DualWeightedMean [numeratorCong=" + this.numeratorCong + ", numeratorFree=" + this.numeratorFree
+                    + ", denominatorCong=" + this.denominatorCong + ", denominatorFree=" + this.denominatorFree + "]";
+        }
+        
     }
 
     /**
@@ -653,6 +662,23 @@ public class EGTF
         {
             return this.numerator / this.denominator;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "WeightedMean [numerator=" + this.numerator + ", denominator=" + this.denominator + "]";
+        }
+        
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "EGTF [kernel=" + this.kernel + ", cCong=" + this.cCong + ", cFree=" + this.cFree + ", deltaV=" + this.deltaV
+                + ", vc=" + this.vc + ", dataSources=" + this.dataSources + ", pointData=" + this.pointData
+                + ", interrupted=" + this.interrupted + ", listeners=" + this.listeners + "]";
     }
     
 }
