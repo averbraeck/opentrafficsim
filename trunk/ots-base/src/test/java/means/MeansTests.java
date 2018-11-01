@@ -111,7 +111,7 @@ public class MeansTests
             assertEquals("check with alternative way to compute geometric mean", geometricMean, gm.getMean(),
                     geometricMean / 99999999);
         }
-        System.out.println("arithmetic mean=" + am.getMean() + ", harmonic mean=" + hm.getMean() + ", geometric mean="
+        System.out.println("Mean of test data: arithmetic=" + am.getMean() + ", harmonic=" + hm.getMean() + ", geometric="
                 + gm.getMean());
         am = new ArithmeticMean<Double, Double>();
         hm = new HarmonicMean<Double, Double>();

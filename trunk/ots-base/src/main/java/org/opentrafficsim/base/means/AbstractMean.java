@@ -82,11 +82,21 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
      * @param weight W; the weight
      * @return this AbstractMean&lt;MT, V, W&gt;; for method chaining
      */
-    public abstract AbstractMean<MT, V, W> add(final V value, final W weight);
+    public final AbstractMean<MT, V, W> add(final V value, final W weight)
+    {
+        return addImpl(value, weight);
+    }
+    
+    /**
+     * Adds a value with weight.
+     * @param value V; the value
+     * @param weight Number; the weight
+     * @return this AbstractMean&lt;MT, V, W&gt;; for method chaining
+     */
+    protected abstract AbstractMean<MT, V, W> addImpl(final V value, final Number weight);
 
     /** Unity weight. */
-    @SuppressWarnings("unchecked")
-    private final W unityWeight = (W) new Integer(1);
+    private final Number unityWeight = new Integer(1);
 
     /**
      * Add a value with weight 1.
@@ -95,7 +105,7 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
      */
     public final AbstractMean<MT, V, W> add(final V value)
     {
-        return add(value, this.unityWeight);
+        return addImpl(value, this.unityWeight);
     }
 
     /**
@@ -114,7 +124,7 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
         while (itV.hasNext())
         {
             Throw.when(!itW.hasNext(), IllegalArgumentException.class, "Unequal number of values and weights.");
-            add(itV.next(), itW.next());
+            addImpl(itV.next(), itW.next());
         }
         Throw.when(itW.hasNext(), IllegalArgumentException.class, "Unequal number of values and weights.");
         return this;
@@ -132,7 +142,7 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
         Throw.when(values.length != weights.length, IllegalArgumentException.class, "Unequal number of values and weights.");
         for (int i = 0; i < values.length; i++)
         {
-            add(values[i], weights[i]);
+            addImpl(values[i], weights[i]);
         }
         return this;
     }
@@ -146,7 +156,7 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
     {
         for (Entry<V, W> entry : map.entrySet())
         {
-            add(entry.getKey(), entry.getValue());
+            addImpl(entry.getKey(), entry.getValue());
         }
         return this;
     }
@@ -161,7 +171,7 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
     {
         for (V v : collection)
         {
-            add(v, weights.apply(v));
+            addImpl(v, weights.apply(v));
         }
         return this;
     }
@@ -180,7 +190,7 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
     {
         for (S s : collection)
         {
-            add(values.apply(s), weights.apply(s));
+            addImpl(values.apply(s), weights.apply(s));
         }
         return this;
     }
@@ -195,7 +205,7 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
         Iterator<V> itV = values.iterator();
         while (itV.hasNext())
         {
-            add(itV.next(), this.unityWeight);
+            addImpl(itV.next(), this.unityWeight);
         }
         return this;
     }
@@ -209,7 +219,7 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
     {
         for (int i = 0; i < values.length; i++)
         {
-            add(values[i], this.unityWeight);
+            addImpl(values[i], this.unityWeight);
         }
         return this;
     }

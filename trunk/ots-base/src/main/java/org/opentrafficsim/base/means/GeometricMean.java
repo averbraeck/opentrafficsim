@@ -25,7 +25,7 @@ public class GeometricMean<V extends Number, W extends Number> extends AbstractM
 
     /** {@inheritDoc} */
     @Override
-    public final GeometricMean<V, W> add(final V value, final W weight)
+    public final GeometricMean<V, W> addImpl(final V value, final Number weight)
     {
         increment(Math.log(value.doubleValue()) * weight.doubleValue(), weight.doubleValue());
         return this;
