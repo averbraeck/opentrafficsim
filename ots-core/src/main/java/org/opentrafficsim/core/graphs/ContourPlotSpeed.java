@@ -5,7 +5,6 @@ import java.awt.Color;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.graphs.ContourDataSource.ContourDataType;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
@@ -18,9 +17,8 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <G> sampler GTU data type
  */
-public class ContourPlotSpeed<G extends GtuDataInterface> extends AbstractContourPlot<Speed, G>
+public class ContourPlotSpeed extends AbstractContourPlot<Speed>
 {
 
     /** */
@@ -32,7 +30,7 @@ public class ContourPlotSpeed<G extends GtuDataInterface> extends AbstractContou
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;G&gt;; data pool
      */
-    public ContourPlotSpeed(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<G> dataPool)
+    public ContourPlotSpeed(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<?> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Speed(30.0, SpeedUnit.KM_PER_HOUR), "%.0fkm/h",
                 "speed %.1f km/h");

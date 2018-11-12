@@ -21,7 +21,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.DomainOrder;
 import org.opentrafficsim.core.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.core.graphs.ContourDataSource.Dimension;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.language.Throw;
@@ -39,10 +38,8 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <Z> z-value type
- * @param <G> sampler GTU data type
  */
-public abstract class AbstractContourPlot<Z extends Number, G extends GtuDataInterface> extends AbstractSamplerPlot<G>
-        implements XYInterpolatedDataset
+public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamplerPlot implements XYInterpolatedDataset
 {
 
     /** */
@@ -61,7 +58,7 @@ public abstract class AbstractContourPlot<Z extends Number, G extends GtuDataInt
     private final String valueFormat;
 
     /** Data pool. */
-    private final ContourDataSource<G> dataPool;
+    private final ContourDataSource<?> dataPool;
 
     /** Map to set time granularity. */
     private Map<JRadioButtonMenuItem, Double> timeGranularityButtons = new LinkedHashMap<>();
@@ -88,7 +85,7 @@ public abstract class AbstractContourPlot<Z extends Number, G extends GtuDataInt
      * @param legendFormat String; format string for the captions in the color legend
      * @param valueFormat String; format string used to create status label (under the mouse)
      */
-    public AbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<G> dataPool,
+    public AbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<?> dataPool,
             final BoundsPaintScale paintScale, final Z legendStep, final String legendFormat, final String valueFormat)
     {
         super(caption, dataPool.getUpdateInterval(), simulator, dataPool.getSampler(), dataPool.getPath(), dataPool.getDelay());
@@ -117,7 +114,7 @@ public abstract class AbstractContourPlot<Z extends Number, G extends GtuDataInt
      * @param valueFormat String; format string used to create status label (under the mouse)
      */
     @SuppressWarnings("parameternumber")
-    public AbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<G> dataPool,
+    public AbstractContourPlot(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<?> dataPool,
             final Z legendStep, final String legendFormat, final Z minValue, final Z maxValue, final String valueFormat)
     {
         this(caption, simulator, dataPool, createPaintScale(minValue, maxValue), legendStep, legendFormat, valueFormat);
@@ -260,7 +257,7 @@ public abstract class AbstractContourPlot<Z extends Number, G extends GtuDataInt
         }
         return result;
     }
-    
+
     /**
      * Returns the time granularity, just for information.
      * @return double; time granularity
@@ -269,7 +266,7 @@ public abstract class AbstractContourPlot<Z extends Number, G extends GtuDataInt
     {
         return this.dataPool.getGranularity(Dimension.TIME);
     }
-    
+
     /**
      * Returns the space granularity, just for information.
      * @return double; space granularity
@@ -331,7 +328,7 @@ public abstract class AbstractContourPlot<Z extends Number, G extends GtuDataInt
      * Returns the data pool for sub classes.
      * @return ContourDataSource; data pool for subclasses
      */
-    protected final ContourDataSource<G> getDataPool()
+    protected final ContourDataSource<?> getDataPool()
     {
         return this.dataPool;
     }

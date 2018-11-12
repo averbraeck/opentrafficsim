@@ -39,7 +39,7 @@ public abstract class Sampler<G extends GtuDataInterface>
 {
 
     /** Map with all sampling data. */
-    private final Map<KpiLaneDirection, TrajectoryGroup> trajectories = new LinkedHashMap<>();
+    private final Map<KpiLaneDirection, TrajectoryGroup<G>> trajectories = new LinkedHashMap<>();
 
     /** End times of active samplings. */
     private final Map<KpiLaneDirection, Time> endTimes = new LinkedHashMap<>();
@@ -150,7 +150,7 @@ public abstract class Sampler<G extends GtuDataInterface>
         {
             return;
         }
-        this.trajectories.put(kpiLaneDirection, new TrajectoryGroup(now(), kpiLaneDirection));
+        this.trajectories.put(kpiLaneDirection, new TrajectoryGroup<>(now(), kpiLaneDirection));
         initRecording(kpiLaneDirection);
     }
 
@@ -312,7 +312,7 @@ public abstract class Sampler<G extends GtuDataInterface>
      * @param kpiLaneDirection KpiLaneDirection; lane direction
      * @return trajectory group of given lane direction, {@code null} if none
      */
-    public final TrajectoryGroup getTrajectoryGroup(final KpiLaneDirection kpiLaneDirection)
+    public final TrajectoryGroup<G> getTrajectoryGroup(final KpiLaneDirection kpiLaneDirection)
     {
         return this.trajectories.get(kpiLaneDirection);
     }
@@ -337,20 +337,20 @@ public abstract class Sampler<G extends GtuDataInterface>
         int counter = 0;
         BufferedWriter bw = CompressedFileWriter.create(file, compression.equals(CompressionMethod.ZIP));
         // create Query, as this class is designed to filter for space-time regions
-        Query query = new Query(this, "", new MetaDataSet());
+        Query<G> query = new Query<>(this, "", new MetaDataSet());
         for (SpaceTimeRegion str : this.spaceTimeRegions)
         {
             query.addSpaceTimeRegion(str.getLaneDirection(), str.getStartPosition(), str.getEndPosition(), str.getStartTime(),
                     str.getEndTime());
         }
-        List<TrajectoryGroup> groups = query.getTrajectoryGroups(Time.createSI(Double.POSITIVE_INFINITY));
+        List<TrajectoryGroup<G>> groups = query.getTrajectoryGroups(Time.createSI(Double.POSITIVE_INFINITY));
         try
         {
             // gather all meta data types for the header line
             List<MetaDataType<?>> allMetaDataTypes = new ArrayList<>();
-            for (TrajectoryGroup group : groups)
+            for (TrajectoryGroup<G> group : groups)
             {
-                for (Trajectory<?> trajectory : group.getTrajectories())
+                for (Trajectory<G> trajectory : group.getTrajectories())
                 {
                     for (MetaDataType<?> metaDataType : trajectory.getMetaDataTypes())
                     {
@@ -363,7 +363,7 @@ public abstract class Sampler<G extends GtuDataInterface>
             }
             // gather all extended data types for the header line
             List<ExtendedDataType<?, ?, ?, ?>> allExtendedDataTypes = new ArrayList<>();
-            for (TrajectoryGroup group : groups)
+            for (TrajectoryGroup<G> group : groups)
             {
                 for (Trajectory<?> trajectory : group.getTrajectories())
                 {
@@ -391,9 +391,9 @@ public abstract class Sampler<G extends GtuDataInterface>
             }
             bw.write(str.toString());
             bw.newLine();
-            for (TrajectoryGroup group : groups)
+            for (TrajectoryGroup<G> group : groups)
             {
-                for (Trajectory<?> trajectory : group.getTrajectories())
+                for (Trajectory<G> trajectory : group.getTrajectories())
                 {
                     counter++;
                     float[] t = trajectory.getT();

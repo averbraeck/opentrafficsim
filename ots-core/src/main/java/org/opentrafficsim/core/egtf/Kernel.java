@@ -35,27 +35,15 @@ public class Kernel
     }
 
     /**
-     * Returns a weight assuming congestion.
+     * Returns a weight assuming given propagation speed.
      * @param c double; assumed propagation speed
      * @param dx double; distance between measurement and estimated point
      * @param dt double; time between measurement and estimated point
-     * @return double; weight assuming congestion
+     * @return double; weight assuming given propagation speed
      */
-    final double weightCong(final double c, final double dx, final double dt)
+    final double weight(final double c, final double dx, final double dt)
     {
-        return this.shape.weight(c, dt, dx);
-    }
-
-    /**
-     * Returns a weight assuming free flow.
-     * @param c double; assumed propagation speed
-     * @param dx double; distance between measurement and estimated point
-     * @param dt double; time between measurement and estimated point
-     * @return double; weight assuming free flow
-     */
-    final double weightFree(final double c, final double dx, final double dt)
-    {
-        return this.shape.weight(c, dt, dx);
+        return this.shape.weight(c, dx, dt);
     }
 
     /**

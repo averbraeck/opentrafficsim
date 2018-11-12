@@ -45,7 +45,7 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ContourPlotDelay extends AbstractContourPlot<Duration, GtuData>
+public class ContourPlotDelay extends AbstractContourPlot<Duration>
 {
 
     /** */
@@ -82,14 +82,14 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration, GtuData>
 
         /** {@inheritDoc} */
         @Override
-        public Duration processSeries(final Duration intermediate, final List<TrajectoryGroup> trajectories,
+        public Duration processSeries(final Duration intermediate, final List<TrajectoryGroup<?>> trajectories,
                 final List<Length> xFrom, final List<Length> xTo, final Time tFrom, final Time tTo)
         {
             double sumActualTime = 0.0;
             double sumRefTime = 0.0;
             for (int i = 0; i < trajectories.size(); i++)
             {
-                TrajectoryGroup trajectoryGroup = trajectories.get(i);
+                TrajectoryGroup<?> trajectoryGroup = trajectories.get(i);
                 for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
                 {
                     if (GraphUtil.considerTrajectory(trajectory, tFrom, tTo))
@@ -130,13 +130,14 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration, GtuData>
         {
             return QUANTITY;
         }
+
     };
 
     /**
      * Constructor.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataSource&lt;G&gt;; data pool
+     * @param dataPool ContourDataSource&lt;GtuData&gt;; data pool
      */
     public ContourPlotDelay(final String caption, final OTSSimulatorInterface simulator,
             final ContourDataSource<GtuData> dataPool)

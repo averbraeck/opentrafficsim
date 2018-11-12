@@ -72,12 +72,29 @@ public class TypedEGTF extends EGTF
 
     /**
      * Adds point data.
+     * @param quantity Quantity&lt;Z, ?&gt;; quantity of the data
+     * @param location Length; location
+     * @param time Duration; time
+     * @param value Z; data value
+     * @param <U> unit of type
+     * @param <Z> value type
+     * @throws IllegalStateException if data was added with a data stream previously
+     */
+    public synchronized <U extends Unit<U>, Z extends Scalar<U>> void addPointData(final Quantity<Z, ?> quantity,
+            final Length location, final Duration time, final Z value)
+    {
+        addPointDataSI(quantity, location.si, time.si, value.doubleValue());
+    }
+    
+    /**
+     * Adds point data.
      * @param dataStream DataStream&lt;Z&gt;; data stream of the data
      * @param location Length; location
      * @param time Duration; time
      * @param value Z; data value
      * @param <U> unit of type
      * @param <Z> value type
+     * @throws IllegalStateException if data was added with a quantity previously
      */
     public synchronized <U extends Unit<U>, Z extends Scalar<U>> void addPointData(final DataStream<Z> dataStream,
             final Length location, final Duration time, final Z value)
@@ -87,12 +104,29 @@ public class TypedEGTF extends EGTF
 
     /**
      * Adds vector data.
+     * @param quantity Quantity&lt;Z, ?&gt;; quantity of the data
+     * @param location LengthVector; locations
+     * @param time DurationVector; times
+     * @param values DoubleVectorInterface&lt;U&gt;; data values
+     * @param <U> unit of type
+     * @param <Z> value type
+     * @throws IllegalStateException if data was added with a data stream previously
+     */
+    public synchronized <U extends Unit<U>, Z extends Scalar<U>> void addVectorData(final Quantity<Z, ?> quantity,
+            final LengthVector location, final DurationVector time, final DoubleVectorInterface<U> values)
+    {
+        addVectorDataSI(quantity, location.getValuesSI(), time.getValuesSI(), values.getValuesSI());
+    }
+    
+    /**
+     * Adds vector data.
      * @param dataStream DataStream&lt;Z&gt;; data stream of the data
      * @param location LengthVector; locations
      * @param time DurationVector; times
      * @param values DoubleVectorInterface&lt;U&gt;; data values
      * @param <U> unit of type
      * @param <Z> value type
+     * @throws IllegalStateException if data was added with a quantity previously
      */
     public synchronized <U extends Unit<U>, Z extends Scalar<U>> void addVectorData(final DataStream<Z> dataStream,
             final LengthVector location, final DurationVector time, final DoubleVectorInterface<U> values)
@@ -102,12 +136,29 @@ public class TypedEGTF extends EGTF
 
     /**
      * Adds grid data.
+     * @param quantity Quantity&lt;Z, ?&gt;; quantity of the data
+     * @param location LengthVector; locations
+     * @param time DurationVector; times
+     * @param values DoubleMatrixInterface&lt;U&gt;; data values
+     * @param <U> unit of type
+     * @param <Z> value type
+     * @throws IllegalStateException if data was added with a data stream previously
+     */
+    public synchronized <U extends Unit<U>, Z extends Scalar<U>> void addGridData(final Quantity<Z, ?> quantity,
+            final LengthVector location, final DurationVector time, final DoubleMatrixInterface<U> values)
+    {
+        addGridDataSI(quantity, location.getValuesSI(), time.getValuesSI(), values.getValuesSI());
+    }
+    
+    /**
+     * Adds grid data.
      * @param dataStream DataStream&lt;Z&gt;; data stream of the data
      * @param location LengthVector; locations
      * @param time DurationVector; times
      * @param values DoubleMatrixInterface&lt;U&gt;; data values
      * @param <U> unit of type
      * @param <Z> value type
+     * @throws IllegalStateException if data was added with a quantity previously
      */
     public synchronized <U extends Unit<U>, Z extends Scalar<U>> void addGridData(final DataStream<Z> dataStream,
             final LengthVector location, final DurationVector time, final DoubleMatrixInterface<U> values)
@@ -146,6 +197,28 @@ public class TypedEGTF extends EGTF
     {
         setKernelSI(sigma.si, tau.si, xMax.si, tMax.si);
     }
+    
+    /**
+     * Sets a Gaussian kernel with infinite range.
+     * @param sigma Length; spatial kernel size
+     * @param tau Duration; temporal kernel size
+     */
+    public void setGaussKernel(final Length sigma, final Duration tau)
+    {
+        setGaussKernelSI(sigma.si, tau.si);
+    }
+
+    /**
+     * Returns a Gaussian kernel with limited range.
+     * @param sigma Length; spatial kernel size in [m]
+     * @param tau Duration; temporal kernel size in [s]
+     * @param xMax Length; maximum spatial range in [m]
+     * @param tMax Duration; maximum temporal range in [s]
+     */
+    public void setGaussKernel(final Length sigma, final Duration tau, final Length xMax, final Duration tMax)
+    {
+        setGaussKernelSI(sigma.si, tau.si, xMax.si, tMax.si);
+    }
 
     /**
      * Sets a kernel with limited range and provided shape. The shape allows using non-exponential kernels.
@@ -153,7 +226,7 @@ public class TypedEGTF extends EGTF
      * @param tMax Duration; maximum temporal range
      * @param shape KernelShape; shape of the kernel
      */
-    public void setKernelSI(final Length xMax, final Duration tMax, final KernelShape shape)
+    public void setKernel(final Length xMax, final Duration tMax, final KernelShape shape)
     {
         setKernelSI(xMax.si, tMax.si, shape);
     }

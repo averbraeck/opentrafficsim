@@ -5,6 +5,7 @@ import java.util.List;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
@@ -35,11 +36,12 @@ public class MeanIntensity extends AbstractIndicator<Frequency>
 
     /** {@inheritDoc} */
     @Override
-    protected Frequency calculate(Query query, Time startTime, Time endTime, final List<TrajectoryGroup> trajectoryGroups)
+    protected <G extends GtuDataInterface> Frequency calculate(final Query<G> query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         double ttd = this.travelDistance.getValue(query, startTime, endTime, trajectoryGroups).si;
         double area = 0;
-        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
+        for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)
         {
             area += trajectoryGroup.getLength().si * (endTime.si - startTime.si);
         }

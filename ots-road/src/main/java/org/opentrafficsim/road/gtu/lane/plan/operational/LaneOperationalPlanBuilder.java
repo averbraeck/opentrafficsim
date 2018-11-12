@@ -26,7 +26,6 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.math.Solver;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -354,10 +353,10 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         // on successive calls, use laneChange.getDirection() as laneChangeDirectionality is NONE (i.e. no LC initiated)
         LateralDirectionality direction = laneChange.isChangingLane() ? laneChange.getDirection() : laneChangeDirectionality;
 
-        Acceleration acc = gtu.getVehicleModel().boundAcceleration(acceleration, gtu);
-        Duration brakingTime = brakingTime(acc, startSpeed, timeStep);
-        Length planDistance = Length.createSI(startSpeed.si * brakingTime.si + .5 * acc.si * brakingTime.si * brakingTime.si);
-        List<Segment> segmentList = createAccelerationSegments(startSpeed, acc, brakingTime, timeStep);
+        Duration brakingTime = brakingTime(acceleration, startSpeed, timeStep);
+        Length planDistance =
+                Length.createSI(startSpeed.si * brakingTime.si + .5 * acceleration.si * brakingTime.si * brakingTime.si);
+        List<Segment> segmentList = createAccelerationSegments(startSpeed, acceleration, brakingTime, timeStep);
 
         try
         {
@@ -476,6 +475,8 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             final SimpleOperationalPlan simplePlan, final LaneChange laneChange)
             throws ParameterException, GTUException, NetworkException, OperationalPlanException
     {
+        Acceleration acc = gtu.getVehicleModel().boundAcceleration(simplePlan.getAcceleration(), gtu);
+        
         if (INSTANT_LANE_CHANGES)
         {
             if (simplePlan.isLaneChange())
@@ -485,7 +486,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             try
             {
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(),
-                        simplePlan.getAcceleration(), simplePlan.getDuration());
+                        acc, simplePlan.getDuration());
             }
             catch (OTSGeometryException exception)
             {
@@ -497,13 +498,13 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         try
         {
             if ((!simplePlan.isLaneChange() && !laneChange.isChangingLane())
-                    || (gtu.getSpeed().si == 0.0 && simplePlan.getAcceleration().si <= 0.0))
+                    || (gtu.getSpeed().si == 0.0 && acc.si <= 0.0))
             {
                 return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(),
-                        simplePlan.getAcceleration(), simplePlan.getDuration());
+                        acc, simplePlan.getDuration());
             }
             return LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtu, simplePlan.getLaneChangeDirection(),
-                    gtu.getLocation(), startTime, gtu.getSpeed(), simplePlan.getAcceleration(), simplePlan.getDuration(),
+                    gtu.getLocation(), startTime, gtu.getSpeed(), acc, simplePlan.getDuration(),
                     laneChange);
         }
         catch (OTSGeometryException exception)

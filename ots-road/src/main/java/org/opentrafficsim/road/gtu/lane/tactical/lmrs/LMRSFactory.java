@@ -92,13 +92,11 @@ public class LMRSFactory extends AbstractLaneBasedTacticalPlannerFactory<LMRS> i
      * @param mandatoryIncentives mandatory incentives; note that order may matter
      * @param voluntaryIncentives voluntary incentives; note that order may matter
      * @param accelerationIncentives Set&lt;AccelerationIncentive&gt;; acceleration incentives
-     * @throws GTUException if the supplied car-following model does not have an accessible empty constructor
      */
     public LMRSFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
             final PerceptionFactory perceptionFactory, final Synchronization synchronization, final Cooperation cooperation,
             final GapAcceptance gapAcceptance, final Tailgating tailGating, final Set<MandatoryIncentive> mandatoryIncentives,
             final Set<VoluntaryIncentive> voluntaryIncentives, final Set<AccelerationIncentive> accelerationIncentives)
-            throws GTUException
     {
         super(carFollowingModelFactory, perceptionFactory);
         this.synchronization = synchronization;

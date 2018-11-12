@@ -203,7 +203,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                     {
                         NeighborTriplet info = this.anticipation.anticipate(erroneousTriplet(gtu.getDistance().neg(),
                                 gtu.getSpeed(), gtu.getAcceleration(), getError(gtu.getId(), taue, dt), distanceError,
-                                speedError, accelerationError, egoSpeed), d, traveledDistance);
+                                speedError, accelerationError, egoSpeed), d, traveledDistance, false);
                         if (info.getHeadway().le0())
                         {
                             firstFollowersSet.add(gtu.moved(info.getHeadway().neg(), info.getSpeed(), info.getAcceleration()));
@@ -224,7 +224,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                     {
                         NeighborTriplet info = this.anticipation.anticipate(erroneousTriplet(gtu.getDistance(), gtu.getSpeed(),
                                 gtu.getAcceleration(), getError(gtu.getId(), taue, dt), distanceError, speedError,
-                                accelerationError, egoSpeed), d, traveledDistance);
+                                accelerationError, egoSpeed), d, traveledDistance, true);
                         if (info.getHeadway().ge0())
                         {
                             firstLeaderssSet.add(gtu.moved(info.getHeadway(), info.getSpeed(), info.getAcceleration()));
@@ -254,7 +254,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                     NeighborTriplet info = this.anticipation.anticipate(
                             erroneousTriplet(gtu.getDistance().neg(), gtu.getSpeed(), gtu.getAcceleration(),
                                     getError(gtu.getId(), taue, dt), distanceError, speedError, accelerationError, egoSpeed),
-                            d, traveledDistance);
+                            d, traveledDistance, false);
                     if (info.getHeadway().le(length) || lane.isCurrent())
                     {
                         followersSet.add(gtu.moved(info.getHeadway().neg(), info.getSpeed(), info.getAcceleration()));
@@ -276,7 +276,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                     NeighborTriplet info = this.anticipation.anticipate(
                             erroneousTriplet(gtu.getDistance(), gtu.getSpeed(), gtu.getAcceleration(),
                                     getError(gtu.getId(), taue, dt), distanceError, speedError, accelerationError, egoSpeed),
-                            d, traveledDistance);
+                            d, traveledDistance, true);
                     if (info.getHeadway().ge(gtu.getLength().neg()) || lane.isCurrent())
                     {
                         leadersSet.add(gtu.moved(info.getHeadway(), info.getSpeed(), info.getAcceleration()));

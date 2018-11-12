@@ -168,7 +168,6 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
-
         // obtain objects to get info
         getPerception().perceive();
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)

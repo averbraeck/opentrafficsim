@@ -30,15 +30,20 @@ public interface TaskSupplier
      */
     class Constant implements TaskSupplier
     {
+        /** Id. */
+        private final String id;
+
         /** Task demand. */
-        private double taskDemand;
+        private final double taskDemand;
 
         /**
          * Constructor.
+         * @param id String; id
          * @param taskDemand double; task demand
          */
-        public Constant(final double taskDemand)
+        public Constant(final String id, final double taskDemand)
         {
+            this.id = id;
             this.taskDemand = taskDemand;
         }
 
@@ -46,7 +51,7 @@ public interface TaskSupplier
         @Override
         public Task getTask(final LaneBasedGTU gtu)
         {
-            return new Task.Constant(this.taskDemand);
+            return new Task.Constant(this.id, this.taskDemand);
         }
     }
 

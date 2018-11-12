@@ -5,6 +5,7 @@ import java.util.List;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
@@ -35,12 +36,12 @@ public class MeanDensity extends AbstractIndicator<LinearDensity>
 
     /** {@inheritDoc} */
     @Override
-    protected LinearDensity calculate(final Query query, final Time startTime, final Time endTime,
-            final List<TrajectoryGroup> trajectoryGroups)
+    protected <G extends GtuDataInterface> LinearDensity calculate(final Query<G> query, final Time startTime,
+            final Time endTime, final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         double ttt = this.travelTime.getValue(query, startTime, endTime, trajectoryGroups).si;
         double area = 0;
-        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
+        for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)
         {
             area += trajectoryGroup.getLength().si * (endTime.si - startTime.si);
         }

@@ -1189,7 +1189,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                 while (it.hasNext())
                 {
                     KpiLaneDirection lane = it.next();
-                    TrajectoryGroup trajectoryGroup = this.sampler.getTrajectoryGroup(lane);
+                    TrajectoryGroup<?> trajectoryGroup = this.sampler.getTrajectoryGroup(lane);
                     int last = this.lastConsecutivelyAssignedTrajectories.get(lane);
                     SortedSet<Integer> assigned = this.assignedTrajectories.get(lane);
                     if (!this.aggregateLanes)

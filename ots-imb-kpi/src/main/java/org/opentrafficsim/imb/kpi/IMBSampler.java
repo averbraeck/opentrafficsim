@@ -35,14 +35,13 @@ import nl.tudelft.simulation.language.d3.CartesianPoint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
-public class IMBSampler extends Sampler
+public class IMBSampler extends Sampler<GtuData>
 {
     /** The IMBConnector. */
     private final IMBConnector imbConnector;
 
     /** Transceiver of statistics. */
-    private Set<ImbKpiTransceiver> imbKpiTransceivers = new HashSet<>();
+    private Set<ImbKpiTransceiver<GtuData>> imbKpiTransceivers = new HashSet<>();
 
     /** The last received timestamp. */
     private Time lastTimestamp = Time.ZERO;
@@ -204,7 +203,7 @@ public class IMBSampler extends Sampler
         else if (contains(kpiLaneDirection))
         {
             // TEST LOOP
-            for (Trajectory trajectory : getTrajectoryGroup(kpiLaneDirection).getTrajectories())
+            for (Trajectory<GtuData> trajectory : getTrajectoryGroup(kpiLaneDirection).getTrajectories())
             {
                 if (trajectory.getGtuId().equals(gtu.getId()))
                 {
@@ -230,7 +229,7 @@ public class IMBSampler extends Sampler
     /**
      * @param imbKpiTransceiver ImbKpiTransceiver; add imbKpiTransceiver.
      */
-    public void addImbKpiTransceiver(final ImbKpiTransceiver imbKpiTransceiver)
+    public void addImbKpiTransceiver(final ImbKpiTransceiver<GtuData> imbKpiTransceiver)
     {
         this.imbKpiTransceivers.add(imbKpiTransceiver);
     }
@@ -245,7 +244,7 @@ public class IMBSampler extends Sampler
         {
             return;
         }
-        for (ImbKpiTransceiver imbKpiTransceiver : this.imbKpiTransceivers)
+        for (ImbKpiTransceiver<GtuData> imbKpiTransceiver : this.imbKpiTransceivers)
         {
             imbKpiTransceiver.notifyTime(now());
         }

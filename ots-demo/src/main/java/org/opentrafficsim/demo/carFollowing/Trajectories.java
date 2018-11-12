@@ -171,7 +171,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
         RoadSampler sampler = new RoadSampler(simulator);
         Duration updateInterval = Duration.createSI(10.0);
 
-        AbstractPlot plot = new TrajectoryPlot<>("Trajectory Graph", updateInterval, simulator, sampler, graphPath);
+        AbstractPlot plot = new TrajectoryPlot("Trajectory Graph", updateInterval, simulator, sampler, graphPath);
 
         charts.setCell(plot.getContentPane(), 0, 0);
         addTab(getTabCount(), "statistics", charts);

@@ -282,7 +282,7 @@ public class LmrsStrategies implements EventListenerInterface
         boolean autorun = false;
         String suffix = "";
         long seed = 1L;
-        double sigma = 0.1; //0.25;
+        double sigma = 0.1; // 0.25;
         double vGain = 3.3789;
         // 25km/h -> 3.3789
         // 35km/h -> 3.7153
@@ -908,7 +908,7 @@ public class LmrsStrategies implements EventListenerInterface
                 }
             }
             catch (NetworkException | OTSGeometryException | NamingException | ValueException | ParameterException
-                    | GTUException | RemoteException exception)
+                    | RemoteException exception)
             {
                 exception.printStackTrace();
             }

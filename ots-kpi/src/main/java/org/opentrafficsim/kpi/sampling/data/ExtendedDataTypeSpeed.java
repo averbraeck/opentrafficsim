@@ -1,6 +1,8 @@
 package org.opentrafficsim.kpi.sampling.data;
 
+import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.Unit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
@@ -44,6 +46,14 @@ public abstract class ExtendedDataTypeSpeed<G extends GtuDataInterface>
     protected final FloatSpeedVector convert(final float[] storage) throws ValueException
     {
         return new FloatSpeedVector(storage, SpeedUnit.SI, StorageType.DENSE);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>> FloatSpeed interpolate(final FloatSpeed value0,
+            final FloatSpeed value1, final double f)
+    {
+        return FloatSpeed.interpolate(value0, value1, (float) f);
     }
 
 }

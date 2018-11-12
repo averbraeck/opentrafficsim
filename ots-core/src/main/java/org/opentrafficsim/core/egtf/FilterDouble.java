@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.egtf;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -72,7 +73,7 @@ public class FilterDouble implements Filter
     @Override
     public String toString()
     {
-        return "Filter [location=" + this.location + ", time=" + this.time + "]";
+        return "Filter [location=" + Arrays.toString(this.location) + ", time=" + Arrays.toString(this.time) + "]";
     }
 
 }

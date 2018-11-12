@@ -5,7 +5,6 @@ import java.awt.Color;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.opentrafficsim.core.graphs.ContourDataSource.ContourDataType;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
@@ -18,9 +17,8 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <G> sampler GTU data type
  */
-public class ContourPlotDensity<G extends GtuDataInterface> extends AbstractContourPlot<LinearDensity, G>
+public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
 {
 
     /** */
@@ -30,9 +28,9 @@ public class ContourPlotDensity<G extends GtuDataInterface> extends AbstractCont
      * Constructor.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataSource&lt;G&gt;; data pool
+     * @param dataPool ContourDataSource; data pool
      */
-    public ContourPlotDensity(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<G> dataPool)
+    public ContourPlotDensity(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<?> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new LinearDensity(30.0, LinearDensityUnit.PER_KILOMETER),
                 "%.0f/km", "density %.1f veh/km");

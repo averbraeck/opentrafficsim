@@ -549,7 +549,7 @@ public class OperationalPlan implements Serializable
     {
         Throw.when(time.lt(this.getStartTime()), OperationalPlanException.class,
                 "getTravelDistance exception: requested traveled distance before start of plan");
-        Throw.when(time.gt(this.getEndTime()), OperationalPlanException.class,
+        Throw.when(time.si > this.getEndTime().si + 1e-6, OperationalPlanException.class,
                 "getTravelDistance exception: requested traveled distance beyond end of plan");
         if (this.operationalPlanSegmentList.size() == 1)
         {

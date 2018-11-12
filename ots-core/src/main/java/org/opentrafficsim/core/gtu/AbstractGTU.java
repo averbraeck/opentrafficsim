@@ -463,7 +463,15 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             }
             else if (time.si > plan.getEndTime().si)
             {
-                throw new IllegalStateException("Requesting speed value beyond plan.");
+                if (time.si - plan.getEndTime().si < 1e-6)
+                {
+                    this.cachedSpeed = Try.assign(() -> plan.getSpeed(plan.getEndTime()),
+                            "getSpeed() could not derive a valid speed for the current operationalPlan");
+                }
+                else
+                {
+                    throw new IllegalStateException("Requesting speed value beyond plan.");
+                }
             }
             else
             {
@@ -500,7 +508,15 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             }
             else if (time.si > plan.getEndTime().si)
             {
-                throw new IllegalStateException("Requesting acceleration value beyond plan.");
+                if (time.si - plan.getEndTime().si < 1e-6)
+                {
+                    this.cachedAcceleration = Try.assign(() -> plan.getAcceleration(plan.getEndTime()),
+                            "getAcceleration() could not derive a valid acceleration for the current operationalPlan");
+                }
+                else
+                {
+                    throw new IllegalStateException("Requesting acceleration value beyond plan.");
+                }
             }
             else
             {

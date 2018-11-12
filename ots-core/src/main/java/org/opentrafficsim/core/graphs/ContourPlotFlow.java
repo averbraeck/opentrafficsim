@@ -5,7 +5,6 @@ import java.awt.Color;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.core.graphs.ContourDataSource.ContourDataType;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
@@ -18,9 +17,8 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <G> sampler GTU data type
  */
-public class ContourPlotFlow<G extends GtuDataInterface> extends AbstractContourPlot<Frequency, G>
+public class ContourPlotFlow extends AbstractContourPlot<Frequency>
 {
 
     /** */
@@ -32,7 +30,7 @@ public class ContourPlotFlow<G extends GtuDataInterface> extends AbstractContour
      * @param simulator OTSSimulatorInterface; simulator
      * @param dataPool ContourDataSource&lt;G&gt;; data pool
      */
-    public ContourPlotFlow(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<G> dataPool)
+    public ContourPlotFlow(final String caption, final OTSSimulatorInterface simulator, final ContourDataSource<?> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Frequency(500.0, FrequencyUnit.PER_HOUR), "%.0f/h",
                 "flow %.1f veh/h");

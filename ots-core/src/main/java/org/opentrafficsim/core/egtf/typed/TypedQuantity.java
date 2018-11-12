@@ -52,27 +52,26 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U>, K extends Dou
     });
 
     /** Standard quantity for flow. */
-    public static final Quantity<Frequency, FrequencyMatrix> FLOW =
-            new TypedQuantity<>("Flow", false, new Converter<FrequencyMatrix>()
+    public static final Quantity<Frequency, FrequencyMatrix> FLOW = new TypedQuantity<>("Flow", new Converter<FrequencyMatrix>()
+    {
+        @Override
+        public FrequencyMatrix convert(final double[][] data)
+        {
+            try
             {
-                @Override
-                public FrequencyMatrix convert(final double[][] data)
-                {
-                    try
-                    {
-                        return new FrequencyMatrix(data, FrequencyUnit.SI, StorageType.DENSE);
-                    }
-                    catch (ValueException exception)
-                    {
-                        // should not happen
-                        throw new RuntimeException("Unexcepted exception: data is null when converting.", exception);
-                    }
-                }
-            });
+                return new FrequencyMatrix(data, FrequencyUnit.SI, StorageType.DENSE);
+            }
+            catch (ValueException exception)
+            {
+                // should not happen
+                throw new RuntimeException("Unexcepted exception: data is null when converting.", exception);
+            }
+        }
+    });
 
     /** Standard quantity for density. */
     public static final Quantity<LinearDensity, LinearDensityMatrix> DENSITY =
-            new TypedQuantity<>("Density", false, new Converter<LinearDensityMatrix>()
+            new TypedQuantity<>("Density", new Converter<LinearDensityMatrix>()
             {
                 @Override
                 public LinearDensityMatrix convert(final double[][] data)
@@ -88,7 +87,7 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U>, K extends Dou
                     }
                 }
             });
-    
+
     /**
      * Constructor.
      * @param name String; name

@@ -15,10 +15,10 @@ public interface KernelShape
     /**
      * Calculates a weight.
      * @param c double; assumed propagation speed
-     * @param dt double; time between measurement and estimated point
      * @param dx double; distance between measurement and estimated point
+     * @param dt double; time between measurement and estimated point
      * @return double; weight
      */
-    double weight(double c, double dt, double dx);
+    double weight(double c, double dx, double dt);
 
 }

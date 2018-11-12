@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -26,12 +27,12 @@ public class MeanTripLength extends AbstractIndicator<Length>
 
     /** {@inheritDoc} */
     @Override
-    protected Length calculate(final Query query, final Time startTime, final Time endTime,
-            final List<TrajectoryGroup> trajectoryGroups)
+    protected <G extends GtuDataInterface> Length calculate(final Query<G> query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Length sum = Length.ZERO;
         Set<String> gtuIds = new HashSet<>();
-        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
+        for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)
         {
             for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {

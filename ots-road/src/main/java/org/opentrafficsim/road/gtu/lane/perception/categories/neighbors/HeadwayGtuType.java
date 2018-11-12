@@ -5,7 +5,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation.NeighborTriplet;
@@ -219,7 +218,7 @@ public interface HeadwayGtuType
                 this.traveledDistance = perceivingGtu.getOdometer().minus(perceivingGtu.getOdometer(this.when));
             }
             NeighborTriplet triplet = this.estimation.estimate(perceivingGtu, perceivedGtu, distance, downstream, this.when);
-            triplet = this.anticipation.anticipate(triplet, this.tr, this.traveledDistance);
+            triplet = this.anticipation.anticipate(triplet, this.tr, this.traveledDistance, downstream);
             return new HeadwayGTUPerceived(perceivedGtu, triplet.getHeadway(), triplet.getSpeed(), triplet.getAcceleration());
         }
 
@@ -228,7 +227,7 @@ public interface HeadwayGtuType
         public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
                 final Length distance) throws GTUException, ParameterException
         {
-            return null;
+            return createHeadwayGtu(perceivingGtu, perceivedGtu, distance, true);
         }
 
         /** {@inheritDoc} */
@@ -236,7 +235,7 @@ public interface HeadwayGtuType
         public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
                 final Length distance) throws GTUException, ParameterException
         {
-            return null;
+            return createHeadwayGtu(perceivingGtu, perceivedGtu, distance, false);
         }
 
         /** {@inheritDoc} */

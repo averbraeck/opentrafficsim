@@ -29,13 +29,13 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.graphs.GraphPath;
 import org.opentrafficsim.core.graphs.AbstractPlot;
 import org.opentrafficsim.core.graphs.ContourDataSource;
 import org.opentrafficsim.core.graphs.ContourPlotAcceleration;
 import org.opentrafficsim.core.graphs.ContourPlotDensity;
 import org.opentrafficsim.core.graphs.ContourPlotFlow;
 import org.opentrafficsim.core.graphs.ContourPlotSpeed;
+import org.opentrafficsim.core.graphs.GraphPath;
 import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -60,7 +60,6 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -231,7 +230,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
             throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
         RoadSampler sampler = new RoadSampler(simulator);
-        ContourDataSource<GtuData> dataPool = new ContourDataSource<>(sampler, path);
+        ContourDataSource dataPool = new ContourDataSource(sampler, path);
         for (int i = 0; i < graphCount; i++)
         {
 
@@ -239,25 +238,25 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
             AbstractPlot plot = null;
             if (graphName.equals("TrajectoryPlot"))
             {
-                plot = new TrajectoryPlot<>(graphName, Duration.createSI(10.0), simulator, sampler, path);
+                plot = new TrajectoryPlot(graphName, Duration.createSI(10.0), simulator, sampler, path);
             }
             else
             {
                 if (graphName.contains("DensityPlot"))
                 {
-                    plot = new ContourPlotDensity<>(graphName, simulator, dataPool);
+                    plot = new ContourPlotDensity(graphName, simulator, dataPool);
                 }
                 else if (graphName.contains("SpeedPlot"))
                 {
-                    plot = new ContourPlotSpeed<>(graphName, simulator, dataPool);
+                    plot = new ContourPlotSpeed(graphName, simulator, dataPool);
                 }
                 else if (graphName.contains("FlowPlot"))
                 {
-                    plot = new ContourPlotFlow<>(graphName, simulator, dataPool);
+                    plot = new ContourPlotFlow(graphName, simulator, dataPool);
                 }
                 else if (graphName.contains("AccelerationPlot"))
                 {
-                    plot = new ContourPlotAcceleration<>(graphName, simulator, dataPool);
+                    plot = new ContourPlotAcceleration(graphName, simulator, dataPool);
                 }
                 else
                 {

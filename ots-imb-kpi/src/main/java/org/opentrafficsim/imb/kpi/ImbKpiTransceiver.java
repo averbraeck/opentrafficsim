@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
@@ -255,8 +256,9 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 16, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <G> gtu daat type
  */
-public class ImbKpiTransceiver implements Serializable
+public class ImbKpiTransceiver<G extends GtuDataInterface> implements Serializable
 {
 
     /** */
@@ -266,7 +268,7 @@ public class ImbKpiTransceiver implements Serializable
     private final Connector connector;
 
     /** The query for the statistic. */
-    private final Query query;
+    private final Query<G> query;
 
     /** The Network id for which the graph is made. */
     private final String networkId;
@@ -309,7 +311,7 @@ public class ImbKpiTransceiver implements Serializable
      * @param transmissionInterval Duration; the interval between generation of graphs
      * @throws IMBException when the post of the IMB message fails
      */
-    public ImbKpiTransceiver(final Connector connector, Time time, String networkId, final Query query,
+    public ImbKpiTransceiver(final Connector connector, Time time, String networkId, final Query<G> query,
             final Duration transmissionInterval) throws IMBException
     {
         this.connector = connector;
@@ -356,7 +358,7 @@ public class ImbKpiTransceiver implements Serializable
      */
     public void sendStatisticsUpdate() throws IMBException
     {
-        List<TrajectoryGroup> groups = this.query.getTrajectoryGroups(this.updateTime);
+        List<TrajectoryGroup<G>> groups = this.query.getTrajectoryGroups(this.updateTime);
         Length tdist = this.totalTravelDistance.getValue(this.query, this.updateTime, groups);
         Duration ttt = this.totalTravelTime.getValue(this.query, this.updateTime, groups);
         Speed ms = this.meanSpeed.getValue(this.query, this.updateTime, groups);

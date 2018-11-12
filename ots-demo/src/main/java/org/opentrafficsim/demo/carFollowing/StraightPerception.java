@@ -38,13 +38,13 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.graphs.GraphPath;
 import org.opentrafficsim.core.graphs.AbstractPlot;
 import org.opentrafficsim.core.graphs.ContourDataSource;
 import org.opentrafficsim.core.graphs.ContourPlotAcceleration;
 import org.opentrafficsim.core.graphs.ContourPlotDensity;
 import org.opentrafficsim.core.graphs.ContourPlotFlow;
 import org.opentrafficsim.core.graphs.ContourPlotSpeed;
+import org.opentrafficsim.core.graphs.GraphPath;
 import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -83,7 +83,6 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
-import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -278,7 +277,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
             throw new OTSSimulationException(exception);
         }
         RoadSampler sampler = new RoadSampler(simulator);
-        ContourDataSource<GtuData> dataPool = new ContourDataSource<>(sampler, graphPath);
+        ContourDataSource dataPool = new ContourDataSource(sampler, graphPath);
         Duration updateInterval = Duration.createSI(10.0);
 
         for (int i = 0; i < graphCount; i++)
@@ -287,25 +286,25 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
             AbstractPlot plot = null;
             if (graphName.contains("TrajectoryPlot"))
             {
-                plot = new TrajectoryPlot<>("Trajectory Graph", updateInterval, simulator, sampler, graphPath);
+                plot = new TrajectoryPlot("Trajectory Graph", updateInterval, simulator, sampler, graphPath);
             }
             else
             {
                 if (graphName.contains("DensityPlot"))
                 {
-                    plot = new ContourPlotDensity<>(graphName, simulator, dataPool);
+                    plot = new ContourPlotDensity(graphName, simulator, dataPool);
                 }
                 else if (graphName.contains("SpeedPlot"))
                 {
-                    plot = new ContourPlotSpeed<>(graphName, simulator, dataPool);
+                    plot = new ContourPlotSpeed(graphName, simulator, dataPool);
                 }
                 else if (graphName.contains("FlowPlot"))
                 {
-                    plot = new ContourPlotFlow<>(graphName, simulator, dataPool);
+                    plot = new ContourPlotFlow(graphName, simulator, dataPool);
                 }
                 else if (graphName.contains("AccelerationPlot"))
                 {
-                    plot = new ContourPlotAcceleration<>(graphName, simulator, dataPool);
+                    plot = new ContourPlotAcceleration(graphName, simulator, dataPool);
                 }
                 else
                 {

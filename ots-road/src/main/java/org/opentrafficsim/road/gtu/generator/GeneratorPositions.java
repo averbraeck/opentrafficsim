@@ -22,6 +22,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -77,6 +78,7 @@ public final class GeneratorPositions implements Locatable
      * @param biases LaneBiases; lane biases for GTU types
      * @param stream StreamInterface; stream for random numbers
      */
+    @SuppressWarnings("synthetic-access")
     private GeneratorPositions(final GeneratorZonePosition position, final LaneBiases biases, final StreamInterface stream)
     {
         this.position = position;
@@ -416,7 +418,7 @@ public final class GeneratorPositions implements Locatable
     {
 
         /** Contained lanes. */
-        final List<GeneratorLanePosition> positions;
+        private final List<GeneratorLanePosition> positions;
 
         /** The link. */
         private final CrossSectionLink link;
@@ -504,8 +506,9 @@ public final class GeneratorPositions implements Locatable
         GeneratorLanePosition draw(final GTUType gtuType, final StreamInterface stream, final LaneBiases biases,
                 final Map<Integer, Integer> unplaced, final Speed desiredSpeed)
         {
-            double[] cumulWeights = new double[this.positions.size()];
-            double totalWeight = 0.0;
+            Map<GeneratorLanePosition, Double> map = new LinkedHashMap<>();
+//            double[] cumulWeights = new double[this.positions.size()];
+//            double totalWeight = 0.0;
             for (int i = 0; i < this.positions.size(); i++)
             {
                 GeneratorLanePosition lanePosition = this.positions.get(i);
@@ -520,27 +523,31 @@ public final class GeneratorPositions implements Locatable
                             found = true;
                             int laneNum = lanePosition.getLaneNumber();
                             int unplacedTemplates = unplaced == null ? 0 : unplaced.getOrDefault(laneNum, 0);
-                            totalWeight += biases.getBias(type).calculateWeight(laneNum, getNumberOfLanes(gtuType),
+                            double w = biases.getBias(type).calculateWeight(laneNum, getNumberOfLanes(gtuType),
                                     unplacedTemplates, desiredSpeed);
+                            map.put(lanePosition, w);
+//                            totalWeight += w;
                         }
                         type = type.getParent();
                     }
                     if (!found)
                     {
-                        totalWeight += 1.0; // no bias for this GTU type
+                        map.put(lanePosition, 1.0);
+//                        totalWeight += 1.0; // no bias for this GTU type
                     }
-                    cumulWeights[i] = totalWeight;
+//                    cumulWeights[i] = totalWeight;
                 }
             }
-            double r = totalWeight * stream.nextDouble();
-            for (int i = 0; i < this.positions.size(); i++)
-            {
-                if (r <= cumulWeights[i])
-                {
-                    return this.positions.get(i);
-                }
-            }
-            return this.positions.get(this.positions.size() - 1);
+            return Draw.drawWeighted(map, stream);
+//            double r = totalWeight * stream.nextDouble();
+//            for (int i = 0; i < this.positions.size(); i++)
+//            {
+//                if (r <= cumulWeights[i])
+//                {
+//                    return this.positions.get(i);
+//                }
+//            }
+//            return this.positions.get(this.positions.size() - 1);
         }
 
         /**
@@ -577,7 +584,7 @@ public final class GeneratorPositions implements Locatable
     {
 
         /** Contained links. */
-        final List<GeneratorLinkPosition> positions;
+        private final List<GeneratorLinkPosition> positions;
 
         /**
          * Constructor.
@@ -605,8 +612,9 @@ public final class GeneratorPositions implements Locatable
         GeneratorLanePosition draw(final GTUType gtuType, final StreamInterface stream, final LaneBiases biases,
                 final Map<CrossSectionLink, Map<Integer, Integer>> unplaced, final Speed desiredSpeed, final Route route)
         {
-            double[] cumulWeights = new double[this.positions.size()];
-            double totalWeight = 0.0;
+            Map<GeneratorLinkPosition, Double> map = new LinkedHashMap<>();
+//            double[] cumulWeights = new double[this.positions.size()];
+//            double totalWeight = 0.0;
             for (int i = 0; i < this.positions.size(); i++)
             {
                 Link link = this.positions.get(i).getLink();
@@ -617,26 +625,32 @@ public final class GeneratorPositions implements Locatable
                     int to = route.indexOf(direction.isPlus() ? link.getEndNode() : link.getStartNode());
                     if (from > -1 && to > -1 && to - from == 1)
                     {
-                        totalWeight += this.positions.get(i).getWeight(gtuType); // else, no weight
+                        map.put(this.positions.get(i), this.positions.get(i).getWeight(gtuType));
+//                        totalWeight += this.positions.get(i).getWeight(gtuType); // else, no weight
                     }
                 }
                 else
                 {
-                    totalWeight += this.positions.get(i).getWeight(gtuType); // no route, consider all locations
+                    map.put(this.positions.get(i), this.positions.get(i).getWeight(gtuType));
+//                    totalWeight += this.positions.get(i).getWeight(gtuType); // no route, consider all locations
                 }
-                cumulWeights[i] = totalWeight;
+//                cumulWeights[i] = totalWeight;
             }
-            double r = totalWeight * stream.nextDouble();
-            for (int i = 0; i < this.positions.size(); i++)
-            {
-                if (r <= cumulWeights[i])
-                {
-                    GeneratorLinkPosition position = this.positions.get(i);
-                    return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()), desiredSpeed);
-                }
-            }
-            GeneratorLinkPosition position = this.positions.get(this.positions.size() - 1);
-            return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()), desiredSpeed);
+
+            GeneratorLinkPosition linkPosition = Draw.drawWeighted(map, stream);
+            return linkPosition.draw(gtuType, stream, biases, unplaced.get(linkPosition.getLink()), desiredSpeed);
+
+//            double r = totalWeight * stream.nextDouble();
+//            for (int i = 0; i < this.positions.size(); i++)
+//            {
+//                if (r <= cumulWeights[i])
+//                {
+//                    GeneratorLinkPosition position = this.positions.get(i);
+//                    return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()), desiredSpeed);
+//                }
+//            }
+//            GeneratorLinkPosition position = this.positions.get(this.positions.size() - 1);
+//            return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()), desiredSpeed);
         }
 
         /** {@inheritDoc} */
@@ -932,7 +946,7 @@ public final class GeneratorPositions implements Locatable
          * @param desiredSpeed Speed; desired speed at the generator
          * @return road position (0.0 = right, 1.0 = left)
          */
-        double getValue(final Speed desiredSpeed);
+        double getValue(Speed desiredSpeed);
 
         /**
          * Fixed road position.

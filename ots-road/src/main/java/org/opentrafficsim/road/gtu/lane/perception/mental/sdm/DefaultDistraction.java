@@ -30,7 +30,7 @@ public enum DefaultDistraction
     DRINKING("4", "Drinking", freq(1028, 0.729), 0.729, dur(5.23), dur(7.4)),
 
     /** Manipulating audio controls. */
-    MANIPULATNING_AUDIO_CONTROLS("5", "Manipulating audio controls", freq(1539, 0.943), 0.943, dur(5.46), dur(8.63)),
+    MANIPULATING_AUDIO_CONTROLS("5", "Manipulating audio controls", freq(1539, 0.943), 0.943, dur(5.46), dur(8.63)),
 
     /** Smoking. */
     SMOKING("6", "Smoking", freq(45, 0.071), 0.071, dur(245.81), dur(162.95)),
@@ -57,7 +57,7 @@ public enum DefaultDistraction
     REACHING("13", "Reaching", freq(2246, 1.0), 1.0, dur(7.58), dur(36.7)),
 
     /** Manipulating vehicle controls. */
-    MANUPULATING_VEHICLE_CONTROLS("14", "Manipulating vehicle controls", freq(2095, 1.0), 1.0, dur(4.82), dur(11.53)),
+    MANIPULATING_VEHICLE_CONTROLS("14", "Manipulating vehicle controls", freq(2095, 1.0), 1.0, dur(4.82), dur(11.53)),
 
     /** Internal distraction. */
     INTERNAL_DISTRACTION("15", "Internal distraction", freq(481, 0.814), 0.814, dur(21.55), dur(46.38)),
@@ -69,7 +69,7 @@ public enum DefaultDistraction
     PREPARING_EAT_DRINK("17", "Preparing to eat / drink", freq(1503, 0.614), 0.614, dur(15.4), dur(34.7));
 
     /** Total time of data with which frequencies are determined. */
-    private static double baselineDurationSeconds = 207.14 * 3600.0;
+    private static final double BASELINE_DURATION_SECONDS = 207.14 * 3600.0;
 
     /** Id. */
     private final String id;
@@ -117,7 +117,7 @@ public enum DefaultDistraction
      */
     private static Frequency freq(final int occurrences, final double exposure)
     {
-        return Frequency.createSI(occurrences / (baselineDurationSeconds * exposure));
+        return Frequency.createSI(occurrences / (BASELINE_DURATION_SECONDS * exposure));
     }
 
     /**
@@ -182,6 +182,16 @@ public enum DefaultDistraction
     public Duration getStdDuration()
     {
         return this.stdDuration;
+    }
+
+    /**
+     * Returns a default distraction from the id.
+     * @param id String; id
+     * @return DefaultDistraction; default distraction from id
+     */
+    public static DefaultDistraction getFromId(final String id)
+    {
+        return values()[Integer.parseInt(id) - 1];
     }
 
 }

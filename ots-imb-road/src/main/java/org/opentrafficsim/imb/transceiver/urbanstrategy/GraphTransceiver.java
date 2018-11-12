@@ -257,13 +257,13 @@ public class GraphTransceiver extends AbstractTransceiver
         }
         else if (plot instanceof AbstractContourPlot)
         {
-            newMessage.add(((AbstractContourPlot<?, ?>) plot).getTimeGranularity());
+            newMessage.add(((AbstractContourPlot<?>) plot).getTimeGranularity());
         }
         else
         {
             newMessage.add(0.0d);
         }
-        newMessage.add(plot instanceof AbstractContourPlot ? ((AbstractContourPlot<?, ?>) plot).getSpaceGranularity() : 0.0d);
+        newMessage.add(plot instanceof AbstractContourPlot ? ((AbstractContourPlot<?>) plot).getSpaceGranularity() : 0.0d);
         newMessage.add(this.network.getId());
         newMessage.add(0); // WS not all plots have a path
         // newMessage.add(plot.getPath().size());
