@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -24,11 +25,11 @@ public class TotalTravelTime extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    protected Duration calculate(final Query query, final Time startTime, final Time endTime,
-            final List<TrajectoryGroup> trajectoryGroups)
+    protected <G extends GtuDataInterface> Duration calculate(final Query<G> query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Duration sum = Duration.ZERO;
-        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
+        for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)
         {
             for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {

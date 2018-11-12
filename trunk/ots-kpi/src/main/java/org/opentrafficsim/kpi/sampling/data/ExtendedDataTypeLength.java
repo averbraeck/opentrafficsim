@@ -1,6 +1,8 @@
 package org.opentrafficsim.kpi.sampling.data;
 
+import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.Unit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vfloat.scalar.FloatLength;
@@ -44,6 +46,14 @@ public abstract class ExtendedDataTypeLength<G extends GtuDataInterface>
     protected final FloatLengthVector convert(final float[] storage) throws ValueException
     {
         return new FloatLengthVector(storage, LengthUnit.SI, StorageType.DENSE);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public <AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>> FloatLength interpolate(final FloatLength value0,
+            final FloatLength value1, final double f)
+    {
+        return FloatLength.interpolate(value0, value1, (float) f);
     }
 
 }

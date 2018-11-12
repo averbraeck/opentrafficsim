@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance.egoAcceleration;
-
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -64,7 +62,7 @@ public interface GapAcceptance
             Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
             for (HeadwayGTU follower : neighbors.getFirstFollowers(lat))
             {
-                if (follower.getSpeed().gt0() || follower.getAcceleration().gt0())
+                if (follower.getSpeed().gt0() || follower.getAcceleration().gt0() || follower.getDistance().si < 1.0)
                 {
                     Acceleration a = LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire,
                             follower.getParameters(), follower.getSpeedLimitInfo(), follower.getCarFollowingModel());

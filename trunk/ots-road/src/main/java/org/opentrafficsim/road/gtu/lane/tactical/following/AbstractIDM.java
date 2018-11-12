@@ -112,7 +112,7 @@ public abstract class AbstractIDM extends AbstractCarFollowingModel
         // limit deceleration in free term (occurs if speed > desired speed)
         aFree = aFree > -b0.si ? aFree : -b0.si;
         // return free term if there are no leaders
-        if (!leaders.iterator().hasNext())
+        if (leaders.isEmpty())
         {
             return Acceleration.createSI(aFree);
         }

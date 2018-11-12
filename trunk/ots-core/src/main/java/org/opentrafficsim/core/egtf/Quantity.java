@@ -17,10 +17,10 @@ public class Quantity<T extends Number, K>
     public static final Quantity<Double, double[][]> SPEED_SI = new Quantity<>("Speed", true, Converter.SI);
 
     /** Standard quantity for flow. */
-    public static final Quantity<Double, double[][]> FLOW_SI = new Quantity<>("Flow", false, Converter.SI);
+    public static final Quantity<Double, double[][]> FLOW_SI = new Quantity<>("Flow", Converter.SI);
 
     /** Standard quantity for density. */
-    public static final Quantity<Double, double[][]> DENSITY_SI = new Quantity<>("Density", false, Converter.SI);
+    public static final Quantity<Double, double[][]> DENSITY_SI = new Quantity<>("Density", Converter.SI);
 
     /** Name. */
     private final String name;
@@ -42,7 +42,7 @@ public class Quantity<T extends Number, K>
     }
 
     /**
-     * Constructor. Protected so only the default SPEED quantity is speed.
+     * Constructor. Protected so only the default SPEED_SI quantity is speed.
      * @param name String; name
      * @param speed boolean; whether this quantity is speed
      * @param converter Converter&lt;K&gt;; converter for output format

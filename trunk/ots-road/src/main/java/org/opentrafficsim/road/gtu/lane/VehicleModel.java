@@ -24,6 +24,13 @@ public interface VehicleModel
         {
             return acceleration;
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "VehicleModel [None]";
+        }
     };
 
     /** Acceleration bounded by GTU min and max acceleration. */
@@ -35,6 +42,13 @@ public interface VehicleModel
             return acceleration.si > gtu.getMaximumDeceleration().si
                     ? (acceleration.si < gtu.getMaximumAcceleration().si ? acceleration : gtu.getMaximumAcceleration())
                     : gtu.getMaximumDeceleration();
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "VehicleModel [MinMax]";
         }
     };
 

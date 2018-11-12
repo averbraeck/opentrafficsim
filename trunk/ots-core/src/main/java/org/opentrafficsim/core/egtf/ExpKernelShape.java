@@ -31,9 +31,9 @@ public class ExpKernelShape implements KernelShape
 
     /** {@inheritDoc} */
     @Override
-    public double weight(final double c, final double dt, final double dx)
+    public double weight(final double c, final double dx, final double dt)
     {
-        return Math.exp(-Math.abs(dx) / this.sigma - (Math.abs(dt - dx / c)) / this.tau);
+        return Math.exp(-Math.abs(dx) / this.sigma - Math.abs(dt - dx / c) / this.tau);
     }
 
     /** {@inheritDoc} */

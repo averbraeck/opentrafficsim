@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.vector.SpeedVector;
+import org.opentrafficsim.core.graphs.BoundsPaintScale;
 import org.opentrafficsim.core.gtu.GTU;
 
 /**
@@ -40,11 +43,11 @@ public class SpeedGTUColorer implements GTUColorer, Serializable
         this.maximumSpeed = maximumSpeed;
         this.legend = new ArrayList<>(4);
         Color[] colorTable = { Color.RED, Color.YELLOW, Color.GREEN };
-        Speed zeroValue = new Speed(0, maximumSpeed.getUnit());
+        Speed zeroSpeed = new Speed(0.0, SpeedUnit.KM_PER_HOUR);
         for (int index = 0; index < colorTable.length; index++)
         {
             double ratio = index * 1.0 / (colorTable.length - 1);
-            Speed speed = Speed.interpolate(zeroValue, maximumSpeed, ratio);
+            Speed speed = Speed.interpolate(zeroSpeed, maximumSpeed, ratio);
             String label = speed.toString().replaceFirst("\\.0*|,0*", ".0");
             this.legend.add(new LegendEntry(colorTable[index], label, index == 0 ? "stationary" : "driving " + label));
         }

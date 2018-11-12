@@ -824,7 +824,7 @@ public final class Trajectory<G extends GtuDataInterface>
                                         edt.getStorageValue(fromList, bounds.from + 1), bounds.fFrom));
                         j++;
                     }
-                    for (int i = bounds.from + 1; i < bounds.to; i++)
+                    for (int i = bounds.from + 1; i <= bounds.to; i++)
                     {
                         toList = edt.setValue(toList, j, edt.getStorageValue(fromList, i));
                         j++;

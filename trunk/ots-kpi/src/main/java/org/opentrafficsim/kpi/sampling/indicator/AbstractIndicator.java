@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
@@ -26,7 +27,7 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
 {
 
     /** Last query. */
-    private Query lastQuery;
+    private Query<?> lastQuery;
 
     /** Last start time. */
     private Time lastStartTime;
@@ -43,9 +44,11 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
      * @param query Query; query
      * @param endTime Time; start time of interval to calculate indicator over
      * @param trajectoryGroups List&lt;TrajectoryGroup&gt;; group of trajectories to calculate the indicator for
+     * @param <G> gtu data type
      * @return value for given query
      */
-    public final T getValue(final Query query, final Time endTime, final List<TrajectoryGroup> trajectoryGroups)
+    public final <G extends GtuDataInterface> T getValue(final Query<G> query, final Time endTime,
+            final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         return getValue(query, Time.ZERO, endTime, trajectoryGroups);
     }
@@ -56,10 +59,11 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
      * @param startTime Time; start time of interval to calculate indicator over
      * @param endTime Time; start time of interval to calculate indicator over
      * @param trajectoryGroups List&lt;TrajectoryGroup&gt;; group of trajectories to calculate the indicator for
+     * @param <G> gtu data type
      * @return value for given query
      */
-    public final T getValue(final Query query, final Time startTime, final Time endTime,
-            final List<TrajectoryGroup> trajectoryGroups)
+    public final <G extends GtuDataInterface> T getValue(final Query<G> query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Throw.whenNull(query, "Query may not be null.");
         Throw.whenNull(startTime, "Start time may not be null.");
@@ -81,9 +85,10 @@ public abstract class AbstractIndicator<T extends DoubleScalarInterface>
      * @param startTime Time; start time of interval to calculate indicator over
      * @param endTime Time; start time of interval to calculate indicator over
      * @param trajectoryGroups List&lt;TrajectoryGroup&gt;; group of trajectories to calculate the indicator for
+     * @param <G> gtu data type
      * @return value for given trajectory group
      */
-    protected abstract T calculate(final Query query, final Time startTime, final Time endTime,
-            final List<TrajectoryGroup> trajectoryGroups);
+    protected abstract <G extends GtuDataInterface> T calculate(final Query<G> query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup<G>> trajectoryGroups);
 
 }

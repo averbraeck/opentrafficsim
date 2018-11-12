@@ -31,6 +31,7 @@ import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
@@ -236,10 +237,11 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
 
     TotalNumberOfStops totalNumberOfStops = new TotalNumberOfStops();
 
-    public void publishKpis(double time, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Query query)
+    public <G extends GtuDataInterface> void publishKpis(double time, final DEVSSimulatorInterface.TimeDoubleUnit simulator,
+            final Query<G> query)
     {
         Time t = new Time(time, TimeUnit.BASE_SECOND);
-        List<TrajectoryGroup> groups = query.getTrajectoryGroups(t);
+        List<TrajectoryGroup<G>> groups = query.getTrajectoryGroups(t);
         Length tdist = this.totalTravelDistance.getValue(query, t, groups);
         Duration ttt = this.totalTravelTime.getValue(query, t, groups);
         Speed ms = this.meanSpeed.getValue(query, t, groups);
@@ -258,7 +260,7 @@ public class TestXMLParserKPIs extends AbstractWrappableAnimation
         scheduleKpiEvent(time + 30, simulator, query);
     }
 
-    public void scheduleKpiEvent(double time, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Query query)
+    public void scheduleKpiEvent(double time, final DEVSSimulatorInterface.TimeDoubleUnit simulator, final Query<?> query)
     {
         try
         {

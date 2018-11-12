@@ -35,6 +35,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;

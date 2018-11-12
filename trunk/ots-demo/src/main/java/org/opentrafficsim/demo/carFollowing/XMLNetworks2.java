@@ -170,7 +170,7 @@ public class XMLNetworks2 extends AbstractWrappableAnimation implements UNITS
                 throw new RuntimeException(exception);
             }
             AbstractPlot plot =
-                    new TrajectoryPlot<>("Trajectories on lane " + (graphIndex + 1), updateInterval, simulator, sampler, path);
+                    new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), updateInterval, simulator, sampler, path);
             charts.setCell(plot.getContentPane(), graphIndex % columns, graphIndex / columns);
         }
         addTab(getTabCount(), "statistics", charts);

@@ -16,6 +16,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
@@ -36,14 +37,15 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <G> gtu data type
  */
-public final class Query implements Identifiable
+public final class Query<G extends GtuDataInterface> implements Identifiable
 {
     /** unique id. */
     private final String id;
 
     /** Sampling. */
-    private final Sampler<?> sampler;
+    private final Sampler<G> sampler;
 
     /** Description. */
     private final String description;
@@ -67,7 +69,7 @@ public final class Query implements Identifiable
      * @param metaDataSet MetaDataSet; meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet)
+    public Query(final Sampler<G> sampler, final String id, final String description, final MetaDataSet metaDataSet)
     {
         this(sampler, description, metaDataSet, null, null);
     }
@@ -80,7 +82,7 @@ public final class Query implements Identifiable
      * @param interval Duration; interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<G> sampler, final String id, final String description, final MetaDataSet metaDataSet,
             final Duration interval)
     {
         this(sampler, id, description, metaDataSet, null, interval);
@@ -94,7 +96,7 @@ public final class Query implements Identifiable
      * @param updateFrequency Frequency; update frequency
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<G> sampler, final String id, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency)
     {
         this(sampler, id, description, metaDataSet, updateFrequency, null);
@@ -109,7 +111,7 @@ public final class Query implements Identifiable
      * @param interval Duration; interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler<?> sampler, final String id, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<G> sampler, final String id, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
         Throw.whenNull(sampler, "Sampling may not be null.");
@@ -125,24 +127,24 @@ public final class Query implements Identifiable
     }
 
     /**
-     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
      * @param metaDataSet MetaDataSet; meta data
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet)
+    public Query(final Sampler<G> sampler, final String description, final MetaDataSet metaDataSet)
     {
         this(sampler, null, description, metaDataSet, null, null);
     }
 
     /**
-     * @param sampler Sampler&lt;?&gt;; sampler
+     * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
      * @param metaDataSet MetaDataSet; meta data
      * @param interval Duration; interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet, final Duration interval)
+    public Query(final Sampler<G> sampler, final String description, final MetaDataSet metaDataSet, final Duration interval)
     {
         this(sampler, null, description, metaDataSet, null, interval);
     }
@@ -154,7 +156,7 @@ public final class Query implements Identifiable
      * @param updateFrequency Frequency; update frequency
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<G> sampler, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency)
     {
         this(sampler, null, description, metaDataSet, updateFrequency, null);
@@ -168,7 +170,7 @@ public final class Query implements Identifiable
      * @param interval Duration; interval to gather statistics over
      * @throws NullPointerException if sampling, description or metaDataSet is null
      */
-    public Query(final Sampler<?> sampler, final String description, final MetaDataSet metaDataSet,
+    public Query(final Sampler<G> sampler, final String description, final MetaDataSet metaDataSet,
             final Frequency updateFrequency, final Duration interval)
     {
         this(sampler, null, description, metaDataSet, updateFrequency, interval);
@@ -301,7 +303,7 @@ public final class Query implements Identifiable
      * @param <T> underlying class of meta data type and its value
      * @return list of trajectory groups in accordance with the query
      */
-    public <T> List<TrajectoryGroup> getTrajectoryGroups(final Time endTime)
+    public <T> List<TrajectoryGroup<G>> getTrajectoryGroups(final Time endTime)
     {
         return getTrajectoryGroups(Time.ZERO, endTime);
     }
@@ -316,28 +318,28 @@ public final class Query implements Identifiable
      * @return list of trajectory groups in accordance with the query
      */
     @SuppressWarnings("unchecked")
-    public <T> List<TrajectoryGroup> getTrajectoryGroups(final Time startTime, final Time endTime)
+    public <T> List<TrajectoryGroup<G>> getTrajectoryGroups(final Time startTime, final Time endTime)
     {
         Throw.whenNull(startTime, "Start t may not be null.");
         Throw.whenNull(endTime, "End t may not be null.");
         // Step 1) gather trajectories per GTU, truncated over space and time
         Map<String, TrajectoryAcceptList> trajectoryAcceptLists = new HashMap<>();
-        List<TrajectoryGroup> trajectoryGroupList = new ArrayList<>();
+        List<TrajectoryGroup<G>> trajectoryGroupList = new ArrayList<>();
         for (SpaceTimeRegion spaceTimeRegion : this.spaceTimeRegions)
         {
             Time start = startTime.gt(spaceTimeRegion.getStartTime()) ? startTime : spaceTimeRegion.getStartTime();
             Time end = endTime.lt(spaceTimeRegion.getEndTime()) ? endTime : spaceTimeRegion.getEndTime();
-            TrajectoryGroup trajectoryGroup;
+            TrajectoryGroup<G> trajectoryGroup;
             if (this.sampler.getTrajectoryGroup(spaceTimeRegion.getLaneDirection()) == null)
             {
-                trajectoryGroup = new TrajectoryGroup(start, spaceTimeRegion.getLaneDirection());
+                trajectoryGroup = new TrajectoryGroup<>(start, spaceTimeRegion.getLaneDirection());
             }
             else
             {
                 trajectoryGroup = this.sampler.getTrajectoryGroup(spaceTimeRegion.getLaneDirection())
                         .getTrajectoryGroup(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
             }
-            for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
+            for (Trajectory<G> trajectory : trajectoryGroup.getTrajectories())
             {
                 if (!trajectoryAcceptLists.containsKey(trajectory.getGtuId()))
                 {
@@ -378,11 +380,11 @@ public final class Query implements Identifiable
             }
         }
         // Step 3) filter trajectories
-        List<TrajectoryGroup> out = new ArrayList<>();
-        for (TrajectoryGroup full : trajectoryGroupList)
+        List<TrajectoryGroup<G>> out = new ArrayList<>();
+        for (TrajectoryGroup<G> full : trajectoryGroupList)
         {
-            TrajectoryGroup filtered = new TrajectoryGroup(full.getStartTime(), full.getLaneDirection());
-            for (Trajectory<?> trajectory : full.getTrajectories())
+            TrajectoryGroup<G> filtered = new TrajectoryGroup<>(full.getStartTime(), full.getLaneDirection());
+            for (Trajectory<G> trajectory : full.getTrajectories())
             {
                 String gtuId = trajectory.getGtuId();
                 if (trajectoryAcceptLists.get(gtuId).isAccepted(trajectory))
@@ -435,7 +437,7 @@ public final class Query implements Identifiable
         {
             return false;
         }
-        Query other = (Query) obj;
+        Query<?> other = (Query<?>) obj;
         if (this.description == null)
         {
             if (other.description != null)

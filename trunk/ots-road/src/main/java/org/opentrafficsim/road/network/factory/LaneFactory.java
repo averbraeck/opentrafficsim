@@ -18,16 +18,20 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.Stripe;
+import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
@@ -47,10 +51,171 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public final class LaneFactory
 {
-    /** Do not instantiate this class. */
-    private LaneFactory()
+
+    /** Stripe width. */
+    private static final Length STRIPE_WIDTH = Length.createSI(0.2);
+    
+    /** Angle above which a Bezier curve is used over a straight line. */
+    private static final double BEZIER_MARGIN = Math.toRadians(0.5);
+
+    /** Link. */
+    private final CrossSectionLink link;
+
+    /** Offset for next cross section elements. Left side of lane when building left to right, and vice versa. */
+    private Length offset;
+
+    /** Lane width to use (negative when building left to right). */
+    private Length laneWidth0;
+
+    /** Lane type to use. */
+    private LaneType laneType0;
+
+    /** Speed limit to use. */
+    private Speed speedLimit0;
+
+    /** created lanes. */
+    private final List<Lane> lanes = new ArrayList<>();
+
+    /**
+     * @param network OTSNetwork; network
+     * @param from OTSNode3D; from node
+     * @param to OTSNode3D; to node
+     * @param type LinkType; link type
+     * @param simulator OTSSimulatorInterface; simulator
+     * @param policy LaneKeepingPolicy; lane keeping policy
+     * @throws OTSGeometryException if no valid line can be created
+     * @throws NetworkException if the link exists, or a node does not exist, in the network
+     */
+    public LaneFactory(final OTSNetwork network, final OTSNode from, final OTSNode to, final LinkType type,
+            final OTSSimulatorInterface simulator, final LaneKeepingPolicy policy) throws OTSGeometryException, NetworkException
     {
-        // Cannot be instantiated.
+        this(network, from, to, type, simulator, policy, makeLine(from, to));
+    }
+
+    /**
+     * @param network OTSNetwork; network
+     * @param from OTSNode3D; from node
+     * @param to OTSNode3D; to node
+     * @param type LinkType; link type
+     * @param simulator OTSSimulatorInterface; simulator
+     * @param policy LaneKeepingPolicy; lane keeping policy
+     * @param line OTSLine3D; line
+     * @throws NetworkException if the link exists, or a node does not exist, in the network
+     */
+    public LaneFactory(final OTSNetwork network, final OTSNode from, final OTSNode to, final LinkType type,
+            final OTSSimulatorInterface simulator, final LaneKeepingPolicy policy, final OTSLine3D line) throws NetworkException
+    {
+        this.link = new CrossSectionLink(network, from.getId() + to.getId(), from, to, type, line, simulator, policy);
+    }
+
+    /**
+     * Creates a line between two nodes. If the nodes and their directions are on a straight line, a straight line is created.
+     * Otherwise a default Bezier curve is created.
+     * @param from OTSNode; from node
+     * @param to OTSNode; to node
+     * @return OTSLine3D; line
+     * @throws OTSGeometryException if no valid line can be created
+     */
+    private static OTSLine3D makeLine(final OTSNode from, final OTSNode to) throws OTSGeometryException
+    {
+        // Straight or bezier?
+        double rotCrow = Math.atan2(to.getLocation().y - from.getLocation().y, to.getLocation().x - from.getLocation().x);
+        double dRot = from.getLocation().getRotZ() - rotCrow;
+        while (dRot < -Math.PI)
+        {
+            dRot += 2.0 * Math.PI;
+        }
+        while (dRot > Math.PI)
+        {
+            dRot -= 2.0 * Math.PI;
+        }
+        OTSLine3D line;
+        if (from.getLocation().getRotZ() != to.getLocation().getRotZ() || Math.abs(dRot) > BEZIER_MARGIN)
+        {
+            line = Bezier.cubic(from.getLocation(), to.getLocation());
+        }
+        else
+        {
+            line = new OTSLine3D(from.getPoint(), to.getPoint());
+        }
+        return line;
+    }
+
+    /**
+     * Prepare the factory to add lanes from left to right.
+     * @param leftLanes double; number of lanes left from the link design line
+     * @param laneWidth Length; lane width
+     * @param laneType LaneType; lane type
+     * @param speedLimit Speed; speed limit
+     * @return LaneFactory this lane factory for method chaining
+     */
+    public LaneFactory leftToRight(final double leftLanes, final Length laneWidth, final LaneType laneType,
+            final Speed speedLimit)
+    {
+        this.offset = laneWidth.multiplyBy(leftLanes);
+        this.laneWidth0 = laneWidth.neg();
+        this.laneType0 = laneType;
+        this.speedLimit0 = speedLimit;
+        Try.execute(() -> new Stripe(this.link, this.offset, this.offset, STRIPE_WIDTH),
+                "Unexpected exception while building link.");
+        return this;
+    }
+
+    /**
+     * Prepare the factory to add lanes from right to left.
+     * @param rightLanes double; number of lanes right from the link design line
+     * @param laneWidth Length; lane width
+     * @param laneType LaneType; lane type
+     * @param speedLimit Speed; speed limit
+     * @return LaneFactory this lane factory for method chaining
+     */
+    public LaneFactory rightToLeft(final double rightLanes, final Length laneWidth, final LaneType laneType,
+            final Speed speedLimit)
+    {
+        this.offset = laneWidth.multiplyBy(-rightLanes);
+        this.laneWidth0 = laneWidth;
+        this.laneType0 = laneType;
+        this.speedLimit0 = speedLimit;
+        Try.execute(() -> new Stripe(this.link, this.offset, this.offset, STRIPE_WIDTH),
+                "Unexpected exception while building link.");
+        return this;
+    }
+
+    /**
+     * Adds a lane pair for each permeable, where the permeable determines the right-hand side line when building from left to
+     * right and vice versa. The left-most line is created in {@code leftToRight()}, meaning that each permeable describes
+     * permeablility between a lane and it's right-hand neighbor, when building left to right (and vice versa). For no allowed
+     * lane changes use {@code null}. This method internally adds {@code null} to create the final continuous stripe.
+     * @param permeable Permeable...; permeable per lane pair, for N lanes N-1 should be provided
+     * @return this LaneFactory this lane factory for method chaining
+     */
+    public LaneFactory addLanes(final Permeable... permeable)
+    {
+        List<Permeable> list = new ArrayList<>(Arrays.asList(permeable));
+        list.add(null);
+        for (Permeable perm : list)
+        {
+            this.lanes.add(Try.assign(() -> new Lane(this.link, "Lane " + (this.lanes.size() + 1),
+                    this.offset.plus(this.laneWidth0.multiplyBy(0.5)), this.laneWidth0.abs(), this.laneType0, this.speedLimit0,
+                    null), "Unexpected exception while building link."));
+            this.offset = this.offset.plus(this.laneWidth0);
+            Stripe stripe = Try.assign(() -> new Stripe(this.link, this.offset, this.offset, STRIPE_WIDTH),
+                    "Unexpected exception while building link.");
+            if (perm != null)
+            {
+                stripe.addPermeability(GTUType.VEHICLE, perm);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Returns the created lanes in build order.
+     * @return List&lt;Lane&gt; created lanes in build order
+     */
+    public List<Lane> getLanes()
+    {
+        return this.lanes;
     }
 
     /**
@@ -323,5 +488,4 @@ public final class LaneFactory
         DirectedPoint dp2 = new DirectedPoint(p3.x, p3.y, p3.z, 0.0, 0.0, Math.atan2(p4.y - p3.y, p4.x - p3.x));
         return Bezier.cubic(dp1, dp2);
     }
-
 }

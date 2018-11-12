@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -38,12 +39,12 @@ public class TotalDelay extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    protected Duration calculate(final Query query, final Time startTime, final Time endTime,
-            final List<TrajectoryGroup> trajectoryGroups)
+    protected <G extends GtuDataInterface> Duration calculate(final Query<G> query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Duration sumTime = Duration.ZERO;
         Length sumDist = Length.ZERO;
-        for (TrajectoryGroup trajectoryGroup : trajectoryGroups)
+        for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)
         {
             // TODO: use data points and limit speed per interval
             for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())

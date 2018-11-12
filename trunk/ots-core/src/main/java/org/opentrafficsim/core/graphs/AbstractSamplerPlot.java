@@ -7,7 +7,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.graphs.GraphPath.Section;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
@@ -27,16 +26,15 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <G> sampler GTU data type
  */
-public abstract class AbstractSamplerPlot<G extends GtuDataInterface> extends AbstractSpaceTimePlot
+public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
 {
 
     /** */
     private static final long serialVersionUID = 20181004L;
 
     /** Sampler. */
-    private final Sampler<G> sampler;
+    private final Sampler<?> sampler;
 
     /** KPI lane directions registered in the sampler. */
     private final GraphPath<KpiLaneDirection> path;
@@ -45,7 +43,7 @@ public abstract class AbstractSamplerPlot<G extends GtuDataInterface> extends Ab
     private List<Time> lastUpdateTime = new ArrayList<>();
 
     /** Cached trajectories per series in the path. */
-    private List<List<TrajectoryGroup>> trajectoriesCache = new ArrayList<>();
+    private List<List<TrajectoryGroup<?>>> trajectoriesCache = new ArrayList<>();
 
     /**
      * Constructor.
@@ -57,7 +55,7 @@ public abstract class AbstractSamplerPlot<G extends GtuDataInterface> extends Ab
      * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
      */
     public AbstractSamplerPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
-            final Sampler<G> sampler, final GraphPath<KpiLaneDirection> path, final Duration delay)
+            final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path, final Duration delay)
     {
         super(caption, updateInterval, simulator, delay, DEFAULT_INITIAL_UPPER_TIME_BOUND);
         this.sampler = sampler;
@@ -82,11 +80,11 @@ public abstract class AbstractSamplerPlot<G extends GtuDataInterface> extends Ab
      * @param series int; series number
      * @return List&lt;TrajectoryGroup&gt;; the trajectories
      */
-    protected List<TrajectoryGroup> getTrajectories(final int series)
+    protected List<TrajectoryGroup<?>> getTrajectories(final int series)
     {
         if (this.lastUpdateTime.get(series) == null || this.lastUpdateTime.get(series).lt(getUpdateTime()))
         {
-            List<TrajectoryGroup> cache = new ArrayList<>();
+            List<TrajectoryGroup<?>> cache = new ArrayList<>();
             for (Section<KpiLaneDirection> section : getPath().getSections())
             {
                 cache.add(this.sampler.getTrajectoryGroup(section.getSource(series)));
@@ -115,9 +113,9 @@ public abstract class AbstractSamplerPlot<G extends GtuDataInterface> extends Ab
 
     /**
      * Returns the sampler.
-     * @return Sampler&lt;G&gt;; sampler.
+     * @return Sampler&lt;?&gt;; sampler.
      */
-    protected final Sampler<G> getSampler()
+    protected final Sampler<?> getSampler()
     {
         return this.sampler;
     }

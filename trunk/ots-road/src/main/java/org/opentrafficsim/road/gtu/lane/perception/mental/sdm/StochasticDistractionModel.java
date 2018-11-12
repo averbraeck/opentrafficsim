@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -158,7 +159,14 @@ public class StochasticDistractionModel implements EventListenerInterface
     {
         if (event.getType().equals(Network.GTU_ADD_EVENT))
         {
+            // The GTU is not initialized yet, so we can't obtain the tactical planner
             String gtuId = (String) event.getContent();
+            GTU gtu = this.network.getGTU(gtuId);
+            gtu.addListener(this, GTU.INIT_EVENT);
+        }
+        else if (event.getType().equals(GTU.INIT_EVENT))
+        {
+            String gtuId = (String) ((Object[]) event.getContent())[0];
             LaneBasedGTU gtu = (LaneBasedGTU) this.network.getGTU(gtuId);
             Mental mental = gtu.getTacticalPlanner().getPerception().getMental();
             if (mental != null && mental instanceof Fuller)

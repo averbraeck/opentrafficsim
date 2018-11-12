@@ -7,6 +7,7 @@ import java.util.List;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.animation.ColorInterpolator;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 
 /**
@@ -72,7 +73,7 @@ public class TaskSaturationColorer implements GTUColorer
         {
             return ColorInterpolator.interpolateColor(SUBCRIT, MID, (ts - tsCrit) / range);
         }
-        return ColorInterpolator.interpolateColor(MID, MAX, (tsMax - ts) / range);
+        return ColorInterpolator.interpolateColor(MAX, MID, (tsMax - ts) / range);
     }
 
     /** {@inheritDoc} */

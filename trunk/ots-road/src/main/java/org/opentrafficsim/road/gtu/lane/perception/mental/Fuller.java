@@ -5,6 +5,7 @@ import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.PO
 
 import java.util.Set;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -13,6 +14,10 @@ import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.immutablecollections.Immutable;
+import nl.tudelft.simulation.immutablecollections.ImmutableLinkedHashSet;
+import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 import nl.tudelft.simulation.language.Throw;
 
 /**
@@ -121,6 +126,15 @@ public class Fuller implements Mental
         this.tasks.remove(task);
     }
 
+    /**
+     * Returns the tasks.
+     * @return ImmutableSet&lt;Task&gt; tasks
+     */
+    public ImmutableSet<Task> getTasks()
+    {
+        return new ImmutableLinkedHashSet<>(this.tasks, Immutable.WRAP);
+    }
+
     /** {@inheritDoc} */
     @Override
     public void apply(final LanePerception perception) throws ParameterException, GTUException
@@ -135,10 +149,6 @@ public class Fuller implements Mental
             taskDemand += task.demand(perception, gtu, parameters);
         }
         double taskSaturation = taskDemand / parameters.getParameter(TC);
-        if (taskSaturation < 0.0)
-        {
-            System.out.println("oh dear");
-        }
         parameters.setParameter(TS, taskSaturation);
         // c) behavioral adaptation
         for (BehavioralAdaptation behavioralAdapatation : this.behavioralAdapatations)
@@ -148,6 +158,13 @@ public class Fuller implements Mental
         // d) situational awareness can be implemented by one of the behavioral responses
         // e) perception errors from situational awareness are included in the perception step
         // f) reaction time from situational awareness are included in the perception step
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Fuller [tasks=" + this.tasks + ", behavioralAdapatations=" + this.behavioralAdapatations + "]";
     }
 
     /**
@@ -180,17 +197,19 @@ public class Fuller implements Mental
         /**
          * Class for constant demand.
          */
-        class Constant implements Task
+        class Constant extends IdentifiableTask
         {
             /** Task demand. */
-            private double taskDemand;
+            private final double taskDemand;
 
             /**
              * Constructor.
+             * @param id String; id
              * @param taskDemand double; task demand
              */
-            public Constant(final double taskDemand)
+            public Constant(final String id, final double taskDemand)
             {
+                super(id);
                 this.taskDemand = taskDemand;
             }
 
@@ -201,6 +220,94 @@ public class Fuller implements Mental
             {
                 return this.taskDemand;
             }
+
+        }
+
+        /**
+         * Class for exponential demand.
+         */
+        class Exponential extends IdentifiableTask
+        {
+            /** Initial level of task demand. */
+            private final double initialTaskDemand;
+
+            /** Additional task demand. */
+            private final double additionalTaskDemand;
+
+            /** Time scale at which task demand changes from the initial to the final value. */
+            private final double tau;
+
+            /** Start time of the distraction. */
+            private final double start;
+
+            /**
+             * Constructor.
+             * @param id String; id
+             * @param initialTaskDemand double; initial level of task demand
+             * @param finalTaskDemand double; final level of task demand
+             * @param tau double; time scale at which task demand changes from the initial to the final value
+             * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
+             */
+            public Exponential(final String id, final double initialTaskDemand, final double finalTaskDemand, final double tau,
+                    final SimulatorInterface.TimeDoubleUnit simulator)
+            {
+                super(id);
+                this.initialTaskDemand = initialTaskDemand;
+                this.additionalTaskDemand = finalTaskDemand - initialTaskDemand;
+                this.tau = tau;
+                this.start = simulator.getSimulatorTime().si;
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public double demand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
+                    throws ParameterException, GTUException
+            {
+                double t = gtu.getSimulator().getSimulatorTime().si - this.start;
+                return this.initialTaskDemand + this.additionalTaskDemand * (1.0 - Math.exp(-t / this.tau));
+            }
+
+        }
+    }
+
+    /**
+     * Task that makes itself identifiable. This is intended for inspection and visualization.
+     * <p>
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 nov. 2018 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public abstract static class IdentifiableTask implements Task, Identifiable
+    {
+        /** Id. */
+        private final String id;
+
+        /**
+         * Constructor.
+         * @param id String; id
+         */
+        public IdentifiableTask(final String id)
+        {
+            this.id = id;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getId()
+        {
+            return this.id;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "IdentifiableTask [id=" + getId() + "]";
         }
     }
 

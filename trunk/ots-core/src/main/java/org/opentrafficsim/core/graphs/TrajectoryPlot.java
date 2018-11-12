@@ -30,7 +30,6 @@ import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.graphs.GraphPath.Section;
 import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SamplingException;
@@ -48,9 +47,8 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <G> sampler GTU data type
  */
-public class TrajectoryPlot<G extends GtuDataInterface> extends AbstractSamplerPlot<G> implements XYDataset
+public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 {
     /** */
     private static final long serialVersionUID = 20181013L;
@@ -104,11 +102,11 @@ public class TrajectoryPlot<G extends GtuDataInterface> extends AbstractSamplerP
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param simulator OTSSimulatorInterface; simulator
-     * @param sampler Sampler&lt;G&gt;; road sampler
+     * @param sampler Sampler&lt;?&gt;; road sampler
      * @param path GraphPath&lt;KpiLaneDirection&gt;; path
      */
     public TrajectoryPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,
-            final Sampler<G> sampler, final GraphPath<KpiLaneDirection> path)
+            final Sampler<?> sampler, final GraphPath<KpiLaneDirection> path)
     {
         super(caption, updateInterval, simulator, sampler, path, Duration.ZERO);
         for (int i = 0; i < path.getNumberOfSeries(); i++)
@@ -129,7 +127,7 @@ public class TrajectoryPlot<G extends GtuDataInterface> extends AbstractSamplerP
                 for (int i = 0; i < path.getNumberOfSeries(); i++)
                 {
                     KpiLaneDirection lane = section.getSource(i);
-                    TrajectoryGroup trajectoryGroup = getSampler().getTrajectoryGroup(lane);
+                    TrajectoryGroup<?> trajectoryGroup = getSampler().getTrajectoryGroup(lane);
                     int from = this.knownTrajectories.getOrDefault(lane, 0);
                     int to = trajectoryGroup.size();
                     double scaleFactor = section.getLength().si / lane.getLaneData().getLength().si;
@@ -442,7 +440,7 @@ public class TrajectoryPlot<G extends GtuDataInterface> extends AbstractSamplerP
         {
             return "XYLineAndShapeRendererID []";
         }
-        
+
     }
 
     /**

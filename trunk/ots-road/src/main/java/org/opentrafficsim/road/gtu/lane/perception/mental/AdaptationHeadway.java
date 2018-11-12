@@ -45,8 +45,18 @@ public class AdaptationHeadway implements BehavioralAdaptation
         double eps = parameters.getParameter(Fuller.TS) - parameters.getParameter(Fuller.TS_CRIT);
         eps = eps < 0.0 ? 0.0 : (eps > 1.0 ? 1.0 : eps);
         double factor = 1.0 + parameters.getParameter(BETA_T) * eps;
-        parameters.setParameter(ParameterTypes.TMIN, this.t0Min.multiplyBy(factor));
-        parameters.setParameter(ParameterTypes.TMAX, this.t0Max.multiplyBy(factor));
+        Duration tMin = this.t0Min.multiplyBy(factor);
+        Duration tMax = this.t0Max.multiplyBy(factor);
+        if (tMax.si <= parameters.getParameter(ParameterTypes.TMIN).si)
+        {
+            parameters.setParameter(ParameterTypes.TMIN, tMin);
+            parameters.setParameter(ParameterTypes.TMAX, tMax);
+        }
+        else
+        {
+            parameters.setParameter(ParameterTypes.TMAX, tMax);
+            parameters.setParameter(ParameterTypes.TMIN, tMin);
+        }
     }
 
 }

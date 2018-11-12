@@ -26,8 +26,6 @@ import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.generator.GTUGenerator;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -284,27 +282,6 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     // Overridable methods
 
     /**
-     * Creates animations for nodes, links, lanes and vehicle generators. This can be used if the network is not read from XML.
-     * @param net OTSNetwork; network
-     * @param odApplierOutput Map&lt;String, GeneratorObjects&gt;; output from {@code ODApplier}
-     */
-    protected void animateNetwork(final OTSNetwork net, final Map<String, GeneratorObjects> odApplierOutput)
-    {
-        animateNetwork(net);
-        try
-        {
-            for (GeneratorObjects genObjects : odApplierOutput.values())
-            {
-                new GTUGeneratorAnimation(genObjects.getGenerator(), AbstractSimulationScript.this.simulator);
-            }
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            throw new RuntimeException("Exception while creating network animation.", exception);
-        }
-    }
-
-    /**
      * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML.
      * @param net OTSNetwork; network
      */
@@ -374,8 +351,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     /**
      * Adds taps to the animation. May be overridden.
      * @param sim OTSSimulatorInterface; simulator
+     * @param animation AbstractWrappableAnimation; animation to add tabs to
      */
-    protected void addTabs(final OTSSimulatorInterface sim)
+    protected void addTabs(final OTSSimulatorInterface sim, final AbstractWrappableAnimation animation)
     {
         //
     }
@@ -511,7 +489,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         @Override
         protected final void addTabs(final OTSSimulatorInterface sim)
         {
-            AbstractSimulationScript.this.addTabs(sim);
+            AbstractSimulationScript.this.addTabs(sim, this);
         }
 
         /** {@inheritDoc} */

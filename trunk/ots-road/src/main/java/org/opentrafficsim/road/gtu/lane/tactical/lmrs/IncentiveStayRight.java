@@ -18,6 +18,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 
 /**
@@ -82,7 +83,7 @@ public class IncentiveStayRight implements VoluntaryIncentive
         if (lane.getLateralDirectionality().isRight() && lane.getNumLanes() > 1)
         {
             // must change right
-            return new Desire(root.legalLeft() ? -1.0 : 0.0, 1.0);
+            return new Desire(root.legalLeft() ? -1.0 : 0.0, parameters.getParameter(LmrsParameters.DSYNC));
         }
         if (lane.isRight())
         {
@@ -98,7 +99,7 @@ public class IncentiveStayRight implements VoluntaryIncentive
      * @param parameters Parameters; parameters
      * @param speed Speed; current speed
      * @return double; urgency to leave the lane
-     * @throws ParameterException
+     * @throws ParameterException if parameter is not given
      */
     private double urgency(final SortedSet<InfrastructureLaneChangeInfo> laneChangeInfo, final Parameters parameters,
             final Speed speed) throws ParameterException

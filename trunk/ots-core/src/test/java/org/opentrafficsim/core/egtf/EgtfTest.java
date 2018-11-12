@@ -78,7 +78,8 @@ public class EgtfTest
             egtf.addVectorDataSI(detFlow, qFreeSpace, qFreeTime, qFreeVector);
         }
         egtf.addGridDataSI(detSpeed, x, t, vFreeGrid);
-        Filter filterDet = egtf.filterSI(x, t, TypedQuantity.SPEED, TypedQuantity.FLOW);
+        // Filter filterDet = egtf.filterSI(x, t, TypedQuantity.SPEED, TypedQuantity.FLOW);
+        Filter filterDet = egtf.filterFastSI(0.0, dx, xmax, 0.0, dt, tmax, TypedQuantity.SPEED, TypedQuantity.FLOW);
         // add FCD data
         double location = 1200;
         double time = 130;
@@ -124,20 +125,24 @@ public class EgtfTest
                         vCom12[i][j] < vCom1[i][j]);
                 assertFalse("Speed filtered with additional FCD data is above speed filtered FCD data",
                         vCom2[i][j] > vCom1[i][j]);
-                assertFalse("Flow filtered with detector data is not equal to uniform input flow", qDet[i][j] != 0.5);
-                assertFalse("Flow filtered with FCD data is not equal to uniform input flow", qCom1[i][j] != 0.5);
-                assertFalse("Flow filtered with unreliable FCD data is not equal to uniform input flow", qCom12[i][j] != 0.5);
-                assertFalse("Flow filtered with additional FCD data is not equal to uniform input flow", qCom2[i][j] != 0.5);
+                assertFalse("Flow filtered with detector data is not equal to uniform input flow",
+                        Math.abs(qDet[i][j] - 0.5) > MARGIN);
+                assertFalse("Flow filtered with FCD data is not equal to uniform input flow",
+                        Math.abs(qCom1[i][j] - 0.5) > MARGIN);
+                assertFalse("Flow filtered with unreliable FCD data is not equal to uniform input flow",
+                        Math.abs(qCom12[i][j] - 0.5) > MARGIN);
+                assertFalse("Flow filtered with additional FCD data is not equal to uniform input flow",
+                        Math.abs(qCom2[i][j] - 0.5) > MARGIN);
             }
         }
-//        printMatrix(vDet, "vDet");
-//        printMatrix(vCom1, "vCom1");
-//        printMatrix(vCom12, "vCom12");
-//        printMatrix(vCom2, "vCom2");
-//        printMatrix(qDet, "qDet");
-//        printMatrix(qCom1, "qCom1");
-//        printMatrix(qCom12, "qCom12");
-//        printMatrix(qCom2, "qCom2");
+        // printMatrix(vDet, "vDet");
+        // printMatrix(vCom1, "vCom1");
+        // printMatrix(vCom12, "vCom12");
+        // printMatrix(vCom2, "vCom2");
+        // printMatrix(qDet, "qDet");
+        // printMatrix(qCom1, "qCom1");
+        // printMatrix(qCom12, "qCom12");
+        // printMatrix(qCom2, "qCom2");
     }
 
     /**

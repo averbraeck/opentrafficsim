@@ -14,7 +14,6 @@ import org.opentrafficsim.base.WeightedMeanAndSum;
 import org.opentrafficsim.core.egtf.Converter;
 import org.opentrafficsim.core.egtf.Quantity;
 import org.opentrafficsim.core.graphs.ContourDataSource.ContourDataType;
-import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
@@ -29,9 +28,8 @@ import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
- * @param <G> sampler GTU data type
  */
-public class ContourPlotAcceleration<G extends GtuDataInterface> extends AbstractContourPlot<Acceleration, G>
+public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
 {
 
     /** */
@@ -72,12 +70,12 @@ public class ContourPlotAcceleration<G extends GtuDataInterface> extends Abstrac
                 /** {@inheritDoc} */
                 @Override
                 public WeightedMeanAndSum<Double, Double> processSeries(final WeightedMeanAndSum<Double, Double> intermediate,
-                        final List<TrajectoryGroup> trajectories, final List<Length> xFrom, final List<Length> xTo,
+                        final List<TrajectoryGroup<?>> trajectories, final List<Length> xFrom, final List<Length> xTo,
                         final Time tFrom, final Time tTo)
                 {
                     for (int i = 0; i < trajectories.size(); i++)
                     {
-                        TrajectoryGroup trajectoryGroup = trajectories.get(i);
+                        TrajectoryGroup<?> trajectoryGroup = trajectories.get(i);
                         for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
                         {
                             if (GraphUtil.considerTrajectory(trajectory, tFrom, tTo))
@@ -119,7 +117,7 @@ public class ContourPlotAcceleration<G extends GtuDataInterface> extends Abstrac
      * @param dataPool ContourDataSource&lt;G&gt;; data pool
      */
     public ContourPlotAcceleration(final String caption, final OTSSimulatorInterface simulator,
-            final ContourDataSource<G> dataPool)
+            final ContourDataSource<?> dataPool)
     {
         super(caption, simulator, dataPool, createPaintScale(), new Acceleration(1.0, AccelerationUnit.SI), "%.0fm/s\u00B2",
                 "acceleration %.2f m/s\u00B2");

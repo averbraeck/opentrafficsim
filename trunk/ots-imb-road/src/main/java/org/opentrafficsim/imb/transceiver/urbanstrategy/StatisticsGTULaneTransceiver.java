@@ -14,6 +14,7 @@ import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.kpi.sampling.indicator.MeanSpeed;
@@ -261,8 +262,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Sep 16, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <G> gtu data type
  */
-public class StatisticsGTULaneTransceiver extends AbstractTransceiver
+public class StatisticsGTULaneTransceiver<G extends GtuDataInterface> extends AbstractTransceiver
 {
     /** */
     private static final long serialVersionUID = 20160923L;
@@ -271,7 +273,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
     static final ReferenceSpeed REF_SPEED_TYPE = new ReferenceSpeed();
 
     /** The query for the statistic. */
-    final Query query;
+    final Query<G> query;
 
     /** The Network id for which the graph is made. */
     private final String networkId;
@@ -315,7 +317,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
      * @throws IMBException when the message cannot be posted, or the scheduling of the publish event fails
      */
     public StatisticsGTULaneTransceiver(final Connector connector, OTSSimulatorInterface simulator, String networkId,
-            final Query query, final Duration transmissionInterval) throws IMBException
+            final Query<G> query, final Duration transmissionInterval) throws IMBException
     {
         super("StatisticsGTULane", connector, simulator);
         this.query = query;
@@ -352,9 +354,9 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
     public void sendStatisticsUpdate() throws IMBException, SimRuntimeException
     {
         double time = getSimulator().getSimulatorTime().si;
-        Query q = StatisticsGTULaneTransceiver.this.query;
+        Query<G> q = StatisticsGTULaneTransceiver.this.query;
         Time timeObject = new Time(time, TimeUnit.BASE_SECOND);
-        List<TrajectoryGroup> groups = q.getTrajectoryGroups(timeObject);
+        List<TrajectoryGroup<G>> groups = q.getTrajectoryGroups(timeObject);
 
         Length tdist = StatisticsGTULaneTransceiver.this.totalTravelDistance.getValue(q, timeObject, groups);
         Duration ttt = StatisticsGTULaneTransceiver.this.totalTravelTime.getValue(q, timeObject, groups);
@@ -407,7 +409,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         private final double time;
 
         /** Trajectory groups. */
-        private List<TrajectoryGroup> sourceGroups;
+        private List<TrajectoryGroup<G>> sourceGroups;
 
         /**
          * @param time double; time of statistics
@@ -421,7 +423,7 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
          * @param time double; time of statistics
          * @param sourceGroups List&lt;TrajectoryGroup&gt;; groups
          */
-        public StatisticsRunnable(final double time, final List<TrajectoryGroup> sourceGroups)
+        public StatisticsRunnable(final double time, final List<TrajectoryGroup<G>> sourceGroups)
         {
             this.time = time;
             this.sourceGroups = sourceGroups;
@@ -430,9 +432,9 @@ public class StatisticsGTULaneTransceiver extends AbstractTransceiver
         @Override
         public void run()
         {
-            Query q = StatisticsGTULaneTransceiver.this.query;
+            Query<G> q = StatisticsGTULaneTransceiver.this.query;
             Time timeObject = new Time(this.time, TimeUnit.BASE_SECOND);
-            List<TrajectoryGroup> groups = this.sourceGroups == null ? q.getTrajectoryGroups(timeObject) : this.sourceGroups;
+            List<TrajectoryGroup<G>> groups = this.sourceGroups == null ? q.getTrajectoryGroups(timeObject) : this.sourceGroups;
             Length tdist = StatisticsGTULaneTransceiver.this.totalTravelDistance.getValue(q, timeObject, groups);
             Duration ttt = StatisticsGTULaneTransceiver.this.totalTravelTime.getValue(q, timeObject, groups);
             Speed ms = StatisticsGTULaneTransceiver.this.meanSpeed.getValue(q, timeObject, groups);

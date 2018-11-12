@@ -1,10 +1,12 @@
 package org.opentrafficsim.kpi.sampling;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 
 import nl.tudelft.simulation.language.Throw;
 
@@ -19,8 +21,9 @@ import nl.tudelft.simulation.language.Throw;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+ * @param <G> gtu data type
  */
-public class TrajectoryGroup
+public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Trajectory<G>>
 {
 
     /** Start time of trajectories. */
@@ -36,7 +39,7 @@ public class TrajectoryGroup
     private final KpiLaneDirection laneDirection;
 
     /** Trajectories. */
-    private final List<Trajectory<?>> trajectories = new ArrayList<>();
+    private final List<Trajectory<G>> trajectories = new ArrayList<>();
 
     /**
      * Constructor without length specification. The complete lane will be used.
@@ -74,9 +77,9 @@ public class TrajectoryGroup
 
     /**
      * Add trajectory.
-     * @param trajectory Trajectory&lt;?&gt;; trajectory to add
+     * @param trajectory Trajectory&lt;G&gt;; trajectory to add
      */
-    public final synchronized void addTrajectory(final Trajectory<?> trajectory)
+    public final synchronized void addTrajectory(final Trajectory<G> trajectory)
     {
         this.trajectories.add(trajectory);
     }
@@ -121,7 +124,7 @@ public class TrajectoryGroup
      * Returns a list of trajectories.
      * @return list of trajectories
      */
-    public final List<Trajectory<?>> getTrajectories()
+    public final List<Trajectory<G>> getTrajectories()
     {
         return new ArrayList<>(this.trajectories);
     }
@@ -132,12 +135,12 @@ public class TrajectoryGroup
      * @param x1 Length; end length
      * @return list of trajectories
      */
-    public final synchronized TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1)
+    public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Length x0, final Length x1)
     {
         Length minLenght = Length.max(x0, this.startPosition);
         Length maxLenght = Length.min(x1, this.endPosition);
-        TrajectoryGroup out = new TrajectoryGroup(this.startTime, minLenght, maxLenght, this.laneDirection);
-        for (Trajectory<?> trajectory : this.trajectories)
+        TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime, minLenght, maxLenght, this.laneDirection);
+        for (Trajectory<G> trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(x0, x1));
         }
@@ -150,10 +153,10 @@ public class TrajectoryGroup
      * @param t1 Time; end time
      * @return list of trajectories
      */
-    public final synchronized TrajectoryGroup getTrajectoryGroup(final Time t0, final Time t1)
+    public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Time t0, final Time t1)
     {
-        TrajectoryGroup out = new TrajectoryGroup(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
-        for (Trajectory<?> trajectory : this.trajectories)
+        TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
+        for (Trajectory<G> trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(t0, t1));
         }
@@ -168,10 +171,10 @@ public class TrajectoryGroup
      * @param t1 Time; end time
      * @return list of trajectories
      */
-    public final synchronized TrajectoryGroup getTrajectoryGroup(final Length x0, final Length x1, final Time t0, final Time t1)
+    public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Length x0, final Length x1, final Time t0, final Time t1)
     {
-        TrajectoryGroup out = new TrajectoryGroup(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
-        for (Trajectory<?> trajectory : this.trajectories)
+        TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
+        for (Trajectory<G> trajectory : this.trajectories)
         {
             out.addTrajectory(trajectory.subSet(x0, x1, t0, t1));
         }
@@ -217,7 +220,7 @@ public class TrajectoryGroup
         {
             return false;
         }
-        TrajectoryGroup other = (TrajectoryGroup) obj;
+        TrajectoryGroup<?> other = (TrajectoryGroup<?>) obj;
         if (this.laneDirection == null)
         {
             if (other.laneDirection != null)
@@ -282,6 +285,13 @@ public class TrajectoryGroup
     {
         return "TrajectoryGroup [startTime=" + this.startTime + ", minLength=" + this.startPosition + ", maxLength="
                 + this.endPosition + ", laneDirection=" + this.laneDirection + "]";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Iterator<Trajectory<G>> iterator()
+    {
+        return this.trajectories.iterator();
     }
 
 }

@@ -44,7 +44,7 @@ public interface Estimation
                     - perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA));
             double delta = (perceivedGtu.getOdometer().si - perceivedGtu.getOdometer(when).si)
                     - (perceivingGtu.getOdometer().si - perceivingGtu.getOdometer(when).si);
-            if (!downstream)
+            if (downstream)
             {
                 delta = -delta; // faster leader increases the headway, faster follower reduces the headway
             }

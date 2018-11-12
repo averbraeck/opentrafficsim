@@ -1,6 +1,8 @@
 package org.opentrafficsim.kpi.sampling.data;
 
+import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.Unit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vfloat.scalar.FloatDuration;
@@ -44,6 +46,14 @@ public abstract class ExtendedDataTypeDuration<G extends GtuDataInterface>
     protected final FloatDurationVector convert(final float[] storage) throws ValueException
     {
         return new FloatDurationVector(storage, DurationUnit.SI, StorageType.DENSE);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>> FloatDuration interpolate(final FloatDuration value0,
+            final FloatDuration value1, final double f)
+    {
+        return FloatDuration.interpolate(value0, value1, (float) f);
     }
 
 }

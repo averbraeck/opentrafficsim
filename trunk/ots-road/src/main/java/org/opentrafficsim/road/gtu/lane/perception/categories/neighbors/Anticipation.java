@@ -24,7 +24,7 @@ public interface Anticipation
     {
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
-                final Length traveledDistance)
+                final Length traveledDistance, final boolean downstream)
         {
             return neighborTriplet;
         }
@@ -41,11 +41,14 @@ public interface Anticipation
     {
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
-                final Length traveledDistance)
+                final Length traveledDistance, final boolean downstream)
         {
-            return new NeighborTriplet(
-                    neighborTriplet.getHeadway().plus(neighborTriplet.getSpeed().multiplyBy(duration)).minus(traveledDistance),
-                    neighborTriplet.getSpeed(), neighborTriplet.getAcceleration());
+            // upstream neighbor approaches when faster
+            Length distance = downstream
+                    ? neighborTriplet.getHeadway().plus(neighborTriplet.getSpeed().multiplyBy(duration)).minus(traveledDistance)
+                    : neighborTriplet.getHeadway().minus(neighborTriplet.getSpeed().multiplyBy(duration))
+                            .plus(traveledDistance);
+            return new NeighborTriplet(distance, neighborTriplet.getSpeed(), neighborTriplet.getAcceleration());
         }
 
         @Override
@@ -60,13 +63,14 @@ public interface Anticipation
     {
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
-                final Length traveledDistance)
+                final Length traveledDistance, final boolean downstream)
         {
             if (neighborTriplet.getSpeed().si < -neighborTriplet.getAcceleration().si * duration.si)
             {
                 // to stand still
                 double t = neighborTriplet.getSpeed().si / -neighborTriplet.getAcceleration().si;
                 double dx = neighborTriplet.getSpeed().si * t + .5 * neighborTriplet.getAcceleration().si * t * t;
+                dx = downstream ? dx : -dx; // upstream neighbor approaches when faster
                 return new NeighborTriplet(Length.createSI(neighborTriplet.getHeadway().si + dx - traveledDistance.si),
                         Speed.ZERO, Acceleration.ZERO);
             }
@@ -89,9 +93,10 @@ public interface Anticipation
      * @param neighborTriplet NeighborTriplet; headway, speed and acceleration
      * @param duration Duration; duration
      * @param traveledDistance Length; distance the subject vehicle traveled during the anticipation time
+     * @param downstream boolean; whether the perceived GTU is downstream
      * @return anticipated info
      */
-    NeighborTriplet anticipate(NeighborTriplet neighborTriplet, Duration duration, Length traveledDistance);
+    NeighborTriplet anticipate(NeighborTriplet neighborTriplet, Duration duration, Length traveledDistance, boolean downstream);
 
     /**
      * Anticipate own movement.

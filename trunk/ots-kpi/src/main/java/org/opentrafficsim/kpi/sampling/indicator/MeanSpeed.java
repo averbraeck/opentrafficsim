@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
@@ -39,8 +40,8 @@ public class MeanSpeed extends AbstractIndicator<Speed>
 
     /** {@inheritDoc} */
     @Override
-    protected Speed calculate(final Query query, final Time startTime, final Time endTime,
-            final List<TrajectoryGroup> trajectoryGroups)
+    protected <G extends GtuDataInterface> Speed calculate(final Query<G> query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         return this.travelDistance.getValue(query, startTime, endTime, trajectoryGroups)
                 .divideBy(this.travelTime.getValue(query, startTime, endTime, trajectoryGroups));
