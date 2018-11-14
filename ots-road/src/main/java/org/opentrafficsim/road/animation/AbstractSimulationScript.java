@@ -101,6 +101,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         setDefaultProperties();
         for (int i = 0; i < properties.length; i += 2)
         {
+            System.out.println("Adding argument " + properties[i] + " with argument " + properties[i + 1]);
             this.props.put(properties[i], properties[i + 1]);
         }
     }
@@ -234,7 +235,8 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
                         tReport += 60.0;
                     }
                 }
-                sim.stop(); // end of simulation event
+                //sim.stop(); // end of simulation event
+                onSimulationEnd(); // TODO this is temporary for as long as stop() gives an exception
             }
             catch (Exception exception)
             {
