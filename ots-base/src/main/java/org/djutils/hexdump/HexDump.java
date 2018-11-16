@@ -21,6 +21,16 @@ public final class HexDump
         // Do not instantiate.
     }
 
+    /** Index in an output line where the first hexadecimal digit of the first dumped byte will appear. */
+    private static final int HEXOFFSET = 10;
+
+    /** Index in an output line where the character dump of the first dumped byte will appear. */
+    private static final int CHAROFFSET = 60;
+
+    /** Prototype output line. */
+    private static final String PROTOTYPELINE =
+            "                                                                             \n";
+
     /**
      * Create a nicely formatted hexadecimal dump of a bunch of bytes.
      * @param bytes byte[]; the bytes to dump
@@ -29,54 +39,41 @@ public final class HexDump
     public static String hexDump(final byte[] bytes)
     {
         StringBuilder result = new StringBuilder();
-        StringBuilder lhs = new StringBuilder();
-        StringBuilder rhs = new StringBuilder();
+        StringBuilder line = new StringBuilder();
+        int lineByte = 15;
         for (int pos = 0; pos < bytes.length; pos++)
         {
             byte b = bytes[pos];
+            lineByte = pos % 16;
             if (pos % 16 == 0)
             {
-                if (lhs.length() > 0)
-                {
-                    result.append(lhs);
-                    result.append(rhs);
-                    result.append("\n");
-                    lhs = new StringBuilder();
-                    rhs = new StringBuilder();
-                }
-                lhs.append(String.format("%08x: ", pos));
+                line.setLength(0);
+                line.append(PROTOTYPELINE);
+                replace(line, 0, String.format("%08x:", pos));
             }
-            lhs.append(String.format("%02x", b));
-            rhs.append(b >= 32 && b < 127 ? ((char) b) : '.');
-            if (pos % 8 == 0 && pos % 16 != 0)
+            replace(line, HEXOFFSET + lineByte * 3 + lineByte / 8, String.format("%02x", b));
+            replace(line, CHAROFFSET + lineByte * 1 + lineByte / 8, (b >= 32 && b < 127 ? "" + b : "."));
+            if (15 == lineByte)
             {
-                lhs.append("  ");
-                rhs.append(" ");
-            }
-            else
-            {
-                lhs.append(" ");
+                result.append(line);
             }
         }
-        if (lhs.length() > 0)
+        if (lineByte < 15)
         {
-            for (int pos = bytes.length % 16; pos < 16; pos++)
-            {
-                lhs.append("   ");
-                rhs.append(" ");
-                if (8 == pos)
-                {
-                    lhs.append(" ");
-                }
-            }
-            result.append(lhs);
-            result.append(rhs);
-        }
-        if (result.length() > 0)
-        {
-            result.append("\n");
+            result.append(line);
         }
         return result.toString();
     }
-    
+
+    /**
+     * Replace partial contents of a StringBuilder.
+     * @param stringBuilder StringBuilder; the StringBuilder
+     * @param position int; position in the StringBuilder where replacement starts
+     * @param replacement String; text to put at the indicated position (replacing whatever was there)
+     */
+    private static void replace(final StringBuilder stringBuilder, final int position, final String replacement)
+    {
+        stringBuilder.replace(position, position + replacement.length(), replacement);
+    }
+
 }
