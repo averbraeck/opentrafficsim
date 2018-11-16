@@ -3,7 +3,6 @@ package org.djutils.hexdump;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.djutils.hexdump.HexDump;
 import org.junit.Test;
 
 /**
