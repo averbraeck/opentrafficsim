@@ -5,9 +5,9 @@ import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 

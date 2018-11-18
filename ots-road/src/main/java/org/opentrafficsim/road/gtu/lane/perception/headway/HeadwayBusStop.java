@@ -3,11 +3,10 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.network.lane.object.BusStop;
-
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 
 /**
  * <p>

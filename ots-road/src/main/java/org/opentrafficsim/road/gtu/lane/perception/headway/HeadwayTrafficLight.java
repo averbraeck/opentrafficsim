@@ -1,11 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.perception.headway;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Container for a reference to information about a (lane based) traffic light and a headway to the traffic light.

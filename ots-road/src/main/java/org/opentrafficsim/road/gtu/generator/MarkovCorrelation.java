@@ -8,8 +8,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.djutils.exceptions.Throw;
+
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Markov Chain functionality using state auto-correlations. Rather than specifying a Transition Matrix, this matrix is

@@ -2,14 +2,13 @@ package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.core.compatibility.Compatibility;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Lane type to indicate compatibility with GTU types. The id of a LaneType should be unique. This is, however, not checked or

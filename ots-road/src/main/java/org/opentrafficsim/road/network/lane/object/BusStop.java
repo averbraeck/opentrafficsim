@@ -10,6 +10,9 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.immutablecollections.Immutable;
+import org.djutils.immutablecollections.ImmutableHashSet;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -21,9 +24,6 @@ import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.immutablecollections.Immutable;
-import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 
 /**
  * A bus stop is a location on a lane. The stop has a name, and a set of lines. At a single stop in reality, there may be

@@ -9,6 +9,7 @@ import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.SamplingException;
@@ -16,8 +17,6 @@ import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.kpi.sampling.indicator.AbstractIndicator;
 import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Delay based on reference speed.

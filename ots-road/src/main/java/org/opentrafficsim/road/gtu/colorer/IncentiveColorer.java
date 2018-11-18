@@ -1,13 +1,13 @@
-package org.opentrafficsim.road.gtu.animation;
+package org.opentrafficsim.road.gtu.colorer;
 
 import java.awt.Color;
 
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 
 /**
- * Colorer for total desire.
+ * Colorer for desire from a specific incentive.
  * <p>
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -17,31 +17,44 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TotalDesireColorer extends DesireColorer
+public class IncentiveColorer extends DesireColorer
 {
 
     /** */
     private static final long serialVersionUID = 20170414L;
 
+    /** Incentive class. */
+    private Class<? extends Incentive> incentiveClass;
+
+    /**
+     * @param incentiveClass Class&lt;? extends Incentive&gt;; incentive class
+     */
+    public IncentiveColorer(final Class<? extends Incentive> incentiveClass)
+    {
+        this.incentiveClass = incentiveClass;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final Color getColor(final GTU gtu)
     {
-        Parameters params = gtu.getParameters();
-        Double dLeft = params.getParameterOrNull(LmrsParameters.DLEFT);
-        Double dRight = params.getParameterOrNull(LmrsParameters.DRIGHT);
-        if (dLeft == null || dRight == null)
+        if (!(gtu.getTacticalPlanner() instanceof DesireBased))
         {
             return NA;
         }
-        return getColor(dLeft, dRight);
+        Desire d = ((DesireBased) gtu.getTacticalPlanner()).getLatestDesire(this.incentiveClass);
+        if (d != null)
+        {
+            return getColor(d.getLeft(), d.getRight());
+        }
+        return NA;
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "Total desire";
+        return this.incentiveClass.getSimpleName();
     }
 
 }

@@ -17,7 +17,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -44,13 +45,10 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -109,9 +107,10 @@ public class CarTest implements UNITS
      */
     public static OTSSimulatorInterface makeSimulator() throws SimRuntimeException, NamingException
     {
-        Model model = new Model();
-        return new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND), new Duration(3600.0, SECOND),
-                model);
+        OTSSimulatorInterface simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
+                new Duration(3600.0, SECOND), model);
+        Model model = new Model(simulator);
+        return simulator;
     }
 
     /**
@@ -177,27 +176,24 @@ public class CarTest implements UNITS
     }
 
     /** The helper model. */
-    protected static class Model implements OTSModelInterface
+    protected static class Model extends AbstractOTSModel
     {
+        /**
+         * @param simulator the simulator to use
+         */
+        public Model(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+        {
+            super(simulator);
+        }
+
         /** */
         private static final long serialVersionUID = 20141027L;
 
-        /** The simulator. */
-        private DEVSSimulator.TimeDoubleUnit simulator;
-
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulator.TimeDoubleUnit) theSimulator;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final DEVSSimulator.TimeDoubleUnit getSimulator()
-        {
-            return this.simulator;
+            //
         }
 
         /** {@inheritDoc} */

@@ -3,6 +3,7 @@ package org.opentrafficsim.road;
 import java.lang.reflect.Field;
 import java.util.Set;
 
+import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeBoolean;
@@ -10,8 +11,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeInteger;
 import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-
-import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * Creator of set of parameters with default values.

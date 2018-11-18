@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -12,8 +13,6 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUPerceived;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTURealCopy;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Whether a GTU needs to be wrapped, or information should be copied for later and unaltered use.

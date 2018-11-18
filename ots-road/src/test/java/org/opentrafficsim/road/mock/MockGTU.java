@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.mock;
 
 import org.mockito.Mockito;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * MockGTU.java. <br>

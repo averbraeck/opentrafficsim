@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.animation;
+package org.opentrafficsim.road.gtu.colorer;
 
 import java.awt.Color;
 import java.io.Serializable;
@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.animation.ColorInterpolator;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.colorer.ColorInterpolator;
+import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**

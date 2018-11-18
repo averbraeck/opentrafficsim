@@ -2,13 +2,12 @@ package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
 import java.io.Serializable;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

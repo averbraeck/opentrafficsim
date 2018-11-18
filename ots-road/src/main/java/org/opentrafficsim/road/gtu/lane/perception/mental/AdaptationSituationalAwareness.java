@@ -4,14 +4,13 @@ import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.PO
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVEZERO;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Behavioral adaptation which sets parameters for situational awareness and reaction time.
