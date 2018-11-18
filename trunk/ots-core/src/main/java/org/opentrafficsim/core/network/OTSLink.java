@@ -7,14 +7,14 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -97,13 +97,12 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * Clone a link for a new network.
      * @param newNetwork Network; the new network to which the clone belongs
      * @param newSimulator OTSSimulatorInterface; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not. Could be used in subclasses.
      * @param link OTSLink; the link to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected OTSLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation,
-            final OTSLink link) throws NetworkException
+    protected OTSLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final OTSLink link)
+            throws NetworkException
     {
         this(newNetwork, link.id, newNetwork.getNode(link.startNode.getId()), newNetwork.getNode(link.endNode.getId()),
                 link.linkType, link.designLine, newSimulator);
@@ -303,14 +302,12 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
      * Clone the OTSLink for e.g., copying a network.
      * @param newNetwork Network; the new network to which the clone belongs
      * @param newSimulator OTSSimulatorInterface; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @return a clone of this object
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public OTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
-            throws NetworkException
+    public OTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
-        return new OTSLink(newNetwork, newSimulator, animation, this);
+        return new OTSLink(newNetwork, newSimulator, this);
     }
 }

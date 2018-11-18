@@ -3,12 +3,12 @@ package org.opentrafficsim.core.network;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.mock.MockSimulator;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * Test the LinkDirection class.

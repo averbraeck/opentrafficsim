@@ -1,9 +1,8 @@
 package org.opentrafficsim.core.perception;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.perception.AbstractHistorical.EventValue;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Single-valued historical state.

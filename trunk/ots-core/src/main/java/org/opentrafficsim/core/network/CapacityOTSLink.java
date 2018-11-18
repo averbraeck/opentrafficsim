@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.network;
 
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * A link with a maximum capacity, expressed as the maximum number of GTUs per time unit that the link can handle.
@@ -49,15 +49,14 @@ public class CapacityOTSLink extends OTSLink implements Capacity
      * Clone a link for a new network.
      * @param newNetwork Network; the new network to which the clone belongs
      * @param newSimulator OTSSimulatorInterface; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @param link CapacityOTSLink; the link to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected CapacityOTSLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation,
-            final CapacityOTSLink link) throws NetworkException
+    protected CapacityOTSLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final CapacityOTSLink link)
+            throws NetworkException
     {
-        super(newNetwork, newSimulator, animation, link);
+        super(newNetwork, newSimulator, link);
         this.capacity = link.capacity;
     }
 
@@ -85,10 +84,9 @@ public class CapacityOTSLink extends OTSLink implements Capacity
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CapacityOTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
-            throws NetworkException
+    public CapacityOTSLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
-        return new CapacityOTSLink(newNetwork, newSimulator, animation, this);
+        return new CapacityOTSLink(newNetwork, newSimulator, this);
     }
 
 }

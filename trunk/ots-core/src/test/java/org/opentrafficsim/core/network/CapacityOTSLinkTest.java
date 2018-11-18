@@ -8,12 +8,12 @@ import java.util.Map;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.mock.MockSimulator;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * Test the CapacityOTSLink class.
@@ -63,7 +63,7 @@ public class CapacityOTSLinkTest
         new OTSNode(newNetwork, fromNode.getId(), fromPoint);
         new OTSNode(newNetwork, toNode.getId(), toPoint);
         OTSSimulatorInterface newSimulator = MockSimulator.createMock();
-        CapacityOTSLink clonedLink = new CapacityOTSLink(newNetwork, newSimulator, true, link);
+        CapacityOTSLink clonedLink = new CapacityOTSLink(newNetwork, newSimulator, link);
         assertTrue("from point matches", fromPoint.equals(clonedLink.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(clonedLink.getDesignLine().get(1)));
         // XXXX is it really intentional that the equals method of Node does NOT check equality of the network field?
@@ -73,7 +73,7 @@ public class CapacityOTSLinkTest
         clonedLink.setCapacity(initialCapacity);
         assertTrue("capacity mathes", initialCapacity.equals(clonedLink.getCapacity()));
         newNetwork.removeLink(clonedLink);
-        clonedLink = link.clone(newNetwork, newSimulator, true);
+        clonedLink = link.clone(newNetwork, newSimulator);
         assertTrue("from point matches", fromPoint.equals(clonedLink.getDesignLine().get(0)));
         assertTrue("to point matches", toPoint.equals(clonedLink.getDesignLine().get(1)));
         // XXXX is it really intentional that the equals method of Node does NOT check equality of the network field?

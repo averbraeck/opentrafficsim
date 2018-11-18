@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,15 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.Binding;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.event.EventContext;
-
+import org.djutils.immutablecollections.Immutable;
+import org.djutils.immutablecollections.ImmutableHashMap;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.core.animation.ClonableRenderable2DInterface;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -26,17 +22,8 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.core.perception.PerceivableContext;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2DInterface;
-import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.immutablecollections.Immutable;
-import nl.tudelft.simulation.immutablecollections.ImmutableHashMap;
-import nl.tudelft.simulation.immutablecollections.ImmutableMap;
-import nl.tudelft.simulation.naming.context.ContextUtil;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.
@@ -106,6 +93,14 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         return new ImmutableHashMap<>(this.nodeMap, Immutable.WRAP);
     }
 
+    /**
+     * @return the original NodeMap; only to be used in the 'network' package for cloning.
+     */
+    final Map<String, Node> getRawNodeMap()
+    {
+        return this.nodeMap;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final void addNode(final Node node) throws NetworkException
@@ -165,6 +160,14 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final ImmutableMap<String, Link> getLinkMap()
     {
         return new ImmutableHashMap<>(this.linkMap, Immutable.WRAP);
+    }
+
+    /**
+     * @return the original LinkMap; only to be used in the 'network' package for cloning.
+     */
+    final Map<String, Link> getRawLinkMap()
+    {
+        return this.linkMap;
     }
 
     /** {@inheritDoc} */
@@ -261,6 +264,14 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         return new ImmutableHashMap<>(this.objectMap, Immutable.WRAP);
     }
 
+    /**
+     * @return the original ObjectMap; only to be used in the 'network' package for cloning.
+     */
+    final Map<String, ObjectInterface> getRawObjectMap()
+    {
+        return this.objectMap;
+    }
+
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
@@ -334,6 +345,14 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final ImmutableMap<String, InvisibleObjectInterface> getInvisibleObjectMap()
     {
         return new ImmutableHashMap<>(this.invisibleObjectMap, Immutable.WRAP);
+    }
+
+    /**
+     * @return the original InvisibleObjectMap; only to be used in the 'network' package for cloning.
+     */
+    final Map<String, InvisibleObjectInterface> getRawInvisibleObjectMap()
+    {
+        return this.invisibleObjectMap;
     }
 
     /** {@inheritDoc} */
@@ -526,7 +545,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
                         routes.add(route);
                     }
                 }
-                catch (@SuppressWarnings("unused") NetworkException ne)
+                catch (NetworkException ne)
                 {
                     // thrown if no nodes exist in the route. Do not add the route in that case.
                 }
@@ -694,6 +713,46 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         return graph;
     }
 
+    /**
+     * @return a defensive copy of the routeMap.
+     */
+    public final ImmutableMap<GTUType, Map<String, Route>> getRouteMap()
+    {
+        return new ImmutableHashMap<>(this.routeMap, Immutable.WRAP);
+    }
+
+    /**
+     * @return routeMap; only to be used in the 'network' package for cloning.
+     */
+    final Map<GTUType, Map<String, Route>> getRawRouteMap()
+    {
+        return this.routeMap;
+    }
+
+    /**
+     * @param newRouteMap the routeMap to set, only to be used in the 'network' package for cloning.
+     */
+    final void setRawRouteMap(final Map<GTUType, Map<String, Route>> newRouteMap)
+    {
+        this.routeMap = newRouteMap;
+    }
+
+    /**
+     * @return linkGraphs; only to be used in the 'network' package for cloning.
+     */
+    final ImmutableMap<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getLinkGraphs()
+    {
+        return new ImmutableHashMap<>(this.linkGraphs, Immutable.WRAP);
+    }
+
+    /**
+     * @return linkGraphs; only to be used in the 'network' package for cloning.
+     */
+    final Map<GTUType, SimpleDirectedWeightedGraph<Node, LinkEdge<Link>>> getRawLinkGraphs()
+    {
+        return this.linkGraphs;
+    }
+
     /***************************************************************************************/
     /**************************************** GTUs *****************************************/
     /***************************************************************************************/
@@ -743,6 +802,14 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         return this.gtuMap.containsKey(gtuId);
     }
 
+    /**
+     * @return gtuMap
+     */
+    final Map<String, GTU> getRawGtuMap()
+    {
+        return this.gtuMap;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final String toString()
@@ -750,204 +817,6 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         return "OTSNetwork [id=" + this.id + ", nodeMapSize=" + this.nodeMap.size() + ", linkMapSize=" + this.linkMap.size()
                 + ", objectMapSize=" + this.objectMap.size() + ", routeMapSize=" + this.routeMap.size() + ", gtuMapSize="
                 + this.gtuMap.size() + "]";
-    }
-
-    /***************************************************************************************/
-    /*************************************** CLONE *****************************************/
-    /***************************************************************************************/
-
-    /**
-     * Clone the OTSNetwork.
-     * @param newId String; the new id of the network
-     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator for this network
-     * @param newSimulator OTSSimulatorInterface; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
-     * @return a clone of this network
-     * @throws NetworkException in case the cloning fails
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public OTSNetwork clone(final String newId, final SimulatorInterface.TimeDoubleUnit oldSimulator,
-            final OTSSimulatorInterface newSimulator, final boolean animation) throws NetworkException
-    {
-        OTSNetwork newNetwork = new OTSNetwork(newId);
-
-        // clone the nodes
-        for (Node node : this.nodeMap.values())
-        {
-            ((OTSNode) node).clone1(newNetwork, newSimulator);
-        }
-
-        // clone the links
-        for (Link oldLink : this.linkMap.values())
-        {
-            OTSLink newLink = ((OTSLink) oldLink).clone(newNetwork, newSimulator, animation);
-            if (animation)
-            {
-                cloneAnimation(oldLink, newLink, oldSimulator, newSimulator);
-            }
-        }
-
-        // make the link-connections for the cloned nodes
-        for (Node oldNode : this.nodeMap.values())
-        {
-            OTSNode newNode = ((OTSNode) oldNode).clone2(newNetwork, newSimulator, animation);
-            if (animation)
-            {
-                cloneAnimation(oldNode, newNode, oldSimulator, newSimulator);
-            }
-        }
-
-        // clone the graphs that had been created for the old network
-        for (GTUType gtuType : this.linkGraphs.keySet())
-        {
-            newNetwork.buildGraph(gtuType);
-        }
-
-        // clone the routes
-        Map<GTUType, Map<String, Route>> newRouteMap = new HashMap<>();
-        for (GTUType gtuType : this.routeMap.keySet())
-        {
-            Map<String, Route> newRoutes = new HashMap<>();
-            for (Route route : this.routeMap.get(gtuType).values())
-            {
-                newRoutes.put(route.getId(), route.clone(newNetwork, newSimulator, animation));
-            }
-            newRouteMap.put(gtuType, newRoutes);
-        }
-        newNetwork.routeMap = newRouteMap;
-        // clone the traffic lights
-        for (InvisibleObjectInterface io : getInvisibleObjectMap().values())
-        {
-            InvisibleObjectInterface clonedIO = io.clone(newSimulator, newNetwork);
-            newNetwork.addInvisibleObject(clonedIO);
-        }
-        return newNetwork;
-    }
-
-    /**
-     * Clone all animation objects for the given class. The given class is the <b>source</b> of the animation objects, as it is
-     * not known on beforehand which objects need to be cloned. It is important for cloning that the animation objects implement
-     * the CloneableRenderable2DInterface, so they can be cloned with their properties. If not, they will not be taken into
-     * account for cloning by this method.
-     * @param oldSource Locatable; the old source object that might have one or more animation objects attached to it
-     * @param newSource T; the new source object to attach the cloned animation objects to
-     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator when the old objects can be found
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator where the new simulation objects need to be
-     *            registered
-     * @param <T> locatable type
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public static <T extends Locatable> void cloneAnimation(final Locatable oldSource, final T newSource,
-            final SimulatorInterface.TimeDoubleUnit oldSimulator, final SimulatorInterface.TimeDoubleUnit newSimulator)
-    {
-        if (!(oldSimulator instanceof AnimatorInterface) || !(newSimulator instanceof AnimatorInterface))
-        {
-            return;
-        }
-
-        try
-        {
-            EventContext context =
-                    (EventContext) ContextUtil.lookup(oldSimulator.getReplication().getContext(), "/animation/2D");
-            NamingEnumeration<Binding> list = context.listBindings("");
-            while (list.hasMore())
-            {
-                Binding binding = list.next();
-                @SuppressWarnings("unchecked")
-                Renderable2DInterface<T> animationObject = (Renderable2DInterface<T>) binding.getObject();
-                T locatable = animationObject.getSource();
-                if (oldSource.equals(locatable) && animationObject instanceof ClonableRenderable2DInterface)
-                {
-                    ((ClonableRenderable2DInterface<T>) animationObject).clone(newSource, newSimulator);
-                }
-            }
-        }
-        catch (@SuppressWarnings("unused") NamingException | RemoteException exception)
-        {
-            System.err.println("Error when cloning animation objects for object " + oldSource);
-        }
-    }
-
-    /**
-     * Remove all objects and animation in the network.
-     * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator of the old network
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public void destroy(final SimulatorInterface.TimeDoubleUnit simulator)
-    {
-        for (GTU gtu : this.getGTUs())
-        {
-            gtu.destroy();
-        }
-
-        Set<Renderable2DInterface<?>> animationObjects = new HashSet<>();
-        try
-        {
-            EventContext context = (EventContext) ContextUtil.lookup(simulator.getReplication().getContext(), "/animation/2D");
-            NamingEnumeration<Binding> list = context.listBindings("");
-            while (list.hasMore())
-            {
-                Binding binding = list.next();
-                Renderable2DInterface<?> animationObject = (Renderable2DInterface<?>) binding.getObject();
-                animationObjects.add(animationObject);
-            }
-
-            for (Renderable2DInterface<?> ao : animationObjects)
-            {
-                try
-                {
-                    ao.destroy();
-                }
-                catch (Exception e)
-                {
-                    //
-                }
-            }
-        }
-        catch (NamingException exception)
-        {
-            System.err.println("Error when destroying animation objects");
-        }
-
-        this.nodeMap.clear();
-        this.linkMap.clear();
-        this.linkGraphs.clear();
-        this.routeMap.clear();
-    }
-
-    /**
-     * Remove all animation objects of the given class.
-     * @param clazz Class&lt;?&gt;; the class to remove the animation objects for
-     * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator
-     */
-    @SuppressWarnings("checkstyle:designforextension")
-    public void removeAnimation(final Class<?> clazz, final SimulatorInterface.TimeDoubleUnit oldSimulator)
-    {
-        if (!(oldSimulator instanceof AnimatorInterface))
-        {
-            return;
-        }
-
-        try
-        {
-            EventContext context =
-                    (EventContext) ContextUtil.lookup(oldSimulator.getReplication().getContext(), "/animation/2D");
-            NamingEnumeration<Binding> list = context.listBindings("");
-            while (list.hasMore())
-            {
-                Binding binding = list.next();
-                Renderable2DInterface<?> animationObject = (Renderable2DInterface<?>) binding.getObject();
-                Locatable locatable = animationObject.getSource();
-                if (clazz.isAssignableFrom(locatable.getClass()))
-                {
-                    animationObject.destroy();
-                }
-            }
-        }
-        catch (@SuppressWarnings("unused") NamingException | RemoteException exception)
-        {
-            System.err.println("Error when destroying animation objects for class " + clazz.getSimpleName());
-        }
     }
 
 }

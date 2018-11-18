@@ -17,12 +17,12 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.mock.MockSimulator;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -445,7 +445,7 @@ public class OTSNodeTest
     {
         OTSSimulatorInterface oldSimulator = MockSimulator.createMock();
         OTSSimulatorInterface newSimulator = MockSimulator.createMock();
-        OTSNetwork clonedNetwork = network.clone("clonedNetwork", oldSimulator, newSimulator, false);
+        OTSNetwork clonedNetwork = OTSNetworkUtils.clone(network, "clonedNetwork", oldSimulator, newSimulator);
         assertEquals("Number of nodes should be same", network.getNodeMap().size(), clonedNetwork.getNodeMap().size());
         assertTrue("Node map should be equal", network.getNodeMap().equals(clonedNetwork.getNodeMap()));
     }

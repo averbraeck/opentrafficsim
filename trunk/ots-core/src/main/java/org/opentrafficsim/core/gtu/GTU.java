@@ -8,18 +8,18 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.immutablecollections.ImmutableMap;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 
 /**
  * Generalized Travel Unit. <br>

@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.gtu;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * <p>

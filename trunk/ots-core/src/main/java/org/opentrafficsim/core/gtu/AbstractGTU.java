@@ -11,10 +11,12 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -25,15 +27,12 @@ import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.PerceivableContext;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**

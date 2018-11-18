@@ -18,10 +18,14 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSSimulator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -34,14 +38,8 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.PerceivableContext;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.immutablecollections.ImmutableMap;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -53,13 +51,9 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 11, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <S> strategical planner
- * @param <T> tactical planner
  */
-public class GTUTest<S extends StrategicalPlanner, T extends TacticalPlanner> implements OTSModelInterface
-
+public class GTUTest
 {
-
     /** GTU that will be returned when the fake strategical planner is asked for the associated GTU with getGTU. */
     public GTU gtuOfStrategicalPlanner = null;
 
@@ -82,8 +76,10 @@ public class GTUTest<S extends StrategicalPlanner, T extends TacticalPlanner> im
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
         OTSNetwork perceivableContext = new OTSNetwork("network");
-        OTSSimulatorInterface simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE), new Duration(0, DurationUnit.SI),
-                new Duration(9999, DurationUnit.SI), this);
+        OTSSimulatorInterface simulator = new OTSSimulator();
+        GTUModel model = new GTUModel(simulator);
+        simulator.initialize(new Time(0, TimeUnit.BASE), new Duration(0, DurationUnit.SI), new Duration(9999, DurationUnit.SI),
+                model);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {
 
@@ -322,128 +318,133 @@ public class GTUTest<S extends StrategicalPlanner, T extends TacticalPlanner> im
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator) throws SimRuntimeException
-    {
-        // Not used
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final OTSNetwork getNetwork()
-    {
-        return null;
-    }
-
-}
-
-/**
- * ...
- */
-class TestGTU extends AbstractGTU
-{
     /** */
-    private static final long serialVersionUID = 20151111L;
-
-    /**
-     * @param id String; id of the new GTU
-     * @param gtuType GTUType; type of the new GTU
-     * @param simulator OTSSimulatorInterface; simulator that controls the new GTU
-     * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
-     * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
-     * @throws GTUException when something goes wrong during GTU instantiation
-     */
-    TestGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,
-
-            final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+    class GTUModel extends AbstractOTSModel
     {
-        super(id, gtuType, simulator, perceivableContext);
+        /** */
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * @param simulator the simulator
+         */
+        public GTUModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void constructModel() throws SimRuntimeException
+        {
+            // Not used
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final OTSNetwork getNetwork()
+        {
+            return null;
+        }
     }
 
-    /**
-     * @param idGenerator IdGenerator; id generator that will generate the id of the new GTU
-     * @param gtuType GTUType; type of the new GTU
-     * @param simulator OTSSimulatorInterface; simulator that controls the new GTU
-     * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
-     * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
-     * @throws GTUException when something goes wrong during GTU instantiation
-     */
-    TestGTU(final IdGenerator idGenerator, final GTUType gtuType, final OTSSimulatorInterface simulator,
-
-            final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+    /** */
+    class TestGTU extends AbstractGTU
     {
-        super(idGenerator, gtuType, simulator, perceivableContext);
-    }
+        /** */
+        private static final long serialVersionUID = 20151111L;
 
-    /** {@inheritDoc} */
-    @Override
-    public Length getLength()
-    {
-        return null;
-    }
+        /**
+         * @param id String; id of the new GTU
+         * @param gtuType GTUType; type of the new GTU
+         * @param simulator OTSSimulatorInterface; simulator that controls the new GTU
+         * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
+         * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
+         * @throws GTUException when something goes wrong during GTU instantiation
+         */
+        TestGTU(final String id, final GTUType gtuType, final OTSSimulatorInterface simulator,
 
-    /** {@inheritDoc} */
-    @Override
-    public Length getWidth()
-    {
-        return null;
-    }
+                final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+        {
+            super(id, gtuType, simulator, perceivableContext);
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public Speed getMaximumSpeed()
-    {
-        return null;
-    }
+        /**
+         * @param idGenerator IdGenerator; id generator that will generate the id of the new GTU
+         * @param gtuType GTUType; type of the new GTU
+         * @param simulator OTSSimulatorInterface; simulator that controls the new GTU
+         * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
+         * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
+         * @throws GTUException when something goes wrong during GTU instantiation
+         */
+        TestGTU(final IdGenerator idGenerator, final GTUType gtuType, final OTSSimulatorInterface simulator,
 
-    /** {@inheritDoc} */
-    @Override
-    public RelativePosition getFront()
-    {
-        return null;
-    }
+                final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+        {
+            super(idGenerator, gtuType, simulator, perceivableContext);
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public RelativePosition getRear()
-    {
-        return null;
-    }
+        /** {@inheritDoc} */
+        @Override
+        public Length getLength()
+        {
+            return null;
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public RelativePosition getCenter()
-    {
-        return null;
-    }
+        /** {@inheritDoc} */
+        @Override
+        public Length getWidth()
+        {
+            return null;
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public ImmutableMap<TYPE, RelativePosition> getRelativePositions()
-    {
-        return null;
-    }
+        /** {@inheritDoc} */
+        @Override
+        public Speed getMaximumSpeed()
+        {
+            return null;
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds()
-    {
-        return null;
-    }
+        /** {@inheritDoc} */
+        @Override
+        public RelativePosition getFront()
+        {
+            return null;
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public ImmutableSet<RelativePosition> getContourPoints()
-    {
-        return null;
+        /** {@inheritDoc} */
+        @Override
+        public RelativePosition getRear()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public RelativePosition getCenter()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public ImmutableMap<TYPE, RelativePosition> getRelativePositions()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Bounds getBounds()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public ImmutableSet<RelativePosition> getContourPoints()
+        {
+            return null;
+        }
     }
 
 }

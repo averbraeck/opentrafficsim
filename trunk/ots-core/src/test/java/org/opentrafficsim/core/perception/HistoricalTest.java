@@ -12,11 +12,11 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Try;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.perception.collections.HistoricalHashMap;
 import org.opentrafficsim.core.perception.collections.HistoricalLinkedHashSet;
 import org.opentrafficsim.core.perception.collections.HistoricalLinkedList;

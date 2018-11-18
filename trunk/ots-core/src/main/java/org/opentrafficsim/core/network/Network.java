@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network;
 import java.util.List;
 import java.util.Set;
 
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -11,7 +12,6 @@ import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
 
 import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.immutablecollections.ImmutableMap;
 
 /**
  * Interface that defines what information a network should be able to provide about Nodes, Links and Routes.

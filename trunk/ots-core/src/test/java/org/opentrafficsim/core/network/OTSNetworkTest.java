@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -21,7 +22,6 @@ import org.opentrafficsim.core.mock.MockGTU;
 import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -337,7 +337,7 @@ public class OTSNetworkTest implements EventListenerInterface
     {
         OTSSimulatorInterface oldSimulator = MockSimulator.createMock();
         OTSSimulatorInterface newSimulator = MockSimulator.createMock();
-        OTSNetwork clone = network.clone("cloned network", oldSimulator, newSimulator, false);
+        OTSNetwork clone = OTSNetworkUtils.clone(network, "cloned network", oldSimulator, newSimulator);
         assertTrue("nodes match", network.getNodeMap().equals(clone.getNodeMap()));
         assertTrue("links match", network.getLinkMap().equals(clone.getLinkMap()));
         // TODO: Checking routes is a bit harder; not done for now

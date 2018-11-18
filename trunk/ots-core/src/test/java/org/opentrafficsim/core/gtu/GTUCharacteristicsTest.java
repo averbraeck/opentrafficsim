@@ -3,6 +3,8 @@ package org.opentrafficsim.core.gtu;
 import static org.junit.Assert.assertEquals;
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
+import java.util.List;
+
 import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
@@ -14,9 +16,11 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -66,26 +70,53 @@ public class GTUCharacteristicsTest implements OTSModelInterface
     }
 
     /** ... */
-    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
+    private OTSSimulatorInterface simulator;
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-            throws SimRuntimeException
+    public final void constructModel() throws SimRuntimeException
     {
-        this.simulator = theSimulator;
+        // nothing to do
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
+    public final OTSNetwork getNetwork()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public InputParameterMap getInputParameterMap()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List getOutputStatistics()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final OTSNetwork getNetwork()
+    public String getShortName()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDescription()
     {
         return null;
     }

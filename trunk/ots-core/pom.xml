@@ -57,13 +57,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jfree</groupId>
-      <artifactId>jfreechart</artifactId>
+      <groupId>dsol</groupId>
+      <artifactId>dsol-core</artifactId>
     </dependency>
 
     <dependency>
       <groupId>dsol</groupId>
-      <artifactId>dsol-core</artifactId>
+      <artifactId>dsol-animation</artifactId>
     </dependency>
 
     <dependency>
@@ -74,16 +74,6 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-main</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>dsol</groupId>
-      <artifactId>dsol-swing</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.bric</groupId>
-      <artifactId>multislider</artifactId>
     </dependency>
 
     <dependency>

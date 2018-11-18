@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.Network;
@@ -12,7 +13,6 @@ import org.opentrafficsim.core.network.NetworkException;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**

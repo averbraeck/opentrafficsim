@@ -7,10 +7,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.djutils.exceptions.Throw;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 import nl.tudelft.simulation.dsol.logger.SimLogger;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Set of OTSShape objects and provides methods for fast selection of those objects that intersect an OTSShape. <br>

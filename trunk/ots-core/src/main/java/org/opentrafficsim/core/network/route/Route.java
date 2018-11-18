@@ -174,12 +174,11 @@ public class Route implements Serializable, Identifiable
      * Clone the Route.
      * @param newNetwork Network; the new network
      * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @return a clone of this route
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public Route clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation)
+    public Route clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator)
             throws NetworkException
     {
         Route newRoute = new Route(this.id);

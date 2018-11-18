@@ -5,24 +5,24 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
+import java.util.List;
+
 import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 
 /**
  * Test the TemplateGTUType class.
@@ -35,7 +35,6 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  */
 public class TemplateGTUTypeTest implements OTSModelInterface
 {
-
     /** */
     private static final long serialVersionUID = 20160311L;
 
@@ -162,27 +161,54 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
     }
 
-    /** ... */
-    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
+    /** */
+    private OTSSimulatorInterface simulator;
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-            throws SimRuntimeException
+    public final void constructModel() throws SimRuntimeException
     {
-        this.simulator = theSimulator;
+        //
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
+    public final OTSNetwork getNetwork()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public InputParameterMap getInputParameterMap()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List getOutputStatistics()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OTSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final OTSNetwork getNetwork()
+    public String getShortName()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDescription()
     {
         return null;
     }

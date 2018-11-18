@@ -8,11 +8,10 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.perception.AbstractHistorical;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.AbstractHistoricalMap.EventMap;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Map-valued historical state. The current map is always maintained, and past states of the map are obtained by applying the
