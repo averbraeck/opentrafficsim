@@ -3,9 +3,8 @@ package org.opentrafficsim.kpi.sampling;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Store one position, direction and lane of a GTU.

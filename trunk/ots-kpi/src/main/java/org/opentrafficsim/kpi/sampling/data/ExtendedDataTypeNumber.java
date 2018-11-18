@@ -2,10 +2,9 @@ package org.opentrafficsim.kpi.sampling.data;
 
 import java.util.Arrays;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.SamplingException;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Class for unitless values.

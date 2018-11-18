@@ -4,11 +4,10 @@ import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vfloat.scalar.FloatScalar;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.SamplingException;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Type class to define different types of data by which trajectories can be extended beyond the basic t, x, v, a. Extend this

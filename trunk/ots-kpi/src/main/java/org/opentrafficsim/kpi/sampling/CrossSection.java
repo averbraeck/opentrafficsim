@@ -5,11 +5,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
-
-import nl.tudelft.simulation.immutablecollections.ImmutableIterator;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * A cross sections contains locations on lanes that together make up a cross section. It is not required that this is on a

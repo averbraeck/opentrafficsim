@@ -14,14 +14,13 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.CompressedFileWriter;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.meta.MetaData;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataType;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Sampler is the highest level organizer for sampling.

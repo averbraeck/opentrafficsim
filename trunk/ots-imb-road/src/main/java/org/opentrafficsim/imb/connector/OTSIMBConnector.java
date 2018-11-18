@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.connector;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.IntegerProperty;
 import org.opentrafficsim.base.modelproperties.Property;
@@ -8,7 +9,6 @@ import org.opentrafficsim.base.modelproperties.StringProperty;
 import org.opentrafficsim.imb.IMBException;
 
 import nl.tno.imb.TConnection;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

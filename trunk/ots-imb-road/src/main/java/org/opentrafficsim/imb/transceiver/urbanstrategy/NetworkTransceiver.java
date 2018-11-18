@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.transceiver.urbanstrategy;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
@@ -7,7 +8,6 @@ import org.opentrafficsim.imb.connector.Connector.IMBEventType;
 import org.opentrafficsim.imb.transceiver.AbstractTransceiver;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * IMB transceiver for the network. <br>
