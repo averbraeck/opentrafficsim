@@ -25,10 +25,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Functions that can draw a schematic diagram of an intersection given the list of traffic streams. The traffic stream numbers
