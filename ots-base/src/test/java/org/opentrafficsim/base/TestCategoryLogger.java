@@ -1,10 +1,9 @@
 package org.opentrafficsim.base;
 
+import org.djutils.logger.CategoryLogger;
+import org.djutils.logger.LogCategory;
 import org.opentrafficsim.base.logger.Cat;
 import org.pmw.tinylog.Level;
-
-import nl.tudelft.simulation.logger.CategoryLogger;
-import nl.tudelft.simulation.logger.LogCategory;
 
 /**
  * TestCategoryLogger.java. <br>

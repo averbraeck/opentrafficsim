@@ -13,8 +13,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>dsol</groupId>
-			<artifactId>dsol-base</artifactId>
+			<groupId>org.djutils</groupId>
+			<artifactId>djutils</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.djunits</groupId>

@@ -1,6 +1,6 @@
 package org.opentrafficsim.base;
 
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
 
 /**
  * Super class for types with hierarchical structure. Upper level types without parent can be created in sub classes using a

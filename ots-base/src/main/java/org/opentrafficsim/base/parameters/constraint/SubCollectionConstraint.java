@@ -3,7 +3,7 @@ package org.opentrafficsim.base.parameters.constraint;
 import java.util.Collection;
 import java.util.HashSet;
 
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
 
 /**
  * Constraint that checks whether a collection (the parameter value) is a subset of a constraint collection.

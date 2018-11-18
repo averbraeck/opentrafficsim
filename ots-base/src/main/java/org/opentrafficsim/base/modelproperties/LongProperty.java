@@ -1,6 +1,6 @@
 package org.opentrafficsim.base.modelproperties;
 
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
 
 /**
  * Long property.

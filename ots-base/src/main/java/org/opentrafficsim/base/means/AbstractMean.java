@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
 
 /**
  * Methods and fields common to all implementations of Mean. Mean implements various kinds of mean. For an excellent discussion
@@ -86,7 +86,7 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
     {
         return addImpl(value, weight);
     }
-    
+
     /**
      * Adds a value with weight.
      * @param value V; the value
@@ -116,8 +116,7 @@ public abstract class AbstractMean<MT, V extends Number, W extends Number>
      * @return this AbstractMean&lt;MT, V, W&gt;; for method chaining
      * @throws IllegalArgumentException if the number of values is not equal to the number of weights
      */
-    public final AbstractMean<MT, V, W> add(final Iterable<V> values, final Iterable<W> weights)
-            throws IllegalArgumentException
+    public final AbstractMean<MT, V, W> add(final Iterable<V> values, final Iterable<W> weights) throws IllegalArgumentException
     {
         Iterator<V> itV = values.iterator();
         Iterator<W> itW = weights.iterator();

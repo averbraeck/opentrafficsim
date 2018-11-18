@@ -1,6 +1,6 @@
 package org.opentrafficsim.base.logger;
 
-import nl.tudelft.simulation.logger.LogCategory;
+import org.djutils.logger.LogCategory;
 
 /**
  * Predefined categories for Category logging. <br>

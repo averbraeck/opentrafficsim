@@ -2,11 +2,10 @@ package org.opentrafficsim.base.parameters;
 
 import java.io.Serializable;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Defines meta-information of a parameter, defining the parameter uniquely.
