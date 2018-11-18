@@ -4,13 +4,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.opentrafficsim.water.network.infra.Obstacle;
 import org.opentrafficsim.water.transfer.Terminal;
 

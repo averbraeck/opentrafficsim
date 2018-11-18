@@ -9,8 +9,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.djutils.reflection.ClassUtil;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 /**
  * <p>
