@@ -10,22 +10,19 @@ import javax.naming.NamingException;
 import javax.swing.JScrollPane;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.dsol.OTSReplication;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.demo.ntm.NTMModel;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
-import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
+import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
+import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
+import nl.tudelft.simulation.dsol.swing.gui.HTMLPanel;
 import nl.tudelft.simulation.event.Event;
 
 /**
@@ -61,15 +58,9 @@ public class DataViewerApplication extends DSOLApplication
      */
     public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException, PropertyException
     {
-        DataViewer model = new DataViewer();
-        // model.getSettingsNTM().getStartTimeSinceMidnight().getInUnit(DurationUnit.SECOND)
-        Time startTime = new Time(0.0, TimeUnit.BASE_SECOND);
-        // OTSReplication replication =
-        // new OTSReplication("rep1", startTime, new Duration(0.0, DurationUnit.SECOND), model
-        // .getSettingsNTM().getDurationOfSimulation(), model);
-        SimpleAnimator simulator = new SimpleAnimator(startTime, new Duration(0.0, DurationUnit.SECOND),
-                new Duration(7200.0, DurationUnit.SECOND), model);
-        // simulator.initialize(replication, ReplicationMode.TERMINATING);
+        OTSAnimator simulator = new OTSAnimator();
+        DataViewer model = new DataViewer(simulator);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(7200.0, DurationUnit.SECOND), model);
 
         DSOLPanel<Time, Duration, SimTimeDoubleUnit> panel = new DSOLPanel<Time, Duration, SimTimeDoubleUnit>(model, simulator);
         addInfoTab(panel);
