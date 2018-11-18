@@ -4,13 +4,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.CrossSection;
 import org.opentrafficsim.kpi.sampling.KpiDirectedLanePosition;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Accepts trajectories that have passed all cross sections as defined in a query.

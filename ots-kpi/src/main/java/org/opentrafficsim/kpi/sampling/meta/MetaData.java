@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import nl.tudelft.simulation.immutablecollections.ImmutableIterator;
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableIterator;
 
 /**
  * Collection of objects, one object per meta data type included.

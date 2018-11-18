@@ -6,10 +6,9 @@ import org.djunits.unit.Unit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vfloat.scalar.AbstractFloatScalar;
 import org.djunits.value.vfloat.vector.AbstractFloatVector;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.SamplingException;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Class to facilitate JUNITS types in extended data.

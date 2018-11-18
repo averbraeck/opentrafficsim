@@ -4,11 +4,10 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.DoubleScalarInterface;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Abstract indicator which stores the last calculated value and returns it in {@code getValue()} for an equal query, start time

@@ -1,9 +1,8 @@
 package org.opentrafficsim.kpi.sampling.meta;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.interfaces.NodeDataInterface;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Accepts trajectories with an origin node included in a set in a query.

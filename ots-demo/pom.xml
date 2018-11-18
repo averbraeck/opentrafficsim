@@ -7,6 +7,7 @@
     <version>1.00.03-SNAPSHOT</version>
     <relativePath>../ots/pom.xml</relativePath>
   </parent>
+  
   <artifactId>ots-demo</artifactId>
   <name>Open Traffic Sim demo classes</name>
   <description>Demo classes for the Open Traffic Sim project</description>
@@ -30,7 +31,11 @@
     </dependency>
     <dependency>
       <groupId>dsol</groupId>
-      <artifactId>dsol-swing</artifactId>
+      <artifactId>ots-swing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dsol</groupId>
+      <artifactId>ots-web</artifactId>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>

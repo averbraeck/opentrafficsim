@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import nl.tudelft.simulation.immutablecollections.ImmutableIterator;
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableIterator;
 
 /**
  * Set of trajectories to be accepted or rejected for a query.

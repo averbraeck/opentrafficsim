@@ -54,13 +54,13 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.modelproperties.StringProperty;
+import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
 import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.imb.connector.OTSIMBConnector;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
-import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -188,7 +188,7 @@ public class IMBSuperDemo implements UNITS
                 public void actionPerformed(final ActionEvent e)
                 {
                     // System.out.println("selected " + demo.shortName());
-                    description.setText(demo.description());
+                    description.setText(demo.getDescription());
                     startButton.setEnabled(true);
                     startButton.setVisible(true);
                     rebuildPropertyPanel(demo.getProperties());
@@ -618,7 +618,7 @@ class CleverRadioButton extends JRadioButton
      */
     CleverRadioButton(final WrappableAnimation animation)
     {
-        super(animation.shortName());
+        super(animation.getShortName());
         this.animation = animation;
     }
 

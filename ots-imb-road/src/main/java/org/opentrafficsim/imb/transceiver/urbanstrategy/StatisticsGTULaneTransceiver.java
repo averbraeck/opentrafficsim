@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
@@ -26,7 +27,6 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelDistance;
 import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
 import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
 import org.opentrafficsim.road.network.sampling.indicator.TotalDelayReference;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -16,7 +17,6 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

@@ -31,6 +31,8 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -76,16 +78,14 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
-import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
+import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.io.URLResource;
 
 /**
  * <p>
@@ -105,7 +105,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel() throws OTSSimulationException
+    protected final OTSModelInterface<OTSSimulatorInterface> makeModel() throws OTSSimulationException
     {
         return new BusStreetModel();
     }
@@ -136,7 +136,7 @@ public class BusStreetDemo extends AbstractWrappableAnimation
     /**
      * The simulation model.
      */
-    class BusStreetModel implements OTSModelInterface
+    class BusStreetModel implements OTSModelInterface<OTSSimulatorInterface>
     {
 
         /** */
@@ -150,9 +150,8 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
+        public void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) arg0;
             Map<String, StreamInterface> streams = new HashMap<>();
             streams.put("generation", new MersenneTwister(100L));
             this.simulator.getReplication().setStreams(streams);
@@ -213,13 +212,6 @@ public class BusStreetDemo extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public OTSNetwork getNetwork()
         {
             return this.network;
@@ -249,6 +241,27 @@ public class BusStreetDemo extends AbstractWrappableAnimation
             new LaneBasedGTUGenerator(id, headwayGenerator, getColorer(), characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, this.simulator, roomChecker,
                     new IdGenerator(""));
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OTSSimulatorInterface getSimulator()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public InputParameterMap getInputParameterMap()
+        {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<OutputStatistic<?>> getOutputStatistics()
+        {
+            return null;
         }
 
     }

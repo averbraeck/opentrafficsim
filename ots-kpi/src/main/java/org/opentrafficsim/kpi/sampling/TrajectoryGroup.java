@@ -6,9 +6,8 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Contains all trajectories pertaining to a certain space-time region.

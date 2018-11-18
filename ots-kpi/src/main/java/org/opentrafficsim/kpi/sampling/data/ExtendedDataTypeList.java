@@ -3,10 +3,9 @@ package org.opentrafficsim.kpi.sampling.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.SamplingException;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Extended data type for anything that can be captured in a list. Typically, these are non-numeric objects.

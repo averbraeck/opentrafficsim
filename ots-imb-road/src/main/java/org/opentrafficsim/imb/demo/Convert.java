@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nl.tudelft.simulation.language.io.URLResource;
+import org.djutils.io.URLResource;
 
 /**
  * <p>

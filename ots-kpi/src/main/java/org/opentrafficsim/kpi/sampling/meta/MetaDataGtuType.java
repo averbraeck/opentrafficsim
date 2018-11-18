@@ -1,9 +1,8 @@
 package org.opentrafficsim.kpi.sampling.meta;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.interfaces.GtuTypeDataInterface;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Accepts trajectories with a GTUType included in a set in a query.

@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import nl.tudelft.simulation.immutablecollections.ImmutableIterator;
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableIterator;
 
 /**
  * Collection of object sets, one object set per meta data type included. This defines constraints to which meta data has to

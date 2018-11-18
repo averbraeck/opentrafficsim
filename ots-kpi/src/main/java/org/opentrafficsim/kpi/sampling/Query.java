@@ -15,15 +15,14 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.interfaces.LinkDataInterface;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataType;
-
-import nl.tudelft.simulation.immutablecollections.ImmutableIterator;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * A query defines which subset of trajectory information should be included. This is in terms of space-time regions, and in

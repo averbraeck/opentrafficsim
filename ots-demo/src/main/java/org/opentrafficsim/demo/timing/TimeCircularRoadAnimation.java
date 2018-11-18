@@ -15,12 +15,12 @@ import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.modelproperties.SelectionProperty;
+import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.carFollowing.CircularRoad;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
-import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 

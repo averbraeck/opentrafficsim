@@ -2,11 +2,10 @@ package org.opentrafficsim.kpi.sampling.meta;
 
 import java.util.Set;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.kpi.interfaces.GtuDataInterface;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Abstract class for defining a type of meta data.
