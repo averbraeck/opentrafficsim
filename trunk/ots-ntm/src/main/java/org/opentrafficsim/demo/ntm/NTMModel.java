@@ -28,9 +28,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -44,7 +44,6 @@ import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -52,9 +51,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -66,13 +63,10 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class NTMModel implements OTSModelInterface
+public class NTMModel extends AbstractOTSModel
 {
     /** */
     private static final long serialVersionUID = 20140815L;
-
-    /** The simulator. */
-    private OTSSimulatorInterface simulator;
 
     /** Detailed areas from the traffic model. */
     private Map<String, Area> areas;
@@ -142,10 +136,12 @@ public class NTMModel implements OTSModelInterface
 
     /**
      * Constructor to make the graphs with the right type.
+     * @param simulator the simulator
      */
     @SuppressWarnings("unchecked")
-    public NTMModel()
+    public NTMModel(final OTSSimulatorInterface simulator)
     {
+        super(simulator);
         LinkEdge<NTMLink> l = new LinkEdge<NTMLink>(null);
         this.linkGraph =
                 new SimpleDirectedWeightedGraph<NTMNode, LinkEdge<NTMLink>>((Class<? extends LinkEdge<NTMLink>>) l.getClass());
@@ -155,9 +151,8 @@ public class NTMModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> _simulator)
+    public final void constructModel()
     {
-        this.simulator = (OTSSimulatorInterface) _simulator;
         try
         {
             // create the output base maps
@@ -314,7 +309,7 @@ public class NTMModel implements OTSModelInterface
                     this.getInputNTM().getVarianceRoutes(), true, 1, 999999);
 
             // in case we run on an animator and not on a simulator, we create the animation
-            if (_simulator instanceof AnimatorInterface)
+            if (getSimulator() instanceof AnimatorInterface)
             {
                 createDynamicAreaAnimation(this);
             }
@@ -893,13 +888,6 @@ public class NTMModel implements OTSModelInterface
         {
             exception.printStackTrace();
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final OTSSimulatorInterface getSimulator()
-    {
-        return this.simulator;
     }
 
     /**

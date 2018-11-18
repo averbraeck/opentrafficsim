@@ -11,13 +11,13 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.network.factory.rti.data.OTSToRTIData;
 import org.opentrafficsim.road.network.factory.rti.data.RTIToOTSData;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.tudelft.simulation.dsol.SimRuntimeException;

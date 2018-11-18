@@ -21,12 +21,12 @@ import javax.naming.NamingException;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.demo.ntm.animation.RoadAnimation;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -48,8 +48,11 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class DataViewer implements OTSModelInterface
+public class DataViewer extends AbstractOTSModel
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+
     /**
      * <p>
      * Copyright (c) 2013-2017 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -78,27 +81,22 @@ public class DataViewer implements OTSModelInterface
     /** */
     HashMap<String, ShapeObject> mapRoadCounts;
 
-    /** The simulator. */
-    private OTSSimulatorInterface simulator;
-
     /**
      * Constructor to make the graphs with the right type.
+     * @param simulator the simulator
      */
-    @SuppressWarnings("unchecked")
-    public DataViewer()
+    public DataViewer(final OTSSimulatorInterface simulator)
     {
+        super(simulator);
     }
 
     /**
      * {@inheritDoc}
-     * @throws SimRuntimeException
-     * @throws RemoteException
      */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> _simulator)
+    public final void constructModel()
             throws SimRuntimeException
     {
-        this.simulator = (OTSSimulatorInterface) _simulator;
         String startMap = "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data";
 
         String fileArea = FileDialog.showFileDialog(true, "shp", "Shapefile with Areas", startMap);
@@ -513,13 +511,6 @@ public class DataViewer implements OTSModelInterface
             }
         }
         return area;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-    {
-        return null;
     }
 
     /** {@inheritDoc} */

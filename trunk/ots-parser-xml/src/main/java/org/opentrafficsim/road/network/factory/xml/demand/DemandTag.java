@@ -11,7 +11,8 @@ import org.djunits.value.StorageType;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
-import org.opentrafficsim.core.gtu.Try;
+import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.network.factory.xml.units.DurationUnits;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
@@ -21,8 +22,6 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Demand.

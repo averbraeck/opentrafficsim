@@ -11,20 +11,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSReplication;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.demo.ntm.IO.ProjectConfigurations;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
 
-import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
-import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
-import nl.tudelft.simulation.dsol.gui.swing.DSOLApplication;
-import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
+import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
+import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
+import nl.tudelft.simulation.dsol.swing.gui.HTMLPanel;
 import nl.tudelft.simulation.event.Event;
 
 /**
@@ -61,7 +58,8 @@ public class NTMTestApplication extends DSOLApplication
      */
     public static void main(final String[] args) throws Exception
     {
-        NTMModel model = new NTMModel();
+        OTSAnimator simulator = new OTSAnimator();
+        NTMModel model = new NTMModel(simulator);
         InputNTM inputNTM = new InputNTM();
         model.setInputNTM(inputNTM);
         // String startMap = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague/";
@@ -73,10 +71,7 @@ public class NTMTestApplication extends DSOLApplication
             model.getInputNTM().setInputMap(System.getProperty("user.dir"));
         }
         // model.getSettingsNTM().getStartTimeSinceMidnight().getInUnit(DurationUnit.SECOND)
-        Time startTime = new Time(0.0, TimeUnit.BASE_SECOND);
-        SimpleAnimator simulator = new SimpleAnimator(startTime, new Duration(0.0, DurationUnit.SECOND),
-                new Duration(10800.0, DurationUnit.SECOND), model);
-        // simulator.initialize(replication, ReplicationMode.TERMINATING);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(10800.0, DurationUnit.SECOND), model);
 
         panel = new DSOLPanel<Time, Duration, SimTimeDoubleUnit>(model, simulator);
         addInfoTab(panel);

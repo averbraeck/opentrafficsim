@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
@@ -16,8 +17,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Category.
