@@ -8,19 +8,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.NestedCache;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * A LaneStructureRecord contains information about the lanes that can be accessed from this lane by a GTUType. It tells whether

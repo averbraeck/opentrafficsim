@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.opentrafficsim.road.gtu.animation.DesireBased;
-import org.opentrafficsim.road.gtu.animation.Synchronizable;
+import org.opentrafficsim.road.gtu.colorer.DesireBased;
+import org.opentrafficsim.road.gtu.colorer.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;

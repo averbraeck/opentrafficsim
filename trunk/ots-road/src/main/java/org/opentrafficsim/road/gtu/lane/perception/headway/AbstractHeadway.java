@@ -1,9 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.perception.headway;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Super class for non-delayed and non-erroneous perception. Sub classes should wrap the actual simulation object to obtain

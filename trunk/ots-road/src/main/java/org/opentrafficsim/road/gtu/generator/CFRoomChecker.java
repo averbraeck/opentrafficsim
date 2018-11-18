@@ -8,6 +8,7 @@ import java.util.SortedSet;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
@@ -17,8 +18,6 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharact
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * This class places GTU's behind the leader at the desired headway (i.e. CF, car-following) and the speed of the leader, but no

@@ -2,13 +2,12 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Interface with LMRS parameters.

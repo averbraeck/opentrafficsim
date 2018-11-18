@@ -5,11 +5,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
@@ -20,7 +21,6 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.route.RouteSupplier;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Default generator for {@code LaneBasedGTUCharacteristics}.

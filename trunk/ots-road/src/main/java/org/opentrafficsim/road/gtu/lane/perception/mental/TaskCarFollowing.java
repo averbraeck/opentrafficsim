@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;

@@ -9,6 +9,7 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -37,7 +38,6 @@ import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Conflicts deal with traffic on different links/roads that need to consider each other as their paths may be in conflict

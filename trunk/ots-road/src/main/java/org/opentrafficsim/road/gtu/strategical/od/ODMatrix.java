@@ -19,13 +19,12 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * The minimal OD matrix has 1 origin, 1 destination and 1 time period. More of each can be used. Further categorization of data

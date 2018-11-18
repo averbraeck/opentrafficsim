@@ -20,6 +20,10 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.Immutable;
+import org.djutils.immutablecollections.ImmutableArrayList;
+import org.djutils.immutablecollections.ImmutableList;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -48,10 +52,6 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventType;
-import nl.tudelft.simulation.immutablecollections.Immutable;
-import nl.tudelft.simulation.immutablecollections.ImmutableArrayList;
-import nl.tudelft.simulation.immutablecollections.ImmutableList;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important

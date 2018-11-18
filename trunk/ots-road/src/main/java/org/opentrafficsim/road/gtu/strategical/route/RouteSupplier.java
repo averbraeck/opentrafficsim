@@ -5,10 +5,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.NestedCache;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
@@ -16,7 +17,6 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Supplies a route by determining one.

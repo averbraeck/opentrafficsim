@@ -11,11 +11,12 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
@@ -28,8 +29,6 @@ import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Perceives information concerning the infrastructure, including slits, lanes, speed limits and road markings.

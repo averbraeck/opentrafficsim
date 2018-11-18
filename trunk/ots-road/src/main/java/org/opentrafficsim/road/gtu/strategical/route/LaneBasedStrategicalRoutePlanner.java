@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -25,8 +26,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Strategical planner, route-based, with personal driving characteristics, which contain settings for the tactical planner. The

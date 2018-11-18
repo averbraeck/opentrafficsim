@@ -5,12 +5,13 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.animation.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.road.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
@@ -18,8 +19,6 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.network.lane.Lane;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Options for vehicle generation based on an OD matrix.

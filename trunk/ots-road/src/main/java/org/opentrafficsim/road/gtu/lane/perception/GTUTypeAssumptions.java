@@ -5,12 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.lane.LaneType;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -23,8 +24,6 @@ import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedAbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsUtil.DistanceGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Perception of surrounding traffic on the own road, i.e. without crossing traffic.

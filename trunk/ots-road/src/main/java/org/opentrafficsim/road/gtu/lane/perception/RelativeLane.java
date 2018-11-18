@@ -2,9 +2,8 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.io.Serializable;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.network.LateralDirectionality;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Defines a lane relative to the current lane.

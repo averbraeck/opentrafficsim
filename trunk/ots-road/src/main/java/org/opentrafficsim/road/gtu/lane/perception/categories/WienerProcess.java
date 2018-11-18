@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;

@@ -11,6 +11,7 @@ import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.vector.DurationVector;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
@@ -19,7 +20,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Split fraction at a node with fractions per link, optionally per gtu type.

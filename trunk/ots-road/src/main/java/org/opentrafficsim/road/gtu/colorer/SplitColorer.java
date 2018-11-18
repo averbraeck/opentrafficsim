@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.animation;
+package org.opentrafficsim.road.gtu.colorer;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;

@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.lane.object;
 import javax.media.j3d.Bounds;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -10,7 +11,6 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.road.network.lane.Lane;
 
-import nl.tudelft.simulation.language.Throw;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**

@@ -9,8 +9,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -22,7 +23,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Stochastic Distraction Model by Manuel Lindorfer.

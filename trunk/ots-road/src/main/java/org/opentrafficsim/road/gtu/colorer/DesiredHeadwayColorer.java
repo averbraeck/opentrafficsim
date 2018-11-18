@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.animation;
+package org.opentrafficsim.road.gtu.colorer;
 
 import java.awt.Color;
 import java.io.Serializable;
@@ -9,8 +9,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.animation.ColorInterpolator;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.colorer.ColorInterpolator;
+import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 
 /**
  * Color on a scale from Tmin to Tmax parameters, or two given limits.

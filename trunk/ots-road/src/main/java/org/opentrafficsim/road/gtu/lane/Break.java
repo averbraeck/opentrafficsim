@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane;
 
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.perception.Perception;
 
 /**

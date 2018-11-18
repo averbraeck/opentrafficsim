@@ -2,10 +2,9 @@ package org.opentrafficsim.road.network.speed;
 
 import java.io.Serializable;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.Type;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Defines the type of a speed limit, resulting in different behavior.

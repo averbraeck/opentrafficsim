@@ -2,10 +2,10 @@ package org.opentrafficsim.road.gtu.lane;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 /**
  * Specific type of LaneBasedGTU. This class adds length, width, maximum speed and a reference to the simulator to the

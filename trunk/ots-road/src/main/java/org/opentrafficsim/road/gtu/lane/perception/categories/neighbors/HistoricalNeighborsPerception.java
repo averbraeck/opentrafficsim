@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.Try;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;

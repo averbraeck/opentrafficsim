@@ -23,7 +23,6 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AbstractDelayedPerceptionCategory;
-import org.opentrafficsim.road.gtu.lane.perception.categories.AbstractDelayedPerceptionCategory.DelayedInfoType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;

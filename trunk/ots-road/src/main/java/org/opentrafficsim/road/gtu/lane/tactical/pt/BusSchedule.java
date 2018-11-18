@@ -7,10 +7,9 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

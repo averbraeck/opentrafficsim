@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -30,7 +31,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipa
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Implementation of delayed neighbors perception which anticipates using constant speed.

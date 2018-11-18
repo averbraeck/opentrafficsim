@@ -1,14 +1,14 @@
-package org.opentrafficsim.road.gtu.animation;
+package org.opentrafficsim.road.gtu.colorer;
 
 import java.awt.Color;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
-import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.core.gtu.animation.SpeedGTUColorer;
-import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
+import org.opentrafficsim.core.gtu.colorer.AccelerationGTUColorer;
+import org.opentrafficsim.core.gtu.colorer.IDGTUColorer;
+import org.opentrafficsim.core.gtu.colorer.SpeedGTUColorer;
+import org.opentrafficsim.core.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;

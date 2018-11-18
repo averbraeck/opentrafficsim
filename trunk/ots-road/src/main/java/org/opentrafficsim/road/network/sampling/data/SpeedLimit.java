@@ -2,13 +2,12 @@ package org.opentrafficsim.road.network.sampling.data;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.sampling.GtuData;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Speed limit for trajectories.

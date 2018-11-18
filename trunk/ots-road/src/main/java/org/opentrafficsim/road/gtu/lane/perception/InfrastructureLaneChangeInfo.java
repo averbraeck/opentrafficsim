@@ -3,10 +3,9 @@ package org.opentrafficsim.road.gtu.lane.perception;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Contains information by which drivers know when they need to leave a lane in order to be able to stay on the infrastructure

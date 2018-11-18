@@ -2,9 +2,8 @@ package org.opentrafficsim.road.gtu.strategical;
 
 import java.io.Serializable;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

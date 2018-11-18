@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.animation;
+package org.opentrafficsim.road.gtu.colorer;
 
 import java.awt.Color;
 import java.io.Serializable;
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.road.gtu.animation.Synchronizable.State;
+import org.opentrafficsim.core.gtu.colorer.GTUColorer;
+import org.opentrafficsim.road.gtu.colorer.Synchronizable.State;
 
 /**
  * Color based on synchronization state.
