@@ -5,9 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.djutils.exceptions.Throw;
 import org.junit.Test;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Test the GTUException class.

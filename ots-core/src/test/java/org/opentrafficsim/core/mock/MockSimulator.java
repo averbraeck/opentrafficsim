@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.mock;
 
 import org.mockito.Mockito;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 /**
  * MockSimulator.java. <br>

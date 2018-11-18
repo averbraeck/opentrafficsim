@@ -4,8 +4,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.djutils.exceptions.Throw;
+
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Utility to draw from a collection.

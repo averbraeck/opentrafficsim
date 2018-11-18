@@ -106,8 +106,8 @@ public class CompleteRoute extends Route
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CompleteRoute clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public CompleteRoute clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
         CompleteRoute newRoute = new CompleteRoute(getId(), this.gtuType);
         for (Node node : getNodes())

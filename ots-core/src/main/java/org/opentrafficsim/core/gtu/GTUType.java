@@ -7,6 +7,7 @@ import java.util.Map;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
@@ -15,7 +16,6 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * A GTU type identifies the type of a GTU. <br>

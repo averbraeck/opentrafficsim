@@ -5,12 +5,11 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * TemplateGTUType stores most of the information that is needed to generate a GTU.

@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.gtu.Try;
+import org.djutils.exceptions.Try;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;

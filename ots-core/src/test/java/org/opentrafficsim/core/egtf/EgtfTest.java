@@ -4,9 +4,9 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.Locale;
 
+import org.djutils.exceptions.Try;
 import org.junit.Test;
 import org.opentrafficsim.core.egtf.typed.TypedQuantity;
-import org.opentrafficsim.core.gtu.Try;
 
 /**
  * <p>

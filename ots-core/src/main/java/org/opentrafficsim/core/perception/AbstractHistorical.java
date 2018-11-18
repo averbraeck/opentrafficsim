@@ -5,10 +5,9 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.perception.AbstractHistorical.Event;
 import org.opentrafficsim.core.perception.HistoryManager.HistoricalElement;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Base class for objects or properties that can be perceived from their actual state in the past. The principle by which a past

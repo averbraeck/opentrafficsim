@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
 
 /**
  * Utility class to cache data based on a variable (between cache instances) number of keys of any type. This replaces nested

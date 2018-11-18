@@ -4,9 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djutils.exceptions.Throw;
+
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Generic implementation of a set of objects that have a draw method with corresponding probabilities / frequencies.

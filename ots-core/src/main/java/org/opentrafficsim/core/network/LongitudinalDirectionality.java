@@ -3,11 +3,10 @@ package org.opentrafficsim.core.network;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
+import org.djutils.immutablecollections.Immutable;
+import org.djutils.immutablecollections.ImmutableHashSet;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-
-import nl.tudelft.simulation.immutablecollections.Immutable;
-import nl.tudelft.simulation.immutablecollections.ImmutableHashSet;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 
 /**
  * Permitted longitudinal driving directions.

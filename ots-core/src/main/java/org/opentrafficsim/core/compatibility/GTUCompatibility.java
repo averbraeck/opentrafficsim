@@ -3,6 +3,7 @@ package org.opentrafficsim.core.compatibility;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.HierarchicalType;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -10,7 +11,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 
 import nl.tudelft.simulation.dsol.logger.SimLogger;
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Directional GTUType dependent compatibility.

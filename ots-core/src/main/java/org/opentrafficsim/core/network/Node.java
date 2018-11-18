@@ -5,12 +5,12 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.immutablecollections.ImmutableSet;
 
 /**
  * The Node is a point with an id. It is used in the network to connect Links.

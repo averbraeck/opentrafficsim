@@ -11,6 +11,7 @@ import javax.media.j3d.Bounds;
 
 import org.junit.Test;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -18,7 +19,6 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.mock.MockGTU;
 import org.opentrafficsim.core.mock.MockSimulator;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -161,7 +161,7 @@ public class OTSLinkTest implements EventListenerInterface
         assertTrue("link is equal to extremely similar link with same id but different network", link.equals(otherLink));
         otherNetwork.removeLink(otherLink);
         OTSSimulatorInterface simulator2 = MockSimulator.createMock();
-        otherLink = link.clone(otherNetwork, simulator2, false);
+        otherLink = link.clone(otherNetwork, simulator2);
         assertTrue("link is equal to clone in different network", link.equals(otherLink));
     }
 

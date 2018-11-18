@@ -5,9 +5,9 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.LengthVector;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.egtf.Filter;
 import org.opentrafficsim.core.egtf.Quantity;
-import org.opentrafficsim.core.gtu.Try;
 
 /**
  * Typed version of a kernel.

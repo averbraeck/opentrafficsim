@@ -2,7 +2,8 @@ package org.opentrafficsim.core.geometry;
 
 import java.awt.geom.Line2D;
 
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
+
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
