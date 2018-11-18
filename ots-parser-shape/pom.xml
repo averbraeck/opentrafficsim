@@ -17,7 +17,19 @@
 
     <dependency>
       <groupId>opentrafficsim</groupId>
-      <artifactId>ots-road</artifactId>
+      <artifactId>ots-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-swing</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-shapefile</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>

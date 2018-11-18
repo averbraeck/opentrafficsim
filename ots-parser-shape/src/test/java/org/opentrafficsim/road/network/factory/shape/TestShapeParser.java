@@ -1,36 +1,47 @@
 package org.opentrafficsim.road.network.factory.shape;
 
+import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.naming.NamingException;
-import javax.swing.SwingUtilities;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.io.URLResource;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSAnimator;
+import org.opentrafficsim.core.dsol.OTSReplication;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
-import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.animation.LinkAnimation;
+import org.opentrafficsim.core.network.animation.NodeAnimation;
+import org.pmw.tinylog.Level;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -38,87 +49,62 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
+import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
+import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
 
-public class TestShapeParser extends AbstractWrappableAnimation
+/**
+ * Test model for parsing ESRI shape files.
+ */
+public class TestShapeParser extends DSOLApplication
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @param title the title of the window
+     * @param panel the panel to display the animation
+     */
+    public TestShapeParser(final String title, final DSOLPanel panel)
+    {
+        super(title, panel);
+        panel.getConsole().setLogLevel(Level.TRACE);
+    }
 
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException should never happen
+     * @throws NamingException on animation creation error
+     * @throws RemoteException on animation panel failure
      */
-    public static void main(final String[] args) throws SimRuntimeException
+    public static void main(final String[] args) throws SimRuntimeException, NamingException, RemoteException
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    TestShapeParser xmlModel = new TestShapeParser();
-                    // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<org.opentrafficsim.base.modelproperties.Property<?>>(), null, true);
-                }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "TestXMLModel";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "TestXMLModel";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addTabs(final OTSSimulatorInterface simulator)
-    {
-        return;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        return new GisNDWImport();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final java.awt.geom.Rectangle2D.Double makeAnimationRectangle()
-    {
-        return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
+        SimLogger.setAllLogLevel(Level.TRACE);
+        OTSAnimator simulator = new OTSAnimator();
+        GisNDWImport model = new GisNDWImport(simulator);
+        DSOLPanel panel = new DSOLPanel(model, simulator);
+        AnimationPanel animationPanel =
+                new AnimationPanel(new Rectangle2D.Double(125000, 375000, 40000, 35000), new Dimension(800, 600), simulator);
+        animationPanel.toggleClass(LinkAnimation.Text.class);
+        animationPanel.toggleClass(NodeAnimation.Text.class);
+        panel.getTabbedPane().add("animation", animationPanel);
+        panel.getTabbedPane().setSelectedIndex(1);
+        OTSReplication replication =
+                OTSReplication.create("rep1", Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE), model);
+        simulator.initialize(replication, ReplicationMode.TERMINATING);
+        SimLogger.setSimulator(simulator);
+        new TestShapeParser("TestShapeParser", panel);
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "TestGISParser []";
+        return "TestShapeParser []";
     }
 
     /**
@@ -128,44 +114,42 @@ public class TestShapeParser extends AbstractWrappableAnimation
      * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim
      * License</a>.
      * <p>
-     * $LastChangedDate: 2016-08-26 16:34:41 +0200 (Fri, 26 Aug 2016) $, @version $Revision: 2150 $, by $Author: gtamminga $,
-     * initial version un 27, 2015 <br>
+     * initial version Jun 27, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    /**
-     * @author P070518
-     */
-    class GisNDWImport implements OTSModelInterface
+    static class GisNDWImport extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
 
-        /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
-
         /** The network. */
         private final OTSNetwork network = new OTSNetwork("test network");
 
+        /**
+         * Create the test model.
+         * @param simulator the simulator
+         */
+        public GisNDWImport(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
+
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
-
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
-
             try
             {
                 // open the NWB basic shape file
-                Map<String, AbstractNWBRoadElement> roadMapNWB = getRoadMapNWB("A58", "NWB_A58", "NWB_wegvakken");
+                Map<String, AbstractNWBRoadElement> roadMapNWB = getRoadMapNWB("/A58", "NWB_A58", "NWB_wegvakken");
 
                 // open the shape file with driving lane information
-                Map<String, AbstractNWBRoadElement> laneMapNWB = getRoadMapNWB("A58", "rijstroken_A58", "NWB_rijstroken");
+                Map<String, AbstractNWBRoadElement> laneMapNWB = getRoadMapNWB("/A58", "rijstroken_A58", "NWB_rijstroken");
 
                 // open the shape file with specific lane information such as on and off ramps and weaving areas
                 Map<String, AbstractNWBRoadElement> specialLaneMapNWB =
-                        getRoadMapNWB("A58", "mengstroken_A58", "NWB_mengstroken");
+                        getRoadMapNWB("/A58", "mengstroken_A58", "NWB_mengstroken");
 
                 combineNWBMaps(roadMapNWB, laneMapNWB, specialLaneMapNWB);
             }
@@ -193,7 +177,14 @@ public class TestShapeParser extends AbstractWrappableAnimation
             {
                 NWBDrivingLane lane = (NWBDrivingLane) laneElement;
                 NWBRoadElement road = (NWBRoadElement) roadMapNWB.get(lane.getRoadId());
-                List<LineString> lineSegmentList = splitRoad(road, lane);
+                if (road != null)
+                {
+                    List<LineString> lineSegmentList = splitRoad(road, lane);
+                }
+                else
+                {
+                    System.err.println("road for lane " + lane.toString() + " does not exist");
+                }
             }
         }
 
@@ -208,7 +199,7 @@ public class TestShapeParser extends AbstractWrappableAnimation
             MultiLineString lines = (MultiLineString) road.getMyGeom();
             LineString line = (LineString) lines.getGeometryN(0);
             List<LineString> lineSegmentList = new ArrayList<>();
-            ;
+
             // The getSubstring is copied from The JCS Conflation Suite (JCS): I assume it is not supported anymore, but can
             // still be found...
             lineSegmentList.add(SubstringLine.getSubstring(line, segment.getBeginDistance(), segment.getEndDistance()));
@@ -262,15 +253,17 @@ public class TestShapeParser extends AbstractWrappableAnimation
         {
             try
             {
-                URL url = TestShapeParser.class.getResource("/");
-                File file = new File(url.getFile() + "../../Data/" + initialDir);
-                String fn = file.getCanonicalPath();
-                fn = fn.replace('\\', '/');
-                File iniDir = new File(fn);
-                file = new File(iniDir, fileName + ".shp");
+                URL url = URLResource.getResource(initialDir);
+                File iniDir = new File(url.getFile());
+                File file = new File(iniDir, fileName + ".shp");
+                System.out.println(file + "  -- exists: " + file.exists());
+
+                ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
+                ShapefileDataStore dataStore = (ShapefileDataStore) dataStoreFactory.createDataStore(file.toURI().toURL());
 
                 FileDataStore dataStoreLink = FileDataStoreFinder.getDataStore(file);
-                return dataStoreLink;
+                System.out.println(dataStore);
+                return dataStore;
 
             }
             catch (IOException exception)
@@ -365,10 +358,35 @@ public class TestShapeParser extends AbstractWrappableAnimation
             property = feature.getProperty("ENDAFSTAND");
             Double endDistance = parseDouble(property);
 
-            OTSNode startNode = new OTSNode(this.network, junctionIdBegin, new OTSPoint3D(coordinates[0]));
-            OTSNode endNode = new OTSNode(this.network, junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
-            return new NWBRoadElement(theGeom, startNode, endNode, roadId, beginDistance, endDistance, junctionIdBegin,
-                    junctionIdEnd, adminDirection, drivingDirection, beginKM, endKM);
+            OTSNode startNode;
+            if (this.network.containsNode(junctionIdBegin))
+                startNode = (OTSNode) this.network.getNode(junctionIdBegin);
+            else
+                startNode = new OTSNode(this.network, junctionIdBegin, new OTSPoint3D(coordinates[0]));
+            OTSNode endNode;
+            if (this.network.containsNode(junctionIdEnd))
+                endNode = (OTSNode) this.network.getNode(junctionIdEnd);
+            else
+                endNode = new OTSNode(this.network, junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
+            NWBRoadElement road = new NWBRoadElement(theGeom, startNode, endNode, roadId, beginDistance, endDistance,
+                    junctionIdBegin, junctionIdEnd, adminDirection, drivingDirection, beginKM, endKM);
+            if (getSimulator() instanceof AnimatorInterface)
+            {
+                try
+                {
+                    System.out.println(startNode);
+                    new NodeAnimation(startNode, this.simulator);
+                    new NodeAnimation(endNode, this.simulator);
+                    OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, LinkType.ROAD,
+                            new OTSLine3D(coordinates), this.simulator);
+                    new LinkAnimation(link, this.simulator, 2.0f);
+                }
+                catch (RemoteException | NamingException | OTSGeometryException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+            return road;
         }
 
         /**
@@ -401,10 +419,35 @@ public class TestShapeParser extends AbstractWrappableAnimation
 
             String junctionIdBegin = roadId + "_" + beginDistance;
             String junctionIdEnd = roadId + "_" + endDistance;
-            OTSNode startNode = new OTSNode(this.network, junctionIdBegin, new OTSPoint3D(coordinates[0]));
-            OTSNode endNode = new OTSNode(this.network, junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
-            return new NWBDrivingLane(theGeom, startNode, endNode, roadId, beginDistance, endDistance, startNumberOfLanes,
-                    endNumberOfLanes, sideCode);
+
+            OTSNode startNode;
+            if (this.network.containsNode(junctionIdBegin))
+                startNode = (OTSNode) this.network.getNode(junctionIdBegin);
+            else
+                startNode = new OTSNode(this.network, junctionIdBegin, new OTSPoint3D(coordinates[0]));
+            OTSNode endNode;
+            if (this.network.containsNode(junctionIdEnd))
+                endNode = (OTSNode) this.network.getNode(junctionIdEnd);
+            else
+                endNode = new OTSNode(this.network, junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
+            NWBDrivingLane lane = new NWBDrivingLane(theGeom, startNode, endNode, roadId, beginDistance, endDistance,
+                    startNumberOfLanes, endNumberOfLanes, sideCode);
+            if (getSimulator() instanceof AnimatorInterface)
+            {
+                try
+                {
+                    new NodeAnimation(startNode, this.simulator);
+                    new NodeAnimation(endNode, this.simulator);
+                    OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, LinkType.ROAD,
+                            new OTSLine3D(coordinates), this.simulator);
+                    new LinkAnimation(link, this.simulator, 1.0f);
+                }
+                catch (RemoteException | NamingException | OTSGeometryException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+            return lane;
         }
 
         /**
@@ -440,10 +483,34 @@ public class TestShapeParser extends AbstractWrappableAnimation
 
             String junctionIdBegin = roadId + "_" + beginDistance;
             String junctionIdEnd = roadId + "_" + endDistance;
-            OTSNode startNode = new OTSNode(this.network, junctionIdBegin, new OTSPoint3D(coordinates[0]));
-            OTSNode endNode = new OTSNode(this.network, junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
-            return new NWBDrivingLane(theGeom, startNode, endNode, roadId, beginDistance, endDistance, startNumberOfLanes,
-                    endNumberOfLanes, sideCode);
+            OTSNode startNode;
+            if (this.network.containsNode(junctionIdBegin))
+                startNode = (OTSNode) this.network.getNode(junctionIdBegin);
+            else
+                startNode = new OTSNode(this.network, junctionIdBegin, new OTSPoint3D(coordinates[0]));
+            OTSNode endNode;
+            if (this.network.containsNode(junctionIdEnd))
+                endNode = (OTSNode) this.network.getNode(junctionIdEnd);
+            else
+                endNode = new OTSNode(this.network, junctionIdEnd, new OTSPoint3D(coordinates[coordinates.length - 1]));
+            NWBDrivingLane lane = new NWBDrivingLane(theGeom, startNode, endNode, roadId, beginDistance, endDistance,
+                    startNumberOfLanes, endNumberOfLanes, sideCode);
+            if (getSimulator() instanceof AnimatorInterface)
+            {
+                try
+                {
+                    new NodeAnimation(startNode, this.simulator);
+                    new NodeAnimation(endNode, this.simulator);
+                    OTSLink link = new OTSLink(this.network, UUID.randomUUID().toString(), startNode, endNode, LinkType.ROAD,
+                            new OTSLine3D(coordinates), this.simulator);
+                    new LinkAnimation(link, this.simulator, 1.0f);
+                }
+                catch (RemoteException | NamingException | OTSGeometryException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+            return lane;
         }
 
         /**
@@ -460,13 +527,6 @@ public class TestShapeParser extends AbstractWrappableAnimation
                 }
             }
             return Double.NaN;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */
