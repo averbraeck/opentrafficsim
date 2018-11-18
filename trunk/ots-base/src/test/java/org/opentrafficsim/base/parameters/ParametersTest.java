@@ -19,11 +19,10 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * <p>

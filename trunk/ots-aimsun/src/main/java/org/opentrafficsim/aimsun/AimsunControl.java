@@ -16,16 +16,6 @@ import java.util.ArrayList;
 import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducer;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
@@ -38,6 +28,8 @@ import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -52,10 +44,18 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
-import org.opentrafficsim.simulationengine.OTSSimulationException;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.xml.sax.SAXException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventProducer;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>

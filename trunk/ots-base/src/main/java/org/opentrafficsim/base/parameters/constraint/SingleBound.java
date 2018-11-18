@@ -1,8 +1,7 @@
 package org.opentrafficsim.base.parameters.constraint;
 
 import org.djunits.value.vdouble.scalar.AbstractDoubleScalar;
-
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
 
 /**
  * Continuous constraints with a single bound. To allow both {@code Double} and {@code AbstractDoubleScalar<?, ?>} constraints,

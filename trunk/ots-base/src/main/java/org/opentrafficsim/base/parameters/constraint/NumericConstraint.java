@@ -2,7 +2,7 @@ package org.opentrafficsim.base.parameters.constraint;
 
 import java.util.IllegalFormatException;
 
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
 
 /**
  * List of default constraint for ParameterTypes.

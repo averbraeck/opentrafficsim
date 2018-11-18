@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import nl.tudelft.simulation.language.Throw;
+import org.djutils.exceptions.Throw;
 
 /**
  * Utility to calculate a weighted mean and/or sum. This can be used as part of a process or loop with information being

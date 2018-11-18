@@ -5,11 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.Parameters;
-
-import nl.tudelft.simulation.language.Throw;
 
 /**
  * Pick list with PickListItems.
