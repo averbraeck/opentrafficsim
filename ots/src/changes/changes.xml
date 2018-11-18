@@ -2,7 +2,52 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="1.00.03" date="2018-XX-XX" description="POM in aimsun-proto updated; using external logger">
+    <release version="1.01.00" date="2018-11-17" description="Update to dsol 3.03.00, djutils, major refactoring">
+      <action dev="averbraeck" type="update">
+        The DSOL version has been updated to 3.03.00. This has quite a number of consequences.
+        Examples are a new use of the DSOLModel, more time-based inner classes of the Simulators,
+        DistContinuousTime has been renamed into DistContinuousSimulationTime, models have 
+        specified input parameters and output parameters, which makes the use of the 
+        ModelProperties superfluous, charts have been moved into one class each, etc.
+        See https://simulation.tudelft.nl/dsol/3.0/changes-report.html#a3.03.00 for more information.
+      </action>
+      <action dev="averbraeck" type="add">
+        Two projects for OTS have been added: ots-swing for animation using Swing and
+        ots-web for animation using the Web.
+      </action>
+      <action dev="averbraeck" type="update">
+        The swing-specific classes of ots-core and ots-road have been moved to the ots-swing project.
+        This makes the core OTS classes independent from swing, so versions running on servers, or 
+        using the web or sim0mq can guarantee no swing code is executed.
+      </action>
+      <action dev="averbraeck" type="update">
+        Because the animation classes have been moved from the dsol-core and dsol-road project, 
+        code such as the following in one of the base packages or in the parsers is not possible 
+        anymore:
+<![CDATA[
+<pre>
+if (simulator instanceof AnimatorInterface)
+   new LaneAnimation(newLane, simulator, color, false);
+</pre>
+]]>
+        Instead, animation has to be added in the application, specifically for Swing, JavaFX, 
+        or the Web. If drawing data has to be stored for specific types of objects or for 
+        specific instances (line width, outline color, drawing color, etc.), this has to be
+        done in separate objects, which are e.g., accessible via a Map&lt;Road, DrawingObject&gt;
+        or a Map&lt;Class&lt;?&gt;, DrawingObject&gt;, where the DrawingObject can be specified
+        by the user. It is foreseen that a reference implementation of such a DrawingObject 
+        will be included in ots-core. This object can then be used by different visualizations.
+      </action>
+      <action dev="averbraeck" type="update">
+        The Try class has been moved to the DJUTILS project.
+      </action>
+      <action dev="averbraeck" type="update">
+        The demo in the ots-parser-shape project and the A58 data has been moved to the 
+        src/test/java and src/test/resources locations.
+      </action>
+      <action dev="averbraeck" type="update">
+        The [ots].gtu.animation package has been renamed to [ots].gtu.colorer.
+      </action>
       <action dev="averbraeck" type="fix">
         The destroy() method of DefaultCarAnimation is repaired to not call Renderable2D.destroy()
         twice.
