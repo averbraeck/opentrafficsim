@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="1.01.00" date="2018-11-17" description="Update to dsol 3.03.00, djutils, major refactoring">
+    <release version="1.01.00" date="2018-11-19" description="Update to dsol 3.03.00, djutils, major refactoring">
       <action dev="averbraeck" type="update">
         The DSOL version has been updated to 3.03.00. This has quite a number of consequences.
         Examples are a new use of the DSOLModel, more time-based inner classes of the Simulators,
@@ -33,10 +33,10 @@ if (simulator instanceof AnimatorInterface)
         Instead, animation has to be added in the application, specifically for Swing, JavaFX, 
         or the Web. If drawing data has to be stored for specific types of objects or for 
         specific instances (line width, outline color, drawing color, etc.), this has to be
-        done in separate objects, which are e.g., accessible via a Map&lt;Road, DrawingObject&gt;
-        or a Map&lt;Class&lt;?&gt;, DrawingObject&gt;, where the DrawingObject can be specified
-        by the user. It is foreseen that a reference implementation of such a DrawingObject 
-        will be included in ots-core. This object can then be used by different visualizations.
+        done in separate objects, which are e.g., accessible via a Map&lt;Road, DrawingInfo&gt;
+        or a Map&lt;Class&lt;?&gt;, DrawingInfo&gt;, where the DrawingInfo can be specified
+        by the user. A first implementation of DrawingInfo has been included in ots-core, in the
+        [ots].core.animation package. This object can be used by different visualizations.
       </action>
       <action dev="averbraeck" type="update">
         The Try class has been moved to the DJUTILS project.
