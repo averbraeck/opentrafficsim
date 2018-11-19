@@ -15,8 +15,6 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.opentrafficsim.core.animation.Drawable;
-import org.opentrafficsim.core.animation.DrawingInfo;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -67,15 +65,6 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** GTUs registered in this network. */
     private Map<String, GTU> gtuMap = new HashMap<>();
-    
-    /** drawing info: base information per class. */
-    private Map<Class<? extends Drawable>, DrawingInfo> classDrawingInfoMap = new HashMap<>();
-
-    /** drawing info: base information per instance. */
-    private Map<Drawable, DrawingInfo> baseDrawingInfoMap = new HashMap<>();
-
-    /** drawing info: dynamic information per instance. */
-    private Map<Drawable, DrawingInfo> dynamicDrawingInfoMap = new HashMap<>();
 
     /**
      * Construction of an empty network.
@@ -126,6 +115,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         this.nodeMap.put(node.getId(), node);
         fireEvent(Network.NODE_ADD_EVENT, node.getId());
+        fireEvent(Network.ANIMATION_NODE_ADD_EVENT, node);
     }
 
     /** {@inheritDoc} */
@@ -137,6 +127,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             throw new NetworkException("Node " + node + " not registered in network " + this.id);
         }
         fireEvent(Network.NODE_REMOVE_EVENT, node.getId());
+        fireEvent(Network.ANIMATION_NODE_REMOVE_EVENT, node);
         this.nodeMap.remove(node.getId());
     }
 
@@ -200,6 +191,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         this.linkMap.put(link.getId(), link);
         fireEvent(Network.LINK_ADD_EVENT, link.getId());
+        fireEvent(Network.ANIMATION_LINK_ADD_EVENT, link);
     }
 
     /** {@inheritDoc} */
@@ -211,6 +203,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             throw new NetworkException("Link " + link + " not registered in network " + this.id);
         }
         fireEvent(Network.LINK_REMOVE_EVENT, link.getId());
+        fireEvent(Network.ANIMATION_LINK_REMOVE_EVENT, link);
         this.linkMap.remove(link.getId());
     }
 
@@ -314,6 +307,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         this.objectMap.put(object.getFullId(), object);
         fireEvent(Network.OBJECT_ADD_EVENT, object.getFullId());
+        fireEvent(Network.ANIMATION_OBJECT_ADD_EVENT, object);
     }
 
     /** {@inheritDoc} */
@@ -325,6 +319,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             throw new NetworkException("Object " + object + " not registered in network " + this.id);
         }
         fireEvent(Network.OBJECT_REMOVE_EVENT, object.getFullId());
+        fireEvent(Network.ANIMATION_OBJECT_REMOVE_EVENT, object);
         this.objectMap.remove(object.getFullId());
     }
 
@@ -398,6 +393,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         this.invisibleObjectMap.put(object.getFullId(), object);
         fireEvent(Network.INVISIBLE_OBJECT_ADD_EVENT, object.getFullId());
+        fireEvent(Network.ANIMATION_INVISIBLE_OBJECT_ADD_EVENT, object);
     }
 
     /** {@inheritDoc} */
@@ -409,6 +405,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             throw new NetworkException("InvisibleObject " + object + " not registered in network " + this.id);
         }
         fireEvent(Network.INVISIBLE_OBJECT_REMOVE_EVENT, object.getFullId());
+        fireEvent(Network.ANIMATION_INVISIBLE_OBJECT_REMOVE_EVENT, object);
         this.objectMap.remove(object.getFullId());
     }
 
@@ -475,6 +472,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         this.routeMap.get(gtuType).put(route.getId(), route);
         fireEvent(Network.ROUTE_ADD_EVENT, new Object[] { gtuType.getId(), route.getId() });
+        fireEvent(Network.ANIMATION_ROUTE_ADD_EVENT, new Object[] { gtuType, route });
     }
 
     /** {@inheritDoc} */
@@ -486,6 +484,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             throw new NetworkException("Route " + route + " for GTUType " + gtuType + " not registered in network " + this.id);
         }
         fireEvent(Network.ROUTE_REMOVE_EVENT, new Object[] { gtuType.getId(), route.getId() });
+        fireEvent(Network.ANIMATION_ROUTE_REMOVE_EVENT, new Object[] { gtuType, route });
         this.routeMap.get(gtuType).remove(route.getId());
     }
 
@@ -774,6 +773,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     {
         this.gtuMap.put(gtu.getId(), gtu);
         fireTimedEvent(Network.GTU_ADD_EVENT, gtu.getId(), gtu.getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.ANIMATION_GTU_ADD_EVENT, gtu, gtu.getSimulator().getSimulatorTime());
     }
 
     /** {@inheritDoc} */
@@ -781,6 +781,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     public final void removeGTU(final GTU gtu)
     {
         fireTimedEvent(Network.GTU_REMOVE_EVENT, gtu.getId(), gtu.getSimulator().getSimulatorTime());
+        fireTimedEvent(Network.ANIMATION_GTU_REMOVE_EVENT, gtu, gtu.getSimulator().getSimulatorTime());
         this.gtuMap.remove(gtu.getId());
     }
 
@@ -819,67 +820,6 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     final Map<String, GTU> getRawGtuMap()
     {
         return this.gtuMap;
-    }
-
-    /***************************************************************************************/
-    /*********************************** ANIMATION INFO ************************************/
-    /***************************************************************************************/
-
-    /** {@inheritDoc} */
-    @Override
-    public void addDrawingInfoClass(final Class<? extends Drawable> drawableClass, final DrawingInfo drawingInfo)
-    {
-        this.classDrawingInfoMap.put(drawableClass, drawingInfo);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void addDrawingInfoBase(final Drawable drawable, final DrawingInfo drawingInfo)
-    {
-        this.baseDrawingInfoMap.put(drawable, drawingInfo);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void addDrawingInfoDynamic(final Drawable drawable, final DrawingInfo drawingInfo)
-    {
-        this.dynamicDrawingInfoMap.put(drawable, drawingInfo);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DrawingInfo getDrawingInfo(final Drawable drawable)
-    {
-        DrawingInfo drawingInfo = this.dynamicDrawingInfoMap.get(drawable);
-        if (drawingInfo != null)
-        {
-            return drawingInfo;
-        }
-        return getDrawingInfoBase(drawable);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DrawingInfo getDrawingInfoBase(final Drawable drawable)
-    {
-        DrawingInfo drawingInfo = this.baseDrawingInfoMap.get(drawable);
-        if (drawingInfo != null)
-        {
-            return drawingInfo;
-        }
-        return getDrawingInfoClass(drawable.getClass());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DrawingInfo getDrawingInfoClass(final Class<? extends Drawable> drawableClass)
-    {
-        DrawingInfo drawingInfo = this.classDrawingInfoMap.get(drawableClass);
-        if (drawingInfo != null)
-        {
-            return drawingInfo;
-        }
-        return null;
     }
 
     /***************************************************************************************/

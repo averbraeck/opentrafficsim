@@ -62,11 +62,6 @@
     </dependency>
 
     <dependency>
-      <groupId>dsol</groupId>
-      <artifactId>dsol-animation</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.jgrapht</groupId>
       <artifactId>jgrapht-core</artifactId>
     </dependency>
@@ -85,7 +80,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
-      <optional>false</optional>
+      <scope>test</scope>
     </dependency>
 
    </dependencies>

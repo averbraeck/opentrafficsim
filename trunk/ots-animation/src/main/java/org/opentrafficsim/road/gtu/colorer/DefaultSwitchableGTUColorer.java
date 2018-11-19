@@ -1,10 +1,13 @@
-package org.opentrafficsim.core.gtu.colorer;
-
-import java.io.Serializable;
+package org.opentrafficsim.road.gtu.colorer;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 
 /**
  * A simple way to construct a SwitchableGTUColorer set up with the "standard" set of GTUColorers. <br>
@@ -13,12 +16,13 @@ import org.djunits.value.vdouble.scalar.Speed;
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
+ * @version $Revision: 1378 $, $LastChangedDate: 2015-09-03 13:38:01 +0200 (Thu, 03 Sep 2015) $, by $Author: averbraeck $,
  *          initial version Jun 18, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer implements Serializable
+// TODO same class name as in core, w\o additional functionality, while the core one is used in AbstractWrappableAnimation
+public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
 {
     /** */
     private static final long serialVersionUID = 20150000L;

@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.colorer;
+package org.opentrafficsim.road.gtu.colorer;
 
 import java.awt.Color;
 import java.io.Serializable;
@@ -6,23 +6,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.animation.ColorInterpolator;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
- * Color GTU depending on their speed.
  * <p>
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version 27 mei 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 mrt. 2018 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class SpeedGTUColorer implements GTUColorer, Serializable
+public class DesiredSpeedColorer implements GTUColorer, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150000L;
@@ -30,46 +30,56 @@ public class SpeedGTUColorer implements GTUColorer, Serializable
     /** The legend. */
     private final ArrayList<LegendEntry> legend;
 
+    /** The speed that corresponds to the first entry in the legend. */
+    private final Speed minimumSpeed;
+
     /** The speed that corresponds to the last entry in the legend. */
     private final Speed maximumSpeed;
 
     /**
      * Construct a new SpeedGTUColorer.
+     * @param minimumSpeed Speed; the speed at (and below) which the returned color will be red
      * @param maximumSpeed Speed; the speed at (and above) which the returned color will be green
      */
-    public SpeedGTUColorer(final Speed maximumSpeed)
+    public DesiredSpeedColorer(final Speed minimumSpeed, final Speed maximumSpeed)
     {
+        this.minimumSpeed = minimumSpeed;
         this.maximumSpeed = maximumSpeed;
         this.legend = new ArrayList<>(4);
         Color[] colorTable = { Color.RED, Color.YELLOW, Color.GREEN };
-        Speed zeroSpeed = new Speed(0.0, SpeedUnit.KM_PER_HOUR);
         for (int index = 0; index < colorTable.length; index++)
         {
             double ratio = index * 1.0 / (colorTable.length - 1);
-            Speed speed = Speed.interpolate(zeroSpeed, maximumSpeed, ratio);
+            Speed speed = Speed.interpolate(minimumSpeed, maximumSpeed, ratio);
             String label = speed.toString().replaceFirst("\\.0*|,0*", ".0");
             this.legend.add(new LegendEntry(colorTable[index], label, index == 0 ? "stationary" : "driving " + label));
         }
+        this.legend.add(new LegendEntry(Color.WHITE, "unknown", "unknown"));
     }
 
     /** {@inheritDoc} */
     @Override
     public final Color getColor(final GTU gtu)
     {
-        Speed speed = gtu.getSpeed();
-        double ratio = speed.getSI() / this.maximumSpeed.getSI() * (this.legend.size() - 1);
-        if (ratio <= 0)
+        if (gtu instanceof LaneBasedGTU)
         {
-            return this.legend.get(0).getColor();
+            Speed speed = ((LaneBasedGTU) gtu).getDesiredSpeed();
+            double ratio = (speed.si - this.minimumSpeed.si) / (this.maximumSpeed.si - this.minimumSpeed.si)
+                    * (this.legend.size() - 2);
+            if (ratio <= 0)
+            {
+                return this.legend.get(0).getColor();
+            }
+            if (ratio >= this.legend.size() - 2)
+            {
+                return this.legend.get(this.legend.size() - 2).getColor();
+            }
+            // Interpolate
+            int floor = (int) Math.floor(ratio);
+            return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1).getColor(),
+                    ratio - floor);
         }
-        if (ratio >= this.legend.size() - 1)
-        {
-            return this.legend.get(this.legend.size() - 1).getColor();
-        }
-        // Interpolate
-        int floor = (int) Math.floor(ratio);
-        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1).getColor(),
-                ratio - floor);
+        return Color.WHITE;
     }
 
     /** {@inheritDoc} */
@@ -83,7 +93,7 @@ public class SpeedGTUColorer implements GTUColorer, Serializable
     @Override
     public final String toString()
     {
-        return "Speed";
+        return "Desired speed";
     }
 
 }
