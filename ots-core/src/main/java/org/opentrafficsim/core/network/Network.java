@@ -5,14 +5,13 @@ import java.util.Set;
 
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.Identifiable;
-import org.opentrafficsim.core.animation.Drawable;
-import org.opentrafficsim.core.animation.DrawingInfo;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.core.object.ObjectInterface;
 
+import nl.tudelft.simulation.event.EventProducerInterface;
 import nl.tudelft.simulation.event.EventType;
 
 /**
@@ -27,7 +26,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Network extends Identifiable
+public interface Network extends EventProducerInterface, Identifiable
 {
     /** @return String; the id */
     @Override
@@ -383,55 +382,82 @@ public interface Network extends Identifiable
             LinkWeight linkWeight) throws NetworkException;
 
     /***************************************************************************************/
-    /*********************************** ANIMATION INFO ************************************/
+    /********************************** ANIMATION EVENTS ***********************************/
     /***************************************************************************************/
 
     /**
-     * Add the drawing info for a class. Here it can e.g., be specified that all lanes are filled with a light gray color and
-     * drawn with a dark gray stroke. The class drawing info <b>can</b> be cached.
-     * @param drawableClass the class to set the drawing info for
-     * @param drawingInfo the default drawing info for the class
+     * The timed event type for pub/sub indicating the addition of a Node. <br>
+     * Payload: Node node (not an array, just an Object)
      */
-    void addDrawingInfoClass(Class<? extends Drawable> drawableClass, DrawingInfo drawingInfo);
+    EventType ANIMATION_NODE_ADD_EVENT = new EventType("ANIMATION.NETWORK.NODE.ADD");
 
     /**
-     * Add the drawing info for an instance. This overrides the drawing info for the class. An example is that a bus lane can be
-     * drawn using a black color to make it different from the standard lanes. The base drawing info <b>can</b> be cached.
-     * @param drawable the object to set the drawing info for
-     * @param drawingInfo the default drawing info for the drawable
+     * The (regular, not timed) event type for pub/sub indicating the removal of a Node. <br>
+     * Payload: Node node (not an array, just an Object)
      */
-    void addDrawingInfoBase(Drawable drawable, DrawingInfo drawingInfo);
+    EventType ANIMATION_NODE_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.NODE.REMOVE");
 
     /**
-     * Add the dynamic drawing information for an instance. This overrides the drawing info for the object and the class, and
-     * should <b>not</b> be cached. An example is that a lane on a highway that turns red when it is forbidden for traffic to
-     * use the lane.
-     * @param drawable the object to set the drawing info for
-     * @param drawingInfo the dynamic drawing info for the drawable
+     * The (regular, not timed) event type for pub/sub indicating the addition of a Link. <br>
+     * Payload: Link link (not an array, just an Object)
      */
-    void addDrawingInfoDynamic(Drawable drawable, DrawingInfo drawingInfo);
+    EventType ANIMATION_LINK_ADD_EVENT = new EventType("ANIMATION.NETWORK.LINK.ADD");
 
     /**
-     * Get the drawing information for a drawable instance. It first checks the dynamic info, then the base info, and then the
-     * class info.
-     * @param drawable the object to get the drawing info for
-     * @return DrawingInfo; the drawing info for the instance, or null if no Drawing info could be found
+     * The (regular, not timed) event type for pub/sub indicating the removal of a Link. <br>
+     * Payload: Link link (not an array, just an Object)
      */
-    DrawingInfo getDrawingInfo(Drawable drawable);
+    EventType ANIMATION_LINK_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.LINK.REMOVE");
 
     /**
-     * Get the static drawing information for a drawable instance. It first checks the base info, and then the class info.
-     * @param drawable the object to get the drawing info for
-     * @return DrawingInfo; the drawing info for the instance, or null if no Drawing info could be found
+     * The (regular, not timed) event type for pub/sub indicating the addition of an ObjectInterface implementing object. <br>
+     * Payload: StaticObject object (not an array, just an Object)
      */
-    DrawingInfo getDrawingInfoBase(Drawable drawable);
+    EventType ANIMATION_OBJECT_ADD_EVENT = new EventType("ANIMATION.NETWORK.OBJECT.ADD");
 
     /**
-     * Get the static class-based drawing information for a drawable instance.
-     * @param drawableClass the class to get the drawing info for
-     * @return DrawingInfo; the drawing info for the class, or null if no Drawing info could be found
+     * The (regular, not timed) event type for pub/sub indicating the removal of an ObjectInterface implementing object. <br>
+     * Payload: StaticObject object (not an array, just an Object)
      */
-    DrawingInfo getDrawingInfoClass(Class<? extends Drawable> drawableClass);
+    EventType ANIMATION_OBJECT_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.OBJECT.REMOVE");
+
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the addition of an InvisibleObjectInterface implementing
+     * object. <br>
+     * Payload: InvisibleObject object (not an array, just an Object)
+     */
+    EventType ANIMATION_INVISIBLE_OBJECT_ADD_EVENT = new EventType("ANIMATION.NETWORK.INVISIBLE_OBJECT.ADD");
+
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the removal of an InvisibleObjectInterface implementing
+     * object. <br>
+     * Payload: InvisibleObject object (not an array, just an Object)
+     */
+    EventType ANIMATION_INVISIBLE_OBJECT_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.INVISIBLE_OBJECT.REMOVE");
+
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the addition of a Route for a gtuType. <br>
+     * Payload: [GTUType gtuType, Route route]
+     */
+    EventType ANIMATION_ROUTE_ADD_EVENT = new EventType("ANIMATION.NETWORK.ROUTE.ADD");
+
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the removal of a Route for a gtuType. <br>
+     * Payload: [GTUType gtuType, Route route]
+     */
+    EventType ANIMATION_ROUTE_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.ROUTE.REMOVE");
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the network. <br>
+     * Payload: GTU gtu (not an array, just an Object)
+     */
+    EventType ANIMATION_GTU_ADD_EVENT = new EventType("ANIMATION.NETWORK.GTU.ADD");
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the network. <br>
+     * Payload: GTU gtu (not an array, just an Object)
+     */
+    EventType ANIMATION_GTU_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.GTU.REMOVE");
 
     /***************************************************************************************/
     /*************************************** EVENTS ****************************************/

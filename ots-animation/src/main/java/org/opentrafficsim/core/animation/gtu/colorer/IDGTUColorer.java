@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.colorer;
+package org.opentrafficsim.core.animation.gtu.colorer;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import org.opentrafficsim.core.gtu.GTU;
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
+ * @version $Revision: 4763 $, $LastChangedDate: 2018-11-19 11:04:56 +0100 (Mon, 19 Nov 2018) $, by $Author: averbraeck $,
  *          initial version 28 mei 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
