@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -24,7 +25,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface Link extends Locatable, Serializable, Identifiable
+public interface Link extends Locatable, Serializable, Identifiable, Drawable
 {
     /**
      * Return the network in which this link is registered. Cannot be null.
@@ -63,7 +64,7 @@ public interface Link extends Locatable, Serializable, Identifiable
      * @return the longitudinal directionality of the link (FORWARD, BACKWARD, BOTH or NONE) for the given GTU type. NONE will
      *         be returned if no directionality is given.
      */
-    LongitudinalDirectionality getDirectionality(final GTUType gtuType);
+    LongitudinalDirectionality getDirectionality(GTUType gtuType);
 
     /**
      * Add a GTU to this link (e.g., for statistical purposes, or for a model on macro level). It is safe to add a GTU again. No

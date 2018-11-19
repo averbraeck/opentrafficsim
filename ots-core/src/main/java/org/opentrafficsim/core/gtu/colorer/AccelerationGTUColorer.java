@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.opentrafficsim.core.animation.ColorInterpolator;
 import org.opentrafficsim.core.gtu.GTU;
 
 /**

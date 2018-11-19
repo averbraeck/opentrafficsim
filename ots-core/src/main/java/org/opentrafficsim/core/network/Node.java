@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 
@@ -24,7 +25,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Node extends Locatable, Serializable, Identifiable
+public interface Node extends Locatable, Serializable, Identifiable, Drawable
 {
     /**
      * Return the network in which this link is registered. Cannot be null.

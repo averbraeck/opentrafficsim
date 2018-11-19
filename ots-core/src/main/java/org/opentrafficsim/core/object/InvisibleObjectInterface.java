@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.object;
 
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -19,7 +20,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface InvisibleObjectInterface extends Identifiable
+public interface InvisibleObjectInterface extends Identifiable, Drawable
 {
 
     /**

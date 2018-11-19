@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.animation.ColorInterpolator;
 import org.opentrafficsim.core.gtu.GTU;
 
 /**

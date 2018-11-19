@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import java.awt.Color;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -12,6 +11,7 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -41,7 +41,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface GTU extends Locatable, Serializable, EventProducerInterface, Identifiable
+public interface GTU extends Locatable, Serializable, EventProducerInterface, Identifiable, Drawable
 {
     /** @return the id of the GTU */
     @Override
@@ -168,12 +168,6 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
     boolean isDestroyed();
 
     /**
-     * Return the base color of the GTU (not the state-based color).
-     * @return Color; the base color of the GTU (not the state-based color)
-     */
-    Color getBaseColor();
-
-    /**
      * Adds the provided GTU to this GTU, meaning it moves with this GTU.
      * @param gtu GTU; gtu to enter this GTU
      * @throws GTUException if the gtu already has a parent
@@ -207,7 +201,7 @@ public interface GTU extends Locatable, Serializable, EventProducerInterface, Id
 
     /**
      * The event type for pub/sub indicating the initialization of a new GTU. <br>
-     * Payload: [String id, DirectedPoint initialPosition, Length length, Length width, Color gtuBaseColor]
+     * Payload: [String id, DirectedPoint initialPosition, Length length, Length width]
      */
     EventType INIT_EVENT = new EventType("GTU.INIT");
 
