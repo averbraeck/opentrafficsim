@@ -21,6 +21,6 @@ public interface Capacity
      * Set the link capacity.
      * @param capacity Frequency; the new capacity of the link as a frequency in GTUs per time unit.
      */
-    void setCapacity(final Frequency capacity);
+    void setCapacity(Frequency capacity);
 
 }

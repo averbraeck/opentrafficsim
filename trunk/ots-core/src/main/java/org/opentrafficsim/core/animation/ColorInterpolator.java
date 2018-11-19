@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.colorer;
+package org.opentrafficsim.core.animation;
 
 import java.awt.Color;
 

@@ -7,6 +7,7 @@ import javax.media.j3d.Bounds;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -27,7 +28,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class StaticObject extends EventProducer implements ObjectInterface, Serializable, Identifiable
+public class StaticObject extends EventProducer implements ObjectInterface, Serializable, Identifiable, Drawable
 {
     /** */
     private static final long serialVersionUID = 20160400L;

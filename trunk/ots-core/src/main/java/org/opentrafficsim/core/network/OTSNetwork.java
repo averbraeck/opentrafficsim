@@ -15,6 +15,8 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.opentrafficsim.core.animation.Drawable;
+import org.opentrafficsim.core.animation.DrawingInfo;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
@@ -65,6 +67,15 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
 
     /** GTUs registered in this network. */
     private Map<String, GTU> gtuMap = new HashMap<>();
+    
+    /** drawing info: base information per class. */
+    private Map<Class<? extends Drawable>, DrawingInfo> classDrawingInfoMap = new HashMap<>();
+
+    /** drawing info: base information per instance. */
+    private Map<Drawable, DrawingInfo> baseDrawingInfoMap = new HashMap<>();
+
+    /** drawing info: dynamic information per instance. */
+    private Map<Drawable, DrawingInfo> dynamicDrawingInfoMap = new HashMap<>();
 
     /**
      * Construction of an empty network.
@@ -809,6 +820,69 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     {
         return this.gtuMap;
     }
+
+    /***************************************************************************************/
+    /*********************************** ANIMATION INFO ************************************/
+    /***************************************************************************************/
+
+    /** {@inheritDoc} */
+    @Override
+    public void addDrawingInfoClass(final Class<? extends Drawable> drawableClass, final DrawingInfo drawingInfo)
+    {
+        this.classDrawingInfoMap.put(drawableClass, drawingInfo);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addDrawingInfoBase(final Drawable drawable, final DrawingInfo drawingInfo)
+    {
+        this.baseDrawingInfoMap.put(drawable, drawingInfo);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addDrawingInfoDynamic(final Drawable drawable, final DrawingInfo drawingInfo)
+    {
+        this.dynamicDrawingInfoMap.put(drawable, drawingInfo);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DrawingInfo getDrawingInfo(final Drawable drawable)
+    {
+        DrawingInfo drawingInfo = this.dynamicDrawingInfoMap.get(drawable);
+        if (drawingInfo != null)
+        {
+            return drawingInfo;
+        }
+        return getDrawingInfoBase(drawable);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DrawingInfo getDrawingInfoBase(final Drawable drawable)
+    {
+        DrawingInfo drawingInfo = this.baseDrawingInfoMap.get(drawable);
+        if (drawingInfo != null)
+        {
+            return drawingInfo;
+        }
+        return getDrawingInfoClass(drawable.getClass());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DrawingInfo getDrawingInfoClass(final Class<? extends Drawable> drawableClass)
+    {
+        DrawingInfo drawingInfo = this.classDrawingInfoMap.get(drawableClass);
+        if (drawingInfo != null)
+        {
+            return drawingInfo;
+        }
+        return null;
+    }
+
+    /***************************************************************************************/
 
     /** {@inheritDoc} */
     @Override

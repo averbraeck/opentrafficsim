@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.animation.Drawable;
+import org.opentrafficsim.core.animation.DrawingInfo;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
@@ -379,6 +381,57 @@ public interface Network extends Identifiable
      */
     CompleteRoute getShortestRouteBetween(GTUType gtuType, Node nodeFrom, Node nodeTo, List<Node> nodesVia,
             LinkWeight linkWeight) throws NetworkException;
+
+    /***************************************************************************************/
+    /*********************************** ANIMATION INFO ************************************/
+    /***************************************************************************************/
+
+    /**
+     * Add the drawing info for a class. Here it can e.g., be specified that all lanes are filled with a light gray color and
+     * drawn with a dark gray stroke. The class drawing info <b>can</b> be cached.
+     * @param drawableClass the class to set the drawing info for
+     * @param drawingInfo the default drawing info for the class
+     */
+    void addDrawingInfoClass(Class<? extends Drawable> drawableClass, DrawingInfo drawingInfo);
+
+    /**
+     * Add the drawing info for an instance. This overrides the drawing info for the class. An example is that a bus lane can be
+     * drawn using a black color to make it different from the standard lanes. The base drawing info <b>can</b> be cached.
+     * @param drawable the object to set the drawing info for
+     * @param drawingInfo the default drawing info for the drawable
+     */
+    void addDrawingInfoBase(Drawable drawable, DrawingInfo drawingInfo);
+
+    /**
+     * Add the dynamic drawing information for an instance. This overrides the drawing info for the object and the class, and
+     * should <b>not</b> be cached. An example is that a lane on a highway that turns red when it is forbidden for traffic to
+     * use the lane.
+     * @param drawable the object to set the drawing info for
+     * @param drawingInfo the dynamic drawing info for the drawable
+     */
+    void addDrawingInfoDynamic(Drawable drawable, DrawingInfo drawingInfo);
+
+    /**
+     * Get the drawing information for a drawable instance. It first checks the dynamic info, then the base info, and then the
+     * class info.
+     * @param drawable the object to get the drawing info for
+     * @return DrawingInfo; the drawing info for the instance, or null if no Drawing info could be found
+     */
+    DrawingInfo getDrawingInfo(Drawable drawable);
+
+    /**
+     * Get the static drawing information for a drawable instance. It first checks the base info, and then the class info.
+     * @param drawable the object to get the drawing info for
+     * @return DrawingInfo; the drawing info for the instance, or null if no Drawing info could be found
+     */
+    DrawingInfo getDrawingInfoBase(Drawable drawable);
+
+    /**
+     * Get the static class-based drawing information for a drawable instance.
+     * @param drawableClass the class to get the drawing info for
+     * @return DrawingInfo; the drawing info for the class, or null if no Drawing info could be found
+     */
+    DrawingInfo getDrawingInfoClass(Class<? extends Drawable> drawableClass);
 
     /***************************************************************************************/
     /*************************************** EVENTS ****************************************/

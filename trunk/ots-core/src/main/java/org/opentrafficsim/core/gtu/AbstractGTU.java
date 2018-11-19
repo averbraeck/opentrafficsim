@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import java.awt.Color;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -16,7 +15,6 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -99,9 +97,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** Is this GTU destroyed? */
     private boolean destroyed = false;
-
-    /** The cached base color. */
-    private Color baseColor = null;
 
     /** aligned or not. */
     // TODO: should be indicated with a Parameter
@@ -200,7 +195,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.tacticalPlanner.set(strategicalPlanner.getTacticalPlanner());
         Time now = this.simulator.getSimulatorTime();
 
-        fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth(), getBaseColor() }, now);
+        fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth() }, now);
 
         try
         {
@@ -599,18 +594,6 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         {
             return new DirectedPoint(0, 0, 0);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public Color getBaseColor()
-    {
-        if (this.baseColor == null)
-        {
-            this.baseColor = IDGTUColorer.LEGEND.get(this.uniqueNumber % IDGTUColorer.LEGEND.size()).getColor();
-        }
-        return this.baseColor;
     }
 
     /**

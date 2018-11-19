@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.Serializable;
 import java.util.List;
 
+import org.opentrafficsim.core.animation.Colorer;
 import org.opentrafficsim.core.gtu.GTU;
 
 /**
@@ -17,15 +18,8 @@ import org.opentrafficsim.core.gtu.GTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface GTUColorer
+public interface GTUColorer extends Colorer<GTU>
 {
-    /**
-     * Return the fill color for a GTU.
-     * @param gtu GTU; the GTU
-     * @return Color; the color for the GTU
-     */
-    Color getColor(GTU gtu);
-
     /**
      * Return a list of legend entries (useful to make a legend of the colors used to render the GTUs).
      * @return List&lt;LegendEntry&gt;; the list of legend entries; the caller should not (try to) modify this List
