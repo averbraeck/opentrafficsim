@@ -1,8 +1,6 @@
 package org.opentrafficsim.road.gtu.lane;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,15 +16,11 @@ import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.Route;
@@ -34,9 +28,6 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
@@ -54,9 +45,6 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
 {
     /** */
     private static final long serialVersionUID = 20141025L;
-
-    /** The animation. */
-    private Renderable2D<? super LaneBasedIndividualGTU> animation;
 
     /** Sensing positions. */
     private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new HashMap<>();
@@ -111,55 +99,6 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
     }
 
-    /**
-     * @param strategicalPlanner LaneBasedStrategicalPlanner; the strategical planner (e.g., route determination) to use
-     * @param initialLongitudinalPositions Set&lt;DirectedLanePosition&gt;; the initial positions of the car on one or more
-     *            lanes with their directions
-     * @param initialSpeed Speed; the initial speed of the car on the lane
-     * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation
-     * @param gtuColorer GTUColorer; the GTUColorer that will be linked from the animation to determine the color (may be null
-     *            in which case a default will be used)
-     * @throws NetworkException when the GTU cannot be placed on the given lane
-     * @throws SimRuntimeException when the move method cannot be scheduled
-     * @throws GTUException when initial values are not correct
-     * @throws OTSGeometryException when the initial path is wrong
-     */
-    @SuppressWarnings("unchecked")
-    public final void initWithAnimation(final LaneBasedStrategicalPlanner strategicalPlanner,
-            final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-            final Class<? extends Renderable2D<? super LaneBasedIndividualGTU>> animationClass, final GTUColorer gtuColorer)
-            throws NetworkException, SimRuntimeException, GTUException, OTSGeometryException
-    {
-        super.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
-
-        // animation
-        if (getSimulator() instanceof AnimatorInterface && animationClass != null)
-        {
-            try
-            {
-                Constructor<?> constructor;
-
-                if (null == gtuColorer)
-                {
-                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[] { this, getSimulator() });
-                    this.animation = (Renderable2D<LaneBasedIndividualGTU>) constructor.newInstance(this, getSimulator());
-                }
-                else
-                {
-                    constructor =
-                            ClassUtil.resolveConstructor(animationClass, new Object[] { this, getSimulator(), gtuColorer });
-                    this.animation =
-                            (Renderable2D<LaneBasedIndividualGTU>) constructor.newInstance(this, getSimulator(), gtuColorer);
-                }
-            }
-            catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
-                    | IllegalArgumentException | InvocationTargetException exception)
-            {
-                throw new GTUException("Could not instantiate car animation of type " + animationClass.getName(), exception);
-            }
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
     public final RelativePosition getFront()
@@ -193,25 +132,6 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     public final ImmutableSet<RelativePosition> getContourPoints()
     {
         return new ImmutableHashSet<>(this.contourPoints, Immutable.WRAP);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void destroy()
-    {
-        if (this.animation != null)
-        {
-            try
-            {
-                this.animation.destroy();
-                this.animation = null;
-            }
-            catch (@SuppressWarnings("unused") Exception e)
-            {
-                System.err.println("Error when destroying the animation of car: " + this.getId());
-            }
-        }
-        super.destroy();
     }
 
     /** {@inheritDoc} */
@@ -284,12 +204,6 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
 
         /** The simulator. */
         private OTSSimulatorInterface simulator = null;
-
-        /** Animation. */
-        private Class<? extends Renderable2D<? super LaneBasedIndividualGTU>> animationClass = null;
-
-        /** GTUColorer. */
-        private GTUColorer gtuColorer = null;
 
         /** Network. */
         private OTSNetwork network = null;
@@ -406,27 +320,6 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param animationClass Class&lt;? extends Renderable2D&lt;? super LaneBasedIndividualGTU&gt;&gt;; set animation class
-         * @return the class itself for chaining the setters
-         */
-        public final LaneBasedIndividualCarBuilder setAnimationClass(
-                final Class<? extends Renderable2D<? super LaneBasedIndividualGTU>> animationClass)
-        {
-            this.animationClass = animationClass;
-            return this;
-        }
-
-        /**
-         * @param gtuColorer GTUColorer; set gtuColorer.
-         * @return the class itself for chaining the setters
-         */
-        public final LaneBasedIndividualCarBuilder setGtuColorer(final GTUColorer gtuColorer)
-        {
-            this.gtuColorer = gtuColorer;
-            return this;
-        }
-
-        /**
          * @param network OTSNetwork; set network
          * @return the class itself for chaining the setters
          */
@@ -501,22 +394,6 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @return animationClass.
-         */
-        public final Class<? extends Renderable2D<? super LaneBasedIndividualGTU>> getAnimationClass()
-        {
-            return this.animationClass;
-        }
-
-        /**
-         * @return gtuColorer.
-         */
-        public final GTUColorer getGtuColorer()
-        {
-            return this.gtuColorer;
-        }
-
-        /**
          * @return network
          */
         public final OTSNetwork getNetwork()
@@ -552,8 +429,8 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
                     this.maximumSpeed, this.front, this.simulator, this.network);
             gtu.setMaximumAcceleration(this.maximumAcceleration);
             gtu.setMaximumDeceleration(this.maximumDeceleration);
-            gtu.initWithAnimation(laneBasedStrategicalPlannerFactory.create(gtu, route, origin, destination),
-                    this.initialLongitudinalPositions, this.initialSpeed, this.animationClass, this.gtuColorer);
+            gtu.init(laneBasedStrategicalPlannerFactory.create(gtu, route, origin, destination),
+                    this.initialLongitudinalPositions, this.initialSpeed);
             return gtu;
 
         }

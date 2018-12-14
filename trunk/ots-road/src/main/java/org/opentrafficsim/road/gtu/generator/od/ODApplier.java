@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.generator.od;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,8 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.naming.NamingException;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -27,14 +24,12 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
@@ -340,7 +335,6 @@ public final class ODApplier
                 HeadwayDistribution randomization = odOptions.get(ODOptions.HEADWAY_DIST, lane, o, linkType);
                 ArrivalsHeadwayGenerator headwayGenerator =
                         new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
-                GTUColorer gtuColorer = odOptions.get(ODOptions.GTU_COLORER, lane, o, linkType);
                 GTUCharacteristicsGeneratorODWrapper characteristicsGenerator = new GTUCharacteristicsGeneratorODWrapper(root,
                         simulator, odOptions.get(ODOptions.GTU_TYPE, lane, o, linkType), stream);
                 RoomChecker roomChecker = odOptions.get(ODOptions.ROOM_CHECKER, lane, o, linkType);
@@ -350,15 +344,11 @@ public final class ODApplier
                 // and finally, the generator
                 try
                 {
-                    LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator(id, headwayGenerator, gtuColorer,
-                            characteristicsGenerator, GeneratorPositions.create(initialPosition, stream, biases, linkWeights),
-                            network, simulator, roomChecker, idGenerator);
+                    LaneBasedGTUGenerator generator = new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
+                            GeneratorPositions.create(initialPosition, stream, biases, linkWeights), network, simulator,
+                            roomChecker, idGenerator);
                     generator.setNoLaneChangeDistance(odOptions.get(ODOptions.NO_LC_DIST, lane, o, linkType));
                     output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
-                    if (animation)
-                    {
-                        new GTUGeneratorAnimation(generator, simulator);
-                    }
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -368,11 +358,6 @@ public final class ODApplier
                 catch (ProbabilityException exception)
                 {
                     // should not happen, as we define probabilities in the headwayGenerator
-                    throw new RuntimeException(exception);
-                }
-                catch (NamingException | RemoteException exception)
-                {
-                    // should not happen
                     throw new RuntimeException(exception);
                 }
             }

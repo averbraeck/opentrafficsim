@@ -34,12 +34,12 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 import nl.javel.gisbeans.map.MapInterface;
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -140,17 +140,17 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @param extent Rectangle2D; bottom left corner, length and width of the area (world) to animate.
      * @param size Dimension; the size to be used for the animation.
      * @param simulator SimpleAnimator; the simulator or animator of the model.
-     * @param wrappableAnimation WrappableAnimation; the builder and rebuilder of the simulation, based on properties.
+     * @param otsModel OTSModelInterface; the builder and rebuilder of the simulation, based on properties.
      * @param gtuColorer GTUColorer; the colorer to use for the GTUs.
      * @param network OTSNetwork; network
      * @throws RemoteException when notification of the animation panel fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OTSAnimator simulator,
-            final OTSModel model, final GTUColorer gtuColorer, final OTSNetwork network)
+            final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network)
             throws RemoteException, PropertyException
     {
-        super(simulator, wrappableAnimation);
+        super(simulator, otsModel);
 
         // Add the animation panel as a tab.
 

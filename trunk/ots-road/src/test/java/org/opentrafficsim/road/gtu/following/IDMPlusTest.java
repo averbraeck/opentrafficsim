@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -19,7 +20,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSSimulator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -38,11 +41,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -68,8 +68,9 @@ public class IDMPlusTest implements UNITS
     {
         // Test 1. Check a car standing still with no leaders accelerates with maximum acceleration
         // cars have #10 and up
-        SimpleSimulator simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
-                new Duration(3600, SECOND), new IDMPlusTestModel());
+        OTSSimulatorInterface simulator = new OTSSimulator();
+        IDMPlusTestModel model = new IDMPlusTestModel(simulator);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         Length s0 = new Length(2, METER);
         GTUFollowingModelOld carFollowingModel = new IDMPlusOld(new Acceleration(1.25, METER_PER_SECOND_2),
                 new Acceleration(1.5, METER_PER_SECOND_2), s0, new Duration(1, SECOND), 1d);
@@ -364,25 +365,25 @@ public class IDMPlusTest implements UNITS
  * initial version 0 feb. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class IDMPlusTestModel implements OTSModelInterface
+class IDMPlusTestModel extends AbstractOTSModel
 {
 
     /** */
     private static final long serialVersionUID = 20150210L;
 
-    /** {@inheritDoc} */
-    @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator) throws SimRuntimeException
+    /**
+     * @param simulator the simulator to use
+     */
+    IDMPlusTestModel(final OTSSimulatorInterface simulator)
     {
-        // do nothing.
+        super(simulator);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-
+    public void constructModel() throws SimRuntimeException
     {
-        return null;
+        // do nothing.
     }
 
     /** {@inheritDoc} */

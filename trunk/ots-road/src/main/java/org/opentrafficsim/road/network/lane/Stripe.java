@@ -8,7 +8,6 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -99,20 +98,14 @@ public class Stripe extends RoadMarkerAlong
      * Clone a Stripe for a new network.
      * @param newParentLink CrossSectionLink; the new link to which the clone belongs
      * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @param cse Stripe; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     protected Stripe(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation, final Stripe cse) throws NetworkException
+            final Stripe cse) throws NetworkException
     {
-        super(newParentLink, newSimulator, animation, cse);
-
-        if (animation)
-        {
-            OTSNetwork.cloneAnimation(cse, this, cse.getParentLink().getSimulator(), newSimulator);
-        }
+        super(newParentLink, newSimulator, cse);
     }
 
     /**
@@ -154,10 +147,10 @@ public class Stripe extends RoadMarkerAlong
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Stripe clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public Stripe clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
-        return new Stripe(newParentLink, newSimulator, animation, this);
+        return new Stripe(newParentLink, newSimulator, this);
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 
 /**
  * Displays whether a GTU is blocking conflicts.

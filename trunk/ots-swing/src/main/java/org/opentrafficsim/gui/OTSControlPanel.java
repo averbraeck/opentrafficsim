@@ -433,14 +433,7 @@ public class OTSControlPanel extends JPanel
                 frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 frame.dispose();
                 OTSControlPanel.this.cleanup();
-                try
-                {
-                    OTSControlPanel.this.wrappableAnimation.rebuildSimulator(rect);
-                }
-                catch (Exception exception)
-                {
-                    exception.printStackTrace();
-                }
+                // TODO: maybe rebuild model...
             }
             fixButtons();
         }
@@ -476,11 +469,7 @@ public class OTSControlPanel extends JPanel
                 {
                     this.clockPanel.cancelTimer(); // cancel the timer on the clock panel.
                 }
-
-                if (this.wrappableAnimation != null)
-                {
-                    this.wrappableAnimation.stopTimersThreads(); // stop the linked timers and other threads
-                }
+                // TODO: are there timers or threads we need to stop?
             }
             catch (Throwable exception)
             {

@@ -5,7 +5,6 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
 
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -76,20 +75,14 @@ public class Shoulder extends CrossSectionElement
      * Clone a Shoulder for a new network.
      * @param newParentLink CrossSectionLink; the new link to which the clone belongs
      * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @param cse Shoulder; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     protected Shoulder(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation, final Shoulder cse) throws NetworkException
+            final Shoulder cse) throws NetworkException
     {
-        super(newParentLink, newSimulator, animation, cse);
-
-        if (animation)
-        {
-            OTSNetwork.cloneAnimation(cse, this, cse.getParentLink().getSimulator(), newSimulator);
-        }
+        super(newParentLink, newSimulator, cse);
     }
 
     /** {@inheritDoc} */
@@ -111,10 +104,10 @@ public class Shoulder extends CrossSectionElement
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Shoulder clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public Shoulder clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
-        return new Shoulder(newParentLink, newSimulator, animation, this);
+        return new Shoulder(newParentLink, newSimulator, this);
     }
 
 }

@@ -32,11 +32,9 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGTUCharacteristicsGenerator;
@@ -109,9 +107,6 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     /** The way that this generator checks if it is safe to construct and place the next lane based GTU. */
     private final RoomChecker roomChecker;
 
-    /** The GTU colorer that will be linked to each generated GTU. */
-    private final GTUColorer gtuColorer;
-
     /** ID generator. */
     private final IdGenerator idGenerator;
 
@@ -125,7 +120,6 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      * Construct a new lane base GTU generator.
      * @param id String; name of the new GTU generator
      * @param interarrivelTimeGenerator Generator&lt;Duration&gt;; generator for the interval times between GTUs
-     * @param gtuColorer GTUColorer; the GTU colorer that will be used by all generated GTUs
      * @param laneBasedGTUCharacteristicsGenerator LaneBasedGTUCharacteristicsGenerator; generator of the characteristics of
      *            each GTU
      * @param generatorPositions GeneratorPositions; location and initial direction provider for all generated GTUs
@@ -139,7 +133,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
      */
     @SuppressWarnings("parameternumber")
     public LaneBasedGTUGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
-            final GTUColorer gtuColorer, final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
+            final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final OTSNetwork network, final OTSSimulatorInterface simulator,
             final RoomChecker roomChecker, final IdGenerator idGenerator)
             throws SimRuntimeException, ProbabilityException, ParameterException
@@ -151,7 +145,6 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
         this.network = network;
         this.simulator = simulator;
         this.roomChecker = roomChecker;
-        this.gtuColorer = gtuColorer;
         this.idGenerator = idGenerator;
         Duration headway = this.interarrivelTimeGenerator.draw();
         if (headway != null) // otherwise no demand at all
@@ -363,10 +356,8 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
         gtu.setMaximumDeceleration(characteristics.getMaximumDeceleration());
         gtu.setVehicleModel(characteristics.getVehicleModel());
         gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
-        gtu.initWithAnimation(
-                characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
-                        characteristics.getOrigin(), characteristics.getDestination()),
-                position, speed, DefaultCarAnimation.class, this.gtuColorer);
+        gtu.init(characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
+                characteristics.getOrigin(), characteristics.getDestination()), position, speed);
         this.generatedGTUs++;
         fireEvent(GTU_GENERATED_EVENT, gtu);
     }
@@ -438,15 +429,6 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     public final String getId()
     {
         return this.id;
-    }
-
-    /**
-     * Retrieve the GTUColorer that this LaneBasedGTUGenerator assigns to all generated GTUs.
-     * @return GtuColorer; the GTUColorer that this LaneBasedGTUGenerator assigns to all generated GTUs
-     */
-    public final GTUColorer getGtuColorer()
-    {
-        return this.gtuColorer;
     }
 
     /**
@@ -604,10 +586,8 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
         return this.generatorPositions.getBounds();
     }
 
-    /**
-     * Returns the number of vehicles in queue per included position for animation.
-     * @return number of vehicles in queue per included position for animation
-     */
+    /** {@inheritDoc} */
+    @Override
     public Map<DirectedPoint, Integer> getQueueLengths()
     {
         Map<DirectedPoint, Integer> result = new LinkedHashMap<>();

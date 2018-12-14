@@ -5,6 +5,7 @@ import static org.opentrafficsim.core.gtu.GTUType.CAR;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -15,7 +16,10 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -33,7 +37,6 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -69,8 +72,9 @@ public class SensorTest implements UNITS
         GTUType gtuType = CAR;
         LaneType laneType = LaneType.TWO_WAY_LANE;
         // And a simulator, but for that we first need something that implements OTSModelInterface
-        OTSModelInterface model = new DummyModelForSensorTest();
-        final SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
+        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSModelInterface model = new DummyModelForSensorTest(simulator);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         Lane[] lanesA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
         Lane[] lanesB = LaneFactory.makeMultiLane(network, "B", nodeATo, nodeBTo, null, 3, laneType,
@@ -180,8 +184,8 @@ class TriggerSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
         return null;
     }
@@ -198,48 +202,30 @@ class TriggerSensor extends AbstractSensor
  * initial version 4 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class DummyModelForSensorTest implements OTSModelInterface
+class DummyModelForSensorTest extends AbstractOTSModel
 {
     /** */
     private static final long serialVersionUID = 20150114L;
 
-    /** The simulator. */
-    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
-
     /**
-     * Register the simulator.
-     * @param simulator SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulator
+     * @param simulator the simulator to use
      */
-    public final void setSimulator(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator)
+    DummyModelForSensorTest(final OTSSimulatorInterface simulator)
     {
-        this.simulator = simulator;
+        super(simulator);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0)
-            throws SimRuntimeException
+    public final void constructModel() throws SimRuntimeException
     {
-        // Nothing happens here
+        //
     }
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-
-    {
-        if (null == this.simulator)
-        {
-            throw new Error("getSimulator called, but simulator field is null");
-        }
-        return this.simulator;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OTSNetwork getNetwork()
+    public final OTSNetwork getNetwork()
     {
         return null;
     }
-
 }

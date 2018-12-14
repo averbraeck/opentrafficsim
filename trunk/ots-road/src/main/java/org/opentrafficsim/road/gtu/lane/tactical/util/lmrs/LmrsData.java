@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.opentrafficsim.road.gtu.colorer.DesireBased;
-import org.opentrafficsim.road.gtu.colorer.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
+import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 
 /**
  * Keeps data for LMRS for a specific GTU.
@@ -47,7 +47,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     final Map<Class<? extends Incentive>, Desire> desireMap = new HashMap<>();
 
     /** Synchronization state. */
-    State synchronizationState;
+    Synchronizable.State synchronizationState;
 
     /** Vehicle that is being synchronized to. */
     private String syncVehicle;
@@ -174,7 +174,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /** {@inheritDoc} */
     @Override
-    public State getSynchronizationState()
+    public Synchronizable.State getSynchronizationState()
     {
         return this.synchronizationState;
     }

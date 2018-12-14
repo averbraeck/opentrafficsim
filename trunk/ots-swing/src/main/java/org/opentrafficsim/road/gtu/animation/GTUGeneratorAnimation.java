@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.generator;
+package org.opentrafficsim.road.gtu.animation;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 
 import org.opentrafficsim.core.animation.TextAlignment;
 import org.opentrafficsim.core.animation.TextAnimation;
+import org.opentrafficsim.road.gtu.generator.GTUGenerator;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;

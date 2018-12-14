@@ -12,8 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 
 /**
  * Let the user select what the colors in the animation mean.

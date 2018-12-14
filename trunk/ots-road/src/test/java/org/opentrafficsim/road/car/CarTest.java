@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -18,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -45,10 +47,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
@@ -107,9 +107,9 @@ public class CarTest implements UNITS
      */
     public static OTSSimulatorInterface makeSimulator() throws SimRuntimeException, NamingException
     {
-        OTSSimulatorInterface simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
-                new Duration(3600.0, SECOND), model);
+        OTSSimulatorInterface simulator = new OTSSimulator();
         Model model = new Model(simulator);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         return simulator;
     }
 
@@ -178,16 +178,16 @@ public class CarTest implements UNITS
     /** The helper model. */
     protected static class Model extends AbstractOTSModel
     {
+        /** */
+        private static final long serialVersionUID = 20141027L;
+
         /**
          * @param simulator the simulator to use
          */
-        public Model(final DEVSSimulatorInterface.TimeDoubleUnit simulator)
+        public Model(final OTSSimulatorInterface simulator)
         {
             super(simulator);
         }
-
-        /** */
-        private static final long serialVersionUID = 20141027L;
 
         /** {@inheritDoc} */
         @Override
@@ -202,6 +202,5 @@ public class CarTest implements UNITS
         {
             return null;
         }
-
     }
 }

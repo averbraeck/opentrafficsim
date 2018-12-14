@@ -44,6 +44,8 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.perception.HistoryManager;
+import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
@@ -75,7 +77,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Replication.class, DEVSSimulatorInterface.class })
+@PrepareForTest({ OTSReplication.class, OTSSimulatorInterface.class })
 public class ODApplierTest
 {
 
@@ -94,6 +96,9 @@ public class ODApplierTest
     /** Network. */
     private OTSNetwork network;
 
+    /** History manager. */
+    HistoryManager historyManager;
+
     /** Lanes. */
     private final Map<String, Lane> lanes = new HashMap<>();
 
@@ -105,6 +110,16 @@ public class ODApplierTest
     {
         OTSReplication replicationMock = PowerMockito.mock(OTSReplication.class);
         PowerMockito.when(replicationMock.getStream(Mockito.anyString())).thenReturn(this.stream);
+        Answer<HistoryManager> answerHM = new Answer<HistoryManager>()
+        {
+            @Override
+            public HistoryManager answer(final InvocationOnMock invocation) throws Throwable
+            {
+                return ODApplierTest.this.historyManager;
+            }
+
+        };
+        PowerMockito.when(replicationMock.getHistoryManager(Mockito.any())).then(answerHM);
         return replicationMock;
     }
 
@@ -136,6 +151,7 @@ public class ODApplierTest
     {
         this.replication = createReplicationMock();
         this.simulator = createSimulatorMock();
+        this.historyManager = new HistoryManagerDEVS(this.simulator, Duration.createSI(10.0), Duration.createSI(1.0));
         this.network = new OTSNetwork("ODApplierExample");
         OTSPoint3D pointA = new OTSPoint3D(0, 0, 0);
         OTSPoint3D pointB = new OTSPoint3D(1000, 0, 0);
@@ -173,7 +189,7 @@ public class ODApplierTest
      * Returns the replication.
      * @return replication
      */
-    final Replication<Time, Duration, SimTimeDoubleUnit> getReplication()
+    final Replication<Time, Duration, SimTimeDoubleUnit, OTSSimulatorInterface> getReplication()
     {
         return this.replication;
     }

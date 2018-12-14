@@ -1,17 +1,11 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
-import java.rmi.RemoteException;
-
-import javax.naming.NamingException;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.animation.SinkAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -45,14 +39,6 @@ public class SinkSensor extends AbstractSensor
             throws NetworkException
     {
         super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator, Compatible.EVERYTHING);
-        try
-        {
-            new SinkAnimation(this, simulator);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            exception.printStackTrace();
-        }
     }
 
     /**
@@ -67,14 +53,6 @@ public class SinkSensor extends AbstractSensor
             final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         super("SINK@" + lane.toString(), lane, position, RelativePosition.FRONT, simulator, Compatible.EVERYTHING);
-        try
-        {
-            new SinkAnimation(this, simulator);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            exception.printStackTrace();
-        }
     }
 
     /** {@inheritDoc} */
@@ -94,8 +72,8 @@ public class SinkSensor extends AbstractSensor
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public SinkSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public SinkSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,

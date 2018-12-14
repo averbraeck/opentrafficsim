@@ -15,9 +15,6 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.colorer.Blockable;
-import org.opentrafficsim.road.gtu.colorer.DesireBased;
-import org.opentrafficsim.road.gtu.colorer.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -27,6 +24,9 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
+import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
+import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
@@ -238,7 +238,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
 
     /** {@inheritDoc} */
     @Override
-    public State getSynchronizationState()
+    public Synchronizable.State getSynchronizationState()
     {
         return this.lmrsData.getSynchronizationState();
     }

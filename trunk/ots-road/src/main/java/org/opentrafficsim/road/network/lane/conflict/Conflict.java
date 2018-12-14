@@ -1,11 +1,8 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
-import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-
-import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -31,7 +28,6 @@ import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUReal;
-import org.opentrafficsim.road.network.animation.ConflictAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
@@ -153,15 +149,6 @@ public final class Conflict extends AbstractLaneBasedObject
         this.gtuType = gtuType;
         this.permitted = permitted;
         this.cloneLock = cloneLock;
-
-        try
-        {
-            new ConflictAnimation(this, simulator);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            throw new NetworkException(exception);
-        }
 
         // Create conflict end
         if (conflictType.equals(ConflictType.SPLIT) || conflictType.equals(ConflictType.MERGE))
@@ -376,8 +363,8 @@ public final class Conflict extends AbstractLaneBasedObject
 
     /** {@inheritDoc} */
     @Override
-    public Conflict clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public Conflict clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
@@ -452,7 +439,7 @@ public final class Conflict extends AbstractLaneBasedObject
         /** {@inheritDoc} */
         @Override
         public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE,
-                final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation) throws NetworkException
+                final SimulatorInterface.TimeDoubleUnit newSimulator) throws NetworkException
         {
             // Constructor of Conflict creates these.
             return null;
@@ -628,7 +615,7 @@ public final class Conflict extends AbstractLaneBasedObject
                 return createParallelGtu(perceivingGtu, perceivedGtu, overlapFront, overlap, overlapRear);
             }
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,

@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.colorer;
 import java.awt.Color;
 
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 

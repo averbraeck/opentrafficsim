@@ -247,8 +247,8 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
 
     /** {@inheritDoc} */
     @Override
-    public abstract AbstractSensor clone(CrossSectionElement newCSE, SimulatorInterface.TimeDoubleUnit newSimulator,
-            boolean animation) throws NetworkException;
+    public abstract AbstractSensor clone(CrossSectionElement newCSE, SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException;
 
     /** {@inheritDoc} */
     @Override

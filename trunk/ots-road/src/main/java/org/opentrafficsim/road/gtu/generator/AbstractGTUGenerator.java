@@ -27,12 +27,10 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU.LaneBasedIndividualCarBuilder;
@@ -106,9 +104,6 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
     /** The direction in which the GTU has to be generated; DIR_PLUS or DIR_MINUS. */
     private final GTUDirectionality direction;
 
-    /** GTUColorer to use. */
-    private final GTUColorer gtuColorer;
-
     /** The lane-based strategical planner factory to use. */
     private final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory;
 
@@ -144,7 +139,6 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
      * @param position Length; position on the lane, relative to the design line of the link
      * @param direction GTUDirectionality; the direction on the lane in which the GTU has to be generated (DIR_PLUS, or
      *            DIR_MINUS)
-     * @param gtuColorer GTUColorer; the GTUColorer to use
      * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends LaneBasedStrategicalPlanner&gt;; the
      *            lane-based strategical planner factory to use
      * @param routeGenerator RouteGenerator; route generator
@@ -156,7 +150,6 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
             final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
             final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> interarrivelTimeDist, final long maxGTUs,
             final Time startTime, final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
-            final GTUColorer gtuColorer,
             final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
             final RouteGenerator routeGenerator, final OTSNetwork network) throws SimRuntimeException
     {
@@ -172,7 +165,6 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
         this.lane = lane;
         this.position = position;
         this.direction = direction;
-        this.gtuColorer = gtuColorer;
         this.strategicalPlannerFactory = strategicalPlannerFactory;
         this.routeGenerator = routeGenerator;
         this.network = network;
@@ -227,8 +219,6 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
             Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
             initialLongitudinalPositions.add(new DirectedLanePosition(this.lane, this.position, this.direction));
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
-            carBuilder.setAnimationClass(DefaultCarAnimation.class);
-            carBuilder.setGtuColorer(this.gtuColorer);
             carBuilder.setNetwork(this.network);
             carBuilder.setMaximumAcceleration(Acceleration.createSI(3.0));
             carBuilder.setMaximumDeceleration(Acceleration.createSI(-8.0));
@@ -582,14 +572,6 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
     public final Time getEndTime()
     {
         return this.endTime;
-    }
-
-    /**
-     * @return gtuColorer.
-     */
-    public final GTUColorer getGtuColorer()
-    {
-        return this.gtuColorer;
     }
 
     /**

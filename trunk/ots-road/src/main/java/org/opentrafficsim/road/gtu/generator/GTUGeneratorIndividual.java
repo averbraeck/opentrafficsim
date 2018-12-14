@@ -12,7 +12,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -70,7 +69,6 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
      * @param position Length; position on the lane, relative to the design line of the link
      * @param direction GTUDirectionality; the direction on the lane in which the GTU has to be generated (DIR_PLUS, or
      *            DIR_MINUS)
-     * @param gtuColorer GTUColorer; the GTUColorer to use
      * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends LaneBasedStrategicalPlanner&gt;; the
      *            lane-based strategical planner factory to use
      * @param routeGenerator RouteGenerator; route generator
@@ -85,12 +83,11 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator implements Seri
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> widthDist,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs, final Time startTime,
             final Time endTime, final Lane lane, final Length position, final GTUDirectionality direction,
-            final GTUColorer gtuColorer,
             final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> strategicalPlannerFactory,
             final RouteGenerator routeGenerator, final OTSNetwork network) throws SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, initialSpeedDist, interarrivelTimeDist, maxGTUs, startTime, endTime, lane,
-                position, direction, gtuColorer, strategicalPlannerFactory, routeGenerator, network);
+                position, direction, strategicalPlannerFactory, routeGenerator, network);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.factory;
 
-import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -26,8 +24,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.animation.LinkAnimation;
-import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -36,7 +32,6 @@ import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
-import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -54,7 +49,7 @@ public final class LaneFactory
 
     /** Stripe width. */
     private static final Length STRIPE_WIDTH = Length.createSI(0.2);
-    
+
     /** Angle above which a Bezier curve is used over a straight line. */
     private static final double BEZIER_MARGIN = Math.toRadians(0.5);
 
@@ -294,31 +289,18 @@ public final class LaneFactory
      * @param speedLimit Speed; the speed limit on the new Lane
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator
      * @return Lane
-     * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on network inconsistency
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
             final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
-            final DEVSSimulatorInterface.TimeDoubleUnit simulator)
-            throws NamingException, NetworkException, OTSGeometryException
+            final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException, OTSGeometryException
     {
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.VEHICLE, speedLimit);
         Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, speedMap,
                 new OvertakingConditions.LeftAndRight());
-        if (simulator instanceof AnimatorInterface)
-        {
-            try
-            {
-                new LaneAnimation(result, simulator, Color.LIGHT_GRAY, false);
-            }
-            catch (RemoteException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
         return result;
     }
 
@@ -334,13 +316,12 @@ public final class LaneFactory
      * @param speedLimit Speed; the speed limit on the new Lane
      * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane; the new Lane
-     * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on network inconsistency
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     public static Lane makeLane(final Network network, final String name, final OTSNode from, final OTSNode to,
             final OTSPoint3D[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
-            final OTSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
+            final OTSSimulatorInterface simulator) throws NetworkException, OTSGeometryException
     {
         Length width = new Length(4.0, LengthUnit.METER);
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, simulator);
@@ -365,7 +346,6 @@ public final class LaneFactory
      * @param speedLimit Speed; the speed limit on all lanes
      * @param simulator OTSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
-     * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on topological problems
      * @throws OTSGeometryException when creation of center line or contour fails
      */
@@ -373,7 +353,7 @@ public final class LaneFactory
     public static Lane[] makeMultiLane(final Network network, final String name, final OTSNode from, final OTSNode to,
             final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart, final int laneOffsetAtEnd,
             final LaneType laneType, final Speed speedLimit, final OTSSimulatorInterface simulator)
-            throws NamingException, NetworkException, OTSGeometryException
+            throws NetworkException, OTSGeometryException
     {
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, simulator);
         Lane[] result = new Lane[laneCount];
@@ -385,17 +365,6 @@ public final class LaneFactory
             Length latPosAtEnd = new Length((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
             result[laneIndex] =
                     makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit, simulator);
-        }
-        if (simulator instanceof AnimatorInterface)
-        {
-            try
-            {
-                new LinkAnimation(link, simulator, 3f);
-            }
-            catch (RemoteException exception)
-            {
-                exception.printStackTrace();
-            }
         }
         return result;
     }

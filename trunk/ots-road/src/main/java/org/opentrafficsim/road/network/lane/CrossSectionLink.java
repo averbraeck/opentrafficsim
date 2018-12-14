@@ -89,19 +89,18 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * Clone a CrossSectionLink for a new network.
      * @param newNetwork Network; the new network to which the clone belongs
      * @param newSimulator OTSSimulatorInterface; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @param link CrossSectionLink; the link to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected CrossSectionLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation,
-            final CrossSectionLink link) throws NetworkException
+    protected CrossSectionLink(final Network newNetwork, final OTSSimulatorInterface newSimulator, final CrossSectionLink link)
+            throws NetworkException
     {
-        super(newNetwork, newSimulator, animation, link);
+        super(newNetwork, newSimulator, link);
         this.laneKeepingPolicy = link.laneKeepingPolicy;
         for (CrossSectionElement cse : link.crossSectionElementList)
         {
-            cse.clone(this, newSimulator, animation);
+            cse.clone(this, newSimulator);
             // the CrossSectionElement will add itself to the Link (OTS-237)
         }
     }
@@ -222,10 +221,9 @@ public class CrossSectionLink extends OTSLink implements Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public CrossSectionLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator, final boolean animation)
-            throws NetworkException
+    public CrossSectionLink clone(final Network newNetwork, final OTSSimulatorInterface newSimulator) throws NetworkException
     {
-        return new CrossSectionLink(newNetwork, newSimulator, animation, this);
+        return new CrossSectionLink(newNetwork, newSimulator, this);
     }
 
     /**

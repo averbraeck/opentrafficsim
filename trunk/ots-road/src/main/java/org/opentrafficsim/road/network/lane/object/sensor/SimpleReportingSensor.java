@@ -1,17 +1,11 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
-import java.awt.Color;
-import java.rmi.RemoteException;
-
-import javax.naming.NamingException;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.animation.SensorAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -52,14 +46,6 @@ public class SimpleReportingSensor extends AbstractSensor
             final Compatible compatible) throws NetworkException
     {
         super(id, lane, position, triggerPosition, simulator, compatible);
-        try
-        {
-            new SensorAnimation(this, position, simulator, Color.YELLOW);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            exception.printStackTrace();
-        }
     }
 
     /** {@inheritDoc} */
@@ -72,8 +58,8 @@ public class SimpleReportingSensor extends AbstractSensor
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public SimpleReportingSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public SimpleReportingSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,

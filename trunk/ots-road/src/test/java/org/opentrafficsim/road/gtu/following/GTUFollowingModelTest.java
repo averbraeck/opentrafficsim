@@ -13,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -24,7 +25,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSSimulator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -46,11 +49,8 @@ import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePl
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test the methods that the classes that implement GTUFollowingModel have in common.
@@ -62,11 +62,8 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * initial version 27 feb. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class GTUFollowingModelTest implements OTSModelInterface, UNITS
+public class GTUFollowingModelTest implements UNITS
 {
-    /** */
-    private static final long serialVersionUID = 20150227L;
-
     /** The network. */
     private OTSNetwork network = new OTSNetwork("gtu following test network");
 
@@ -80,6 +77,10 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
      */
     private void gtuFollowingModelTests(final GTUFollowingModelOld gtuFollowingModel) throws Exception
     {
+        OTSSimulatorInterface simulator = new OTSSimulator();
+        Model model = new Model(simulator, this.network);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
+        
         Acceleration maxSafeDeceleration = gtuFollowingModel.getMaximumSafeDeceleration();
         assertNotNull("maximumSafeDeceleration must return non-null value", maxSafeDeceleration);
         assertTrue("value of maximuSafeDeceleration must be positive", 0 < maxSafeDeceleration.getSI());
@@ -108,8 +109,6 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         assertNotNull("minimum headway at speed 0 should be non null", minimumHeadway);
         assertTrue("minimum headway at speed 0 hould have value >= 0", 0 <= minimumHeadway.getSI());
         // System.out.println("minimum headway at speed " + speed + " is " + minimumHeadway);
-        SimpleSimulator simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
-                new Duration(1800, SECOND), this);
         GTUType carType = CAR;
         LaneType laneType = LaneType.TWO_WAY_LANE;
         Lane lane = CarTest.makeLane(this.network, laneType, simulator);
@@ -208,7 +207,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         gtu100m.setParameters(parameters);
         gtu100m.init(strategicalPlanner, initialLongitudinalPositions50, speed);
         HeadwayGTUSimple hwgtu100m = new HeadwayGTUSimple(gtu100m.getId(), gtu100m.getGTUType(), headway100m,
-                gtu100m.getLength(), gtu100m.getWidth(), gtu100m.getSpeed(), gtu100m.getAcceleration(), maxSpeed); // gtu100m.getDesiredSpeed());
+                gtu100m.getLength(), gtu100m.getWidth(), gtu100m.getSpeed(), gtu100m.getAcceleration(), maxSpeed);
+        // gtu100m.getDesiredSpeed());
         otherGTUs.add(hwgtu100m);
         DualAccelerationStep as50and100m =
                 gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
@@ -246,7 +246,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         Length overlap = new Length(length.minus(ahead));
         HeadwayGTUSimple hwgtu1m =
                 new HeadwayGTUSimple(gtu1m.getId(), gtu1m.getGTUType(), ahead, overlap, Length.ZERO.minus(overlap),
-                        gtu1m.getLength(), gtu1m.getWidth(), gtu1m.getSpeed(), gtu1m.getAcceleration(), maxSpeed); // gtu1m.getDesiredSpeed());
+                        gtu1m.getLength(), gtu1m.getWidth(), gtu1m.getSpeed(), gtu1m.getAcceleration(), maxSpeed);
+        // gtu1m.getDesiredSpeed());
         otherGTUs.add(hwgtu1m);
         DualAccelerationStep as1m = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         AccelerationStep a1 = AbstractGTUFollowingModelMobil.TOODANGEROUS.getLeaderAccelerationStep();
@@ -268,7 +269,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         gtuMinus75m.init(strategicalPlanner, initialLongitudinalPositionsMinus75, speed);
         HeadwayGTUSimple hwgtuMinus75m =
                 new HeadwayGTUSimple(gtuMinus75m.getId(), gtuMinus75m.getGTUType(), headwayMinus75m, gtuMinus75m.getLength(),
-                        gtuMinus75m.getWidth(), gtuMinus75m.getSpeed(), gtuMinus75m.getAcceleration(), maxSpeed); // gtuMinus75m.getDesiredSpeed());
+                        gtuMinus75m.getWidth(), gtuMinus75m.getSpeed(), gtuMinus75m.getAcceleration(), maxSpeed);
+        // gtuMinus75m.getDesiredSpeed());
         otherGTUs.add(hwgtuMinus75m);
         DualAccelerationStep asMinus75And100m =
                 gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
@@ -345,26 +347,37 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         gtuFollowingModelTests(new IDMPlusOld());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator) throws SimRuntimeException
+    /** The helper model. */
+    protected static class Model extends AbstractOTSModel
     {
-        // Do nothing.
+        /** */
+        private static final long serialVersionUID = 20141027L;
+
+        /** */
+        private final OTSNetwork network;
+
+        /**
+         * @param simulator the simulator to use
+         * @param network the network
+         */
+        public Model(final OTSSimulatorInterface simulator, final OTSNetwork network)
+        {
+            super(simulator);
+            this.network = network;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final void constructModel() throws SimRuntimeException
+        {
+            //
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final OTSNetwork getNetwork()
+        {
+            return this.network;
+        }
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final OTSNetwork getNetwork()
-    {
-        return this.network;
-    }
-
 }

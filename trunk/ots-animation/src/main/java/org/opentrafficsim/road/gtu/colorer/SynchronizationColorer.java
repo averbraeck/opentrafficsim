@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.road.gtu.colorer.Synchronizable.State;
+import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 
 /**
  * Color based on synchronization state.
@@ -62,7 +62,7 @@ public class SynchronizationColorer implements GTUColorer, Serializable
         {
             return NA;
         }
-        State state = ((Synchronizable) gtu.getTacticalPlanner()).getSynchronizationState();
+        Synchronizable.State state = ((Synchronizable) gtu.getTacticalPlanner()).getSynchronizationState();
         if (state == null)
         {
             return NA;
