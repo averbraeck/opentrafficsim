@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
-import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -144,11 +143,10 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * @param gtuColorer GTUColorer; the colorer to use for the GTUs.
      * @param network OTSNetwork; network
      * @throws RemoteException when notification of the animation panel fails
-     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OTSAnimator simulator,
             final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network)
-            throws RemoteException, PropertyException
+            throws RemoteException
     {
         super(simulator, otsModel);
 
