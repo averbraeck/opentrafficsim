@@ -7,7 +7,6 @@ import javax.naming.NamingException;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.PropertyException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
@@ -56,7 +55,7 @@ public class OTSSimulator extends DEVSSimulator.TimeDoubleUnit implements OTSSim
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OTSModelInterface model, final int replicationNr)
-            throws SimRuntimeException, NamingException, PropertyException
+            throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         OTSReplication newReplication = OTSReplication.create("rep" + replicationNr, startTime, warmupPeriod, runLength, model);

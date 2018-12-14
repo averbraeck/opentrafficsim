@@ -4,7 +4,6 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.PropertyException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -47,10 +46,9 @@ public interface OTSSimulatorInterface extends DEVSSimulatorInterface.TimeDouble
      * @param replicationNr int; the replication number
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when context for the animation cannot be created
-     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OTSModelInterface model,
-            int replicationNr) throws SimRuntimeException, NamingException, PropertyException;
+            int replicationNr) throws SimRuntimeException, NamingException;
 
     /**
      * Construct and schedule a SimEvent using a Time to specify the execution time.

@@ -7,7 +7,6 @@ import javax.naming.NamingException;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.PropertyException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
@@ -58,7 +57,7 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OTSModelInterface model, final int replicationnr)
-            throws SimRuntimeException, NamingException, PropertyException
+            throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update
