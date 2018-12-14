@@ -12,7 +12,6 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.network.NetworkAnimation;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -91,10 +90,9 @@ public class CircularRoadSwing extends SimulatorFrame
      * @throws InputParameterException
      * @throws RemoteException
      * @throws OTSSimulationException
-     * @throws PropertyException when a property is not handled
      */
     public CircularRoadSwing(final String title, OTSAnimationPanel panel, final CircularRoadModel model)
-            throws InputParameterException, RemoteException, OTSSimulationException, PropertyException
+            throws InputParameterException, RemoteException, OTSSimulationException
     {
         super(title, panel);
         this.model = model;
@@ -128,7 +126,7 @@ public class CircularRoadSwing extends SimulatorFrame
                     new Dimension(200, 200), simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
             new CircularRoadSwing("Circular Road", animationPanel, otsModel);
         }
-        catch (SimRuntimeException | NamingException | PropertyException | RemoteException | InputParameterException
+        catch (SimRuntimeException | NamingException | RemoteException | InputParameterException
                 | OTSSimulationException exception)
         {
             exception.printStackTrace();
@@ -197,10 +195,9 @@ public class CircularRoadSwing extends SimulatorFrame
      * Add the tabs
      * @param simulator
      * @throws OTSSimulationException
-     * @throws PropertyException
      */
     protected final void addStatisticsTab(final OTSSimulatorInterface simulator)
-            throws OTSSimulationException, PropertyException
+            throws OTSSimulationException
     {
         int columns = 7;
         int rows = 2;

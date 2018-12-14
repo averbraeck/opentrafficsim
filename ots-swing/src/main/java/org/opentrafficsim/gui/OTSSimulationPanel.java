@@ -8,10 +8,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.xml.bind.PropertyException;
 
-import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.Console;
 import nl.tudelft.simulation.dsol.swing.gui.StatusBar;
@@ -62,10 +63,9 @@ public class OTSSimulationPanel extends JPanel
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator or animator of the model.
      * @param otsModel OTSModel; the model with its properties.
      * @throws RemoteException when communications to a remote machine fails
-     * @throws PropertyException when one of the user modified properties has the empty string as key
      */
     public OTSSimulationPanel(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSModelInterface otsModel)
-            throws RemoteException, PropertyException
+            throws RemoteException
     {
 
         this.simulator = simulator;
@@ -98,9 +98,9 @@ public class OTSSimulationPanel extends JPanel
 
     /**
      * Adds the properties tab.
-     * @throws PropertyException on exception with properties
+     * @throws InputParameterException on exception with properties
      */
-    public final void addPropertiesTab() throws PropertyException
+    public final void addPropertiesTab() throws InputParameterException
     {
         // TODO: make a tab with the InputParameters
     }
