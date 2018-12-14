@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
-import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.media.j3d.Bounds;
-import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
@@ -23,8 +21,6 @@ import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.animation.SensorAnimation;
-import org.opentrafficsim.road.network.animation.TrafficLightSensorAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -178,14 +174,6 @@ public class TrafficLightSensor extends EventProducer
         catch (OTSGeometryException exception)
         {
             // This happens if A and B are the same
-            throw new NetworkException(exception);
-        }
-        try
-        {
-            new TrafficLightSensorAnimation(this, simulator);
-        }
-        catch (RemoteException | NamingException | OTSGeometryException exception)
-        {
             throw new NetworkException(exception);
         }
     }
@@ -607,14 +595,6 @@ class FlankSensor extends AbstractSensor
     {
         super(id, lane, longitudinalPosition, positionType, simulator, compatible);
         this.parent = parent;
-        try
-        {
-            new SensorAnimation(this, longitudinalPosition, simulator, Color.BLUE);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            throw new NetworkException(exception);
-        }
     }
 
     /** {@inheritDoc} */
@@ -626,8 +606,8 @@ class FlankSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public FlankSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public FlankSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "sensors can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -21,7 +22,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -45,11 +48,8 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test the various methods of an AbstractLaneBasedGTU.<br>
@@ -83,9 +83,9 @@ public class AbstractLaneBasedGTUTest implements UNITS
         GTUType gtuType = CAR;
         LaneType laneType = LaneType.TWO_WAY_LANE;
         // And a simulator, but for that we first need something that implements OTSModelInterface
-        OTSModelInterface model = new DummyModel();
-        final OTSSimulatorInterface simulator =
-                new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
+        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSModelInterface model = new DummyModel(simulator);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
 
         Lane[] lanesGroupA = LaneFactory.makeMultiLane(this.network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator);
@@ -395,47 +395,31 @@ public class AbstractLaneBasedGTUTest implements UNITS
  * initial version 4 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class DummyModel implements OTSModelInterface
+class DummyModel extends AbstractOTSModel
 {
     /** */
     private static final long serialVersionUID = 20150114L;
 
-    /** The simulator. */
-    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
-
     /**
-     * Register the simulator.
-     * @param simulator SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulator
+     * @param simulator the simulator to use
      */
-    public void setSimulator(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator)
+    DummyModel(final OTSSimulatorInterface simulator)
     {
-        this.simulator = simulator;
+        super(simulator);
     }
 
     /** {@inheritDoc} */
     @Override
-    public OTSNetwork getNetwork()
+    public final void constructModel() throws SimRuntimeException
+    {
+        //
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final OTSNetwork getNetwork()
     {
         return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
-    {
-        // Nothing happens here
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-
-    {
-        if (null == this.simulator)
-        {
-            throw new Error("getSimulator called, but simulator field is null");
-        }
-        return this.simulator;
     }
 
 }

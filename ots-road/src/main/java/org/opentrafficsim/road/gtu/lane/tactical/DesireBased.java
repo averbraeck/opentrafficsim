@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.colorer;
+package org.opentrafficsim.road.gtu.lane.tactical;
 
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;

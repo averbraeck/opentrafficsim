@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane.object.sensor;
 
-import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.animation.SensorAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -350,8 +348,6 @@ public class Detector extends AbstractSensor
                 this.dataMap.put(measurement, new ArrayList<>());
             }
         }
-        // animation
-        Try.execute(() -> new SensorAnimation(this, longitudinalPosition, simulator, Color.BLUE), "Unable to create animation");
 
         // rear detector
         /** Abstract sensor. */
@@ -388,8 +384,8 @@ public class Detector extends AbstractSensor
 
             /** {@inheritDoc} */
             @Override
-            public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-                    final boolean animation) throws NetworkException
+            public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+                    throws NetworkException
             {
                 return null; // Detector constructor creates new clone
             }
@@ -527,8 +523,8 @@ public class Detector extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public AbstractSensor clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
         return null;
     }

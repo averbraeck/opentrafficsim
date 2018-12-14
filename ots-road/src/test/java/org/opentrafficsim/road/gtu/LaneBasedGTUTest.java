@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -22,7 +23,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSSimulator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -48,11 +51,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test the LaneBasedGTU class.
@@ -94,8 +94,9 @@ public class LaneBasedGTUTest implements UNITS
         {
             fail("truckUpToLane must be >= truckFromLane");
         }
-        OTSModelInterface model = new Model();
-        SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
+        OTSSimulatorInterface simulator = new OTSSimulator();
+        Model model = new Model(simulator);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         GTUType carType = CAR;
         GTUType truckType = TRUCK;
         LaneType laneType = LaneType.TWO_WAY_LANE;
@@ -369,8 +370,9 @@ public class LaneBasedGTUTest implements UNITS
         {
             this.network = new OTSNetwork("test"); // new network every time, otherwise nodes cannot be added again
             // Create a car with constant acceleration
-            OTSModelInterface model = new Model();
-            SimpleSimulator simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), model);
+            OTSSimulatorInterface simulator = new OTSSimulator();
+            Model model = new Model(simulator);
+            simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
             // Run the simulator clock to some non-zero value
             simulator.runUpTo(new Time(60, TimeUnit.BASE_SECOND));
             while (simulator.isRunning())
@@ -516,35 +518,33 @@ public class LaneBasedGTUTest implements UNITS
         }
         return null;
     }
-}
 
-/** */
-class Model implements OTSModelInterface
-{
-
-    /** */
-    private static final long serialVersionUID = 20150127L;
-
-    /** {@inheritDoc} */
-    @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator) throws SimRuntimeException
+    /** The helper model. */
+    public static class Model extends AbstractOTSModel
     {
-        // Dummy
+        /**
+         * @param simulator the simulator to use
+         */
+        public Model(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
+
+        /** */
+        private static final long serialVersionUID = 20141027L;
+
+        /** {@inheritDoc} */
+        @Override
+        public final void constructModel() throws SimRuntimeException
+        {
+            //
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final OTSNetwork getNetwork()
+        {
+            return null;
+        }
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OTSNetwork getNetwork()
-    {
-        return null;
-    }
-
 }

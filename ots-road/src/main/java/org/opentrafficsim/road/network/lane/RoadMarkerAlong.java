@@ -89,15 +89,14 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * Clone a RoadMarkerAlong for a new network.
      * @param newCrossSectionLink CrossSectionLink; the new link to which the clone belongs
      * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @param cse RoadMarkerAlong; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     protected RoadMarkerAlong(final CrossSectionLink newCrossSectionLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation, final RoadMarkerAlong cse) throws NetworkException
+            final RoadMarkerAlong cse) throws NetworkException
     {
-        super(newCrossSectionLink, newSimulator, animation, cse);
+        super(newCrossSectionLink, newSimulator, cse);
         this.permeabilityMap.putAll(cse.permeabilityMap);
     }
 

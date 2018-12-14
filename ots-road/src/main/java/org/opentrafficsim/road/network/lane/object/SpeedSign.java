@@ -1,9 +1,5 @@
 package org.opentrafficsim.road.network.lane.object;
 
-import java.rmi.RemoteException;
-
-import javax.naming.NamingException;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -11,7 +7,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.animation.SpeedSignAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -72,15 +67,6 @@ public class SpeedSign extends AbstractLaneBasedObject
         this.gtuType = gtuType;
         this.startTimeOfDay = startTimeOfDay;
         this.endTimeOfDay = endTimeOfDay;
-
-        try
-        {
-            new SpeedSignAnimation(this, simulator);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            throw new NetworkException(exception);
-        }
     }
 
     /**
@@ -161,7 +147,7 @@ public class SpeedSign extends AbstractLaneBasedObject
     /** {@inheritDoc} */
     @Override
     public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE,
-            final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation) throws NetworkException
+            final SimulatorInterface.TimeDoubleUnit newSimulator) throws NetworkException
     {
         return new SpeedSign(getId(), (Lane) newCSE, getDirection(), getLongitudinalPosition(), newSimulator, this.speed,
                 this.gtuType, this.startTimeOfDay, this.endTimeOfDay);

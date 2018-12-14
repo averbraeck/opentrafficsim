@@ -7,6 +7,7 @@ import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.UNITS;
@@ -19,7 +20,10 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
@@ -72,7 +76,9 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 1.6), METER);
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
-        OTSModelInterface model = new DummyModelForTemplateGTUTest();
+        OTSSimulatorInterface simulator = new OTSSimulator();
+        OTSModelInterface model = new DummyModelForTemplateGTUTest(simulator);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
         LaneBasedTemplateGTUType passengerCar = new LaneBasedTemplateGTUType(pcType, new Generator<Length>()
         {
             @Override
@@ -280,7 +286,6 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
         assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(),
                 characteristics.getMaximumSpeed().getSI(), 0.0001);
     }
-}
 
 /**
  * Dummy OTSModelInterface.
@@ -292,47 +297,32 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
  * initial version 4 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class DummyModelForTemplateGTUTest implements OTSModelInterface
+static class DummyModelForTemplateGTUTest extends AbstractOTSModel
 {
-    /** */
-    private static final long serialVersionUID = 20150114L;
-
-    /** The simulator. */
-    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
-
     /**
-     * Register the simulator.
-     * @param simulator SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulator
+     * @param simulator the simulator to use
      */
-    public void setSimulator(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator)
+    public DummyModelForTemplateGTUTest(final OTSSimulatorInterface simulator)
     {
-        this.simulator = simulator;
+        super(simulator);
+    }
+
+    /** */
+    private static final long serialVersionUID = 20141027L;
+
+    /** {@inheritDoc} */
+    @Override
+    public final void constructModel() throws SimRuntimeException
+    {
+        //
     }
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
-    {
-        // Nothing happens here
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-
-    {
-        if (null == this.simulator)
-        {
-            throw new Error("getSimulator called, but simulator field is null");
-        }
-        return this.simulator;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OTSNetwork getNetwork()
+    public final OTSNetwork getNetwork()
     {
         return null;
     }
+}
 
 }

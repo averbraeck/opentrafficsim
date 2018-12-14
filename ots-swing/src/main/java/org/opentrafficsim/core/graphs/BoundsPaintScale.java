@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.gtu.colorer.ColorInterpolator;
+import org.opentrafficsim.core.animation.ColorInterpolator;
 
 import nl.tudelft.simulation.dsol.logger.SimLogger;
 

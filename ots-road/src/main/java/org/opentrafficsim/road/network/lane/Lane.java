@@ -24,6 +24,8 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
+import org.opentrafficsim.core.dsol.OTSReplication;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -35,11 +37,9 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
@@ -390,23 +390,18 @@ public class Lane extends CrossSectionElement implements Serializable
      * Clone a Lane for a new network.
      * @param newParentLink CrossSectionLink; the new link to which the clone belongs
      * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @param cse Lane; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    protected Lane(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation, final Lane cse) throws NetworkException
+    protected Lane(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator, final Lane cse)
+            throws NetworkException
     {
-        super(newParentLink, newSimulator, animation, cse);
+        super(newParentLink, newSimulator, cse);
         this.laneType = cse.laneType;
         this.speedLimitMap = new HashMap<>(cse.speedLimitMap);
         this.overtakingConditions = cse.overtakingConditions;
         this.gtuList = new HistoricalArrayList<>(getManager(newParentLink));
-        if (animation)
-        {
-            OTSNetwork.cloneAnimation(cse, this, cse.getParentLink().getSimulator(), newSimulator);
-        }
     }
 
     /**
@@ -1887,10 +1882,10 @@ public class Lane extends CrossSectionElement implements Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Lane clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public Lane clone(final CrossSectionLink newParentLink, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
-        Lane newLane = new Lane(newParentLink, newSimulator, animation, this);
+        Lane newLane = new Lane(newParentLink, newSimulator, this);
         // nextLanes, prevLanes, nextNeighbors, rightNeighbors are filled at first request
 
         SortedMap<Double, List<SingleSensor>> newSensorMap = new TreeMap<>();
@@ -1899,7 +1894,7 @@ public class Lane extends CrossSectionElement implements Serializable
             List<SingleSensor> newSensorList = new ArrayList<>();
             for (SingleSensor sensor : this.sensors.get(distance))
             {
-                SingleSensor newSensor = ((AbstractSensor) sensor).clone(newLane, newSimulator, animation);
+                SingleSensor newSensor = ((AbstractSensor) sensor).clone(newLane, newSimulator);
                 newSensorList.add(newSensor);
             }
             newSensorMap.put(distance, newSensorList);
@@ -1914,7 +1909,7 @@ public class Lane extends CrossSectionElement implements Serializable
             for (LaneBasedObject lbo : this.laneBasedObjects.get(distance))
             {
                 AbstractLaneBasedObject laneBasedObject = (AbstractLaneBasedObject) lbo;
-                LaneBasedObject newLbo = laneBasedObject.clone(newLane, newSimulator, animation);
+                LaneBasedObject newLbo = laneBasedObject.clone(newLane, newSimulator);
                 newLaneBasedObjectList.add(newLbo);
             }
             newLaneBasedObjectMap.put(distance, newLaneBasedObjectList);

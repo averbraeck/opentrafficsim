@@ -13,7 +13,6 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -78,8 +77,7 @@ public class GTUTest
         OTSNetwork perceivableContext = new OTSNetwork("network");
         OTSSimulatorInterface simulator = new OTSSimulator();
         GTUModel model = new GTUModel(simulator);
-        simulator.initialize(new Time(0, TimeUnit.BASE), new Duration(0, DurationUnit.SI), new Duration(9999, DurationUnit.SI),
-                model);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model);
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {
 
@@ -111,13 +109,13 @@ public class GTUTest
             }
 
             @Override
-            public TacticalPlanner getTacticalPlanner()
+            public TacticalPlanner<?, ?> getTacticalPlanner()
             {
                 return null;
             }
 
             @Override
-            public TacticalPlanner getTacticalPlanner(final Time time)
+            public TacticalPlanner<?, ?> getTacticalPlanner(final Time time)
             {
                 return null;
             }
@@ -327,7 +325,7 @@ public class GTUTest
         /**
          * @param simulator the simulator
          */
-        public GTUModel(final OTSSimulatorInterface simulator)
+        GTUModel(final OTSSimulatorInterface simulator)
         {
             super(simulator);
         }

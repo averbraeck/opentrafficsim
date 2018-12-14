@@ -1,13 +1,10 @@
 package org.opentrafficsim.road.network.lane.object;
 
-import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.Immutable;
@@ -17,7 +14,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.animation.BusStopAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
@@ -69,15 +65,6 @@ public class BusStop extends AbstractLaneBasedObject
         super(id, lane, LongitudinalDirectionality.DIR_PLUS, longitudinalPosition,
                 LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
         this.name = name;
-
-        try
-        {
-            new BusStopAnimation(this, simulator);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            throw new NetworkException(exception);
-        }
     }
 
     /**
@@ -202,7 +189,7 @@ public class BusStop extends AbstractLaneBasedObject
     /** {@inheritDoc} */
     @Override
     public final AbstractLaneBasedObject clone(final CrossSectionElement newCSE,
-            final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation) throws NetworkException
+            final SimulatorInterface.TimeDoubleUnit newSimulator) throws NetworkException
     {
         BusStop busStop = new BusStop(getId(), (Lane) newCSE, getLongitudinalPosition(), this.name, newSimulator);
         busStop.setLines(this.lines);

@@ -314,8 +314,8 @@ public interface LaneBasedGTU extends GTU
 
     /**
      * The lane-based event type for pub/sub indicating the initialization of a new GTU. <br>
-     * Payload: [String gtuId, DirectedPoint initialPosition, Length length, Length width, Color gtuBaseColor, Lane
-     * referenceLane, Length positionOnReferenceLane, GTUDirectionality direction, GTUType gtuType]
+     * Payload: [String gtuId, DirectedPoint initialPosition, Length length, Length width, Lane referenceLane, Length
+     * positionOnReferenceLane, GTUDirectionality direction, GTUType gtuType]
      */
     EventType LANEBASED_INIT_EVENT = new EventType("LANEBASEDGTU.INIT");
 

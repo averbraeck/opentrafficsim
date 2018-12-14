@@ -3,19 +3,14 @@ package org.opentrafficsim.gui;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.rmi.RemoteException;
-import java.util.List;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
-import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.Console;
@@ -69,8 +64,8 @@ public class OTSSimulationPanel extends JPanel
      * @throws RemoteException when communications to a remote machine fails
      * @throws PropertyException when one of the user modified properties has the empty string as key
      */
-    public OTSSimulationPanel(final DEVSSimulatorInterface.TimeDoubleUnit simulator,
-            final OTSModelInterface otsModel) throws RemoteException, PropertyException
+    public OTSSimulationPanel(final DEVSSimulatorInterface.TimeDoubleUnit simulator, final OTSModelInterface otsModel)
+            throws RemoteException, PropertyException
     {
 
         this.simulator = simulator;
@@ -107,22 +102,7 @@ public class OTSSimulationPanel extends JPanel
      */
     public final void addPropertiesTab() throws PropertyException
     {
-        // Let's add the properties of the simulation model as a tab
-        List<Property<?>> propertyList =
-                new CompoundProperty("", "", "", this.otsModel.getUserModifiedProperties(), true, 0)
-                        .displayOrderedValue();
-        StringBuilder html = new StringBuilder();
-        html.append("<html><table border=\"1\"><tr><th colspan=\"" + propertyList.size() + "\">Settings</th></tr><tr>");
-
-        for (Property<?> ap : propertyList)
-        {
-            html.append("<td valign=\"top\">" + ap.htmlStateDescription() + "</td>");
-        }
-        html.append("</table></html>");
-        JLabel propertySettings = new JLabel(html.toString());
-        JScrollPane settings = new JScrollPane(propertySettings);
-        settings.setBorder(null);
-        this.tabbedPane.addTab("settings", settings);
+        // TODO: make a tab with the InputParameters
     }
 
     /**
@@ -156,6 +136,22 @@ public class OTSSimulationPanel extends JPanel
     public final OTSControlPanel getOtsControlPanel()
     {
         return this.otsControlPanel;
+    }
+
+    /**
+     * @return console
+     */
+    public final Console getConsole()
+    {
+        return this.console;
+    }
+
+    /**
+     * @return otsModel
+     */
+    public final OTSModelInterface getOtsModel()
+    {
+        return this.otsModel;
     }
 
     /** {@inheritDoc} */

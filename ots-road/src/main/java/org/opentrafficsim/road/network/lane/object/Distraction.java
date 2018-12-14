@@ -47,8 +47,8 @@ public class Distraction extends AbstractLaneBasedObject
 
     /** {@inheritDoc} */
     @Override
-    public AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public AbstractLaneBasedObject clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
         return new Distraction(getId(), (Lane) newCSE, getLongitudinalPosition(), newSimulator, this.profile);
     }

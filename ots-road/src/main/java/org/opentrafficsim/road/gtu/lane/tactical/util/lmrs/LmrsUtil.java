@@ -22,7 +22,6 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.colorer.Synchronizable.State;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -36,6 +35,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
+import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -231,16 +231,16 @@ public final class LmrsUtil implements LmrsParameters
             double dSync = params.getParameter(DSYNC);
             if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dSync)
             {
-                State state;
+                Synchronizable.State state;
                 if (desire.getLeft() >= params.getParameter(DCOOP))
                 {
                     // switch on left indicator
                     turnIndicatorStatus = TurnIndicatorIntent.LEFT;
-                    state = State.INDICATING;
+                    state = Synchronizable.State.INDICATING;
                 }
                 else
                 {
-                    state = State.SYNCHRONIZING;
+                    state = Synchronizable.State.SYNCHRONIZING;
                 }
                 aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.getLeft(),
                         LateralDirectionality.LEFT, lmrsData);
@@ -248,16 +248,16 @@ public final class LmrsUtil implements LmrsParameters
             }
             else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dSync)
             {
-                State state;
+                Synchronizable.State state;
                 if (desire.getRight() >= params.getParameter(DCOOP))
                 {
                     // switch on right indicator
                     turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
-                    state = State.INDICATING;
+                    state = Synchronizable.State.INDICATING;
                 }
                 else
                 {
-                    state = State.SYNCHRONIZING;
+                    state = Synchronizable.State.SYNCHRONIZING;
                 }
                 aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.getRight(),
                         LateralDirectionality.RIGHT, lmrsData);
@@ -265,16 +265,16 @@ public final class LmrsUtil implements LmrsParameters
             }
             else
             {
-                lmrsData.synchronizationState = State.NONE;
+                lmrsData.synchronizationState = Synchronizable.State.NONE;
             }
 
             // cooperate
             aSync = lmrsData.getCooperation().cooperate(perception, params, sli, carFollowingModel, LateralDirectionality.LEFT,
                     desire);
-            a = applyAcceleration(a, aSync, lmrsData, State.COOPERATING);
+            a = applyAcceleration(a, aSync, lmrsData, Synchronizable.State.COOPERATING);
             aSync = lmrsData.getCooperation().cooperate(perception, params, sli, carFollowingModel, LateralDirectionality.RIGHT,
                     desire);
-            a = applyAcceleration(a, aSync, lmrsData, State.COOPERATING);
+            a = applyAcceleration(a, aSync, lmrsData, Synchronizable.State.COOPERATING);
 
             // relaxation
             exponentialHeadwayRelaxation(params);
@@ -304,7 +304,7 @@ public final class LmrsUtil implements LmrsParameters
      * @return Acceleration; minimized acceleration
      */
     private static Acceleration applyAcceleration(final Acceleration a, final Acceleration aNew, final LmrsData lmrsData,
-            final State state)
+            final Synchronizable.State state)
     {
         if (a.si < aNew.si)
         {

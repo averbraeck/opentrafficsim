@@ -7,11 +7,9 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.generator.CFBARoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
@@ -40,9 +38,6 @@ public class ODOptions
 
     /** ID generator option. */
     public static final Option<IdGenerator> GTU_ID = new Option<>("gtu id", new IdGenerator(""));
-
-    /** GTU colorer option. */
-    public static final Option<GTUColorer> GTU_COLORER = new Option<>("gtu colorer", new DefaultSwitchableGTUColorer());
 
     /** GTU characteristics generator option. */
     public static final Option<GTUCharacteristicsGeneratorOD> GTU_TYPE =

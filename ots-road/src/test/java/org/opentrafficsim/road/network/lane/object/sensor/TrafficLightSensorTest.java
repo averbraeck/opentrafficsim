@@ -23,7 +23,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -51,11 +52,8 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 
@@ -72,46 +70,6 @@ import nl.tudelft.simulation.event.EventListenerInterface;
  */
 public class TrafficLightSensorTest implements EventListenerInterface
 {
-
-    /**
-     * Make a simulator.
-     * @return DEVSSimulator.TimeDoubleUnit; the new simulator
-     * @throws SimRuntimeException ...
-     * @throws NamingException ...
-     */
-    private static SimpleSimulator makeSimulator() throws SimRuntimeException, NamingException
-    {
-        return new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), new OTSModelInterface()
-        {
-
-            /** */
-            private static final long serialVersionUID = 1L;
-
-            /** Store the simulator. */
-            private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim;
-
-            @Override
-            public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-                    throws SimRuntimeException
-            {
-                this.sim = theSimulator;
-            }
-
-            @Override
-            public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-            {
-                return this.sim;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public OTSNetwork getNetwork()
-            {
-                return null;
-            }
-        });
-    }
-
     /**
      * Build the test network.
      * @param lengths double[]; The lengths of the subsequent lanes to construct; negative lengths indicate that the design
@@ -207,7 +165,9 @@ public class TrafficLightSensorTest implements EventListenerInterface
             for (int pos = 50; pos < 130; pos++)
             {
                 System.out.println("Number of lanes is " + lengthList.length + " pos is " + pos);
-                SimpleSimulator simulator = makeSimulator();
+                OTSSimulatorInterface simulator = new OTSSimulator();
+                Model model = new Model(simulator);
+                simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                 Lane[] lanes = buildNetwork(lengthList, simulator);
                 OTSNetwork network = (OTSNetwork) lanes[0].getParentLink().getNetwork();
                 Length a = new Length(100, LengthUnit.METER);
@@ -300,7 +260,6 @@ public class TrafficLightSensorTest implements EventListenerInterface
                 {
                     assertEquals("event list contains 0 events", 0, this.loggedEvents.size());
                 }
-                simulator.cleanUp();
             }
         }
     }
@@ -314,6 +273,35 @@ public class TrafficLightSensorTest implements EventListenerInterface
     {
         System.out.println("Received event " + event);
         this.loggedEvents.add(event);
+    }
+
+    /** The helper model. */
+    protected static class Model extends AbstractOTSModel
+    {
+        /** */
+        private static final long serialVersionUID = 20141027L;
+
+        /**
+         * @param simulator the simulator to use
+         */
+        public Model(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final void constructModel() throws SimRuntimeException
+        {
+            //
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final OTSNetwork getNetwork()
+        {
+            return null;
+        }
     }
 
 }

@@ -184,12 +184,11 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * Clone the LaneBasedObject for e.g., copying a network.
      * @param newCSE CrossSectionElement; the new cross section element to which the clone belongs
      * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @return AbstractLaneBasedObject; a clone of this object
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public abstract AbstractLaneBasedObject clone(CrossSectionElement newCSE, SimulatorInterface.TimeDoubleUnit newSimulator,
-            boolean animation) throws NetworkException;
+    public abstract AbstractLaneBasedObject clone(CrossSectionElement newCSE, SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException;
 
 }

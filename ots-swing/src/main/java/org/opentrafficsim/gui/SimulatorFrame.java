@@ -5,7 +5,7 @@ import java.awt.Frame;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
 
 /**
  * Wrap a DSOL simulator, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be maximized.
@@ -20,7 +20,6 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
  */
 public class SimulatorFrame extends JFrame
 {
-
     /** */
     private static final long serialVersionUID = 20141216L;
 
@@ -42,13 +41,13 @@ public class SimulatorFrame extends JFrame
 
     /**
      * Wrap a WrappableSimulation in a JFrame.
-     * @param simulation WrappableSimulation; the simulation that will be shown in the JFrame
+     * @param model OTSModelInterface; the model that will be shown in the JFrame
      * @param panel JPanel; this should be the JPanel of the simulation
      */
-    public SimulatorFrame(final WrappableSimulation simulation, final JPanel panel)
+    public SimulatorFrame(final OTSModelInterface model, final JPanel panel)
     {
         super();
-        setTitle(simulation.getShortName());
+        setTitle(model.getShortName());
         setContentPane(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();

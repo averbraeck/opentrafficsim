@@ -1,13 +1,8 @@
 package org.opentrafficsim.road.network.lane.object.trafficlight;
 
-import java.rmi.RemoteException;
-
-import javax.naming.NamingException;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -41,15 +36,6 @@ public class SimpleTrafficLight extends AbstractTrafficLight
             final DEVSSimulatorInterface.TimeDoubleUnit simulator) throws NetworkException
     {
         super(id, lane, longitudinalPosition, simulator);
-
-        try
-        {
-            new TrafficLightAnimation(this, simulator);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            throw new NetworkException(exception);
-        }
     }
 
     /** {@inheritDoc} */
@@ -63,16 +49,14 @@ public class SimpleTrafficLight extends AbstractTrafficLight
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public SimpleTrafficLight clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator,
-            final boolean animation) throws NetworkException
+    public SimpleTrafficLight clone(final CrossSectionElement newCSE, final SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException
     {
         Throw.when(!(newCSE instanceof Lane), NetworkException.class, "traffic lights can only be cloned for Lanes");
         Throw.when(!(newSimulator instanceof DEVSSimulatorInterface.TimeDoubleUnit), NetworkException.class,
                 "simulator should be a DEVSSimulator");
         return new SimpleTrafficLight(getId(), (Lane) newCSE, getLongitudinalPosition(),
                 (DEVSSimulatorInterface.TimeDoubleUnit) newSimulator);
-
-        // the traffic light creates its own animation (for now)
     }
 
 }

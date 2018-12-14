@@ -11,8 +11,8 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -22,7 +22,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -55,11 +56,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Test some very basic properties of lane change models.
@@ -71,13 +69,20 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * initial version 14 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneChangeModelTest implements OTSModelInterface, UNITS
+public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20150313;
 
     /** The network. */
     private OTSNetwork network = new OTSNetwork("lane change model test network");
+
+    /**
+     */
+    public LaneChangeModelTest()
+    {
+        super(new OTSSimulator());
+    }
 
     /**
      * Create a Link.
@@ -166,11 +171,10 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         GTUType gtuType = CAR;
         LaneType laneType = LaneType.TWO_WAY_LANE;
         int laneCount = 2;
-        SimpleSimulator simpleSimulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, SECOND),
-                new Duration(3600, SECOND), this);
+        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this);
         Lane[] lanes =
                 makeMultiLane(this.network, "Road with two lanes", new OTSNode(this.network, "From", new OTSPoint3D(0, 0, 0)),
-                        new OTSNode(this.network, "To", new OTSPoint3D(200, 0, 0)), laneType, laneCount, simpleSimulator);
+                        new OTSNode(this.network, "To", new OTSPoint3D(200, 0, 0)), laneType, laneCount, this.simulator);
 
         // Let's see if adjacent lanes are accessible
         // lanes: | 0 : 1 : 2 | in case of three lanes
@@ -192,7 +196,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         // new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
         // 1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d), laneChangeModel);
         LaneBasedIndividualGTU car = new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER),
-                new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.createSI(2.0), simpleSimulator, this.network);
+                new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.createSI(2.0), this.simulator, this.network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, car), car);
         car.setParameters(parameters);
@@ -238,7 +242,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             // laneChangeModel);
             LaneBasedIndividualGTU collisionCar =
                     new LaneBasedIndividualGTU("LaneChangeBlockingCarAt" + pos, gtuType, vehicleLength, new Length(2, METER),
-                            new Speed(150, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), simpleSimulator, this.network);
+                            new Speed(150, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, collisionCar), collisionCar);
             collisionCar.setParameters(parameters);
@@ -276,7 +280,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             // laneChangeModel);
             LaneBasedIndividualGTU otherCar =
                     new LaneBasedIndividualGTU("OtherCarAt" + pos, gtuType, vehicleLength, new Length(2, METER),
-                            new Speed(150, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), simpleSimulator, this.network);
+                            new Speed(150, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel, otherCar), otherCar);
             otherCar.setParameters(parameters);
@@ -306,17 +310,9 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator) throws SimRuntimeException
+    public void constructModel() throws SimRuntimeException
     {
         // DO NOTHING
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-
-    {
-        return null;
     }
 
     /** {@inheritDoc} */

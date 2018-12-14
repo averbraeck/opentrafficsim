@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.colorer;
+package org.opentrafficsim.road.gtu.lane.tactical;
 
 /**
  * Interface for tactical planners that can return synchronization information for visualization.

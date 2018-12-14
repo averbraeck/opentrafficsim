@@ -10,6 +10,7 @@ import javax.media.j3d.Bounds;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Identifiable;
+import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -34,7 +35,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement extends EventProducer implements Locatable, Serializable, Identifiable
+public abstract class CrossSectionElement extends EventProducer implements Locatable, Serializable, Identifiable, Drawable
 {
     /** */
     private static final long serialVersionUID = 20150826L;
@@ -186,13 +187,12 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * Clone a CrossSectionElement for a new network.
      * @param newCrossSectionLink CrossSectionLink; the new link to which the clone belongs
      * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @param cse CrossSectionElement; the element to clone from
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
     protected CrossSectionElement(final CrossSectionLink newCrossSectionLink,
-            final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation, final CrossSectionElement cse)
+            final SimulatorInterface.TimeDoubleUnit newSimulator, final CrossSectionElement cse)
             throws NetworkException
     {
         this.id = cse.id;
@@ -586,11 +586,10 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      * Clone the CrossSectionElement for e.g., copying a network.
      * @param newParentLink CrossSectionLink; the new link to which the clone belongs
      * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator for this network
-     * @param animation boolean; whether to (re)create animation or not
      * @return a clone of this object
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public abstract CrossSectionElement clone(final CrossSectionLink newParentLink,
-            final SimulatorInterface.TimeDoubleUnit newSimulator, final boolean animation) throws NetworkException;
+    public abstract CrossSectionElement clone(CrossSectionLink newParentLink, SimulatorInterface.TimeDoubleUnit newSimulator)
+            throws NetworkException;
 }

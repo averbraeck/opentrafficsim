@@ -36,6 +36,7 @@
         <module>../ots-rail</module>
         <module>../ots-water</module>
         <module>../ots-multimodal</module>
+        <module>../ots-animation</module>
         <module>../ots-swing</module>
         <module>../ots-web</module>
         <module>../ots-demo</module>
@@ -68,7 +69,7 @@
     <ots.version>${project.version}</ots.version>
     <djunits.version>3.00.07</djunits.version>
     <djutils.version>1.00.00</djutils.version>
-    <dsol.version>3.03.00</dsol.version>
+    <dsol.version>3.03.01</dsol.version>
     <sim0mq.version>0.05.00</sim0mq.version>
     <junit.version>4.12</junit.version>
     <java3d.version>1.5.1</java3d.version>
@@ -294,7 +295,9 @@
             <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs</link>
             <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-introspection/apidocs</link>
             <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-core/apidocs</link>
+            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-animation/apidocs</link>
             <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-swing/apidocs</link>
+            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-web/apidocs</link>
             <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-demo/apidocs</link>
             <link>https://tinylog.org/javadoc</link>
             <link>https://djunits.org/docs/current/apidocs</link>
@@ -313,6 +316,9 @@
             <link>https://opentrafficsim.org/docs/current/ots-rail/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-water/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-multimodal/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-animation/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-swing/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-web/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-demo/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-kpi/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-sim0mq/apidocs</link>
@@ -504,7 +510,9 @@
             <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-interpreter/apidocs</link>
             <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-introspection/apidocs</link>
             <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-core/apidocs</link>
+            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-animation/apidocs</link>
             <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-swing/apidocs</link>
+            <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-web/apidocs</link>
             <link>https://sg-3.tbm.tudelft.nl/dsol/3.0/dsol-demo/apidocs</link>
             <link>https://tinylog.org/javadoc</link>
             <link>https://djunits.org/docs/current/apidocs</link>
@@ -523,6 +531,9 @@
             <link>https://opentrafficsim.org/docs/current/ots-rail/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-water/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-multimodal/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-animation/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-swing/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-web/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-demo/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-kpi/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-sim0mq/apidocs</link>
@@ -874,6 +885,12 @@
       <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-multimodal</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-animation</artifactId>
         <version>${ots.version}</version>
       </dependency>
 

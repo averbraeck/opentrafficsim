@@ -1,13 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Path2D;
-import java.awt.image.ImageObserver;
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,19 +13,9 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.media.j3d.BoundingBox;
-import javax.media.j3d.Bounds;
-import javax.naming.NamingException;
-import javax.vecmath.Point3d;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -50,10 +33,6 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * This data structure can clearly indicate the lane structure ahead of us, e.g. in the following situation:
@@ -122,7 +101,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  */
 public class RollingLaneStructure implements LaneStructure, Serializable
 {
-
     /** */
     private static final long serialVersionUID = 20160400L;
 
@@ -170,6 +148,10 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /** GTU. */
     private final LaneBasedGTU containingGtu;
+    
+    /** the animation access. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    public AnimationAccess animationAccess = new AnimationAccess();
 
     /**
      * Constructor.
@@ -1493,201 +1475,40 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     }
 
     /**
-     * Enables visualization of this lane structure. This is purely for debugging purposes.
-     * @param gtu GTU; GTU to animate the LaneStructure off
+     * AnimationAccess provides access to a number of private fields in the structure, which should only be used read-only! <br>
+     * <br>
+     * Copyright (c) 2003-2018 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
+     * See for project information <a href="https://www.simulation.tudelft.nl/" target="_blank">www.simulation.tudelft.nl</a>.
+     * The source code and binary code of this software is proprietary information of Delft University of Technology.
+     * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
      */
-    public final void visualize(final GTU gtu)
+    public class AnimationAccess
     {
         /**
-         * Locatable.
+         * @return the lane structure records of the cross section
          */
-        class LaneStructureLocatable implements Locatable
+        @SuppressWarnings("synthetic-access")
+        public TreeMap<RelativeLane, RollingLaneStructureRecord> getCrossSectionRecords()
         {
-            /** {@inheritDoc} */
-            @Override
-            public DirectedPoint getLocation() throws RemoteException
-            {
-                LaneStructureRecord rt = getRootRecord();
-                if (rt == null)
-                {
-                    return gtu.getLocation();
-                }
-                Length position = rt.getDirection().isPlus() ? rt.getStartDistance().neg()
-                        : rt.getLane().getLength().plus(rt.getStartDistance());
-                position = position.lt0() ? Length.ZERO : position;
-                try
-                {
-                    return rt.getLane().getCenterLine().getLocation(position);
-                }
-                catch (OTSGeometryException exception)
-                {
-                    throw new RuntimeException("Unable to return location.", exception);
-                }
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Bounds getBounds() throws RemoteException
-            {
-                Point3d p1 = new Point3d(-1000000, -1000000, 0.0);
-                Point3d p2 = new Point3d(1000000, 1000000, 0.0);
-                return new BoundingBox(p1, p2);
-            }
+            return RollingLaneStructure.this.crossSectionRecords;
         }
+
         /**
-         * Animation of lane structure.
+         * @return the upstream edge
          */
-        class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
+        @SuppressWarnings("synthetic-access")
+        public Set<RollingLaneStructureRecord> getUpstreamEdge()
         {
-
-            /** Destroyed. */
-            private boolean isDestroyed = false;
-
-            /**
-             * @param source LaneStructureLocatable; dummy locatable
-             * @throws NamingException on naming exception
-             * @throws RemoteException on remote exception
-             */
-            LaneStructureAnimation(final LaneStructureLocatable source) throws NamingException, RemoteException
-            {
-                super(source, gtu.getSimulator());
-                this.setFlip(false);
-                this.setRotate(false);
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
-            {
-                if (!this.isDestroyed)
-                {
-                    if (gtu.isDestroyed())
-                    {
-                        this.isDestroyed = true;
-                        Try.execute(() -> destroy(), "Exception during deletion of LaneStructureAnimation.");
-                        return;
-                    }
-                    else
-                    {
-                        LaneStructureRecord rt = getRootRecord();
-                        if (rt != null)
-                        {
-                            paintRecord(rt, graphics);
-                        }
-                    }
-                }
-            }
-
-            /**
-             * @param lsr LaneStructureRecord; record
-             * @param graphics Graphics2D; graphics
-             */
-            @SuppressWarnings({ "unchecked", "synthetic-access" })
-            private void paintRecord(final LaneStructureRecord lsr, final Graphics2D graphics)
-            {
-                // line
-                DirectedPoint loc = Try.assign(() -> getSource().getLocation(), "Unable to return location.");
-                graphics.setStroke(
-                        new BasicStroke(RollingLaneStructure.this.crossSectionRecords.containsValue(lsr) ? 1.0f : 0.5f));
-                graphics.setColor(RollingLaneStructure.this.crossSectionRecords.containsValue(lsr) ? Color.PINK
-                        : RollingLaneStructure.this.upstreamEdge.contains(lsr) ? Color.MAGENTA
-                                : RollingLaneStructure.this.downstreamEdge.contains(lsr) ? Color.GREEN : Color.CYAN);
-                OTSLine3D line = Try.assign(() -> lsr.getLane().getCenterLine().extractFractional(0.1, 0.9),
-                        "Exception while painting LaneStructures");
-                Path2D.Double path = new Path2D.Double();
-                boolean start = true;
-                for (OTSPoint3D point : line.getPoints())
-                {
-                    if (start)
-                    {
-                        path.moveTo(point.x - loc.x, -(point.y - loc.y));
-                        start = false;
-                    }
-                    else
-                    {
-                        path.lineTo(point.x - loc.x, -(point.y - loc.y));
-                    }
-                }
-                graphics.draw(path);
-                // connection
-                Field sourceField = Try.assign(() -> RollingLaneStructureRecord.class.getDeclaredField("source"),
-                        "Exception while painting LaneStructure");
-                sourceField.setAccessible(true);
-                LaneStructureRecord src =
-                        Try.assign(() -> (LaneStructureRecord) sourceField.get(lsr), "Exception while painting LaneStructure");
-                if (src != null)
-                {
-                    Field sourceLinkField = Try.assign(() -> RollingLaneStructureRecord.class.getDeclaredField("sourceLink"),
-                            "Exception while painting LaneStructure");
-                    sourceLinkField.setAccessible(true);
-                    RecordLink link =
-                            (RecordLink) Try.assign(() -> sourceLinkField.get(lsr), "Exception while painting LaneStructure");
-                    float f1 = link.equals(RecordLink.DOWN) ? 0.9f : link.equals(RecordLink.UP) ? 0.1f : 0.5f;
-                    float f2 = link.equals(RecordLink.DOWN) ? 0.0f : link.equals(RecordLink.UP) ? 1.0f : 0.5f;
-                    f1 = src.getDirection().isPlus() ? f1 : 1.0f - f1;
-                    f2 = lsr.getDirection().isPlus() ? f2 : 1.0f - f2;
-                    float f3 = f1;
-                    float f4 = f2;
-                    DirectedPoint p1 = Try.assign(() -> src.getLane().getCenterLine().getLocationFraction(f3),
-                            "Exception while painting LaneStructure");
-                    DirectedPoint p2 = Try.assign(() -> line.getLocationFraction(f4), "Exception while painting LaneStructure");
-                    path = new Path2D.Double();
-                    path.moveTo(p1.x - loc.x, -(p1.y - loc.y));
-                    path.lineTo(p2.x - loc.x, -(p2.y - loc.y));
-                    graphics.setStroke(new BasicStroke(0.15f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10f,
-                            new float[] { .3f, 1.2f }, 0f));
-                    graphics.setColor(Color.DARK_GRAY);
-                    graphics.draw(path);
-                }
-                // left/right
-                paintLateralConnection(lsr, lsr.getLeft(), Color.RED, graphics, loc);
-                paintLateralConnection(lsr, lsr.getRight(), Color.BLUE, graphics, loc);
-                // recursion to depending records
-                Field dependentField = Try.assign(() -> RollingLaneStructureRecord.class.getDeclaredField("dependentRecords"),
-                        "Exception while painting LaneStructure");
-                dependentField.setAccessible(true);
-                Set<LaneStructureRecord> dependables = (Set<LaneStructureRecord>) Try.assign(() -> dependentField.get(lsr),
-                        "Exception while painting LaneStructure");
-                if (dependables != null)
-                {
-                    for (LaneStructureRecord dependable : new LinkedHashSet<>(dependables)) // concurrency
-                    {
-                        paintRecord(dependable, graphics);
-                    }
-                }
-            }
-
-            /**
-             * Paint the connection to a lateral record.
-             * @param main LaneStructureRecord; main record
-             * @param adj LaneStructureRecord; adjacent record, can be {@code null}
-             * @param color Color; color
-             * @param graphics Graphics2D; graphics
-             * @param loc DirectedPoint; location
-             */
-            private void paintLateralConnection(final LaneStructureRecord main, final LaneStructureRecord adj,
-                    final Color color, final Graphics2D graphics, final DirectedPoint loc)
-            {
-                if (adj == null)
-                {
-                    return;
-                }
-                float f1 = main.getDirection().isPlus() ? 0.45f : 0.55f;
-                float f2 = adj.getDirection().isPlus() ? 0.55f : 0.45f;
-                DirectedPoint p1 = Try.assign(() -> main.getLane().getCenterLine().getLocationFraction(f1),
-                        "Exception while painting LaneStructure");
-                DirectedPoint p2 = Try.assign(() -> adj.getLane().getCenterLine().getLocationFraction(f2),
-                        "Exception while painting LaneStructure");
-                Path2D.Double path = new Path2D.Double();
-                path.moveTo(p1.x - loc.x, -(p1.y - loc.y));
-                path.lineTo(p2.x - loc.x, -(p2.y - loc.y));
-                graphics.setStroke(new BasicStroke(0.05f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10f,
-                        new float[] { .15f, 0.6f }, 0f));
-                graphics.setColor(color);
-                graphics.draw(path);
-            }
+            return RollingLaneStructure.this.upstreamEdge;
         }
-        Try.execute(() -> new LaneStructureAnimation(new LaneStructureLocatable()), "Could not create animation.");
-    }
 
+        /**
+         * @return the downstream edge
+         */
+        @SuppressWarnings("synthetic-access")
+        public Set<RollingLaneStructureRecord> getDownstreamEdge()
+        {
+            return RollingLaneStructure.this.downstreamEdge;
+        }
+    }
 }
