@@ -7,8 +7,6 @@ import javax.swing.JFrame;
 
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 
-import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
-
 /**
  * OTSSwingApplication.java. <br>
  * <br>

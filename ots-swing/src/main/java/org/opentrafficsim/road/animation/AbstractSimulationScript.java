@@ -94,7 +94,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 //     * @param propertyName String; property name
 //     * @return double; value of property
 //     */
-//    public final boolean getBooleanProperty(final String propertyName)
+//    public final boolean getInputParameterBoolean(final String propertyName)
 //    {
 //        return Boolean.parseBoolean(getProperty(propertyName));
 //    }
@@ -104,7 +104,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 //     * @param propertyName String; property name
 //     * @return int; value of property
 //     */
-//    public final int getIntegerProperty(final String propertyName)
+//    public final int getInputParameterInteger(final String propertyName)
 //    {
 //        return Integer.parseInt(getProperty(propertyName));
 //    }
@@ -165,14 +165,14 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 //        Time startTime = getTimeProperty("startTime");
 //        Duration warmupTime = getDurationProperty("warmupTime");
 //        Duration simulationTime = getDurationProperty("simulationTime");
-//        if (getBooleanProperty("autorun"))
+//        if (getInputParameterBoolean("autorun"))
 //        {
 //
 //            ScriptSimulation scriptSimulation = this.new ScriptSimulation();
 //            try
 //            {
 //                DEVSSimulatorInterface.TimeDoubleUnit sim =
-//                        scriptSimulation.buildSimulator(startTime, warmupTime, simulationTime, new ArrayList<Property<?>>());
+//                        scriptSimulation.buildSimulator(startTime, warmupTime, simulationTime, new ArrayList<InputParameter<?>>());
 //                sim.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
 //                double tReport = 60.0;
 //                Time t = sim.getSimulatorTime();
@@ -197,7 +197,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 //        else
 //        {
 //            Try.execute(() -> new ScriptAnimation().buildAnimator(startTime, warmupTime, simulationTime,
-//                    new ArrayList<Property<?>>(), null, true), RuntimeException.class, "Exception from properties.");
+//                    new ArrayList<InputParameter<?>>(), null, true), RuntimeException.class, "Exception from properties.");
 //        }
 //    }
 //
