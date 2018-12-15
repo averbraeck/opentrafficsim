@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 import javax.swing.JScrollPane;
-import javax.xml.bind.PropertyException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -17,6 +16,7 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.demo.ntm.NTMModel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
@@ -54,7 +54,7 @@ public class DataViewerApplication extends DSOLApplication
      * @throws RemoteException
      * @throws NamingException
      * @throws IOException
-     * @throws PropertyException
+     * @throws InputParameterException
      */
     public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException
     {
