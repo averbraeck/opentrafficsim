@@ -1,14 +1,14 @@
 package org.opentrafficsim.imb.connector;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.IntegerProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.StringProperty;
 import org.opentrafficsim.imb.IMBException;
 
 import nl.tno.imb.TConnection;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterInteger;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterString;
 
 /**
  * <p>
@@ -62,38 +62,38 @@ public class OTSIMBConnector extends IMBConnector
     }
 
     /**
-     * Construct a new OTSIMBConnector from a CompoundProperty (preferably constructed with the
+     * Construct a new OTSIMBConnector from a InputParameterMap (preferably constructed with the
      * <cite>standardIMBProperties</cite> method of this class.
-     * @param compoundProperty CompoundProperty; the compound property with the settings
+     * @param inputParameterMap InputParameterMap; the compound property with the settings
      * @param modelName String; the name used to register on the hub host
      * @return OTSIMBConnector; a new OTSIMBConnector expecting the IMB hub on localhost port 4000.
      * @throws IMBException when a connection to the IMB hub could not be established
      */
-    public static OTSIMBConnector create(final CompoundProperty compoundProperty, final String modelName) throws IMBException
+    public static OTSIMBConnector create(final InputParameterMap inputParameterMap, final String modelName) throws IMBException
     {
         String host = null;
         int port = -1;
         int modelId = 1;
         String federation = "OTS_RT";
 
-        for (Property<?> ap : compoundProperty)
+        for (InputParameter<?> ap : inputParameterMap.getValue().values())
         {
             switch (ap.getKey())
             {
                 case "IMBHost":
-                    host = ((StringProperty) ap).getValue();
+                    host = ap.getValue().toString();
                     break;
 
                 case "IMBPort":
-                    port = ((IntegerProperty) ap).getValue();
+                    port = (Integer) ap.getValue();
                     break;
 
                 case "IMBModelId":
-                    modelId = ((IntegerProperty) ap).getValue();
+                    modelId = (Integer) ap.getValue();
                     break;
 
                 case "IMBFederation":
-                    federation = ((StringProperty) ap).getValue();
+                    federation = ap.getValue().toString();
                     break;
 
                 default:
@@ -106,23 +106,23 @@ public class OTSIMBConnector extends IMBConnector
     }
 
     /**
-     * Create a CompoundProperty with the settings for an IMB connection.
-     * @param displayPriority int; the displayPriority of the created CompoundProperty
-     * @return CompoundProperty the default settings
+     * Create a InputParameterMap with the settings for an IMB connection.
+     * @param displayPriority int; the displayPriority of the created InputParameterMap
+     * @return InputParameterMap the default settings
      */
-    public static CompoundProperty standardIMBProperties(final int displayPriority)
+    public static InputParameterMap standardIMBProperties(final int displayPriority)
     {
         try
         {
-            CompoundProperty result =
-                    new CompoundProperty("IMBProperties", "IMB properties", "IMB properties", null, false, displayPriority);
-            result.add(new StringProperty("IMBHost", "IMB hub host", "Name of the IMB hub", "localhost", false, 0));
-            result.add(new IntegerProperty("IMBPort", "IMB hub port", "Port on the IMB hub", 4000, 0, 65535, "%d", false, 1));
-            result.add(new IntegerProperty("IMBModelId", "IMB model id", "Model id", 1, 0, 9999, "%d", false, 2));
-            result.add(new StringProperty("IMBFederation", "IMB federation", "Federation on the IMB hub", "OTS_RT", false, 3));
+            InputParameterMap result =
+                    new InputParameterMap("IMBProperties", "IMB properties", "IMB properties", displayPriority);
+            result.add(new InputParameterString("IMBHost", "IMB hub host", "Name of the IMB hub", "localhost", 0));
+            result.add(new InputParameterInteger("IMBPort", "IMB hub port", "Port on the IMB hub", 4000, 0, 65535, "%d", 1));
+            result.add(new InputParameterInteger("IMBModelId", "IMB model id", "Model id", 1, 0, 9999, "%d", 2));
+            result.add(new InputParameterString("IMBFederation", "IMB federation", "Federation on the IMB hub", "OTS_RT", 3));
             return result;
         }
-        catch (PropertyException exception)
+        catch (InputParameterException exception)
         {
             exception.printStackTrace();
         }
@@ -130,24 +130,24 @@ public class OTSIMBConnector extends IMBConnector
     }
 
     /**
-     * Create a CompoundProperty with the settings for an IMB connection.
-     * @param displayPriority int; the displayPriority of the created CompoundProperty
+     * Create a InputParameterMap with the settings for an IMB connection.
+     * @param displayPriority int; the displayPriority of the created InputParameterMap
      * @param imbHost String; host that runs the IMB hub
-     * @return CompoundProperty the default settings
+     * @return InputParameterMap the default settings
      */
-    public static CompoundProperty standardIMBProperties(final int displayPriority, final String imbHost)
+    public static InputParameterMap standardIMBProperties(final int displayPriority, final String imbHost)
     {
         try
         {
-            CompoundProperty result =
-                    new CompoundProperty("IMBProperties", "IMB properties", "IMB properties", null, false, displayPriority);
-            result.add(new StringProperty("IMBHost", "IMB hub host", "Name of the IMB hub", imbHost, false, 0));
-            result.add(new IntegerProperty("IMBPort", "IMB hub port", "Port on the IMB hub", 4000, 0, 65535, "%d", false, 1));
-            result.add(new IntegerProperty("IMBModelId", "IMB model id", "Model id", 1, 0, 9999, "%d", false, 2));
-            result.add(new StringProperty("IMBFederation", "IMB federation", "Federation on the IMB hub", "OTS_RT", false, 3));
+            InputParameterMap result =
+                    new InputParameterMap("IMBProperties", "IMB properties", "IMB properties", displayPriority);
+            result.add(new InputParameterString("IMBHost", "IMB hub host", "Name of the IMB hub", imbHost, 0));
+            result.add(new InputParameterInteger("IMBPort", "IMB hub port", "Port on the IMB hub", 4000, 0, 65535, "%d", 1));
+            result.add(new InputParameterInteger("IMBModelId", "IMB model id", "Model id", 1, 0, 9999, "%d", 2));
+            result.add(new InputParameterString("IMBFederation", "IMB federation", "Federation on the IMB hub", "OTS_RT", 3));
             return result;
         }
-        catch (PropertyException exception)
+        catch (InputParameterException exception)
         {
             exception.printStackTrace();
         }
