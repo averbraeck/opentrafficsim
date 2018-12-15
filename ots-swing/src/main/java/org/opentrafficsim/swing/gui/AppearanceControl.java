@@ -1,4 +1,4 @@
-package org.opentrafficsim.gui;
+package org.opentrafficsim.swing.gui;
 
 /**
  * This interface allows on screen items to <b>not</b> obtain colors and/or the font from an {@code Appearance}. This can be

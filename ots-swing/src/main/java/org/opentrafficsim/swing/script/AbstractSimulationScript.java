@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.animation;
+package org.opentrafficsim.swing.script;
 
 import nl.tudelft.simulation.event.EventListenerInterface;
 
