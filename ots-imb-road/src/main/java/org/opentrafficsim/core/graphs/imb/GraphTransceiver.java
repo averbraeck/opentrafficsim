@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.graphs.AbstractContourPlot;
-import org.opentrafficsim.core.graphs.AbstractPlot;
-import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.draw.swing.graphs.AbstractContourPlot;
+import org.opentrafficsim.draw.swing.graphs.AbstractPlot;
+import org.opentrafficsim.draw.swing.graphs.TrajectoryPlot;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.Connector;
 import org.opentrafficsim.imb.connector.Connector.IMBEventType;
