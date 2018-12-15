@@ -1,4 +1,4 @@
-package org.opentrafficsim.gui;
+package org.opentrafficsim.swing.gui;
 
 import java.awt.Frame;
 import java.util.Properties;

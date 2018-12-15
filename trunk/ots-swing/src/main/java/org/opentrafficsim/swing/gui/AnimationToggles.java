@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.animation;
+package org.opentrafficsim.swing.gui;
 
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.OTSLink;
@@ -11,7 +11,6 @@ import org.opentrafficsim.draw.swing.road.BusStopAnimation;
 import org.opentrafficsim.draw.swing.road.LaneAnimation;
 import org.opentrafficsim.draw.swing.road.SensorAnimation;
 import org.opentrafficsim.draw.swing.road.TrafficLightAnimation;
-import org.opentrafficsim.gui.OTSAnimationPanel;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
