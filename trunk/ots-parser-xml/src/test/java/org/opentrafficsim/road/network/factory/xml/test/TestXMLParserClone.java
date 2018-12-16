@@ -19,7 +19,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.modelproperties.InputParameterException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -81,18 +81,18 @@ public class TestXMLParserClone extends AbstractWrappableAnimation
                     TestXMLParserClone xmlParserClone = new TestXMLParserClone();
                     // 1 hour simulation run for testing
                     xmlParserClone.oldSimulator = xmlParserClone.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, DurationUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                            new Duration(60.0, DurationUnit.MINUTE), new ArrayList<InputParameter<?>>(), null, true);
                     System.out.println("Number of animation objects before for old sim : "
                             + countNumberAnimationObjects(xmlParserClone.oldSimulator));
 
                     xmlParserClone.newSimulator = xmlParserClone.buildAnimator(Time.ZERO, Duration.ZERO,
-                            new Duration(60.0, DurationUnit.MINUTE), new ArrayList<Property<?>>(), null, true);
+                            new Duration(60.0, DurationUnit.MINUTE), new ArrayList<InputParameter<?>>(), null, true);
                     System.out.println("Number of animation objects after for old sim  : "
                             + countNumberAnimationObjects(xmlParserClone.oldSimulator));
                     System.out.println("Number of animation objects after for new sim  : "
                             + countNumberAnimationObjects(xmlParserClone.newSimulator));
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }

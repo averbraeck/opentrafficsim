@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
+import javax.xml.bind.InputParameterException;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
@@ -117,7 +117,7 @@ public class XMLNetworkWriter
     }
 
     private static void marshall(File file, DEFINITIONS definitions, List<NODE> nodes, List<LINK> links)
-            throws JAXBException, PropertyException
+            throws JAXBException, InputParameterException
     {
         JAXBContext jaxbContext = JAXBContext.newInstance("org.opentrafficsim.road.network.factory.vissim.xsd");
         Marshaller marshaller = jaxbContext.createMarshaller();

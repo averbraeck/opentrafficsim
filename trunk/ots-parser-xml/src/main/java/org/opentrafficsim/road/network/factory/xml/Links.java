@@ -18,6 +18,8 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.core.animation.DrawingInfoLine;
+import org.opentrafficsim.core.animation.DrawingInfoShape;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -335,15 +337,7 @@ final class Links
         {
             connector.setDemandWeight(connectorTag.demandWeight);
         }
-
-        try
-        {
-            new LinkAnimation(connector, simulator, 0.5f);
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
+        parser.network.addDrawingInfoBase(connector, new DrawingInfoLine<CrossSectionLink>(Color.BLACK, 0.5f));
         connectorTag.connector = connector;
     }
 
@@ -495,14 +489,8 @@ final class Links
             link.setPriority(linkTag.priority);
         }
 
-        try
-        {
-            new LinkAnimation(link, simulator, 0.5f);
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
+        parser.network.addDrawingInfoBase(link, new DrawingInfoLine<CrossSectionLink>(Color.BLACK, 0.5f));
+
         linkTag.link = link;
     }
 
@@ -544,6 +532,9 @@ final class Links
                         case DASHED:
                             Stripe dashedLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
                             dashedLine.addPermeability(GTUType.VEHICLE, Permeable.BOTH);
+
+                            parser.network.addDrawingInfoBase(dashedLine, new DrawingInfoLine<Stripe>(Color.BLACK, 0.5f));
+
                             if (simulator != null && simulator instanceof AnimatorInterface)
                             {
                                 try

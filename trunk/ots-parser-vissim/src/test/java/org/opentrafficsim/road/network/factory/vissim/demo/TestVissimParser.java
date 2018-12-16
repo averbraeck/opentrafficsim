@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.factory.vissim;
+package org.opentrafficsim.road.network.factory.vissim.demo;
 
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -15,7 +15,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opengis.feature.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.modelproperties.InputParameterException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -23,6 +23,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.network.factory.vissim.VissimNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.xml.sax.SAXException;
 
@@ -50,9 +51,9 @@ public class TestVissimParser extends AbstractWrappableAnimation
                     TestVissimParser xmlModel = new TestVissimParser();
                     // 1 hour simulation run for testing
                     xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<org.opentrafficsim.base.modelproperties.Property<?>>(), null, true);
+                            new ArrayList<org.opentrafficsim.base.modelproperties.InputParameter<?>>(), null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
