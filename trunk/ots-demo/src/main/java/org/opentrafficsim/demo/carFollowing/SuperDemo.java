@@ -55,7 +55,7 @@ import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.swing.gui.LabeledPanel;
 import org.opentrafficsim.swing.gui.ProbabilityDistributionEditor;
-import org.opentrafficsim.swing.gui.SimulatorFrame;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
@@ -104,7 +104,7 @@ public class SuperDemo implements UNITS
             {
                 try
                 {
-                    JFrame frame = new SimulatorFrame("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
+                    JFrame frame = new AbstractOTSSwingApplication("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
                     frame.setExtendedState(frame.getExtendedState() & ~Frame.MAXIMIZED_BOTH);
                     // frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_VERT);
                     // The code above does not work; the code below does work. Code found on
