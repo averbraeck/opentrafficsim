@@ -137,22 +137,22 @@ public class CircularRoadIMB extends AbstractOTSSwingApplication implements UNIT
         this.inputParameterMap.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
                 new String[] { "MOBIL", "LMRS", "Toledo" }, 0, false, 600));
-        this.inputParameterMap.add(new InputParameterInteger("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
-                "Track length %dm", false, 10));
-        this.inputParameterMap.add(new InputParameterDouble("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
-                "Density %.1f veh/km", false, 11));
+        this.inputParameterMap.add(new InputParameterInteger("TrackLength", "Track length", "Circumference of the track", 2000,
+                500, 6000, "Track length %dm", false, 10));
+        this.inputParameterMap.add(new InputParameterDouble("MeanDensity", "Mean density", "Number of vehicles per km", 40.0,
+                5.0, 45.0, "Density %.1f veh/km", false, 11));
         this.inputParameterMap.add(new InputParameterDouble("DensityVariability", "Density variability",
                 "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
         List<InputParameter<?>> outputProperties = new ArrayList<>();
         for (int lane = 1; lane <= 2; lane++)
         {
             String laneId = String.format("Lane %d ", lane);
-            outputProperties.add(new InputParameterBoolean(laneId + "Density", laneId + " Density", laneId + "Density contour plot",
-                    true, false, 0));
-            outputProperties
-                    .add(new InputParameterBoolean(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, false, 1));
+            outputProperties.add(new InputParameterBoolean(laneId + "Density", laneId + " Density",
+                    laneId + "Density contour plot", true, false, 0));
             outputProperties.add(
-                    new InputParameterBoolean(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot", true, false, 2));
+                    new InputParameterBoolean(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, false, 1));
+            outputProperties.add(new InputParameterBoolean(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot",
+                    true, false, 2));
             outputProperties.add(new InputParameterBoolean(laneId + "Acceleration", laneId + " Acceleration",
                     laneId + "Acceleration contour plot", true, false, 3));
             outputProperties.add(new InputParameterBoolean(laneId + "Trajectories", laneId + " Trajectories",

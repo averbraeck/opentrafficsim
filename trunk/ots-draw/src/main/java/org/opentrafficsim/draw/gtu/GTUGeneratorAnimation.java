@@ -34,7 +34,7 @@ public class GTUGeneratorAnimation extends TextAnimation
 
     /** */
     private static final long serialVersionUID = 20181018L;
-    
+
     /** Default font. */
     private static final Font FONT = new Font("SansSerif", Font.PLAIN, 4);
 

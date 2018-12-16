@@ -307,7 +307,7 @@ public class ImbKpiTransceiver<G extends GtuDataInterface> implements Serializab
      * @param connector Connector; the IMB connector
      * @param time Time; time of creation
      * @param networkId String; the network id
- * @param query Query&lt;G&gt;; the statistics query
+     * @param query Query&lt;G&gt;; the statistics query
      * @param transmissionInterval Duration; the interval between generation of graphs
      * @throws IMBException when the post of the IMB message fails
      */

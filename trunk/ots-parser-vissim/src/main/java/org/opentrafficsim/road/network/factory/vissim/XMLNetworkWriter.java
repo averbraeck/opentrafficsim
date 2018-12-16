@@ -12,7 +12,6 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.InputParameterException;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
@@ -35,6 +34,8 @@ import org.opentrafficsim.road.network.factory.vissim.xsd.ROADTYPE;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
+
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 
 /**
  * @author NLGUTU

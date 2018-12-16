@@ -44,7 +44,8 @@ public class DefaultAnimationFactory
      * @param simulator the simulator
      * @throws OTSDrawingException on drawing error
      */
-    public static void animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator) throws OTSDrawingException
+    public static void animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator)
+            throws OTSDrawingException
     {
         try
         {
@@ -98,4 +99,3 @@ public class DefaultAnimationFactory
     }
 
 }
-

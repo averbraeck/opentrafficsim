@@ -126,7 +126,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
     }
 
     /**
-     * Sets the auto bounds without deactivating auto bounds through the axis change listener. This is used to initialize the 
+     * Sets the auto bounds without deactivating auto bounds through the axis change listener. This is used to initialize the
      * plot, and to update the plot when time is increased.
      * @param plot XYPlot; plot with default zoom-all bounds set
      */

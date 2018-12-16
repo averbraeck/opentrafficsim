@@ -24,9 +24,12 @@ import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
+import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.network.NetworkAnimation;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -34,25 +37,18 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.animation.LinkAnimation;
-import org.opentrafficsim.core.network.animation.NodeAnimation;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.GTUCharacteristicsGeneratorOD;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier;
-import org.opentrafficsim.road.gtu.generator.od.ODApplier.GeneratorObjects;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
-import org.opentrafficsim.road.gtu.strategical.route.RouteSupplier;
 import org.opentrafficsim.road.network.factory.xml.demand.XmlOdParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -143,9 +139,13 @@ public class XmlNetworkLaneParser implements Serializable
     @SuppressWarnings("visibilitymodifier")
     protected OTSSimulatorInterface simulator;
 
-    /** The network to register the GTUs in. */
+    /** The network to register the nodes, links, roads, lanes, and GTUs in. */
     @SuppressWarnings("visibilitymodifier")
     protected OTSNetwork network;
+
+    /** The network to register the drawing information for the network in. */
+    @SuppressWarnings("visibilitymodifier")
+    protected NetworkAnimation networkAnimation;
 
     /** All comments encountered in the XML file. */
     List<String> xmlComments = new ArrayList<>();
@@ -280,6 +280,7 @@ public class XmlNetworkLaneParser implements Serializable
         // exception);
         // }
         this.network = otsNetwork;
+        this.networkAnimation = new NetworkAnimation(this.network);
         this.xmlComments.clear();
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -369,8 +370,7 @@ public class XmlNetworkLaneParser implements Serializable
                         gtuTag.maxSpeedDist));
             }
             GTUCharacteristicsGeneratorOD gtuTypeGenerator = new DefaultGTUCharacteristicsGeneratorOD(templates);
-            ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE, gtuTypeGenerator).set(ODOptions.GTU_COLORER,
-                    GTUColorerTag.defaultColorer);
+            ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE, gtuTypeGenerator);
             // TODO add chosen model in gtuTypeGenerator
             XmlOdParser xmlOdParser =
                     new XmlOdParser(this.simulator, this.network, new LinkedHashSet<>(this.gtuTypes.values()));
@@ -478,7 +478,6 @@ public class XmlNetworkLaneParser implements Serializable
             if (null == centroidNode)
             {
                 centroidNode = new OTSNode(otsNetwork, centroidName, centroidPoint);
-                new NodeAnimation(centroidNode, this.simulator);
             }
             String linkId = map.get("link");
             Link link = otsNetwork.getLink(linkId);
@@ -509,7 +508,6 @@ public class XmlNetworkLaneParser implements Serializable
                 System.out.println("Constructing connector link " + linkName);
                 connectorLink = new CrossSectionLink(otsNetwork, linkName, from, to, LinkType.CONNECTOR, designLine,
                         this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
-                new LinkAnimation(connectorLink, this.simulator, 0.5f);
             }
         }
         if (startTimeStrings.size() > 1)
@@ -563,17 +561,6 @@ public class XmlNetworkLaneParser implements Serializable
         {
             GTUTag gtuTag = this.gtuTags.get(gtuType.getId());
             templates.add(new TemplateGTUType(gtuType, gtuTag.lengthDist, gtuTag.widthDist, gtuTag.maxSpeedDist));
-        }
-        ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE,
-                new DefaultGTUCharacteristicsGeneratorOD(RouteSupplier.NULL, templates));
-        if (GTUColorerTag.defaultColorer != null)
-        {
-            odOptions.set(ODOptions.GTU_COLORER, GTUColorerTag.defaultColorer);
-        }
-        Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(otsNetwork, od, this.simulator, odOptions);
-        for (String str : generatedObjects.keySet())
-        {
-            new GTUGeneratorAnimation(generatedObjects.get(str).getGenerator(), this.simulator);
         }
         od.print();
     }
@@ -629,6 +616,14 @@ public class XmlNetworkLaneParser implements Serializable
     public ImmutableList<String> getXMLComments()
     {
         return new ImmutableArrayList<>(this.xmlComments, Immutable.COPY);
+    }
+
+    /**
+     * @return the network animation data belonging to the network that was parsed.
+     */
+    public final NetworkAnimation getNetworkAnimation()
+    {
+        return this.networkAnimation;
     }
 
     /** {@inheritDoc} */

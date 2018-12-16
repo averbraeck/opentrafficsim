@@ -44,4 +44,3 @@ public class OTSDrawingException extends Exception
         super(message, cause);
     }
 }
-

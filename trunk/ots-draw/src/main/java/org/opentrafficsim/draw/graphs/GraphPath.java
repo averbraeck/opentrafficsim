@@ -85,7 +85,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Returns the start distance of the section.
- * @param section Section&lt;S&gt;; Section&lt;S&gt; section
+     * @param section Section&lt;S&gt;; Section&lt;S&gt; section
      * @return Length; start distance of the section
      */
     public final Length getStartDistance(final Section<S> section)
@@ -178,7 +178,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
         }
         return new ImmutableArrayList<>(list, Immutable.WRAP).iterator();
     }
-    
+
     /**
      * Returns an immutable list of the sections.
      * @return ImmutableList&lt;Section&lt;S&gt;&gt;; sections
@@ -187,7 +187,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
     {
         return new ImmutableArrayList<>(this.sections, Immutable.WRAP);
     }
-    
+
     /**
      * Interface for sections.
      * <p>

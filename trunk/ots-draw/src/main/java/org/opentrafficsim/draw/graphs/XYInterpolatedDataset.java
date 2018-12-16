@@ -16,11 +16,11 @@ import org.jfree.data.xy.XYZDataset;
  */
 interface XYInterpolatedDataset extends XYZDataset
 {
-    
+
     /**
      * Returns the number of items in each column.
      * @return int; number of items in each column
      */
     int getRangeBinCount();
-    
+
 }

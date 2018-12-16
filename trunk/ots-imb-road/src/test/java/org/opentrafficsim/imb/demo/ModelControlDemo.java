@@ -344,8 +344,8 @@ public class ModelControlDemo extends ModelStarter
             InputParameter<?> caccPenetration = findByKeyInList(propertyList, "CACCpenetration");
             if (null != caccPenetration)
             {
-                parameters.addParameter(
-                        new Parameter("CACC penetration (range 0.0 - 1.0)", ((InputParameterDouble) caccPenetration).getValue()));
+                parameters.addParameter(new Parameter("CACC penetration (range 0.0 - 1.0)",
+                        ((InputParameterDouble) caccPenetration).getValue()));
             }
             InputParameter<?> caccCompliance = findByKeyInList(propertyList, "CACCCompliance");
             if (null != caccCompliance)
@@ -529,10 +529,10 @@ public class ModelControlDemo extends ModelStarter
                     String laneId = String.format("Lane %d ", lane);
                     outputProperties.add(new InputParameterBoolean(laneId + "Density", laneId + " Density",
                             laneId + "Density contour plot", true, false, 0));
-                    outputProperties.add(new InputParameterBoolean(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot",
-                            true, false, 1));
-                    outputProperties.add(new InputParameterBoolean(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot",
-                            true, false, 2));
+                    outputProperties.add(new InputParameterBoolean(laneId + "Flow", laneId + " Flow",
+                            laneId + "Flow contour plot", true, false, 1));
+                    outputProperties.add(new InputParameterBoolean(laneId + "Speed", laneId + " Speed",
+                            laneId + "Speed contour plot", true, false, 2));
                     outputProperties.add(new InputParameterBoolean(laneId + "Acceleration", laneId + " Acceleration",
                             laneId + "Acceleration contour plot", true, false, 3));
                     outputProperties.add(new InputParameterBoolean(laneId + "Trajectories", laneId + " Trajectories",
@@ -920,8 +920,7 @@ public class ModelControlDemo extends ModelStarter
             Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
             initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Speed initialSpeed = new Speed(0, KM_PER_HOUR);
-            gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
-                    this.gtuColorer);
+            gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class, this.gtuColorer);
         }
 
         /** {@inheritDoc} */

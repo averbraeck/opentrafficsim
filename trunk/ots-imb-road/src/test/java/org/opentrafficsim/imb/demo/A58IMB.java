@@ -368,8 +368,8 @@ public class A58IMB extends AbstractOTSSwingApplication
     public List<InputParameter<?>> getSupportedProperties()
     {
         List<InputParameter<?>> result = new ArrayList<>();
-        result.add(new InputParameterDouble("penetration", "penetration", "<html>Fraction of vehicles equipped with CACC</html>",
-                0.0, 0.0, 1.0, "%.2f", false, 13));
+        result.add(new InputParameterDouble("penetration", "penetration",
+                "<html>Fraction of vehicles equipped with CACC</html>", 0.0, 0.0, 1.0, "%.2f", false, 13));
         return result;
     }
 

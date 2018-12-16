@@ -80,7 +80,7 @@ public class DataViewer extends AbstractOTSModel
 
     /**
      * Constructor to make the graphs with the right type.
- * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      */
     public DataViewer(final OTSSimulatorInterface simulator)
     {
@@ -91,8 +91,7 @@ public class DataViewer extends AbstractOTSModel
      * {@inheritDoc}
      */
     @Override
-    public final void constructModel()
-            throws SimRuntimeException
+    public final void constructModel() throws SimRuntimeException
     {
         String startMap = "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data";
 

@@ -351,9 +351,9 @@ public class GTUTransceiver extends AbstractTransceiver
                         gtu.getSimulator().getSimulatorTime()));
                 LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
                 DirectedLanePosition dlp = laneBasedGTU.getReferencePosition();
-                this.notify(new TimedEvent<Time>(LaneBasedGTU.LANEBASED_INIT_EVENT, gtu,
-                        new Object[] { gtu.getId(), gtu.getLocation(), gtu.getLength(), gtu.getWidth(),
-                                dlp.getLane(), dlp.getGtuDirection(), gtu.getGTUType() },
+                this.notify(new TimedEvent<Time>(
+                        LaneBasedGTU.LANEBASED_INIT_EVENT, gtu, new Object[] { gtu.getId(), gtu.getLocation(), gtu.getLength(),
+                                gtu.getWidth(), dlp.getLane(), dlp.getGtuDirection(), gtu.getGTUType() },
                         gtu.getSimulator().getSimulatorTime()));
             }
             catch (RemoteException | GTUException exception)

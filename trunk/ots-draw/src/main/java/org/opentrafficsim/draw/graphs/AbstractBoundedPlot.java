@@ -60,7 +60,7 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
                 "AbstractBoundedPlot can only work with XYPlot.");
 
         super.setChart(chart);
-        
+
         XYPlot xyPlot = chart.getXYPlot();
         xyPlot.getDomainAxis().addChangeListener(new AxisChangeListener()
         {
