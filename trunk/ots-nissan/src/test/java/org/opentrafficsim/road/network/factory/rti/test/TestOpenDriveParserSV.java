@@ -30,7 +30,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.modelproperties.InputParameterException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -116,9 +116,9 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     TestOpenDriveParserSV xmlModel = new TestOpenDriveParserSV();
                     // 1 hour simulation run for testing
                     xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<Property<?>>(), null, true);
+                            new ArrayList<InputParameter<?>>(), null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }

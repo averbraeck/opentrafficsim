@@ -25,14 +25,14 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.BooleanProperty;
+import org.opentrafficsim.base.modelproperties.InputParameterBoolean;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.ContinuousProperty;
-import org.opentrafficsim.base.modelproperties.IntegerProperty;
+import org.opentrafficsim.base.modelproperties.InputParameterDouble;
+import org.opentrafficsim.base.modelproperties.InputParameterInteger;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
+import org.opentrafficsim.base.modelproperties.InputParameterException;
+import org.opentrafficsim.base.modelproperties.InputParameterSelectionList;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -136,15 +136,15 @@ public class ModelControlDemo extends ModelStarter
      * @param key String; the key path of the sought property
      * @return Property&lt;?&gt;; the first matching property, or null if no property with the given key was found
      */
-    private Property<?> findPropertyInList(final List<Property<?>> properties, final String key)
+    private InputParameter<?> findPropertyInList(final List<InputParameter<?>> properties, final String key)
     {
         try
         {
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", properties, false, 0);
-            for (Property<?> p : propertyContainer)
+            for (InputParameter<?> p : propertyContainer)
             {
                 String keyPath = p.getKey();
-                for (Property<?> parent = p.getParent(); null != parent && propertyContainer != parent; parent =
+                for (InputParameter<?> parent = p.getParent(); null != parent && propertyContainer != parent; parent =
                         parent.getParent())
                 {
                     keyPath = parent.getKey() + "." + keyPath;
@@ -156,7 +156,7 @@ public class ModelControlDemo extends ModelStarter
                 }
             }
         }
-        catch (PropertyException exception)
+        catch (InputParameterException exception)
         {
             exception.printStackTrace();
         }
@@ -173,7 +173,7 @@ public class ModelControlDemo extends ModelStarter
 
         try
         {
-            List<Property<?>> properties = new CircularRoadIMB(null, null, null, null).getSupportedProperties();
+            List<InputParameter<?>> properties = new CircularRoadIMB(null, null, null, null).getSupportedProperties();
             for (String parameterName : parameters.getParameterNames())
             {
                 if (parameterName.equals("Federation"))
@@ -195,7 +195,7 @@ public class ModelControlDemo extends ModelStarter
                 {
                     case "Truck fraction":
                     {
-                        Property<?> p = findPropertyInList(properties, "TrafficComposition");
+                        InputParameter<?> p = findPropertyInList(properties, "TrafficComposition");
                         if (null == p || !(p instanceof ProbabilityDistributionProperty))
                         {
                             System.err.println("Property " + p + " is not a ProbalityDistributionProperty");
@@ -211,7 +211,7 @@ public class ModelControlDemo extends ModelStarter
                                 System.out.println("Setting TrafficComposition to [" + values[0] + ", " + values[1] + "]");
                                 pdp.setValue(values);
                             }
-                            catch (PropertyException exception)
+                            catch (InputParameterException exception)
                             {
                                 exception.printStackTrace();
                             }
@@ -221,21 +221,21 @@ public class ModelControlDemo extends ModelStarter
 
                     case "CACC penetration":
                     {
-                        Property<?> p = findPropertyInList(properties, "CACCpenetration");
-                        if (null == p || !(p instanceof ContinuousProperty))
+                        InputParameter<?> p = findPropertyInList(properties, "CACCpenetration");
+                        if (null == p || !(p instanceof InputParameterDouble))
                         {
-                            System.err.println("Property " + p + " is not a ContinuousProperty");
+                            System.err.println("Property " + p + " is not a InputParameterDouble");
                         }
                         else
                         {
-                            ContinuousProperty cp = (ContinuousProperty) p;
+                            InputParameterDouble cp = (InputParameterDouble) p;
                             Double value = (double) parameters.getParameterByName(parameterName).getValue();
                             try
                             {
                                 System.out.println("Setting CACC penetration to " + value);
                                 cp.setValue(value);
                             }
-                            catch (PropertyException exception)
+                            catch (InputParameterException exception)
                             {
                                 exception.printStackTrace();
                             }
@@ -245,21 +245,21 @@ public class ModelControlDemo extends ModelStarter
 
                     case "CACC compliance":
                     {
-                        Property<?> p = findPropertyInList(properties, "CACCCompliance");
-                        if (null == p || !(p instanceof ContinuousProperty))
+                        InputParameter<?> p = findPropertyInList(properties, "CACCCompliance");
+                        if (null == p || !(p instanceof InputParameterDouble))
                         {
-                            System.err.println("Property " + p + " is not a ContinuousProperty");
+                            System.err.println("Property " + p + " is not a InputParameterDouble");
                         }
                         else
                         {
-                            ContinuousProperty cp = (ContinuousProperty) p;
+                            InputParameterDouble cp = (InputParameterDouble) p;
                             Double value = (double) parameters.getParameterByName(parameterName).getValue();
                             try
                             {
                                 System.out.println("Setting CACC compliance to " + value);
                                 cp.setValue(value);
                             }
-                            catch (PropertyException exception)
+                            catch (InputParameterException exception)
                             {
                                 exception.printStackTrace();
                             }
@@ -283,7 +283,7 @@ public class ModelControlDemo extends ModelStarter
             signalModelState(ModelState.READY);
             System.out.println("Reported ModelState.READY");
         }
-        catch (PropertyException | IMBException | NamingException | SimRuntimeException exception1)
+        catch (InputParameterException | IMBException | NamingException | SimRuntimeException exception1)
         {
             exception1.printStackTrace();
         }
@@ -334,28 +334,28 @@ public class ModelControlDemo extends ModelStarter
         System.out.println("received parameters: " + parameters);
         try
         {
-            List<Property<?>> propertyList = new CircularRoadIMB(null, null, null, null).getSupportedProperties();
-            Property<?> truckFraction = findByKeyInList(propertyList, "TrafficComposition");
+            List<InputParameter<?>> propertyList = new CircularRoadIMB(null, null, null, null).getSupportedProperties();
+            InputParameter<?> truckFraction = findByKeyInList(propertyList, "TrafficComposition");
             if (null != truckFraction)
             {
                 parameters.addParameter(new Parameter("Truck fraction (range 0.0 - 1.0)",
                         ((ProbabilityDistributionProperty) truckFraction).getValue()[1]));
             }
-            Property<?> caccPenetration = findByKeyInList(propertyList, "CACCpenetration");
+            InputParameter<?> caccPenetration = findByKeyInList(propertyList, "CACCpenetration");
             if (null != caccPenetration)
             {
                 parameters.addParameter(
-                        new Parameter("CACC penetration (range 0.0 - 1.0)", ((ContinuousProperty) caccPenetration).getValue()));
+                        new Parameter("CACC penetration (range 0.0 - 1.0)", ((InputParameterDouble) caccPenetration).getValue()));
             }
-            Property<?> caccCompliance = findByKeyInList(propertyList, "CACCCompliance");
+            InputParameter<?> caccCompliance = findByKeyInList(propertyList, "CACCCompliance");
             if (null != caccCompliance)
             {
                 parameters.addParameter(
-                        new Parameter("CACC compliance (range 0.0 - 1.0)", ((ContinuousProperty) caccCompliance).getValue()));
+                        new Parameter("CACC compliance (range 0.0 - 1.0)", ((InputParameterDouble) caccCompliance).getValue()));
             }
             System.out.println("(possibly) modified paramters: " + parameters);
         }
-        catch (PropertyException exception)
+        catch (InputParameterException exception)
         {
             exception.printStackTrace();
         }
@@ -367,12 +367,12 @@ public class ModelControlDemo extends ModelStarter
      * @param key String; the key
      * @return Property&lt;?&gt; or null if none of the entries in the list contained a property with the specified key
      */
-    private Property<?> findByKeyInList(final List<Property<?>> propertyList, final String key)
+    private InputParameter<?> findByKeyInList(final List<InputParameter<?>> propertyList, final String key)
     {
-        Property<?> result = null;
-        for (Property<?> property : propertyList)
+        InputParameter<?> result = null;
+        for (InputParameter<?> property : propertyList)
         {
-            Property<?> p = property.findByKey(key);
+            InputParameter<?> p = property.findByKey(key);
             if (null != p)
             {
                 if (null != result)
@@ -453,7 +453,7 @@ public class ModelControlDemo extends ModelStarter
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         /** User settable properties. */
-        private final List<Property<?>> properties;
+        private final List<InputParameter<?>> properties;
 
         /** The sequence of Lanes that all vehicles will follow. */
         private List<List<Lane>> paths = new ArrayList<>();
@@ -484,10 +484,10 @@ public class ModelControlDemo extends ModelStarter
          * @param network OTSNetwork; the network
          * @param properties List&lt;Property&lt;?&gt;&gt;; properties that configure this simulation
          * @param imbConnector IMBConnector; connection to the IMB hub
-         * @throws PropertyException XXX not thrown
+         * @throws InputParameterException XXX not thrown
          */
-        CircularRoadIMB(final GTUColorer gtuColorer, final OTSNetwork network, final List<Property<?>> properties,
-                final IMBConnector imbConnector) throws PropertyException
+        CircularRoadIMB(final GTUColorer gtuColorer, final OTSNetwork network, final List<InputParameter<?>> properties,
+                final IMBConnector imbConnector) throws InputParameterException
         {
             this.properties = properties;
             this.gtuColorer = gtuColorer;
@@ -499,43 +499,43 @@ public class ModelControlDemo extends ModelStarter
          * Construct and return the list of properties that the user may modify.
          * @return List&lt;AbstractProperty&gt;; the list of properties that the user may modify
          */
-        public List<Property<?>> getSupportedProperties()
+        public List<InputParameter<?>> getSupportedProperties()
         {
-            List<Property<?>> result = new ArrayList<>();
-            result.add(new ContinuousProperty("CACCpenetration", "CACC penetration",
+            List<InputParameter<?>> result = new ArrayList<>();
+            result.add(new InputParameterDouble("CACCpenetration", "CACC penetration",
                     "<html>Fraction of vehicles equipped with CACC</html>", 0.0, 0.0, 1.0, "%.2f", false, 13));
-            result.add(new ContinuousProperty("CACCCompliance", "CACC compliance",
+            result.add(new InputParameterDouble("CACCCompliance", "CACC compliance",
                     "<html>Compliance within CADD equipped vehicle population</html>", 0.5, 0.0, 1.0, "%.2f", false, 14));
-            result.add(new SelectionProperty("LaneChanging", "Lane changing",
+            result.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
                     "<html>The lane change strategies vary in politeness.<br>"
                             + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
                             + "<li>Altruistic (assigns effect on new and current follower the same weight as "
                             + "the personal gain).</html>",
                     new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
-            result.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
+            result.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                     "<html>The tactical planner determines if a lane change is desired and possible.</html>",
                     new String[] { "MOBIL", "LMRS", "Toledo" }, 0, false, 600));
-            result.add(new IntegerProperty("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
+            result.add(new InputParameterInteger("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
                     "Track length %dm", false, 10));
-            result.add(new ContinuousProperty("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
+            result.add(new InputParameterDouble("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
                     "Density %.1f veh/km", false, 11));
-            result.add(new ContinuousProperty("DensityVariability", "Density variability",
+            result.add(new InputParameterDouble("DensityVariability", "Density variability",
                     "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
-            List<Property<?>> outputProperties = new ArrayList<>();
+            List<InputParameter<?>> outputProperties = new ArrayList<>();
             try
             {
                 for (int lane = 1; lane <= 2; lane++)
                 {
                     String laneId = String.format("Lane %d ", lane);
-                    outputProperties.add(new BooleanProperty(laneId + "Density", laneId + " Density",
+                    outputProperties.add(new InputParameterBoolean(laneId + "Density", laneId + " Density",
                             laneId + "Density contour plot", true, false, 0));
-                    outputProperties.add(new BooleanProperty(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot",
+                    outputProperties.add(new InputParameterBoolean(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot",
                             true, false, 1));
-                    outputProperties.add(new BooleanProperty(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot",
+                    outputProperties.add(new InputParameterBoolean(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot",
                             true, false, 2));
-                    outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + " Acceleration",
+                    outputProperties.add(new InputParameterBoolean(laneId + "Acceleration", laneId + " Acceleration",
                             laneId + "Acceleration contour plot", true, false, 3));
-                    outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId + " Trajectories",
+                    outputProperties.add(new InputParameterBoolean(laneId + "Trajectories", laneId + " Trajectories",
                             laneId + "Trajectory (time/distance) diagram", true, false, 4));
                 }
                 result.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
@@ -543,7 +543,7 @@ public class ModelControlDemo extends ModelStarter
                 result.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                         "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                         new Double[] { 0.8, 0.2 }, false, 10));
-                result.add(new SelectionProperty("CarFollowingModel", "Car following model",
+                result.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                         "<html>The car following model determines "
                                 + "the acceleration that a vehicle will make taking into account "
                                 + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
@@ -555,7 +555,7 @@ public class ModelControlDemo extends ModelStarter
                 result.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck", new Acceleration(0.5, METER_PER_SECOND_2),
                         new Acceleration(1.25, METER_PER_SECOND_2), new Length(2.0, METER), new Duration(1.0, SECOND), 3));
             }
-            catch (PropertyException exception)
+            catch (InputParameterException exception)
             {
                 exception.printStackTrace();
             }
@@ -635,14 +635,14 @@ public class ModelControlDemo extends ModelStarter
                 // Get car-following model name
                 String carFollowingModelName = null;
                 CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-                Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
                     throw new Error("Cannot find \"Car following model\" property");
                 }
-                if (cfmp instanceof SelectionProperty)
+                if (cfmp instanceof InputParameterSelectionList)
                 {
-                    carFollowingModelName = ((SelectionProperty) cfmp).getValue();
+                    carFollowingModelName = ((InputParameterSelectionList) cfmp).getValue();
                 }
                 else
                 {
@@ -650,7 +650,7 @@ public class ModelControlDemo extends ModelStarter
                 }
 
                 // Get car-following model parameter
-                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
                 {
                     if (ap instanceof CompoundProperty)
                     {
@@ -698,9 +698,9 @@ public class ModelControlDemo extends ModelStarter
                 {
                     throw new Error("Cannot find \"Lane changing\" property");
                 }
-                if (cfmp instanceof SelectionProperty)
+                if (cfmp instanceof InputParameterSelectionList)
                 {
-                    String laneChangeModelName = ((SelectionProperty) cfmp).getValue();
+                    String laneChangeModelName = ((InputParameterSelectionList) cfmp).getValue();
                     if ("Egoistic".equals(laneChangeModelName))
                     {
                         this.laneChangeModel = new Egoistic();
@@ -720,11 +720,11 @@ public class ModelControlDemo extends ModelStarter
                 }
 
                 // Get remaining properties
-                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
                 {
-                    if (ap instanceof SelectionProperty)
+                    if (ap instanceof InputParameterSelectionList)
                     {
-                        SelectionProperty sp = (SelectionProperty) ap;
+                        InputParameterSelectionList sp = (InputParameterSelectionList) ap;
                         if ("TacticalPlanner".equals(sp.getKey()))
                         {
                             String tacticalPlannerName = sp.getValue();
@@ -768,17 +768,17 @@ public class ModelControlDemo extends ModelStarter
                             this.carProbability = pdp.getValue()[0];
                         }
                     }
-                    else if (ap instanceof IntegerProperty)
+                    else if (ap instanceof InputParameterInteger)
                     {
-                        IntegerProperty ip = (IntegerProperty) ap;
+                        InputParameterInteger ip = (InputParameterInteger) ap;
                         if ("TrackLength".equals(ip.getKey()))
                         {
                             radius = ip.getValue() / 2 / Math.PI;
                         }
                     }
-                    else if (ap instanceof ContinuousProperty)
+                    else if (ap instanceof InputParameterDouble)
                     {
-                        ContinuousProperty cp = (ContinuousProperty) ap;
+                        InputParameterDouble cp = (InputParameterDouble) ap;
                         if (cp.getKey().equals("MeanDensity"))
                         {
                             headway = 1000 / cp.getValue();
@@ -855,7 +855,7 @@ public class ModelControlDemo extends ModelStarter
                 }
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
-                    | PropertyException exception)
+                    | InputParameterException exception)
             {
                 exception.printStackTrace();
             }

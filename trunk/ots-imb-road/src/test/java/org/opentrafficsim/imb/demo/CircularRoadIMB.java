@@ -23,14 +23,14 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.modelproperties.BooleanProperty;
+import org.opentrafficsim.base.modelproperties.InputParameterBoolean;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.ContinuousProperty;
-import org.opentrafficsim.base.modelproperties.IntegerProperty;
+import org.opentrafficsim.base.modelproperties.InputParameterDouble;
+import org.opentrafficsim.base.modelproperties.InputParameterInteger;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
+import org.opentrafficsim.base.modelproperties.InputParameterException;
+import org.opentrafficsim.base.modelproperties.InputParameterSelectionList;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -124,38 +124,38 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
 
     /**
      * Create a CircularRoad simulation.
-     * @throws PropertyException if key for a property used more than once
+     * @throws InputParameterException if key for a property used more than once
      */
-    public CircularRoadIMB() throws PropertyException
+    public CircularRoadIMB() throws InputParameterException
     {
-        this.properties.add(new SelectionProperty("LaneChanging", "Lane changing",
+        this.properties.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
                 "<html>The lane change strategies vary in politeness.<br>"
                         + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
                         + "<li>Altruistic (assigns effect on new and current follower the same weight as "
                         + "the personal gain).</html>",
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
-        this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
+        this.properties.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
                 new String[] { "MOBIL", "LMRS", "Toledo" }, 0, false, 600));
-        this.properties.add(new IntegerProperty("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
+        this.properties.add(new InputParameterInteger("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
                 "Track length %dm", false, 10));
-        this.properties.add(new ContinuousProperty("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
+        this.properties.add(new InputParameterDouble("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
                 "Density %.1f veh/km", false, 11));
-        this.properties.add(new ContinuousProperty("DensityVariability", "Density variability",
+        this.properties.add(new InputParameterDouble("DensityVariability", "Density variability",
                 "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
-        List<Property<?>> outputProperties = new ArrayList<>();
+        List<InputParameter<?>> outputProperties = new ArrayList<>();
         for (int lane = 1; lane <= 2; lane++)
         {
             String laneId = String.format("Lane %d ", lane);
-            outputProperties.add(new BooleanProperty(laneId + "Density", laneId + " Density", laneId + "Density contour plot",
+            outputProperties.add(new InputParameterBoolean(laneId + "Density", laneId + " Density", laneId + "Density contour plot",
                     true, false, 0));
             outputProperties
-                    .add(new BooleanProperty(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, false, 1));
+                    .add(new InputParameterBoolean(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, false, 1));
             outputProperties.add(
-                    new BooleanProperty(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot", true, false, 2));
-            outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + " Acceleration",
+                    new InputParameterBoolean(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot", true, false, 2));
+            outputProperties.add(new InputParameterBoolean(laneId + "Acceleration", laneId + " Acceleration",
                     laneId + "Acceleration contour plot", true, false, 3));
-            outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId + " Trajectories",
+            outputProperties.add(new InputParameterBoolean(laneId + "Trajectories", laneId + " Trajectories",
                     laneId + "Trajectory (time/distance) diagram", true, false, 4));
         }
         this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
@@ -185,18 +185,18 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
                 try
                 {
                     CircularRoadIMB circularRoad = new CircularRoadIMB();
-                    List<Property<?>> propertyList = circularRoad.getProperties();
+                    List<InputParameter<?>> propertyList = circularRoad.getProperties();
                     try
                     {
                         propertyList.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                                 "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                                 new Double[] { 0.8, 0.2 }, false, 10));
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
-                    propertyList.add(new SelectionProperty("CarFollowingModel", "Car following model",
+                    propertyList.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                             "<html>The car following model determines "
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
@@ -213,7 +213,7 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
                     circularRoad.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), propertyList, null,
                             true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -234,7 +234,7 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
     /**
      * @return the saved user properties for a next run
      */
-    private List<Property<?>> getSavedUserModifiedProperties()
+    private List<InputParameter<?>> getSavedUserModifiedProperties()
     {
         return this.savedUserModifiedProperties;
     }
@@ -248,23 +248,23 @@ public class CircularRoadIMB extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
     {
         // Make the tab with the plots
-        Property<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
+        InputParameter<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
         }
-        ArrayList<BooleanProperty> graphs = new ArrayList<>();
+        ArrayList<InputParameterBoolean> graphs = new ArrayList<>();
         if (output instanceof CompoundProperty)
         {
             CompoundProperty outputProperties = (CompoundProperty) output;
-            for (Property<?> ap : outputProperties.getValue())
+            for (InputParameter<?> ap : outputProperties.getValue())
             {
-                if (ap instanceof BooleanProperty)
+                if (ap instanceof InputParameterBoolean)
                 {
-                    BooleanProperty bp = (BooleanProperty) ap;
+                    InputParameterBoolean bp = (InputParameterBoolean) ap;
                     if (bp.getValue())
                     {
                         graphs.add(bp);
@@ -424,7 +424,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
     private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
     /** User settable properties. */
-    private List<Property<?>> properties = null;
+    private List<InputParameter<?>> properties = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
     private List<List<Lane>> paths = new ArrayList<>();
@@ -452,7 +452,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
      * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      * @param network OTSNetwork; the network
      */
-    RoadSimulationModelIMB(final List<Property<?>> properties, final GTUColorer gtuColorer, final OTSNetwork network)
+    RoadSimulationModelIMB(final List<InputParameter<?>> properties, final GTUColorer gtuColorer, final OTSNetwork network)
     {
         this.properties = properties;
         this.gtuColorer = gtuColorer;
@@ -485,7 +485,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
         try
         {
             CompoundProperty imbSettings = null;
-            for (Property<?> property : this.properties)
+            for (InputParameter<?> property : this.properties)
             {
                 if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
                 {
@@ -521,14 +521,14 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             // Get car-following model name
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-            Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+            InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new Error("Cannot find \"Car following model\" property");
             }
-            if (cfmp instanceof SelectionProperty)
+            if (cfmp instanceof InputParameterSelectionList)
             {
-                carFollowingModelName = ((SelectionProperty) cfmp).getValue();
+                carFollowingModelName = ((InputParameterSelectionList) cfmp).getValue();
             }
             else
             {
@@ -536,7 +536,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             }
 
             // Get car-following model parameter
-            for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+            for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
             {
                 if (ap instanceof CompoundProperty)
                 {
@@ -584,9 +584,9 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             {
                 throw new Error("Cannot find \"Lane changing\" property");
             }
-            if (cfmp instanceof SelectionProperty)
+            if (cfmp instanceof InputParameterSelectionList)
             {
-                String laneChangeModelName = ((SelectionProperty) cfmp).getValue();
+                String laneChangeModelName = ((InputParameterSelectionList) cfmp).getValue();
                 if ("Egoistic".equals(laneChangeModelName))
                 {
                     this.laneChangeModel = new Egoistic();
@@ -606,11 +606,11 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             }
 
             // Get remaining properties
-            for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+            for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
             {
-                if (ap instanceof SelectionProperty)
+                if (ap instanceof InputParameterSelectionList)
                 {
-                    SelectionProperty sp = (SelectionProperty) ap;
+                    InputParameterSelectionList sp = (InputParameterSelectionList) ap;
                     if ("TacticalPlanner".equals(sp.getKey()))
                     {
                         String tacticalPlannerName = sp.getValue();
@@ -652,17 +652,17 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
                         this.carProbability = pdp.getValue()[0];
                     }
                 }
-                else if (ap instanceof IntegerProperty)
+                else if (ap instanceof InputParameterInteger)
                 {
-                    IntegerProperty ip = (IntegerProperty) ap;
+                    InputParameterInteger ip = (InputParameterInteger) ap;
                     if ("TrackLength".equals(ip.getKey()))
                     {
                         radius = ip.getValue() / 2 / Math.PI;
                     }
                 }
-                else if (ap instanceof ContinuousProperty)
+                else if (ap instanceof InputParameterDouble)
                 {
-                    ContinuousProperty cp = (ContinuousProperty) ap;
+                    InputParameterDouble cp = (InputParameterDouble) ap;
                     if (cp.getKey().equals("MeanDensity"))
                     {
                         headway = 1000 / cp.getValue();
@@ -738,7 +738,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
             }
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
-                | PropertyException exception)
+                | InputParameterException exception)
         {
             exception.printStackTrace();
         }
