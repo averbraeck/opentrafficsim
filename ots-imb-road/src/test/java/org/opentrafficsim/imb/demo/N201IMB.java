@@ -22,7 +22,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.modelproperties.InputParameterException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -44,11 +44,11 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransceiver;
 import org.opentrafficsim.kpi.sampling.Query;
-import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -91,9 +91,9 @@ public class N201IMB extends AbstractWrappableAnimation
                     N201IMB n201Model = new N201IMB();
                     // 1 hour simulation run for testing
                     n201Model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(10.0, DurationUnit.HOUR),
-                            new ArrayList<Property<?>>(), null, true);
+                            new ArrayList<InputParameter<?>>(), null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -134,7 +134,7 @@ public class N201IMB extends AbstractWrappableAnimation
     /**
      * @return the saved user properties for a next run
      */
-    private List<Property<?>> getSavedUserModifiedProperties()
+    private List<InputParameter<?>> getSavedUserModifiedProperties()
     {
         return this.savedUserModifiedProperties;
     }
@@ -182,7 +182,7 @@ public class N201IMB extends AbstractWrappableAnimation
         private OTSSimulatorInterface simulator;
 
         /** User settable properties. */
-        private List<Property<?>> modelProperties = null;
+        private List<InputParameter<?>> modelProperties = null;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
         private final OTSNetwork network;
@@ -198,7 +198,7 @@ public class N201IMB extends AbstractWrappableAnimation
          * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network OTSNetwork; the network
          */
-        N201Model(final List<Property<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
+        N201Model(final List<InputParameter<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
         {
             this.modelProperties = modelProperties;
             this.network = network;
@@ -215,7 +215,7 @@ public class N201IMB extends AbstractWrappableAnimation
             try
             {
                 CompoundProperty imbSettings = null;
-                for (Property<?> property : this.modelProperties)
+                for (InputParameter<?> property : this.modelProperties)
                 {
                     if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
                     {

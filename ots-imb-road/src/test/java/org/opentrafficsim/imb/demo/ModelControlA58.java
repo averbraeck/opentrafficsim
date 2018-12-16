@@ -29,9 +29,9 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.base.modelproperties.ContinuousProperty;
+import org.opentrafficsim.base.modelproperties.InputParameterDouble;
 import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.modelproperties.InputParameterException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -60,7 +60,6 @@ import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
-import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.sampling.GtuTypeData;
@@ -69,6 +68,7 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.ReferenceSpeed;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -199,7 +199,7 @@ public class ModelControlA58 extends ModelStarter
                     ModelControlA58.this.a58Animation.buildAnimator(Time.ZERO, Duration.ZERO,
                             new Duration(3600.000001, DurationUnit.SI), null, null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -274,12 +274,12 @@ public class ModelControlA58 extends ModelStarter
      * @param key String; the key
      * @return Property&lt;?&gt; or null if none of the entries in the list contained a property with the specified key
      */
-    private Property<?> findByKeyInList(final List<Property<?>> propertyList, final String key)
+    private InputParameter<?> findByKeyInList(final List<InputParameter<?>> propertyList, final String key)
     {
-        Property<?> result = null;
-        for (Property<?> property : propertyList)
+        InputParameter<?> result = null;
+        for (InputParameter<?> property : propertyList)
         {
-            Property<?> p = property.findByKey(key);
+            InputParameter<?> p = property.findByKey(key);
             if (null != p)
             {
                 if (null != result)
@@ -296,11 +296,11 @@ public class ModelControlA58 extends ModelStarter
     @Override
     public void parameterRequest(ModelParameters parameters)
     {
-        List<Property<?>> propertyList = new A58IMB().getSupportedProperties();
-        Property<?> caccPenetration = findByKeyInList(propertyList, "penetration");
+        List<InputParameter<?>> propertyList = new A58IMB().getSupportedProperties();
+        InputParameter<?> caccPenetration = findByKeyInList(propertyList, "penetration");
         if (null != caccPenetration)
         {
-            parameters.addParameter(new Parameter("penetration", ((ContinuousProperty) caccPenetration).getValue()));
+            parameters.addParameter(new Parameter("penetration", ((InputParameterDouble) caccPenetration).getValue()));
         }
         System.out.println("(possibly) modified paramters: " + parameters);
     }

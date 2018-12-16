@@ -21,9 +21,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.ContinuousProperty;
+import org.opentrafficsim.base.modelproperties.InputParameterDouble;
 import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.modelproperties.InputParameterException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -43,10 +43,10 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NetworkTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
-import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -87,13 +87,13 @@ public class A58IMB extends AbstractWrappableAnimation
                 try
                 {
                     A58IMB a58Model = new A58IMB();
-                    List<Property<?>> propertyList = new ArrayList<>();
+                    List<InputParameter<?>> propertyList = new ArrayList<>();
                     propertyList.add(OTSIMBConnector.standardIMBProperties(0, "vps17642.public.cloudvps.com"));
                     // 1 hour simulation run for testing
                     a58Model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(10.0, DurationUnit.HOUR), propertyList, null,
                             true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -134,7 +134,7 @@ public class A58IMB extends AbstractWrappableAnimation
     /**
      * @return the saved user properties for a next run
      */
-    private List<Property<?>> getSavedUserModifiedProperties()
+    private List<InputParameter<?>> getSavedUserModifiedProperties()
     {
         return this.savedUserModifiedProperties;
     }
@@ -182,7 +182,7 @@ public class A58IMB extends AbstractWrappableAnimation
         private OTSSimulatorInterface simulator;
 
         /** User settable properties. */
-        private List<Property<?>> modelProperties = null;
+        private List<InputParameter<?>> modelProperties = null;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
         private final OTSNetwork network;
@@ -198,7 +198,7 @@ public class A58IMB extends AbstractWrappableAnimation
          * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network OTSNetwork; the network
          */
-        A58Model(final List<Property<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
+        A58Model(final List<InputParameter<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
         {
             this.modelProperties = modelProperties;
             this.network = network;
@@ -215,7 +215,7 @@ public class A58IMB extends AbstractWrappableAnimation
             try
             {
                 CompoundProperty imbSettings = null;
-                for (Property<?> property : this.modelProperties)
+                for (InputParameter<?> property : this.modelProperties)
                 {
                     if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
                     {
@@ -365,10 +365,10 @@ public class A58IMB extends AbstractWrappableAnimation
      * Retrieve a list of properties that the user can modify.
      * @return List&lt;Property&lt;?&gt;&gt;;
      */
-    public List<Property<?>> getSupportedProperties()
+    public List<InputParameter<?>> getSupportedProperties()
     {
-        List<Property<?>> result = new ArrayList<>();
-        result.add(new ContinuousProperty("penetration", "penetration", "<html>Fraction of vehicles equipped with CACC</html>",
+        List<InputParameter<?>> result = new ArrayList<>();
+        result.add(new InputParameterDouble("penetration", "penetration", "<html>Fraction of vehicles equipped with CACC</html>",
                 0.0, 0.0, 1.0, "%.2f", false, 13));
         return result;
     }
