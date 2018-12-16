@@ -73,8 +73,8 @@ public final class LaneFactory
 
     /**
      * @param network OTSNetwork; network
- * @param from OTSNode; from node
- * @param to OTSNode; to node
+     * @param from OTSNode; from node
+     * @param to OTSNode; to node
      * @param type LinkType; link type
      * @param simulator OTSSimulatorInterface; simulator
      * @param policy LaneKeepingPolicy; lane keeping policy
@@ -89,8 +89,8 @@ public final class LaneFactory
 
     /**
      * @param network OTSNetwork; network
- * @param from OTSNode; from node
- * @param to OTSNode; to node
+     * @param from OTSNode; from node
+     * @param to OTSNode; to node
      * @param type LinkType; link type
      * @param simulator OTSSimulatorInterface; simulator
      * @param policy LaneKeepingPolicy; lane keeping policy

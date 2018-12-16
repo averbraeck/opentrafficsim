@@ -192,8 +192,7 @@ public abstract class CrossSectionElement extends EventProducer implements Locat
      *             or the end node of the link are not registered in the network.
      */
     protected CrossSectionElement(final CrossSectionLink newCrossSectionLink,
-            final SimulatorInterface.TimeDoubleUnit newSimulator, final CrossSectionElement cse)
-            throws NetworkException
+            final SimulatorInterface.TimeDoubleUnit newSimulator, final CrossSectionElement cse) throws NetworkException
     {
         this.id = cse.id;
         this.parentLink = newCrossSectionLink;

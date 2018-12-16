@@ -148,7 +148,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
     /** GTU. */
     private final LaneBasedGTU containingGtu;
-    
+
     /** the animation access. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     public AnimationAccess animationAccess = new AnimationAccess();

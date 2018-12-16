@@ -80,7 +80,7 @@ public class GTUFollowingModelTest implements UNITS
         OTSSimulatorInterface simulator = new OTSSimulator();
         Model model = new Model(simulator, this.network);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
-        
+
         Acceleration maxSafeDeceleration = gtuFollowingModel.getMaximumSafeDeceleration();
         assertNotNull("maximumSafeDeceleration must return non-null value", maxSafeDeceleration);
         assertTrue("value of maximuSafeDeceleration must be positive", 0 < maxSafeDeceleration.getSI());

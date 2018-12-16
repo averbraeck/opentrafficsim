@@ -114,8 +114,8 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
                 false);
         panel.addToggleAnimationButtonIcon("GTU", GTU.class, "/icons/Gtu24.png", "Show/hide GTUs", true, false);
-        panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids", false,
-                true);
+        panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids",
+                false, true);
         panel.addToggleAnimationButtonIcon("Sensor", Sensor.class, "/icons/Sensor24.png", "Show/hide sensors", true, false);
         panel.addToggleAnimationButtonIcon("SensorId", SensorAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids",
                 false, true);
@@ -128,8 +128,8 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("Generator", GTUGeneratorAnimation.class, "/icons/Generator24.png",
                 "Show/hide generators", false, false);
         panel.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
-        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops", false,
-                true);
+        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops",
+                false, true);
     }
 
     /**
@@ -151,8 +151,8 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("Shoulder", Shoulder.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
                 false);
         panel.addToggleAnimationButtonIcon("GTU", GTU.class, "/icons/Gtu24.png", "Show/hide GTUs", true, false);
-        panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids", false,
-                true);
+        panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU Ids",
+                false, true);
         panel.addToggleAnimationButtonIcon("Sensor", Sensor.class, "/icons/Sensor24.png", "Show/hide sensors", false, false);
         panel.addToggleAnimationButtonIcon("SensorId", SensorAnimation.Text.class, "/icons/Id24.png", "Show/hide sensors Ids",
                 false, true);
@@ -165,8 +165,8 @@ public final class AnimationToggles
         panel.addToggleAnimationButtonIcon("Generator", GTUGeneratorAnimation.class, "/icons/Generator24.png",
                 "Show/hide generators", false, false);
         panel.addToggleAnimationButtonIcon("Bus", BusStop.class, "/icons/BusStop24.png", "Show/hide bus stops", false, false);
-        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops", false,
-                true);
+        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stops",
+                false, true);
     }
 
     /**
@@ -178,7 +178,7 @@ public final class AnimationToggles
         panel.getAnimationPanel().showClass(locatableClass);
         panel.updateAnimationClassCheckBox(locatableClass);
     }
-    
+
     /**
      * Set a class to be shown in the animation to true.
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
@@ -188,7 +188,7 @@ public final class AnimationToggles
         panel.getAnimationPanel().hideClass(locatableClass);
         panel.updateAnimationClassCheckBox(locatableClass);
     }
-    
+
     /**
      * Set all animation on, and create the toggles on the left hand side.
      * @param panel OTSAnimationPanel; the WrappableAnimation.

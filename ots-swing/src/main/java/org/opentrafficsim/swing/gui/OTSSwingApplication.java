@@ -40,7 +40,7 @@ public abstract class OTSSwingApplication extends JFrame
     /**
      * Constructor for DSOLApplication.
      * @param title String; the title in the top bar
- * @param panel OTSAnimationPanel; the panel to put in the frame
+     * @param panel OTSAnimationPanel; the panel to put in the frame
      */
     public OTSSwingApplication(final String title, final OTSAnimationPanel panel)
     {
@@ -54,4 +54,3 @@ public abstract class OTSSwingApplication extends JFrame
     }
 
 }
-

@@ -23,8 +23,8 @@ public class ReferenceSpeed extends ExtendedDataTypeSpeed<GtuData>
 {
 
     /** Single instance. */
-    public static final ReferenceSpeed INSTANCE = new ReferenceSpeed(); 
-    
+    public static final ReferenceSpeed INSTANCE = new ReferenceSpeed();
+
     /**
      * 
      */

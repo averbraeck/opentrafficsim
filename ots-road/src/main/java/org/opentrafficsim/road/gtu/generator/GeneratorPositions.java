@@ -507,8 +507,8 @@ public final class GeneratorPositions implements Locatable
                 final Map<Integer, Integer> unplaced, final Speed desiredSpeed)
         {
             Map<GeneratorLanePosition, Double> map = new LinkedHashMap<>();
-//            double[] cumulWeights = new double[this.positions.size()];
-//            double totalWeight = 0.0;
+            // double[] cumulWeights = new double[this.positions.size()];
+            // double totalWeight = 0.0;
             for (int i = 0; i < this.positions.size(); i++)
             {
                 GeneratorLanePosition lanePosition = this.positions.get(i);
@@ -526,28 +526,28 @@ public final class GeneratorPositions implements Locatable
                             double w = biases.getBias(type).calculateWeight(laneNum, getNumberOfLanes(gtuType),
                                     unplacedTemplates, desiredSpeed);
                             map.put(lanePosition, w);
-//                            totalWeight += w;
+                            // totalWeight += w;
                         }
                         type = type.getParent();
                     }
                     if (!found)
                     {
                         map.put(lanePosition, 1.0);
-//                        totalWeight += 1.0; // no bias for this GTU type
+                        // totalWeight += 1.0; // no bias for this GTU type
                     }
-//                    cumulWeights[i] = totalWeight;
+                    // cumulWeights[i] = totalWeight;
                 }
             }
             return Draw.drawWeighted(map, stream);
-//            double r = totalWeight * stream.nextDouble();
-//            for (int i = 0; i < this.positions.size(); i++)
-//            {
-//                if (r <= cumulWeights[i])
-//                {
-//                    return this.positions.get(i);
-//                }
-//            }
-//            return this.positions.get(this.positions.size() - 1);
+            // double r = totalWeight * stream.nextDouble();
+            // for (int i = 0; i < this.positions.size(); i++)
+            // {
+            // if (r <= cumulWeights[i])
+            // {
+            // return this.positions.get(i);
+            // }
+            // }
+            // return this.positions.get(this.positions.size() - 1);
         }
 
         /**
@@ -613,8 +613,8 @@ public final class GeneratorPositions implements Locatable
                 final Map<CrossSectionLink, Map<Integer, Integer>> unplaced, final Speed desiredSpeed, final Route route)
         {
             Map<GeneratorLinkPosition, Double> map = new LinkedHashMap<>();
-//            double[] cumulWeights = new double[this.positions.size()];
-//            double totalWeight = 0.0;
+            // double[] cumulWeights = new double[this.positions.size()];
+            // double totalWeight = 0.0;
             for (int i = 0; i < this.positions.size(); i++)
             {
                 Link link = this.positions.get(i).getLink();
@@ -626,31 +626,31 @@ public final class GeneratorPositions implements Locatable
                     if (from > -1 && to > -1 && to - from == 1)
                     {
                         map.put(this.positions.get(i), this.positions.get(i).getWeight(gtuType));
-//                        totalWeight += this.positions.get(i).getWeight(gtuType); // else, no weight
+                        // totalWeight += this.positions.get(i).getWeight(gtuType); // else, no weight
                     }
                 }
                 else
                 {
                     map.put(this.positions.get(i), this.positions.get(i).getWeight(gtuType));
-//                    totalWeight += this.positions.get(i).getWeight(gtuType); // no route, consider all locations
+                    // totalWeight += this.positions.get(i).getWeight(gtuType); // no route, consider all locations
                 }
-//                cumulWeights[i] = totalWeight;
+                // cumulWeights[i] = totalWeight;
             }
 
             GeneratorLinkPosition linkPosition = Draw.drawWeighted(map, stream);
             return linkPosition.draw(gtuType, stream, biases, unplaced.get(linkPosition.getLink()), desiredSpeed);
 
-//            double r = totalWeight * stream.nextDouble();
-//            for (int i = 0; i < this.positions.size(); i++)
-//            {
-//                if (r <= cumulWeights[i])
-//                {
-//                    GeneratorLinkPosition position = this.positions.get(i);
-//                    return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()), desiredSpeed);
-//                }
-//            }
-//            GeneratorLinkPosition position = this.positions.get(this.positions.size() - 1);
-//            return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()), desiredSpeed);
+            // double r = totalWeight * stream.nextDouble();
+            // for (int i = 0; i < this.positions.size(); i++)
+            // {
+            // if (r <= cumulWeights[i])
+            // {
+            // GeneratorLinkPosition position = this.positions.get(i);
+            // return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()), desiredSpeed);
+            // }
+            // }
+            // GeneratorLinkPosition position = this.positions.get(this.positions.size() - 1);
+            // return position.draw(gtuType, stream, biases, unplaced.get(position.getLink()), desiredSpeed);
         }
 
         /** {@inheritDoc} */
