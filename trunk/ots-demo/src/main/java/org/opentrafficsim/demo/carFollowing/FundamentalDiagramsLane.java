@@ -20,9 +20,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -30,16 +27,14 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.graphs.FundamentalDiagram;
-import org.opentrafficsim.core.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.graphs.GraphLaneUtil;
-import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
+import org.opentrafficsim.road.graphs.GraphLaneUtil;
+import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -57,8 +52,12 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -86,7 +85,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
     {
         try
         {
-            this.properties.add(new SelectionProperty("CarFollowingModel", "Car following model",
+            this.properties.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                     "<html>The car following model determines "
                             + "the acceleration that a vehicle will make taking into account nearby vehicles, "
                             + "infrastructural restrictions (e.g. speed limit, curvature of the road) "
@@ -96,7 +95,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                     "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                     new Double[] { 0.8, 0.2 }, false, 10));
         }
-        catch (PropertyException exception)
+        catch (InputParameterException exception)
         {
             exception.printStackTrace();
         }
@@ -129,7 +128,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                     fundamentalDiagramsLane.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND),
                             fundamentalDiagramsLane.getProperties(), null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -260,7 +259,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         /** User settable properties. */
-        private List<Property<?>> fundamentalDiagramsLaneProperties = null;
+        private List<InputParameter<?>> fundamentalDiagramsLaneProperties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -268,7 +267,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         /**
          * @param properties List&lt;Property&lt;?&gt;&gt;; the properties
          */
-        FundamentalDiagramLanePlotsModel(final List<Property<?>> properties)
+        FundamentalDiagramLanePlotsModel(final List<InputParameter<?>> properties)
         {
             this.fundamentalDiagramsLaneProperties = properties;
         }
@@ -306,11 +305,11 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 exception.printStackTrace();
             }
 
-            for (Property<?> p : this.fundamentalDiagramsLaneProperties)
+            for (InputParameter<?> p : this.fundamentalDiagramsLaneProperties)
             {
-                if (p instanceof SelectionProperty)
+                if (p instanceof InputParameterSelectionList)
                 {
-                    SelectionProperty sp = (SelectionProperty) p;
+                    InputParameterSelectionList sp = (InputParameterSelectionList) p;
                     if ("CarFollowingModel".equals(sp.getKey()))
                     {
                         String modelName = sp.getValue();
@@ -339,7 +338,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                     }
                     else
                     {
-                        throw new Error("Unhandled SelectionProperty " + p.getKey());
+                        throw new Error("Unhandled InputParameterSelectionList " + p.getKey());
                     }
                 }
                 else if (p instanceof ProbabilityDistributionProperty)
@@ -397,7 +396,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, this.block), this.block);
                 this.block.setParameters(parameters);
-                this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
+                this.block.init(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
                         FundamentalDiagramsLane.this.getColorer());
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
@@ -442,7 +441,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
                 gtu.setParameters(parameters);
-                gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
+                gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                         FundamentalDiagramsLane.this.getColorer());
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }

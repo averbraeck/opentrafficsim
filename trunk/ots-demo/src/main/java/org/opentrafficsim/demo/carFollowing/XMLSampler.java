@@ -21,12 +21,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.ContinuousProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Distribution;
@@ -38,7 +35,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.graphs.AbstractPlot;
-import org.opentrafficsim.core.graphs.GraphPath;
 import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -55,10 +51,9 @@ import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.graphs.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
+import org.opentrafficsim.road.graphs.GraphLaneUtil;
+import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.generator.CFRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
@@ -94,8 +89,13 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -132,17 +132,17 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
      */
     public XMLSampler()
     {
-        this.properties.add(new SelectionProperty(
+        this.properties.add(new InputParameterSelectionList(
                 "Network", "Network", "Network", new String[] { "Merge 1 plus 1 into 1", "Merge 2 plus 1 into 2",
                         "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2", "Split 4 into 2 plus 2" },
                 0, false, 0));
-        this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
+        this.properties.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
                 new String[] { "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 0, false, 600));
-        this.properties.add(new SelectionProperty("LaneChanging", "Lane changing",
+        this.properties.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
                 "<html>The lane change friendliness (if used -- eg just for MOBIL.</html>",
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 600));
-        this.properties.add(new ContinuousProperty("FlowPerInputLane", "Flow per input lane", "Traffic flow per input lane",
+        this.properties.add(new InputParameterDouble("FlowPerInputLane", "Flow per input lane", "Traffic flow per input lane",
                 500d, 0d, 3000d, "%.0f veh/h", false, 1));
     }
 
@@ -238,7 +238,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         private final OTSNetwork network = new OTSNetwork("network");
 
         /** User settable properties. */
-        private List<Property<?>> props = null;
+        private List<InputParameter<?>> props = null;
 
         /** The sequence of Lanes that all vehicles will follow. */
         private List<List<Lane>> paths = new ArrayList<>();
@@ -297,7 +297,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         /**
          * @param userModifiedProperties List&lt;Property&lt;?&gt;&gt;; the (possibly user modified) properties
          */
-        XMLSamplerModel(final List<Property<?>> userModifiedProperties)
+        XMLSamplerModel(final List<InputParameter<?>> userModifiedProperties)
         {
             this.props = userModifiedProperties;
         }
@@ -343,7 +343,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                 {
                     cp = new CompoundProperty("", "", "", this.props, false, 0);
                 }
-                catch (PropertyException exception2)
+                catch (InputParameterException exception2)
                 {
                     exception2.printStackTrace();
                 }
@@ -358,14 +358,14 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                 // Get car-following model name
                 String carFollowingModelName = null;
                 CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.props, false, 0);
-                Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
                     throw new Error("Cannot find \"Car following model\" property");
                 }
-                if (cfmp instanceof SelectionProperty)
+                if (cfmp instanceof InputParameterSelectionList)
                 {
-                    carFollowingModelName = ((SelectionProperty) cfmp).getValue();
+                    carFollowingModelName = ((InputParameterSelectionList) cfmp).getValue();
                 }
                 else
                 {
@@ -373,7 +373,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                 }
 
                 // Get car-following model parameter
-                for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
+                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
                     if (ap instanceof CompoundProperty)
                     {
@@ -420,9 +420,9 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                 {
                     throw new Error("Cannot find \"Lane changing\" property");
                 }
-                if (cfmp instanceof SelectionProperty)
+                if (cfmp instanceof InputParameterSelectionList)
                 {
-                    String laneChangeModelName = ((SelectionProperty) cfmp).getValue();
+                    String laneChangeModelName = ((InputParameterSelectionList) cfmp).getValue();
                     if ("Egoistic".equals(laneChangeModelName))
                     {
                         this.laneChangeModel = new Egoistic();
@@ -481,11 +481,11 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                 }
 
                 // Get remaining properties
-                for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
+                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
-                    if (ap instanceof SelectionProperty)
+                    if (ap instanceof InputParameterSelectionList)
                     {
-                        SelectionProperty sp = (SelectionProperty) ap;
+                        InputParameterSelectionList sp = (InputParameterSelectionList) ap;
                         if ("TacticalPlanner".equals(sp.getKey()))
                         {
                             String tacticalPlannerName = sp.getValue();
@@ -545,9 +545,9 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                             this.carProbability = pdp.getValue()[0];
                         }
                     }
-                    else if (ap instanceof ContinuousProperty)
+                    else if (ap instanceof InputParameterDouble)
                     {
-                        ContinuousProperty contP = (ContinuousProperty) ap;
+                        InputParameterDouble contP = (InputParameterDouble) ap;
                         if (contP.getKey().startsWith("Flow"))
                         {
                             this.averageHeadway = new Duration(3600.0 / contP.getValue(), SECOND);
@@ -663,7 +663,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
                 }
             }
             catch (NamingException | NetworkException | GTUException | OTSGeometryException | ProbabilityException
-                    | PropertyException | ParameterException exception1)
+                    | InputParameterException | ParameterException exception1)
             {
                 exception1.printStackTrace();
             }
@@ -882,7 +882,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, block), block);
             block.setParameters(parameters);
-            block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
+            block.init(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
                     XMLSampler.this.getColorer());
             return lane;
         }

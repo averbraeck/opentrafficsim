@@ -18,8 +18,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -39,6 +38,8 @@ import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -440,7 +441,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
                     System.out.println("Setting up replication " + finalReplication);
                     model.setNextReplication(finalReplication);
                     // 1 hour simulation run for testing
-                    model.buildSimulator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), new ArrayList<Property<?>>());
+                    model.buildSimulator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), new ArrayList<InputParameter<?>>());
                     if (finalAutoRun)
                     {
                         int lastReportedTime = -60;
@@ -528,7 +529,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
 
                     }
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }

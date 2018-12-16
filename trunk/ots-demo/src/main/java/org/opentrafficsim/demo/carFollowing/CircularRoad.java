@@ -17,14 +17,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.BooleanProperty;
+import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.ContinuousProperty;
-import org.opentrafficsim.base.modelproperties.IntegerProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -37,9 +32,7 @@ import org.opentrafficsim.core.graphs.ContourPlotDensity;
 import org.opentrafficsim.core.graphs.ContourPlotFlow;
 import org.opentrafficsim.core.graphs.ContourPlotSpeed;
 import org.opentrafficsim.core.graphs.FundamentalDiagram;
-import org.opentrafficsim.core.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.core.graphs.GraphCrossSection;
-import org.opentrafficsim.core.graphs.GraphPath;
 import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -49,10 +42,9 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.graphs.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
+import org.opentrafficsim.road.graphs.GraphLaneUtil;
+import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
@@ -77,8 +69,15 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterInteger;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -106,54 +105,54 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
 
     /**
      * Create a CircularRoad simulation.
-     * @throws PropertyException when a property is not handled
+     * @throws InputParameterException when a property is not handled
      */
-    public CircularRoad() throws PropertyException
+    public CircularRoad() throws InputParameterException
     {
-        this.properties.add(new SelectionProperty("LaneChanging", "Lane changing",
+        this.properties.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
                 "<html>The lane change strategies vary in politeness.<br>"
                         + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
                         + "<li>Altruistic (assigns effect on new and current follower the same weight as "
                         + "the personal gain).</html>",
-                new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
-        this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
+                new String[] { "Egoistic", "Altruistic" }, 0, 500));
+        this.properties.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
-                new String[] { "IDM", "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 1, false, 600));
-        this.properties.add(new IntegerProperty("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
-                "Track length %dm", false, 10));
-        this.properties.add(new ContinuousProperty("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
-                "Density %.1f veh/km", false, 11));
-        this.properties.add(new ContinuousProperty("DensityVariability", "Density variability",
-                "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
-        List<Property<?>> outputProperties = new ArrayList<>();
+                new String[] { "IDM", "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 1, 600));
+        this.properties.add(new InputParameterInteger("TrackLength", "Track length", "Circumference of the track", 2000, 500,
+                6000, "Track length %dm", 10));
+        this.properties.add(new InputParameterDouble("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0,
+                45.0, true, true, "Density %.1f veh/km", 11));
+        this.properties.add(new InputParameterDouble("DensityVariability", "Density variability",
+                "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, true, true, "%.1f", 12));
+        List<InputParameter<?>> outputProperties = new ArrayList<>();
         for (int lane = 1; lane <= 2; lane++)
         {
             int index = lane - 1;
             String laneId = String.format("Lane %d ", lane);
-            outputProperties.add(index, new BooleanProperty(laneId + "Density", laneId + " Density",
-                    laneId + "Density contour plot", true, false, 0));
+            outputProperties.add(index, new InputParameterBoolean(laneId + "Density", laneId + " Density",
+                    laneId + "Density contour plot", true, 0));
             index += lane;
             outputProperties.add(index,
-                    new BooleanProperty(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, false, 1));
+                    new InputParameterBoolean(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, 1));
             index += lane;
             outputProperties.add(index,
-                    new BooleanProperty(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot", true, false, 2));
+                    new InputParameterBoolean(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot", true, 2));
             index += lane;
-            outputProperties.add(index, new BooleanProperty(laneId + "Acceleration", laneId + " Acceleration",
-                    laneId + "Acceleration contour plot", true, false, 3));
+            outputProperties.add(index, new InputParameterBoolean(laneId + "Acceleration", laneId + " Acceleration",
+                    laneId + "Acceleration contour plot", true, 3));
             index += lane;
-            outputProperties.add(index, new BooleanProperty(laneId + "Trajectories", laneId + " Trajectories",
-                    laneId + "Trajectory (time/distance) diagram", true, false, 4));
+            outputProperties.add(index, new InputParameterBoolean(laneId + "Trajectories", laneId + " Trajectories",
+                    laneId + "Trajectory (time/distance) diagram", true, 4));
             // index += lane;
-            // outputProperties.add(index, new BooleanProperty(laneId + "Variable Sample Rate Trajectories",
+            // outputProperties.add(index, new InputParameterBoolean(laneId + "Variable Sample Rate Trajectories",
             // laneId + " VSR Trajectories", laneId + "Trajectory (time/distance) diagram", true, false, 5));
         }
-        outputProperties.add(new BooleanProperty("Fundamental diagram aggregated", "Fundamental diagram aggregated",
-                "Fundamental diagram aggregated", true, false, 5));
+        outputProperties.add(new InputParameterBoolean("Fundamental diagram aggregated", "Fundamental diagram aggregated",
+                "Fundamental diagram aggregated", true, 5));
         outputProperties
-                .add(new BooleanProperty("Fundamental diagram", "Fundamental diagram", "Fundamental diagram", true, false, 5));
-        this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
-                outputProperties, true, 1000));
+                .add(new InputParameterBoolean("Fundamental diagram", "Fundamental diagram", "Fundamental diagram", true, 5));
+        this.properties.add(
+                new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output", outputProperties, 1000));
     }
 
     /** {@inheritDoc} */
@@ -179,18 +178,18 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 try
                 {
                     CircularRoad circularRoad = new CircularRoad();
-                    List<Property<?>> propertyList = circularRoad.getProperties();
+                    List<InputParameter<?>> propertyList = circularRoad.getProperties();
                     try
                     {
                         propertyList.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                                 "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                                 new Double[] { 0.8, 0.2 }, false, 10));
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
-                    propertyList.add(new SelectionProperty("CarFollowingModel", "Car following model",
+                    propertyList.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                             "<html>The car following model determines "
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
@@ -207,7 +206,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                     circularRoad.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), propertyList, null,
                             true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -226,7 +225,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
     /**
      * @return the saved user properties for a next run
      */
-    private List<Property<?>> getSavedUserModifiedProperties()
+    private List<InputParameter<?>> getSavedUserModifiedProperties()
     {
         return this.savedUserModifiedProperties;
     }
@@ -240,23 +239,23 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
     {
         // Make the tab with the plots
-        Property<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
+        InputParameter<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
         }
-        ArrayList<BooleanProperty> graphs = new ArrayList<>();
+        ArrayList<InputParameterBoolean> graphs = new ArrayList<>();
         if (output instanceof CompoundProperty)
         {
             CompoundProperty outputProperties = (CompoundProperty) output;
-            for (Property<?> ap : outputProperties.getValue())
+            for (InputParameter<?> ap : outputProperties.getValue())
             {
-                if (ap instanceof BooleanProperty)
+                if (ap instanceof InputParameterBoolean)
                 {
-                    BooleanProperty bp = (BooleanProperty) ap;
+                    InputParameterBoolean bp = (InputParameterBoolean) ap;
                     if (bp.getValue())
                     {
                         graphs.add(bp);
@@ -437,7 +436,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         /** User settable properties. */
-        private List<Property<?>> props = null;
+        private List<InputParameter<?>> props = null;
 
         /** The sequence of Lanes that all vehicles will follow. */
         private List<List<Lane>> paths = new ArrayList<>();
@@ -457,7 +456,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
         /**
          * @param properties List&lt;Property&lt;?&gt;&gt;; the properties
          */
-        RoadSimulationModel(final List<Property<?>> properties)
+        RoadSimulationModel(final List<InputParameter<?>> properties)
         {
             this.props = properties;
         }
@@ -491,14 +490,14 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 // Get car-following model name
                 String carFollowingModelName = null;
                 CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.props, false, 0);
-                Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
                     throw new Error("Cannot find \"Car following model\" property");
                 }
-                if (cfmp instanceof SelectionProperty)
+                if (cfmp instanceof InputParameterSelectionList)
                 {
-                    carFollowingModelName = ((SelectionProperty) cfmp).getValue();
+                    carFollowingModelName = ((InputParameterSelectionList) cfmp).getValue();
                 }
                 else
                 {
@@ -506,7 +505,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 }
 
                 // Get car-following model parameter
-                for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
+                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
                     if (ap instanceof CompoundProperty)
                     {
@@ -554,9 +553,9 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 {
                     throw new Error("Cannot find \"Lane changing\" property");
                 }
-                if (cfmp instanceof SelectionProperty)
+                if (cfmp instanceof InputParameterSelectionList)
                 {
-                    String laneChangeModelName = ((SelectionProperty) cfmp).getValue();
+                    String laneChangeModelName = ((InputParameterSelectionList) cfmp).getValue();
                     if ("Egoistic".equals(laneChangeModelName))
                     {
                         this.laneChangeModel = new Egoistic();
@@ -576,11 +575,11 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 }
 
                 // Get remaining properties
-                for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
+                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
-                    if (ap instanceof SelectionProperty)
+                    if (ap instanceof InputParameterSelectionList)
                     {
-                        SelectionProperty sp = (SelectionProperty) ap;
+                        InputParameterSelectionList sp = (InputParameterSelectionList) ap;
                         if ("TacticalPlanner".equals(sp.getKey()))
                         {
                             String tacticalPlannerName = sp.getValue();
@@ -631,17 +630,17 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                             this.carProbability = pdp.getValue()[0];
                         }
                     }
-                    else if (ap instanceof IntegerProperty)
+                    else if (ap instanceof InputParameterInteger)
                     {
-                        IntegerProperty ip = (IntegerProperty) ap;
+                        InputParameterInteger ip = (InputParameterInteger) ap;
                         if ("TrackLength".equals(ip.getKey()))
                         {
                             radius = ip.getValue() / 2 / Math.PI;
                         }
                     }
-                    else if (ap instanceof ContinuousProperty)
+                    else if (ap instanceof InputParameterDouble)
                     {
-                        ContinuousProperty cp = (ContinuousProperty) ap;
+                        InputParameterDouble cp = (InputParameterDouble) ap;
                         if (cp.getKey().equals("MeanDensity"))
                         {
                             headway = 1000 / cp.getValue();
@@ -706,7 +705,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 }
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
-                    | PropertyException exception)
+                    | InputParameterException exception)
             {
                 exception.printStackTrace();
             }
@@ -753,7 +752,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
             Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
             initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Speed initialSpeed = new Speed(0, KM_PER_HOUR);
-            gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
+            gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                     CircularRoad.this.getColorer());
             // Check that the gtu is indeed at the expected position
             /*-

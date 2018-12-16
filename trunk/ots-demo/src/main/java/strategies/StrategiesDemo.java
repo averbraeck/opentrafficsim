@@ -31,6 +31,9 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -40,17 +43,13 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
-import org.opentrafficsim.core.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.NodeAnimation;
-import org.opentrafficsim.road.animation.AbstractSimulationScript;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
 import org.opentrafficsim.road.gtu.colorer.IncentiveColorer;
@@ -93,6 +92,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.event.EventInterface;
@@ -587,7 +587,7 @@ public class StrategiesDemo extends AbstractSimulationScript
             Length prevPos = prevLane.getLength().plus(pos.plus(gtu.getRear().getDx()));
             initialPositions.add(new DirectedLanePosition(prevLane, prevPos, GTUDirectionality.DIR_PLUS));
         }
-        gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class, getGtuColorer());
+        gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class, getGtuColorer());
 
         Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGTU.LANE_CHANGE_EVENT),
                 "Exception while adding lane change listener");

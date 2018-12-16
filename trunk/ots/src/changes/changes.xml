@@ -2,7 +2,10 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="1.01.00" date="2018-11-19" description="Update to dsol 3.03.00, djutils, major refactoring">
+    <release version="1.01.00" date="2018-12-15" description="Update to ots 1.01.00, djutils, animation, major refactoring">
+      <action dev="pknoppers" type="update">
+        The means package has been moved from ots to the djutils project.
+      </action>
       <action dev="averbraeck" type="update">
         The DSOL version has been updated to 3.03.00. This has quite a number of consequences.
         Examples are a new use of the DSOLModel, more time-based inner classes of the Simulators,
@@ -12,8 +15,9 @@
         See https://simulation.tudelft.nl/dsol/3.0/changes-report.html#a3.03.00 for more information.
       </action>
       <action dev="averbraeck" type="add">
-        Two projects for OTS have been added: ots-swing for animation using Swing and
-        ots-web for animation using the Web.
+        Three projects for OTS animation have been added. ots-swing for animation using Swing and
+        ots-web for animation using the Web. The generic drawing clases that are used for ots-swing
+        and ots-web (using a virtual screen for ots-web) are in the project ots-draw-swing.
       </action>
       <action dev="averbraeck" type="update">
         The swing-specific classes of ots-core and ots-road have been moved to the ots-swing project.

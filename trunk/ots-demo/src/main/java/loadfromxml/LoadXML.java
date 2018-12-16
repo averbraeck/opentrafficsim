@@ -23,25 +23,22 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.colorer.IDGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.gtu.colorer.BlockingColorer;
 import org.opentrafficsim.road.gtu.colorer.DesiredSpeedColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -52,9 +49,12 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventProducer;
@@ -86,13 +86,13 @@ public class LoadXML extends AbstractWrappableAnimation
      * Load a network from an XML file; program entry point.
      * @param args String[]; the command line arguments; optional name of file to load
      * @throws IOException when the file could not be read
-     * @throws PropertyException should never happen
+     * @throws InputParameterException should never happen
      * @throws OTSSimulationException when an error occurs during simulation
      * @throws NamingException when a name collision is detected
      * @throws SimRuntimeException should never happen
      */
     public static void main(final String[] args)
-            throws IOException, SimRuntimeException, NamingException, OTSSimulationException, PropertyException
+            throws IOException, SimRuntimeException, NamingException, OTSSimulationException, InputParameterException
     {
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
         LoadXML loadXML = new LoadXML();
@@ -136,7 +136,7 @@ public class LoadXML extends AbstractWrappableAnimation
         loadXML.xml = new String(Files.readAllBytes(Paths.get(loadXML.fileName)));
         try
         {
-            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, DurationUnit.SI), new ArrayList<Property<?>>(),
+            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, DurationUnit.SI), new ArrayList<InputParameter<?>>(),
                     null, true);
         }
         catch (SimRuntimeException sre)
