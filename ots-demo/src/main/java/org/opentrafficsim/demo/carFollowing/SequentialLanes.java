@@ -33,13 +33,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.graphs.AbstractPlot;
-import org.opentrafficsim.core.graphs.ContourDataSource;
-import org.opentrafficsim.core.graphs.ContourPlotAcceleration;
-import org.opentrafficsim.core.graphs.ContourPlotDensity;
-import org.opentrafficsim.core.graphs.ContourPlotFlow;
-import org.opentrafficsim.core.graphs.ContourPlotSpeed;
-import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -47,9 +40,16 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.demo.carFollowing.Straight.StraightModel;
+import org.opentrafficsim.draw.graphs.AbstractPlot;
+import org.opentrafficsim.draw.graphs.ContourDataSource;
+import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
+import org.opentrafficsim.draw.graphs.ContourPlotDensity;
+import org.opentrafficsim.draw.graphs.ContourPlotFlow;
+import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
+import org.opentrafficsim.draw.graphs.TrajectoryPlot;
+import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.road.graphs.GraphLaneUtil;
-import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -66,7 +66,7 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -91,7 +91,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
+public class SequentialLanes extends AbstractOTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -109,11 +109,11 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
         outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true, false, 0));
         outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
         outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
-        outputProperties
-                .add(new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
         outputProperties.add(
-                new InputParameterBoolean("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
+                new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
+        outputProperties.add(new InputParameterBoolean("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram",
+                true, false, 4));
+        this.inputParameterMap.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
     }
 
@@ -384,7 +384,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
         private Speed speedLimit;
 
         /**
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
+         * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
          */
         SequentialModel(final List<InputParameter<?>> properties)
         {
@@ -439,8 +439,8 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
                     OTSNode toNode = this.nodes.get(i);
                     OTSLine3D line = lines[i - 1];
                     String linkName = fromNode.getId() + "-" + toNode.getId();
-//                    LongitudinalDirectionality direction = line.equals(l23) && minus ? LongitudinalDirectionality.DIR_MINUS
-                    //                            : LongitudinalDirectionality.DIR_PLUS;
+                    // LongitudinalDirectionality direction = line.equals(l23) && minus ? LongitudinalDirectionality.DIR_MINUS
+                    // : LongitudinalDirectionality.DIR_PLUS;
                     Lane[] lanes = LaneFactory.makeMultiLane(this.network, linkName, fromNode, toNode, line.getPoints(), 1,
                             laneType, this.speedLimit, this.simulator);
                     if (i == this.nodes.size() - 1)

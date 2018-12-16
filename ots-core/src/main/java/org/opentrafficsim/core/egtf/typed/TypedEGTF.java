@@ -85,7 +85,7 @@ public class TypedEGTF extends EGTF
     {
         addPointDataSI(quantity, location.si, time.si, value.doubleValue());
     }
-    
+
     /**
      * Adds point data.
      * @param dataStream DataStream&lt;Z&gt;; data stream of the data
@@ -117,7 +117,7 @@ public class TypedEGTF extends EGTF
     {
         addVectorDataSI(quantity, location.getValuesSI(), time.getValuesSI(), values.getValuesSI());
     }
-    
+
     /**
      * Adds vector data.
      * @param dataStream DataStream&lt;Z&gt;; data stream of the data
@@ -149,7 +149,7 @@ public class TypedEGTF extends EGTF
     {
         addGridDataSI(quantity, location.getValuesSI(), time.getValuesSI(), values.getValuesSI());
     }
-    
+
     /**
      * Adds grid data.
      * @param dataStream DataStream&lt;Z&gt;; data stream of the data
@@ -197,7 +197,7 @@ public class TypedEGTF extends EGTF
     {
         setKernelSI(sigma.si, tau.si, xMax.si, tMax.si);
     }
-    
+
     /**
      * Sets a Gaussian kernel with infinite range.
      * @param sigma Length; spatial kernel size

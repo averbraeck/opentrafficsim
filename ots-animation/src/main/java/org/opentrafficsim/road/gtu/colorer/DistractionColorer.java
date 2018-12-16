@@ -45,7 +45,7 @@ public class DistractionColorer implements GTUColorer, Serializable
 
     /**
      * Constructor.
- * @param distractions DefaultDistraction...; DefaultDistraction... distractions to color
+     * @param distractions DefaultDistraction...; DefaultDistraction... distractions to color
      */
     public DistractionColorer(final DefaultDistraction... distractions)
     {

@@ -53,9 +53,9 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.LabeledPanel;
 import org.opentrafficsim.swing.gui.ProbabilityDistributionEditor;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
@@ -104,7 +104,8 @@ public class SuperDemo implements UNITS
             {
                 try
                 {
-                    JFrame frame = new AbstractOTSSwingApplication("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
+                    JFrame frame = new AbstractOTSSwingApplication("Open Traffic Simulator Demonstrations",
+                            new SuperDemo().buildGUI());
                     frame.setExtendedState(frame.getExtendedState() & ~Frame.MAXIMIZED_BOTH);
                     // frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_VERT);
                     // The code above does not work; the code below does work. Code found on
@@ -256,7 +257,7 @@ public class SuperDemo implements UNITS
 
     /**
      * Regenerate the contents of the propertyPanel.
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the demo-specific properties to display
+     * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the demo-specific properties to display
      */
     final void rebuildPropertyPanel(final List<InputParameter<?>> properties)
     {
@@ -341,7 +342,7 @@ public class SuperDemo implements UNITS
 
     /**
      * Create a graphical editor for an AbstractProperty.
- * @param ap InputParameter&lt;?&gt;; the abstract property for which an editor must be created
+     * @param ap InputParameter&lt;?&gt;; the abstract property for which an editor must be created
      * @return JPanel
      */
     @SuppressWarnings("checkstyle:methodlength")

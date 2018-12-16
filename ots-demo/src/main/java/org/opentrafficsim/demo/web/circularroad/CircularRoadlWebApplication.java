@@ -37,8 +37,8 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionL
 public class CircularRoadlWebApplication extends DSOLWebServer
 {
     /**
- * @param title String; the tile for the model
- * @param simulator OTSSimulatorInterface; the simulator
+     * @param title String; the tile for the model
+     * @param simulator OTSSimulatorInterface; the simulator
      * @throws Exception on jetty error
      */
     public CircularRoadlWebApplication(final String title, final OTSSimulatorInterface simulator) throws Exception
@@ -95,8 +95,8 @@ public class CircularRoadlWebApplication extends DSOLWebServer
             outputProperties.add(index,
                     new InputParameterBoolean(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, false, 1));
             index += lane;
-            outputProperties.add(index,
-                    new InputParameterBoolean(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot", true, false, 2));
+            outputProperties.add(index, new InputParameterBoolean(laneId + "Speed", laneId + " Speed",
+                    laneId + "Speed contour plot", true, false, 2));
             index += lane;
             outputProperties.add(index, new InputParameterBoolean(laneId + "Acceleration", laneId + " Acceleration",
                     laneId + "Acceleration contour plot", true, false, 3));
@@ -109,8 +109,8 @@ public class CircularRoadlWebApplication extends DSOLWebServer
         }
         outputProperties.add(new InputParameterBoolean("Fundamental diagram aggregated", "Fundamental diagram aggregated",
                 "Fundamental diagram aggregated", true, false, 5));
-        outputProperties
-                .add(new InputParameterBoolean("Fundamental diagram", "Fundamental diagram", "Fundamental diagram", true, false, 5));
+        outputProperties.add(
+                new InputParameterBoolean("Fundamental diagram", "Fundamental diagram", "Fundamental diagram", true, false, 5));
         properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output", outputProperties,
                 true, 1000));
 

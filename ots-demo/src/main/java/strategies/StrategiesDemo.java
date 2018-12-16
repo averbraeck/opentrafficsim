@@ -48,8 +48,8 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.animation.NodeAnimation;
-import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
+import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
 import org.opentrafficsim.road.gtu.colorer.IncentiveColorer;
@@ -91,7 +91,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -167,7 +167,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void setupDemo(final AbstractWrappableAnimation animation, final OTSNetwork net)
+    protected void setupDemo(final AbstractOTSSwingApplication animation, final OTSNetwork net)
     {
         // text
         JLabel textLabel = new JLabel("<html><p align=\"justify\">"

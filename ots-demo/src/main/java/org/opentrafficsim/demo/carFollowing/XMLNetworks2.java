@@ -29,8 +29,6 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.graphs.AbstractPlot;
-import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -40,8 +38,10 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.draw.graphs.AbstractPlot;
+import org.opentrafficsim.draw.graphs.TrajectoryPlot;
+import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.road.graphs.GraphLaneUtil;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
@@ -68,7 +68,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.xml.sax.SAXException;
 
@@ -96,7 +96,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class XMLNetworks2 extends AbstractWrappableAnimation implements UNITS
+public class XMLNetworks2 extends AbstractOTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20160422L;
@@ -109,18 +109,18 @@ public class XMLNetworks2 extends AbstractWrappableAnimation implements UNITS
      */
     public XMLNetworks2()
     {
-        this.properties.add(new InputParameterSelectionList(
+        this.inputParameterMap.add(new InputParameterSelectionList(
                 "Network", "Network", "Network", new String[] { "Merge 1 plus 1 into 1", "Merge 2 plus 1 into 2",
                         "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2", "Split 4 into 2 plus 2" },
                 0, false, 0));
-        this.properties.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
+        this.inputParameterMap.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
                 new String[] { "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 0, false, 600));
-        this.properties.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
+        this.inputParameterMap.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
                 "<html>The lane change friendliness (if used -- eg just for MOBIL.</html>",
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 600));
-        this.properties.add(new InputParameterDouble("FlowPerInputLane", "Flow per input lane", "Traffic flow per input lane",
-                500d, 0d, 3000d, "%.0f veh/h", false, 1));
+        this.inputParameterMap.add(new InputParameterDouble("FlowPerInputLane", "Flow per input lane",
+                "Traffic flow per input lane", 500d, 0d, 3000d, "%.0f veh/h", false, 1));
     }
 
     /** {@inheritDoc} */
@@ -270,7 +270,7 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
 
     /**
- * @param userModifiedProperties List&lt;InputParameter&lt;?&gt;&gt;; the (possibly user modified) properties
+     * @param userModifiedProperties List&lt;InputParameter&lt;?&gt;&gt;; the (possibly user modified) properties
      */
     XMLNetwork2Model(final List<InputParameter<?>> userModifiedProperties)
     {

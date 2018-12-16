@@ -56,8 +56,7 @@ public class OTSAnimator extends DEVSRealTimeClock.TimeDoubleUnit implements OTS
     /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model, final int replicationnr)
-            throws SimRuntimeException, NamingException
+            final OTSModelInterface model, final int replicationnr) throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         setAnimationDelay(20); // 50 Hz animation update

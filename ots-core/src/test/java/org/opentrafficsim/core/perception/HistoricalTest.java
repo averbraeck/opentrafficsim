@@ -132,7 +132,8 @@ public class HistoricalTest
         hist.addAll(asSet("5.0", "6.0", "7.0", "8.0", "9.0"));
         hist.removeAll(asSet("5.0", "6.0"));
         hist.retainAll(asSet("5.0", "6.0", "7.0", "10.0"));
-        Try.testFail(() -> {
+        Try.testFail(() ->
+        {
             Iterator<String> it = hist.iterator();
             it.next();
             it.remove();
@@ -193,7 +194,8 @@ public class HistoricalTest
         hist.addAll(asSet("5.0", "6.0", "7.0", "8.0", "9.0"));
         hist.removeAll(asSet("5.0", "6.0"));
         hist.retainAll(asSet("5.0", "6.0", "7.0", "10.0"));
-        Try.testFail(() -> {
+        Try.testFail(() ->
+        {
             Iterator<String> it = hist.iterator();
             it.next();
             it.remove();

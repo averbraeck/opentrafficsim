@@ -20,7 +20,7 @@ public class DirectedLinkPosition extends LinkDirection
 
     /** */
     private static final long serialVersionUID = 20181022L;
-    
+
     /** The fractional position (between 0.0 and 1.0) of the reference point on the lane. */
     private final double fractionalLongitudinalPosition;
 

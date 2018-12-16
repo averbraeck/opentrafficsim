@@ -37,7 +37,7 @@ import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -59,7 +59,7 @@ import nl.tudelft.simulation.event.EventProducer;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class AHFEAnimation extends AbstractWrappableAnimation
+public class AHFEAnimation extends AbstractOTSSwingApplication
 {
 
     /** Warm-up time. */
@@ -444,8 +444,8 @@ public class AHFEAnimation extends AbstractWrappableAnimation
                     System.out.println("Setting up replication " + finalReplication);
                     model.setNextReplication(finalReplication);
                     // 1 hour simulation run for testing
-                    model.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), new ArrayList<InputParameter<?>>(),
-                            null, true);
+                    model.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si),
+                            new ArrayList<InputParameter<?>>(), null, true);
                     if (finalAutoRun)
                     {
                         int lastReportedTime = -1;

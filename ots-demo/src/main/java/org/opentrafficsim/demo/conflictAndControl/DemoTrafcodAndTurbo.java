@@ -41,13 +41,13 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.demo.carFollowing.DefaultsFactory;
-import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
+import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
-import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
@@ -57,7 +57,7 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
@@ -85,7 +85,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
+public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
 {
 
     /** */
@@ -225,9 +225,8 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
                         {
                             if (stream != 7)
                             {
-                                TrafficLight tl = 
-                                trafficLights.add(new SimpleTrafficLight(String.format("TL%02d", stream), lane,
-                                        lane.getLength().minus(stopLineMargin),
+                                TrafficLight tl = trafficLights.add(new SimpleTrafficLight(String.format("TL%02d", stream),
+                                        lane, lane.getLength().minus(stopLineMargin),
                                         (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator));
 
                                 try
@@ -238,7 +237,7 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
                                 {
                                     throw new NetworkException(exception);
                                 }
-                                
+
                                 sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                         lane.getLength().minus(headDetectorMargin), lane,
                                         lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
@@ -267,7 +266,7 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
                                 {
                                     throw new NetworkException(exception);
                                 }
-                                
+
                                 sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                         lane.getLength().minus(headDetectorMargin), lane,
                                         lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,

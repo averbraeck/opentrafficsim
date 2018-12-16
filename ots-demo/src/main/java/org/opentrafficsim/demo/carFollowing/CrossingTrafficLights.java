@@ -42,14 +42,14 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.PropertiesParser;
-import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
+import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
-import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -58,7 +58,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -82,7 +82,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CrossingTrafficLights extends AbstractWrappableAnimation implements UNITS
+public class CrossingTrafficLights extends AbstractOTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -105,13 +105,13 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
      */
     public CrossingTrafficLights() throws InputParameterException
     {
-        this.properties.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
+        this.inputParameterMap.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
                 "<html>The lane change strategies vary in politeness.<br>"
                         + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
                         + "<li>Altruistic (assigns effect on new and current follower the same weight as "
                         + "the personal gain).</html>",
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
-        this.properties.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
+        this.inputParameterMap.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
                 new String[] { "IDM", "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 0, false, 600));
     }
@@ -293,7 +293,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
         private Speed speedLimit = new Speed(80, KM_PER_HOUR);
 
         /**
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
+         * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
          */
         CrossingTrafficLightstModel(final List<InputParameter<?>> properties)
         {
@@ -358,7 +358,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                                 {
                                     throw new NetworkException(exception);
                                 }
-                                
+
                                 if (i == 0 || i == 2)
                                 {
                                     this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL", new Object[] { tl });

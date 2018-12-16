@@ -18,8 +18,8 @@ import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.demo.carFollowing.CircularRoad;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
@@ -47,7 +47,7 @@ public class TimeCircularRoadSimulation implements UNITS
     {
         try
         {
-            AbstractWrappableAnimation simulation = new CircularRoad();
+            AbstractOTSSwingApplication simulation = new CircularRoad();
             List<InputParameter<?>> activeProperties = new ArrayList<>();
             activeProperties.addAll(simulation.getProperties());
             for (InputParameter<?> ap : activeProperties)
@@ -84,8 +84,8 @@ public class TimeCircularRoadSimulation implements UNITS
                     new Double[] { 0.8, 0.2 }, false, 5));
             CompoundProperty modelSelection =
                     new CompoundProperty("ModelSelection", "Model selection", "Modeling specific settings", null, false, 300);
-            modelSelection.add(new InputParameterSelectionList("SimulationScale", "Simulation scale", "Level of detail of the simulation",
-                    new String[] { "Micro", "Macro", "Meta" }, 0, true, 0));
+            modelSelection.add(new InputParameterSelectionList("SimulationScale", "Simulation scale",
+                    "Level of detail of the simulation", new String[] { "Micro", "Macro", "Meta" }, 0, true, 0));
             modelSelection.add(new InputParameterSelectionList("CarFollowingModel", "Car following model", "",
                     new String[] { "IDM", "IDM+" }, 1, false, 1));
             modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.56, METER_PER_SECOND_2),

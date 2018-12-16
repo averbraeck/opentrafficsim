@@ -54,8 +54,7 @@ public class OTSSimulator extends DEVSSimulator.TimeDoubleUnit implements OTSSim
     /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OTSModelInterface model, final int replicationNr)
-            throws SimRuntimeException, NamingException
+            final OTSModelInterface model, final int replicationNr) throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         OTSReplication newReplication = OTSReplication.create("rep" + replicationNr, startTime, warmupPeriod, runLength, model);

@@ -81,7 +81,7 @@ public final class Reader
     {
         return createInputStream(fileName, CompressionType.AUTODETECT);
     }
-    
+
     /**
      * Determine the type of compression used in a file.
      * <p>
@@ -120,8 +120,8 @@ public final class Reader
     }
 
     /**
-     * Determine if bytes match the GZip compression signature. Derived from <a
-     * href="http://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped">
+     * Determine if bytes match the GZip compression signature. Derived from
+     * <a href="http://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped">
      * http://stackoverflow.com/questions/4818468/how-to-check-if-inputstream-is-gzipped</a>. <br>
      * Determines if a byte array is compressed. The java.util.zip GZip implementation does not expose the GZip header so it is
      * difficult to determine if a string is compressed.
@@ -147,8 +147,8 @@ public final class Reader
     }
 
     /**
-     * Determine if bytes match a ZIP archive signature. Derived from <a
-     * href="https://en.wikipedia.org/wiki/List_of_file_signatures">https://en.wikipedia.org/wiki/List_of_file_signatures</a>.
+     * Determine if bytes match a ZIP archive signature. Derived from <a href=
+     * "https://en.wikipedia.org/wiki/List_of_file_signatures">https://en.wikipedia.org/wiki/List_of_file_signatures</a>.
      * @param bytes byte[]; at least 4 bytes from the start of the stream to determine compression type.
      * @return boolean; true if bytes indicates the start of a ZIP archive; false otherwise
      */
@@ -158,8 +158,8 @@ public final class Reader
         {
             return false;
         }
-        return 0x03 == bytes[2] && 0x04 == bytes[3] || 0x05 == bytes[2] && 0x06 == bytes[3] || 0x07 == bytes[2]
-                && 0x08 == bytes[3];
+        return 0x03 == bytes[2] && 0x04 == bytes[3] || 0x05 == bytes[2] && 0x06 == bytes[3]
+                || 0x07 == bytes[2] && 0x08 == bytes[3];
     }
 
     /**

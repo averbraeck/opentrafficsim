@@ -28,8 +28,6 @@ import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.graphs.ContourDataSource;
-import org.opentrafficsim.core.graphs.ContourPlotSpeed;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
@@ -37,13 +35,15 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
+import org.opentrafficsim.draw.graphs.ContourDataSource;
+import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
+import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
-import org.opentrafficsim.road.graphs.GraphLaneUtil;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.DistractionColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -73,7 +73,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -254,7 +254,7 @@ public class SdmSimulation extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void addTabs(final OTSSimulatorInterface sim, final AbstractWrappableAnimation animation)
+    protected void addTabs(final OTSSimulatorInterface sim, final AbstractOTSSwingApplication animation)
     {
         if (!getInputParameterBoolean("output") || !getInputParameterBoolean("plots"))
         {

@@ -26,22 +26,22 @@ import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.graphs.AbstractPlot;
-import org.opentrafficsim.core.graphs.ContourDataSource;
-import org.opentrafficsim.core.graphs.ContourPlotAcceleration;
-import org.opentrafficsim.core.graphs.ContourPlotDensity;
-import org.opentrafficsim.core.graphs.ContourPlotFlow;
-import org.opentrafficsim.core.graphs.ContourPlotSpeed;
-import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.draw.graphs.AbstractPlot;
+import org.opentrafficsim.draw.graphs.ContourDataSource;
+import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
+import org.opentrafficsim.draw.graphs.ContourPlotDensity;
+import org.opentrafficsim.draw.graphs.ContourPlotFlow;
+import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
+import org.opentrafficsim.draw.graphs.TrajectoryPlot;
+import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.road.graphs.GraphLaneUtil;
-import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -56,7 +56,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -80,7 +80,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
  * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularLane extends AbstractWrappableAnimation implements UNITS
+public class CircularLane extends AbstractOTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -94,21 +94,21 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
      */
     public CircularLane() throws InputParameterException
     {
-        this.properties.add(new InputParameterInteger("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
-                "Track length %dm", false, 10));
-        this.properties.add(new InputParameterDouble("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
-                "Density %.1f veh/km", false, 11));
-        this.properties.add(new InputParameterDouble("DensityVariability", "Density variability",
+        this.inputParameterMap.add(new InputParameterInteger("TrackLength", "Track length", "Circumference of the track", 2000,
+                500, 6000, "Track length %dm", false, 10));
+        this.inputParameterMap.add(new InputParameterDouble("MeanDensity", "Mean density", "Number of vehicles per km", 40.0,
+                5.0, 45.0, "Density %.1f veh/km", false, 11));
+        this.inputParameterMap.add(new InputParameterDouble("DensityVariability", "Density variability",
                 "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
         List<InputParameter<?>> outputProperties = new ArrayList<>();
         outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true, false, 0));
         outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
         outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
-        outputProperties
-                .add(new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
         outputProperties.add(
-                new InputParameterBoolean("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
+                new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
+        outputProperties.add(new InputParameterBoolean("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram",
+                true, false, 4));
+        this.inputParameterMap.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
     }
 
@@ -190,7 +190,8 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
     protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
     {
         // Make the tab with the plots
-        InputParameter<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findSubPropertyByKey("OutputGraphs");
+        InputParameter<?> output =
+                new CompoundProperty("", "", "", this.properties, false, 0).findSubPropertyByKey("OutputGraphs");
         if (null == output)
         {
             throw new OTSSimulationException("Cannot find output properties");
@@ -346,7 +347,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
         private List<Lane> path = new ArrayList<>();
 
         /**
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user modified properties for the model
+         * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user modified properties for the model
          */
         LaneSimulationModel(final List<InputParameter<?>> properties)
         {

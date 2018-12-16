@@ -43,7 +43,7 @@ public class DrawingInfoLine<D extends Drawable> implements DrawingInfo
 
     /**
      * Create a DrawingInfo object for a line.
- * @param lineColorer Colorer&lt;D&gt;; the line colorer
+     * @param lineColorer Colorer&lt;D&gt;; the line colorer
      * @param lineWidth float; the line width, which could be relative and is open for interpretation by the visualization or
      *            animation class
      */
@@ -57,7 +57,7 @@ public class DrawingInfoLine<D extends Drawable> implements DrawingInfo
     /**
      * The returned color could be dependent on the state of the object representing the line. E.g., it turns red under certain
      * circumstances.
- * @param drawable D; the object that could influence the color of the line
+     * @param drawable D; the object that could influence the color of the line
      * @return the color of the line
      */
     public final Color getLineColor(final D drawable)
@@ -66,7 +66,7 @@ public class DrawingInfoLine<D extends Drawable> implements DrawingInfo
     }
 
     /**
-     * Set the line color using a FixedColorer. 
+     * Set the line color using a FixedColorer.
      * @param lineColor Color; lineColor to set
      */
     public final void setLineColor(final Color lineColor)
@@ -75,8 +75,8 @@ public class DrawingInfoLine<D extends Drawable> implements DrawingInfo
     }
 
     /**
-     * Set the line colorer. 
- * @param lineColorer Colorer&lt;D&gt;; lineColorer to set
+     * Set the line colorer.
+     * @param lineColorer Colorer&lt;D&gt;; lineColorer to set
      */
     public final void setLineColorer(final Colorer<D> lineColorer)
     {

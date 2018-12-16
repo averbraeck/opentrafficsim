@@ -37,7 +37,8 @@ public final class Writer
      * @return OutputStream that accepts data to write and should eventually be closed
      * @throws IOException when the requested file could not be opened for writing, or the compression type is unknown
      */
-    public static OutputStream createOutputStream(final String fileName, final CompressionType compressionType) throws IOException
+    public static OutputStream createOutputStream(final String fileName, final CompressionType compressionType)
+            throws IOException
     {
         if (CompressionType.AUTODETECT.equals(compressionType))
         {

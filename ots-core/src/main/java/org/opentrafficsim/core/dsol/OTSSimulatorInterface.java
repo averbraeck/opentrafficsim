@@ -47,8 +47,8 @@ public interface OTSSimulatorInterface extends DEVSSimulatorInterface.TimeDouble
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when context for the animation cannot be created
      */
-    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OTSModelInterface model,
-            int replicationNr) throws SimRuntimeException, NamingException;
+    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OTSModelInterface model, int replicationNr)
+            throws SimRuntimeException, NamingException;
 
     /**
      * Construct and schedule a SimEvent using a Time to specify the execution time.

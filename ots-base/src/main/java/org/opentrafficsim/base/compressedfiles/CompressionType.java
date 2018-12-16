@@ -15,22 +15,22 @@ public enum CompressionType
 {
     /** Do not compress / uncompress the data. */
     NONE("txt"),
-    
+
     /** Create or read a ZIP archive with one, top-level entry in the TOC. */
     ZIP("zip"),
-    
+
     /** Create or read a gzip-compressed file. */
     GZIP("gz"),
-    
+
     /** Create or read a bzip2-compressed file. */
     BZIP2("bz2"),
-    
+
     /** Auto-detect the compression method (only for readers). */
     AUTODETECT(null);
-    
+
     /** Commonly used file extension for files containing data that is compressed using this method. */
     private final String extension;
-    
+
     /**
      * Construct a CompressionType.
      * @param extension String; commonly used file extension for files containing data that is compressed using this method
@@ -39,7 +39,7 @@ public enum CompressionType
     {
         this.extension = extension;
     }
-    
+
     /**
      * Retrieve the commonly used file extension for files containing data that is compressed using this method.
      * @return String; the commonly used file extension for files containing data that is compressed using this method

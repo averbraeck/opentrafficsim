@@ -82,7 +82,7 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
         paramFactory.addParameter(ParameterTypes.TMAX, Duration.createSI(1.0));
         paramFactory.addParameter(ParameterTypes.T, Duration.createSI(1.0));
         paramFactory.addParameter(GTUType.TRUCK, ParameterTypes.A, Acceleration.createSI(0.8));
-        
+
         Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
         mandatoryIncentives.add(new IncentiveRoute());
         Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
