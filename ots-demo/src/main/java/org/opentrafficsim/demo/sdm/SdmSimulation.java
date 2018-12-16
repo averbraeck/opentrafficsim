@@ -20,30 +20,30 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vfloat.scalar.FloatDuration;
+import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.compressedfiles.CompressionType;
 import org.opentrafficsim.base.compressedfiles.Writer;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.graphs.ContourDataSource;
 import org.opentrafficsim.core.graphs.ContourPlotSpeed;
-import org.opentrafficsim.core.graphs.GraphPath;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
-import org.opentrafficsim.graphs.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
-import org.opentrafficsim.road.animation.AbstractSimulationScript;
+import org.opentrafficsim.road.graphs.GraphLaneUtil;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.DistractionColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -74,9 +74,9 @@ import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
-import org.opentrafficsim.simulationengine.OTSSimulatorInterface;
+import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
-import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
+import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -230,10 +230,10 @@ public class SdmSimulation extends AbstractSimulationScript
             DefaultDistraction dist = DefaultDistraction.values()[Integer.parseInt(distraction) - 1];
             distFactory.addDistraction(dist, getTaskSupplier(dist, sim.getReplication().getStream("default")));
         }
-        new StochasticDistractionModel(getBooleanProperty("allowMultiTasking"), distFactory.build(), sim, this.network);
+        new StochasticDistractionModel(getInputParameterBoolean("allowMultiTasking"), distFactory.build(), sim, this.network);
 
         // sampler
-        if (getBooleanProperty("output"))
+        if (getInputParameterBoolean("output"))
         {
             this.sampler = new RoadSampler(sim);
             Time start = new Time(0.05, TimeUnit.BASE_HOUR);
@@ -256,7 +256,7 @@ public class SdmSimulation extends AbstractSimulationScript
     @Override
     protected void addTabs(final OTSSimulatorInterface sim, final AbstractWrappableAnimation animation)
     {
-        if (!getBooleanProperty("output") || !getBooleanProperty("plots"))
+        if (!getInputParameterBoolean("output") || !getInputParameterBoolean("plots"))
         {
             return;
         }
@@ -347,7 +347,7 @@ public class SdmSimulation extends AbstractSimulationScript
     @Override
     protected void onSimulationEnd()
     {
-        if (getBooleanProperty("output"))
+        if (getInputParameterBoolean("output"))
         {
             Length detectorPosition = Length.createSI(100.0);
             double tts = 0.0;

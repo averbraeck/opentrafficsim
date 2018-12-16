@@ -13,9 +13,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.demo.carFollowing.CircularRoad;
@@ -25,6 +22,9 @@ import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 
 /**
  * <p>
@@ -48,13 +48,13 @@ public class TimeCircularRoadSimulation implements UNITS
         try
         {
             AbstractWrappableAnimation simulation = new CircularRoad();
-            List<Property<?>> activeProperties = new ArrayList<>();
+            List<InputParameter<?>> activeProperties = new ArrayList<>();
             activeProperties.addAll(simulation.getProperties());
-            for (Property<?> ap : activeProperties)
+            for (InputParameter<?> ap : activeProperties)
             {
-                if (ap instanceof SelectionProperty)
+                if (ap instanceof InputParameterSelectionList)
                 {
-                    SelectionProperty sp = (SelectionProperty) ap;
+                    InputParameterSelectionList sp = (InputParameterSelectionList) ap;
                     if ("TacticalPlanner".equals(sp.getKey()))
                     {
                         sp.setValue("DIRECTED/IDM");
@@ -63,7 +63,7 @@ public class TimeCircularRoadSimulation implements UNITS
             }
             if (!GRAPHS)
             {
-                for (Property<?> ap : activeProperties)
+                for (InputParameter<?> ap : activeProperties)
                 {
                     if (ap instanceof CompoundProperty)
                     {
@@ -84,9 +84,9 @@ public class TimeCircularRoadSimulation implements UNITS
                     new Double[] { 0.8, 0.2 }, false, 5));
             CompoundProperty modelSelection =
                     new CompoundProperty("ModelSelection", "Model selection", "Modeling specific settings", null, false, 300);
-            modelSelection.add(new SelectionProperty("SimulationScale", "Simulation scale", "Level of detail of the simulation",
+            modelSelection.add(new InputParameterSelectionList("SimulationScale", "Simulation scale", "Level of detail of the simulation",
                     new String[] { "Micro", "Macro", "Meta" }, 0, true, 0));
-            modelSelection.add(new SelectionProperty("CarFollowingModel", "Car following model", "",
+            modelSelection.add(new InputParameterSelectionList("CarFollowingModel", "Car following model", "",
                     new String[] { "IDM", "IDM+" }, 1, false, 1));
             modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.56, METER_PER_SECOND_2),
                     new Acceleration(2.09, METER_PER_SECOND_2), new Length(3.0, METER), new Duration(1.2, SECOND), 2));
@@ -113,7 +113,7 @@ public class TimeCircularRoadSimulation implements UNITS
             sim.scheduleEventRel(new Duration(59.999, MINUTE), this, this, "stop", new Object[] { System.currentTimeMillis() });
             sim.start();
         }
-        catch (SimRuntimeException | PropertyException | NamingException | OTSSimulationException
+        catch (SimRuntimeException | InputParameterException | NamingException | OTSSimulationException
                 | InterruptedException exception)
         {
             exception.printStackTrace();

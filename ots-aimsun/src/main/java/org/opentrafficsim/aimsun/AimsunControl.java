@@ -25,7 +25,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions;
 import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.opentrafficsim.base.modelproperties.InputParameterException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -231,11 +231,11 @@ public class AimsunControl extends AbstractWrappableAnimation
                         try
                         {
                             SimpleAnimator animator = buildAnimator(Time.ZERO, warmupDuration, runDuration,
-                                    new ArrayList<Property<?>>(), null, true);
+                                    new ArrayList<InputParameter<?>>(), null, true);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
                             animator.setSpeedFactor(1000.0, true);
                         }
-                        catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception1)
+                        catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception1)
                         {
                             exception1.printStackTrace();
                             // Stop the simulation

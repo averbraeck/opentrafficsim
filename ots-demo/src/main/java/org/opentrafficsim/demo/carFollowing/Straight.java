@@ -23,12 +23,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.BooleanProperty;
+import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -41,7 +38,6 @@ import org.opentrafficsim.core.graphs.ContourPlotAcceleration;
 import org.opentrafficsim.core.graphs.ContourPlotDensity;
 import org.opentrafficsim.core.graphs.ContourPlotFlow;
 import org.opentrafficsim.core.graphs.ContourPlotSpeed;
-import org.opentrafficsim.core.graphs.GraphPath;
 import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -49,10 +45,9 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.graphs.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
+import org.opentrafficsim.road.graphs.GraphLaneUtil;
+import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -71,8 +66,13 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.HTMLPanel;
@@ -98,18 +98,18 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
 
     /**
      * Create a ContourPlots simulation.
-     * @throws PropertyException when the provided properties could not be handled
+     * @throws InputParameterException when the provided properties could not be handled
      */
-    public Straight() throws PropertyException
+    public Straight() throws InputParameterException
     {
-        List<Property<?>> outputProperties = new ArrayList<>();
-        outputProperties.add(new BooleanProperty("DensityPlot", "Density", "Density contour plot", true, false, 0));
-        outputProperties.add(new BooleanProperty("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
-        outputProperties.add(new BooleanProperty("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
+        List<InputParameter<?>> outputProperties = new ArrayList<>();
+        outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true, false, 0));
+        outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
+        outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
         outputProperties
-                .add(new BooleanProperty("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
+                .add(new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
         outputProperties.add(
-                new BooleanProperty("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
+                new InputParameterBoolean("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
         this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
     }
@@ -138,18 +138,18 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                 try
                 {
                     Straight straight = new Straight();
-                    List<Property<?>> localProperties = straight.getProperties();
+                    List<InputParameter<?>> localProperties = straight.getProperties();
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                                 "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                                 new Double[] { 0.8, 0.2 }, false, 10));
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
-                    localProperties.add(new SelectionProperty("CarFollowingModel", "Car following model",
+                    localProperties.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                             "<html>The car following model determines "
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
@@ -165,7 +165,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                     straight.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), localProperties, null, true);
                     straight.panel.getTabbedPane().addTab("info", straight.makeInfoPane());
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -213,24 +213,24 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
     {
 
         // Make the tab with the plots
-        Property<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
+        InputParameter<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
         }
-        ArrayList<BooleanProperty> graphs = new ArrayList<>();
+        ArrayList<InputParameterBoolean> graphs = new ArrayList<>();
         if (output instanceof CompoundProperty)
         {
             CompoundProperty outputProperties = (CompoundProperty) output;
-            for (Property<?> ap : outputProperties.getValue())
+            for (InputParameter<?> ap : outputProperties.getValue())
             {
-                if (ap instanceof BooleanProperty)
+                if (ap instanceof InputParameterBoolean)
                 {
-                    BooleanProperty bp = (BooleanProperty) ap;
+                    InputParameterBoolean bp = (InputParameterBoolean) ap;
                     if (bp.getValue())
                     {
                         graphs.add(bp);
@@ -381,7 +381,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
 
         /** User settable properties. */
         @SuppressWarnings("hiding")
-        private List<Property<?>> properties = null;
+        private List<InputParameter<?>> properties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -389,7 +389,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
         /**
          * @param properties List&lt;Property&lt;?&gt;&gt;; the user settable properties
          */
-        StraightModel(final List<Property<?>> properties)
+        StraightModel(final List<InputParameter<?>> properties)
         {
             this.properties = properties;
         }
@@ -431,24 +431,24 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                 new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
                 String carFollowingModelName = null;
                 CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-                Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
                     throw new Error("Cannot find \"Car following model\" property");
                 }
-                if (cfmp instanceof SelectionProperty)
+                if (cfmp instanceof InputParameterSelectionList)
                 {
-                    carFollowingModelName = ((SelectionProperty) cfmp).getValue();
+                    carFollowingModelName = ((InputParameterSelectionList) cfmp).getValue();
                 }
                 else
                 {
                     throw new Error("\"Car following model\" property has wrong type");
                 }
-                for (Property<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
                 {
-                    if (ap instanceof SelectionProperty)
+                    if (ap instanceof InputParameterSelectionList)
                     {
-                        SelectionProperty sp = (SelectionProperty) ap;
+                        InputParameterSelectionList sp = (InputParameterSelectionList) ap;
                         if ("CarFollowingModel".equals(sp.getKey()))
                         {
                             carFollowingModelName = sp.getValue();
@@ -520,7 +520,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                 this.simulator.scheduleEventAbs(new Time(420, TimeUnit.BASE_SECOND), this, this, "removeBlock", null);
             }
             catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException
-                    | PropertyException exception)
+                    | InputParameterException exception)
             {
                 exception.printStackTrace();
             }
@@ -542,7 +542,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(new IDMOld(), this.block), this.block);
                 this.block.setParameters(parameters);
-                this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
+                this.block.init(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
                         Straight.this.getColorer());
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
@@ -586,7 +586,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
                 gtu.setParameters(parameters);
-                gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
+                gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                         Straight.this.getColorer());
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }

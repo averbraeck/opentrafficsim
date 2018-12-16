@@ -7,7 +7,7 @@
     <version>1.01.00-SNAPSHOT</version>
     <relativePath>../ots/pom.xml</relativePath>
   </parent>
-  
+
   <artifactId>ots-demo</artifactId>
   <name>Open Traffic Sim demo classes</name>
   <description>Demo classes for the Open Traffic Sim project</description>
@@ -30,11 +30,11 @@
       <artifactId>ots-parser-osm</artifactId>
     </dependency>
     <dependency>
-      <groupId>dsol</groupId>
+      <groupId>opentrafficsim</groupId>
       <artifactId>ots-swing</artifactId>
     </dependency>
     <dependency>
-      <groupId>dsol</groupId>
+      <groupId>opentrafficsim</groupId>
       <artifactId>ots-web</artifactId>
     </dependency>
     <dependency>

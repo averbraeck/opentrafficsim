@@ -17,10 +17,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -28,7 +26,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.graphs.AbstractPlot;
-import org.opentrafficsim.core.graphs.GraphPath;
 import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -36,10 +33,9 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.graphs.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
+import org.opentrafficsim.road.graphs.GraphLaneUtil;
+import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -57,8 +53,12 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -86,7 +86,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
     {
         try
         {
-            this.properties.add(new SelectionProperty("CarFollowingModel", "Car following model",
+            this.properties.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                     "<html>The car following model determines "
                             + "the acceleration that a vehicle will make taking into account nearby vehicles, "
                             + "infrastructural restrictions (e.g. speed limit, curvature of the road) "
@@ -96,7 +96,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
                     "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                     new Double[] { 0.8, 0.2 }, false, 9));
         }
-        catch (PropertyException exception)
+        catch (InputParameterException exception)
         {
             exception.printStackTrace();
         }
@@ -129,7 +129,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
                     trajectories.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND),
                             trajectories.getProperties(), null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -258,7 +258,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
 
         /** User settable properties. */
         @SuppressWarnings("hiding")
-        private List<Property<?>> properties = null;
+        private List<InputParameter<?>> properties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -266,7 +266,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
         /**
          * @param properties List&lt;Property&lt;?&gt;&gt;; the properties
          */
-        TrajectoriesModel(final List<Property<?>> properties)
+        TrajectoriesModel(final List<InputParameter<?>> properties)
         {
             this.properties = properties;
         }
@@ -297,11 +297,11 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
                 exception1.printStackTrace();
             }
 
-            for (Property<?> p : this.properties)
+            for (InputParameter<?> p : this.properties)
             {
-                if (p instanceof SelectionProperty)
+                if (p instanceof InputParameterSelectionList)
                 {
-                    SelectionProperty sp = (SelectionProperty) p;
+                    InputParameterSelectionList<String> sp = (InputParameterSelectionList<String>) p;
                     if ("CarFollowingModel".equals(sp.getKey()))
                     {
                         String modelName = sp.getValue();
@@ -330,7 +330,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
                     }
                     else
                     {
-                        throw new Error("Unhandled SelectionProperty " + p.getKey());
+                        throw new Error("Unhandled InputParameterSelectionList " + p.getKey());
                     }
                 }
                 else if (p instanceof ProbabilityDistributionProperty)
@@ -390,7 +390,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars, this.block), this.block);
             this.block.setParameters(parameters);
-            this.block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
+            this.block.init(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class,
                     Trajectories.this.getColorer());
         }
 
@@ -429,7 +429,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
                 gtu.setParameters(parameters);
-                gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
+                gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                         Trajectories.this.getColorer());
                 // Re-schedule this method after headway seconds
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

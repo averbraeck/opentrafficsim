@@ -45,25 +45,25 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.BooleanProperty;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.ContinuousProperty;
-import org.opentrafficsim.base.modelproperties.IntegerProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.base.modelproperties.StringProperty;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
-import org.opentrafficsim.gui.LabeledPanel;
-import org.opentrafficsim.gui.ProbabilityDistributionEditor;
-import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
+import org.opentrafficsim.swing.gui.LabeledPanel;
+import org.opentrafficsim.swing.gui.ProbabilityDistributionEditor;
+import org.opentrafficsim.swing.gui.SimulatorFrame;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterInteger;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 
 /**
  * Several demos in one application.
@@ -86,7 +86,7 @@ public class SuperDemo implements UNITS
 
     /** Properties of the currently selected demonstration. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected List<Property<?>> activeProperties = null;
+    protected List<InputParameter<?>> activeProperties = null;
 
     /** Panel with the description of the currently selected demonstration. */
     private LabeledPanel descriptionPanel;
@@ -115,7 +115,7 @@ public class SuperDemo implements UNITS
                     frame.setSize(d.width / 2, d.height - taskHeight);
                     frame.setLocation(0, 0);
                 }
-                catch (PropertyException exception)
+                catch (InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -126,9 +126,9 @@ public class SuperDemo implements UNITS
     /**
      * Build the GUI.
      * @return JPanel; the JPanel that holds the application
-     * @throws PropertyException when one of the demonstrations has a user modified property with the empty string as key
+     * @throws InputParameterException when one of the demonstrations has a user modified property with the empty string as key
      */
-    public final JPanel buildGUI() throws PropertyException
+    public final JPanel buildGUI() throws InputParameterException
     {
         final JPanel mainPanel = new JPanel(new BorderLayout());
         // Ensure that the window does not shrink into (almost) nothingness when un-maximized
@@ -164,7 +164,7 @@ public class SuperDemo implements UNITS
         final JPanel centerPanel = new JPanel(new BorderLayout());
         this.propertyPanel = new JPanel();
         this.propertyPanel.setLayout(new BoxLayout(this.propertyPanel, BoxLayout.Y_AXIS));
-        rebuildPropertyPanel(new ArrayList<Property<?>>());
+        rebuildPropertyPanel(new ArrayList<InputParameter<?>>());
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         this.descriptionPanel = new LabeledPanel("Description");
         this.descriptionPanel.setLayout(new BorderLayout());
@@ -230,7 +230,7 @@ public class SuperDemo implements UNITS
                             SuperDemo.this.activeProperties, null, false);
                 }
                 catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException
-                        | PropertyException exception)
+                        | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -258,7 +258,7 @@ public class SuperDemo implements UNITS
      * Regenerate the contents of the propertyPanel.
      * @param properties List&lt;Property&lt;?&gt;&gt;; the demo-specific properties to display
      */
-    final void rebuildPropertyPanel(final List<Property<?>> properties)
+    final void rebuildPropertyPanel(final List<InputParameter<?>> properties)
     {
         this.propertyPanel.removeAll();
         try
@@ -269,7 +269,7 @@ public class SuperDemo implements UNITS
              * This is ugly, but it gets the job done... Insert a dummy property at the top and later replace the property
              * editor for the dummy property by the simulationSelection JPanel.
              */
-            BooleanProperty dummy = new BooleanProperty("Dummy", "Dummy", "Dummy", false, false, 0);
+            InputParameterBoolean dummy = new InputParameterBoolean("Dummy", "Dummy", "Dummy", false, false, 0);
             simulationSettings.add(dummy);
             if (properties.size() > 0)
             {
@@ -277,7 +277,7 @@ public class SuperDemo implements UNITS
                 {
                     boolean movedAny = false;
                     // Move the properties that has display priority < 100 into the simulationSettings group.
-                    for (Property<?> ap : properties)
+                    for (InputParameter<?> ap : properties)
                     {
                         if (ap.getDisplayPriority() < 100)
                         {
@@ -298,9 +298,9 @@ public class SuperDemo implements UNITS
                         new Double[] { 0.8, 0.2 }, false, 5));
                 CompoundProperty modelSelection = new CompoundProperty("ModelSelection", "Model selection",
                         "Modeling specific settings", null, false, 300);
-                modelSelection.add(new SelectionProperty("SimulationScale", "Simulation scale",
+                modelSelection.add(new InputParameterSelectionList("SimulationScale", "Simulation scale",
                         "Level of detail of the simulation", new String[] { "Micro", "Macro", "Meta" }, 0, true, 0));
-                modelSelection.add(new SelectionProperty("CarFollowingModel", "Car following model",
+                modelSelection.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                         "<html>The car following model determines "
                                 + "the acceleration that a vehicle will make taking into account "
                                 + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
@@ -317,7 +317,7 @@ public class SuperDemo implements UNITS
             }
             properties.add(0, simulationSettings);
             boolean fixedDummy = false;
-            for (Property<?> p : new CompoundProperty("", "", "", properties, false, 0).displayOrderedValue())
+            for (InputParameter<?> p : new CompoundProperty("", "", "", properties, false, 0).displayOrderedValue())
             {
                 JPanel propertySubPanel = makePropertyEditor(p);
                 if (!fixedDummy)
@@ -333,7 +333,7 @@ public class SuperDemo implements UNITS
             simulationSettings.remove(dummy);
             SuperDemo.this.activeProperties = properties;
         }
-        catch (PropertyException exception)
+        catch (InputParameterException exception)
         {
             exception.printStackTrace();
         }
@@ -345,14 +345,14 @@ public class SuperDemo implements UNITS
      * @return JPanel
      */
     @SuppressWarnings("checkstyle:methodlength")
-    final JPanel makePropertyEditor(final Property<?> ap)
+    final JPanel makePropertyEditor(final InputParameter<?> ap)
     {
         JPanel result;
-        if (ap instanceof SelectionProperty)
+        if (ap instanceof InputParameterSelectionList)
         {
             result = new JPanel();
             result.setLayout(new BorderLayout());
-            final SelectionProperty sp = (SelectionProperty) ap;
+            final InputParameterSelectionList sp = (InputParameterSelectionList) ap;
             final JComboBox<String> comboBox = new JComboBox<String>(sp.getOptionNames());
             comboBox.setSelectedItem(sp.getValue());
             comboBox.setToolTipText(sp.getDescription());
@@ -368,7 +368,7 @@ public class SuperDemo implements UNITS
                         {
                             sp.setValue(itemText);
                         }
-                        catch (PropertyException exception)
+                        catch (InputParameterException exception)
                         {
                             exception.printStackTrace();
                         }
@@ -411,7 +411,7 @@ public class SuperDemo implements UNITS
                     {
                         pdp.setValue(pdpe.getProbabilities());
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -422,9 +422,9 @@ public class SuperDemo implements UNITS
             result.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC").getPreferredSize().getHeight()));
             result.setToolTipText(pdp.getDescription());
         }
-        else if (ap instanceof IntegerProperty)
+        else if (ap instanceof InputParameterInteger)
         {
-            final IntegerProperty ip = (IntegerProperty) ap;
+            final InputParameterInteger ip = (InputParameterInteger) ap;
             result = new LabeledPanel(ap.getShortName());
             result.setLayout(new BorderLayout());
             final JSlider slider = new JSlider();
@@ -449,7 +449,7 @@ public class SuperDemo implements UNITS
                     {
                         ip.setValue(value);
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -460,9 +460,9 @@ public class SuperDemo implements UNITS
             result.add(currentValue, BorderLayout.SOUTH);
             result.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) slider.getPreferredSize().getHeight()));
         }
-        else if (ap instanceof ContinuousProperty)
+        else if (ap instanceof InputParameterDouble)
         {
-            final ContinuousProperty cp = (ContinuousProperty) ap;
+            final InputParameterDouble cp = (InputParameterDouble) ap;
             result = new LabeledPanel(ap.getShortName());
             result.setLayout(new BorderLayout());
             final JSlider slider = new JSlider();
@@ -489,7 +489,7 @@ public class SuperDemo implements UNITS
                     {
                         cp.setValue(value);
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -500,9 +500,9 @@ public class SuperDemo implements UNITS
             result.add(currentValue, BorderLayout.SOUTH);
             result.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) slider.getPreferredSize().getHeight() * 4));
         }
-        else if (ap instanceof BooleanProperty)
+        else if (ap instanceof InputParameterBoolean)
         {
-            final BooleanProperty bp = (BooleanProperty) ap;
+            final InputParameterBoolean bp = (InputParameterBoolean) ap;
             result = new JPanel(new BorderLayout());
             final JCheckBox checkBox = new JCheckBox(bp.getShortName(), bp.getValue());
             checkBox.setToolTipText(bp.getDescription());
@@ -516,7 +516,7 @@ public class SuperDemo implements UNITS
                     {
                         bp.setValue(checkBox.isSelected());
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -532,7 +532,7 @@ public class SuperDemo implements UNITS
             CompoundProperty cp = (CompoundProperty) ap;
             result = new LabeledPanel(ap.getShortName());
             result.setLayout(new BoxLayout(result, BoxLayout.Y_AXIS));
-            for (Property<?> subProperty : cp.displayOrderedValue())
+            for (InputParameter<?> subProperty : cp.displayOrderedValue())
             {
                 result.add(makePropertyEditor(subProperty));
             }
@@ -554,7 +554,7 @@ public class SuperDemo implements UNITS
                     {
                         sp.setValue(textField.getText());
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -567,7 +567,7 @@ public class SuperDemo implements UNITS
                     {
                         sp.setValue(textField.getText());
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -580,7 +580,7 @@ public class SuperDemo implements UNITS
                     {
                         sp.setValue(textField.getText());
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }

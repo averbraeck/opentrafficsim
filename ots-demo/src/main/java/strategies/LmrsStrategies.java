@@ -34,11 +34,15 @@ import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.CompressedFileWriter;
-import org.opentrafficsim.base.modelproperties.Property;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -50,11 +54,6 @@ import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
-import org.opentrafficsim.core.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.colorer.IDGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -76,8 +75,7 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeLength;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeNumber;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
-import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.colorer.DesireBased;
+import org.opentrafficsim.road.gtu.animation.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.DesiredSpeedColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -87,7 +85,6 @@ import org.opentrafficsim.road.gtu.colorer.SocialPressureColorer;
 import org.opentrafficsim.road.gtu.colorer.SynchronizationColorer;
 import org.opentrafficsim.road.gtu.colorer.TotalDesireColorer;
 import org.opentrafficsim.road.gtu.generator.GTUGenerator;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
@@ -108,6 +105,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNe
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
+import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -136,7 +134,6 @@ import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
-import org.opentrafficsim.road.network.animation.StripeAnimation.TYPE;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -155,8 +152,10 @@ import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -404,7 +403,7 @@ public class LmrsStrategies implements EventListenerInterface
             {
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
                 DEVSSimulatorInterface.TimeDoubleUnit sim = lmrsStrategiesSimulation.buildSimulator(Time.ZERO, Duration.ZERO,
-                        Duration.createSI(SIMTIME.si + 1e-9), new ArrayList<Property<?>>());
+                        Duration.createSI(SIMTIME.si + 1e-9), new ArrayList<InputParameter<?>>());
                 double tReport = 60.0;
                 Time t = sim.getSimulatorTime();
                 while (t.le(SIMTIME))
@@ -431,7 +430,7 @@ public class LmrsStrategies implements EventListenerInterface
             try
             {
                 lmrsStrategiesAnimation.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si),
-                        new ArrayList<Property<?>>(), null, true);
+                        new ArrayList<InputParameter<?>>(), null, true);
             }
             catch (Exception exception)
             {

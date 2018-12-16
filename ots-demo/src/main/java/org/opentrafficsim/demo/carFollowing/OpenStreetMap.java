@@ -19,9 +19,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -29,7 +26,6 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.animation.AnimationToggles;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.road.network.factory.osm.OSMLink;
 import org.opentrafficsim.road.network.factory.osm.OSMNetwork;
@@ -44,8 +40,12 @@ import org.opentrafficsim.road.network.factory.osm.input.ReadOSMFile;
 import org.opentrafficsim.road.network.factory.osm.output.Convert;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -101,18 +101,18 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
                 try
                 {
                     OpenStreetMap osm = new OpenStreetMap();
-                    List<Property<?>> localProperties = osm.getProperties();
+                    List<InputParameter<?>> localProperties = osm.getProperties();
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                                 "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                                 new Double[] { 0.8, 0.2 }, false, 10));
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
-                    localProperties.add(new SelectionProperty("CarFollowingModel", "Car following model",
+                    localProperties.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                             "<html>The car following model determines "
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
@@ -318,7 +318,7 @@ class OSMModel implements OTSModelInterface
      * @param pL ProgressListener; the receiver of progress events
      * @param converter Convert; the output converter
      */
-    OSMModel(final List<Property<?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
+    OSMModel(final List<InputParameter<?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
             final ProgressListener pL, final Convert converter)
     {
         this.osmNetwork = osmNetwork;

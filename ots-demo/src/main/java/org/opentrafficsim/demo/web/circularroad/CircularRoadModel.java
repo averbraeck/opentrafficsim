@@ -17,12 +17,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.ContinuousProperty;
-import org.opentrafficsim.base.modelproperties.IntegerProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -30,13 +26,11 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.colorer.DefaultSwitchableGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
@@ -60,6 +54,11 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterInteger;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -104,7 +103,7 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
     private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
     /** User settable properties. */
-    private List<Property<?>> props = null;
+    private List<InputParameter<?>> props = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
     private List<List<Lane>> paths = new ArrayList<>();
@@ -127,7 +126,7 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
     /**
      * @param properties List&lt;Property&lt;?&gt;&gt;; the properties
      */
-    CircularRoadModel(final List<Property<?>> properties)
+    CircularRoadModel(final List<InputParameter<?>> properties)
     {
         this.props = properties;
     }
@@ -160,14 +159,14 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
             // Get car-following model name
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.props, false, 0);
-            Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+            InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new Error("Cannot find \"Car following model\" property");
             }
-            if (cfmp instanceof SelectionProperty)
+            if (cfmp instanceof InputParameterSelectionList)
             {
-                carFollowingModelName = ((SelectionProperty) cfmp).getValue();
+                carFollowingModelName = ((InputParameterSelectionList) cfmp).getValue();
             }
             else
             {
@@ -175,7 +174,7 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
             }
 
             // Get car-following model parameter
-            for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
+            for (InputParameter<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
             {
                 if (ap instanceof CompoundProperty)
                 {
@@ -223,9 +222,9 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
             {
                 throw new Error("Cannot find \"Lane changing\" property");
             }
-            if (cfmp instanceof SelectionProperty)
+            if (cfmp instanceof InputParameterSelectionList)
             {
-                String laneChangeModelName = ((SelectionProperty) cfmp).getValue();
+                String laneChangeModelName = ((InputParameterSelectionList) cfmp).getValue();
                 if ("Egoistic".equals(laneChangeModelName))
                 {
                     this.laneChangeModel = new Egoistic();
@@ -245,11 +244,11 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
             }
 
             // Get remaining properties
-            for (Property<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
+            for (InputParameter<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
             {
-                if (ap instanceof SelectionProperty)
+                if (ap instanceof InputParameterSelectionList)
                 {
-                    SelectionProperty sp = (SelectionProperty) ap;
+                    InputParameterSelectionList sp = (InputParameterSelectionList) ap;
                     if ("TacticalPlanner".equals(sp.getKey()))
                     {
                         String tacticalPlannerName = sp.getValue();
@@ -300,17 +299,17 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
                         this.carProbability = pdp.getValue()[0];
                     }
                 }
-                else if (ap instanceof IntegerProperty)
+                else if (ap instanceof InputParameterInteger)
                 {
-                    IntegerProperty ip = (IntegerProperty) ap;
+                    InputParameterInteger ip = (InputParameterInteger) ap;
                     if ("TrackLength".equals(ip.getKey()))
                     {
                         radius = ip.getValue() / 2 / Math.PI;
                     }
                 }
-                else if (ap instanceof ContinuousProperty)
+                else if (ap instanceof InputParameterDouble)
                 {
-                    ContinuousProperty cp = (ContinuousProperty) ap;
+                    InputParameterDouble cp = (InputParameterDouble) ap;
                     if (cp.getKey().equals("MeanDensity"))
                     {
                         headway = 1000 / cp.getValue();
@@ -375,7 +374,7 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
             }
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
-                | PropertyException exception)
+                | InputParameterException exception)
         {
             exception.printStackTrace();
         }
@@ -422,7 +421,7 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
-        gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
+        gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                 getColorer());
     }
 

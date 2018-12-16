@@ -5,6 +5,7 @@ import static org.opentrafficsim.core.gtu.GTUType.CAR;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,9 +28,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -44,14 +42,14 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.PropertiesParser;
-import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
+import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -61,8 +59,12 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLig
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.HTMLPanel;
@@ -99,17 +101,17 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
 
     /**
      * Create a CrossingTrafficLights simulation.
-     * @throws PropertyException when a property is not handled
+     * @throws InputParameterException when a property is not handled
      */
-    public CrossingTrafficLights() throws PropertyException
+    public CrossingTrafficLights() throws InputParameterException
     {
-        this.properties.add(new SelectionProperty("LaneChanging", "Lane changing",
+        this.properties.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
                 "<html>The lane change strategies vary in politeness.<br>"
                         + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
                         + "<li>Altruistic (assigns effect on new and current follower the same weight as "
                         + "the personal gain).</html>",
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
-        this.properties.add(new SelectionProperty("TacticalPlanner", "Tactical planner",
+        this.properties.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
                 new String[] { "IDM", "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 0, false, 600));
     }
@@ -138,18 +140,18 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                 try
                 {
                     CrossingTrafficLights crossingTrafficLights = new CrossingTrafficLights();
-                    List<Property<?>> localProperties = crossingTrafficLights.getProperties();
+                    List<InputParameter<?>> localProperties = crossingTrafficLights.getProperties();
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                                 "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                                 new Double[] { 0.8, 0.2 }, false, 10));
                     }
-                    catch (PropertyException exception)
+                    catch (InputParameterException exception)
                     {
                         exception.printStackTrace();
                     }
-                    localProperties.add(new SelectionProperty("CarFollowingModel", "Car following model",
+                    localProperties.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                             "<html>The car following model determines "
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
@@ -168,7 +170,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
 
                     crossingTrafficLights.panel.getTabbedPane().addTab("info", crossingTrafficLights.makeInfoPane());
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -282,7 +284,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
         private LaneChangeModel laneChangeModel;
 
         /** User settable properties. */
-        private List<Property<?>> properties = null;
+        private List<InputParameter<?>> properties = null;
 
         /** the tactical planner factory for this model. */
         private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory;
@@ -293,7 +295,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
         /**
          * @param properties List&lt;Property&lt;?&gt;&gt;; the user settable properties
          */
-        CrossingTrafficLightstModel(final List<Property<?>> properties)
+        CrossingTrafficLightstModel(final List<InputParameter<?>> properties)
         {
             this.properties = properties;
         }
@@ -347,6 +349,16 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                                 SimpleTrafficLight tl = new SimpleTrafficLight(lane.getId() + "_TL", lane,
                                         new Length(lane.getLength().minus(new Length(10.0, LengthUnit.METER))), this.simulator);
                                 trafficLights.put(lane, tl);
+
+                                try
+                                {
+                                    new TrafficLightAnimation(tl, simulator);
+                                }
+                                catch (RemoteException | NamingException exception)
+                                {
+                                    throw new NetworkException(exception);
+                                }
+                                
                                 if (i == 0 || i == 2)
                                 {
                                     this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL", new Object[] { tl });
@@ -373,7 +385,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                 this.strategicalPlannerFactory = PropertiesParser.parseStrategicalPlannerFactory(this.properties,
                         this.carFollowingModel, this.laneChangeModel, this.stream);
             }
-            catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | PropertyException
+            catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException | InputParameterException
                     | GTUException exception)
             {
                 exception.printStackTrace();
@@ -422,7 +434,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
                         this.network);
                 Route route = null;
                 LaneBasedStrategicalPlanner strategicalPlanner = this.strategicalPlannerFactory.create(gtu, route, null, null);
-                gtu.initWithAnimation(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
+                gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
                         CrossingTrafficLights.this.getColorer());
                 this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar",
                         new Object[] { lane });

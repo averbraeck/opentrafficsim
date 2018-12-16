@@ -26,9 +26,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -38,17 +38,16 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.demo.carFollowing.DefaultsFactory;
-import org.opentrafficsim.road.animation.AnimationToggles;
-import org.opentrafficsim.road.gtu.colorer.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
@@ -59,10 +58,13 @@ import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -106,9 +108,9 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
                     DemoTrafcodAndTurbo model = new DemoTrafcodAndTurbo();
                     // 1 hour simulation run for testing
                     model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<Property<?>>(), null, true);
+                            new ArrayList<InputParameter<?>>(), null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -138,7 +140,7 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
     {
         JScrollPane scrollPane = new JScrollPane(DemoTrafcodAndTurbo.this.controllerDisplayPanel);
         JPanel wrapper = new JPanel(new BorderLayout());
@@ -223,9 +225,20 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
                         {
                             if (stream != 7)
                             {
+                                TrafficLight tl = 
                                 trafficLights.add(new SimpleTrafficLight(String.format("TL%02d", stream), lane,
                                         lane.getLength().minus(stopLineMargin),
                                         (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator));
+
+                                try
+                                {
+                                    new TrafficLightAnimation(tl, simulator);
+                                }
+                                catch (RemoteException | NamingException exception)
+                                {
+                                    throw new NetworkException(exception);
+                                }
+                                
                                 sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                         lane.getLength().minus(headDetectorMargin), lane,
                                         lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
@@ -241,9 +254,20 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
                             {
                                 lane = (Lane) ((CrossSectionLink) this.network.getLink("ESS1", "ESS"))
                                         .getCrossSectionElement("FORWARD");
-                                trafficLights.add(new SimpleTrafficLight(String.format("TL%02d", stream), lane,
+                                TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream), lane,
                                         lane.getLength().minus(stopLineMargin),
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator));
+                                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+                                trafficLights.add(tl);
+
+                                try
+                                {
+                                    new TrafficLightAnimation(tl, simulator);
+                                }
+                                catch (RemoteException | NamingException exception)
+                                {
+                                    throw new NetworkException(exception);
+                                }
+                                
                                 sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                         lane.getLength().minus(headDetectorMargin), lane,
                                         lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
@@ -380,7 +404,7 @@ public class DemoTrafcodAndTurbo extends AbstractWrappableAnimation
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(carFollowingModelCars, block), block);
             block.setParameters(parameters);
-            block.initWithAnimation(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class, gtuColorer);
+            block.init(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class, gtuColorer);
             return lane;
         }
 

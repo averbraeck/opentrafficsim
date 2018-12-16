@@ -6,9 +6,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
-import org.opentrafficsim.base.modelproperties.SelectionProperty;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
@@ -28,6 +25,9 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -55,22 +55,22 @@ public final class PropertiesParser
      * @param properties List&lt;Property&lt;?&gt;&gt;; the properties to parse
      * @param gtuType String; the type of GTU, e.g. "Car" or "Truck"
      * @return GTUFollowingModelOld; the car following model
-     * @throws PropertyException in case parsing fails
+     * @throws InputParameterException in case parsing fails
      */
-    public static GTUFollowingModelOld parseGTUFollowingModelOld(final List<Property<?>> properties, final String gtuType)
-            throws PropertyException
+    public static GTUFollowingModelOld parseGTUFollowingModelOld(final List<InputParameter<?>> properties, final String gtuType)
+            throws InputParameterException
     {
         // Get car-following model name
         String carFollowingModelName = null;
         CompoundProperty propertyContainer = new CompoundProperty("", "", "", properties, false, 0);
-        Property<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+        InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
         if (null == cfmp)
         {
-            throw new PropertyException("Cannot find \"Car following model\" property");
+            throw new InputParameterException("Cannot find \"Car following model\" property");
         }
-        if (cfmp instanceof SelectionProperty)
+        if (cfmp instanceof InputParameterSelectionList)
         {
-            carFollowingModelName = ((SelectionProperty) cfmp).getValue();
+            carFollowingModelName = ((InputParameterSelectionList) cfmp).getValue();
         }
         else
         {
@@ -78,7 +78,7 @@ public final class PropertiesParser
         }
 
         // Get car-following model parameter
-        for (Property<?> ap : new CompoundProperty("", "", "", properties, false, 0))
+        for (InputParameter<?> ap : new CompoundProperty("", "", "", properties, false, 0))
         {
             if (ap instanceof CompoundProperty)
             {
@@ -100,7 +100,7 @@ public final class PropertiesParser
                     }
                     else
                     {
-                        throw new PropertyException("Unknown gtu following model: " + carFollowingModelName);
+                        throw new InputParameterException("Unknown gtu following model: " + carFollowingModelName);
                     }
                     if (ap.getKey().contains(gtuType))
                     {
@@ -109,26 +109,26 @@ public final class PropertiesParser
                 }
             }
         }
-        throw new PropertyException("Cannot determine GTU following model for GTU type " + gtuType);
+        throw new InputParameterException("Cannot determine GTU following model for GTU type " + gtuType);
     }
 
     /**
      * Get the lane change model from the properties.
      * @param properties List&lt;Property&lt;?&gt;&gt;; the properties to parse
      * @return LaneChangeModel; the lane change model
-     * @throws PropertyException in case parsing fails
+     * @throws InputParameterException in case parsing fails
      */
-    public static LaneChangeModel parseLaneChangeModel(final List<Property<?>> properties) throws PropertyException
+    public static LaneChangeModel parseLaneChangeModel(final List<InputParameter<?>> properties) throws InputParameterException
     {
         CompoundProperty propertyContainer = new CompoundProperty("", "", "", properties, false, 0);
-        Property<?> cfmp = propertyContainer.findByKey("LaneChanging");
+        InputParameter<?> cfmp = propertyContainer.findByKey("LaneChanging");
         if (null == cfmp)
         {
-            throw new PropertyException("Cannot find \"Lane changing\" property");
+            throw new InputParameterException("Cannot find \"Lane changing\" property");
         }
-        if (cfmp instanceof SelectionProperty)
+        if (cfmp instanceof InputParameterSelectionList)
         {
-            String laneChangeModelName = ((SelectionProperty) cfmp).getValue();
+            String laneChangeModelName = ((InputParameterSelectionList) cfmp).getValue();
             if ("Egoistic".equals(laneChangeModelName))
             {
                 return new Egoistic();
@@ -137,9 +137,9 @@ public final class PropertiesParser
             {
                 return new Altruistic();
             }
-            throw new PropertyException("Lane changing " + laneChangeModelName + " not implemented");
+            throw new InputParameterException("Lane changing " + laneChangeModelName + " not implemented");
         }
-        throw new PropertyException("\"Lane changing\" property has wrong type");
+        throw new InputParameterException("\"Lane changing\" property has wrong type");
     }
 
     /**
@@ -149,18 +149,18 @@ public final class PropertiesParser
      * @param laneChangeModel LaneChangeModel; the lane change model in case it is needed
      * @param stream StreamInterface; random stream
      * @return LaneBasedStrategicalPlannerFactory; the tactical planner factory
-     * @throws PropertyException in case parsing fails
+     * @throws InputParameterException in case parsing fails
      * @throws GTUException in case LMRS Factory cannot be created
      */
     public static LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> parseStrategicalPlannerFactory(
-            final List<Property<?>> properties, final GTUFollowingModelOld gtuFollowingModel,
-            final LaneChangeModel laneChangeModel, final StreamInterface stream) throws PropertyException, GTUException
+            final List<InputParameter<?>> properties, final GTUFollowingModelOld gtuFollowingModel,
+            final LaneChangeModel laneChangeModel, final StreamInterface stream) throws InputParameterException, GTUException
     {
-        for (Property<?> ap : new CompoundProperty("", "", "", properties, false, 0))
+        for (InputParameter<?> ap : new CompoundProperty("", "", "", properties, false, 0))
         {
-            if (ap instanceof SelectionProperty)
+            if (ap instanceof InputParameterSelectionList)
             {
-                SelectionProperty sp = (SelectionProperty) ap;
+                InputParameterSelectionList sp = (InputParameterSelectionList) ap;
                 if ("TacticalPlanner".equals(sp.getKey()))
                 {
                     String tacticalPlannerName = sp.getValue();
@@ -191,12 +191,12 @@ public final class PropertiesParser
                     }
                     else
                     {
-                        throw new PropertyException("Don't know how to create a " + tacticalPlannerName + " tactical planner");
+                        throw new InputParameterException("Don't know how to create a " + tacticalPlannerName + " tactical planner");
                     }
                 }
             }
         }
-        throw new PropertyException("No TacticalPlanner key found in the properties");
+        throw new InputParameterException("No TacticalPlanner key found in the properties");
     }
 
 }

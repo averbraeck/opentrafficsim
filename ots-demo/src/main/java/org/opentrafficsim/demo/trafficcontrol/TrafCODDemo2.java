@@ -19,15 +19,15 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.PropertyException;
+import org.djutils.io.URLResource;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -35,10 +35,13 @@ import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -81,9 +84,9 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                     TrafCODDemo2 model = new TrafCODDemo2();
                     // 1 hour simulation run for testing
                     model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<Property<?>>(), null, true);
+                            new ArrayList<InputParameter<?>>(), null, true);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | PropertyException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -113,7 +116,7 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
 
     /** {@inheritDoc} */
     @Override
-    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, PropertyException
+    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
     {
         JScrollPane scrollPane = new JScrollPane(TrafCODDemo2.this.controllerDisplayPanel);
         JPanel wrapper = new JPanel(new BorderLayout());
@@ -179,8 +182,19 @@ public class TrafCODDemo2 extends AbstractWrappableAnimation
                     {
                         Lane lane = (Lane) ((CrossSectionLink) this.network.getLink(direction, direction + "C"))
                                 .getCrossSectionElement("FORWARD" + laneNumber);
-                        trafficLights.add(new SimpleTrafficLight(String.format("TL%02d", stream), lane,
-                                lane.getLength().minus(stopLineMargin), (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator));
+                        TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream), lane,
+                                lane.getLength().minus(stopLineMargin), (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+                        trafficLights.add(tl);
+
+                        try
+                        {
+                            new TrafficLightAnimation(tl, simulator);
+                        }
+                        catch (RemoteException | NamingException exception)
+                        {
+                            throw new NetworkException(exception);
+                        }
+                        
                         sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                 lane.getLength().minus(headDetectorMargin), lane,
                                 lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
