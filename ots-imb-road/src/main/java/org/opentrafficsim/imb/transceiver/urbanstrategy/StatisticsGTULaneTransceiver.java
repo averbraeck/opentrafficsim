@@ -312,7 +312,7 @@ public class StatisticsGTULaneTransceiver<G extends GtuDataInterface> extends Ab
      * @param connector Connector; the IMB connector
      * @param simulator OTSSimulatorInterface; the simulator
      * @param networkId String; the network id
-     * @param query Query; the statistics query
+ * @param query Query&lt;G&gt;; the statistics query
      * @param transmissionInterval Duration; the interval between generation of graphs
      * @throws IMBException when the message cannot be posted, or the scheduling of the publish event fails
      */
@@ -421,7 +421,7 @@ public class StatisticsGTULaneTransceiver<G extends GtuDataInterface> extends Ab
 
         /**
          * @param time double; time of statistics
-         * @param sourceGroups List&lt;TrajectoryGroup&gt;; groups
+ * @param sourceGroups List&lt;TrajectoryGroup&lt;G&gt;&gt;; groups
          */
         public StatisticsRunnable(final double time, final List<TrajectoryGroup<G>> sourceGroups)
         {

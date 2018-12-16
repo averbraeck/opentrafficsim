@@ -83,7 +83,7 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
 
     /**
      * Create a DrawingInfo object for a shape that is not filled.
-     * @param lineColorer Colorer; the line colorer
+ * @param lineColorer Colorer&lt;D&gt;; the line colorer
      * @param lineWidth float; the line width, which could be relative and is open for interpretation by the visualization or
      *            animation class
      */
@@ -98,10 +98,10 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
 
     /**
      * Create a DrawingInfo object for a shape that is filled, with a contour line.
-     * @param lineColorer Colorer; the line colorer
+ * @param lineColorer Colorer&lt;D&gt;; the line colorer
      * @param lineWidth float; the line width, which could be relative and is open for interpretation by the visualization or
      *            animation class
-     * @param fillColorer Colorer; the fill colorer
+ * @param fillColorer Colorer&lt;D&gt;; the fill colorer
      */
     public DrawingInfoShape(final Colorer<D> lineColorer, final float lineWidth, final Colorer<D> fillColorer)
     {
@@ -115,7 +115,7 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
 
     /**
      * Create a DrawingInfo object for a shape that is filled, without a contour line.
-     * @param fillColorer Colorer; the fill colorer
+ * @param fillColorer Colorer&lt;D&gt;; the fill colorer
      */
     public DrawingInfoShape(final Colorer<D> fillColorer)
     {
@@ -128,7 +128,7 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
     /**
      * The returned color could be dependent on the state of the object for the fill color used. E.g., it turns red under
      * certain circumstances.
-     * @param drawable the object that could influence the fill color
+ * @param drawable D; the object that could influence the fill color
      * @return the color of the fill
      */
     public final Color getFillColor(final D drawable)
@@ -147,7 +147,7 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
 
     /**
      * Set the fill colorer.
-     * @param fillColorer Colorer; fillColorer to set
+ * @param fillColorer Colorer&lt;D&gt;; fillColorer to set
      */
     public final void setFillColorer(final Colorer<D> fillColorer)
     {
@@ -157,7 +157,7 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
     /**
      * The returned color could be dependent on the state of the object representing the line. E.g., it turns red under certain
      * circumstances.
-     * @param drawable the object that could influence the color of the line
+ * @param drawable D; the object that could influence the color of the line
      * @return the color of the line
      */
     public final Color getLineColor(final D drawable)
@@ -176,7 +176,7 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
 
     /**
      * Set the line colorer.
-     * @param lineColorer Colorer; lineColorer to set
+ * @param lineColorer Colorer&lt;D&gt;; lineColorer to set
      */
     public final void setLineColorer(final Colorer<D> lineColorer)
     {
@@ -192,7 +192,7 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
     }
 
     /**
-     * @param lineWidth set lineWidth
+ * @param lineWidth float; set lineWidth
      */
     public final void setLineWidth(final float lineWidth)
     {
@@ -208,7 +208,7 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
     }
 
     /**
-     * @param filled set filled
+ * @param filled boolean; set filled
      */
     public final void setFilled(final boolean filled)
     {
@@ -224,7 +224,7 @@ public class DrawingInfoShape<D extends Drawable> implements DrawingInfo
     }
 
     /**
-     * @param stroked set stroked
+ * @param stroked boolean; set stroked
      */
     public final void setStroked(final boolean stroked)
     {

@@ -138,7 +138,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
      * @param extent Rectangle2D; bottom left corner, length and width of the area (world) to animate.
      * @param size Dimension; the size to be used for the animation.
-     * @param simulator SimpleAnimator; the simulator or animator of the model.
+ * @param simulator OTSAnimator; the simulator or animator of the model.
      * @param otsModel OTSModelInterface; the builder and rebuilder of the simulation, based on properties.
      * @param gtuColorer GTUColorer; the colorer to use for the GTUs.
      * @param network OTSNetwork; network

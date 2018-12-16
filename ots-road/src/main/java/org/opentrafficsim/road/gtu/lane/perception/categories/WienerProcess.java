@@ -56,7 +56,7 @@ public class WienerProcess extends DistNormal
      * @param stream StreamInterface; random number stream
      * @param mu double; mean
      * @param sigma double; standard deviation
-     * @param tau double; correlation time
+ * @param tau Duration; correlation time
      * @param simulator OTSSimulatorInterface; simulator
      */
     public WienerProcess(final StreamInterface stream, final double mu, final double sigma, final Duration tau,

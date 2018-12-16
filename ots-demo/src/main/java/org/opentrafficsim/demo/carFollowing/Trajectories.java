@@ -264,7 +264,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
         private Random randomGenerator = new Random(12345);
 
         /**
-         * @param properties List&lt;Property&lt;?&gt;&gt;; the properties
+ * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
          */
         TrajectoriesModel(final List<InputParameter<?>> properties)
         {

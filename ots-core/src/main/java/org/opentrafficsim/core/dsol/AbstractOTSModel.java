@@ -24,7 +24,7 @@ public abstract class AbstractOTSModel extends AbstractDSOLModel.TimeDoubleUnit<
 
     /**
      * Instantiate an abstract OTSModel.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to use
+ * @param simulator OTSSimulatorInterface; the simulator to use
      * @param shortName String; a very short description of the simulation
      * @param description String; a description of the simulation (HTML formatted)
      */
@@ -37,7 +37,7 @@ public abstract class AbstractOTSModel extends AbstractDSOLModel.TimeDoubleUnit<
 
     /**
      * Instantiate an abstract OTSModel. The name and description will be set as the class name.
-     * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to use
+ * @param simulator OTSSimulatorInterface; the simulator to use
      */
     public AbstractOTSModel(final OTSSimulatorInterface simulator)
     {
@@ -54,7 +54,7 @@ public abstract class AbstractOTSModel extends AbstractDSOLModel.TimeDoubleUnit<
     }
 
     /**
-     * @param shortName set shortName
+ * @param shortName String; set shortName
      */
     public final void setShortName(final String shortName)
     {
@@ -69,7 +69,7 @@ public abstract class AbstractOTSModel extends AbstractDSOLModel.TimeDoubleUnit<
     }
 
     /**
-     * @param description set description
+ * @param description String; set description
      */
     public final void setDescription(final String description)
     {

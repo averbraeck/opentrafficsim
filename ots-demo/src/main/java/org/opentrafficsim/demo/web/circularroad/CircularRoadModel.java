@@ -124,7 +124,7 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
     private GTUColorer colorer = new DefaultSwitchableGTUColorer();
 
     /**
-     * @param properties List&lt;Property&lt;?&gt;&gt;; the properties
+ * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
      */
     CircularRoadModel(final List<InputParameter<?>> properties)
     {

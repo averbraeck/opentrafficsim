@@ -295,7 +295,7 @@ public class XMLSampler extends AbstractWrappableAnimation implements UNITS
         private IdGenerator idGenerator = new IdGenerator("");
 
         /**
-         * @param userModifiedProperties List&lt;Property&lt;?&gt;&gt;; the (possibly user modified) properties
+ * @param userModifiedProperties List&lt;InputParameter&lt;?&gt;&gt;; the (possibly user modified) properties
          */
         XMLSamplerModel(final List<InputParameter<?>> userModifiedProperties)
         {

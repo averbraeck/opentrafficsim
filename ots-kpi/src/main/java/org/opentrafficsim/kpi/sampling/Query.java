@@ -62,7 +62,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     private final List<SpaceTimeRegion> spaceTimeRegions = new ArrayList<>();
 
     /**
-     * @param sampler Sampler&lt;?&gt;; sampler
+ * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
      * @param metaDataSet MetaDataSet; meta data
@@ -74,7 +74,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * @param sampler Sampler&lt;?&gt;; sampler
+ * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
      * @param metaDataSet MetaDataSet; meta data
@@ -88,7 +88,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * @param sampler Sampler&lt;?&gt;; sampler
+ * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
      * @param metaDataSet MetaDataSet; meta data
@@ -102,7 +102,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * @param sampler Sampler&lt;?&gt;; sampler
+ * @param sampler Sampler&lt;G&gt;; sampler
      * @param id String; id
      * @param description String; description
      * @param metaDataSet MetaDataSet; meta data
@@ -149,7 +149,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * @param sampler Sampler&lt;?&gt;; sampler
+ * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
      * @param metaDataSet MetaDataSet; meta data
      * @param updateFrequency Frequency; update frequency
@@ -162,7 +162,7 @@ public final class Query<G extends GtuDataInterface> implements Identifiable
     }
 
     /**
-     * @param sampler Sampler&lt;?&gt;; sampler
+ * @param sampler Sampler&lt;G&gt;; sampler
      * @param description String; description
      * @param metaDataSet MetaDataSet; meta data
      * @param updateFrequency Frequency; update frequency

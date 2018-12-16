@@ -416,7 +416,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
         private Random randomGenerator = new Random(12345);
 
         /**
-         * @param properties List&lt;Property&lt;?&gt;&gt;; the user settable properties
+ * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
          */
         StraightPerceptionModel(final List<InputParameter<?>> properties)
         {

@@ -149,7 +149,7 @@ public class Quantity<T extends Number, K>
 
         /**
          * Constructor.
-         * @param name String name
+ * @param name String; String name
          */
         SI(final String name)
         {

@@ -256,7 +256,7 @@ public class SuperDemo implements UNITS
 
     /**
      * Regenerate the contents of the propertyPanel.
-     * @param properties List&lt;Property&lt;?&gt;&gt;; the demo-specific properties to display
+ * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the demo-specific properties to display
      */
     final void rebuildPropertyPanel(final List<InputParameter<?>> properties)
     {
@@ -341,7 +341,7 @@ public class SuperDemo implements UNITS
 
     /**
      * Create a graphical editor for an AbstractProperty.
-     * @param ap Property&lt;?&gt;; the abstract property for which an editor must be created
+ * @param ap InputParameter&lt;?&gt;; the abstract property for which an editor must be created
      * @return JPanel
      */
     @SuppressWarnings("checkstyle:methodlength")

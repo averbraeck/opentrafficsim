@@ -293,7 +293,7 @@ public class CrossingTrafficLights extends AbstractWrappableAnimation implements
         private Speed speedLimit = new Speed(80, KM_PER_HOUR);
 
         /**
-         * @param properties List&lt;Property&lt;?&gt;&gt;; the user settable properties
+ * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
          */
         CrossingTrafficLightstModel(final List<InputParameter<?>> properties)
         {

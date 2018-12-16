@@ -80,8 +80,8 @@ public class ODMatrix implements Serializable, Identifiable
     /**
      * Constructs an OD matrix.
      * @param id String; id
-     * @param origins List&lt;Node&gt;; origin nodes
-     * @param destinations List&lt;Node&gt;; destination nodes
+ * @param origins List&lt;? extends Node&gt;; origin nodes
+ * @param destinations List&lt;? extends Node&gt;; destination nodes
      * @param categorization Categorization; categorization of data
      * @param globalTimeVector TimeVector; default time
      * @param globalInterpolation Interpolation; interpolation of demand data

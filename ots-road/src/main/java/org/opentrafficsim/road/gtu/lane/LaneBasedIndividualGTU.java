@@ -403,7 +403,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
 
         /**
          * Build one LaneBasedIndividualCar.
-         * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends
+ * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends LaneBasedStrategicalPlanner&gt;; LaneBasedStrategicalPlannerFactory&lt;? extends
          *            LaneBasedStrategicalPlanner&gt;; LaneBasedStrategicalPlannerFactory&lt;? extends
          *            LaneBasedStrategicalPlanner&gt;; factory for the strategical planner
          * @param route Route; route

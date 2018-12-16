@@ -32,7 +32,7 @@ public class LaneStructureLocatable implements Locatable
     private final GTU gtu;
 
     /**
-     * @param rollingLaneStructure the rolling lane structure
+ * @param rollingLaneStructure RollingLaneStructure; the rolling lane structure
      * @param gtu GTU; the gtu
      */
     public LaneStructureLocatable(RollingLaneStructure rollingLaneStructure, final GTU gtu)

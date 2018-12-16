@@ -479,7 +479,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
         /**
          * Construct a new TrajectoryAndLengthOffset object.
-         * @param trajectory Trajectory; the trajectory
+ * @param trajectory Trajectory&lt;?&gt;; the trajectory
          * @param offset Length; the length from the beginning of the sampled path to the start of the lane to which the
          *            trajectory belongs
          * @param scaleFactor double; scale factor for space dimension

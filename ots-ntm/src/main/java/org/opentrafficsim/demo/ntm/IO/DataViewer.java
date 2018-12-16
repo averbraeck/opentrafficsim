@@ -80,7 +80,7 @@ public class DataViewer extends AbstractOTSModel
 
     /**
      * Constructor to make the graphs with the right type.
-     * @param simulator the simulator
+ * @param simulator OTSSimulatorInterface; the simulator
      */
     public DataViewer(final OTSSimulatorInterface simulator)
     {

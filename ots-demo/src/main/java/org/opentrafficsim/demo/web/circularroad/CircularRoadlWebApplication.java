@@ -37,8 +37,8 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionL
 public class CircularRoadlWebApplication extends DSOLWebServer
 {
     /**
-     * @param title the tile for the model
-     * @param simulator the simulator
+ * @param title String; the tile for the model
+ * @param simulator OTSSimulatorInterface; the simulator
      * @throws Exception on jetty error
      */
     public CircularRoadlWebApplication(final String title, final OTSSimulatorInterface simulator) throws Exception

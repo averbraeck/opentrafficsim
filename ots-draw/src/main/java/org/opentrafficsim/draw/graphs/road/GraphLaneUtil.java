@@ -355,8 +355,8 @@ public final class GraphLaneUtil
 
     /**
      * Creates a cross section.
-     * @param names List&lt;&Stringgt;; names
-     * @param lanes List&lt;&KpiLaneDirectiongt;; lanes
+ * @param names List&lt;String&gt;;; names
+ * @param lanes List&lt;KpiLaneDirection&gt;;; lanes
      * @param positions List&lt;Length&gt;; positions
      * @param speed Speed; speed
      * @return GraphCrossSection&lt;KpiLaneDirection&gt;; cross section

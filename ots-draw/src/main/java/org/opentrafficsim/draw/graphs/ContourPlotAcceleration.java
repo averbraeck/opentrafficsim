@@ -115,7 +115,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
      * Constructor.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataSource&lt;G&gt;; data pool
+ * @param dataPool ContourDataSource&lt;?&gt;; data pool
      */
     public ContourPlotAcceleration(final String caption, final OTSSimulatorInterface simulator,
             final ContourDataSource<?> dataPool)

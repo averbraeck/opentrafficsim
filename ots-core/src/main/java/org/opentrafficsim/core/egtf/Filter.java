@@ -28,14 +28,14 @@ public interface Filter
 
     /**
      * Returns filtered data as SI values.
-     * @param quantity Quantity; quantity
+ * @param quantity Quantity&lt;?, ?&gt;; quantity
      * @return double[][]; filtered data as SI values
      */
     double[][] getSI(Quantity<?, ?> quantity);
 
     /**
      * Returns the filtered data in output format.
-     * @param quantity Quantity; quantity.
+ * @param quantity Quantity&lt;?, K&gt;; quantity.
      * @return K; filtered data in output format
      * @param <K> output format.
      */

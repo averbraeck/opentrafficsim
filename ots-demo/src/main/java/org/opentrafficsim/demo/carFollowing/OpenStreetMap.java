@@ -312,7 +312,7 @@ class OSMModel implements OTSModelInterface
     private final Convert converter;
 
     /**
-     * @param properties List&lt;Property&lt;?&gt;&gt;; the properties (not used)
+ * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties (not used)
      * @param osmNetwork OSMNetwork; the OSM network structure
      * @param wL WarningListener; the receiver of warning events
      * @param pL ProgressListener; the receiver of progress events
