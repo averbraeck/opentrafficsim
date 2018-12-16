@@ -239,7 +239,7 @@ public final class Trajectory<G extends GtuDataInterface>
             return 0;
         }
         int index = Arrays.binarySearch(this.x, 0, this.size, position);
-        return index < 0 ? - index - 2 : index;
+        return index < 0 ? -index - 2 : index;
     }
 
     /**
@@ -254,7 +254,7 @@ public final class Trajectory<G extends GtuDataInterface>
             return 0;
         }
         int index = Arrays.binarySearch(this.t, 0, this.size, time);
-        return index < 0 ? - index - 2 : index;
+        return index < 0 ? -index - 2 : index;
     }
 
     /**
@@ -491,10 +491,10 @@ public final class Trajectory<G extends GtuDataInterface>
     /**
      * Returns a space-time view of this trajectory. This is much more efficient than {@code subSet()} as no trajectory is
      * copied. The limitation is that only distance and time (and mean speed) in the space-time view can be obtained.
- * @param startPosition Length; start position
- * @param endPosition Length; end position
- * @param startTime Time; start time
- * @param endTime Time; end time
+     * @param startPosition Length; start position
+     * @param endPosition Length; end position
+     * @param startTime Time; start time
+     * @param endTime Time; end time
      * @return space-time view of this trajectory
      */
     @SuppressWarnings("synthetic-access")
@@ -626,19 +626,19 @@ public final class Trajectory<G extends GtuDataInterface>
         Boundary from = getBoundaryAtPosition(startPos, false);
         Boundary to = getBoundaryAtPosition(endPos, true);
         return new Boundaries(from.index, from.fraction, to.index, to.fraction);
-//        int from = binarySearchX(startPos);
-//        double fFrom = 0;
-//        if (this.x[from] < startPos)
-//        {
-//            fFrom = (startPos - this.x[from]) / (this.x[from + 1] - this.x[from]);
-//        }
-//        int to = binarySearchX(endPos);
-//        double fTo = 0;
-//        if (to < this.size - 1)
-//        {
-//            fTo = (endPos - this.x[to]) / (this.x[to + 1] - this.x[to]);
-//        }
-//        return new Boundaries(from, fFrom, to, fTo);
+        // int from = binarySearchX(startPos);
+        // double fFrom = 0;
+        // if (this.x[from] < startPos)
+        // {
+        // fFrom = (startPos - this.x[from]) / (this.x[from + 1] - this.x[from]);
+        // }
+        // int to = binarySearchX(endPos);
+        // double fTo = 0;
+        // if (to < this.size - 1)
+        // {
+        // fTo = (endPos - this.x[to]) / (this.x[to + 1] - this.x[to]);
+        // }
+        // return new Boundaries(from, fFrom, to, fTo);
     }
 
     /**
@@ -656,24 +656,24 @@ public final class Trajectory<G extends GtuDataInterface>
         // to float needed as x is in floats and due to precision fTo > 1 may become true
         float startTim = (float) startTime.si;
         float endTim = (float) endTime.si;
-          Boundary from = getBoundaryAtTime(startTim, false);
-          Boundary to = getBoundaryAtTime(endTim, true);
-          return new Boundaries(from.index, from.fraction, to.index, to.fraction);
-//        int from = binarySearchT(startTim);
-//        double fFrom = 0;
-//        if (this.t[from] < startTim)
-//        {
-//            fFrom = (startTim - this.t[from]) / (this.t[from + 1] - this.t[from]);
-//        }
-//        int to = binarySearchT(endTim);
-//        double fTo = 0;
-//        if (to < this.size - 1)
-//        {
-//            fTo = (endTim - this.t[to]) / (this.t[to + 1] - this.t[to]);
-//        }
-//        return new Boundaries(from, fFrom, to, fTo);
+        Boundary from = getBoundaryAtTime(startTim, false);
+        Boundary to = getBoundaryAtTime(endTim, true);
+        return new Boundaries(from.index, from.fraction, to.index, to.fraction);
+        // int from = binarySearchT(startTim);
+        // double fFrom = 0;
+        // if (this.t[from] < startTim)
+        // {
+        // fFrom = (startTim - this.t[from]) / (this.t[from + 1] - this.t[from]);
+        // }
+        // int to = binarySearchT(endTim);
+        // double fTo = 0;
+        // if (to < this.size - 1)
+        // {
+        // fTo = (endTim - this.t[to]) / (this.t[to + 1] - this.t[to]);
+        // }
+        // return new Boundaries(from, fFrom, to, fTo);
     }
-    
+
     /**
      * Returns the boundary at the given position.
      * @param position float; position
@@ -690,7 +690,7 @@ public final class Trajectory<G extends GtuDataInterface>
         }
         return new Boundary(index, fraction);
     }
-    
+
     /**
      * Returns the boundary at the given time.
      * @param time float; time
@@ -707,7 +707,7 @@ public final class Trajectory<G extends GtuDataInterface>
         }
         return new Boundary(index, fraction);
     }
-    
+
     /**
      * Returns an interpolated time at the given position.
      * @param position Length; position
@@ -717,7 +717,7 @@ public final class Trajectory<G extends GtuDataInterface>
     {
         return Time.createSI(getBoundaryAtPosition((float) position.si, false).getValue(this.t));
     }
-    
+
     /**
      * Returns an interpolated speed at the given position.
      * @param position Length; position
@@ -727,7 +727,7 @@ public final class Trajectory<G extends GtuDataInterface>
     {
         return Speed.createSI(getBoundaryAtPosition((float) position.si, false).getValue(this.v));
     }
-    
+
     /**
      * Returns an interpolated acceleration at the given position.
      * @param position Length; position
@@ -737,30 +737,30 @@ public final class Trajectory<G extends GtuDataInterface>
     {
         return Acceleration.createSI(getBoundaryAtPosition((float) position.si, false).getValue(this.a));
     }
-    
+
     /**
      * Returns an interpolated position at the given time.
- * @param time Time; time
+     * @param time Time; time
      * @return Length; interpolated position at the given time
      */
     public Length getPositionAtTime(final Time time)
     {
         return Length.createSI(getBoundaryAtTime((float) time.si, false).getValue(this.x));
     }
-    
+
     /**
      * Returns an interpolated speed at the given time.
- * @param time Time; time
+     * @param time Time; time
      * @return Speed; interpolated speed at the given time
      */
     public Speed getSpeedAtTime(final Time time)
     {
         return Speed.createSI(getBoundaryAtTime((float) time.si, false).getValue(this.v));
     }
-    
+
     /**
      * Returns an interpolated acceleration at the given time.
- * @param time Time; time
+     * @param time Time; time
      * @return Acceleration; interpolated acceleration at the given time
      */
     public Acceleration getAccelerationAtTime(final Time time)
@@ -938,8 +938,8 @@ public final class Trajectory<G extends GtuDataInterface>
         public final double fraction;
 
         /**
- * @param index int; rounded down index
- * @param fraction double; fraction
+         * @param index int; rounded down index
+         * @param fraction double; fraction
          */
         Boundary(final int index, final double fraction)
         {
@@ -953,10 +953,10 @@ public final class Trajectory<G extends GtuDataInterface>
         {
             return "Boundary [index=" + this.index + ", fraction=" + this.fraction + "]";
         }
-        
+
         /**
          * Returns the value at the boundary in the array.
- * @param array float[]; float[] array
+         * @param array float[]; float[] array
          * @return double; value at the boundary in the array
          */
         public double getValue(final float[] array)

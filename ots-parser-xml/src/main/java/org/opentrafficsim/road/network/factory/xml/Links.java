@@ -19,7 +19,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.animation.DrawingInfoLine;
-import org.opentrafficsim.core.animation.DrawingInfoShape;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -31,7 +30,6 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -337,7 +335,7 @@ final class Links
         {
             connector.setDemandWeight(connectorTag.demandWeight);
         }
-        parser.network.addDrawingInfoBase(connector, new DrawingInfoLine<CrossSectionLink>(Color.BLACK, 0.5f));
+        parser.networkAnimation.addDrawingInfoBase(connector, new DrawingInfoLine<CrossSectionLink>(Color.BLACK, 0.5f));
         connectorTag.connector = connector;
     }
 
@@ -489,7 +487,7 @@ final class Links
             link.setPriority(linkTag.priority);
         }
 
-        parser.network.addDrawingInfoBase(link, new DrawingInfoLine<CrossSectionLink>(Color.BLACK, 0.5f));
+        parser.networkAnimation.addDrawingInfoBase(link, new DrawingInfoLine<CrossSectionLink>(Color.BLACK, 0.5f));
 
         linkTag.link = link;
     }
@@ -532,8 +530,8 @@ final class Links
                         case DASHED:
                             Stripe dashedLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
                             dashedLine.addPermeability(GTUType.VEHICLE, Permeable.BOTH);
-
-                            parser.network.addDrawingInfoBase(dashedLine, new DrawingInfoLine<Stripe>(Color.BLACK, 0.5f));
+                            parser.networkAnimation.addDrawingInfoBase(dashedLine,
+                                    new DrawingInfoLine<Stripe>(Color.BLACK, 0.5f));
 
                             if (simulator != null && simulator instanceof AnimatorInterface)
                             {

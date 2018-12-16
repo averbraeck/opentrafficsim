@@ -136,7 +136,7 @@ public class NTMModel extends AbstractOTSModel
 
     /**
      * Constructor to make the graphs with the right type.
- * @param simulator OTSSimulatorInterface; the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      */
     @SuppressWarnings("unchecked")
     public NTMModel(final OTSSimulatorInterface simulator)

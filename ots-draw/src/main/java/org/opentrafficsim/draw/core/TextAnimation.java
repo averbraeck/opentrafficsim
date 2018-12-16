@@ -58,7 +58,7 @@ public abstract class TextAnimation implements Locatable, Serializable
 
     /** FontSize the size of the font; default = 2.0 (meters). */
     private final float fontSize;
-    
+
     /** Minimum font size to trigger scaling. */
     private final float minFontSize;
 
@@ -231,7 +231,7 @@ public abstract class TextAnimation implements Locatable, Serializable
     {
         return this.dy;
     }
-    
+
     /**
      * Sets a new offset.
      * @param x float; dx
@@ -428,7 +428,7 @@ public abstract class TextAnimation implements Locatable, Serializable
         {
             return false;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public final String toString()

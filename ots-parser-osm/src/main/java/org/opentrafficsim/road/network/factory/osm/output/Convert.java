@@ -677,7 +677,7 @@ public final class Convert
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
                         laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
             }
-            
+
             network.addDrawingInfoBase(newLane, new DrawingInfoShape<Lane>(color));
 
             lanes.add(newLane);

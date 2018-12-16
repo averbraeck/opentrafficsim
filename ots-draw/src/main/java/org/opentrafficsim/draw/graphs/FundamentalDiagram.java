@@ -107,7 +107,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
      * @param domainQuantity Quantity; initial quantity on the domain axis
      * @param rangeQuantity Quantity; initial quantity on the range axis
      * @param simulator OTSSimulatorInterface; simulator
- * @param source FdSource; source providing the data
+     * @param source FdSource; source providing the data
      */
     public FundamentalDiagram(final String caption, final Quantity domainQuantity, final Quantity rangeQuantity,
             final OTSSimulatorInterface simulator, final FdSource source)
@@ -679,9 +679,9 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
         /**
          * Get scaled value in presentation unit.
- * @param src FdSource; the data source
+         * @param src FdSource; the data source
          * @param series int; series number
- * @param item int; item number in series
+         * @param item int; item number in series
          * @return double; scaled value in presentation unit
          */
         public abstract double getValue(FdSource src, int series, int item);
@@ -915,7 +915,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         {
             return "CrossSectionSamplerFdSource [harmonic=" + this.harmonic + "]";
         }
-        
+
     }
 
     /**
@@ -977,7 +977,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         {
             return "PathSamplerFdSource []";
         }
-        
+
     }
 
     /**

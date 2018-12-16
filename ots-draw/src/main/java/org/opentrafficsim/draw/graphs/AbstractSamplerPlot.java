@@ -50,8 +50,8 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
      * @param caption String; caption
      * @param updateInterval Duration; regular update interval (simulation time)
      * @param simulator OTSSimulatorInterface; simulator
- * @param sampler Sampler&lt;?&gt;; road sampler
- * @param path GraphPath&lt;KpiLaneDirection&gt;; path
+     * @param sampler Sampler&lt;?&gt;; road sampler
+     * @param path GraphPath&lt;KpiLaneDirection&gt;; path
      * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
      */
     public AbstractSamplerPlot(final String caption, final Duration updateInterval, final OTSSimulatorInterface simulator,

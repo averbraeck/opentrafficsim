@@ -486,7 +486,7 @@ public class XmlOdParserTest
             fromString(xml);
             fail(message);
         }
-        catch (@SuppressWarnings("unused") XmlParserException e)
+        catch (XmlParserException e)
         {
             // e.printStackTrace(); // Can be used to check that fails occur for the right reason
             // expected

@@ -47,7 +47,7 @@ public abstract class ExtendedDataTypeLength<G extends GtuDataInterface>
     {
         return new FloatLengthVector(storage, LengthUnit.SI, StorageType.DENSE);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public <AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>> FloatLength interpolate(final FloatLength value0,

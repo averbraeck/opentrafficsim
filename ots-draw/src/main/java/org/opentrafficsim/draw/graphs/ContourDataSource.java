@@ -218,9 +218,9 @@ public class ContourDataSource<G extends GtuDataInterface>
      * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
      */
     @SuppressWarnings("parameternumber")
-    public ContourDataSource(final Sampler<G> sampler, final Duration delay,
-            final GraphPath<KpiLaneDirection> path, final double[] spaceGranularity, final int initSpaceIndex,
-            final double[] timeGranularity, final int initTimeIndex, final Time start, final Time initialEnd)
+    public ContourDataSource(final Sampler<G> sampler, final Duration delay, final GraphPath<KpiLaneDirection> path,
+            final double[] spaceGranularity, final int initSpaceIndex, final double[] timeGranularity, final int initTimeIndex,
+            final Time start, final Time initialEnd)
     {
         this.sampler = sampler;
         this.updateInterval = Duration.createSI(timeGranularity[initTimeIndex]);
@@ -279,7 +279,7 @@ public class ContourDataSource<G extends GtuDataInterface>
 
     /**
      * Register a contour plot to this data pool. The contour constructor will do this.
- * @param contourPlot AbstractContourPlot&lt;?&gt;; contour plot
+     * @param contourPlot AbstractContourPlot&lt;?&gt;; contour plot
      */
     final void registerContourPlot(final AbstractContourPlot<?> contourPlot)
     {
@@ -833,7 +833,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * Add additional data to stored intermediate result.
      * @param additionalIntermediate Map&lt;ContourDataType&lt;?, ?&gt;, Object&gt;; intermediate storage map
      * @param contourDataType ContourDataType&lt;?, ?&gt;; additional data type
- * @param included List&lt;TrajectoryGroup&lt;?&gt;&gt;; trajectories
+     * @param included List&lt;TrajectoryGroup&lt;?&gt;&gt;; trajectories
      * @param xStart List&lt;Length&gt;; start distance per trajectory group
      * @param xEnd List&lt;Length&gt;; end distance per trajectory group
      * @param tFrom Time; start time
@@ -860,8 +860,7 @@ public class ContourDataSource<G extends GtuDataInterface>
     private <I> float finalizeAdditional(final Map<ContourDataType<?, ?>, Object> additionalIntermediate,
             final ContourDataType<?, ?> contourDataType)
     {
-        return ((ContourDataType<?, I>) contourDataType).finalize((I) additionalIntermediate.get(contourDataType))
-                .floatValue();
+        return ((ContourDataType<?, I>) contourDataType).finalize((I) additionalIntermediate.get(contourDataType)).floatValue();
     }
 
     /**
@@ -1019,7 +1018,7 @@ public class ContourDataSource<G extends GtuDataInterface>
 
         /**
          * Returns the {@code Axis} object.
- * @param dataPool ContourDataSource&lt;?&gt;; data pool
+         * @param dataPool ContourDataSource&lt;?&gt;; data pool
          * @return Axis; axis
          */
         protected abstract Axis getAxis(ContourDataSource<?> dataPool);
@@ -1213,7 +1212,7 @@ public class ContourDataSource<G extends GtuDataInterface>
         /**
          * Calculate value from provided trajectories that apply to a single grid cell on a single series (lane).
          * @param intermediate I; intermediate value of previous series, starts as the identity
- * @param trajectories List&lt;TrajectoryGroup&lt;?&gt;&gt;; trajectories, all groups overlap the requested space-time
+         * @param trajectories List&lt;TrajectoryGroup&lt;?&gt;&gt;; trajectories, all groups overlap the requested space-time
          * @param xFrom List&lt;Length&gt;; start location of cell on the section
          * @param xTo List&lt;Length&gt;; end location of cell on the section.
          * @param tFrom Time; start time of cell

@@ -1,11 +1,8 @@
 package org.opentrafficsim.road.network.factory.xml;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.SpeedUnit;
@@ -14,12 +11,12 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.distributions.ProbabilityException;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
@@ -28,7 +25,6 @@ import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
@@ -366,16 +362,8 @@ class GeneratorTag implements Serializable
         GTUGeneratorIndividual generator = new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator,
                 generatorTag.gtuTag.gtuType, gtuClass, generatorTag.initialSpeedDist, generatorTag.iatDist,
                 generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist,
-                generatorTag.maxGTUs, startTime, endTime, lane, position, generatorTag.gtuDirection, generatorTag.gtuColorer,
-                strategicalPlannerFactory, routeGenerator, parser.network);
-        try
-        {
-            new GTUGeneratorAnimation(generator, simulator);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            exception.printStackTrace();
-        }
+                generatorTag.maxGTUs, startTime, endTime, lane, position, generatorTag.gtuDirection, strategicalPlannerFactory,
+                routeGenerator, parser.network);
 
         // TODO GTUMix
         // TODO RouteMix

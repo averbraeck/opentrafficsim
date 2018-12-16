@@ -170,7 +170,8 @@ public class TrajectoryGroup<G extends GtuDataInterface> implements Iterable<Tra
      * @param t1 Time; end time
      * @return list of trajectories
      */
-    public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Length x0, final Length x1, final Time t0, final Time t1)
+    public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Length x0, final Length x1, final Time t0,
+            final Time t1)
     {
         TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime.lt(t0) ? t0 : this.startTime, this.laneDirection);
         for (Trajectory<G> trajectory : this.trajectories)

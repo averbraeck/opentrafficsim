@@ -27,12 +27,12 @@ public class LaneStructureLocatable implements Locatable
 {
     /** RollingLaneStructure. */
     private final RollingLaneStructure rollingLaneStructure;
-    
+
     /** GTU. */
     private final GTU gtu;
 
     /**
- * @param rollingLaneStructure RollingLaneStructure; the rolling lane structure
+     * @param rollingLaneStructure RollingLaneStructure; the rolling lane structure
      * @param gtu GTU; the gtu
      */
     public LaneStructureLocatable(RollingLaneStructure rollingLaneStructure, final GTU gtu)
@@ -88,5 +88,5 @@ public class LaneStructureLocatable implements Locatable
     {
         return this.gtu;
     }
-    
+
 }

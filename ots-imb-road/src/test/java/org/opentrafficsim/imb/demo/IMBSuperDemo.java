@@ -112,7 +112,8 @@ public class IMBSuperDemo implements UNITS
             {
                 try
                 {
-                    JFrame frame = new AbstractOTSSwingApplication("Open Traffic Simulator Demonstrations", new IMBSuperDemo().buildGUI());
+                    JFrame frame = new AbstractOTSSwingApplication("Open Traffic Simulator Demonstrations",
+                            new IMBSuperDemo().buildGUI());
                     frame.setExtendedState(frame.getExtendedState() & ~Frame.MAXIMIZED_BOTH);
                     // frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_VERT);
                     // The code above does not work; the code below does work. Code found on
