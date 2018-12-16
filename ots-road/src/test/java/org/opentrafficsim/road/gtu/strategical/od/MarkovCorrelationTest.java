@@ -107,7 +107,7 @@ public class MarkovCorrelationTest
             markov.addState(state, correlation);
             fail(message);
         }
-        catch (@SuppressWarnings("unused") IllegalArgumentException | NullPointerException ex)
+        catch (IllegalArgumentException | NullPointerException ex)
         {
             // expected
         }
@@ -129,7 +129,7 @@ public class MarkovCorrelationTest
             markov.addState(previousState, state, correlation);
             fail(message);
         }
-        catch (@SuppressWarnings("unused") IllegalArgumentException | NullPointerException ex)
+        catch (IllegalArgumentException | NullPointerException ex)
         {
             // expected
         }

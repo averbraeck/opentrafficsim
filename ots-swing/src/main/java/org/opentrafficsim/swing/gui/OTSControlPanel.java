@@ -244,7 +244,7 @@ public class OTSControlPanel extends JPanel
         {
             return new ImageIcon(ImageIO.read(Resource.getResourceAsStream(iconPath)));
         }
-        catch (@SuppressWarnings("unused") NullPointerException | IOException npe)
+        catch (NullPointerException | IOException npe)
         {
             System.err.println("Could not load icon from path " + iconPath);
             return null;
@@ -262,7 +262,7 @@ public class OTSControlPanel extends JPanel
         {
             return new ImageIcon(GrayFilter.createDisabledImage(ImageIO.read(Resource.getResourceAsStream(iconPath))));
         }
-        catch (@SuppressWarnings("unused") NullPointerException | IOException e)
+        catch (NullPointerException | IOException e)
         {
             System.err.println("Could not load icon from path " + iconPath);
             return null;
@@ -333,7 +333,7 @@ public class OTSControlPanel extends JPanel
                 {
                     Thread.sleep(10);
                 }
-                catch (@SuppressWarnings("unused") InterruptedException exception)
+                catch (InterruptedException exception)
                 {
                     // nothing to do
                 }
@@ -402,7 +402,7 @@ public class OTSControlPanel extends JPanel
                     this.stopAtEvent = scheduleEvent(new Time(now, TimeUnit.BASE), SimEventInterface.MIN_PRIORITY, this, this,
                             "autoPauseSimulator", null);
                 }
-                catch (@SuppressWarnings("unused") SimRuntimeException exception)
+                catch (SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator", "Caught an exception "
                             + "while trying to schedule an autoPauseSimulator event at the current simulator time");
@@ -557,7 +557,7 @@ public class OTSControlPanel extends JPanel
                     // System.out.println("AutoPauseSimulator: starting simulator");
                     getSimulator().start();
                 }
-                catch (@SuppressWarnings("unused") SimRuntimeException exception)
+                catch (SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator",
                             "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
@@ -633,7 +633,7 @@ public class OTSControlPanel extends JPanel
                 this.stopAtEvent = scheduleEvent(new Time(stopTime, TimeUnit.BASE), SimEventInterface.MAX_PRIORITY, this, this,
                         "autoPauseSimulator", null);
             }
-            catch (@SuppressWarnings("unused") SimRuntimeException exception)
+            catch (SimRuntimeException exception)
             {
                 this.logger.logp(Level.SEVERE, "ControlPanel", "propertyChange",
                         "Caught an exception while trying to schedule an autoPauseSimulator event");

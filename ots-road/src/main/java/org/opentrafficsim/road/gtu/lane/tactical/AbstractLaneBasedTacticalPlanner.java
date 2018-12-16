@@ -152,7 +152,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                 path = lane.getCenterLine().extract(Length.ZERO, position).reverse();
             }
         }
-        catch (@SuppressWarnings("unused") OTSGeometryException exception)
+        catch (OTSGeometryException exception)
         {
             // System.err.println(gtu + ": " + exception.getMessage());
             // System.err.println(lane + ", len=" + lane.getLength());
@@ -198,7 +198,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
                     ld = gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), /* gtu.getLanes().get(lane), */
                             lastGtuDir, gtu.getGTUType());
                 }
-                catch (@SuppressWarnings("unused") NetworkException ne)
+                catch (NetworkException ne)
                 {
                     // no route found.
                     // return the data structure up to this point...

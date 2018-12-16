@@ -51,7 +51,7 @@ public class CFRoomChecker implements RoomChecker
                     speedLimit = limit;
                 }
             }
-            catch (@SuppressWarnings("unused") NetworkException exception)
+            catch (NetworkException exception)
             {
                 // ignore
             }

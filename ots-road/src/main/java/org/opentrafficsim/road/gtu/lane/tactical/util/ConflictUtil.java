@@ -806,7 +806,7 @@ public final class ConflictUtil
             return route.contains(startNode) && route.contains(endNode)
                     && Math.abs(route.indexOf(endNode) - route.indexOf(startNode)) == 1;
         }
-        catch (@SuppressWarnings("unused") UnsupportedOperationException uoe)
+        catch (UnsupportedOperationException uoe)
         {
             // conservative assumption: it's on the route (gtu should be upstream of the conflict)
             return true;

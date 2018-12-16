@@ -174,7 +174,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
             p = this.getLocation();
             this.bounds = new BoundingBox(new Point3d(p.x - 1, p.y - 1, 0.0), new Point3d(p.x + 1, p.y + 1, 0.0));
         }
-        catch (@SuppressWarnings("unused") RemoteException exception)
+        catch (RemoteException exception)
         {
             throw new RuntimeException("Bounds for generator cannot be determined.");
         }
@@ -590,7 +590,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
         {
             return this.lane.getCenterLine().getLocation(this.position);
         }
-        catch (@SuppressWarnings("unused") OTSGeometryException exception)
+        catch (OTSGeometryException exception)
         {
             return this.lane.getLocation();
         }
@@ -612,7 +612,7 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
         {
             map.put(getLocation(), this.carBuilderList.size());
         }
-        catch (@SuppressWarnings("unused") RemoteException exception)
+        catch (RemoteException exception)
         {
             throw new RuntimeException("Locartion for generator queue cannot be determined.");
         }

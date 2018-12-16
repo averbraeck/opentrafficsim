@@ -45,25 +45,25 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.InputParameterBoolean;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
-import org.opentrafficsim.base.modelproperties.InputParameterDouble;
-import org.opentrafficsim.base.modelproperties.InputParameterInteger;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.InputParameterException;
-import org.opentrafficsim.base.modelproperties.InputParameterSelectionList;
 import org.opentrafficsim.base.modelproperties.StringProperty;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.imb.connector.OTSIMBConnector;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.LabeledPanel;
 import org.opentrafficsim.swing.gui.ProbabilityDistributionEditor;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterInteger;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 
 /**
  * Several demos in one application.

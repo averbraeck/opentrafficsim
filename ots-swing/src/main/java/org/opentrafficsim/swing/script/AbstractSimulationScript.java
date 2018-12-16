@@ -290,9 +290,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 //
 //    /**
 //     * Sets the animation toggles. May be overridden.
-//     * @param animation AbstractWrappableAnimation; animation to set the toggle on
+//     * @param animation AbstractOTSSwingApplication; animation to set the toggle on
 //     */
-//    protected void addAnimationToggles(final AbstractWrappableAnimation animation)
+//    protected void addAnimationToggles(final AbstractOTSSwingApplication animation)
 //    {
 //        AnimationToggles.setIconAnimationTogglesFull(animation);
 //        animation.toggleAnimationClass(OTSLink.class);
@@ -304,9 +304,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 //    /**
 //     * Adds taps to the animation. May be overridden.
 //     * @param sim OTSSimulatorInterface; simulator
-//     * @param animation AbstractWrappableAnimation; animation to add tabs to
+//     * @param animation AbstractOTSSwingApplication; animation to add tabs to
 //     */
-//    protected void addTabs(final OTSSimulatorInterface sim, final AbstractWrappableAnimation animation)
+//    protected void addTabs(final OTSSimulatorInterface sim, final AbstractOTSSwingApplication animation)
 //    {
 //        //
 //    }
@@ -329,10 +329,10 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 //
 //    /**
 //     * Method that is called when the animation has been created, to add components for a demo.
-//     * @param animation AbstractWrappableAnimation; animation
+//     * @param animation AbstractOTSSwingApplication; animation
 //     * @param net OTSNetwork; network
 //     */
-//    protected void setupDemo(final AbstractWrappableAnimation animation, final OTSNetwork net)
+//    protected void setupDemo(final AbstractOTSSwingApplication animation, final OTSNetwork net)
 //    {
 //        //
 //    }
@@ -403,7 +403,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 //     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
 //     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
 //     */
-//    class ScriptAnimation extends AbstractWrappableAnimation
+//    class ScriptAnimation extends AbstractOTSSwingApplication
 //    {
 //        /** */
 //        private static final long serialVersionUID = 20180409L;
@@ -455,7 +455,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 //
 //        /** {@inheritDoc} */
 //        @Override
-//        protected void setupDemo(final AbstractWrappableAnimation animation, final OTSNetwork net)
+//        protected void setupDemo(final AbstractOTSSwingApplication animation, final OTSNetwork net)
 //        {
 //            AbstractSimulationScript.this.setupDemo(animation, net);
 //        }

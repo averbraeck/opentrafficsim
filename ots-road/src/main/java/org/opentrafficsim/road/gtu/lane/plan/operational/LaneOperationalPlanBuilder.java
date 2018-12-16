@@ -309,7 +309,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
                     path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getDirection().isPlus()
                             ? from.getLane().getCenterLine() : from.getLane().getCenterLine().reverse());
                 }
-                catch (@SuppressWarnings("unused") NullPointerException nas)
+                catch (NullPointerException nas)
                 {
                     prevFrom.getNextLaneDirection(gtu);
                     ref.getLaneDirection().getNextLaneDirection(gtu);

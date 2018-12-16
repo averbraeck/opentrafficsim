@@ -133,7 +133,6 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
         {
             exception.printStackTrace();
         }
-
     }
 
     /**
@@ -242,7 +241,6 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     protected final void generateCar(final Length initialPosition, final Lane lane, final GTUType gtuType)
             throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
-
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
@@ -270,13 +268,6 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
         gtu.init(strategicalPlanner, initialPositions, initialSpeed);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OTSSimulatorInterface getSimulator()
-    {
-        return this.simulator;
     }
 
     /** {@inheritDoc} */

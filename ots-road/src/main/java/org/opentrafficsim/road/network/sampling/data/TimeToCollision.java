@@ -93,7 +93,7 @@ public class TimeToCollision extends ExtendedDataTypeDuration<GtuData>
             }
             return new FloatDuration(Float.NaN, DurationUnit.SI);
         }
-        catch (@SuppressWarnings("unused") GTUException exception)
+        catch (GTUException exception)
         {
             // GTU was destroyed and is without a reference location
             return new FloatDuration(Float.NaN, DurationUnit.SI);

@@ -234,7 +234,7 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
                     {
                         fs = Double.parseDouble(fontSize.getText());
                     }
-                    catch (@SuppressWarnings("unused") NumberFormatException exception)
+                    catch (NumberFormatException exception)
                     {
                         fs = 16.0;
                     }
@@ -243,7 +243,7 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
                     {
                         w = Integer.parseInt(width.getText());
                     }
-                    catch (@SuppressWarnings("unused") NumberFormatException exception)
+                    catch (NumberFormatException exception)
                     {
                         w = getWidth();
                     }
@@ -252,7 +252,7 @@ public abstract class AbstractPlot extends JFrame implements Identifiable, Datas
                     {
                         h = Integer.parseInt(height.getText());
                     }
-                    catch (@SuppressWarnings("unused") NumberFormatException exception)
+                    catch (NumberFormatException exception)
                     {
                         h = getHeight();
                     }

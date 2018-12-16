@@ -930,7 +930,7 @@ public class OTSLine3D implements Locatable, Serializable
             {
                 return getLocationSI(positionSI);
             }
-            catch (@SuppressWarnings("unused") OTSGeometryException exception)
+            catch (OTSGeometryException exception)
             {
                 // cannot happen
             }
