@@ -70,7 +70,7 @@ public class SplitColorer implements GTUColorer
             refPos = laneGtu.getReferencePosition();
 
         }
-        catch (@SuppressWarnings("unused") GTUException exception)
+        catch (GTUException exception)
         {
             return UNKNOWN;
         }
@@ -96,7 +96,7 @@ public class SplitColorer implements GTUColorer
                             gtu.getGTUType());
                 }
             }
-            catch (@SuppressWarnings("unused") NetworkException exception)
+            catch (NetworkException exception)
             {
                 // System.err.println("Network exception while defining split color for GTU.");
                 return UNKNOWN;
