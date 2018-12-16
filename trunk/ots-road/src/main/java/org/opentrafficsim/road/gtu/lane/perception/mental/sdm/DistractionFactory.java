@@ -81,7 +81,7 @@ public class DistractionFactory
                 new TaskSupplier.Constant(id, taskDemand));
         return this;
     }
-    
+
     /**
      * Helper method to create a distraction.
      * @param id String; id

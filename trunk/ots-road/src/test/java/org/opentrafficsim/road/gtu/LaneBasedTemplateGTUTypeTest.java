@@ -287,42 +287,43 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
                 characteristics.getMaximumSpeed().getSI(), 0.0001);
     }
 
-/**
- * Dummy OTSModelInterface.
- * <p>
- * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * <p>
- * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
- * initial version 4 jan. 2015 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- */
-static class DummyModelForTemplateGTUTest extends AbstractOTSModel
-{
     /**
-     * @param simulator the simulator to use
+     * Dummy OTSModelInterface.
+     * <p>
+     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * <p>
+     * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
+     * initial version 4 jan. 2015 <br>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    public DummyModelForTemplateGTUTest(final OTSSimulatorInterface simulator)
+    static class DummyModelForTemplateGTUTest extends AbstractOTSModel
     {
-        super(simulator);
-    }
+        /**
+         * @param simulator the simulator to use
+         */
+        public DummyModelForTemplateGTUTest(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
 
-    /** */
-    private static final long serialVersionUID = 20141027L;
+        /** */
+        private static final long serialVersionUID = 20141027L;
 
-    /** {@inheritDoc} */
-    @Override
-    public final void constructModel() throws SimRuntimeException
-    {
-        //
-    }
+        /** {@inheritDoc} */
+        @Override
+        public final void constructModel() throws SimRuntimeException
+        {
+            //
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public final OTSNetwork getNetwork()
-    {
-        return null;
+        /** {@inheritDoc} */
+        @Override
+        public final OTSNetwork getNetwork()
+        {
+            return null;
+        }
     }
-}
 
 }

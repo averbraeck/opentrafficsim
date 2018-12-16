@@ -24,7 +24,7 @@ public interface VehicleModel
         {
             return acceleration;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -43,7 +43,7 @@ public interface VehicleModel
                     ? (acceleration.si < gtu.getMaximumAcceleration().si ? acceleration : gtu.getMaximumAcceleration())
                     : gtu.getMaximumDeceleration();
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()

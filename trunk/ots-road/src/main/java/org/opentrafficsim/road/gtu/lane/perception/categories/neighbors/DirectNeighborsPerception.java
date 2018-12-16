@@ -171,9 +171,10 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         Length pos = record.getStartDistance().neg();
         pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx()) : pos.minus(getGtu().getFront().getDx());
         boolean ignoreIfUpstream = true;
-        PerceptionCollectable<HeadwayGTU, LaneBasedGTU> it = new DownstreamNeighborsIterable(getGtu(), record,
-                Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
-                this.headwayGtuType, getGtu(), lane, ignoreIfUpstream);
+        PerceptionCollectable<HeadwayGTU,
+                LaneBasedGTU> it = new DownstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),
+                        getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), this.headwayGtuType, getGtu(),
+                        lane, ignoreIfUpstream);
         this.leaders.put(lane, new TimeStampedObject<>(it, getTimestamp()));
     }
 

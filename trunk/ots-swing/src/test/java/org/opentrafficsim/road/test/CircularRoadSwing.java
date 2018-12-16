@@ -146,7 +146,7 @@ public class CircularRoadSwing extends AbstractOTSSwingApplication
         TablePanel trajectoryChart = new TablePanel(2, 2);
         plot = new TrajectoryPlot("Trajectory all lanes", updateInterval, simulator, sampler, path01);
         trajectoryChart.setCell(plot.getContentPane(), 0, 0);
-        
+
         List<KpiLaneDirection> lanes = new ArrayList<>();
         List<Length> positions = new ArrayList<>();
         lanes.add(path01.get(0).getSource(0));
@@ -168,8 +168,8 @@ public class CircularRoadSwing extends AbstractOTSSwingApplication
             throw new RuntimeException(exception);
         }
 
-        plot = new FundamentalDiagram("Fundamental diagram Density-Flow", Quantity.DENSITY, Quantity.FLOW, simulator,
-                sampler, crossSection, true, Duration.createSI(60.0), false);
+        plot = new FundamentalDiagram("Fundamental diagram Density-Flow", Quantity.DENSITY, Quantity.FLOW, simulator, sampler,
+                crossSection, true, Duration.createSI(60.0), false);
         trajectoryChart.setCell(plot.getContentPane(), 1, 0);
 
         plot = new FundamentalDiagram("Fundamental diagram Flow-Speed", Quantity.FLOW, Quantity.SPEED, simulator, sampler,

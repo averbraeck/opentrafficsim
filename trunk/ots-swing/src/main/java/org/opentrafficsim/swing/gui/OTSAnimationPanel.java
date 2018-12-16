@@ -138,15 +138,14 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
      * @param extent Rectangle2D; bottom left corner, length and width of the area (world) to animate.
      * @param size Dimension; the size to be used for the animation.
- * @param simulator OTSAnimator; the simulator or animator of the model.
+     * @param simulator OTSAnimator; the simulator or animator of the model.
      * @param otsModel OTSModelInterface; the builder and rebuilder of the simulation, based on properties.
      * @param gtuColorer GTUColorer; the colorer to use for the GTUs.
      * @param network OTSNetwork; network
      * @throws RemoteException when notification of the animation panel fails
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final OTSAnimator simulator,
-            final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network)
-            throws RemoteException
+            final OTSModelInterface otsModel, final GTUColorer gtuColorer, final OTSNetwork network) throws RemoteException
     {
         super(simulator, otsModel);
 
@@ -987,7 +986,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                     double w = this.extent.getWidth();
                     double h = this.extent.getHeight();
                     this.extent = new Rectangle2D.Double(point.getX() - w / 2, point.getY() - h / 2, w, h);
-                } 
+                }
             }
             super.paintComponent(g);
         }

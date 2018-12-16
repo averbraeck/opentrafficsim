@@ -394,7 +394,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      * @param lane RelativeLane; lane from which the lane change possibility is requested
      * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @param legal boolean; legal, or physical otherwise
- * @param possibilityMap Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;; 
+     * @param possibilityMap
+     *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
      *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
      *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;; legal
      *            or physical possibility map

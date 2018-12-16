@@ -68,10 +68,11 @@ public class IDMPlus extends AbstractIDM
         Acceleration a = parameters.getParameter(A);
         Headway leader = leaders.first();
         double sRatio;
-        try{
-        sRatio =
-                dynamicDesiredHeadway(parameters, speed, desiredHeadway, leader.getSpeed()).si / leader.getDistance().si;
-        } catch (Exception e)
+        try
+        {
+            sRatio = dynamicDesiredHeadway(parameters, speed, desiredHeadway, leader.getSpeed()).si / leader.getDistance().si;
+        }
+        catch (Exception e)
         {
             System.out.println("hmmm");
             return null;

@@ -476,7 +476,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             throws ParameterException, GTUException, NetworkException, OperationalPlanException
     {
         Acceleration acc = gtu.getVehicleModel().boundAcceleration(simplePlan.getAcceleration(), gtu);
-        
+
         if (INSTANT_LANE_CHANGES)
         {
             if (simplePlan.isLaneChange())
@@ -485,8 +485,8 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             }
             try
             {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(),
-                        acc, simplePlan.getDuration());
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
+                        simplePlan.getDuration());
             }
             catch (OTSGeometryException exception)
             {
@@ -497,15 +497,13 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         // gradual lane change
         try
         {
-            if ((!simplePlan.isLaneChange() && !laneChange.isChangingLane())
-                    || (gtu.getSpeed().si == 0.0 && acc.si <= 0.0))
+            if ((!simplePlan.isLaneChange() && !laneChange.isChangingLane()) || (gtu.getSpeed().si == 0.0 && acc.si <= 0.0))
             {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(),
-                        acc, simplePlan.getDuration());
+                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
+                        simplePlan.getDuration());
             }
             return LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtu, simplePlan.getLaneChangeDirection(),
-                    gtu.getLocation(), startTime, gtu.getSpeed(), acc, simplePlan.getDuration(),
-                    laneChange);
+                    gtu.getLocation(), startTime, gtu.getSpeed(), acc, simplePlan.getDuration(), laneChange);
         }
         catch (OTSGeometryException exception)
         {
