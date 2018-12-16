@@ -26,10 +26,10 @@ public final class OTSNetworkUtils
     {
         // utility class
     }
-    
+
     /**
      * Clone the OTSNetwork.
- * @param network OTSNetwork; the network to clone
+     * @param network OTSNetwork; the network to clone
      * @param newId String; the new id of the network
      * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator for this network
      * @param newSimulator OTSSimulatorInterface; the new simulator for this network
@@ -94,7 +94,7 @@ public final class OTSNetworkUtils
 
     /**
      * Remove all objects and animation in the network.
- * @param network OTSNetwork; the network to destroy
+     * @param network OTSNetwork; the network to destroy
      * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator of the old network
      */
     public static void destroy(final OTSNetwork network, final SimulatorInterface.TimeDoubleUnit simulator)

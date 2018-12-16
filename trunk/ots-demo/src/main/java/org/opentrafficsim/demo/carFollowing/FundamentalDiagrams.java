@@ -25,15 +25,15 @@ import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.graphs.FundamentalDiagram;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.road.graphs.GraphLaneUtil;
-import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.draw.graphs.FundamentalDiagram;
+import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -49,7 +49,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -70,7 +70,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
  * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagrams extends AbstractWrappableAnimation implements UNITS
+public class FundamentalDiagrams extends AbstractOTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -83,13 +83,13 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
     {
         try
         {
-            this.properties.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
+            this.inputParameterMap.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                     "<html>The car following model determines "
                             + "the acceleration that a vehicle will make taking into account nearby vehicles, "
                             + "infrastructural restrictions (e.g. speed limit, curvature of the road) "
                             + "capabilities of the vehicle and personality of the driver.</html>",
                     new String[] { "IDM", "IDM+" }, 1, false, 500));
-            this.properties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
+            this.inputParameterMap.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                     "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                     new Double[] { 0.8, 0.2 }, false, 10));
         }
@@ -262,7 +262,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
         private Random randomGenerator = new Random(12345);
 
         /**
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
+         * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
          */
         FundamentalDiagramPlotsModel(final List<InputParameter<?>> properties)
         {

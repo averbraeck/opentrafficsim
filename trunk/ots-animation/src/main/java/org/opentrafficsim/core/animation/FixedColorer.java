@@ -62,7 +62,7 @@ public class FixedColorer<D extends Drawable> implements Colorer<D>
 
     /**
      * Initialize the FixedColorer with a color.
- * @param color Color; the fixed color to use
+     * @param color Color; the fixed color to use
      */
     protected FixedColorer(final Color color)
     {
@@ -79,7 +79,7 @@ public class FixedColorer<D extends Drawable> implements Colorer<D>
 
     /**
      * Instantiate a singleton fixed colorer for a certain color.
- * @param color Color; the fixed color to use
+     * @param color Color; the fixed color to use
      * @return the FixedColorer
      * @param <D> the Drawable type
      */

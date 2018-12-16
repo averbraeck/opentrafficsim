@@ -27,7 +27,7 @@ public class OTSReplication extends Replication.TimeDoubleUnit<OTSSimulatorInter
     private HistoryManager historyManager;
 
     /**
- * @param experiment Experiment.TimeDoubleUnit&lt;OTSSimulatorInterface&gt;; Experiment
+     * @param experiment Experiment.TimeDoubleUnit&lt;OTSSimulatorInterface&gt;; Experiment
      * @throws NamingException when the context for the replication cannot be created
      */
     public OTSReplication(final Experiment.TimeDoubleUnit<OTSSimulatorInterface> experiment) throws NamingException
@@ -38,7 +38,7 @@ public class OTSReplication extends Replication.TimeDoubleUnit<OTSSimulatorInter
     /**
      * Create a new OTSReplication.
      * @param id String; id of the new OTSReplication
- * @param startTime Time; the start time of the new OTSReplication
+     * @param startTime Time; the start time of the new OTSReplication
      * @param warmupPeriod Duration; the warmup period of the new OTSReplication
      * @param runLength Duration; the run length of the new OTSReplication
      * @param model OTSModelInterface; the model
@@ -60,7 +60,7 @@ public class OTSReplication extends Replication.TimeDoubleUnit<OTSSimulatorInter
     /**
      * Returns the history manager. If none was set, one is created coupled to the simulator using 0s of history and 10s
      * clean-up time.
- * @param simulator OTSSimulatorInterface; simulator
+     * @param simulator OTSSimulatorInterface; simulator
      * @return HistoryManager; history manager
      */
     public HistoryManager getHistoryManager(final OTSSimulatorInterface simulator)

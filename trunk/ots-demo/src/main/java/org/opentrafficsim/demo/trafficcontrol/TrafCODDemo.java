@@ -25,14 +25,14 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.network.animation.TrafficLightAnimation;
+import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
@@ -59,7 +59,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCODDemo extends AbstractWrappableAnimation
+public class TrafCODDemo extends AbstractOTSSwingApplication
 {
 
     /** */
@@ -173,7 +173,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                 {
                     throw new NetworkException(exception);
                 }
-                
+
                 SimpleTrafficLight tl11 = new SimpleTrafficLight("TL11", laneNX, new Length(296, LengthUnit.METER),
                         (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
                 trafficLights.add(tl11);
@@ -186,7 +186,7 @@ public class TrafCODDemo extends AbstractWrappableAnimation
                 {
                     throw new NetworkException(exception);
                 }
-                
+
                 Set<TrafficLightSensor> sensors = new HashSet<>();
                 sensors.add(new TrafficLightSensor("D081", laneWX, new Length(292, LengthUnit.METER), laneWX,
                         new Length(294, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR,

@@ -21,7 +21,7 @@ public interface Converter<K>
         {
             return filteredData;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()

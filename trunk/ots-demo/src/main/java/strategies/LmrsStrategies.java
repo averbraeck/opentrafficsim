@@ -63,10 +63,13 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.animation.LinkAnimation;
-import org.opentrafficsim.core.network.animation.NodeAnimation;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
+import org.opentrafficsim.draw.gtu.GTUGeneratorAnimation;
+import org.opentrafficsim.draw.network.LinkAnimation;
+import org.opentrafficsim.draw.network.NodeAnimation;
+import org.opentrafficsim.draw.road.LaneAnimation;
+import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
@@ -75,7 +78,6 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeDuration;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeLength;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeNumber;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataTypeSpeed;
-import org.opentrafficsim.road.gtu.animation.GTUGeneratorAnimation;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.DesiredSpeedColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -132,8 +134,6 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.animation.LaneAnimation;
-import org.opentrafficsim.road.network.animation.StripeAnimation;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -150,8 +150,8 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -492,7 +492,7 @@ public class LmrsStrategies implements EventListenerInterface
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    class LmrsStrategiesAnimation extends AbstractWrappableAnimation
+    class LmrsStrategiesAnimation extends AbstractOTSSwingApplication
     {
 
         /** */
@@ -882,7 +882,7 @@ public class LmrsStrategies implements EventListenerInterface
                             {
                                 return FloatSpeed.createSI(gtu.getGtu().getDesiredSpeed().floatValue());
                             }
-                            catch (@SuppressWarnings("unused") NullPointerException ex)
+                            catch (NullPointerException ex)
                             {
                                 return FloatSpeed.NaN;
                             }

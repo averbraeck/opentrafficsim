@@ -30,7 +30,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
@@ -119,12 +119,12 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
 
     /** The OTSNetwork. */
     private final OTSNetwork network = new OTSNetwork("network");
-    
+
     /** Colorer. */
     private GTUColorer colorer = new DefaultSwitchableGTUColorer();
 
     /**
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
+     * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
      */
     CircularRoadModel(final List<InputParameter<?>> properties)
     {
@@ -254,9 +254,8 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
                         String tacticalPlannerName = sp.getValue();
                         if ("MOBIL/IDM".equals(tacticalPlannerName))
                         {
-                            this.strategicalPlannerGeneratorCars =
-                                    new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
-                                            this.carFollowingModelCars, this.laneChangeModel));
+                            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+                                    new LaneBasedCFLCTacticalPlannerFactory(this.carFollowingModelCars, this.laneChangeModel));
                             this.strategicalPlannerGeneratorTrucks =
                                     new LaneBasedStrategicalRoutePlannerFactory(new LaneBasedCFLCTacticalPlannerFactory(
                                             this.carFollowingModelTrucks, this.laneChangeModel));
@@ -264,8 +263,7 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
                         else if ("DIRECTED/IDM".equals(tacticalPlannerName))
                         {
                             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(
-                                            this.carFollowingModelCars));
+                                    new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(this.carFollowingModelCars));
                             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                                     new LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory(
                                             this.carFollowingModelTrucks));
@@ -421,8 +419,7 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
-        gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class,
-                getColorer());
+        gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class, getColorer());
     }
 
     /** {@inheritDoc} */
@@ -478,4 +475,3 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
     }
 
 }
-

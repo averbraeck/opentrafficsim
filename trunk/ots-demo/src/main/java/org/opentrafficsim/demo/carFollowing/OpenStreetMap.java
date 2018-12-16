@@ -39,7 +39,7 @@ import org.opentrafficsim.road.network.factory.osm.events.WarningListenerImpl;
 import org.opentrafficsim.road.network.factory.osm.input.ReadOSMFile;
 import org.opentrafficsim.road.network.factory.osm.output.Convert;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -59,7 +59,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Moritz Bergmann
  */
-public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
+public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -312,7 +312,7 @@ class OSMModel implements OTSModelInterface
     private final Convert converter;
 
     /**
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties (not used)
+     * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties (not used)
      * @param osmNetwork OSMNetwork; the OSM network structure
      * @param wL WarningListener; the receiver of warning events
      * @param pL ProgressListener; the receiver of progress events

@@ -63,8 +63,8 @@ public class TimeCircularRoadAnimation implements UNITS
                     new Double[] { 0.8, 0.2 }, false, 5));
             CompoundProperty modelSelection =
                     new CompoundProperty("ModelSelection", "Model selection", "Modeling specific settings", null, false, 300);
-            modelSelection.add(new InputParameterSelectionList("SimulationScale", "Simulation scale", "Level of detail of the simulation",
-                    new String[] { "Micro", "Macro", "Meta" }, 0, true, 0));
+            modelSelection.add(new InputParameterSelectionList("SimulationScale", "Simulation scale",
+                    "Level of detail of the simulation", new String[] { "Micro", "Macro", "Meta" }, 0, true, 0));
             modelSelection.add(new InputParameterSelectionList("CarFollowingModel", "Car following model", "",
                     new String[] { "IDM", "IDM+" }, 1, false, 1));
             modelSelection.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.56, METER_PER_SECOND_2),

@@ -54,5 +54,5 @@ public class EgtfEvent extends EventObject
     {
         return "EgtfEvent [progress=" + this.progress + "]";
     }
-    
+
 }

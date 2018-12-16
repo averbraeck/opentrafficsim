@@ -178,8 +178,7 @@ public class Route implements Serializable, Identifiable
      * @throws NetworkException in case the cloning fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public Route clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator)
-            throws NetworkException
+    public Route clone(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator) throws NetworkException
     {
         Route newRoute = new Route(this.id);
         for (Node node : this.nodes)

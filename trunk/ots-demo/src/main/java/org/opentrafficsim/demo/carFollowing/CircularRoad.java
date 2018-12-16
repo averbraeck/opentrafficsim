@@ -25,15 +25,6 @@ import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.graphs.AbstractPlot;
-import org.opentrafficsim.core.graphs.ContourDataSource;
-import org.opentrafficsim.core.graphs.ContourPlotAcceleration;
-import org.opentrafficsim.core.graphs.ContourPlotDensity;
-import org.opentrafficsim.core.graphs.ContourPlotFlow;
-import org.opentrafficsim.core.graphs.ContourPlotSpeed;
-import org.opentrafficsim.core.graphs.FundamentalDiagram;
-import org.opentrafficsim.core.graphs.GraphCrossSection;
-import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -42,9 +33,18 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.draw.graphs.AbstractPlot;
+import org.opentrafficsim.draw.graphs.ContourDataSource;
+import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
+import org.opentrafficsim.draw.graphs.ContourPlotDensity;
+import org.opentrafficsim.draw.graphs.ContourPlotFlow;
+import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
+import org.opentrafficsim.draw.graphs.FundamentalDiagram;
+import org.opentrafficsim.draw.graphs.GraphCrossSection;
+import org.opentrafficsim.draw.graphs.TrajectoryPlot;
+import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.road.graphs.GraphLaneUtil;
-import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingDirectedChangeTacticalPlannerFactory;
@@ -68,7 +68,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -95,7 +95,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularRoad extends AbstractWrappableAnimation implements UNITS
+public class CircularRoad extends AbstractOTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -109,20 +109,20 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
      */
     public CircularRoad() throws InputParameterException
     {
-        this.properties.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
+        this.inputParameterMap.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
                 "<html>The lane change strategies vary in politeness.<br>"
                         + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
                         + "<li>Altruistic (assigns effect on new and current follower the same weight as "
                         + "the personal gain).</html>",
                 new String[] { "Egoistic", "Altruistic" }, 0, 500));
-        this.properties.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
+        this.inputParameterMap.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
                 new String[] { "IDM", "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 1, 600));
-        this.properties.add(new InputParameterInteger("TrackLength", "Track length", "Circumference of the track", 2000, 500,
-                6000, "Track length %dm", 10));
-        this.properties.add(new InputParameterDouble("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0,
-                45.0, true, true, "Density %.1f veh/km", 11));
-        this.properties.add(new InputParameterDouble("DensityVariability", "Density variability",
+        this.inputParameterMap.add(new InputParameterInteger("TrackLength", "Track length", "Circumference of the track", 2000,
+                500, 6000, "Track length %dm", 10));
+        this.inputParameterMap.add(new InputParameterDouble("MeanDensity", "Mean density", "Number of vehicles per km", 40.0,
+                5.0, 45.0, true, true, "Density %.1f veh/km", 11));
+        this.inputParameterMap.add(new InputParameterDouble("DensityVariability", "Density variability",
                 "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, true, true, "%.1f", 12));
         List<InputParameter<?>> outputProperties = new ArrayList<>();
         for (int lane = 1; lane <= 2; lane++)
@@ -151,7 +151,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                 "Fundamental diagram aggregated", true, 5));
         outputProperties
                 .add(new InputParameterBoolean("Fundamental diagram", "Fundamental diagram", "Fundamental diagram", true, 5));
-        this.properties.add(
+        this.inputParameterMap.add(
                 new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output", outputProperties, 1000));
     }
 
@@ -454,7 +454,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
         private final OTSNetwork network = new OTSNetwork("network");
 
         /**
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
+         * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
          */
         RoadSimulationModel(final List<InputParameter<?>> properties)
         {

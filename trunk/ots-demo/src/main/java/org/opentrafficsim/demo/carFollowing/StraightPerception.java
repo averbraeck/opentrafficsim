@@ -37,13 +37,6 @@ import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.graphs.AbstractPlot;
-import org.opentrafficsim.core.graphs.ContourDataSource;
-import org.opentrafficsim.core.graphs.ContourPlotAcceleration;
-import org.opentrafficsim.core.graphs.ContourPlotDensity;
-import org.opentrafficsim.core.graphs.ContourPlotFlow;
-import org.opentrafficsim.core.graphs.ContourPlotSpeed;
-import org.opentrafficsim.core.graphs.TrajectoryPlot;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -53,9 +46,16 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.draw.graphs.AbstractPlot;
+import org.opentrafficsim.draw.graphs.ContourDataSource;
+import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
+import org.opentrafficsim.draw.graphs.ContourPlotDensity;
+import org.opentrafficsim.draw.graphs.ContourPlotFlow;
+import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
+import org.opentrafficsim.draw.graphs.TrajectoryPlot;
+import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
-import org.opentrafficsim.road.graphs.GraphLaneUtil;
-import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
@@ -81,7 +81,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -108,7 +108,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class StraightPerception extends AbstractWrappableAnimation implements UNITS
+public class StraightPerception extends AbstractOTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -126,11 +126,11 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
         outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true, false, 0));
         outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
         outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
-        outputProperties
-                .add(new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
         outputProperties.add(
-                new InputParameterBoolean("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
+                new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
+        outputProperties.add(new InputParameterBoolean("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram",
+                true, false, 4));
+        this.inputParameterMap.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
     }
 
@@ -416,7 +416,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
         private Random randomGenerator = new Random(12345);
 
         /**
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
+         * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
          */
         StraightPerceptionModel(final List<InputParameter<?>> properties)
         {
@@ -752,7 +752,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                 {
                     getTacticalPlanner().getPerception().perceive();
                 }
-                catch (@SuppressWarnings("unused") NullPointerException exception)
+                catch (NullPointerException exception)
                 {
                     //
                 }
@@ -810,7 +810,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
                 {
                     headwayGTU = simplePerception.getForwardHeadwayGTU();
                 }
-                catch (@SuppressWarnings("unused") NullPointerException exception)
+                catch (NullPointerException exception)
                 {
                     // WJ can't obtain the headway if we never perceived anything yet
                     simplePerception.updateAll();

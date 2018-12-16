@@ -140,8 +140,7 @@ public class CompressedFilesTest
         fixedFileName = testFileName + ".zip";
         assertTrue("File with .zip suffix should have been created", new File(fixedFileName).exists());
         inputStream = Reader.createInputStream(fixedFileName, CompressionType.ZIP);
-        assertTrue("toString method of zip reader is somewhat descriptive", inputStream.toString()
-                .contains("ZipInputStream"));
+        assertTrue("toString method of zip reader is somewhat descriptive", inputStream.toString().contains("ZipInputStream"));
         readContent = new String(IOUtils.toByteArray(inputStream));
         inputStream.close();
         assertEquals("contents of txt file should match written data", testContent, readContent);

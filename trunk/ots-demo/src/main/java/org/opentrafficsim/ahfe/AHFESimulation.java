@@ -441,7 +441,8 @@ public class AHFESimulation extends AbstractWrappableSimulation
                     System.out.println("Setting up replication " + finalReplication);
                     model.setNextReplication(finalReplication);
                     // 1 hour simulation run for testing
-                    model.buildSimulator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), new ArrayList<InputParameter<?>>());
+                    model.buildSimulator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si),
+                            new ArrayList<InputParameter<?>>());
                     if (finalAutoRun)
                     {
                         int lastReportedTime = -60;

@@ -52,7 +52,7 @@ public final class PropertiesParser
 
     /**
      * Get the car following model for a GTU type, e.g. "Car" or "Truck" from the properties.
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties to parse
+     * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties to parse
      * @param gtuType String; the type of GTU, e.g. "Car" or "Truck"
      * @return GTUFollowingModelOld; the car following model
      * @throws InputParameterException in case parsing fails
@@ -114,7 +114,7 @@ public final class PropertiesParser
 
     /**
      * Get the lane change model from the properties.
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties to parse
+     * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties to parse
      * @return LaneChangeModel; the lane change model
      * @throws InputParameterException in case parsing fails
      */
@@ -144,7 +144,7 @@ public final class PropertiesParser
 
     /**
      * Get the strategical planner factory from the properties.
- * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties to parse
+     * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties to parse
      * @param gtuFollowingModel GTUFollowingModelOld; the car following model in case it is needed
      * @param laneChangeModel LaneChangeModel; the lane change model in case it is needed
      * @param stream StreamInterface; random stream
@@ -191,7 +191,8 @@ public final class PropertiesParser
                     }
                     else
                     {
-                        throw new InputParameterException("Don't know how to create a " + tacticalPlannerName + " tactical planner");
+                        throw new InputParameterException(
+                                "Don't know how to create a " + tacticalPlannerName + " tactical planner");
                     }
                 }
             }

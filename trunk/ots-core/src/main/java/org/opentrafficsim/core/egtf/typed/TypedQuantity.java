@@ -115,5 +115,5 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U>, K extends Dou
     {
         return "TypedQuantity []";
     }
-    
+
 }

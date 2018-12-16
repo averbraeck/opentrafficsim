@@ -48,7 +48,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.xml.sax.SAXException;
 
@@ -70,7 +70,7 @@ import nl.tudelft.simulation.event.EventProducer;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class LoadXML extends AbstractWrappableAnimation
+public class LoadXML extends AbstractOTSSwingApplication
 {
 
     /** */
@@ -136,8 +136,8 @@ public class LoadXML extends AbstractWrappableAnimation
         loadXML.xml = new String(Files.readAllBytes(Paths.get(loadXML.fileName)));
         try
         {
-            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, DurationUnit.SI), new ArrayList<InputParameter<?>>(),
-                    null, true);
+            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, DurationUnit.SI),
+                    new ArrayList<InputParameter<?>>(), null, true);
         }
         catch (SimRuntimeException sre)
         {

@@ -113,9 +113,7 @@ public class RDTests
                         fail("Supplied RD coordinates (" + rdIn + ") should NOT have thrown an IllegalArgumentException");
                     }
                 }
-                wgs =
-                        new Point2D.Double(centerEW + xFactor * 1.05 * halfWidthWGS, centerNS + yFactor * 1.05
-                                * halfHeightWGS);
+                wgs = new Point2D.Double(centerEW + xFactor * 1.05 * halfWidthWGS, centerNS + yFactor * 1.05 * halfHeightWGS);
                 try
                 {
                     TransformWGS84DutchRDNew.toWGS84(wgs);
