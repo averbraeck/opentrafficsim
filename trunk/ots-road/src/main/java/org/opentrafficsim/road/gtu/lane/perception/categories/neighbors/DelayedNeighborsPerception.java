@@ -291,7 +291,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             }
 
         }
-        catch (@SuppressWarnings("unused") PerceptionException exception)
+        catch (PerceptionException exception)
         {
             // lane change performed, info on a lane not present
         }
@@ -326,7 +326,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 }
             }
         }
-        catch (@SuppressWarnings("unused") ParameterException pe)
+        catch (ParameterException pe)
         {
             //
         }

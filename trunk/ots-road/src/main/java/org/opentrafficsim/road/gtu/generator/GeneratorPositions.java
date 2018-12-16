@@ -103,7 +103,7 @@ public final class GeneratorPositions implements Locatable
                     {
                         point = pos.getLane().getCenterLine().getLocation(pos.getPosition());
                     }
-                    catch (@SuppressWarnings("unused") OTSGeometryException exception)
+                    catch (OTSGeometryException exception)
                     {
                         point = new DirectedPoint(0, 0, 0);
                     }
@@ -291,7 +291,7 @@ public final class GeneratorPositions implements Locatable
                         speedLimit = limit;
                     }
                 }
-                catch (@SuppressWarnings("unused") NetworkException exception)
+                catch (NetworkException exception)
                 {
                     // ignore
                 }

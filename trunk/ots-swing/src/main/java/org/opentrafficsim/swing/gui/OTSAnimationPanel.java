@@ -643,7 +643,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 {
                     Thread.sleep(10);
                 }
-                catch (@SuppressWarnings("unused") InterruptedException exception)
+                catch (InterruptedException exception)
                 {
                     // nothing to do
                 }
@@ -760,7 +760,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 {
                     Thread.sleep(50); // 20 times per second
                 }
-                catch (@SuppressWarnings("unused") InterruptedException exception)
+                catch (InterruptedException exception)
                 {
                     // do nothing
                 }
@@ -977,7 +977,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                 {
                     point = this.lastGtu != null ? this.lastGtu.getLocation() : null;
                 }
-                catch (@SuppressWarnings("unused") RemoteException exception)
+                catch (RemoteException exception)
                 {
                     System.err.println("Could not pan to GTU location.");
                     return;

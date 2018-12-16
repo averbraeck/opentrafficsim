@@ -44,7 +44,7 @@ public class ReferenceSpeed extends ExtendedDataTypeSpeed<GtuData>
             double v2 = gtuObj.getMaximumSpeed().si;
             return new FloatSpeed(v1 < v2 ? v1 : v2, SpeedUnit.SI);
         }
-        catch (@SuppressWarnings("unused") GTUException exception)
+        catch (GTUException exception)
         {
             // GTU was destroyed and is without a reference location
             return new FloatSpeed(Double.NaN, SpeedUnit.SI);

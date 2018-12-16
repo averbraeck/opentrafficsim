@@ -426,7 +426,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         {
             return this.odometer.get(time).plus(getOperationalPlan(time).getTraveledDistance(time));
         }
-        catch (@SuppressWarnings("unused") OperationalPlanException ope)
+        catch (OperationalPlanException ope)
         {
             return this.odometer.get(time);
         }
@@ -590,7 +590,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             }
             return this.cacheLocation;
         }
-        catch (@SuppressWarnings("unused") OperationalPlanException exception)
+        catch (OperationalPlanException exception)
         {
             return new DirectedPoint(0, 0, 0);
         }
@@ -629,7 +629,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         {
             gtu.setParent(null);
         }
-        catch (@SuppressWarnings("unused") GTUException exception)
+        catch (GTUException exception)
         {
             // cannot happen, setting null is always ok
         }

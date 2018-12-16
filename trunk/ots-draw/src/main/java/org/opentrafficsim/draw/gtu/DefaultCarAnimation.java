@@ -308,7 +308,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
                     {
                         destroy();
                     }
-                    catch (@SuppressWarnings("unused") Exception e)
+                    catch (Exception e)
                     {
                         System.err.println("Error while destroying text animation of GTU " + car.getId());
                     }

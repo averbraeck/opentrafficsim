@@ -331,7 +331,7 @@ public class IDMPlusTest implements UNITS
                     // System.out.println(referenceCar40 + ", t= " + simulator.getSimulatorTime() + ", pos="
                     // + referenceCar40.getLocation());
                 }
-                catch (@SuppressWarnings("unused") InterruptedException ie)
+                catch (InterruptedException ie)
                 {
                     ie = null; // ignore
                 }
