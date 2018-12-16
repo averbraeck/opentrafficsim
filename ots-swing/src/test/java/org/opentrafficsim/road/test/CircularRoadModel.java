@@ -96,7 +96,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     /** Strategical planner generator for cars. */
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorCars = null;
 
-    /** Strategical planner generator for cars. */
+    /** Strategical planner generator for trucks. */
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
 
     /** The OTSNetwork. */
@@ -105,24 +105,34 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     /**
      * @param simulator the simulator for this model
      */
-    public CircularRoadModel(final OTSSimulatorInterface simulator) throws InputParameterException
+    public CircularRoadModel(final OTSSimulatorInterface simulator)
     {
         super(simulator);
         makeInputParameterMap();
     }
 
-    public void makeInputParameterMap() throws InputParameterException
+    /**
+     * Make a map of input parameters for this demo.
+     */
+    public void makeInputParameterMap()
     {
-        InputParameterMap genericMap = new InputParameterMap("generic", "Generic", "Generic parameters", 1.0);
-        InputParameterMap carMap = new InputParameterMap("car", "Car", "Car parameters", 2.0);
-        InputParameterMap truckMap = new InputParameterMap("truck", "Truck", "Truck parameters", 3.0);
-        this.inputParameterMap.add(genericMap);
-        this.inputParameterMap.add(carMap);
-        this.inputParameterMap.add(truckMap);
+        try
+        {
+            InputParameterMap genericMap = new InputParameterMap("generic", "Generic", "Generic parameters", 1.0);
+            InputParameterMap carMap = new InputParameterMap("car", "Car", "Car parameters", 2.0);
+            InputParameterMap truckMap = new InputParameterMap("truck", "Truck", "Truck parameters", 3.0);
+            this.inputParameterMap.add(genericMap);
+            this.inputParameterMap.add(carMap);
+            this.inputParameterMap.add(truckMap);
 
-        genericMap.add(new InputParameterDoubleScalar<LengthUnit, Length>("trackLength", "Track length",
-                "Track length (circumfence of the track)", Length.createSI(2000.0), Length.createSI(500.0),
-                Length.createSI(2000.0), true, true, "%.0f", 1.0));
+            genericMap.add(new InputParameterDoubleScalar<LengthUnit, Length>("trackLength", "Track length",
+                    "Track length (circumfence of the track)", Length.createSI(2000.0), Length.createSI(500.0),
+                    Length.createSI(2000.0), true, true, "%.0f", 1.0));
+        }
+        catch (InputParameterException exception)
+        {
+            exception.printStackTrace();
+        }
 
     }
 
@@ -159,7 +169,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
             Duration tSafe = Duration.createSI(1.2);
 
             CarFollowingModel carFollowingModel = new IDMPlus();
-            
+
             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
@@ -210,7 +220,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
                     pos += actualHeadway;
                 }
             }
-            
+
         }
         catch (Exception exception)
         {

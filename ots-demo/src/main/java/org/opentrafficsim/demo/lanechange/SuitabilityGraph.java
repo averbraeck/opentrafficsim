@@ -46,7 +46,7 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
-import org.opentrafficsim.swing.gui.SimulatorFrame;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -105,7 +105,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
             public void run()
             {
                 SuitabilityGraph suitabilityGraph = new SuitabilityGraph();
-                new SimulatorFrame("Suitability graph", suitabilityGraph.getPanel());
+                new AbstractOTSSwingApplication("Suitability graph", suitabilityGraph.getPanel());
                 try
                 {
                     suitabilityGraph.drawPlots();

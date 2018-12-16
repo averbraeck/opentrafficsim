@@ -8,7 +8,8 @@ import javax.swing.JPanel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 
 /**
- * Wrap a DSOL simulator, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be maximized.
+ * Wrap a DSOL simulation model, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be
+ * maximized.
  * <p>
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -18,7 +19,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SimulatorFrame extends JFrame
+public abstract class AbstractOTSSwingApplication extends JFrame
 {
     /** */
     private static final long serialVersionUID = 20141216L;
@@ -28,7 +29,7 @@ public class SimulatorFrame extends JFrame
      * @param title String; title for the JFrame
      * @param panel JPanel; the JPanel that will become the contentPane of the JFrame
      */
-    public SimulatorFrame(final String title, final JPanel panel)
+    public AbstractOTSSwingApplication(final String title, final JPanel panel)
     {
         super();
         setTitle(title);
@@ -44,7 +45,7 @@ public class SimulatorFrame extends JFrame
      * @param model OTSModelInterface; the model that will be shown in the JFrame
      * @param panel JPanel; this should be the JPanel of the simulation
      */
-    public SimulatorFrame(final OTSModelInterface model, final JPanel panel)
+    public AbstractOTSSwingApplication(final OTSModelInterface model, final JPanel panel)
     {
         super();
         setTitle(model.getShortName());
