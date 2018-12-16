@@ -41,7 +41,7 @@ public final class GraphUtil
     /**
      * Helper method for quick filtering of trajectories by checking if the time of the trajectory has overlap with the given
      * time.
-     * @param trajectory Trajectory; trajectory
+ * @param trajectory Trajectory&lt;?&gt;; trajectory
      * @param startTime Time; start time
      * @param endTime Time; end time
      * @return boolean; true if the trajectory should be considered for the given time
@@ -62,7 +62,7 @@ public final class GraphUtil
     /**
      * Helper method for quick filtering of trajectories by checking if the position of the trajectory has overlap with the
      * given range.
-     * @param trajectory Trajectory; trajectory
+ * @param trajectory Trajectory&lt;?&gt;; trajectory
      * @param startPosition Length; start position
      * @param endPosition Length; end position
      * @return boolean; true if the trajectory should be considered for the given time

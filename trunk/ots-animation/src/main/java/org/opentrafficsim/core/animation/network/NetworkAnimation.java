@@ -39,7 +39,7 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
 
     /**
      * Construct this NetworkAnimation object with a connection to the Network.
-     * @param network the network to which the animation info is connected
+ * @param network Network; the network to which the animation info is connected
      * @throws RemoteException in case of remote events and network error
      */
     public NetworkAnimation(Network network) throws RemoteException
@@ -65,8 +65,8 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
     /**
      * Add the drawing info for a class. Here it can e.g., be specified that all lanes are filled with a light gray color and
      * drawn with a dark gray stroke. The class drawing info <b>can</b> be cached.
-     * @param drawableClass the class to set the drawing info for
-     * @param drawingInfo the default drawing info for the class
+ * @param drawableClass Class&lt;? extends Drawable&gt;; the class to set the drawing info for
+ * @param drawingInfo DrawingInfo; the default drawing info for the class
      */
     public void addDrawingInfoClass(final Class<? extends Drawable> drawableClass, final DrawingInfo drawingInfo)
     {
@@ -76,8 +76,8 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
     /**
      * Add the drawing info for an instance. This overrides the drawing info for the class. An example is that a bus lane can be
      * drawn using a black color to make it different from the standard lanes. The base drawing info <b>can</b> be cached.
-     * @param drawable the object to set the drawing info for
-     * @param drawingInfo the default drawing info for the drawable
+ * @param drawable Drawable; the object to set the drawing info for
+ * @param drawingInfo DrawingInfo; the default drawing info for the drawable
      */
     public void addDrawingInfoBase(final Drawable drawable, final DrawingInfo drawingInfo)
     {
@@ -88,8 +88,8 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
      * Add the dynamic drawing information for an instance. This overrides the drawing info for the object and the class, and
      * should <b>not</b> be cached. An example is that a lane on a highway that turns red when it is forbidden for traffic to
      * use the lane.
-     * @param drawable the object to set the drawing info for
-     * @param drawingInfo the dynamic drawing info for the drawable
+ * @param drawable Drawable; the object to set the drawing info for
+ * @param drawingInfo DrawingInfo; the dynamic drawing info for the drawable
      */
     public void addDrawingInfoDynamic(final Drawable drawable, final DrawingInfo drawingInfo)
     {
@@ -99,7 +99,7 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
     /**
      * Get the drawing information for a drawable instance. It first checks the dynamic info, then the base info, and then the
      * class info.
-     * @param drawable the object to get the drawing info for
+ * @param drawable Drawable; the object to get the drawing info for
      * @return DrawingInfo; the drawing info for the instance, or null if no Drawing info could be found
      */
     public DrawingInfo getDrawingInfo(final Drawable drawable)
@@ -114,7 +114,7 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
 
     /**
      * Get the static drawing information for a drawable instance. It first checks the base info, and then the class info.
-     * @param drawable the object to get the drawing info for
+ * @param drawable Drawable; the object to get the drawing info for
      * @return DrawingInfo; the drawing info for the instance, or null if no Drawing info could be found
      */
     public DrawingInfo getDrawingInfoBase(final Drawable drawable)
@@ -129,7 +129,7 @@ public class NetworkAnimation extends EventProducer implements EventListenerInte
 
     /**
      * Get the static class-based drawing information for a drawable instance.
-     * @param drawableClass the class to get the drawing info for
+ * @param drawableClass Class&lt;? extends Drawable&gt;; the class to get the drawing info for
      * @return DrawingInfo; the drawing info for the class, or null if no Drawing info could be found
      */
     public DrawingInfo getDrawingInfoClass(final Class<? extends Drawable> drawableClass)

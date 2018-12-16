@@ -43,7 +43,7 @@ public final class OTSNetworkAnimationUtils
     
     /**
      * Clone the OTSNetwork, including animation.
-     * @param network the network to clone
+ * @param network OTSNetwork; the network to clone
      * @param newId String; the new id of the network
      * @param oldSimulator SimulatorInterface.TimeDoubleUnit; the old simulator for this network
      * @param newSimulator OTSSimulatorInterface; the new simulator for this network
@@ -122,7 +122,7 @@ public final class OTSNetworkAnimationUtils
 
     /**
      * Remove all objects and animation in the network.
-     * @param network the network to destroy
+ * @param network OTSNetwork; the network to destroy
      * @param simulator SimulatorInterface.TimeDoubleUnit; the simulator of the old network
      */
     @SuppressWarnings("checkstyle:designforextension")

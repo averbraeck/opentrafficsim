@@ -29,7 +29,7 @@ public final class DataStream<T extends Number>
     /**
      * Constructor.
      * @param dataSource DataSource; data source
-     * @param quantity Quantity; quantity
+ * @param quantity Quantity&lt;T, ?&gt;; quantity
      * @param thetaCong double; standard deviation in congestion
      * @param thetaFree double; standard deviation in free flow
      */

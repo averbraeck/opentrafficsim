@@ -185,7 +185,7 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
 
     /**
      * Enables visualization of this lane structure. This is purely for debugging purposes.
-     * @param rollingLaneStructure the lane structure to visualize
+ * @param rollingLaneStructure RollingLaneStructure; the lane structure to visualize
      * @param gtu GTU; GTU to animate the LaneStructure of
      */
     public static final void visualize(final RollingLaneStructure rollingLaneStructure, final GTU gtu)

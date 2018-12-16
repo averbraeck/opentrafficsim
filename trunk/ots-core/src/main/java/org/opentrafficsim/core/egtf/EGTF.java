@@ -207,7 +207,7 @@ public class EGTF
 
     /**
      * Adds point data.
-     * @param dataStream DataStream; data stream of the data
+ * @param dataStream DataStream&lt;?&gt;; data stream of the data
      * @param location double; location in [m]
      * @param time double; time in [s]
      * @param value double; data value
@@ -242,7 +242,7 @@ public class EGTF
 
     /**
      * Adds vector data.
-     * @param dataStream DataStream; data stream of the data
+ * @param dataStream DataStream&lt;?&gt;; data stream of the data
      * @param location double[]; locations in [m]
      * @param time double[]; times in [s]
      * @param values double[]; data values in SI unit
@@ -288,7 +288,7 @@ public class EGTF
 
     /**
      * Adds grid data.
-     * @param dataStream DataStream; data stream of the data
+ * @param dataStream DataStream&lt;?&gt;; data stream of the data
      * @param location double[]; locations in [m]
      * @param time double[]; times in [s]
      * @param values double[][]; data values in SI unit
@@ -374,7 +374,7 @@ public class EGTF
     /**
      * Returns data from a specific time as a subset of data from a specific location. An empty map is returned if no such data
      * exists.
-     * @param spatialData SortedMap; spatially selected data
+ * @param spatialData Map&lt;Double, Map&lt;DataStream&lt;?&gt;, Double&gt;&gt;; spatially selected data
      * @param time double; time in [s]
      * @return data from a specific time, from data from a specific location
      */
@@ -478,7 +478,7 @@ public class EGTF
      * done. Finally, the filtering results can then be obtained from the listener.
      * @param location double[]; location of output grid in [m]
      * @param time double[]; time of output grid in [s]
-     * @param quantities Quantity...; quantities to calculate filtered data of
+ * @param quantities Quantity&lt;?, ?&gt;...; quantities to calculate filtered data of
      * @return EgtfParallelListener; listener to notify keep track of the progress
      */
     public EgtfParallelListener filterParallelSI(final double[] location, final double[] time,
@@ -510,7 +510,7 @@ public class EGTF
      * @param tMin double; minimum time value of output grid [s]
      * @param tStep double; time step of output grid [s]
      * @param tMax double; maximum time value of output grid [s]
-     * @param quantities Quantity...; quantities to calculate filtered data of
+ * @param quantities Quantity&lt;?, ?&gt;...; quantities to calculate filtered data of
      * @return EgtfParallelListener; listener to notify keep track of the progress
      */
     public EgtfParallelListener filterParallelFastSI(final double xMin, final double xStep, final double xMax,

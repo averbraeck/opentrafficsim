@@ -740,7 +740,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     }
 
     /**
-     * @param newRouteMap the routeMap to set, only to be used in the 'network' package for cloning.
+ * @param newRouteMap Map&lt;GTUType,Map&lt;String,Route&gt;&gt;; the routeMap to set, only to be used in the 'network' package for cloning.
      */
     final void setRawRouteMap(final Map<GTUType, Map<String, Route>> newRouteMap)
     {

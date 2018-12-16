@@ -300,7 +300,7 @@ public final class LmrsUtil implements LmrsParameters
      * @param a Acceleration; previous acceleration
      * @param aNew Acceleration; new acceleration
      * @param lmrsData LmrsData; lmrs data
-     * @param state State; synchronization state
+ * @param state Synchronizable.State; synchronization state
      * @return Acceleration; minimized acceleration
      */
     private static Acceleration applyAcceleration(final Acceleration a, final Acceleration aNew, final LmrsData lmrsData,

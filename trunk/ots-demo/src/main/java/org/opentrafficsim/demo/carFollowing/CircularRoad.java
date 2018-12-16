@@ -454,7 +454,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
         private final OTSNetwork network = new OTSNetwork("network");
 
         /**
-         * @param properties List&lt;Property&lt;?&gt;&gt;; the properties
+ * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
          */
         RoadSimulationModel(final List<InputParameter<?>> properties)
         {

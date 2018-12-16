@@ -227,7 +227,7 @@ public class IMBSampler extends Sampler<GtuData>
     }
 
     /**
-     * @param imbKpiTransceiver ImbKpiTransceiver; add imbKpiTransceiver.
+ * @param imbKpiTransceiver ImbKpiTransceiver&lt;GtuData&gt;; add imbKpiTransceiver.
      */
     public void addImbKpiTransceiver(final ImbKpiTransceiver<GtuData> imbKpiTransceiver)
     {

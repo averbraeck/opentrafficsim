@@ -384,7 +384,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
         private Speed speedLimit;
 
         /**
-         * @param properties List&lt;Property&lt;?&gt;&gt;; the user settable properties
+ * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
          */
         SequentialModel(final List<InputParameter<?>> properties)
         {

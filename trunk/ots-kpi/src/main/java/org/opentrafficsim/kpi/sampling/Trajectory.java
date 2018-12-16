@@ -491,10 +491,10 @@ public final class Trajectory<G extends GtuDataInterface>
     /**
      * Returns a space-time view of this trajectory. This is much more efficient than {@code subSet()} as no trajectory is
      * copied. The limitation is that only distance and time (and mean speed) in the space-time view can be obtained.
-     * @param startPosition start position
-     * @param endPosition end position
-     * @param startTime start time
-     * @param endTime end time
+ * @param startPosition Length; start position
+ * @param endPosition Length; end position
+ * @param startTime Time; start time
+ * @param endTime Time; end time
      * @return space-time view of this trajectory
      */
     @SuppressWarnings("synthetic-access")
@@ -740,7 +740,7 @@ public final class Trajectory<G extends GtuDataInterface>
     
     /**
      * Returns an interpolated position at the given time.
-     * @param time Length; time
+ * @param time Time; time
      * @return Length; interpolated position at the given time
      */
     public Length getPositionAtTime(final Time time)
@@ -750,7 +750,7 @@ public final class Trajectory<G extends GtuDataInterface>
     
     /**
      * Returns an interpolated speed at the given time.
-     * @param time Length; time
+ * @param time Time; time
      * @return Speed; interpolated speed at the given time
      */
     public Speed getSpeedAtTime(final Time time)
@@ -760,7 +760,7 @@ public final class Trajectory<G extends GtuDataInterface>
     
     /**
      * Returns an interpolated acceleration at the given time.
-     * @param time Length; time
+ * @param time Time; time
      * @return Acceleration; interpolated acceleration at the given time
      */
     public Acceleration getAccelerationAtTime(final Time time)
@@ -938,8 +938,8 @@ public final class Trajectory<G extends GtuDataInterface>
         public final double fraction;
 
         /**
-         * @param index rounded down index
-         * @param fraction fraction
+ * @param index int; rounded down index
+ * @param fraction double; fraction
          */
         Boundary(final int index, final double fraction)
         {
@@ -956,7 +956,7 @@ public final class Trajectory<G extends GtuDataInterface>
         
         /**
          * Returns the value at the boundary in the array.
-         * @param array float[] array
+ * @param array float[]; float[] array
          * @return double; value at the boundary in the array
          */
         public double getValue(final float[] array)

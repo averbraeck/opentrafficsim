@@ -25,7 +25,7 @@ public class Kernel
      * Constructor.
      * @param xMax double; maximum spatial range
      * @param tMax double; maximum temporal range
-     * @param shape Shape; shape of the kernel
+ * @param shape KernelShape; shape of the kernel
      */
     Kernel(final double xMax, final double tMax, final KernelShape shape)
     {

@@ -79,7 +79,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * Constructor with specified paint scale.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataSource&lt;G&gt;; data pool
+ * @param dataPool ContourDataSource&lt;?&gt;; data pool
      * @param paintScale BoundsPaintScale; paint scale
      * @param legendStep Z; increment between color legend entries
      * @param legendFormat String; format string for the captions in the color legend
@@ -106,7 +106,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * Constructor with default paint scale.
      * @param caption String; caption
      * @param simulator OTSSimulatorInterface; simulator
-     * @param dataPool ContourDataSource&lt;G&gt;; data pool
+ * @param dataPool ContourDataSource&lt;?&gt;; data pool
      * @param legendStep Z; increment between color legend entries
      * @param legendFormat String; format string for the captions in the color legend
      * @param minValue Z; minimum value
@@ -213,7 +213,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @param command String; prefix for the actionCommand of the items under the new JMenu
      * @param values double[]; array of values to be formatted using the format strings to yield the items under the new JMenu
      * @param initialValue double; the currently selected value (used to put the bullet on the correct item)
-     * @param granularityButtons Map; map in to which buttons should be added
+ * @param granularityButtons Map&lt;JRadioButtonMenuItem, Double&gt;; map in to which buttons should be added
      * @return JMenu with JRadioMenuItems for the values and a bullet on the currentValue item
      */
     private JMenu buildMenu(final String menuName, final String format1, final double formatValue, final String format2,
