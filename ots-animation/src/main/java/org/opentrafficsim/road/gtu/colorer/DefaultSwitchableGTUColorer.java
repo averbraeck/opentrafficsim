@@ -21,7 +21,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-// TODO same class name as in core, w\o additional functionality, while the core one is used in AbstractWrappableAnimation
+// TODO same class name as in core, w\o additional functionality, while the core one is used in AbstractOTSSwingApplication
 public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
 {
     /** */

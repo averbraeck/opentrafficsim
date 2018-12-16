@@ -52,7 +52,7 @@ public class SocialPressureColorer implements GTUColorer
             double rho = gtu.getParameters().getParameter(Tailgating.RHO);
             return ColorInterpolator.interpolateColor(NONE, FULL, rho);
         }
-        catch (@SuppressWarnings("unused") Exception exception)
+        catch (Exception exception)
         {
             return NA;
         }
