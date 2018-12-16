@@ -22,7 +22,7 @@
     
     <dependency>
       <groupId>opentrafficsim</groupId>
-      <artifactId>ots-draw-swing</artifactId>
+      <artifactId>ots-draw</artifactId>
     </dependency>
     
     <dependency>
