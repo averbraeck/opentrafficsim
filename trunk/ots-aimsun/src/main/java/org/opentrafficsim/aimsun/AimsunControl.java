@@ -1,5 +1,7 @@
 package org.opentrafficsim.aimsun;
 
+import java.awt.Dimension;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,9 +13,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 import javax.naming.NamingException;
+import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.DurationUnit;
@@ -24,11 +26,11 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions;
-import org.opentrafficsim.base.modelproperties.Property;
-import org.opentrafficsim.base.modelproperties.InputParameterException;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
@@ -36,25 +38,21 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.road.animation.AnimationToggles;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.road.network.lane.object.SpeedSign;
-import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -67,12 +65,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class AimsunControl extends AbstractWrappableAnimation
+public class AimsunControl
 {
-
-    /** */
-    private static final long serialVersionUID = 20160418L;
-
     /** XML description of the network. */
     private String networkXML = null;
 
@@ -141,6 +135,7 @@ public class AimsunControl extends AbstractWrappableAnimation
             System.out.println("Socket time out is " + clientSocket.getSoTimeout());
             clientSocket.setSoTimeout(0);
             System.out.println("Constructing animation/simulation");
+
             AimsunControl aimsunControl = new AimsunControl();
             aimsunControl.commandLoop(clientSocket);
         }
@@ -230,12 +225,18 @@ public class AimsunControl extends AbstractWrappableAnimation
                         Duration warmupDuration = new Duration(createSimulation.getWarmUpTime(), DurationUnit.SECOND);
                         try
                         {
-                            SimpleAnimator animator = buildAnimator(Time.ZERO, warmupDuration, runDuration,
-                                    new ArrayList<InputParameter<?>>(), null, true);
+                            OTSAnimator animator = new OTSAnimator();
+                            animator.initialize(Time.ZERO, warmupDuration, runDuration, this.model);
+                            OTSAnimationPanel animationPanel = new OTSAnimationPanel(
+                                    new Rectangle2D.Double(-500, -500, 1000, 1000), new Dimension(200, 200), animator,
+                                    this.model, new DefaultSwitchableGTUColorer(), this.model.getNetwork());
+                            new AimsunSwingApplication(this.model, animationPanel);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
                             animator.setSpeedFactor(1000.0, true);
+                            DefaultAnimationFactory.animateNetwork(this.model.getNetwork(), this.model.getSimulator());
+                            AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
                         }
-                        catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception1)
+                        catch (SimRuntimeException | NamingException | OTSDrawingException exception1)
                         {
                             exception1.printStackTrace();
                             // Stop the simulation
@@ -254,7 +255,7 @@ public class AimsunControl extends AbstractWrappableAnimation
                         AimsunControlProtoBuf.SimulateUntil simulateUntil = message.getSimulateUntil();
                         Time stopTime = new Time(simulateUntil.getTime(), TimeUnit.BASE_SECOND);
                         System.out.println("Simulate until " + stopTime + " ");
-                        DEVSSimulator<Time, ?, ?> simulator = (DEVSSimulator<Time, ?, ?>) this.model.getSimulator();
+                        OTSSimulatorInterface simulator = this.model.getSimulator();
                         try
                         {
                             if (null != error)
@@ -432,33 +433,38 @@ public class AimsunControl extends AbstractWrappableAnimation
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
+    /**
+     * The application.
+     */
+    class AimsunSwingApplication extends AbstractOTSSwingApplication
     {
-        return "AimsunControlledOTS";
-    }
+        /** */
+        private static final long serialVersionUID = 1L;
 
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "Aimsun controlled OTS engine";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected OTSModelInterface makeModel() throws OTSSimulationException
-    {
-        this.model = new AimsunModel();
-        return this.model;
+        /**
+         * @param model the model
+         * @param panel the panel of the main screen
+         */
+        public AimsunSwingApplication(final OTSModelInterface model, final JPanel panel)
+        {
+            super(model, panel);
+        }
     }
 
     /**
      * The network.
      */
-    class AimsunModel extends EventProducer implements OTSModelInterface, EventListenerInterface
+    class AimsunModel extends AbstractOTSModel implements EventListenerInterface
     {
+        /**
+         * @param simulator the simulator
+         * @param shortName the model name
+         * @param description the model description
+         */
+        public AimsunModel(OTSSimulatorInterface simulator, String shortName, String description)
+        {
+            super(simulator, shortName, description);
+        }
 
         /** */
         private static final long serialVersionUID = 20170419L;
@@ -466,15 +472,10 @@ public class AimsunControl extends AbstractWrappableAnimation
         /** The network. */
         private OTSNetwork network;
 
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
-
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-                throws SimRuntimeException
+        public void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) theSimulator;
             try
             {
                 this.simulator.addListener(this, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT);
@@ -491,22 +492,15 @@ public class AimsunControl extends AbstractWrappableAnimation
             try
             {
                 this.network = nlp.build(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), false);
-                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, (OTSSimulatorInterface) theSimulator,
+                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException | ValueException | ParameterException exception)
+                    | OTSGeometryException | ValueException | ParameterException | SimRuntimeException exception)
             {
                 exception.printStackTrace();
                 throw new SimRuntimeException(exception);
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */
@@ -523,16 +517,6 @@ public class AimsunControl extends AbstractWrappableAnimation
             return this.network;
         }
 
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesFull(this);
-        this.toggleAnimationClass(OTSLink.class);
-        this.toggleAnimationClass(OTSNode.class);
-        showAnimationClass(SpeedSign.class);
     }
 
 }
