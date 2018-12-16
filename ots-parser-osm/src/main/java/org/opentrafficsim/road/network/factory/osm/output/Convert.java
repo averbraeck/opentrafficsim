@@ -7,7 +7,6 @@ import static org.opentrafficsim.core.gtu.GTUType.SHIP;
 
 import java.awt.Color;
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +24,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
+import org.opentrafficsim.core.animation.DrawingInfoShape;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -55,7 +55,6 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 
 /**
  * <p>
@@ -678,17 +677,9 @@ public final class Convert
                 newLane = new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
                         laneAttributes.getWidth(), laneType, speedLimit, new OvertakingConditions.LeftAndRight());
             }
-            if (simulator instanceof AnimatorInterface)
-            {
-                try
-                {
-                    new LaneAnimation(newLane, simulator, color, false);
-                }
-                catch (RemoteException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
+            
+            network.addDrawingInfoBase(newLane, new DrawingInfoShape<Lane>(color));
+
             lanes.add(newLane);
         }
         return lanes;

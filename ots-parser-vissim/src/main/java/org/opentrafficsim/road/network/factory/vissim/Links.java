@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.factory.vissim;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.animation.DrawingInfoShape;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
@@ -30,7 +30,6 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.factory.vissim.ArcTag.ArcDirection;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -42,7 +41,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLig
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.d3.CartesianPoint;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -569,18 +567,8 @@ final class Links
                 linkTag.lanes.put(name, lane);
                 // update totalLaneWidth
                 totalLaneWidth += Double.parseDouble(laneTag.width);
-                if (simulator != null && simulator instanceof AnimatorInterface)
-                {
-                    try
-                    {
-                        new LaneAnimation(lane, simulator, color, true);
-                    }
-                    catch (RemoteException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                }
 
+                parser.network.addDrawingInfoBase(lane, new DrawingInfoShape<Lane>(color));
             }
         }
 
@@ -681,17 +669,8 @@ final class Links
                 // update totalLaneWidth
                 totalFromLaneWidth += Double.parseDouble(connectLaneTag.width);
                 totalToLaneWidth += Double.parseDouble(connectLaneTag.width);
-                if (simulator != null && simulator instanceof AnimatorInterface)
-                {
-                    try
-                    {
-                        new LaneAnimation(lane, simulator, color, true);
-                    }
-                    catch (RemoteException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                }
+
+                parser.network.addDrawingInfoBase(lane, new DrawingInfoShape<Lane>(color));
 
             }
         }
