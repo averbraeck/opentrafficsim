@@ -25,7 +25,7 @@ public class HexDumpTest
     @Test
     public final void testHexDump()
     {
-        assertTrue("Empty input yields empty output", HexDump.hexDump(new byte[] {}).length() == 0);
+        assertEquals("Empty input yields empty output", "", HexDump.hexDump(new byte[] {}));
         byte[] input = new byte[] { 1, 2 };
         String output = HexDump.hexDump(input);
         assertTrue("Output starts with address \"00000000: \"", output.startsWith("00000000: "));
