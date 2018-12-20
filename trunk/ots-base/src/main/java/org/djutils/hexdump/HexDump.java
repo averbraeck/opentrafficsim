@@ -2,6 +2,17 @@ package org.djutils.hexdump;
 
 /**
  * Create hexadecimal dumps of data.
+ * <br>
+ * Possible features to add:
+ * <ul>
+ * <li>Input from ByteStream</li>
+ * <li>User specified address offset (instead of 0)</li> 
+ * <li>Custom prefix for each output line</li>
+ * <li>Output to OutputStream</li>
+ * <li>Output to logger</li>
+ * <li>Output with time stamp in prefix of each line</li>
+ * <li>Suppression of multiple lines with identical data</li>
+ * </ul>
  * <p>
  * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
