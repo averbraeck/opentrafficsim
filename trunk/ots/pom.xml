@@ -70,7 +70,7 @@
     <ots.version>${project.version}</ots.version>
     <djunits.version>3.00.07</djunits.version>
     <djutils.version>1.00.01</djutils.version>
-    <dsol.version>3.03.01</dsol.version>
+    <dsol.version>3.03.02</dsol.version>
     <sim0mq.version>0.05.00</sim0mq.version>
     <junit.version>4.12</junit.version>
     <java3d.version>1.5.1</java3d.version>
