@@ -3,6 +3,9 @@
   <body>
 
     <release version="1.01.00" date="2018-12-15" description="Update to ots 1.01.00, djutils, animation, major refactoring">
+      <action dev="averbraeck" type="update">
+        DSOL version has been updated to 3.03.02.
+      </action>
       <action dev="pknoppers" type="update">
         The means package has been moved from ots to the djutils project.
       </action>
