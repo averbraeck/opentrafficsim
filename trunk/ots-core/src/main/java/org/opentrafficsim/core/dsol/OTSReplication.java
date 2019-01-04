@@ -27,12 +27,14 @@ public class OTSReplication extends Replication.TimeDoubleUnit<OTSSimulatorInter
     private HistoryManager historyManager;
 
     /**
+     * @param id the id of the Replication.
      * @param experiment Experiment.TimeDoubleUnit&lt;OTSSimulatorInterface&gt;; Experiment
      * @throws NamingException when the context for the replication cannot be created
      */
-    public OTSReplication(final Experiment.TimeDoubleUnit<OTSSimulatorInterface> experiment) throws NamingException
+    public OTSReplication(final String id, final Experiment.TimeDoubleUnit<OTSSimulatorInterface> experiment)
+            throws NamingException
     {
-        super(experiment);
+        super(id, experiment);
     }
 
     /**
@@ -53,7 +55,7 @@ public class OTSReplication extends Replication.TimeDoubleUnit<OTSSimulatorInter
         Treatment.TimeDoubleUnit treatment =
                 new Treatment.TimeDoubleUnit(experiment, "Treatment for " + id, startTime, warmupPeriod, runLength);
         experiment.setTreatment(treatment);
-        return new OTSReplication(experiment);
+        return new OTSReplication(id, experiment);
 
     }
 
