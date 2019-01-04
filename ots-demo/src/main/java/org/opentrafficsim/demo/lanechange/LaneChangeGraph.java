@@ -85,7 +85,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
  * initial version 18 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
+public class LaneChangeGraph extends JFrame extends AbstractOTSModel implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20141118L;

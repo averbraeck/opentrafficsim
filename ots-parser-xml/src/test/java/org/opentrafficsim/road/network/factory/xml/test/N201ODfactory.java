@@ -207,7 +207,7 @@ public class N201ODfactory
                 {
                     new GTUGeneratorIndividual(origin + "." + link.getLanes().indexOf(lane), simulator, gtuType, gtuClass,
                             initSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime, endTime,
-                            lane, position, dir, colorer, strategicalPlannerFactory, routeGenerator, network);
+                            lane, position, dir, strategicalPlannerFactory, routeGenerator, network);
                 }
                 catch (SimRuntimeException exception)
                 {

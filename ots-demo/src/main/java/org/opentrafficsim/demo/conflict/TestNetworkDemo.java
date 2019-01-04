@@ -14,22 +14,18 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -49,20 +45,6 @@ public class TestNetworkDemo extends AbstractOTSSwingApplication
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel() throws OTSSimulationException
-    {
-        return new TestNetworkModel();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String shortName()
     {
         return "Test network demonstration";
@@ -78,7 +60,7 @@ public class TestNetworkDemo extends AbstractOTSSwingApplication
     /**
      * The simulation model.
      */
-    class TestNetworkModel implements OTSModelInterface
+    class TestNetworkModel extends AbstractOTSModel
     {
 
         /** */
@@ -87,14 +69,10 @@ public class TestNetworkDemo extends AbstractOTSSwingApplication
         /** The network. */
         private OTSNetwork network;
 
-        /** Simulator. */
-        private OTSSimulatorInterface simulator;
-
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
+        public void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) arg0;
             try
             {
                 URL url = URLResource.getResource("/conflict/Test-Network-14.xml");
@@ -129,13 +107,6 @@ public class TestNetworkDemo extends AbstractOTSSwingApplication
             {
                 exception.printStackTrace();
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

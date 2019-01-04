@@ -139,7 +139,7 @@ public class TrafCODDemo extends AbstractOTSSwingApplication
     /**
      * The simulation model.
      */
-    class TrafCODModel extends EventProducer implements OTSModelInterface, EventListenerInterface
+    class TrafCODModel extends AbstractOTSModel, EventListenerInterface
     {
         /** */
         private static final long serialVersionUID = 20161020L;
@@ -149,7 +149,7 @@ public class TrafCODDemo extends AbstractOTSSwingApplication
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+        public void constructModel()
                 throws SimRuntimeException
         {
             try

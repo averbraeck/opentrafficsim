@@ -29,16 +29,13 @@ import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.colorer.BlockingColorer;
 import org.opentrafficsim.road.gtu.colorer.DesiredSpeedColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -47,17 +44,12 @@ import org.opentrafficsim.road.gtu.colorer.SplitColorer;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
 
 /**
  * Select a OTS-network XML file, load it and run it.
@@ -72,7 +64,6 @@ import nl.tudelft.simulation.event.EventProducer;
  */
 public class LoadXML extends AbstractOTSSwingApplication
 {
-
     /** */
     private static final long serialVersionUID = 20170421L;
 
@@ -146,20 +137,6 @@ public class LoadXML extends AbstractOTSSwingApplication
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return this.fileName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "OTS network from " + this.fileName;
-    }
-
     /** Currently active XML model. */
     private XMLModel model = null;
 
@@ -171,51 +148,28 @@ public class LoadXML extends AbstractOTSSwingApplication
             .addColorer(new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)))
             .addColorer(new SplitColorer()).addColorer(new BlockingColorer()).build();
 
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel() throws OTSSimulationException
-    {
-        this.model = new XMLModel();
-        return this.model;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setIconAnimationTogglesFull(this);
-        toggleAnimationClass(OTSLink.class);
-        toggleAnimationClass(OTSNode.class);
-        showAnimationClass(SpeedSign.class);
-    }
-
     /**
      * The network.
      */
-    class XMLModel extends EventProducer implements OTSModelInterface
+    class XMLModel extends AbstractOTSModel
     {
-
         /** */
         private static final long serialVersionUID = 20170421L;
 
         /** The network. */
         private OTSNetwork network;
 
-        /** The simulator. */
-        private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
-
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+        public void constructModel()
                 throws SimRuntimeException
         {
-            this.simulator = theSimulator;
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) theSimulator, getColorer());
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator, getColorer());
             try
             {
                 this.network = nlp.build(new ByteArrayInputStream(LoadXML.this.xml.getBytes(StandardCharsets.UTF_8)), false);
-                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, (OTSSimulatorInterface) theSimulator,
+                ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
@@ -230,13 +184,6 @@ public class LoadXML extends AbstractOTSSwingApplication
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public OTSNetwork getNetwork()
         {
             return this.network;
@@ -244,8 +191,9 @@ public class LoadXML extends AbstractOTSSwingApplication
 
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * @return the GTU colorer
+     */
     public GTUColorer getColorer()
     {
         return this.colorer;

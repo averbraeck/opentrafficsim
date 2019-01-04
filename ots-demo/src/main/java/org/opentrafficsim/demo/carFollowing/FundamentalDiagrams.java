@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -211,13 +212,10 @@ public class FundamentalDiagrams extends AbstractOTSSwingApplication implements 
      * initial version ug 1, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class FundamentalDiagramPlotsModel implements OTSModelInterface, UNITS
+    class FundamentalDiagramPlotsModel extends AbstractOTSModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20140820L;
-
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
 
         /** The network. */
         private OTSNetwork network = new OTSNetwork("network");
@@ -271,7 +269,7 @@ public class FundamentalDiagrams extends AbstractOTSSwingApplication implements 
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+        public final void constructModel()
                 throws SimRuntimeException
         {
             try
@@ -446,13 +444,6 @@ public class FundamentalDiagrams extends AbstractOTSSwingApplication implements 
             {
                 exception.printStackTrace();
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

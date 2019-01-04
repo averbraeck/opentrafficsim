@@ -423,7 +423,7 @@ public class ModelControlDemo extends ModelStarter
      * initial version 1 nov. 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    static class CircularRoadIMB implements OTSModelInterface, UNITS
+    static class CircularRoadIMB extends AbstractOTSModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -580,7 +580,7 @@ public class ModelControlDemo extends ModelStarter
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+        public void constructModel()
                 throws SimRuntimeException
         {
             AnimationPanel panel = null;

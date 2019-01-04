@@ -28,6 +28,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -65,8 +66,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.HTMLPanel;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -249,7 +248,7 @@ public class CrossingTrafficLights extends AbstractOTSSwingApplication implement
      * initial version ug 1, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class CrossingTrafficLightstModel implements OTSModelInterface, UNITS
+    class CrossingTrafficLightstModel extends AbstractOTSModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20140815L;
@@ -302,7 +301,7 @@ public class CrossingTrafficLights extends AbstractOTSSwingApplication implement
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+        public final void constructModel()
                 throws SimRuntimeException
         {
             this.simulator = (OTSSimulatorInterface) theSimulator;
@@ -443,13 +442,6 @@ public class CrossingTrafficLights extends AbstractOTSSwingApplication implement
             {
                 exception.printStackTrace();
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

@@ -28,6 +28,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -183,7 +184,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestOpenDriveModel implements OTSModelInterface
+    class TestOpenDriveModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20150811L;
@@ -243,7 +244,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractOTSSwingApplication
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
+        public final void constructModel()
                 throws SimRuntimeException
         {
             this.simulator = (OTSSimulatorInterface) pSimulator;

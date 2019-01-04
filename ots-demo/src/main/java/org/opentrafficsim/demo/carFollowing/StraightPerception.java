@@ -32,7 +32,7 @@ import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -82,7 +82,6 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
@@ -123,24 +122,17 @@ public class StraightPerception extends AbstractOTSSwingApplication implements U
     public StraightPerception() throws InputParameterException
     {
         List<InputParameter<?>> outputProperties = new ArrayList<>();
-        outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true, false, 0));
-        outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
-        outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
+        outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true, 0));
+        outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true, 1));
+        outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true, 2));
         outputProperties.add(
-                new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
+                new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, 3));
         outputProperties.add(new InputParameterBoolean("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram",
-                true, false, 4));
+                true, 4));
         this.inputParameterMap.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-        this.model = null;
-    }
 
     /**
      * Main program.
@@ -191,21 +183,6 @@ public class StraightPerception extends AbstractOTSSwingApplication implements U
                 }
             }
         });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        this.model = new StraightPerceptionModel(this.savedUserModifiedProperties);
-        return this.model;
     }
 
     /**
@@ -370,7 +347,7 @@ public class StraightPerception extends AbstractOTSSwingApplication implements U
      * initial version ug 1, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class StraightPerceptionModel implements OTSModelInterface, UNITS
+    class StraightPerceptionModel extends AbstractOTSModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20140815L;
@@ -447,7 +424,7 @@ public class StraightPerception extends AbstractOTSSwingApplication implements U
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+        public final void constructModel()
                 throws SimRuntimeException
         {
             this.simulator = (OTSSimulatorInterface) theSimulator;

@@ -6,11 +6,9 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.unit.UNITS;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -29,8 +27,6 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -42,24 +38,26 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 /** */
-public class TestModel implements OTSModelInterface, UNITS
+public class TestModel extends AbstractOTSModel implements UNITS
 {
+    /**
+     * @param simulator the simulator
+     */
+    public TestModel(final OTSSimulatorInterface simulator)
+    {
+        super(simulator);
+    }
+
     /** */
     private static final long serialVersionUID = 1L;
-
-    /** The simulator. */
-    private OTSSimulatorInterface simulator;
 
     /** the network. */
     private OTSNetwork network = new OTSNetwork("geometry test network");
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-            throws SimRuntimeException
+    public final void constructModel() throws SimRuntimeException
     {
-        this.simulator = (OTSSimulatorInterface) theSimulator;
-
         // create a small graph and a road around it.
 
         try
@@ -198,13 +196,6 @@ public class TestModel implements OTSModelInterface, UNITS
         {
             //
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-    {
-        return this.simulator;
     }
 
     /** {@inheritDoc} */

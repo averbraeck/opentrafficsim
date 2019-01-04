@@ -31,6 +31,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -171,23 +172,19 @@ public class TestGMParser extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestGMModel implements OTSModelInterface, Serializable
+    class TestGMModel extends AbstractOTSModel implements Serializable
     {
+
         /** */
         private static final long serialVersionUID = 20141121L;
-
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
 
         /** the network. */
         private OTSNetwork network;
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) pSimulator;
             URL url = URLResource.getResource("/networkv2_90km_V5i.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
@@ -235,11 +232,11 @@ public class TestGMParser extends AbstractOTSSwingApplication
             Lane L2a_A3 = (Lane) L2a.getCrossSectionElement("A3");
             new GTUGeneratorIndividual("L2a_A2", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
                     interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L2a_A2,
-                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer, strategicalPlannerFactory,
+                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, strategicalPlannerFactory,
                     new FixedRouteGenerator(null), this.network);
             new GTUGeneratorIndividual("L2a_A3", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
                     interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L2a_A3,
-                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer, strategicalPlannerFactory,
+                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, strategicalPlannerFactory,
                     new FixedRouteGenerator(null), this.network);
 
             CrossSectionLink L49b = (CrossSectionLink) this.network.getLink("L49b");
@@ -247,19 +244,12 @@ public class TestGMParser extends AbstractOTSSwingApplication
             Lane L49b_A2 = (Lane) L49b.getCrossSectionElement("A2");
             new GTUGeneratorIndividual("L49b_A1", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
                     interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L49b_A1,
-                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer, strategicalPlannerFactory,
+                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, strategicalPlannerFactory,
                     new FixedRouteGenerator(null), this.network);
             new GTUGeneratorIndividual("L49b_A2", this.simulator, carType, LaneBasedIndividualGTU.class, initialSpeedDist,
                     interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime, endTime, L49b_A2,
-                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer, strategicalPlannerFactory,
+                    new Length(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, strategicalPlannerFactory,
                     new FixedRouteGenerator(null), this.network);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

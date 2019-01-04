@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -53,14 +53,11 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 
 /**
@@ -102,14 +99,6 @@ public class Trajectories extends AbstractOTSSwingApplication implements UNITS
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-        this.model = null;
-    }
-
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -135,21 +124,6 @@ public class Trajectories extends AbstractOTSSwingApplication implements UNITS
                 }
             }
         });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        this.model = new TrajectoriesModel(this.savedUserModifiedProperties);
-        return this.model;
     }
 
     /** {@inheritDoc} */
@@ -212,7 +186,7 @@ public class Trajectories extends AbstractOTSSwingApplication implements UNITS
      * initial version ug 1, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TrajectoriesModel implements OTSModelInterface, UNITS
+    class TrajectoriesModel extends AbstractOTSModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20140815L;
@@ -273,10 +247,8 @@ public class Trajectories extends AbstractOTSSwingApplication implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) theSimulator;
             try
             {
                 OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
@@ -438,13 +410,6 @@ public class Trajectories extends AbstractOTSSwingApplication implements UNITS
             {
                 exception.printStackTrace();
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

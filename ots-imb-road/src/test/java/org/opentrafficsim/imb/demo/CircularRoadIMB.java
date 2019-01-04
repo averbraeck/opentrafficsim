@@ -394,7 +394,7 @@ public class CircularRoadIMB extends AbstractOTSSwingApplication implements UNIT
  * initial version 1 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class RoadSimulationModelIMB implements OTSModelInterface, UNITS
+class RoadSimulationModelIMB extends AbstractOTSModel implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20141121L;
@@ -477,7 +477,7 @@ class RoadSimulationModelIMB implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+    public void constructModel()
             throws SimRuntimeException
     {
         System.out.println("CircularRoadIMB: constructModel called; Connecting to IMB");

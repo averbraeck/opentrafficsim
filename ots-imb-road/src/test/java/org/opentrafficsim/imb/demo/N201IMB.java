@@ -22,13 +22,14 @@ import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.TransformWGS84DutchRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.imb.IMBException;
@@ -173,7 +174,7 @@ public class N201IMB extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class N201Model implements OTSModelInterface
+    class N201Model extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -206,7 +207,7 @@ public class N201IMB extends AbstractOTSSwingApplication
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
+        public final void constructModel()
                 throws SimRuntimeException
         {
             System.out.println("N201IMB: constructModel called; Connecting to IMB");

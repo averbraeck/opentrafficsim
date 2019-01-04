@@ -11,11 +11,12 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -35,11 +36,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -75,22 +73,16 @@ public class XmlOdParserTest
      */
     public XmlOdParserTest() throws NetworkException, OTSGeometryException, SimRuntimeException, NamingException
     {
-        this.simulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, Duration.createSI(3600), new OTSModelInterface()
+        this.simulator = new OTSSimulator();
+        OTSModelInterface model = new AbstractOTSModel(this.simulator)
         {
-
             /** */
-            private static final long serialVersionUID = 20180528L;
+            private static final long serialVersionUID = 1L;
 
             @Override
-            public void constructModel(SimulatorInterface<Time, Duration, SimTimeDoubleUnit> sim) throws SimRuntimeException
+            public void constructModel() throws SimRuntimeException
             {
                 //
-            }
-
-            @Override
-            public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-            {
-                return XmlOdParserTest.this.simulator;
             }
 
             @Override
@@ -98,8 +90,7 @@ public class XmlOdParserTest
             {
                 return XmlOdParserTest.this.network;
             }
-
-        });
+        };
         this.gtuTypes.add(GTUType.CAR);
         this.gtuTypes.add(GTUType.TRUCK);
         OTSNode A = new OTSNode(this.network, "A", new OTSPoint3D(0, 0, 0));
@@ -125,7 +116,7 @@ public class XmlOdParserTest
     /**
      * Tests OD validity. Checks that fails occur. Note: fails may occur for other reasons so these tests must be carefully
      * created and tested not to fail by using the correct input once.
-     * @throws XmlParserException
+     * @throws XmlParserException on error
      */
     @Test
     public void ValidityTest() throws XmlParserException
@@ -330,7 +321,7 @@ public class XmlOdParserTest
 
     /**
      * Tests that demand levels are correct, including fractions.
-     * @throws XmlParserException
+     * @throws XmlParserException on error
      */
     @Test
     public void LevelTest() throws XmlParserException
@@ -465,7 +456,7 @@ public class XmlOdParserTest
      * Creates an OD from a string.
      * @param str String; xml code of OD
      * @return InputStream
-     * @throws XmlParserException
+     * @throws XmlParserException on error
      */
     private ODMatrix fromString(final String str) throws XmlParserException
     {

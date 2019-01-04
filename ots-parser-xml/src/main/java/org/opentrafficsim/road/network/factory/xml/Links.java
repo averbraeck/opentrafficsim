@@ -19,6 +19,8 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.animation.DrawingInfoLine;
+import org.opentrafficsim.core.animation.DrawingInfoStripe;
+import org.opentrafficsim.core.animation.StripeType;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -30,9 +32,8 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.animation.LaneAnimation;
-import org.opentrafficsim.road.network.animation.ShoulderAnimation;
-import org.opentrafficsim.road.network.animation.StripeAnimation;
+import org.opentrafficsim.draw.road.LaneAnimation;
+import org.opentrafficsim.draw.road.ShoulderAnimation;
 import org.opentrafficsim.road.network.factory.xml.ArcTag.ArcDirection;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -531,85 +532,37 @@ final class Links
                             Stripe dashedLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
                             dashedLine.addPermeability(GTUType.VEHICLE, Permeable.BOTH);
                             parser.networkAnimation.addDrawingInfoBase(dashedLine,
-                                    new DrawingInfoLine<Stripe>(Color.BLACK, 0.5f));
-
-                            if (simulator != null && simulator instanceof AnimatorInterface)
-                            {
-                                try
-                                {
-                                    new StripeAnimation(dashedLine, simulator, StripeAnimation.TYPE.DASHED);
-                                }
-                                catch (RemoteException exception)
-                                {
-                                    exception.printStackTrace();
-                                }
-                            }
+                                    new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.DASHED));
                             cseList.add(dashedLine);
                             break;
 
                         case DOUBLE:
                             Stripe doubleLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
-                            if (simulator != null && simulator instanceof AnimatorInterface)
-                            {
-                                try
-                                {
-                                    new StripeAnimation(doubleLine, simulator, StripeAnimation.TYPE.DOUBLE);
-                                }
-                                catch (RemoteException exception)
-                                {
-                                    exception.printStackTrace();
-                                }
-                            }
+                            parser.networkAnimation.addDrawingInfoBase(doubleLine,
+                                    new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.DOUBLE));
                             cseList.add(doubleLine);
                             break;
 
                         case LEFTONLY:
                             Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
                             leftOnlyLine.addPermeability(GTUType.VEHICLE, Permeable.LEFT); // TODO correct?
-                            if (simulator != null && simulator instanceof AnimatorInterface)
-                            {
-                                try
-                                {
-                                    new StripeAnimation(leftOnlyLine, simulator, StripeAnimation.TYPE.LEFTONLY);
-                                }
-                                catch (RemoteException exception)
-                                {
-                                    exception.printStackTrace();
-                                }
-                            }
+                            parser.networkAnimation.addDrawingInfoBase(leftOnlyLine,
+                                    new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.LEFTONLY));
                             cseList.add(leftOnlyLine);
                             break;
 
                         case RIGHTONLY:
                             Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
                             rightOnlyLine.addPermeability(GTUType.VEHICLE, Permeable.RIGHT); // TODO correct?
-                            if (simulator != null && simulator instanceof AnimatorInterface)
-                            {
-                                try
-                                {
-                                    new StripeAnimation(rightOnlyLine, simulator, StripeAnimation.TYPE.RIGHTONLY);
-                                }
-                                catch (RemoteException exception)
-                                {
-                                    exception.printStackTrace();
-                                }
-                            }
+                            parser.networkAnimation.addDrawingInfoBase(rightOnlyLine,
+                                    new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.RIGHTONLY));
                             cseList.add(rightOnlyLine);
                             break;
 
                         case SOLID:
                             Stripe solidLine = new Stripe(csl, startOffset, endOffset, cseTag.width);
-                            if (simulator != null && simulator instanceof AnimatorInterface)
-                            {
-                                try
-                                {
-                                    new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
-                                }
-                                catch (RemoteException exception)
-                                {
-                                    exception.printStackTrace();
-                                }
-                            }
+                            parser.networkAnimation.addDrawingInfoBase(solidLine,
+                                    new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.SOLID));
                             cseList.add(solidLine);
                             break;
 

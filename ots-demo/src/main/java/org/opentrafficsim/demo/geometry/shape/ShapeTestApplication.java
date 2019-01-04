@@ -9,12 +9,17 @@ import javax.naming.NamingException;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSReplication;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
+import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
@@ -49,12 +54,13 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
      * @throws IOException on ???
+     * @throws OTSDrawingException on drawing error
      */
-    public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException
+    public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException, OTSDrawingException
     {
-        ShapeModel model = new ShapeModel();
-        DEVSAnimator simulator = new DEVSAnimator();
-        OTSReplication replication = new OTSReplication("rep1", new SimTimeDoubleUnit(Time.ZERO), Duration.ZERO,
+        OTSAnimator simulator = new OTSAnimator();
+        ShapeModel model = new ShapeModel(simulator);
+        OTSReplication replication = OTSReplication.create("rep1", Time.ZERO, Duration.ZERO,
                 new Duration(7200.0, SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
 
@@ -62,8 +68,12 @@ public class ShapeTestApplication extends DSOLApplication implements UNITS
 
         Rectangle2D extent = new Rectangle2D.Double(65000.0, 440000.0, 55000.0, 30000.0);
         Dimension size = new Dimension(1024, 768);
-        AnimationPanel animationPanel = new AnimationPanel(extent, size, simulator);
+        OTSAnimationPanel animationPanel =
+                new OTSAnimationPanel(extent, size, simulator, model, new DefaultSwitchableGTUColorer(), model.getNetwork());
         panel.getTabbedPane().addTab(0, "animation", animationPanel);
+
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
 
         // tell the animation panel to update its statistics
         // TODO should be done automatically in DSOL!

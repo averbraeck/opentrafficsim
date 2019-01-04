@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -43,7 +44,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
 
 /**
  * Simulation for AHFE congress.
@@ -555,17 +555,10 @@ public class AHFESimulation extends AbstractWrappableSimulation
         return "Simulation for AHFE congress";
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel() throws OTSSimulationException
-    {
-        return new AHFEModel();
-    }
-
     /**
      * The AHFE simulation model.
      */
-    class AHFEModel extends EventProducer implements OTSModelInterface
+    class AHFEModel extends AbstractOTSModel
     {
 
         /** */
@@ -583,18 +576,18 @@ public class AHFESimulation extends AbstractWrappableSimulation
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+        public void constructModel()
                 throws SimRuntimeException
         {
-            AHFESimulation.this.simulator = theSimulator;
+            AHFESimulation.this.simulator = this.simulator;
 
-            AHFESimulation.this.sampler = new RoadSampler((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+            AHFESimulation.this.sampler = new RoadSampler((DEVSSimulatorInterface.TimeDoubleUnit) this.simulator);
             AHFESimulation.this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
                 // InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml"); // Running from eclipse
                 URL stream = URLResource.getResource("./Network.xml"); // Running Jar
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) this.simulator);
                 this.network = new OTSNetwork("AHFE");
                 nlp.build(stream, this.network, true);
 
@@ -611,7 +604,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, null, (OTSSimulatorInterface) theSimulator, getReplication(),
+                AHFEUtil.createDemand(this.network, null, (OTSSimulatorInterface) this.simulator, getReplication(),
                         getAnticipationStrategy(), getReactionTime(), getAnticipationTime(), getTruckFraction(), SIMEND,
                         getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(), getSpeedError(),
                         getAccelerationError());
@@ -638,14 +631,6 @@ public class AHFESimulation extends AbstractWrappableSimulation
                 AHFESimulation.this.sampler.registerSpaceTimeRegion(new SpaceTimeRegion(
                         new KpiLaneDirection(laneData, KpiGtuDirectionality.DIR_PLUS), start, end, WARMUP, SIMEND));
             }
-        }
-
-        /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return AHFESimulation.this.simulator;
         }
 
         /** {@inheritDoc} */

@@ -139,7 +139,7 @@ public class TestVissimParser extends AbstractOTSSwingApplication
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
+        public final void constructModel()
                 throws SimRuntimeException
         {
 

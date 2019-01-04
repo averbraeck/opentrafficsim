@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -285,13 +286,10 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Moritz Bergmann
  */
-class OSMModel implements OTSModelInterface
+class OSMModel extends AbstractOTSModel
 {
     /** */
     private static final long serialVersionUID = 20150227L;
-
-    /** The simulator. */
-    private OTSSimulatorInterface simulator;
 
     /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
@@ -329,10 +327,9 @@ class OSMModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-            throws SimRuntimeException
+    public void constructModel() throws SimRuntimeException
     {
-        this.simulator = (OTSSimulatorInterface) theSimulator;
+        this.simulator = this.simulator;
         OTSNetwork otsNetwork = new OTSNetwork(this.osmNetwork.getName());
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
@@ -367,7 +364,7 @@ class OSMModel implements OTSModelInterface
             try
             {
                 this.lanes.addAll(
-                        this.converter.makeLanes(otsNetwork, link, (OTSSimulatorInterface) theSimulator, this.warningListener));
+                        this.converter.makeLanes(otsNetwork, link, this.simulator, this.warningListener));
             }
             catch (Exception e)
             {
@@ -385,13 +382,6 @@ class OSMModel implements OTSModelInterface
         System.out.println("Number of Links: " + this.network.getLinkMap().size());
         System.out.println("Number of Nodes: " + this.network.getNodeMap().size());
         System.out.println("Number of Lanes: " + this.lanes.size());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-    {
-        return this.simulator;
     }
 
     /** {@inheritDoc} */

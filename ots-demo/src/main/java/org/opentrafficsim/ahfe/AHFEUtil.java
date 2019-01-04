@@ -362,7 +362,7 @@ public final class AHFEUtil
         initialLongitudinalPositions
                 .add(new DirectedLanePosition(lane, new Length(10.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
         LaneBasedTemplateGTUTypeDistribution characteristicsGenerator = new LaneBasedTemplateGTUTypeDistribution(distribution);
-        new LaneBasedGTUGenerator(id, headwayGenerator, gtuColorer, characteristicsGenerator,
+        new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
                 GeneratorPositions.create(initialLongitudinalPositions, stream), network, simulator, roomChecker, idGenerator);
     }
 

@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -40,6 +41,7 @@ import org.opentrafficsim.draw.graphs.ContourPlotDensity;
 import org.opentrafficsim.draw.graphs.ContourPlotFlow;
 import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram;
+import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.draw.graphs.GraphCrossSection;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
@@ -78,9 +80,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterInteger;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -406,13 +406,10 @@ public class CircularRoad extends AbstractOTSSwingApplication implements UNITS
      * initial version 1 nov. 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class RoadSimulationModel implements OTSModelInterface, UNITS
+    class RoadSimulationModel extends AbstractOTSModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20141121L;
-
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
 
         /** Number of cars created. */
         private int carsCreated = 0;
@@ -472,8 +469,7 @@ public class CircularRoad extends AbstractOTSSwingApplication implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-                throws SimRuntimeException
+        public void constructModel() throws SimRuntimeException
         {
             final int laneCount = 2;
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
@@ -780,13 +776,6 @@ public class CircularRoad extends AbstractOTSSwingApplication implements UNITS
             }
             }
              */
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

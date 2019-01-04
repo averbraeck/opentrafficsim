@@ -15,6 +15,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
@@ -129,23 +130,18 @@ public class TestXMLParserReadXstream extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModelReadXStream implements OTSModelInterface
+    class TestXMLModelReadXStream extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
-
-        /** The simulator. */
-        private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
         /** the network. */
         private OTSNetwork network;
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
-            this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) pSimulator;
             long millis = System.currentTimeMillis();
             String xml;
             try
@@ -169,13 +165,6 @@ public class TestXMLParserReadXstream extends AbstractOTSSwingApplication
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformWGS84toRDNew(0, 0);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

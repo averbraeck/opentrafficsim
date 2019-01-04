@@ -32,7 +32,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -62,7 +62,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
  * initial version 15 apr. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SuitabilityGraph implements OTSModelInterface, UNITS
+public class SuitabilityGraph extends AbstractOTSModel implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20150415L;

@@ -34,6 +34,7 @@ import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -235,7 +236,7 @@ public class ShortMerge extends AbstractOTSSwingApplication
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    class ShortMergeModel implements OTSModelInterface
+    class ShortMergeModel extends AbstractOTSModel
     {
 
         /**
@@ -254,15 +255,15 @@ public class ShortMerge extends AbstractOTSSwingApplication
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+        public void constructModel()
                 throws SimRuntimeException
         {
-            ShortMerge.this.setSimulator((OTSSimulatorInterface) theSimulator);
+            ShortMerge.this.setSimulator(this.simulator);
 
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
                 this.network = new OTSNetwork("ShortMerge");
                 nlp.build(stream, this.network, false);
 
@@ -273,13 +274,6 @@ public class ShortMerge extends AbstractOTSSwingApplication
             {
                 exception.printStackTrace();
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return ShortMerge.this.getSimulator();
         }
 
         /** {@inheritDoc} */
@@ -477,7 +471,7 @@ public class ShortMerge extends AbstractOTSSwingApplication
                     .add(new DirectedLanePosition(lane, new Length(5.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS));
             LaneBasedTemplateGTUTypeDistribution characteristicsGenerator =
                     new LaneBasedTemplateGTUTypeDistribution(distribution);
-            new LaneBasedGTUGenerator(id, headwayGenerator, gtuColorer, characteristicsGenerator,
+            new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network,
                     ShortMerge.this.getSimulator(), roomChecker, idGenerator);
         }

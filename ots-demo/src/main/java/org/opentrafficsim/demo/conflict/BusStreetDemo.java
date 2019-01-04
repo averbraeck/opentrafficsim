@@ -29,6 +29,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -104,21 +105,6 @@ public class BusStreetDemo extends AbstractOTSSwingApplication
     /** */
     private static final long serialVersionUID = 20161211L;
 
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface<OTSSimulatorInterface> makeModel() throws OTSSimulationException
-    {
-        return new BusStreetModel();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setIconAnimationTogglesFull(this);
-        hideAnimationClass(OTSLink.class);
-        hideAnimationClass(OTSNode.class);
-    }
 
     /** {@inheritDoc} */
     @Override
@@ -137,17 +123,13 @@ public class BusStreetDemo extends AbstractOTSSwingApplication
     /**
      * The simulation model.
      */
-    class BusStreetModel implements OTSModelInterface<OTSSimulatorInterface>
+    class BusStreetModel extends AbstractOTSModel
     {
-
         /** */
         private static final long serialVersionUID = 20161211L;
 
         /** The network. */
         private OTSNetwork network;
-
-        /** Simulator. */
-        private OTSSimulatorInterface simulator;
 
         /** {@inheritDoc} */
         @Override
@@ -239,32 +221,10 @@ public class BusStreetDemo extends AbstractOTSSwingApplication
             LaneBasedGTUCharacteristicsGenerator characteristicsGenerator =
                     new CharacteristicsGenerator(this.simulator, new double[] { 0.9, 0.06, 0.04 }, this.network);
             RoomChecker roomChecker = new TTCRoomChecker(new Duration(10.0, DurationUnit.SI));
-            new LaneBasedGTUGenerator(id, headwayGenerator, getColorer(), characteristicsGenerator,
+            new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, this.simulator, roomChecker,
                     new IdGenerator(""));
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public OTSSimulatorInterface getSimulator()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public InputParameterMap getInputParameterMap()
-        {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public List<OutputStatistic<?>> getOutputStatistics()
-        {
-            return null;
-        }
-
     }
 
     /**
