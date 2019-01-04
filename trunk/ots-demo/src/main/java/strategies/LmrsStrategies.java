@@ -43,6 +43,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -552,7 +553,7 @@ public class LmrsStrategies implements EventListenerInterface
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    class LmrsStrategiesModel implements OTSModelInterface
+    class LmrsStrategiesModel extends AbstractOTSModel
     {
 
         /** */

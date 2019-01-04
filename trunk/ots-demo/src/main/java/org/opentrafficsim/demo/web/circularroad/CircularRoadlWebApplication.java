@@ -55,12 +55,12 @@ public class CircularRoadlWebApplication extends DSOLWebServer
         List<InputParameter<?>> properties = new ArrayList<>();
         properties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                 "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
-                new Double[] { 0.8, 0.2 }, false, 10));
+                new Double[] { 0.8, 0.2 }, 10));
         properties.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
                 "<html>The car following model determines " + "the acceleration that a vehicle will make taking into account "
                         + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                         + "curvature of the road) capabilities of the vehicle and personality " + "of the driver.</html>",
-                new String[] { "IDM", "IDM+" }, 1, false, 1));
+                new String[] { "IDM", "IDM+" }, 1, 1));
         properties.add(
                 IDMPropertySet.makeIDMPropertySet("IDMCar", "Car", new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
                         new Acceleration(1.5, AccelerationUnit.METER_PER_SECOND_2), new Length(2.0, LengthUnit.METER),
@@ -77,38 +77,38 @@ public class CircularRoadlWebApplication extends DSOLWebServer
                 new String[] { "Egoistic", "Altruistic" }, 0, false, 500));
         properties.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
-                new String[] { "IDM", "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 1, false, 600));
+                new String[] { "IDM", "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 1, 600));
         properties.add(new InputParameterInteger("TrackLength", "Track length", "Circumference of the track", 2000, 500, 6000,
-                "Track length %dm", false, 10));
+                "Track length %dm", 10));
         properties.add(new InputParameterDouble("MeanDensity", "Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
-                "Density %.1f veh/km", false, 11));
+                "Density %.1f veh/km", 11));
         properties.add(new InputParameterDouble("DensityVariability", "Density variability",
-                "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
+                "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", 12));
         List<InputParameter<?>> outputProperties = new ArrayList<>();
         for (int lane = 1; lane <= 2; lane++)
         {
             int index = lane - 1;
             String laneId = String.format("Lane %d ", lane);
             outputProperties.add(index, new InputParameterBoolean(laneId + "Density", laneId + " Density",
-                    laneId + "Density contour plot", true, false, 0));
+                    laneId + "Density contour plot", true, 0));
             index += lane;
             outputProperties.add(index,
-                    new InputParameterBoolean(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, false, 1));
+                    new InputParameterBoolean(laneId + "Flow", laneId + " Flow", laneId + "Flow contour plot", true, 1));
             index += lane;
-            outputProperties.add(index, new InputParameterBoolean(laneId + "Speed", laneId + " Speed",
-                    laneId + "Speed contour plot", true, false, 2));
+            outputProperties.add(index,
+                    new InputParameterBoolean(laneId + "Speed", laneId + " Speed", laneId + "Speed contour plot", true, 2));
             index += lane;
             outputProperties.add(index, new InputParameterBoolean(laneId + "Acceleration", laneId + " Acceleration",
-                    laneId + "Acceleration contour plot", true, false, 3));
+                    laneId + "Acceleration contour plot", true, 3));
             index += lane;
             outputProperties.add(index, new InputParameterBoolean(laneId + "Trajectories", laneId + " Trajectories",
-                    laneId + "Trajectory (time/distance) diagram", true, false, 4));
+                    laneId + "Trajectory (time/distance) diagram", true, 4));
             // index += lane;
             // outputProperties.add(index, new InputParameterBoolean(laneId + "Variable Sample Rate Trajectories",
             // laneId + " VSR Trajectories", laneId + "Trajectory (time/distance) diagram", true, false, 5));
         }
         outputProperties.add(new InputParameterBoolean("Fundamental diagram aggregated", "Fundamental diagram aggregated",
-                "Fundamental diagram aggregated", true, false, 5));
+                "Fundamental diagram aggregated", true, 5));
         outputProperties.add(
                 new InputParameterBoolean("Fundamental diagram", "Fundamental diagram", "Fundamental diagram", true, false, 5));
         properties.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output", outputProperties,

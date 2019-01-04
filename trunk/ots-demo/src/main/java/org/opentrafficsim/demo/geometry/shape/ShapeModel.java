@@ -3,17 +3,14 @@ package org.opentrafficsim.demo.geometry.shape;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -25,13 +22,10 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class ShapeModel implements OTSModelInterface
+public class ShapeModel extends AbstractOTSModel
 {
     /** */
     private static final long serialVersionUID = 20140815L;
-
-    /** The simulator. */
-    private OTSSimulatorInterface simulator;
 
     /** Nodes from shape file. */
     private Map<String, OTSNode> nodes;
@@ -42,12 +36,18 @@ public class ShapeModel implements OTSModelInterface
     /** the network. */
     private OTSNetwork network = new OTSNetwork("shape model network");
 
+    /**
+     * @param simulator the simulator
+     */
+    public ShapeModel(final OTSSimulatorInterface simulator)
+    {
+        super(simulator);
+    }
+
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-            throws SimRuntimeException
+    public final void constructModel() throws SimRuntimeException
     {
-        this.simulator = (OTSSimulatorInterface) theSimulator;
         try
         {
             // Read the shape files with the function:
@@ -61,13 +61,6 @@ public class ShapeModel implements OTSModelInterface
         {
             exception.printStackTrace();
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-    {
-        return this.simulator;
     }
 
     /** {@inheritDoc} */

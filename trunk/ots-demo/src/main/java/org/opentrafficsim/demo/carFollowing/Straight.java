@@ -27,6 +27,7 @@ import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -73,8 +74,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.HTMLPanel;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 
@@ -103,23 +102,15 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
     public Straight() throws InputParameterException
     {
         List<InputParameter<?>> outputProperties = new ArrayList<>();
-        outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true, false, 0));
-        outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
-        outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
+        outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true,  0));
+        outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true,  1));
+        outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true,  2));
         outputProperties.add(
-                new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true, false, 3));
+                new InputParameterBoolean("AccelerationPlot", "Acceleration", "Acceleration contour plot", true,  3));
         outputProperties.add(new InputParameterBoolean("TrajectoryPlot", "Trajectories", "Trajectory (time/distance) diagram",
-                true, false, 4));
+                true,  4));
         this.inputParameterMap.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
-                outputProperties, true, 1000));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-        this.model = null;
+                outputProperties, 1000));
     }
 
     /**
@@ -171,21 +162,6 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
                 }
             }
         });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        this.model = new StraightModel(this.savedUserModifiedProperties);
-        return this.model;
     }
 
     /**
@@ -338,13 +314,10 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
      * initial version ug 1, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class StraightModel implements OTSModelInterface, UNITS
+    class StraightModel extends AbstractOTSModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20140815L;
-
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
 
         /** The network. */
         private final OTSNetwork network = new OTSNetwork("network");
@@ -410,10 +383,8 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) theSimulator;
             try
             {
                 OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
@@ -594,13 +565,6 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
             {
                 exception.printStackTrace();
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

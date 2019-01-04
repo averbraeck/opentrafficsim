@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -46,7 +47,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventProducer;
 
 /**
  * Simulation for AHFE congress.
@@ -560,20 +560,6 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel() throws OTSSimulationException
-    {
-        return new AHFEModel();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected final Double makeAnimationRectangle()
     {
         return new Rectangle2D.Double(-50, -100, 8050, 150);
@@ -582,7 +568,7 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
     /**
      * The AHFE simulation model.
      */
-    class AHFEModel extends EventProducer implements OTSModelInterface
+    class AHFEModel extends AbstractOTSModel
     {
 
         /** */
@@ -594,17 +580,17 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+        public void constructModel()
                 throws SimRuntimeException
         {
-            AHFEAnimation.this.simulator = theSimulator;
+            AHFEAnimation.this.simulator = this.simulator;
 
-            AHFEAnimation.this.sampler = new RoadSampler((DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+            AHFEAnimation.this.sampler = new RoadSampler((DEVSSimulatorInterface.TimeDoubleUnit) this.simulator);
             AHFEAnimation.this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) this.simulator);
                 this.network = new OTSNetwork("AHFE");
                 nlp.build(stream, this.network, true);
 
@@ -621,7 +607,7 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, AHFEAnimation.this.getColorer(), (OTSSimulatorInterface) theSimulator,
+                AHFEUtil.createDemand(this.network, AHFEAnimation.this.getColorer(), (OTSSimulatorInterface) this.simulator,
                         getReplication(), getAnticipationStrategy(), getReactionTime(), getAnticipationTime(),
                         getTruckFraction(), SIMEND, getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(),
                         getSpeedError(), getAccelerationError());
@@ -648,14 +634,6 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
                 AHFEAnimation.this.sampler.registerSpaceTimeRegion(new SpaceTimeRegion(
                         new KpiLaneDirection(laneData, KpiGtuDirectionality.DIR_PLUS), start, end, WARMUP, SIMEND));
             }
-        }
-
-        /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return AHFEAnimation.this.simulator;
         }
 
         /** {@inheritDoc} */

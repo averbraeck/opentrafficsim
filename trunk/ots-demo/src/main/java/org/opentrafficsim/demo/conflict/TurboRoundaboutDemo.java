@@ -15,13 +15,11 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -30,13 +28,10 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -56,24 +51,6 @@ public class TurboRoundaboutDemo extends AbstractOTSSwingApplication
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel() throws OTSSimulationException
-    {
-        return new TurboRoundaboutModel();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setIconAnimationTogglesFull(this);
-        hideAnimationClass(OTSLink.class);
-        hideAnimationClass(OTSNode.class);
-        // addToggleAnimationButtonText("Block", LaneBlock.class, "Show/hide Blocks", false);
-        // addToggleAnimationButtonText("BlockId", LaneBlockAnimation.Text.class, "Show/hide Block Ids", false);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final String shortName()
     {
         return "Turbo roundabout demonstration";
@@ -89,9 +66,8 @@ public class TurboRoundaboutDemo extends AbstractOTSSwingApplication
     /**
      * The simulation model.
      */
-    class TurboRoundaboutModel implements OTSModelInterface
+    class TurboRoundaboutModel extends AbstractOTSModel
     {
-
         /** */
         private static final long serialVersionUID = 20161211L;
 
@@ -103,9 +79,8 @@ public class TurboRoundaboutDemo extends AbstractOTSSwingApplication
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> arg0) throws SimRuntimeException
+        public void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) arg0;
             try
             {
                 URL url = URLResource.getResource("/conflict/TurboRoundabout.xml");
@@ -195,13 +170,6 @@ public class TurboRoundaboutDemo extends AbstractOTSSwingApplication
                     //
                 }
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

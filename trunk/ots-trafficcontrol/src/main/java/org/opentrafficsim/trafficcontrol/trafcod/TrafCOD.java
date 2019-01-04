@@ -24,6 +24,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -38,7 +39,6 @@ import org.opentrafficsim.trafficcontrol.TrafficController;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -133,7 +133,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
     private int currentTime10 = 0;
 
     /** The simulation engine. */
-    private final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator;
+    private final OTSSimulatorInterface simulator;
 
     /** Space-separated list of the traffic streams in the currently active conflict group. */
     private String currentConflictGroup = "";
@@ -152,8 +152,8 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
     public TrafCOD(String controllerName, final URL trafCodURL, final Set<TrafficLight> trafficLights,
-            final Set<TrafficLightSensor> sensors, final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator,
-            Container display) throws TrafficControlException, SimRuntimeException
+            final Set<TrafficLightSensor> sensors, final OTSSimulatorInterface simulator, Container display)
+            throws TrafficControlException, SimRuntimeException
     {
         this(controllerName, simulator, display);
         Throw.whenNull(trafCodURL, "trafCodURL may not be null");
@@ -226,7 +226,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
-    private TrafCOD(String controllerName, final DEVSSimulator<Time, Duration, SimTimeDoubleUnit> simulator, Container display)
+    private TrafCOD(String controllerName, final OTSSimulatorInterface simulator, Container display)
             throws TrafficControlException, SimRuntimeException
     {
         Throw.whenNull(controllerName, "controllerName may not be null");
@@ -1889,14 +1889,13 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
 
     /** {@inheritDoc} */
     @Override
-    public final InvisibleObjectInterface clone(final SimulatorInterface.TimeDoubleUnit newSimulator, final Network newNetwork)
+    public final InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork)
             throws NetworkException
     {
         try
         {
             // TODO figure out how to provide a display for the clone
-            @SuppressWarnings("unchecked")
-            TrafCOD result = new TrafCOD(getId(), (DEVSSimulator<Time, Duration, SimTimeDoubleUnit>) newSimulator, null);
+            TrafCOD result = new TrafCOD(getId(), newSimulator, null);
             result.fireTimedEvent(TRAFFICCONTROL_CONTROLLER_CREATED,
                     new Object[] { this.controllerName, TrafficController.BEING_CLONED }, newSimulator.getSimulatorTime());
             // Clone the variables

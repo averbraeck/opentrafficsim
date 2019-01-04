@@ -21,7 +21,7 @@ import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -57,7 +57,6 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
@@ -66,8 +65,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterInteger;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 
 /**
@@ -110,14 +107,6 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
                 true, false, 4));
         this.inputParameterMap.add(new CompoundProperty("OutputGraphs", "Output graphs", "Select the graphical output",
                 outputProperties, true, 1000));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-        this.model = null;
     }
 
     /**
@@ -168,21 +157,6 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
                 }
             }
         });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        this.model = new LaneSimulationModel(this.savedUserModifiedProperties);
-        return this.model;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
     }
 
     /** {@inheritDoc} */
@@ -298,7 +272,7 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
      * initial version 1 nov. 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class LaneSimulationModel implements OTSModelInterface, UNITS
+    class LaneSimulationModel extends AbstractOTSModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20141121L;
@@ -356,10 +330,8 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
 
         /** {@inheritDoc} */
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-                throws SimRuntimeException
+        public void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) theSimulator;
             double radius = 2000 / 2 / Math.PI;
             double headway = 40;
             double headwayVariability = 0;
@@ -561,13 +533,6 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
             {
                 throw new GTUException(exception);
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

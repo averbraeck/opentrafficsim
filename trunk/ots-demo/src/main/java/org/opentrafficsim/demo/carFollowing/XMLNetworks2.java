@@ -26,7 +26,7 @@ import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTU;
@@ -69,7 +69,6 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -78,7 +77,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -112,38 +110,15 @@ public class XMLNetworks2 extends AbstractOTSSwingApplication implements UNITS
         this.inputParameterMap.add(new InputParameterSelectionList(
                 "Network", "Network", "Network", new String[] { "Merge 1 plus 1 into 1", "Merge 2 plus 1 into 2",
                         "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2", "Split 4 into 2 plus 2" },
-                0, false, 0));
+                0, 0));
         this.inputParameterMap.add(new InputParameterSelectionList("TacticalPlanner", "Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>",
-                new String[] { "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 0, false, 600));
+                new String[] { "MOBIL/IDM", "DIRECTED/IDM", "LMRS", "Toledo" }, 0, 600));
         this.inputParameterMap.add(new InputParameterSelectionList("LaneChanging", "Lane changing",
                 "<html>The lane change friendliness (if used -- eg just for MOBIL.</html>",
-                new String[] { "Egoistic", "Altruistic" }, 0, false, 600));
+                new String[] { "Egoistic", "Altruistic" }, 0, 600));
         this.inputParameterMap.add(new InputParameterDouble("FlowPerInputLane", "Flow per input lane",
-                "Traffic flow per input lane", 500d, 0d, 3000d, "%.0f veh/h", false, 1));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-        this.model = null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        this.model = new XMLNetwork2Model(this.savedUserModifiedProperties);
-        return this.model;
+                "Traffic flow per input lane", 500d, 0d, 3000d, "%.0f veh/h", 1));
     }
 
     /** {@inheritDoc} */
@@ -204,13 +179,10 @@ public class XMLNetworks2 extends AbstractOTSSwingApplication implements UNITS
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class XMLNetwork2Model implements OTSModelInterface, UNITS
+class XMLNetwork2Model extends AbstractOTSModel implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20150304L;
-
-    /** The simulator. */
-    private DEVSSimulatorInterface.TimeDoubleUnit simulator;
 
     /** The network. */
     private final OTSNetwork network = new OTSNetwork("network");
@@ -297,10 +269,8 @@ class XMLNetwork2Model implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-            throws SimRuntimeException
+    public final void constructModel() throws SimRuntimeException
     {
-        this.simulator = (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator;
         try
         {
             CompoundProperty cp = new CompoundProperty("", "", "", this.properties, false, 0);

@@ -19,9 +19,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -37,7 +37,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.naming.context.ContextUtil;
 
@@ -192,21 +191,16 @@ public class TestXMLParserClone extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModelParse implements OTSModelInterface
+    class TestXMLModelParse extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
 
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
-
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
             long millis = System.currentTimeMillis();
-            this.simulator = (OTSSimulatorInterface) pSimulator;
             URL url = URLResource.getResource("/N201v8.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
@@ -219,13 +213,6 @@ public class TestXMLParserClone extends AbstractOTSSwingApplication
                 exception.printStackTrace();
             }
             System.out.println("parsing took : " + (System.currentTimeMillis() - millis) + " ms");
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */
@@ -255,21 +242,16 @@ public class TestXMLParserClone extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModelClone implements OTSModelInterface
+    class TestXMLModelClone extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
 
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
-
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
             long millis = System.currentTimeMillis();
-            this.simulator = (OTSSimulatorInterface) pSimulator;
 
             try
             {
@@ -294,13 +276,6 @@ public class TestXMLParserClone extends AbstractOTSSwingApplication
             URL gisURL = URLResource.getResource("/N201/map.xml");
             CoordinateTransform rdto0 = new CoordinateTransformWGS84toRDNew(0, 0);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

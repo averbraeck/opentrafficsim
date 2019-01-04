@@ -16,6 +16,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -134,23 +135,18 @@ public class TestXMLParser extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModel implements OTSModelInterface
+    class TestXMLModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
-
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
 
         /** the network. */
         private OTSNetwork network;
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) pSimulator;
             // URL url = URLResource.getResource("/PNH1.xml");
             // URL url = URLResource.getResource("/offset-example.xml");
             // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
@@ -173,13 +169,6 @@ public class TestXMLParser extends AbstractOTSSwingApplication
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformWGS84toRDNew(0, 0);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -29,8 +30,6 @@ import org.xml.sax.SAXException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Four stop demo
@@ -133,23 +132,18 @@ public class NetworkTest extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModel implements OTSModelInterface
+    class TestXMLModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
-
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
 
         /** the network. */
         private OTSNetwork network = null;
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> pSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) pSimulator;
             URL url = URLResource.getResource("/Test-Network-14.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
@@ -161,14 +155,6 @@ public class NetworkTest extends AbstractOTSSwingApplication
             {
                 exception.printStackTrace();
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

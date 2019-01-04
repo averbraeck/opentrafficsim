@@ -1,11 +1,17 @@
 package org.opentrafficsim.swing.gui;
 
 import java.awt.Frame;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.vecmath.Point3d;
 
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.network.Link;
+
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Wrap a DSOL simulation model, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be
@@ -55,11 +61,77 @@ public abstract class AbstractOTSSwingApplication extends JFrame
         setExtendedState(Frame.MAXIMIZED_BOTH);
         setVisible(true);
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String toString()
+    
+    /**
+     * Return the initial 'home' extent for the animation. The 'Home' button returns to this extent. Override this method when a
+     * smaller or larger part of the infra should be shown. In the default setting, all currently visible objects are shown.
+     * @return the initial and 'home' rectangle for the animation.
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    protected Rectangle2D makeAnimationRectangle()
     {
-        return "SimulatorFrame []";
+        double minX = Double.MAX_VALUE;
+        double maxX = -Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        Point3d p3dL = new Point3d();
+        Point3d p3dU = new Point3d();
+        try
+        {
+            for (Link link : this.model.getNetwork().getLinkMap().values())
+            {
+                DirectedPoint l = link.getLocation();
+                BoundingBox b = new BoundingBox(link.getBounds());
+                b.getLower(p3dL);
+                b.getUpper(p3dU);
+                minX = Math.min(minX, l.x + Math.min(p3dL.x, p3dU.x));
+                minY = Math.min(minY, l.y + Math.min(p3dL.y, p3dU.y));
+                maxX = Math.max(maxX, l.x + Math.max(p3dL.x, p3dU.x));
+                maxY = Math.max(maxY, l.y + Math.max(p3dL.y, p3dU.y));
+            }
+        }
+        catch (Exception e)
+        {
+            // ignore
+        }
+        double relativeMargin = 0.05;
+        double xMargin = relativeMargin * (maxX - minX);
+        double yMargin = relativeMargin * (maxY - minY);
+        minX = minX - xMargin;
+        minY = minY - yMargin;
+        maxX = maxX + xMargin;
+        maxY = maxY + yMargin;
+
+        return new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
     }
+
+    /**
+     * Return a very short description of the simulation.
+     * @return String; short description of the simulation
+     */
+    @Deprecated
+    public String shortName()
+    {
+        return getClass().getSimpleName();
+    }
+
+    /**
+     * Return a description of the simulation (HTML formatted).
+     * @return String; HTML text describing the simulation
+     */
+    @Deprecated
+    public String description()
+    {
+        return getClass().getSimpleName();
+    }
+
+    /**
+     * Stop the timers and threads that are connected when disposing of this wrappable simulation.
+     */
+    @Deprecated
+    public void stopTimersThreads()
+    {
+        //
+    }
+    
 }

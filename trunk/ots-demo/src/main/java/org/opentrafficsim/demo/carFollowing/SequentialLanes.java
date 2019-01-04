@@ -27,6 +27,7 @@ import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -74,8 +75,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.dsol.swing.gui.HTMLPanel;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 
@@ -329,13 +328,10 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
      * initial version 0 jan. 2015 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class SequentialModel implements OTSModelInterface, UNITS
+    class SequentialModel extends AbstractOTSModel implements UNITS
     {
         /** */
         private static final long serialVersionUID = 20150130L;
-
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
 
         /** The network. */
         private final OTSNetwork network = new OTSNetwork("network");
@@ -401,10 +397,8 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) theSimulator;
             this.speedLimit = new Speed(100, KM_PER_HOUR);
 
             // TODO Bezier curves make 180 degree mistake when minus is true
@@ -546,13 +540,6 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
             {
                 System.out.println("Caught exception " + e);
             }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

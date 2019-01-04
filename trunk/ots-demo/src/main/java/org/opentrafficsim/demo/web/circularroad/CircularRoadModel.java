@@ -18,8 +18,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -73,13 +74,10 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class CircularRoadModel implements OTSModelInterface, UNITS
+public class CircularRoadModel extends AbstractOTSModel implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20141121L;
-
-    /** The simulator. */
-    private OTSSimulatorInterface simulator;
 
     /** Number of cars created. */
     private int carsCreated = 0;
@@ -142,7 +140,7 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
+    public void constructModel()
             throws SimRuntimeException
     {
         final int laneCount = 2;
@@ -419,14 +417,7 @@ public class CircularRoadModel implements OTSModelInterface, UNITS
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
-        gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class, getColorer());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-    {
-        return this.simulator;
+        gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class);
     }
 
     /** {@inheritDoc} */

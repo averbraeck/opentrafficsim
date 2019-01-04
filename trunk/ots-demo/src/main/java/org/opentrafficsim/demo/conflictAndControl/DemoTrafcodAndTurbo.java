@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo.conflictAndControl;
 
-import static org.opentrafficsim.core.gtu.GTUType.CAR;
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import java.awt.BorderLayout;
@@ -30,7 +29,7 @@ import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -58,7 +57,6 @@ import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
@@ -68,10 +66,8 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventType;
 
 /**
@@ -87,7 +83,6 @@ import nl.tudelft.simulation.event.EventType;
  */
 public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
 {
-
     /** */
     private static final long serialVersionUID = 20161118L;
 
@@ -150,20 +145,6 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
 
     /** {@inheritDoc} */
     @Override
-    protected final OTSModelInterface makeModel() throws OTSSimulationException
-    {
-        return new TrafCODModel();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected final Double makeAnimationRectangle()
     {
         return new Rectangle2D.Double(-200, -200, 400, 400);
@@ -172,7 +153,7 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
     /**
      * The simulation model.
      */
-    class TrafCODModel extends EventProducer implements OTSModelInterface, EventListenerInterface
+    class TrafCODModel extends AbstractOTSModel implements EventListenerInterface
     {
         /** */
         private static final long serialVersionUID = 20161020L;
@@ -182,27 +163,26 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> theSimulator)
-                throws SimRuntimeException
+        public void constructModel() throws SimRuntimeException
         {
             try
             {
                 URL url = URLResource.getResource("/conflictAndControl/TurboRoundaboutAndSignal.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) theSimulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) this.simulator);
                 this.network = nlp.build(url, true);
                 // add conflicts
                 ((CrossSectionLink) this.network.getLink("EBNA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("NBWA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("WBSA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("SBEA")).setPriority(Priority.PRIORITY);
-                ConflictBuilder.buildConflicts(this.network, VEHICLE, (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator,
+                ConflictBuilder.buildConflicts(this.network, VEHICLE, (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
                 // CrossSectionLink csLink = ((CrossSectionLink)
                 // this.network.getLink("WWW"));
                 // Lane lane = (Lane) csLink.getCrossSectionElement("RIGHT");
                 // GTUColorer gtuColorer = null;
-                // setupBlock(lane, (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator,
+                // setupBlock(lane, (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator,
                 // gtuColorer );
 
                 String[] directions = { "E", "S", "W", "N" };
@@ -225,37 +205,9 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
                         {
                             if (stream != 7)
                             {
-                                TrafficLight tl = trafficLights.add(new SimpleTrafficLight(String.format("TL%02d", stream),
+                                TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream),
                                         lane, lane.getLength().minus(stopLineMargin),
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator));
-
-                                try
-                                {
-                                    new TrafficLightAnimation(tl, simulator);
-                                }
-                                catch (RemoteException | NamingException exception)
-                                {
-                                    throw new NetworkException(exception);
-                                }
-
-                                sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
-                                        lane.getLength().minus(headDetectorMargin), lane,
-                                        lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
-                                        RelativePosition.FRONT, RelativePosition.REAR,
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, Compatible.EVERYTHING));
-                                sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
-                                        lane.getLength().minus(longDetectorMargin), lane,
-                                        lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
-                                        RelativePosition.FRONT, RelativePosition.REAR,
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, Compatible.EVERYTHING));
-                            }
-                            else
-                            {
-                                lane = (Lane) ((CrossSectionLink) this.network.getLink("ESS1", "ESS"))
-                                        .getCrossSectionElement("FORWARD");
-                                TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream), lane,
-                                        lane.getLength().minus(stopLineMargin),
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator);
+                                        this.simulator);
                                 trafficLights.add(tl);
 
                                 try
@@ -271,12 +223,41 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
                                         lane.getLength().minus(headDetectorMargin), lane,
                                         lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
                                         RelativePosition.FRONT, RelativePosition.REAR,
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, Compatible.EVERYTHING));
+                                        (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator, Compatible.EVERYTHING));
                                 sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
                                         lane.getLength().minus(longDetectorMargin), lane,
                                         lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
                                         RelativePosition.FRONT, RelativePosition.REAR,
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) theSimulator, Compatible.EVERYTHING));
+                                        (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator, Compatible.EVERYTHING));
+                            }
+                            else
+                            {
+                                lane = (Lane) ((CrossSectionLink) this.network.getLink("ESS1", "ESS"))
+                                        .getCrossSectionElement("FORWARD");
+                                TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream), lane,
+                                        lane.getLength().minus(stopLineMargin),
+                                        (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator);
+                                trafficLights.add(tl);
+
+                                try
+                                {
+                                    new TrafficLightAnimation(tl, simulator);
+                                }
+                                catch (RemoteException | NamingException exception)
+                                {
+                                    throw new NetworkException(exception);
+                                }
+
+                                sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
+                                        lane.getLength().minus(headDetectorMargin), lane,
+                                        lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
+                                        RelativePosition.FRONT, RelativePosition.REAR,
+                                        (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator, Compatible.EVERYTHING));
+                                sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
+                                        lane.getLength().minus(longDetectorMargin), lane,
+                                        lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
+                                        RelativePosition.FRONT, RelativePosition.REAR,
+                                        (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator, Compatible.EVERYTHING));
 
                             }
 
@@ -287,7 +268,7 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
                 String controllerName = "Not so simple TrafCOD controller";
                 DemoTrafcodAndTurbo.this.trafCOD =
                         new TrafCOD(controllerName, URLResource.getResource("/conflictAndControl/Intersection12Dir.tfc"),
-                                trafficLights, sensors, (DEVSSimulator<Time, Duration, SimTimeDoubleUnit>) theSimulator,
+                                trafficLights, sensors, this.simulator,
                                 DemoTrafcodAndTurbo.this.controllerDisplayPanel);
                 DemoTrafcodAndTurbo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 DemoTrafcodAndTurbo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
@@ -322,12 +303,6 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
             {
                 exception.printStackTrace();
             }
-        }
-
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return DemoTrafcodAndTurbo.this.trafCOD.getSimulator();
         }
 
         /** {@inheritDoc} */
@@ -377,7 +352,7 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
         /**
          * Put a block at the end of a Lane.
          * @param lane Lane; the lane on which the block is placed
-         * @param theSimulator OTSSimulatorInterface; the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @param gtuColorer GTUColorer; the gtu colorer to use
          * @return Lane; the lane
          * @throws NamingException on ???
@@ -386,7 +361,7 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
          * @throws GTUException when construction of the GTU (the block is a GTU) fails
          * @throws OTSGeometryException when the initial path is wrong
          */
-        private Lane setupBlock(final Lane lane, final OTSSimulatorInterface theSimulator, final GTUColorer gtuColorer)
+        private Lane setupBlock(final Lane lane, final OTSSimulatorInterface simulator, final GTUColorer gtuColorer)
                 throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
         {
             Length initialPosition = lane.getLength();
@@ -399,7 +374,7 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
             GTUType gtuType = CAR;
             Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", gtuType, new Length(1, LengthUnit.METER),
-                    lane.getWidth(1), Speed.ZERO, Length.createSI(0.5), theSimulator, this.network);
+                    lane.getWidth(1), Speed.ZERO, Length.createSI(0.5), this.simulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(carFollowingModelCars, block), block);
             block.setParameters(parameters);

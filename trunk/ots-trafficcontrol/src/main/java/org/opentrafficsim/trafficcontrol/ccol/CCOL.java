@@ -12,6 +12,7 @@ import java.util.Set;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
@@ -247,8 +248,7 @@ public class CCOL extends EventProducer implements TrafficController
 
     /** {@inheritDoc} */
     @Override
-    public InvisibleObjectInterface clone(SimulatorInterface.TimeDoubleUnit newSimulator, Network newNetwork)
-            throws NetworkException
+    public InvisibleObjectInterface clone(OTSSimulatorInterface newSimulator, Network newNetwork) throws NetworkException
     {
         // FIXME: implement the clone() for CCOL
         return null;
