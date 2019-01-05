@@ -104,7 +104,7 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
      */
     public SequentialLanes() throws InputParameterException
     {
-        List<InputParameter<?>> outputProperties = new ArrayList<>();
+        List<InputParameter<?, ?>> outputProperties = new ArrayList<>();
         outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true, false, 0));
         outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
         outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
@@ -140,7 +140,7 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
                 try
                 {
                     SequentialLanes sequential = new SequentialLanes();
-                    List<InputParameter<?>> localProperties = sequential.getProperties();
+                    List<InputParameter<?, ?>> localProperties = sequential.getProperties();
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
@@ -219,7 +219,7 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
     protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
     {
         // Make the tab with the plots
-        InputParameter<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
+        InputParameter<?, ?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -228,7 +228,7 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
         if (output instanceof CompoundProperty)
         {
             CompoundProperty outputProperties = (CompoundProperty) output;
-            for (InputParameter<?> ap : outputProperties.getValue())
+            for (InputParameter<?, ?> ap : outputProperties.getValue())
             {
                 if (ap instanceof InputParameterBoolean)
                 {
@@ -371,7 +371,7 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
 
         /** User settable properties. */
         @SuppressWarnings("hiding")
-        private List<InputParameter<?>> properties = null;
+        private List<InputParameter<?, ?>> properties = null;
 
         /** The sequence of Lanes that all vehicles will follow. */
         private List<Lane> path = new ArrayList<>();
@@ -382,7 +382,7 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
         /**
          * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
          */
-        SequentialModel(final List<InputParameter<?>> properties)
+        SequentialModel(final List<InputParameter<?, ?>> properties)
         {
             this.properties = properties;
         }
@@ -462,7 +462,7 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
             {
                 String carFollowingModelName = null;
                 CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-                InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                InputParameter<?, ?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
                     throw new Error("Cannot find \"Car following model\" property");
@@ -475,7 +475,7 @@ public class SequentialLanes extends AbstractOTSSwingApplication implements UNIT
                 {
                     throw new Error("\"Car following model\" property has wrong type");
                 }
-                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
                 {
                     if (ap instanceof InputParameterSelectionList)
                     {

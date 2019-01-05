@@ -135,7 +135,7 @@ public class TestNetworkDemo extends AbstractOTSSwingApplication
                     TestNetworkDemo animation = new TestNetworkDemo();
                     // 1 hour simulation run for testing
                     animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<InputParameter<?>>(), null, true);
+                            new ArrayList<InputParameter<?, ?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {

@@ -35,8 +35,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-
 /**
  * @author NLGUTU
  */
@@ -117,8 +115,7 @@ public class XMLNetworkWriter
 
     }
 
-    private static void marshall(File file, DEFINITIONS definitions, List<NODE> nodes, List<LINK> links)
-            throws JAXBException, InputParameterException
+    private static void marshall(File file, DEFINITIONS definitions, List<NODE> nodes, List<LINK> links) throws JAXBException
     {
         JAXBContext jaxbContext = JAXBContext.newInstance("org.opentrafficsim.road.network.factory.vissim.xsd");
         Marshaller marshaller = jaxbContext.createMarshaller();
@@ -189,8 +186,16 @@ public class XMLNetworkWriter
                 }
                 lane.setDIRECTION("FORWARD");
                 ROADLAYOUT.LANE.SPEEDLIMIT speedLimit = new ROADLAYOUT.LANE.SPEEDLIMIT();
-                speedLimit.setLEGALSPEEDLIMIT(
-                        inputLane.getSpeedLimit(GTUType.VEHICLE).getInUnit(SpeedUnit.KM_PER_HOUR) + " km/h");
+                try
+                {
+                    speedLimit.setLEGALSPEEDLIMIT(
+                            inputLane.getSpeedLimit(GTUType.VEHICLE).getInUnit(SpeedUnit.KM_PER_HOUR) + " km/h");
+                }
+                catch (Exception exception)
+                {
+                    System.err.println(exception.getMessage());
+                    speedLimit.setLEGALSPEEDLIMIT("100.0 km/h");
+                }
                 speedLimit.setGTUTYPE("CAR");
                 lane.getSPEEDLIMIT().add(speedLimit);
                 rla.getLANEOrNOTRAFFICLANEOrSHOULDER().add(lane);

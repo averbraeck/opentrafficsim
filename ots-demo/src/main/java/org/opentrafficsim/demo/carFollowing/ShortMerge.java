@@ -216,7 +216,7 @@ public class ShortMerge extends AbstractOTSSwingApplication
         try
         {
             shortMerge.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si),
-                    new ArrayList<InputParameter<?>>(), null, true);
+                    new ArrayList<InputParameter<?, ?>>(), null, true);
         }
         catch (Exception exception)
         {

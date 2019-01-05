@@ -101,7 +101,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
     /** User settable properties. */
-    private List<InputParameter<?>> props = null;
+    private List<InputParameter<?, ?>> props = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
     private List<List<Lane>> paths = new ArrayList<>();
@@ -124,7 +124,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     /**
      * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
      */
-    CircularRoadModel(final List<InputParameter<?>> properties)
+    CircularRoadModel(final List<InputParameter<?, ?>> properties)
     {
         this.props = properties;
     }
@@ -157,7 +157,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
             // Get car-following model name
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.props, false, 0);
-            InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+            InputParameter<?, ?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new Error("Cannot find \"Car following model\" property");
@@ -172,7 +172,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
             }
 
             // Get car-following model parameter
-            for (InputParameter<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
+            for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.props, false, 0))
             {
                 if (ap instanceof CompoundProperty)
                 {
@@ -242,7 +242,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
             }
 
             // Get remaining properties
-            for (InputParameter<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
+            for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.props, false, 0))
             {
                 if (ap instanceof InputParameterSelectionList)
                 {

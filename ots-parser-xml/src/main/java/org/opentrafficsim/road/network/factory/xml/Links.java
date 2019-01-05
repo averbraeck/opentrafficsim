@@ -21,6 +21,7 @@ import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.animation.DrawingInfoLine;
 import org.opentrafficsim.core.animation.DrawingInfoStripe;
 import org.opentrafficsim.core.animation.StripeType;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -680,12 +681,12 @@ final class Links
                                 Class<?> clazz = Class.forName(sensorTag.className);
                                 Constructor<?> sensorConstructor = ClassUtil.resolveConstructor(clazz,
                                         new Class[] { String.class, Lane.class, Length.class, RelativePosition.TYPE.class,
-                                                DEVSSimulatorInterface.TimeDoubleUnit.class });
+                                                DEVSSimulatorInterface.TimeDoubleUnit.class, Compatible.class });
                                 Length position = LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
                                 // { String.class, Lane.class, Length.class, RelativePosition.TYPE.class,
                                 // DEVSSimulatorInterface.TimeDoubleUnit.class }
-                                sensorConstructor.newInstance(
-                                        new Object[] { sensorTag.name, lane, position, sensorTag.triggerPosition, simulator });
+                                sensorConstructor.newInstance(new Object[] { sensorTag.name, lane, position,
+                                        sensorTag.triggerPosition, simulator, Compatible.EVERYTHING });
                             }
                             catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
                                     | IllegalAccessException | IllegalArgumentException | InvocationTargetException

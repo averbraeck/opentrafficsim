@@ -52,7 +52,7 @@ public class CircularRoadlWebApplication extends DSOLWebServer
      */
     public static void main(final String[] args) throws Exception
     {
-        List<InputParameter<?>> properties = new ArrayList<>();
+        List<InputParameter<?, ?>> properties = new ArrayList<>();
         properties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
                 "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
                 new Double[] { 0.8, 0.2 }, 10));
@@ -84,7 +84,7 @@ public class CircularRoadlWebApplication extends DSOLWebServer
                 "Density %.1f veh/km", 11));
         properties.add(new InputParameterDouble("DensityVariability", "Density variability",
                 "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", 12));
-        List<InputParameter<?>> outputProperties = new ArrayList<>();
+        List<InputParameter<?, ?>> outputProperties = new ArrayList<>();
         for (int lane = 1; lane <= 2; lane++)
         {
             int index = lane - 1;

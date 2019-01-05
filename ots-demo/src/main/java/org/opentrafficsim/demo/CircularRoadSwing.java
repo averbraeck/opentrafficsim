@@ -1,7 +1,6 @@
-package org.opentrafficsim.road.test;
+package org.opentrafficsim.demo;
 
 import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +70,7 @@ public class CircularRoadSwing extends AbstractOTSSwingApplication
      * @param model the model
      * @throws OTSDrawingException on animation error
      */
-    public CircularRoadSwing(final String title, OTSAnimationPanel panel, final CircularRoadModel model)
+    public CircularRoadSwing(final String title, final OTSAnimationPanel panel, final CircularRoadModel model)
             throws OTSDrawingException
     {
         super(model, panel);
@@ -99,8 +98,8 @@ public class CircularRoadSwing extends AbstractOTSSwingApplication
             final CircularRoadModel otsModel = new CircularRoadModel(simulator);
             new TabbedParameterDialog(otsModel.getInputParameterMap());
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
-            OTSAnimationPanel animationPanel = new OTSAnimationPanel(new Rectangle2D.Double(-500, -500, 1000, 1000),
-                    new Dimension(200, 200), simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
+            OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
+                    simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
             new CircularRoadSwing("Circular Road", animationPanel, otsModel);
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)

@@ -76,7 +76,7 @@ public class OTSIMBConnector extends IMBConnector
         int modelId = 1;
         String federation = "OTS_RT";
 
-        for (InputParameter<?> ap : inputParameterMap.getValue().values())
+        for (InputParameter<?, ?> ap : inputParameterMap.getValue().values())
         {
             switch (ap.getKey())
             {

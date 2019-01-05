@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.test;
+package org.opentrafficsim.demo;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 

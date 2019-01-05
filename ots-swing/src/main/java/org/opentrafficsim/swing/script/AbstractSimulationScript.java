@@ -172,7 +172,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     // try
     // {
     // DEVSSimulatorInterface.TimeDoubleUnit sim =
-    // scriptSimulation.buildSimulator(startTime, warmupTime, simulationTime, new ArrayList<InputParameter<?>>());
+    // scriptSimulation.buildSimulator(startTime, warmupTime, simulationTime, new ArrayList<InputParameter<?, ?>>());
     // sim.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
     // double tReport = 60.0;
     // Time t = sim.getSimulatorTime();
@@ -197,7 +197,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     // else
     // {
     // Try.execute(() -> new ScriptAnimation().buildAnimator(startTime, warmupTime, simulationTime,
-    // new ArrayList<InputParameter<?>>(), null, true), RuntimeException.class, "Exception from properties.");
+    // new ArrayList<InputParameter<?, ?>>(), null, true), RuntimeException.class, "Exception from properties.");
     // }
     // }
     //

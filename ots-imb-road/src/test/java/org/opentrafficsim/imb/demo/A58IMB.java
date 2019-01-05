@@ -88,7 +88,7 @@ public class A58IMB extends AbstractOTSSwingApplication
                 try
                 {
                     A58IMB a58Model = new A58IMB();
-                    List<InputParameter<?>> propertyList = new ArrayList<>();
+                    List<InputParameter<?, ?>> propertyList = new ArrayList<>();
                     propertyList.add(OTSIMBConnector.standardIMBProperties(0, "vps17642.public.cloudvps.com"));
                     // 1 hour simulation run for testing
                     a58Model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(10.0, DurationUnit.HOUR), propertyList, null,
@@ -135,7 +135,7 @@ public class A58IMB extends AbstractOTSSwingApplication
     /**
      * @return the saved user properties for a next run
      */
-    private List<InputParameter<?>> getSavedUserModifiedProperties()
+    private List<InputParameter<?, ?>> getSavedUserModifiedProperties()
     {
         return this.savedUserModifiedProperties;
     }
@@ -183,7 +183,7 @@ public class A58IMB extends AbstractOTSSwingApplication
         private OTSSimulatorInterface simulator;
 
         /** User settable properties. */
-        private List<InputParameter<?>> modelProperties = null;
+        private List<InputParameter<?, ?>> modelProperties = null;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
         private final OTSNetwork network;
@@ -199,7 +199,7 @@ public class A58IMB extends AbstractOTSSwingApplication
          * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network OTSNetwork; the network
          */
-        A58Model(final List<InputParameter<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
+        A58Model(final List<InputParameter<?, ?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
         {
             this.modelProperties = modelProperties;
             this.network = network;
@@ -216,7 +216,7 @@ public class A58IMB extends AbstractOTSSwingApplication
             try
             {
                 CompoundProperty imbSettings = null;
-                for (InputParameter<?> property : this.modelProperties)
+                for (InputParameter<?, ?> property : this.modelProperties)
                 {
                     if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
                     {
@@ -366,9 +366,9 @@ public class A58IMB extends AbstractOTSSwingApplication
      * Retrieve a list of properties that the user can modify.
      * @return List&lt;Property&lt;?&gt;&gt;;
      */
-    public List<InputParameter<?>> getSupportedProperties()
+    public List<InputParameter<?, ?>> getSupportedProperties()
     {
-        List<InputParameter<?>> result = new ArrayList<>();
+        List<InputParameter<?, ?>> result = new ArrayList<>();
         result.add(new InputParameterDouble("penetration", "penetration",
                 "<html>Fraction of vehicles equipped with CACC</html>", 0.0, 0.0, 1.0, "%.2f", false, 13));
         return result;

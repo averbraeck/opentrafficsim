@@ -139,7 +139,7 @@ public class CrossingTrafficLights extends AbstractOTSSwingApplication implement
                 try
                 {
                     CrossingTrafficLights crossingTrafficLights = new CrossingTrafficLights();
-                    List<InputParameter<?>> localProperties = crossingTrafficLights.getProperties();
+                    List<InputParameter<?, ?>> localProperties = crossingTrafficLights.getProperties();
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
@@ -283,7 +283,7 @@ public class CrossingTrafficLights extends AbstractOTSSwingApplication implement
         private LaneChangeModel laneChangeModel;
 
         /** User settable properties. */
-        private List<InputParameter<?>> properties = null;
+        private List<InputParameter<?, ?>> properties = null;
 
         /** the tactical planner factory for this model. */
         private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory;
@@ -294,7 +294,7 @@ public class CrossingTrafficLights extends AbstractOTSSwingApplication implement
         /**
          * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
          */
-        CrossingTrafficLightstModel(final List<InputParameter<?>> properties)
+        CrossingTrafficLightstModel(final List<InputParameter<?, ?>> properties)
         {
             this.properties = properties;
         }

@@ -2,12 +2,11 @@ package org.opentrafficsim.road.network.factory.xml.test;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
+import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
@@ -27,13 +26,14 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -43,6 +43,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
@@ -56,15 +58,12 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistExponential;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -85,6 +84,18 @@ public class TestGMParser extends AbstractOTSSwingApplication
     private static final long serialVersionUID = 1L;
 
     /**
+     * @param model the model
+     * @param animationPanel the animation panel
+     * @throws OTSDrawingException on drawing error
+     */
+    public TestGMParser(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    {
+        super(model, animationPanel);
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
+    }
+
+    /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException should never happen
@@ -98,59 +109,20 @@ public class TestGMParser extends AbstractOTSSwingApplication
             {
                 try
                 {
-                    TestGMParser xmlModel = new TestGMParser();
-                    // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<InputParameter<?>>(), null, true);
+                    OTSAnimator simulator = new OTSAnimator();
+                    TestGMModel xmlModel = new TestGMModel(simulator);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel);
+                    OTSAnimationPanel animationPanel =
+                            new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+                                    xmlModel, new DefaultSwitchableGTUColorer(), xmlModel.getNetwork());
+                    new TestGMParser(xmlModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
                 {
                     exception.printStackTrace();
                 }
             }
         });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "TestGMModel";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "TestGMModel";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        return new TestGMModel();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final Double makeAnimationRectangle()
-    {
-        return new Rectangle2D.Double(0, 2900, 1400, 1200);
     }
 
     /** {@inheritDoc} */
@@ -172,14 +144,21 @@ public class TestGMParser extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestGMModel extends AbstractOTSModel implements Serializable
+    static class TestGMModel extends AbstractOTSModel implements Serializable
     {
-
         /** */
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
         private OTSNetwork network;
+
+        /**
+         * @param simulator the simulator
+         */
+        TestGMModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -198,7 +177,7 @@ public class TestGMParser extends AbstractOTSSwingApplication
             }
 
             URL gisURL = URLResource.getResource("/N201/map.xml");
-            System.err.println("GIS-map file: " + gisURL.toString());
+            System.err.println("GIS-map file: " + gisURL.toString()); 
             CoordinateTransform rdto0 = new CoordinateTransformRD(104450, 478845);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
 
@@ -271,7 +250,7 @@ public class TestGMParser extends AbstractOTSSwingApplication
     /**
      * Convert coordinates to/from the Dutch RD system.
      */
-    class CoordinateTransformRD implements CoordinateTransform, Serializable
+    static class CoordinateTransformRD implements CoordinateTransform, Serializable
     {
         /** */
         private static final long serialVersionUID = 20141017L;

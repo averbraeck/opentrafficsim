@@ -102,7 +102,7 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
                 try
                 {
                     OpenStreetMap osm = new OpenStreetMap();
-                    List<InputParameter<?>> localProperties = osm.getProperties();
+                    List<InputParameter<?, ?>> localProperties = osm.getProperties();
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
@@ -316,7 +316,7 @@ class OSMModel extends AbstractOTSModel
      * @param pL ProgressListener; the receiver of progress events
      * @param converter Convert; the output converter
      */
-    OSMModel(final List<InputParameter<?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
+    OSMModel(final List<InputParameter<?, ?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
             final ProgressListener pL, final Convert converter)
     {
         this.osmNetwork = osmNetwork;

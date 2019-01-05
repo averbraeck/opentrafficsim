@@ -257,7 +257,7 @@ public class FundamentalDiagramsLane extends AbstractOTSSwingApplication impleme
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         /** User settable properties. */
-        private List<InputParameter<?>> fundamentalDiagramsLaneProperties = null;
+        private List<InputParameter<?, ?>> fundamentalDiagramsLaneProperties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -265,7 +265,7 @@ public class FundamentalDiagramsLane extends AbstractOTSSwingApplication impleme
         /**
          * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
          */
-        FundamentalDiagramLanePlotsModel(final List<InputParameter<?>> properties)
+        FundamentalDiagramLanePlotsModel(final List<InputParameter<?, ?>> properties)
         {
             this.fundamentalDiagramsLaneProperties = properties;
         }
@@ -303,7 +303,7 @@ public class FundamentalDiagramsLane extends AbstractOTSSwingApplication impleme
                 exception.printStackTrace();
             }
 
-            for (InputParameter<?> p : this.fundamentalDiagramsLaneProperties)
+            for (InputParameter<?, ?> p : this.fundamentalDiagramsLaneProperties)
             {
                 if (p instanceof InputParameterSelectionList)
                 {

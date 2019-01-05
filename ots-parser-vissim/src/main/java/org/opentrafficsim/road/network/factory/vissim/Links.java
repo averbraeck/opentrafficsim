@@ -17,7 +17,6 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.animation.DrawingInfoShape;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
@@ -539,8 +538,15 @@ final class Links
                             Length pos = new Length(Double.parseDouble(sensorTag.positionStr), LengthUnit.METER);
                             if (pos.lt(lane.getLength()))
                             {
-                                new SimpleReportingSensor(sensorTag.name, lane, pos, RelativePosition.FRONT, simulator,
-                                        Compatible.EVERYTHING);
+                                try
+                                {
+                                    new SimpleReportingSensor(sensorTag.laneName + ".S" + sensorTag.name, lane, pos,
+                                            RelativePosition.FRONT, simulator, Compatible.EVERYTHING);
+                                }
+                                catch (Exception exception)
+                                {
+                                    System.err.println(exception.getMessage());
+                                }
                             }
                         }
                     }
@@ -568,7 +574,7 @@ final class Links
                 // update totalLaneWidth
                 totalLaneWidth += Double.parseDouble(laneTag.width);
 
-                parser.network.addDrawingInfoBase(lane, new DrawingInfoShape<Lane>(color));
+                // TODO: parser.network.addDrawingInfoBase(lane, new DrawingInfoShape<Lane>(color));
             }
         }
 
@@ -670,7 +676,7 @@ final class Links
                 totalFromLaneWidth += Double.parseDouble(connectLaneTag.width);
                 totalToLaneWidth += Double.parseDouble(connectLaneTag.width);
 
-                parser.network.addDrawingInfoBase(lane, new DrawingInfoShape<Lane>(color));
+                // TODO: parser.network.addDrawingInfoBase(lane, new DrawingInfoShape<Lane>(color));
 
             }
         }
