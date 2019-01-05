@@ -275,12 +275,12 @@ public class ModelControlA58 extends ModelStarter
      * @param key String; the key
      * @return Property&lt;?&gt; or null if none of the entries in the list contained a property with the specified key
      */
-    private InputParameter<?> findByKeyInList(final List<InputParameter<?>> propertyList, final String key)
+    private InputParameter<?, ?> findByKeyInList(final List<InputParameter<?, ?>> propertyList, final String key)
     {
-        InputParameter<?> result = null;
-        for (InputParameter<?> property : propertyList)
+        InputParameter<?, ?> result = null;
+        for (InputParameter<?, ?> property : propertyList)
         {
-            InputParameter<?> p = property.findByKey(key);
+            InputParameter<?, ?> p = property.findByKey(key);
             if (null != p)
             {
                 if (null != result)
@@ -297,8 +297,8 @@ public class ModelControlA58 extends ModelStarter
     @Override
     public void parameterRequest(ModelParameters parameters)
     {
-        List<InputParameter<?>> propertyList = new A58IMB().getSupportedProperties();
-        InputParameter<?> caccPenetration = findByKeyInList(propertyList, "penetration");
+        List<InputParameter<?, ?>> propertyList = new A58IMB().getSupportedProperties();
+        InputParameter<?, ?> caccPenetration = findByKeyInList(propertyList, "penetration");
         if (null != caccPenetration)
         {
             parameters.addParameter(new Parameter("penetration", ((InputParameterDouble) caccPenetration).getValue()));

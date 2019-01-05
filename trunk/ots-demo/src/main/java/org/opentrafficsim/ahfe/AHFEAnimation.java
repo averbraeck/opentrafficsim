@@ -445,7 +445,7 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
                     model.setNextReplication(finalReplication);
                     // 1 hour simulation run for testing
                     model.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si),
-                            new ArrayList<InputParameter<?>>(), null, true);
+                            new ArrayList<InputParameter<?, ?>>(), null, true);
                     if (finalAutoRun)
                     {
                         int lastReportedTime = -1;

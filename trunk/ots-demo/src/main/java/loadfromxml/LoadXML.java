@@ -1,13 +1,13 @@
 package loadfromxml;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 import javax.naming.NamingException;
 import javax.swing.JFileChooser;
@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.DurationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -25,17 +24,23 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSAnimator;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.gtu.colorer.BlockingColorer;
 import org.opentrafficsim.road.gtu.colorer.DesiredSpeedColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -45,10 +50,11 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 
 /**
@@ -67,11 +73,17 @@ public class LoadXML extends AbstractOTSSwingApplication
     /** */
     private static final long serialVersionUID = 20170421L;
 
-    /** Name of the XML file. */
-    private String fileName = null;
-
-    /** The XML code. */
-    private String xml = null;
+    /**
+     * @param model the model
+     * @param animationPanel the animation panel
+     * @throws OTSDrawingException on drawing error
+     */
+    public LoadXML(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    {
+        super(model, animationPanel);
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
+    }
 
     /**
      * Load a network from an XML file; program entry point.
@@ -86,7 +98,8 @@ public class LoadXML extends AbstractOTSSwingApplication
             throws IOException, SimRuntimeException, NamingException, OTSSimulationException, InputParameterException
     {
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
-        LoadXML loadXML = new LoadXML();
+        String fileName;
+        String xml;
         if (0 == args.length)
         {
             JFileChooser fileChooser = new JFileChooser();
@@ -118,40 +131,33 @@ public class LoadXML extends AbstractOTSSwingApplication
                 System.out.println("No file chosen; exiting");
                 System.exit(0);
             }
-            loadXML.fileName = fileChooser.getSelectedFile().getAbsolutePath();
+            fileName = fileChooser.getSelectedFile().getAbsolutePath();
         }
         else
         {
-            loadXML.fileName = args[0];
+            fileName = args[0];
         }
-        loadXML.xml = new String(Files.readAllBytes(Paths.get(loadXML.fileName)));
+        xml = new String(Files.readAllBytes(Paths.get(fileName)));
         try
         {
-            loadXML.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600, DurationUnit.SI),
-                    new ArrayList<InputParameter<?>>(), null, true);
+            OTSAnimator simulator = new OTSAnimator();
+            XMLModel xmlModel = new XMLModel(simulator, xml);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel);
+            OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
+                    simulator, xmlModel, new DefaultSwitchableGTUColorer(), xmlModel.getNetwork());
+            new LoadXML(xmlModel, animationPanel);
         }
-        catch (SimRuntimeException sre)
+        catch (SimRuntimeException | OTSDrawingException sre)
         {
             JOptionPane.showMessageDialog(null, sre.getMessage(), "Exception occured", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
     }
 
-    /** Currently active XML model. */
-    private XMLModel model = null;
-
-    /** GTU colorer. */
-    private GTUColorer colorer = SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
-            .addColorer(GTUTypeColorer.DEFAULT).addColorer(new IDGTUColorer())
-            .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
-            .addColorer(new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
-            .addColorer(new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)))
-            .addColorer(new SplitColorer()).addColorer(new BlockingColorer()).build();
-
     /**
-     * The network.
+     * The Model.
      */
-    class XMLModel extends AbstractOTSModel
+    static class XMLModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20170421L;
@@ -159,16 +165,36 @@ public class LoadXML extends AbstractOTSSwingApplication
         /** The network. */
         private OTSNetwork network;
 
-        /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public void constructModel()
-                throws SimRuntimeException
+        /** the xml file. */
+        private String xml;
+
+        /** GTU colorer. */
+        private GTUColorer colorer = SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
+                .addColorer(GTUTypeColorer.DEFAULT).addColorer(new IDGTUColorer())
+                .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
+                .addColorer(
+                        new DesiredSpeedColorer(new Speed(50, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
+                .addColorer(new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)))
+                .addColorer(new SplitColorer()).addColorer(new BlockingColorer()).build();
+
+        /**
+         * @param simulator the simulator
+         * @param xml the XML string
+         */
+        XMLModel(final OTSSimulatorInterface simulator, final String xml)
         {
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator, getColorer());
+            super(simulator);
+            this.xml = xml;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void constructModel() throws SimRuntimeException
+        {
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator, this.colorer);
             try
             {
-                this.network = nlp.build(new ByteArrayInputStream(LoadXML.this.xml.getBytes(StandardCharsets.UTF_8)), false);
+                this.network = nlp.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), false);
                 ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
@@ -188,15 +214,5 @@ public class LoadXML extends AbstractOTSSwingApplication
         {
             return this.network;
         }
-
     }
-
-    /**
-     * @return the GTU colorer
-     */
-    public GTUColorer getColorer()
-    {
-        return this.colorer;
-    }
-
 }

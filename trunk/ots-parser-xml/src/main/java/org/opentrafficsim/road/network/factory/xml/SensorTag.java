@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
@@ -98,7 +99,7 @@ class SensorTag implements Serializable
             try
             {
                 ClassUtil.resolveConstructor(clazz, new Class[] { String.class, Lane.class, Length.class,
-                        RelativePosition.TYPE.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
+                        RelativePosition.TYPE.class, DEVSSimulatorInterface.TimeDoubleUnit.class, Compatible.class });
             }
             catch (NoSuchMethodException nsme)
             {

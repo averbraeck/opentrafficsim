@@ -211,7 +211,7 @@ public class XMLSampler extends AbstractOTSSwingApplication implements UNITS
         private final OTSNetwork network = new OTSNetwork("network");
 
         /** User settable properties. */
-        private List<InputParameter<?>> props = null;
+        private List<InputParameter<?, ?>> props = null;
 
         /** The sequence of Lanes that all vehicles will follow. */
         private List<List<Lane>> paths = new ArrayList<>();
@@ -270,7 +270,7 @@ public class XMLSampler extends AbstractOTSSwingApplication implements UNITS
         /**
          * @param userModifiedProperties List&lt;InputParameter&lt;?&gt;&gt;; the (possibly user modified) properties
          */
-        XMLSamplerModel(final List<InputParameter<?>> userModifiedProperties)
+        XMLSamplerModel(final List<InputParameter<?, ?>> userModifiedProperties)
         {
             this.props = userModifiedProperties;
         }
@@ -329,7 +329,7 @@ public class XMLSampler extends AbstractOTSSwingApplication implements UNITS
                 // Get car-following model name
                 String carFollowingModelName = null;
                 CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.props, false, 0);
-                InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                InputParameter<?, ?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
                     throw new Error("Cannot find \"Car following model\" property");
@@ -344,7 +344,7 @@ public class XMLSampler extends AbstractOTSSwingApplication implements UNITS
                 }
 
                 // Get car-following model parameter
-                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
+                for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
                     if (ap instanceof CompoundProperty)
                     {
@@ -452,7 +452,7 @@ public class XMLSampler extends AbstractOTSSwingApplication implements UNITS
                 }
 
                 // Get remaining properties
-                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.props, false, 0))
+                for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.props, false, 0))
                 {
                     if (ap instanceof InputParameterSelectionList)
                     {

@@ -92,7 +92,7 @@ public class N201IMB extends AbstractOTSSwingApplication
                     N201IMB n201Model = new N201IMB();
                     // 1 hour simulation run for testing
                     n201Model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(10.0, DurationUnit.HOUR),
-                            new ArrayList<InputParameter<?>>(), null, true);
+                            new ArrayList<InputParameter<?, ?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {
@@ -135,7 +135,7 @@ public class N201IMB extends AbstractOTSSwingApplication
     /**
      * @return the saved user properties for a next run
      */
-    private List<InputParameter<?>> getSavedUserModifiedProperties()
+    private List<InputParameter<?, ?>> getSavedUserModifiedProperties()
     {
         return this.savedUserModifiedProperties;
     }
@@ -183,7 +183,7 @@ public class N201IMB extends AbstractOTSSwingApplication
         private OTSSimulatorInterface simulator;
 
         /** User settable properties. */
-        private List<InputParameter<?>> modelProperties = null;
+        private List<InputParameter<?, ?>> modelProperties = null;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
         private final OTSNetwork network;
@@ -199,7 +199,7 @@ public class N201IMB extends AbstractOTSSwingApplication
          * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          * @param network OTSNetwork; the network
          */
-        N201Model(final List<InputParameter<?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
+        N201Model(final List<InputParameter<?, ?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
         {
             this.modelProperties = modelProperties;
             this.network = network;
@@ -216,7 +216,7 @@ public class N201IMB extends AbstractOTSSwingApplication
             try
             {
                 CompoundProperty imbSettings = null;
-                for (InputParameter<?> property : this.modelProperties)
+                for (InputParameter<?, ?> property : this.modelProperties)
                 {
                     if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
                     {

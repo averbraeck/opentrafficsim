@@ -188,7 +188,7 @@ class XMLNetwork2Model extends AbstractOTSModel implements UNITS
     private final OTSNetwork network = new OTSNetwork("network");
 
     /** User settable properties. */
-    private List<InputParameter<?>> properties = null;
+    private List<InputParameter<?, ?>> properties = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
     private List<List<Lane>> paths = new ArrayList<>();
@@ -244,7 +244,7 @@ class XMLNetwork2Model extends AbstractOTSModel implements UNITS
     /**
      * @param userModifiedProperties List&lt;InputParameter&lt;?&gt;&gt;; the (possibly user modified) properties
      */
-    XMLNetwork2Model(final List<InputParameter<?>> userModifiedProperties)
+    XMLNetwork2Model(final List<InputParameter<?, ?>> userModifiedProperties)
     {
         this.properties = userModifiedProperties;
     }
@@ -285,7 +285,7 @@ class XMLNetwork2Model extends AbstractOTSModel implements UNITS
             // Get car-following model name
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-            InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+            InputParameter<?, ?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new Error("Cannot find \"Car following model\" property");
@@ -300,7 +300,7 @@ class XMLNetwork2Model extends AbstractOTSModel implements UNITS
             }
 
             // Get car-following model parameter
-            for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+            for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
             {
                 if (ap instanceof CompoundProperty)
                 {
@@ -464,7 +464,7 @@ class XMLNetwork2Model extends AbstractOTSModel implements UNITS
             }
 
             // Get remaining properties
-            for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+            for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
             {
                 if (ap instanceof InputParameterSelectionList)
                 {

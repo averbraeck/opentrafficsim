@@ -1,35 +1,37 @@
 package org.opentrafficsim.road.network.factory.xml.test;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.DurationUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 
 /**
  * Four stop demo
@@ -44,6 +46,21 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
  */
 public class NetworkTest extends AbstractOTSSwingApplication
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @param model the model
+     * @param animationPanel the animation panel
+     * @throws OTSDrawingException on drawing error
+     */
+    public NetworkTest(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    {
+        super(model, animationPanel);
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
+    }
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
@@ -58,59 +75,20 @@ public class NetworkTest extends AbstractOTSSwingApplication
             {
                 try
                 {
-                    NetworkTest xmlModel = new NetworkTest();
-                    // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<InputParameter<?>>(), null, true);
+                    OTSAnimator simulator = new OTSAnimator();
+                    TestXMLModel xmlModel = new TestXMLModel(simulator);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel);
+                    OTSAnimationPanel animationPanel =
+                            new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+                                    xmlModel, new DefaultSwitchableGTUColorer(), xmlModel.getNetwork());
+                    new NetworkTest(xmlModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
                 {
                     exception.printStackTrace();
                 }
             }
         });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void addTabs(OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
-    {
-        super.addTabs(simulator);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "TestXMLModel";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "TestXMLModel";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        return new TestXMLModel();
     }
 
     /** {@inheritDoc} */
@@ -132,13 +110,21 @@ public class NetworkTest extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestXMLModel extends AbstractOTSModel
+    static class TestXMLModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
 
         /** the network. */
         private OTSNetwork network = null;
+
+        /**
+         * @param simulator the simulator
+         */
+        TestXMLModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
 
         /** {@inheritDoc} */
         @Override

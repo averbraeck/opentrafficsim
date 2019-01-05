@@ -115,7 +115,7 @@ public class TestOpenDriveParserNASA extends AbstractOTSSwingApplication
                     TestOpenDriveParserNASA xmlModel = new TestOpenDriveParserNASA();
                     // 1 hour simulation run for testing
                     xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<InputParameter<?>>(), null, true);
+                            new ArrayList<InputParameter<?, ?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
                 {

@@ -97,7 +97,7 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
                 5.0, 45.0, "Density %.1f veh/km", false, 11));
         this.inputParameterMap.add(new InputParameterDouble("DensityVariability", "Density variability",
                 "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
-        List<InputParameter<?>> outputProperties = new ArrayList<>();
+        List<InputParameter<?, ?>> outputProperties = new ArrayList<>();
         outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true, false, 0));
         outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true, false, 1));
         outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true, false, 2));
@@ -124,7 +124,7 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
                 try
                 {
                     CircularLane circularLane = new CircularLane();
-                    List<InputParameter<?>> propertyList = circularLane.getProperties();
+                    List<InputParameter<?, ?>> propertyList = circularLane.getProperties();
                     try
                     {
                         propertyList.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
@@ -164,7 +164,7 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
     protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
     {
         // Make the tab with the plots
-        InputParameter<?> output =
+        InputParameter<?, ?> output =
                 new CompoundProperty("", "", "", this.properties, false, 0).findSubPropertyByKey("OutputGraphs");
         if (null == output)
         {
@@ -174,7 +174,7 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
         if (output instanceof CompoundProperty)
         {
             CompoundProperty outputProperties = (CompoundProperty) output;
-            for (InputParameter<?> ap : outputProperties.getValue())
+            for (InputParameter<?, ?> ap : outputProperties.getValue())
             {
                 if (ap instanceof InputParameterBoolean)
                 {
@@ -312,7 +312,7 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
 
         /** User settable properties. */
         @SuppressWarnings("hiding")
-        private List<InputParameter<?>> properties = null;
+        private List<InputParameter<?, ?>> properties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -323,7 +323,7 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
         /**
          * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user modified properties for the model
          */
-        LaneSimulationModel(final List<InputParameter<?>> properties)
+        LaneSimulationModel(final List<InputParameter<?, ?>> properties)
         {
             this.properties = properties;
         }
@@ -339,7 +339,7 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
             {
                 String carFollowingModelName = null;
                 CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-                InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                InputParameter<?, ?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
                     throw new SimRuntimeException("Cannot find \"Car following model\" property");
@@ -352,7 +352,7 @@ public class CircularLane extends AbstractOTSSwingApplication implements UNITS
                 {
                     throw new SimRuntimeException("\"Car following model\" property has wrong type");
                 }
-                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
                 {
                     // System.out.println("Handling property " + ap.getKey());
                     if (ap instanceof InputParameterSelectionList)

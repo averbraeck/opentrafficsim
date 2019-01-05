@@ -86,7 +86,7 @@ public class IMBSuperDemo implements UNITS
 
     /** Properties of the currently selected demonstration. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected List<InputParameter<?>> activeProperties = null;
+    protected List<InputParameter<?, ?>> activeProperties = null;
 
     /** The properties of the connection to an IMB hub. */
     private CompoundProperty imbProperties;
@@ -171,7 +171,7 @@ public class IMBSuperDemo implements UNITS
         centerPanel.add(imbControls, BorderLayout.NORTH);
         this.propertyPanel = new JPanel();
         this.propertyPanel.setLayout(new BoxLayout(this.propertyPanel, BoxLayout.Y_AXIS));
-        rebuildPropertyPanel(new ArrayList<InputParameter<?>>());
+        rebuildPropertyPanel(new ArrayList<InputParameter<?, ?>>());
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         this.descriptionPanel = new LabeledPanel("Description");
         this.descriptionPanel.setLayout(new BorderLayout());
@@ -264,7 +264,7 @@ public class IMBSuperDemo implements UNITS
      * Regenerate the contents of the propertyPanel.
      * @param properties List&lt;Property&lt;?&gt;&gt;; the demo-specific properties to display
      */
-    final void rebuildPropertyPanel(final List<InputParameter<?>> properties)
+    final void rebuildPropertyPanel(final List<InputParameter<?, ?>> properties)
     {
         this.propertyPanel.removeAll();
         try
@@ -283,7 +283,7 @@ public class IMBSuperDemo implements UNITS
                 {
                     boolean movedAny = false;
                     // Move the properties that has display priority < 100 into the simulationSettings group.
-                    for (InputParameter<?> ap : properties)
+                    for (InputParameter<?, ?> ap : properties)
                     {
                         if (ap.getDisplayPriority() < 100)
                         {
@@ -322,7 +322,7 @@ public class IMBSuperDemo implements UNITS
             }
             properties.add(0, simulationSettings);
             boolean fixedDummy = false;
-            for (InputParameter<?> p : new CompoundProperty("", "", "", properties, false, 0).displayOrderedValue())
+            for (InputParameter<?, ?> p : new CompoundProperty("", "", "", properties, false, 0).displayOrderedValue())
             {
                 JPanel propertySubPanel = makePropertyEditor(p);
                 if (!fixedDummy)
@@ -350,7 +350,7 @@ public class IMBSuperDemo implements UNITS
      * @param ap Property&lt;?&gt;; the abstract property for which an editor must be created
      * @return JPanel
      */
-    final JPanel makePropertyEditor(final InputParameter<?> ap)
+    final JPanel makePropertyEditor(final InputParameter<?, ?> ap)
     {
         JPanel result;
         if (ap instanceof InputParameterSelectionList)
@@ -537,7 +537,7 @@ public class IMBSuperDemo implements UNITS
             CompoundProperty cp = (CompoundProperty) ap;
             result = new LabeledPanel(ap.getShortName());
             result.setLayout(new BoxLayout(result, BoxLayout.Y_AXIS));
-            for (InputParameter<?> subProperty : cp.displayOrderedValue())
+            for (InputParameter<?, ?> subProperty : cp.displayOrderedValue())
             {
                 result.add(makePropertyEditor(subProperty));
             }

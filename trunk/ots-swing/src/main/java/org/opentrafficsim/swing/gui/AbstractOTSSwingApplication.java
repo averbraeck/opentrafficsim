@@ -30,30 +30,18 @@ public abstract class AbstractOTSSwingApplication extends JFrame
     /** */
     private static final long serialVersionUID = 20141216L;
 
+    /** The model. */
+    private final OTSModelInterface model;
+    
     /**
-     * Wrap a JPanel in a JFrame.
-     * @param title String; title for the JFrame
-     * @param panel JPanel; the JPanel that will become the contentPane of the JFrame
-     */
-    public AbstractOTSSwingApplication(final String title, final JPanel panel)
-    {
-        super();
-        setTitle(title);
-        setContentPane(panel);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-        setExtendedState(Frame.MAXIMIZED_BOTH);
-        setVisible(true);
-    }
-
-    /**
-     * Wrap a WrappableSimulation in a JFrame.
+     * Wrap an OTSModel in a JFrame.
      * @param model OTSModelInterface; the model that will be shown in the JFrame
      * @param panel JPanel; this should be the JPanel of the simulation
      */
     public AbstractOTSSwingApplication(final OTSModelInterface model, final JPanel panel)
     {
         super();
+        this.model = model;
         setTitle(model.getShortName());
         setContentPane(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,39 +58,7 @@ public abstract class AbstractOTSSwingApplication extends JFrame
     @SuppressWarnings("checkstyle:designforextension")
     protected Rectangle2D makeAnimationRectangle()
     {
-        double minX = Double.MAX_VALUE;
-        double maxX = -Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxY = -Double.MAX_VALUE;
-        Point3d p3dL = new Point3d();
-        Point3d p3dU = new Point3d();
-        try
-        {
-            for (Link link : this.model.getNetwork().getLinkMap().values())
-            {
-                DirectedPoint l = link.getLocation();
-                BoundingBox b = new BoundingBox(link.getBounds());
-                b.getLower(p3dL);
-                b.getUpper(p3dU);
-                minX = Math.min(minX, l.x + Math.min(p3dL.x, p3dU.x));
-                minY = Math.min(minY, l.y + Math.min(p3dL.y, p3dU.y));
-                maxX = Math.max(maxX, l.x + Math.max(p3dL.x, p3dU.x));
-                maxY = Math.max(maxY, l.y + Math.max(p3dL.y, p3dU.y));
-            }
-        }
-        catch (Exception e)
-        {
-            // ignore
-        }
-        double relativeMargin = 0.05;
-        double xMargin = relativeMargin * (maxX - minX);
-        double yMargin = relativeMargin * (maxY - minY);
-        minX = minX - xMargin;
-        minY = minY - yMargin;
-        maxX = maxX + xMargin;
-        maxY = maxY + yMargin;
-
-        return new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
+        return this.model.getNetwork().getExtent();
     }
 
     /**

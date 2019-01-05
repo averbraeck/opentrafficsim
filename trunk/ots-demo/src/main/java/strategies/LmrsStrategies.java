@@ -404,7 +404,7 @@ public class LmrsStrategies implements EventListenerInterface
             {
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
                 DEVSSimulatorInterface.TimeDoubleUnit sim = lmrsStrategiesSimulation.buildSimulator(Time.ZERO, Duration.ZERO,
-                        Duration.createSI(SIMTIME.si + 1e-9), new ArrayList<InputParameter<?>>());
+                        Duration.createSI(SIMTIME.si + 1e-9), new ArrayList<InputParameter<?, ?>>());
                 double tReport = 60.0;
                 Time t = sim.getSimulatorTime();
                 while (t.le(SIMTIME))
@@ -431,7 +431,7 @@ public class LmrsStrategies implements EventListenerInterface
             try
             {
                 lmrsStrategiesAnimation.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si),
-                        new ArrayList<InputParameter<?>>(), null, true);
+                        new ArrayList<InputParameter<?, ?>>(), null, true);
             }
             catch (Exception exception)
             {

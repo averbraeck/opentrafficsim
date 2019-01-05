@@ -232,7 +232,7 @@ public class Trajectories extends AbstractOTSSwingApplication implements UNITS
 
         /** User settable properties. */
         @SuppressWarnings("hiding")
-        private List<InputParameter<?>> properties = null;
+        private List<InputParameter<?, ?>> properties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -240,7 +240,7 @@ public class Trajectories extends AbstractOTSSwingApplication implements UNITS
         /**
          * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
          */
-        TrajectoriesModel(final List<InputParameter<?>> properties)
+        TrajectoriesModel(final List<InputParameter<?, ?>> properties)
         {
             this.properties = properties;
         }
@@ -269,7 +269,7 @@ public class Trajectories extends AbstractOTSSwingApplication implements UNITS
                 exception1.printStackTrace();
             }
 
-            for (InputParameter<?> p : this.properties)
+            for (InputParameter<?, ?> p : this.properties)
             {
                 if (p instanceof InputParameterSelectionList)
                 {

@@ -39,8 +39,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.animation.LinkAnimation;
-import org.opentrafficsim.core.network.animation.NodeAnimation;
+import org.opentrafficsim.draw.network.LinkAnimation;
+import org.opentrafficsim.draw.network.NodeAnimation;
 import org.pmw.tinylog.Level;
 
 import com.vividsolutions.jts.geom.Coordinate;

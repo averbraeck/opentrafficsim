@@ -136,15 +136,15 @@ public class ModelControlDemo extends ModelStarter
      * @param key String; the key path of the sought property
      * @return Property&lt;?&gt;; the first matching property, or null if no property with the given key was found
      */
-    private InputParameter<?> findPropertyInList(final List<InputParameter<?>> properties, final String key)
+    private InputParameter<?, ?> findPropertyInList(final List<InputParameter<?, ?>> properties, final String key)
     {
         try
         {
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", properties, false, 0);
-            for (InputParameter<?> p : propertyContainer)
+            for (InputParameter<?, ?> p : propertyContainer)
             {
                 String keyPath = p.getKey();
-                for (InputParameter<?> parent = p.getParent(); null != parent && propertyContainer != parent; parent =
+                for (InputParameter<?, ?> parent = p.getParent(); null != parent && propertyContainer != parent; parent =
                         parent.getParent())
                 {
                     keyPath = parent.getKey() + "." + keyPath;
@@ -173,7 +173,7 @@ public class ModelControlDemo extends ModelStarter
 
         try
         {
-            List<InputParameter<?>> properties = new CircularRoadIMB(null, null, null, null).getSupportedProperties();
+            List<InputParameter<?, ?>> properties = new CircularRoadIMB(null, null, null, null).getSupportedProperties();
             for (String parameterName : parameters.getParameterNames())
             {
                 if (parameterName.equals("Federation"))
@@ -195,7 +195,7 @@ public class ModelControlDemo extends ModelStarter
                 {
                     case "Truck fraction":
                     {
-                        InputParameter<?> p = findPropertyInList(properties, "TrafficComposition");
+                        InputParameter<?, ?> p = findPropertyInList(properties, "TrafficComposition");
                         if (null == p || !(p instanceof ProbabilityDistributionProperty))
                         {
                             System.err.println("Property " + p + " is not a ProbalityDistributionProperty");
@@ -221,7 +221,7 @@ public class ModelControlDemo extends ModelStarter
 
                     case "CACC penetration":
                     {
-                        InputParameter<?> p = findPropertyInList(properties, "CACCpenetration");
+                        InputParameter<?, ?> p = findPropertyInList(properties, "CACCpenetration");
                         if (null == p || !(p instanceof InputParameterDouble))
                         {
                             System.err.println("Property " + p + " is not a InputParameterDouble");
@@ -245,7 +245,7 @@ public class ModelControlDemo extends ModelStarter
 
                     case "CACC compliance":
                     {
-                        InputParameter<?> p = findPropertyInList(properties, "CACCCompliance");
+                        InputParameter<?, ?> p = findPropertyInList(properties, "CACCCompliance");
                         if (null == p || !(p instanceof InputParameterDouble))
                         {
                             System.err.println("Property " + p + " is not a InputParameterDouble");
@@ -334,20 +334,20 @@ public class ModelControlDemo extends ModelStarter
         System.out.println("received parameters: " + parameters);
         try
         {
-            List<InputParameter<?>> propertyList = new CircularRoadIMB(null, null, null, null).getSupportedProperties();
-            InputParameter<?> truckFraction = findByKeyInList(propertyList, "TrafficComposition");
+            List<InputParameter<?, ?>> propertyList = new CircularRoadIMB(null, null, null, null).getSupportedProperties();
+            InputParameter<?, ?> truckFraction = findByKeyInList(propertyList, "TrafficComposition");
             if (null != truckFraction)
             {
                 parameters.addParameter(new Parameter("Truck fraction (range 0.0 - 1.0)",
                         ((ProbabilityDistributionProperty) truckFraction).getValue()[1]));
             }
-            InputParameter<?> caccPenetration = findByKeyInList(propertyList, "CACCpenetration");
+            InputParameter<?, ?> caccPenetration = findByKeyInList(propertyList, "CACCpenetration");
             if (null != caccPenetration)
             {
                 parameters.addParameter(new Parameter("CACC penetration (range 0.0 - 1.0)",
                         ((InputParameterDouble) caccPenetration).getValue()));
             }
-            InputParameter<?> caccCompliance = findByKeyInList(propertyList, "CACCCompliance");
+            InputParameter<?, ?> caccCompliance = findByKeyInList(propertyList, "CACCCompliance");
             if (null != caccCompliance)
             {
                 parameters.addParameter(
@@ -367,12 +367,12 @@ public class ModelControlDemo extends ModelStarter
      * @param key String; the key
      * @return Property&lt;?&gt; or null if none of the entries in the list contained a property with the specified key
      */
-    private InputParameter<?> findByKeyInList(final List<InputParameter<?>> propertyList, final String key)
+    private InputParameter<?, ?> findByKeyInList(final List<InputParameter<?, ?>> propertyList, final String key)
     {
-        InputParameter<?> result = null;
-        for (InputParameter<?> property : propertyList)
+        InputParameter<?, ?> result = null;
+        for (InputParameter<?, ?> property : propertyList)
         {
-            InputParameter<?> p = property.findByKey(key);
+            InputParameter<?, ?> p = property.findByKey(key);
             if (null != p)
             {
                 if (null != result)
@@ -453,7 +453,7 @@ public class ModelControlDemo extends ModelStarter
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         /** User settable properties. */
-        private final List<InputParameter<?>> properties;
+        private final List<InputParameter<?, ?>> properties;
 
         /** The sequence of Lanes that all vehicles will follow. */
         private List<List<Lane>> paths = new ArrayList<>();
@@ -486,7 +486,7 @@ public class ModelControlDemo extends ModelStarter
          * @param imbConnector IMBConnector; connection to the IMB hub
          * @throws InputParameterException XXX not thrown
          */
-        CircularRoadIMB(final GTUColorer gtuColorer, final OTSNetwork network, final List<InputParameter<?>> properties,
+        CircularRoadIMB(final GTUColorer gtuColorer, final OTSNetwork network, final List<InputParameter<?, ?>> properties,
                 final IMBConnector imbConnector) throws InputParameterException
         {
             this.properties = properties;
@@ -499,9 +499,9 @@ public class ModelControlDemo extends ModelStarter
          * Construct and return the list of properties that the user may modify.
          * @return List&lt;AbstractProperty&gt;; the list of properties that the user may modify
          */
-        public List<InputParameter<?>> getSupportedProperties()
+        public List<InputParameter<?, ?>> getSupportedProperties()
         {
-            List<InputParameter<?>> result = new ArrayList<>();
+            List<InputParameter<?, ?>> result = new ArrayList<>();
             result.add(new InputParameterDouble("CACCpenetration", "CACC penetration",
                     "<html>Fraction of vehicles equipped with CACC</html>", 0.0, 0.0, 1.0, "%.2f", false, 13));
             result.add(new InputParameterDouble("CACCCompliance", "CACC compliance",
@@ -521,7 +521,7 @@ public class ModelControlDemo extends ModelStarter
                     "Density %.1f veh/km", false, 11));
             result.add(new InputParameterDouble("DensityVariability", "Density variability",
                     "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
-            List<InputParameter<?>> outputProperties = new ArrayList<>();
+            List<InputParameter<?, ?>> outputProperties = new ArrayList<>();
             try
             {
                 for (int lane = 1; lane <= 2; lane++)
@@ -635,7 +635,7 @@ public class ModelControlDemo extends ModelStarter
                 // Get car-following model name
                 String carFollowingModelName = null;
                 CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-                InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                InputParameter<?, ?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
                     throw new Error("Cannot find \"Car following model\" property");
@@ -650,7 +650,7 @@ public class ModelControlDemo extends ModelStarter
                 }
 
                 // Get car-following model parameter
-                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
                 {
                     if (ap instanceof CompoundProperty)
                     {
@@ -720,7 +720,7 @@ public class ModelControlDemo extends ModelStarter
                 }
 
                 // Get remaining properties
-                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
                 {
                     if (ap instanceof InputParameterSelectionList)
                     {

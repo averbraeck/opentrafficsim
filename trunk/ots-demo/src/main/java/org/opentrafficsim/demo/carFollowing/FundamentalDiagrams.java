@@ -254,7 +254,7 @@ public class FundamentalDiagrams extends AbstractOTSSwingApplication implements 
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         /** User settable properties. */
-        private List<InputParameter<?>> fundamentalDiagramProperties = null;
+        private List<InputParameter<?, ?>> fundamentalDiagramProperties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -262,7 +262,7 @@ public class FundamentalDiagrams extends AbstractOTSSwingApplication implements 
         /**
          * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties
          */
-        FundamentalDiagramPlotsModel(final List<InputParameter<?>> properties)
+        FundamentalDiagramPlotsModel(final List<InputParameter<?, ?>> properties)
         {
             this.fundamentalDiagramProperties = properties;
         }
@@ -295,7 +295,7 @@ public class FundamentalDiagrams extends AbstractOTSSwingApplication implements 
 
             // create SinkLane
 
-            for (InputParameter<?> p : this.fundamentalDiagramProperties)
+            for (InputParameter<?, ?> p : this.fundamentalDiagramProperties)
             {
                 if (p instanceof InputParameterSelectionList)
                 {

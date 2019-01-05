@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.NamingException;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -59,7 +57,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     private final Set<RelativePosition> contourPoints = new HashSet<>();
 
     /**
-     * Construct a new LaneBasedIndividualCar.
+     * Construct a new LaneBasedIndividualGTU.
      * @param id String; the id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
      * @param length Length; the maximum length of the GTU (parallel with driving direction)
@@ -68,13 +66,12 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
      * @param front Length; front distance relative to the reference position
      * @param simulator OTSSimulatorInterface; the simulator
      * @param network OTSNetwork; the network that the GTU is initially registered in
-     * @throws NamingException if an error occurs when adding the animation handler
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
             final Speed maximumSpeed, final Length front, final OTSSimulatorInterface simulator, final OTSNetwork network)
-            throws NamingException, GTUException
+            throws GTUException
     {
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
 

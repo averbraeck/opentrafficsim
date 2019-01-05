@@ -101,7 +101,7 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
      */
     public Straight() throws InputParameterException
     {
-        List<InputParameter<?>> outputProperties = new ArrayList<>();
+        List<InputParameter<?, ?>> outputProperties = new ArrayList<>();
         outputProperties.add(new InputParameterBoolean("DensityPlot", "Density", "Density contour plot", true,  0));
         outputProperties.add(new InputParameterBoolean("FlowPlot", "Flow", "Flow contour plot", true,  1));
         outputProperties.add(new InputParameterBoolean("SpeedPlot", "Speed", "Speed contour plot", true,  2));
@@ -129,7 +129,7 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
                 try
                 {
                     Straight straight = new Straight();
-                    List<InputParameter<?>> localProperties = straight.getProperties();
+                    List<InputParameter<?, ?>> localProperties = straight.getProperties();
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
@@ -193,7 +193,7 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
     {
 
         // Make the tab with the plots
-        InputParameter<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
+        InputParameter<?, ?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -202,7 +202,7 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
         if (output instanceof CompoundProperty)
         {
             CompoundProperty outputProperties = (CompoundProperty) output;
-            for (InputParameter<?> ap : outputProperties.getValue())
+            for (InputParameter<?, ?> ap : outputProperties.getValue())
             {
                 if (ap instanceof InputParameterBoolean)
                 {
@@ -354,7 +354,7 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
 
         /** User settable properties. */
         @SuppressWarnings("hiding")
-        private List<InputParameter<?>> properties = null;
+        private List<InputParameter<?, ?>> properties = null;
 
         /** The random number generator used to decide what kind of GTU to generate. */
         private Random randomGenerator = new Random(12345);
@@ -362,7 +362,7 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
         /**
          * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the user settable properties
          */
-        StraightModel(final List<InputParameter<?>> properties)
+        StraightModel(final List<InputParameter<?, ?>> properties)
         {
             this.properties = properties;
         }
@@ -402,7 +402,7 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
                 new SinkSensor(sinkLane, new Length(10.0, METER), this.simulator);
                 String carFollowingModelName = null;
                 CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-                InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+                InputParameter<?, ?> cfmp = propertyContainer.findByKey("CarFollowingModel");
                 if (null == cfmp)
                 {
                     throw new Error("Cannot find \"Car following model\" property");
@@ -415,7 +415,7 @@ public class Straight extends AbstractOTSSwingApplication implements UNITS
                 {
                     throw new Error("\"Car following model\" property has wrong type");
                 }
-                for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+                for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
                 {
                     if (ap instanceof InputParameterSelectionList)
                     {

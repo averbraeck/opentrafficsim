@@ -45,9 +45,9 @@ public class TimeCircularRoadAnimation implements UNITS
         try
         {
             WrappableAnimation simulation = new CircularRoad();
-            List<InputParameter<?>> activeProperties = new ArrayList<>();
+            List<InputParameter<?, ?>> activeProperties = new ArrayList<>();
             activeProperties.addAll(simulation.getProperties());
-            for (InputParameter<?> ap : activeProperties)
+            for (InputParameter<?, ?> ap : activeProperties)
             {
                 if (ap instanceof InputParameterSelectionList)
                 {

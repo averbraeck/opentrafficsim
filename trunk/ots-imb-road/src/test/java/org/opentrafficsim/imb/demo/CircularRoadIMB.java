@@ -143,7 +143,7 @@ public class CircularRoadIMB extends AbstractOTSSwingApplication implements UNIT
                 5.0, 45.0, "Density %.1f veh/km", false, 11));
         this.inputParameterMap.add(new InputParameterDouble("DensityVariability", "Density variability",
                 "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
-        List<InputParameter<?>> outputProperties = new ArrayList<>();
+        List<InputParameter<?, ?>> outputProperties = new ArrayList<>();
         for (int lane = 1; lane <= 2; lane++)
         {
             String laneId = String.format("Lane %d ", lane);
@@ -185,7 +185,7 @@ public class CircularRoadIMB extends AbstractOTSSwingApplication implements UNIT
                 try
                 {
                     CircularRoadIMB circularRoad = new CircularRoadIMB();
-                    List<InputParameter<?>> propertyList = circularRoad.getProperties();
+                    List<InputParameter<?, ?>> propertyList = circularRoad.getProperties();
                     try
                     {
                         propertyList.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
@@ -234,7 +234,7 @@ public class CircularRoadIMB extends AbstractOTSSwingApplication implements UNIT
     /**
      * @return the saved user properties for a next run
      */
-    private List<InputParameter<?>> getSavedUserModifiedProperties()
+    private List<InputParameter<?, ?>> getSavedUserModifiedProperties()
     {
         return this.savedUserModifiedProperties;
     }
@@ -251,7 +251,7 @@ public class CircularRoadIMB extends AbstractOTSSwingApplication implements UNIT
     protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
     {
         // Make the tab with the plots
-        InputParameter<?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
+        InputParameter<?, ?> output = new CompoundProperty("", "", "", this.properties, false, 0).findByKey("OutputGraphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -260,7 +260,7 @@ public class CircularRoadIMB extends AbstractOTSSwingApplication implements UNIT
         if (output instanceof CompoundProperty)
         {
             CompoundProperty outputProperties = (CompoundProperty) output;
-            for (InputParameter<?> ap : outputProperties.getValue())
+            for (InputParameter<?, ?> ap : outputProperties.getValue())
             {
                 if (ap instanceof InputParameterBoolean)
                 {
@@ -424,7 +424,7 @@ class RoadSimulationModelIMB extends AbstractOTSModel implements UNITS
     private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
     /** User settable properties. */
-    private List<InputParameter<?>> properties = null;
+    private List<InputParameter<?, ?>> properties = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
     private List<List<Lane>> paths = new ArrayList<>();
@@ -452,7 +452,7 @@ class RoadSimulationModelIMB extends AbstractOTSModel implements UNITS
      * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      * @param network OTSNetwork; the network
      */
-    RoadSimulationModelIMB(final List<InputParameter<?>> properties, final GTUColorer gtuColorer, final OTSNetwork network)
+    RoadSimulationModelIMB(final List<InputParameter<?, ?>> properties, final GTUColorer gtuColorer, final OTSNetwork network)
     {
         this.properties = properties;
         this.gtuColorer = gtuColorer;
@@ -485,7 +485,7 @@ class RoadSimulationModelIMB extends AbstractOTSModel implements UNITS
         try
         {
             CompoundProperty imbSettings = null;
-            for (InputParameter<?> property : this.properties)
+            for (InputParameter<?, ?> property : this.properties)
             {
                 if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
                 {
@@ -521,7 +521,7 @@ class RoadSimulationModelIMB extends AbstractOTSModel implements UNITS
             // Get car-following model name
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", "", this.properties, false, 0);
-            InputParameter<?> cfmp = propertyContainer.findByKey("CarFollowingModel");
+            InputParameter<?, ?> cfmp = propertyContainer.findByKey("CarFollowingModel");
             if (null == cfmp)
             {
                 throw new Error("Cannot find \"Car following model\" property");
@@ -536,7 +536,7 @@ class RoadSimulationModelIMB extends AbstractOTSModel implements UNITS
             }
 
             // Get car-following model parameter
-            for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+            for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
             {
                 if (ap instanceof CompoundProperty)
                 {
@@ -606,7 +606,7 @@ class RoadSimulationModelIMB extends AbstractOTSModel implements UNITS
             }
 
             // Get remaining properties
-            for (InputParameter<?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
+            for (InputParameter<?, ?> ap : new CompoundProperty("", "", "", this.properties, false, 0))
             {
                 if (ap instanceof InputParameterSelectionList)
                 {
