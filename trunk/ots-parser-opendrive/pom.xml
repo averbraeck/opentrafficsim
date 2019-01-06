@@ -20,6 +20,11 @@
       <artifactId>ots-road</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-swing</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>

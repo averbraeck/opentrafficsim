@@ -29,10 +29,10 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.animation.LinkAnimation;
-import org.opentrafficsim.road.network.animation.LaneAnimation;
-import org.opentrafficsim.road.network.animation.ShoulderAnimation;
-import org.opentrafficsim.road.network.animation.StripeAnimation;
+import org.opentrafficsim.draw.network.LinkAnimation;
+import org.opentrafficsim.draw.road.LaneAnimation;
+import org.opentrafficsim.draw.road.ShoulderAnimation;
+import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.road.network.factory.opendrive.LinkTag.ContactPointEnum;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -55,7 +55,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 /**
  * <p>
- * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
@@ -319,7 +319,10 @@ class RoadTag implements Serializable
                         if (!otsNetwork.containsNode(to.node))
                             otsNetwork.addNode(to.node);
 
-                        otsNetwork.addLink(sublink);
+                        if (!otsNetwork.containsLink(sublink))
+                            otsNetwork.addLink(sublink);
+                        else
+                            System.err.println("Sublink already registered: " + sublink);
 
                         break;
                     }
@@ -384,8 +387,10 @@ class RoadTag implements Serializable
             if (!otsNetwork.containsNode(to.node))
                 otsNetwork.addNode(to.node);
 
-            otsNetwork.addLink(sublink);
-
+            if (!otsNetwork.containsLink(sublink))
+                otsNetwork.addLink(sublink);
+            else
+                System.err.println("Sublink already registered: " + sublink);
         }
 
     }
@@ -557,7 +562,7 @@ class RoadTag implements Serializable
                     }
                     catch (RemoteException exception)
                     {
-                        Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
+                        Renderable2D animation = new org.opentrafficsim.draw.network.LinkAnimation(currentLink, simulator, 0.01f);
                         openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
                         exception.printStackTrace();
                     }
