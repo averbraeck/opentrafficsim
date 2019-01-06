@@ -13,7 +13,7 @@ import org.opentrafficsim.road.network.factory.rti.data.RTIToOTSData;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /** */
-public class communicationTest
+public class CommunicationTest
 {
 
     /**
