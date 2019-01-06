@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.demo;
 
+import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
@@ -22,8 +23,10 @@ import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -32,6 +35,8 @@ import org.opentrafficsim.core.gis.TransformWGS84DutchRDNew;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.OTSIMBConnector;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.GTUTransceiver;
@@ -42,9 +47,12 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.test.LMRSTests;
+import org.opentrafficsim.road.network.factory.xml.test.LMRSTests.TestXMLModel;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -58,7 +66,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
- * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
@@ -74,6 +82,18 @@ public class A58IMB extends AbstractOTSSwingApplication
     private A58Model model;
 
     /**
+     * @param model the model
+     * @param animationPanel the animation panel
+     * @throws OTSDrawingException on drawing error
+     */
+    public A58IMB(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    {
+        super(model, animationPanel);
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
+    }
+
+    /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException should never happen
@@ -87,6 +107,16 @@ public class A58IMB extends AbstractOTSSwingApplication
             {
                 try
                 {
+                    OTSAnimator simulator = new OTSAnimator();
+                    A58Model imbModel = new A58Model(simulator);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), imbModel);
+                    OTSAnimationPanel animationPanel =
+                            new OTSAnimationPanel(imbModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+                                    imbModel, new DefaultSwitchableGTUColorer(), imbModel.getNetwork());
+                    new LMRSTests(imbModel, animationPanel);
+
+                    
+                    
                     A58IMB a58Model = new A58IMB();
                     List<InputParameter<?, ?>> propertyList = new ArrayList<>();
                     propertyList.add(OTSIMBConnector.standardIMBProperties(0, "vps17642.public.cloudvps.com"));
@@ -100,44 +130,6 @@ public class A58IMB extends AbstractOTSSwingApplication
                 }
             }
         });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "Model A58";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "Model A58 - IMB";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        System.out.println("A58IMB.makeModel called");
-        this.model = new A58Model(getSavedUserModifiedProperties(), getColorer(), new OTSNetwork("A58 network"));
-        return this.model;
-    }
-
-    /**
-     * @return the saved user properties for a next run
-     */
-    private List<InputParameter<?, ?>> getSavedUserModifiedProperties()
-    {
-        return this.savedUserModifiedProperties;
     }
 
     /** {@inheritDoc} */
@@ -165,7 +157,7 @@ public class A58IMB extends AbstractOTSSwingApplication
     /**
      * Model to test the XML parser.
      * <p>
-     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
      * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim
      * License</a>.
      * <p>
@@ -178,12 +170,6 @@ public class A58IMB extends AbstractOTSSwingApplication
     {
         /** */
         private static final long serialVersionUID = 20141121L;
-
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
-
-        /** User settable properties. */
-        private List<InputParameter<?, ?>> modelProperties = null;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
         private final OTSNetwork network;
@@ -281,13 +267,6 @@ public class A58IMB extends AbstractOTSSwingApplication
         public final GisRenderable2D getGisMap()
         {
             return this.gisMap;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
         }
 
         /** {@inheritDoc} */

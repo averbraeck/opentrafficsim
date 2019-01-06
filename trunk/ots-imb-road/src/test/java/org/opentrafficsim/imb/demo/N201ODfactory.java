@@ -39,7 +39,6 @@ import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataGtuType;
 import org.opentrafficsim.kpi.sampling.meta.MetaDataSet;
-import org.opentrafficsim.road.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
@@ -61,7 +60,7 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 /**
  * <p>
- * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 okt. 2016 <br>
@@ -154,7 +153,6 @@ public class N201ODfactory
                 new ContinuousDistDoubleScalar.Rel<>(2, LengthUnit.METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist =
                 new ContinuousDistDoubleScalar.Rel<>(200, SpeedUnit.KM_PER_HOUR);
-        DefaultSwitchableGTUColorer colorer = new DefaultSwitchableGTUColorer();
         MersenneTwister rand = new MersenneTwister();
         // loop origins
         for (Node origin : matrix.getOrigins())
@@ -207,7 +205,7 @@ public class N201ODfactory
                 {
                     new GTUGeneratorIndividual(origin + "." + link.getLanes().indexOf(lane), simulator, gtuType, gtuClass,
                             initSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime, endTime,
-                            lane, position, dir, colorer, strategicalPlannerFactory, routeGenerator, network);
+                            lane, position, dir, strategicalPlannerFactory, routeGenerator, network);
                 }
                 catch (SimRuntimeException exception)
                 {
