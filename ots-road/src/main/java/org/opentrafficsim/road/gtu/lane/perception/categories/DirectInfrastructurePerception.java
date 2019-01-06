@@ -33,7 +33,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 /**
  * Perceives information concerning the infrastructure, including slits, lanes, speed limits and road markings.
  * <p>
- * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jul 14, 2016 <br>
@@ -618,7 +618,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      * Helper class to return the distance over which a lane change is or is not possible. The distance is based on a
      * LaneStructureRecord, and does not need an update as such.
      * <p>
-     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
