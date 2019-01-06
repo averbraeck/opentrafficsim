@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /** */
-public class RTICars extends LaneBasedIndividualGTU
+public class RTICar extends LaneBasedIndividualGTU
 {
 
     /** */
@@ -35,7 +35,7 @@ public class RTICars extends LaneBasedIndividualGTU
      * @throws NamingException when animation cannot be registered
      * @throws OperationalPlanException when plan retrieval fails
      */
-    public RTICars(final String valueOf, final GTUType carType, final Length carLength, final Length width,
+    public RTICar(final String valueOf, final GTUType carType, final Length carLength, final Length width,
             final Speed maxSpeed, final OTSSimulatorInterface simulator, final OTSNetwork network)
             throws NamingException, GTUException, OperationalPlanException
     {
