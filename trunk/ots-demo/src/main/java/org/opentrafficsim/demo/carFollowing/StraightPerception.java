@@ -100,7 +100,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 /**
  * Simplest contour plots demonstration.
  * <p>
- * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2016-01-05 06:14:49 +0100 (Tue, 05 Jan 2016) $, @version $Revision: 1685 $, by $Author: averbraeck $,
@@ -339,7 +339,7 @@ public class StraightPerception extends AbstractOTSSwingApplication implements U
      * </ul>
      * All these graphs display simulation time along the horizontal axis and distance along the road along the vertical axis.
      * <p>
-     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
