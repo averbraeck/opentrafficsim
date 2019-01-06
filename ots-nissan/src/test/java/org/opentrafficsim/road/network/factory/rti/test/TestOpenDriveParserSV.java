@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.factory.rti.test;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 
-import java.awt.geom.Rectangle2D;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.URL;
@@ -18,31 +18,25 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.CoordinateTransformLonLatToXY;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.gtu.colorer.IDGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -51,6 +45,8 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -61,7 +57,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.factory.opendrive.GeneratorAnimation;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
-import org.opentrafficsim.road.network.factory.rti.communication.RTICars;
+import org.opentrafficsim.road.network.factory.rti.communication.RTICar;
 import org.opentrafficsim.road.network.factory.rti.communication.ReceiverThread;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -70,15 +66,13 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistExponential;
 import nl.tudelft.simulation.jstats.distributions.DistTriangular;
@@ -88,7 +82,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * <p>
- * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-08-05 15:55:21 +0200 (Wed, 05 Aug 2015) $, @version $Revision: 1199 $, by $Author: averbraeck $,
@@ -99,6 +93,19 @@ public class TestOpenDriveParserSV extends AbstractOTSSwingApplication
 {
     /** */
     private static final long serialVersionUID = 1L;
+
+    /**
+     * @param model the model
+     * @param animationPanel the animation panel
+     * @throws OTSDrawingException on drawing error
+     */
+    public TestOpenDriveParserSV(final OTSModelInterface model, final OTSAnimationPanel animationPanel)
+            throws OTSDrawingException
+    {
+        super(model, animationPanel);
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
+    }
 
     /**
      * Main program.
@@ -114,52 +121,20 @@ public class TestOpenDriveParserSV extends AbstractOTSSwingApplication
             {
                 try
                 {
-                    TestOpenDriveParserSV xmlModel = new TestOpenDriveParserSV();
-                    // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<InputParameter<?, ?>>(), null, true);
+                    OTSAnimator simulator = new OTSAnimator();
+                    TestOpenDriveModel openDriveModel = new TestOpenDriveModel(simulator);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), openDriveModel);
+                    OTSAnimationPanel animationPanel =
+                            new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+                                    openDriveModel, new DefaultSwitchableGTUColorer(), openDriveModel.getNetwork());
+                    new TestOpenDriveParserSV(openDriveModel, animationPanel);
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
                 {
                     exception.printStackTrace();
                 }
             }
         });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "TestOpenDriveModel";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "TestOpenDriveModel";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        return new TestOpenDriveModel();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final Rectangle2D.Double makeAnimationRectangle()
-    {
-        return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
     }
 
     /** {@inheritDoc} */
@@ -172,7 +147,7 @@ public class TestOpenDriveParserSV extends AbstractOTSSwingApplication
     /**
      * Model to test the XML parser.
      * <p>
-     * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
      * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim
      * License</a>.
      * <p>
@@ -181,26 +156,28 @@ public class TestOpenDriveParserSV extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class TestOpenDriveModel extends AbstractOTSModel
+    static class TestOpenDriveModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20150811L;
-
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
 
         /** the network. */
         private OTSNetwork network;
 
         private List<LaneBasedIndividualGTU> rtiCars;
 
+        /**
+         * @param simulator the simulator
+         */
+        TestOpenDriveModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
+
         /** {@inheritDoc} */
         @Override
-        public final void constructModel()
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
-            this.simulator = (OTSSimulatorInterface) pSimulator;
-
             this.rtiCars = new ArrayList<>();
 
             // URL url = URLResource.getResource("/NASAames.xodr");
@@ -283,7 +260,7 @@ public class TestOpenDriveParserSV extends AbstractOTSSwingApplication
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                         initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                         startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
-                                        makeSwitchableGTUColorer(), strategicalPlannerFactory, null, this.network);
+                                        strategicalPlannerFactory, null, this.network);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -327,7 +304,7 @@ public class TestOpenDriveParserSV extends AbstractOTSSwingApplication
                                 new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualGTU.class,
                                         initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                         startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
-                                        makeSwitchableGTUColorer(), strategicalPlannerFactory, null, this.network);
+                                        strategicalPlannerFactory, null, this.network);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -521,7 +498,7 @@ public class TestOpenDriveParserSV extends AbstractOTSSwingApplication
                 {
                     try
                     {
-                        RTICars car = new RTICars(String.valueOf(i), carType, carLength, widthDist.draw(), maxSpeedDist.draw(),
+                        RTICar car = new RTICar(String.valueOf(i), carType, carLength, widthDist.draw(), maxSpeedDist.draw(),
                                 this.simulator, this.network);
                         this.rtiCars.add(car);
 
@@ -565,28 +542,9 @@ public class TestOpenDriveParserSV extends AbstractOTSSwingApplication
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public final OTSNetwork getNetwork()
         {
             return this.network;
-        }
-
-        /**
-         * @return a GTUColorer
-         */
-        private final GTUColorer makeSwitchableGTUColorer()
-        {
-            GTUColorer[] gtuColorers =
-                    new GTUColorer[] { new IDGTUColorer(), new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
-                            new AccelerationGTUColorer(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
-                                    new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)) };
-            return new SwitchableGTUColorer(0, gtuColorers);
         }
 
         /** {@inheritDoc} */
