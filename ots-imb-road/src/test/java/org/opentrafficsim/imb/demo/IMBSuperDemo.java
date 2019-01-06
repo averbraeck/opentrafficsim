@@ -48,13 +48,18 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
 import org.opentrafficsim.base.modelproperties.StringProperty;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.imb.connector.OTSIMBConnector;
 import org.opentrafficsim.road.modelproperties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.LabeledPanel;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.ProbabilityDistributionEditor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -68,7 +73,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionL
 /**
  * Several demos in one application.
  * <p>
- * Copyright (c) 2013-2018 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2016-09-06 11:41:50 +0200 (Tue, 06 Sep 2016) $, @version $Revision: 2230 $, by $Author: pknoppers $,
@@ -88,11 +93,20 @@ public class IMBSuperDemo implements UNITS
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected List<InputParameter<?, ?>> activeProperties = null;
 
-    /** The properties of the connection to an IMB hub. */
-    private CompoundProperty imbProperties;
-
     /** Panel with the description of the currently selected demonstration. */
     LabeledPanel descriptionPanel;
+
+    /**
+     * @param model the model
+     * @param animationPanel the animation panel
+     * @throws OTSDrawingException on drawing error
+     */
+    public A58IMB(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    {
+        super(model, animationPanel);
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
+    }
 
     /**
      * Start the application.
