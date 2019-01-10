@@ -73,6 +73,27 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
             final Speed maximumSpeed, final Length front, final OTSSimulatorInterface simulator, final OTSNetwork network)
             throws GTUException
     {
+        this(id, gtuType, length, width, maximumSpeed, front, Length.ZERO, simulator, network);
+    }
+
+    /**
+     * Construct a new LaneBasedIndividualGTU.
+     * @param id String; the id of the GTU
+     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param length Length; the maximum length of the GTU (parallel with driving direction)
+     * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
+     * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
+     * @param front Length; front distance relative to the reference position
+     * @param centerOfGravity Length; distance from the center of gravity to the reference position
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param network OTSNetwork; the network that the GTU is initially registered in
+     * @throws GTUException when a parameter is invalid
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public LaneBasedIndividualGTU(final String id, final GTUType gtuType, final Length length, final Length width,
+            final Speed maximumSpeed, final Length front, final Length centerOfGravity, final OTSSimulatorInterface simulator,
+            final OTSNetwork network) throws GTUException
+    {
         super(id, gtuType, length, width, maximumSpeed, simulator, network);
 
         // sensor positions.
@@ -84,6 +105,8 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
         this.relativePositions.put(RelativePosition.CENTER,
                 new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.CENTER));
+        this.relativePositions.put(RelativePosition.CENTER_GRAVITY,
+                new RelativePosition(centerOfGravity, Length.ZERO, Length.ZERO, RelativePosition.CENTER_GRAVITY));
 
         // Contour positions. For now, a rectangle with the four corners.
         for (int i = -1; i <= 1; i += 2)
@@ -411,8 +434,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @throws Exception when not all required values have been set
          */
         public final LaneBasedIndividualGTU build(
-                final LaneBasedStrategicalPlannerFactory<
-                        ? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory,
+                final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory,
                 final Route route, final Node origin, final Node destination) throws Exception
         {
             if (null == this.id || null == this.gtuType || null == this.initialLongitudinalPositions
