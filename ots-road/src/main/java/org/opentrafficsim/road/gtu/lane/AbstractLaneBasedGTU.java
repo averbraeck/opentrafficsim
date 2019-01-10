@@ -712,7 +712,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     protected void move(final DirectedPoint fromLocation)
             throws SimRuntimeException, GTUException, OperationalPlanException, NetworkException, ParameterException
     {
-        DirectedPoint currentPoint = getLocation();
+        // DirectedPoint currentPoint = getLocation(); // used for "jump" detection that is also commented out
         // Only carry out move() if we still have lane(s) to drive on.
         // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.
         if (this.currentLanes.isEmpty())
@@ -793,11 +793,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 System.err.println("HeadwayObject: " + p.getForwardHeadwayObject());
             }
         }
-        DirectedPoint currentPointAfterMove = getLocation();
-        if (currentPoint.distance(currentPointAfterMove) > 0.1)
-        {
-            System.err.println(this.getId() + " jumped");
-        }
+        // DirectedPoint currentPointAfterMove = getLocation();
+        // if (currentPoint.distance(currentPointAfterMove) > 0.1)
+        // {
+        // System.err.println(this.getId() + " jumped");
+        // }
         // schedule triggers and determine when to enter lanes with front and leave lanes with rear
         scheduleEnterLeaveTriggers();
     }
@@ -1581,7 +1581,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             LanePerception perception = getTacticalPlanner().getPerception();
             // speed
-            EgoPerception ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
+            EgoPerception<?, ?> ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
             Throw.whenNull(ego, "EgoPerception is required to determine the speed.");
             Speed speed = ego.getSpeed();
             // speed limit info
