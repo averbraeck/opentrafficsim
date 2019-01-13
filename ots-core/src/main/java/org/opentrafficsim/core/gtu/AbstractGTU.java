@@ -657,6 +657,15 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         return new LinkedHashSet<>(this.children); // safe copy
     }
 
+    /**
+     * Note that destroying the next move event of the GTU can be dangerous!
+     * @return nextMoveEvent the next move event of the GTU, e.g. to cancel it from outside.
+     */
+    public final SimEvent<SimTimeDoubleUnit> getNextMoveEvent()
+    {
+        return this.nextMoveEvent;
+    }
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("designforextension")

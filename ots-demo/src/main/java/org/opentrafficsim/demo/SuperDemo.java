@@ -1,4 +1,4 @@
-package org.opentrafficsim.imb.demo;
+package org.opentrafficsim.demo;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -34,7 +34,7 @@ import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class IMBSuperDemo extends JFrame
+public class SuperDemo extends JFrame
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -46,9 +46,9 @@ public class IMBSuperDemo extends JFrame
      * Construct a mode chooser that can start different models.
      * @throws HeadlessException when not run in graphics environment
      */
-    public IMBSuperDemo() throws HeadlessException
+    public SuperDemo() throws HeadlessException
     {
-        super("IMB demo models");
+        super("OTS demo models");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(1024, 20));
         addDemos();
@@ -62,12 +62,14 @@ public class IMBSuperDemo extends JFrame
      */
     private void addDemos()
     {
-        this.demos.add(new Demo("CircularRoad", CircularRoadIMB.class, "IMB model of a two-lane circular road with overtaking.\n"
+        this.demos.add(new Demo("Straight", StraightSwing.class, "Single lane road with a blockage for a while.\n"
+                + "The model shows the dissolving of the congestion that occurs as a result."));
+        this.demos.add(new Demo("CircularRoad", CircularRoadSwing.class, "Model of a two-lane circular road with overtaking.\n"
                 + "Users can specify the fraction of cars and trucks, as well as some driving parameters."));
-        this.demos.add(new Demo("N201", N201IMB.class, "IMB model of a the N201 road near Schiphol Airport.\n"
-                + "The model shows the effect of traffic lights on the traffic flow."));
-        this.demos.add(new Demo("A58", A58IMB.class, "Model of a the A58 highway near Eindhoven.\n"
-                + "The model demonstrates a large stretch of highway with on-ramps and off-ramps."));
+        this.demos.add(new Demo("CircularLane", CircularLaneSwing.class, "Model of a one-lane circular road with overtaking.\n"
+                + "Users can specify the fraction of cars and trucks, as well as some driving parameters."));
+        this.demos.add(new Demo("CrossingTrafficLights", CrossingTrafficLightsSwing.class,
+                "Model of a a crossing with traffic lights.\n"));
     }
 
     /**
@@ -83,7 +85,7 @@ public class IMBSuperDemo extends JFrame
         int maxButtonWidth = 0;
         table.add(Box.createRigidArea(new Dimension(0, 3)));
         Box headerBox = Box.createHorizontalBox();
-        JLabel header = new JLabel(" OpenTrafficSim demo's using IMB ");
+        JLabel header = new JLabel(" OpenTrafficSim demo's ");
         header.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 36));
         headerBox.add(header);
         headerBox.add(Box.createHorizontalGlue());
@@ -127,7 +129,7 @@ public class IMBSuperDemo extends JFrame
      */
     public static void main(final String[] args)
     {
-        new IMBSuperDemo();
+        new SuperDemo();
     }
 
     /** the class to prevent the models from exiting the whole SuperDemo application. */

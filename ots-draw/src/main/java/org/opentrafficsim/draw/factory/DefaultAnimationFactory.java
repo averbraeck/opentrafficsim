@@ -2,6 +2,8 @@ package org.opentrafficsim.draw.factory;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
@@ -11,6 +13,7 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
@@ -28,6 +31,12 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+
 /**
  * DefaultAnimationFactory.java. <br>
  * <br>
@@ -36,17 +45,32 @@ import org.opentrafficsim.road.network.lane.Stripe;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class DefaultAnimationFactory
+public class DefaultAnimationFactory implements EventListenerInterface
 {
+    /** the simulator. */
+    private final OTSSimulatorInterface simulator;
+
+    /** rendered gtus. */
+    private Map<LaneBasedGTU, Renderable2D<LaneBasedGTU>> animatedGTUs = new HashMap<>();
+
     /**
-     * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML.
+     * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML. The class will
+     * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
      * @param simulator the simulator
      * @throws OTSDrawingException on drawing error
      */
-    public static void animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator)
-            throws OTSDrawingException
+    protected DefaultAnimationFactory(final OTSNetwork network, final OTSSimulatorInterface simulator) throws OTSDrawingException
     {
+        this.simulator = simulator;
+
+        // subscribe to adding and removing events
+        network.addListener(this, Network.ANIMATION_GTU_ADD_EVENT);
+        network.addListener(this, Network.ANIMATION_GTU_REMOVE_EVENT);
+        network.addListener(this, Network.ANIMATION_OBJECT_ADD_EVENT);
+        network.addListener(this, Network.ANIMATION_OBJECT_REMOVE_EVENT);
+
+        // model the current infrastructure
         try
         {
             for (Node node : network.getNodeMap().values())
@@ -89,7 +113,8 @@ public class DefaultAnimationFactory
             }
             for (GTU gtu : network.getGTUs())
             {
-                new DefaultCarAnimation((LaneBasedGTU) gtu, simulator);
+                Renderable2D<LaneBasedGTU> gtuAnimation = new DefaultCarAnimation((LaneBasedGTU) gtu, simulator);
+                this.animatedGTUs.put((LaneBasedGTU) gtu, gtuAnimation);
             }
         }
         catch (RemoteException | NamingException | OTSGeometryException exception)
@@ -97,5 +122,70 @@ public class DefaultAnimationFactory
             throw new OTSDrawingException("Exception while creating network animation.", exception);
         }
     }
+    
+    /**
+     * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML. The class will
+     * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
+     * @param network OTSNetwork; the network
+     * @param simulator the simulator
+     * @throws OTSDrawingException on drawing error
+     */
+    public static void animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator) throws OTSDrawingException
+    {
+        new DefaultAnimationFactory(network, simulator);
+    }
+    
 
+    /** {@inheritDoc} */
+    @Override
+    public void notify(EventInterface event) throws RemoteException
+    {
+        try
+        {
+            if (event.getType().equals(Network.ANIMATION_GTU_ADD_EVENT))
+            {
+                // schedule the addition of the GTU to prevent it from not having an operational plan
+                LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
+                this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] {gtu});
+            }
+            else if (event.getType().equals(Network.ANIMATION_GTU_REMOVE_EVENT))
+            {
+                LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
+                if (this.animatedGTUs.containsKey(gtu))
+                {
+                    this.animatedGTUs.get(gtu).destroy(); 
+                    this.animatedGTUs.remove(gtu);
+                }
+            }
+            else if (event.getType().equals(Network.ANIMATION_OBJECT_ADD_EVENT))
+            {
+                // TODO ANIMATION_OBJECT_ADD_EVENT
+            }
+            else if (event.getType().equals(Network.ANIMATION_OBJECT_REMOVE_EVENT))
+            {
+                // TODO ANIMATION_OBJECT_REMOVE_EVENT
+            }
+        }
+        catch (NamingException | SimRuntimeException exception)
+        {
+            SimLogger.always().error(exception, "Exception while updating network animation.");
+        }
+    }
+
+    /**
+     * Draw the GTU (scheduled method).
+     * @param gtu the GTU to draw
+     */
+    protected void animateGTU(LaneBasedGTU gtu)
+    {
+        try
+        {
+            Renderable2D<LaneBasedGTU> gtuAnimation = new DefaultCarAnimation(gtu, this.simulator);
+            this.animatedGTUs.put(gtu, gtuAnimation);
+        }
+        catch (RemoteException | NamingException exception)
+        {
+            SimLogger.always().error(exception, "Exception while drawing GTU.");
+        }
+    }
 }

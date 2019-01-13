@@ -17,7 +17,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
@@ -55,11 +54,12 @@ public class TestXMLParserN201 extends AbstractOTSSwingApplication
      * @param animationPanel the animation panel
      * @throws OTSDrawingException on drawing error
      */
-    public TestXMLParserN201(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public TestXMLParserN201(final TestXMLModelN201 model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
+        animationPanel.addAllToggleGISButtonText(" GIS Layers:", model.getGisMap(), "Turn GIS map layer on or off");
     }
 
     /**

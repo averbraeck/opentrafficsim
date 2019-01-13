@@ -12,6 +12,8 @@ import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
+import nl.tudelft.simulation.dsol.logger.SimLogger;
+
 /**
  * Simplified plan containing an acceleration value and possible lane change direction.
  * <p>
@@ -66,7 +68,7 @@ public class SimpleOperationalPlan implements Serializable
         Throw.whenNull(duration, "Duration may not be null.");
         Throw.whenNull(laneChangeDirection, "Lane change direction may not be null.");
         checkAcceleration(acceleration);
-        this.acceleration = acceleration;
+        this.acceleration = Acceleration.max(Acceleration.createSI(-100.0), acceleration);
         this.duration = duration;
         this.laneChangeDirection = laneChangeDirection;
     }
@@ -110,7 +112,7 @@ public class SimpleOperationalPlan implements Serializable
     public final void minimizeAcceleration(final Acceleration a)
     {
         checkAcceleration(a);
-        this.acceleration = Acceleration.min(this.acceleration, a);
+        this.acceleration = Acceleration.max(Acceleration.createSI(-100.0), Acceleration.min(this.acceleration, a)); // XXX: AV
     }
 
     /**
@@ -121,7 +123,7 @@ public class SimpleOperationalPlan implements Serializable
     {
         if (a.equals(Acceleration.NEGATIVE_INFINITY) || a.equals(Acceleration.NEG_MAXVALUE))
         {
-            throw new RuntimeException("Model has calculated a negative infinite or negative max value acceleration.");
+            SimLogger.always().error("Model has calculated a negative infinite or negative max value acceleration."); // XXX: AV
         }
     }
 

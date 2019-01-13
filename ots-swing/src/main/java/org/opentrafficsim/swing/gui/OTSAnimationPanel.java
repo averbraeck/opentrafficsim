@@ -394,6 +394,29 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     }
 
     /**
+     * Add buttons for toggling all GIS layers on or off.
+     * @param header the name of the group of layers
+     * @param gisMap the GIS map for which the toggles have to be added
+     * @param toolTipText the tool tip text to show when hovering over the button
+     */
+    public final void addAllToggleGISButtonText(final String header, final GisRenderable2D gisMap, final String toolTipText)
+    {
+        addToggleText(" ");
+        addToggleText(header);
+        try
+        {
+            for (String layerName : gisMap.getMap().getLayerMap().keySet())
+            {
+                addToggleGISButtonText(layerName, layerName, gisMap, toolTipText);
+            }
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    /**
      * Add a button to toggle a GIS Layer on or off.
      * @param layerName String; the name of the layer
      * @param displayName String; the name to display next to the tick box

@@ -24,8 +24,6 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
-import org.opentrafficsim.core.dsol.OTSReplication;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -969,6 +967,7 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws GTUException
     {
+        // TODO: should this change when we drive in the opposite direction?
         int index;
         // check if we are the first
         if (this.gtuList.size() == 0)
@@ -978,14 +977,18 @@ public class Lane extends CrossSectionElement implements Serializable
         }
         else
         {
-            // check if we can add at the end
+            /*-
+            // check if we can add at the front
             LaneBasedGTU lastGTU = this.gtuList.get(this.gtuList.size() - 1);
-            if (fractionalPosition > lastGTU.fractionalPosition(this, lastGTU.getFront()))
+            if (fractionalPosition < lastGTU.fractionalPosition(this, lastGTU.getFront()))
             {
-                this.gtuList.add(gtu);
-                index = this.gtuList.size() - 1;
+                // this.gtuList.add(gtu); // XXX: AV 20190113
+                // index = this.gtuList.size() - 1; // XXX: AV 20190113
+                this.gtuList.add(0, gtu);
+                index = 0;
             }
             else
+            */
             {
                 // figure out the rank for the new GTU
                 for (index = 0; index < this.gtuList.size(); index++)
@@ -1003,6 +1006,14 @@ public class Lane extends CrossSectionElement implements Serializable
                     }
                 }
                 this.gtuList.add(index, gtu);
+                /*-
+                for (int i = 0; i < this.gtuList.size(); i++)
+                {
+                    LaneBasedGTU gtui = this.gtuList.get(i);
+                    System.out.println(i + ": GTU." + gtui.getId() + " at pos: " + gtui.position(this, gtui.getFront()));
+                }
+                System.out.println();
+                */
             }
         }
         fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtuList.size() },

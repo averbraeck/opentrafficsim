@@ -1,17 +1,15 @@
 package org.opentrafficsim.swing.gui;
 
 import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.vecmath.Point3d;
+import javax.swing.WindowConstants;
 
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.network.Link;
-
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * Wrap a DSOL simulation model, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be
@@ -30,9 +28,13 @@ public abstract class AbstractOTSSwingApplication extends JFrame
     /** */
     private static final long serialVersionUID = 20141216L;
 
-    /** The model. */
+    /** the model. */
     private final OTSModelInterface model;
-    
+
+    /** whether the application has been closed or not. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected boolean closed = false;
+
     /**
      * Wrap an OTSModel in a JFrame.
      * @param model OTSModelInterface; the model that will be shown in the JFrame
@@ -44,12 +46,22 @@ public abstract class AbstractOTSSwingApplication extends JFrame
         this.model = model;
         setTitle(model.getShortName());
         setContentPane(panel);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
         setExtendedState(Frame.MAXIMIZED_BOTH);
         setVisible(true);
+        
+        setExitOnClose(true);
+        addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(final WindowEvent windowEvent)
+            {
+                AbstractOTSSwingApplication.this.closed = true;
+                super.windowClosing(windowEvent);
+            }
+        });
     }
-    
+
     /**
      * Return the initial 'home' extent for the animation. The 'Home' button returns to this extent. Override this method when a
      * smaller or larger part of the infra should be shown. In the default setting, all currently visible objects are shown.
@@ -62,32 +74,26 @@ public abstract class AbstractOTSSwingApplication extends JFrame
     }
 
     /**
-     * Return a very short description of the simulation.
-     * @return String; short description of the simulation
+     * @param exitOnClose set exitOnClose
      */
-    @Deprecated
-    public String shortName()
+    public final void setExitOnClose(final boolean exitOnClose)
     {
-        return getClass().getSimpleName();
+        if (exitOnClose)
+        {
+            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        }
+        else
+        {
+            setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        }
     }
 
     /**
-     * Return a description of the simulation (HTML formatted).
-     * @return String; HTML text describing the simulation
+     * @return closed
      */
-    @Deprecated
-    public String description()
+    public final boolean isClosed()
     {
-        return getClass().getSimpleName();
+        return this.closed;
     }
 
-    /**
-     * Stop the timers and threads that are connected when disposing of this wrappable simulation.
-     */
-    @Deprecated
-    public void stopTimersThreads()
-    {
-        //
-    }
-    
 }

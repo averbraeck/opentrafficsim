@@ -47,7 +47,7 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Simulate traffic on a circular, two-lane road.
+ * Simulate traffic on a circular, one-lane road.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -56,13 +56,16 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * initial version 1 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularRoadModel extends AbstractOTSModel implements UNITS
+public class CircularLaneModel extends AbstractOTSModel implements UNITS
 {
     /** */
     private static final long serialVersionUID = 20141121L;
 
     /** Number of cars created. */
     private int carsCreated = 0;
+
+    /** Type of all GTUs. */
+    private GTUType gtuType = CAR;
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
@@ -74,7 +77,13 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
     /** The sequence of Lanes that all vehicles will follow. */
-    private List<List<Lane>> paths = new ArrayList<>();
+    private List<Lane> path = new ArrayList<>();
+
+    /** The left Lane that contains simulated Cars. */
+    private Lane lane1;
+
+    /** The right Lane that contains simulated Cars. */
+    private Lane lane2;
 
     /** The random number generator used to decide what kind of GTU to generate etc. */
     private StreamInterface stream = new MersenneTwister(12345);
@@ -97,7 +106,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     /**
      * @param simulator the simulator for this model
      */
-    public CircularRoadModel(final OTSSimulatorInterface simulator)
+    public CircularLaneModel(final OTSSimulatorInterface simulator)
     {
         super(simulator);
         makeInputParameterMap();
@@ -110,22 +119,12 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     {
         try
         {
-            InputParameterHelper.makeInputParameterMapCarTruck(this.inputParameterMap, 1.0);
-            
-            InputParameterMap genericMap = null;
-            if (this.inputParameterMap.getValue().containsKey("generic"))
-            {
-                genericMap = (InputParameterMap) this.inputParameterMap.get("generic");
-            }
-            else
-            {
-                genericMap = new InputParameterMap("generic", "Generic", "Generic parameters", 1.0);
-                this.inputParameterMap.add(genericMap);
-            }
+            InputParameterHelper.makeInputParameterMapCarTruck(this.inputParameterMap, 4.0);
+            InputParameterMap genericMap = (InputParameterMap) this.inputParameterMap.get("generic");
 
             genericMap.add(new InputParameterDoubleScalar<LengthUnit, Length>("trackLength", "Track length",
                     "Track length (circumfence of the track)", Length.createSI(1000.0), Length.createSI(500.0),
-                    Length.createSI(2000.0), true, true, "%.0f", 1.5));
+                    Length.createSI(2000.0), true, true, "%.0f", 1.0));
             genericMap.add(new InputParameterDouble("densityMean", "Mean density (veh / km)",
                     "mean density of the vehicles (vehicles per kilometer)", 30.0, 5.0, 45.0, true, true, "%.0f", 2.0));
             genericMap.add(new InputParameterDouble("densityVariability", "Density variability",
@@ -138,27 +137,12 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
         }
     }
 
-    /**
-     * @param index int; the rank number of the path
-     * @return List&lt;Lane&gt;; the set of lanes for the specified index
-     */
-    public List<Lane> getPath(final int index)
-    {
-        return this.paths.get(index);
-    }
-
     /** {@inheritDoc} */
     @Override
     public void constructModel() throws SimRuntimeException
     {
         try
         {
-            final int laneCount = 2;
-            for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
-            {
-                this.paths.add(new ArrayList<Lane>());
-            }
-
             this.carProbability = (double) getInputParameter("generic.carProbability");
             double radius = ((Length) getInputParameter("generic.trackLength")).si / 2 / Math.PI;
             double headway = 1000.0 / (double) getInputParameter("generic.densityMean");
@@ -166,13 +150,12 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
 
             this.parametersCar = InputParameterHelper.getParametersCar(getInputParameterMap());
             this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
-            
+
             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
 
-            GTUType gtuType = CAR;
             LaneType laneType = LaneType.TWO_WAY_LANE;
             OTSNode start = new OTSNode(this.network, "Start", new OTSPoint3D(radius, 0, 0));
             OTSNode halfway = new OTSNode(this.network, "Halfway", new OTSPoint3D(-radius, 0, 0));
@@ -183,39 +166,43 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
                 double angle = Math.PI * (1 + i) / (1 + coordsHalf1.length);
                 coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
-            Lane[] lanes1 = LaneFactory.makeMultiLane(this.network, "FirstHalf", start, halfway, coordsHalf1, laneCount,
-                    laneType, this.speedLimit, this.simulator);
+            this.lane1 = LaneFactory.makeMultiLane(this.network, "Lane1", start, halfway, coordsHalf1, 1, laneType,
+                    this.speedLimit, this.simulator)[0];
+            this.path.add(this.lane1);
+
             OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
                 double angle = Math.PI + Math.PI * (1 + i) / (1 + coordsHalf2.length);
                 coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
-            Lane[] lanes2 = LaneFactory.makeMultiLane(this.network, "SecondHalf", halfway, start, coordsHalf2, laneCount,
-                    laneType, this.speedLimit, this.simulator);
-            for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
-            {
-                this.paths.get(laneIndex).add(lanes1[laneIndex]);
-                this.paths.get(laneIndex).add(lanes2[laneIndex]);
-            }
-            // Put the (not very evenly spaced) cars on the track
+            this.lane2 = LaneFactory.makeMultiLane(this.network, "Lane2", halfway, start, coordsHalf2, 1, laneType,
+                    this.speedLimit, this.simulator)[0];
+            this.path.add(this.lane2);
+
+            // Put the (not very evenly spaced) cars on track1
+            double trackLength = this.lane1.getLength().getSI();
             double variability = (headway - 20) * headwayVariability;
             System.out.println("headway is " + headway + " variability limit is " + variability);
             Random random = new Random(12345);
-            for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
+            for (double pos = 0; pos <= trackLength - headway - variability;)
             {
-                double lane1Length = lanes1[laneIndex].getLength().getSI();
-                double trackLength = lane1Length + lanes2[laneIndex].getLength().getSI();
-                for (double pos = 0; pos <= trackLength - headway - variability;)
-                {
-                    Lane lane = pos >= lane1Length ? lanes2[laneIndex] : lanes1[laneIndex];
-                    // Actual headway is uniformly distributed around headway
-                    double laneRelativePos = pos > lane1Length ? pos - lane1Length : pos;
-                    double actualHeadway = headway + (random.nextDouble() * 2 - 1) * variability;
-                    // System.out.println(lane + ", len=" + lane.getLength() + ", pos=" + laneRelativePos);
-                    generateGTU(new Length(laneRelativePos, METER), lane, gtuType);
-                    pos += actualHeadway;
-                }
+                // Actual headway is uniformly distributed around headway
+                double actualHeadway = headway + (random.nextDouble() * 2 - 1) * variability;
+                generateCar(this.lane1, new Length(pos, METER));
+                pos += actualHeadway;
+            }
+            // Put the (not very evenly spaced) cars on track2
+            trackLength = this.lane2.getLength().getSI();
+            variability = (headway - 20) * headwayVariability;
+            System.out.println("headway is " + headway + " variability limit is " + variability);
+            random = new Random(54321);
+            for (double pos = 0; pos <= trackLength - headway - variability;)
+            {
+                // Actual headway is uniformly distributed around headway
+                double actualHeadway = headway + (random.nextDouble() * 2 - 1) * variability;
+                generateCar(this.lane2, new Length(pos, METER));
+                pos += actualHeadway;
             }
 
         }
@@ -229,20 +216,15 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
      * Generate one gtu.
      * @param initialPosition Length; the initial position of the new cars
      * @param lane Lane; the lane on which the new cars are placed
-     * @param gtuType GTUType; the type of the new cars
-     * @throws SimRuntimeException cannot happen
-     * @throws NetworkException on network inconsistency
      * @throws GTUException when something goes wrong during construction of the car
-     * @throws OTSGeometryException when the initial position is outside the center line of the lane
      */
-    protected final void generateGTU(final Length initialPosition, final Lane lane, final GTUType gtuType)
-            throws GTUException, NetworkException, SimRuntimeException, OTSGeometryException
+    protected final void generateCar(final Lane lane, final Length initialPosition) throws GTUException
     {
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
         LaneBasedIndividualGTU gtu =
-                new LaneBasedIndividualGTU("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER),
+                new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, vehicleLength, new Length(1.8, METER),
                         new Speed(200, KM_PER_HOUR), vehicleLength.multiplyBy(0.5), this.simulator, this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
@@ -265,7 +247,22 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
-        gtu.init(strategicalPlanner, initialPositions, initialSpeed);
+        try
+        {
+            gtu.init(strategicalPlanner, initialPositions, initialSpeed);
+        }
+        catch (NetworkException | SimRuntimeException | OTSGeometryException exception)
+        {
+            throw new GTUException(exception);
+        }
+    }
+
+    /**
+     * @return List&lt;Lane&gt;; the set of lanes for the specified index
+     */
+    public List<Lane> getPath()
+    {
+        return new ArrayList<>(this.path);
     }
 
     /** {@inheritDoc} */
