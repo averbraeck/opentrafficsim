@@ -161,21 +161,23 @@ public class IMBChat extends JFrame
         int port = 4000;
         connection = new TConnection(server, port, this.editName.getText(), 1, this.editFederation.getText());
         // TODO: connection.onDisconnect
-        // connection.onDisconnect = new TConnection.TOnDisconnect()
-        // {
-        // @Override
-        // public void dispatch(TConnection aConnection)
-        // {
-        // // dispatch on display thread
-        // Display.getDefault().syncExec(new Runnable()
-        // {
-        // public void run()
-        // {
-        // chatMainForm.this.btnConnect.setText("Connect");
-        // }
-        // });
-        // }
-        // };
+        /*-
+        connection.onDisconnect = new TConnection.TOnDisconnect()
+        {
+            @Override
+            public void dispatch(TConnection aConnection)
+            {
+                // dispatch on display thread
+                Display.getDefault().syncExec(new Runnable()
+                {
+                    public void run()
+                    {
+                        chatMainForm.this.btnConnect.setText("Connect");
+                    }
+                });
+            }
+        };
+        */
         chatMessageEvent = connection.subscribe("Chat.Message");
         chatMessageEvent.onNormalEvent = new TEventEntry.TOnNormalEvent()
         {

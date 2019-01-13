@@ -1,5 +1,6 @@
 package org.opentrafficsim.imb.demo;
 
+import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
@@ -7,11 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
-import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.DurationUnit;
@@ -20,12 +19,10 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.TransformWGS84DutchRDNew;
@@ -47,7 +44,6 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransce
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -56,10 +52,8 @@ import org.xml.sax.SAXException;
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 
 /**
  * <p>
@@ -75,92 +69,58 @@ public class N201IMB extends AbstractOTSSwingApplication
     /** */
     private static final long serialVersionUID = 20161007L;
 
-    /** The model. */
-    private N201Model model;
-
     /**
      * @param model the model
      * @param animationPanel the animation panel
      * @throws OTSDrawingException on drawing error
      */
-    public N201IMB(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public N201IMB(final N201Model model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
+        animationPanel.addAllToggleGISButtonText(" GIS Layers:", model.getGisMap(), "Turn GIS map layer on or off");
     }
 
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException should never happen
      */
-    public static void main(final String[] args) throws SimRuntimeException
+    public static void main(final String[] args)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    N201IMB n201Model = new N201IMB();
-                    // 1 hour simulation run for testing
-                    n201Model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(10.0, DurationUnit.HOUR),
-                            new ArrayList<InputParameter<?, ?>>(), null, true);
-                }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "Model N201";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "Model N201 - IMB";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel()
-    {
-        System.out.println("N201IMB.makeModel called");
-        this.model = new N201Model(getSavedUserModifiedProperties(), getColorer(), new OTSNetwork("N201 network"));
-        return this.model;
+        demo(true);
     }
 
     /**
-     * @return the saved user properties for a next run
+     * Start the demo.
+     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
      */
-    private List<InputParameter<?, ?>> getSavedUserModifiedProperties()
+    public static void demo(final boolean exitOnClose)
     {
-        return this.savedUserModifiedProperties;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-        this.addToggleGISButtonText(" GIS Layers:", this.model.getGisMap(), "Turn GIS map layer on or off");
+        try
+        {
+            OTSAnimator simulator = new OTSAnimator();
+            final N201Model otsModel = new N201Model(simulator);
+            if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
+            {
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                        new Dimension(800, 600), simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
+                N201IMB app = new N201IMB(otsModel, animationPanel);
+                app.setExitOnClose(exitOnClose);
+            }
+            else
+            {
+                if (exitOnClose)
+                {
+                    System.exit(0);
+                }
+            }
+        }
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /** {@inheritDoc} */
@@ -189,19 +149,13 @@ public class N201IMB extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class N201Model extends AbstractOTSModel
+    static class N201Model extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
 
-        /** The simulator. */
-        private OTSSimulatorInterface simulator;
-
-        /** User settable properties. */
-        private List<InputParameter<?, ?>> modelProperties = null;
-
         /** the network as created by the AbstractWrappableIMBAnimation. */
-        private final OTSNetwork network;
+        private final OTSNetwork network = new OTSNetwork("network");
 
         /** Connector to the IMB hub. */
         OTSIMBConnector imbConnector;
@@ -210,46 +164,34 @@ public class N201IMB extends AbstractOTSSwingApplication
         private GisRenderable2D gisMap;
 
         /**
-         * @param modelProperties List&lt;Property&lt;?&gt;&gt;; the properties
-         * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
-         * @param network OTSNetwork; the network
+         * @param simulator the simulator for this model
          */
-        N201Model(final List<InputParameter<?, ?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
+        public N201Model(final OTSSimulatorInterface simulator)
         {
-            this.modelProperties = modelProperties;
-            this.network = network;
+            super(simulator);
+            InputParameterHelper.makeInputParameterMapIMB(this.inputParameterMap);
         }
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel()
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
             System.out.println("N201IMB: constructModel called; Connecting to IMB");
-            this.simulator = (OTSSimulatorInterface) pSimulator;
-            SimpleAnimator imbAnimator = (SimpleAnimator) pSimulator;
+
             try
             {
-                CompoundProperty imbSettings = null;
-                for (InputParameter<?, ?> property : this.modelProperties)
-                {
-                    if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
-                    {
-                        imbSettings = (CompoundProperty) property;
-                    }
-                }
-                System.out.println("link count " + this.network.getLinkMap().size());
+                InputParameterMap imbSettings = (InputParameterMap) getInputParameterMap().get("imb");
                 Throw.whenNull(imbSettings, "IMB Settings not found in properties");
                 this.imbConnector = OTSIMBConnector.create(imbSettings, "OTS");
-                new NetworkTransceiver(this.imbConnector, imbAnimator, this.network);
-                new NodeTransceiver(this.imbConnector, imbAnimator, this.network);
-                new LinkGTUTransceiver(this.imbConnector, imbAnimator, this.network);
-                new LaneGTUTransceiver(this.imbConnector, imbAnimator, this.network);
-                new GTUTransceiver(this.imbConnector, imbAnimator, this.network);
-                new SensorGTUTransceiver(this.imbConnector, imbAnimator, this.network);
-                new SimulatorTransceiver(this.imbConnector, imbAnimator);
+                new NetworkTransceiver(this.imbConnector, getSimulator(), this.network);
+                new NodeTransceiver(this.imbConnector, getSimulator(), this.network);
+                new LinkGTUTransceiver(this.imbConnector, getSimulator(), this.network);
+                new LaneGTUTransceiver(this.imbConnector, getSimulator(), this.network);
+                new GTUTransceiver(this.imbConnector, getSimulator(), this.network);
+                new SensorGTUTransceiver(this.imbConnector, getSimulator(), this.network);
+                new SimulatorTransceiver(this.imbConnector, getSimulator());
             }
-            catch (IMBException exception)
+            catch (IMBException | InputParameterException exception)
             {
                 throw new SimRuntimeException(exception);
             }
@@ -271,7 +213,7 @@ public class N201IMB extends AbstractOTSSwingApplication
             Query query = N201ODfactory.getQuery(this.network, new RoadSampler(this.simulator));
             try
             {
-                new StatisticsGTULaneTransceiver(this.imbConnector, imbAnimator, this.network.getId(), query,
+                new StatisticsGTULaneTransceiver(this.imbConnector, getSimulator(), this.network.getId(), query,
                         new Duration(30, DurationUnit.SECOND));
             }
             catch (IMBException exception)
@@ -295,13 +237,6 @@ public class N201IMB extends AbstractOTSSwingApplication
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return this.simulator;
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public final OTSNetwork getNetwork()
         {
             return this.network;
@@ -319,7 +254,7 @@ public class N201IMB extends AbstractOTSSwingApplication
     /**
      * Convert coordinates to/from the Dutch RD system.
      */
-    class CoordinateTransformRD implements CoordinateTransform, Serializable
+    static class CoordinateTransformRD implements CoordinateTransform, Serializable
     {
         /** */
         private static final long serialVersionUID = 20141017L;

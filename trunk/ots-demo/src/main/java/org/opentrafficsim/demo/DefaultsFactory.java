@@ -1,4 +1,4 @@
-package org.opentrafficsim.demo.carFollowing;
+package org.opentrafficsim.demo;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;

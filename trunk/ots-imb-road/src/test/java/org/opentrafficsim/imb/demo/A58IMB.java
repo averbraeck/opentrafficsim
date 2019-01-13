@@ -8,27 +8,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
-import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.DurationUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.base.modelproperties.CompoundProperty;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gis.TransformWGS84DutchRDNew;
@@ -47,9 +40,6 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
-import org.opentrafficsim.road.network.factory.xml.test.LMRSTests;
-import org.opentrafficsim.road.network.factory.xml.test.LMRSTests.TestXMLModel;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
@@ -58,11 +48,8 @@ import org.xml.sax.SAXException;
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 
 /**
  * <p>
@@ -78,66 +65,58 @@ public class A58IMB extends AbstractOTSSwingApplication
     /** */
     private static final long serialVersionUID = 20161007L;
 
-    /** The model. */
-    private A58Model model;
-
     /**
      * @param model the model
      * @param animationPanel the animation panel
      * @throws OTSDrawingException on drawing error
      */
-    public A58IMB(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public A58IMB(final A58Model model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
+        animationPanel.addAllToggleGISButtonText(" GIS Layers:", model.getGisMap(), "Turn GIS map layer on or off");
     }
 
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException should never happen
      */
-    public static void main(final String[] args) throws SimRuntimeException
+    public static void main(final String[] args)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    OTSAnimator simulator = new OTSAnimator();
-                    A58Model imbModel = new A58Model(simulator);
-                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), imbModel);
-                    OTSAnimationPanel animationPanel =
-                            new OTSAnimationPanel(imbModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
-                                    imbModel, new DefaultSwitchableGTUColorer(), imbModel.getNetwork());
-                    new LMRSTests(imbModel, animationPanel);
-
-                    
-                    
-                    A58IMB a58Model = new A58IMB();
-                    List<InputParameter<?, ?>> propertyList = new ArrayList<>();
-                    propertyList.add(OTSIMBConnector.standardIMBProperties(0, "vps17642.public.cloudvps.com"));
-                    // 1 hour simulation run for testing
-                    a58Model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(10.0, DurationUnit.HOUR), propertyList, null,
-                            true);
-                }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        });
+        demo(true);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected void addAnimationToggles()
+    /**
+     * Start the demo.
+     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     */
+    public static void demo(final boolean exitOnClose)
     {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
-        this.addToggleGISButtonText(" GIS Layers:", this.model.getGisMap(), "Turn GIS map layer on or off");
+        try
+        {
+            OTSAnimator simulator = new OTSAnimator();
+            final A58Model otsModel = new A58Model(simulator);
+            if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
+            {
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                        new Dimension(800, 600), simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
+                A58IMB app = new A58IMB(otsModel, animationPanel);
+                app.setExitOnClose(exitOnClose);
+            }
+            else
+            {
+                if (exitOnClose)
+                {
+                    System.exit(0);
+                }
+            }
+        }
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /** {@inheritDoc} */
@@ -166,13 +145,13 @@ public class A58IMB extends AbstractOTSSwingApplication
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class A58Model extends AbstractOTSModel
+    static class A58Model extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20141121L;
 
         /** the network as created by the AbstractWrappableIMBAnimation. */
-        private final OTSNetwork network;
+        private final OTSNetwork network = new OTSNetwork("network");
 
         /** the GIS map. */
         private GisRenderable2D gisMap;
@@ -181,46 +160,33 @@ public class A58IMB extends AbstractOTSSwingApplication
         OTSIMBConnector imbConnector;
 
         /**
-         * @param modelProperties List&lt;Property&lt;?&gt;&gt;; the properties
-         * @param gtuColorer GTUColorer; the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
-         * @param network OTSNetwork; the network
+         * @param simulator the simulator for this model
          */
-        A58Model(final List<InputParameter<?, ?>> modelProperties, final GTUColorer gtuColorer, final OTSNetwork network)
+        public A58Model(final OTSSimulatorInterface simulator)
         {
-            this.modelProperties = modelProperties;
-            this.network = network;
+            super(simulator);
+            InputParameterHelper.makeInputParameterMapIMB(this.inputParameterMap);
         }
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel()
-                throws SimRuntimeException
+        public final void constructModel() throws SimRuntimeException
         {
             System.out.println("A58IMB: constructModel called; Connecting to IMB");
-            this.simulator = (OTSSimulatorInterface) pSimulator;
-            SimpleAnimator imbAnimator = (SimpleAnimator) pSimulator;
             try
             {
-                CompoundProperty imbSettings = null;
-                for (InputParameter<?, ?> property : this.modelProperties)
-                {
-                    if (property.getKey().equals(OTSIMBConnector.PROPERTY_KEY))
-                    {
-                        imbSettings = (CompoundProperty) property;
-                    }
-                }
-                System.out.println("link count " + this.network.getLinkMap().size());
+                InputParameterMap imbSettings = (InputParameterMap) getInputParameterMap().get("imb");
                 Throw.whenNull(imbSettings, "IMB Settings not found in properties");
                 this.imbConnector = OTSIMBConnector.create(imbSettings, "OTS");
-                new NetworkTransceiver(this.imbConnector, imbAnimator, this.network);
-                new NodeTransceiver(this.imbConnector, imbAnimator, this.network);
-                new LinkGTUTransceiver(this.imbConnector, imbAnimator, this.network);
-                new LaneGTUTransceiver(this.imbConnector, imbAnimator, this.network);
-                new GTUTransceiver(this.imbConnector, imbAnimator, this.network);
-                new SensorGTUTransceiver(this.imbConnector, imbAnimator, this.network);
-                new SimulatorTransceiver(this.imbConnector, imbAnimator);
+                new NetworkTransceiver(this.imbConnector, getSimulator(), this.network);
+                new NodeTransceiver(this.imbConnector, getSimulator(), this.network);
+                new LinkGTUTransceiver(this.imbConnector, getSimulator(), this.network);
+                new LaneGTUTransceiver(this.imbConnector, getSimulator(), this.network);
+                new GTUTransceiver(this.imbConnector, getSimulator(), this.network);
+                new SensorGTUTransceiver(this.imbConnector, getSimulator(), this.network);
+                new SimulatorTransceiver(this.imbConnector, getSimulator());
             }
-            catch (IMBException exception)
+            catch (IMBException | InputParameterException exception)
             {
                 throw new SimRuntimeException(exception);
             }
@@ -288,7 +254,7 @@ public class A58IMB extends AbstractOTSSwingApplication
     /**
      * Convert coordinates to/from the Dutch RD system.
      */
-    class CoordinateTransformRD implements CoordinateTransform, Serializable
+    static class CoordinateTransformRD implements CoordinateTransform, Serializable
     {
         /** */
         private static final long serialVersionUID = 20141017L;
@@ -339,18 +305,6 @@ public class A58IMB extends AbstractOTSSwingApplication
         {
             return "CoordinateTransformRD [dx=" + this.dx + ", dy=" + this.dy + "]";
         }
-    }
-
-    /**
-     * Retrieve a list of properties that the user can modify.
-     * @return List&lt;Property&lt;?&gt;&gt;;
-     */
-    public List<InputParameter<?, ?>> getSupportedProperties()
-    {
-        List<InputParameter<?, ?>> result = new ArrayList<>();
-        result.add(new InputParameterDouble("penetration", "penetration",
-                "<html>Fraction of vehicles equipped with CACC</html>", 0.0, 0.0, 1.0, "%.2f", false, 13));
-        return result;
     }
 
 }

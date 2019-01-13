@@ -40,7 +40,6 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
-import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 
 /**
  * Circular road simulation demo.
@@ -92,15 +91,34 @@ public class CircularRoadSwing extends AbstractOTSSwingApplication
      */
     public static void main(final String[] args)
     {
+        demo(true);
+    }
+
+    /**
+     * Start the demo.
+     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     */
+    public static void demo(final boolean exitOnClose)
+    {
         try
         {
             OTSAnimator simulator = new OTSAnimator();
             final CircularRoadModel otsModel = new CircularRoadModel(simulator);
-            new TabbedParameterDialog(otsModel.getInputParameterMap());
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
-            OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
-            new CircularRoadSwing("Circular Road", animationPanel, otsModel);
+            if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
+            {
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
+                        new Dimension(800, 600), simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
+                CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);
+                app.setExitOnClose(exitOnClose);
+            }
+            else
+            {
+                if (exitOnClose)
+                {
+                    System.exit(0);
+                }
+            }
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
         {

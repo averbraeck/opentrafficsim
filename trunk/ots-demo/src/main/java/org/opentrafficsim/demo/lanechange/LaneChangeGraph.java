@@ -123,7 +123,6 @@ public class LaneChangeGraph extends JFrame extends AbstractOTSModel implements 
     {
         super(title);
         setContentPane(mainPanel);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.charts = new ChartPanel[2][STANDARDSPEEDS.length];
     }
 
