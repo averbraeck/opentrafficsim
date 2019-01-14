@@ -6,8 +6,10 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.NamingException;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
@@ -32,7 +34,9 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -45,12 +49,10 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
+import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 
 /**
@@ -62,7 +64,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
  * initial version 15 apr. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SuitabilityGraph extends AbstractOTSModel implements UNITS
+public class SuitabilityGraph extends JFrame implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20150415L;
@@ -105,7 +107,7 @@ public class SuitabilityGraph extends AbstractOTSModel implements UNITS
             public void run()
             {
                 SuitabilityGraph suitabilityGraph = new SuitabilityGraph();
-                new AbstractOTSSwingApplication("Suitability graph", suitabilityGraph.getPanel());
+                new SimulatorFrame("Suitability graph", suitabilityGraph.getPanel());
                 try
                 {
                     suitabilityGraph.drawPlots();
@@ -129,7 +131,8 @@ public class SuitabilityGraph extends AbstractOTSModel implements UNITS
     protected final void drawPlots()
             throws NamingException, NetworkException, SimRuntimeException, OTSGeometryException, GTUException
     {
-        SimpleSimulator simulator = new SimpleSimulator(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, DurationUnit.SI),
+        OTSSimulator simulator = new OTSSimulator();
+        simulator.initialize(new Time(0, TimeUnit.BASE_SECOND), new Duration(0, DurationUnit.SI),
                 new Duration(99999, DurationUnit.SI), this);
         final int rows = SPEEDLIMITS.length;
         final int columns = TARGETLANES.length;
@@ -266,17 +269,9 @@ public class SuitabilityGraph extends AbstractOTSModel implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator)
-            throws SimRuntimeException
+    public final void constructModel()
     {
         // Do nothing
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-    {
-        return null;
     }
 
     /** {@inheritDoc} */
@@ -286,6 +281,64 @@ public class SuitabilityGraph extends AbstractOTSModel implements UNITS
         return null; // multiple networks defined...
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public OTSSimulatorInterface getSimulator()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public InputParameterMap getInputParameterMap()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<OutputStatistic<?>> getOutputStatistics()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getShortName()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDescription()
+    {
+        return null;
+    }
+
+}
+
+/** class to wrap a panel in a frame. */
+class SimulatorFrame extends JFrame
+{
+    /** */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Wrap a JPANEL in a JFrame.
+     * @param title the title of the frame
+     * @param panel the panel to wrap
+     */
+    SimulatorFrame(final String title, final JPanel panel)
+    {
+        super();
+        setTitle(title);
+        setContentPane(panel);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        pack();
+        setExtendedState(MAXIMIZED_BOTH);
+        setVisible(true);
+    }
 }
 
 /** */
