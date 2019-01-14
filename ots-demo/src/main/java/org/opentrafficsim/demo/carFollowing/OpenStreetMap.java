@@ -329,7 +329,6 @@ class OSMModel extends AbstractOTSModel
     @Override
     public void constructModel() throws SimRuntimeException
     {
-        this.simulator = this.simulator;
         OTSNetwork otsNetwork = new OTSNetwork(this.osmNetwork.getName());
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
