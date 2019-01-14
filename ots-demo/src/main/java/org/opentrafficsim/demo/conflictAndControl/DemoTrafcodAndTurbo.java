@@ -3,11 +3,9 @@ package org.opentrafficsim.demo.conflictAndControl;
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
 import java.awt.BorderLayout;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
+import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -15,7 +13,6 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
@@ -27,10 +24,11 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -40,7 +38,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.demo.DefaultsFactory;
-import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
+import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
@@ -57,15 +55,12 @@ import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventType;
@@ -86,74 +81,75 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
     /** */
     private static final long serialVersionUID = 20161118L;
 
+    /** the panel. */
+    private OTSAnimationPanel animationPanel;
+
+    /**
+     * Create a T-Junction demo.
+     * @param title the title of the Frame
+     * @param panel the tabbed panel to display
+     * @param model the model
+     * @throws OTSDrawingException on animation error
+     */
+    public DemoTrafcodAndTurbo(final String title, final OTSAnimationPanel panel, final TrafCODModel model)
+            throws OTSDrawingException
+    {
+        super(model, panel);
+        this.animationPanel = panel;
+        // DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(panel);
+        addTabs();
+    }
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException should never happen
      */
-    public static void main(final String[] args) throws SimRuntimeException
+    public static void main(final String[] args)
     {
-        SwingUtilities.invokeLater(new Runnable()
+        demo(true);
+    }
+
+    /**
+     * Start the demo.
+     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     */
+    public static void demo(final boolean exitOnClose)
+    {
+        try
         {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    DemoTrafcodAndTurbo model = new DemoTrafcodAndTurbo();
-                    // 1 hour simulation run for testing
-                    model.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<InputParameter<?, ?>>(), null, true);
-                }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        });
+            OTSAnimator simulator = new OTSAnimator();
+            final TrafCODModel junctionModel = new TrafCODModel(simulator);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), junctionModel);
+            OTSAnimationPanel animationPanel =
+                    new OTSAnimationPanel(junctionModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+                            junctionModel, new DefaultSwitchableGTUColorer(), junctionModel.getNetwork());
+            DemoTrafcodAndTurbo app = new DemoTrafcodAndTurbo("TrafCOD Turbo demo", animationPanel, junctionModel);
+            app.setExitOnClose(exitOnClose);
+        }
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
-    /** TrafCOD controller display. */
-    private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
-
-    /** The TrafCOD controller. */
-    TrafCOD trafCOD;
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
+    /**
+     * Add tab with trafCOD status.
+     */
+    private void addTabs()
     {
-        return "TrafCOD demonstration 2";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "TrafCOD demonstration";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException, InputParameterException
-    {
-        JScrollPane scrollPane = new JScrollPane(DemoTrafcodAndTurbo.this.controllerDisplayPanel);
+        TrafCODModel model = (TrafCODModel) getModel();
+        JScrollPane scrollPane = new JScrollPane(model.getControllerDisplayPanel());
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.add(scrollPane);
-        addTab(getTabCount() - 1, this.trafCOD.getId(), wrapper);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final Double makeAnimationRectangle()
-    {
-        return new Rectangle2D.Double(-200, -200, 400, 400);
+        this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount() - 1,
+                model.getTrafCOD().getId(), wrapper);
     }
 
     /**
      * The simulation model.
      */
-    class TrafCODModel extends AbstractOTSModel implements EventListenerInterface
+    static class TrafCODModel extends AbstractOTSModel implements EventListenerInterface
     {
         /** */
         private static final long serialVersionUID = 20161020L;
@@ -161,21 +157,35 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
         /** The network. */
         private OTSNetwork network;
 
-        @SuppressWarnings("synthetic-access")
+        /** The TrafCOD controller. */
+        private TrafCOD trafCOD;
+
+        /** TrafCOD controller display. */
+        private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
+
+        /**
+         * @param simulator the simulator for this model
+         */
+        TrafCODModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
+
+        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
             try
             {
                 URL url = URLResource.getResource("/conflictAndControl/TurboRoundaboutAndSignal.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) this.simulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
                 this.network = nlp.build(url, true);
                 // add conflicts
                 ((CrossSectionLink) this.network.getLink("EBNA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("NBWA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("WBSA")).setPriority(Priority.PRIORITY);
                 ((CrossSectionLink) this.network.getLink("SBEA")).setPriority(Priority.PRIORITY);
-                ConflictBuilder.buildConflicts(this.network, VEHICLE, (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator,
+                ConflictBuilder.buildConflicts(this.network, VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(new Length(2.0, LengthUnit.SI)));
 
                 // CrossSectionLink csLink = ((CrossSectionLink)
@@ -205,14 +215,13 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
                         {
                             if (stream != 7)
                             {
-                                TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream),
-                                        lane, lane.getLength().minus(stopLineMargin),
-                                        this.simulator);
+                                TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream), lane,
+                                        lane.getLength().minus(stopLineMargin), this.simulator);
                                 trafficLights.add(tl);
 
                                 try
                                 {
-                                    new TrafficLightAnimation(tl, simulator);
+                                    new TrafficLightAnimation(tl, this.simulator);
                                 }
                                 catch (RemoteException | NamingException exception)
                                 {
@@ -222,26 +231,23 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
                                 sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                         lane.getLength().minus(headDetectorMargin), lane,
                                         lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
-                                        RelativePosition.FRONT, RelativePosition.REAR,
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator, Compatible.EVERYTHING));
+                                        RelativePosition.FRONT, RelativePosition.REAR, this.simulator, Compatible.EVERYTHING));
                                 sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
                                         lane.getLength().minus(longDetectorMargin), lane,
                                         lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
-                                        RelativePosition.FRONT, RelativePosition.REAR,
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator, Compatible.EVERYTHING));
+                                        RelativePosition.FRONT, RelativePosition.REAR, this.simulator, Compatible.EVERYTHING));
                             }
                             else
                             {
                                 lane = (Lane) ((CrossSectionLink) this.network.getLink("ESS1", "ESS"))
                                         .getCrossSectionElement("FORWARD");
                                 TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream), lane,
-                                        lane.getLength().minus(stopLineMargin),
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator);
+                                        lane.getLength().minus(stopLineMargin), this.simulator);
                                 trafficLights.add(tl);
 
                                 try
                                 {
-                                    new TrafficLightAnimation(tl, simulator);
+                                    new TrafficLightAnimation(tl, this.simulator);
                                 }
                                 catch (RemoteException | NamingException exception)
                                 {
@@ -251,13 +257,11 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
                                 sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
                                         lane.getLength().minus(headDetectorMargin), lane,
                                         lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
-                                        RelativePosition.FRONT, RelativePosition.REAR,
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator, Compatible.EVERYTHING));
+                                        RelativePosition.FRONT, RelativePosition.REAR, this.simulator, Compatible.EVERYTHING));
                                 sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
                                         lane.getLength().minus(longDetectorMargin), lane,
                                         lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
-                                        RelativePosition.FRONT, RelativePosition.REAR,
-                                        (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator, Compatible.EVERYTHING));
+                                        RelativePosition.FRONT, RelativePosition.REAR, this.simulator, Compatible.EVERYTHING));
 
                             }
 
@@ -266,19 +270,17 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
                     }
                 }
                 String controllerName = "Not so simple TrafCOD controller";
-                DemoTrafcodAndTurbo.this.trafCOD =
-                        new TrafCOD(controllerName, URLResource.getResource("/conflictAndControl/Intersection12Dir.tfc"),
-                                trafficLights, sensors, this.simulator,
-                                DemoTrafcodAndTurbo.this.controllerDisplayPanel);
-                DemoTrafcodAndTurbo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
-                DemoTrafcodAndTurbo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
-                DemoTrafcodAndTurbo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
-                DemoTrafcodAndTurbo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_STATE_CHANGED);
-                DemoTrafcodAndTurbo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_VARIABLE_CREATED);
-                DemoTrafcodAndTurbo.this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
+                this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/conflictAndControl/Intersection12Dir.tfc"),
+                        trafficLights, sensors, this.simulator, this.controllerDisplayPanel);
+                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
+                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
+                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
+                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_STATE_CHANGED);
+                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_VARIABLE_CREATED);
+                this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
                 // Subscribe the TrafCOD machine to trace command events that we
                 // emit
-                addListener(DemoTrafcodAndTurbo.this.trafCOD, TrafficController.TRAFFICCONTROL_SET_TRACING);
+                addListener(this.trafCOD, TrafficController.TRAFFICCONTROL_SET_TRACING);
                 // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new
                 // Object[] {controllerName, "TGX", 8, true});
                 // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new
@@ -310,6 +312,22 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
         public final OTSNetwork getNetwork()
         {
             return this.network;
+        }
+
+        /**
+         * @return trafCOD
+         */
+        public final TrafCOD getTrafCOD()
+        {
+            return this.trafCOD;
+        }
+
+        /**
+         * @return controllerDisplayPanel
+         */
+        public final JPanel getControllerDisplayPanel()
+        {
+            return this.controllerDisplayPanel;
         }
 
         /** {@inheritDoc} */
@@ -371,14 +389,14 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
             IDMPlusOld carFollowingModelCars = new IDMPlusOld(ac1, ac1, l, tSafe, 1.0);
             Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
             initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            GTUType gtuType = CAR;
+            GTUType gtuType = GTUType.CAR;
             Parameters parameters = DefaultsFactory.getDefaultParameters();
             LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", gtuType, new Length(1, LengthUnit.METER),
                     lane.getWidth(1), Speed.ZERO, Length.createSI(0.5), this.simulator, this.network);
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGTUFollowingTacticalPlanner(carFollowingModelCars, block), block);
             block.setParameters(parameters);
-            block.init(strategicalPlanner, initialPositions, Speed.ZERO, DefaultCarAnimation.class, gtuColorer);
+            block.init(strategicalPlanner, initialPositions, Speed.ZERO);
             return lane;
         }
 

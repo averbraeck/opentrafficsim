@@ -2,30 +2,33 @@ package org.opentrafficsim.demo.conflict;
 
 import static org.opentrafficsim.core.gtu.GTUType.VEHICLE;
 
+import java.awt.Dimension;
 import java.net.URL;
-import java.util.ArrayList;
+import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
-import javax.swing.SwingUtilities;
 
-import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSAnimator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 
 /**
  * <p>
@@ -39,28 +42,60 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
  */
 public class TestNetworkDemo extends AbstractOTSSwingApplication
 {
-
     /** */
     private static final long serialVersionUID = 20161211L;
 
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
+    /**
+     * Create a network test demo.
+     * @param title the title of the Frame
+     * @param panel the tabbed panel to display
+     * @param model the model
+     * @throws OTSDrawingException on animation error
+     */
+    public TestNetworkDemo(final String title, final OTSAnimationPanel panel, final TestNetworkModel model)
+            throws OTSDrawingException
     {
-        return "Test network demonstration";
+        super(model, panel);
+        // DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(panel);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
+    /**
+     * Main program.
+     * @param args String[]; the command line arguments (not used)
+     */
+    public static void main(final String[] args)
     {
-        return "Test network demonstration";
+        demo(true);
+    }
+
+    /**
+     * Start the demo.
+     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     */
+    public static void demo(final boolean exitOnClose)
+    {
+        try
+        {
+            OTSAnimator simulator = new OTSAnimator();
+            final TestNetworkModel networkModel = new TestNetworkModel(simulator);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), networkModel);
+            OTSAnimationPanel animationPanel =
+                    new OTSAnimationPanel(networkModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+                            networkModel, new DefaultSwitchableGTUColorer(), networkModel.getNetwork());
+            TestNetworkDemo app = new TestNetworkDemo("Network test demo", animationPanel, networkModel);
+            app.setExitOnClose(exitOnClose);
+        }
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
      * The simulation model.
      */
-    class TestNetworkModel extends AbstractOTSModel
+    static class TestNetworkModel extends AbstractOTSModel
     {
 
         /** */
@@ -68,6 +103,14 @@ public class TestNetworkDemo extends AbstractOTSSwingApplication
 
         /** The network. */
         private OTSNetwork network;
+
+        /**
+         * @param simulator the simulator for this model
+         */
+        TestNetworkModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -117,32 +160,4 @@ public class TestNetworkDemo extends AbstractOTSSwingApplication
         }
 
     }
-
-    /**
-     * Main program.
-     * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException should never happen
-     */
-    public static void main(final String[] args) throws SimRuntimeException
-    {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    TestNetworkDemo animation = new TestNetworkDemo();
-                    // 1 hour simulation run for testing
-                    animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<InputParameter<?, ?>>(), null, true);
-                }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        });
-    }
-
 }
