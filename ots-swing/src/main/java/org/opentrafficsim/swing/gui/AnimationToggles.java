@@ -171,6 +171,7 @@ public final class AnimationToggles
 
     /**
      * Set a class to be shown in the animation to true.
+     * @param panel OTSAnimationPanel; the OTSAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
     public final static void showAnimationClass(final OTSAnimationPanel panel, final Class<? extends Locatable> locatableClass)
@@ -180,7 +181,8 @@ public final class AnimationToggles
     }
 
     /**
-     * Set a class to be shown in the animation to true.
+     * Set a class to be shown in the animation to false.
+     * @param panel OTSAnimationPanel; the OTSAnimationPanel where the animation of a class has to be switched off
      * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
      */
     public final static void hideAnimationClass(final OTSAnimationPanel panel, final Class<? extends Locatable> locatableClass)
