@@ -27,7 +27,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLMRSPerceptionFactory;
@@ -164,6 +163,7 @@ public class StraightModel extends AbstractOTSModel implements UNITS
 
             // 1500 [veh / hour] == 2.4s headway
             this.headway = new Duration(3600.0 / 1500.0, SECOND);
+
             // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
             this.simulator.scheduleEventAbs(Time.ZERO, this, this, "generateCar", null);
 

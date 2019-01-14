@@ -226,7 +226,7 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
             exception.printStackTrace();
             return null;
         }
-        this.model = new OSMModel(getUserModifiedProperties(), this.osmNetwork, this.warningListener, this.progressListener,
+        this.model = new OSMModel(getSi, this.osmNetwork, this.warningListener, this.progressListener,
                 converter);
         Iterator<Node> count = this.otsNetwork.getNodeMap().values().iterator();
         Rectangle2D area = null;
