@@ -68,6 +68,8 @@ public class SuperDemo extends JFrame
                 + "Users can specify the fraction of cars and trucks, as well as some driving parameters."));
         this.demos.add(new Demo("CircularLane", CircularLaneSwing.class, "Model of a one-lane circular road with overtaking.\n"
                 + "Users can specify the fraction of cars and trucks, as well as some driving parameters."));
+        this.demos.add(new Demo("FundamentalDiagrams", FundamentalDiagrams.class,
+                "Creating fundamental diagrams for a straight road.\n"));
         this.demos.add(new Demo("CrossingTrafficLights", CrossingTrafficLightsSwing.class,
                 "Model of a a crossing with traffic lights.\n"));
     }
