@@ -64,6 +64,8 @@ public class SuperDemo extends JFrame
     {
         this.demos.add(new Demo("Straight", StraightSwing.class, "Single lane road with a blockage for a while.\n"
                 + "The model shows the dissolving of the congestion that occurs as a result."));
+        this.demos.add(new Demo("SequentialLanes", SequentialLanes.class,
+                "Cars and trucks driving on several sequential lanes, each around 1 km long.\n"));
         this.demos.add(new Demo("CircularRoad", CircularRoadSwing.class, "Model of a two-lane circular road with overtaking.\n"
                 + "Users can specify the fraction of cars and trucks, as well as some driving parameters."));
         this.demos.add(new Demo("CircularLane", CircularLaneSwing.class, "Model of a one-lane circular road with overtaking.\n"
