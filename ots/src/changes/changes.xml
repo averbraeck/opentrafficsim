@@ -2,13 +2,26 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
 
-    <release version="1.01.00" date="2018-12-15" description="Update to ots 1.01.00, djutils, animation, major refactoring">
+    <release version="1.01.00" date="2019-01-14" description="Update to ots 1.01.00, djutils, animation, major refactoring">
+      <action dev="averbraeck" type="fix">
+        GTUIDColorer used the following formula for the color:
+<![CDATA[
+<pre>
+LEGEND.get(gtu.getId().hashCode() % LEGEND.size()).getColor()
+</pre>
+]]>
+        However, (-2 % 10) returns -2 in Java. Therefore, the GTUIDColorer failed.
+        Changed to always return a positive number using Math.abs().
+      </action>  
       <action dev="averbraeck" type="update">
         The OTSReplication now has a compulsory id. This is in line with the new DSOL 3.02.02 
         Replication class.
       </action>
       <action dev="averbraeck" type="update">
         DSOL version has been updated to 3.03.02.
+      </action>
+      <action dev="averbraeck" type="update">
+        Copyright years udated to 2019.
       </action>
       <action dev="pknoppers" type="update">
         The means package has been moved from ots to the djutils project.
