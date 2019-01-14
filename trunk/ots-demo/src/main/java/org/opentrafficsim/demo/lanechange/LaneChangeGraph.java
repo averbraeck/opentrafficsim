@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -41,16 +42,18 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulator;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTUSimple;
@@ -68,11 +71,10 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
+import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 
 /**
@@ -85,7 +87,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
  * initial version 18 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneChangeGraph extends JFrame extends AbstractOTSModel implements UNITS
+public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20141118L;
@@ -144,7 +146,6 @@ public class LaneChangeGraph extends JFrame extends AbstractOTSModel implements 
         {
             SwingUtilities.invokeAndWait(new Runnable()
             {
-
                 @Override
                 public void run()
                 {
@@ -164,6 +165,7 @@ public class LaneChangeGraph extends JFrame extends AbstractOTSModel implements 
         {
             exception.printStackTrace();
         }
+
         for (int row = 0; row < lcs.charts.length; row++)
         {
             LaneChangeModel laneChangeModel = 0 == row ? new Egoistic() : new Altruistic();
@@ -252,8 +254,8 @@ public class LaneChangeGraph extends JFrame extends AbstractOTSModel implements 
 
     /**
      * Find the headway at which the decision to merge right changes.
-     * @param low Length; minimum headway to consider
-     * @param high Length; maximum headway to consider
+     * @param minHeadway Length; minimum headway to consider
+     * @param maxHeadway Length; maximum headway to consider
      * @param referenceSpeed Speed; speed of the reference car
      * @param speedDifference Speed; speed of the other car minus speed of the reference car
      * @param laneChangeModel LaneChangeModel; the lane change model to apply
@@ -267,38 +269,44 @@ public class LaneChangeGraph extends JFrame extends AbstractOTSModel implements 
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException x
      */
-    private Length findDecisionPoint(Length low, Length high, final Speed referenceSpeed, final Speed speedDifference,
-            final LaneChangeModel laneChangeModel, final boolean mergeRight) throws NamingException, NetworkException,
-            SimRuntimeException, GTUException, OTSGeometryException, ParameterException, OperationalPlanException
+    private Length findDecisionPoint(final Length minHeadway, final Length maxHeadway, final Speed referenceSpeed,
+            final Speed speedDifference, final LaneChangeModel laneChangeModel, final boolean mergeRight)
+            throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException,
+            ParameterException, OperationalPlanException
     {
+        Length high = maxHeadway;
+        Length low = minHeadway;
+
+        // The reference car only needs a simulator
+        // But that needs a model (which this class implements)
+        OTSSimulator simulator = new OTSSimulator();
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), this);
+
         // Set up the network
-        Network network = new OTSNetwork("lane change graph network");
         GTUType gtuType = CAR;
         LaneType laneType = LaneType.TWO_WAY_LANE;
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
-        Lane[] lanes = LaneFactory.makeMultiLane(network, "Road with two lanes",
-                new OTSNode(network, "From", new OTSPoint3D(LOWERBOUND.getSI(), 0, 0)),
-                new OTSNode(network, "To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0)), null, 2, laneType, speedLimit, null);
+        Lane[] lanes = LaneFactory.makeMultiLane(this.network, "Road with two lanes",
+                new OTSNode(this.network, "From", new OTSPoint3D(LOWERBOUND.getSI(), 0, 0)),
+                new OTSNode(this.network, "To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0)), null, 2, laneType, speedLimit,
+                simulator);
+
         // Create the reference vehicle
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions
                 .add(new DirectedLanePosition(lanes[mergeRight ? 0 : 1], new Length(0, METER), GTUDirectionality.DIR_PLUS));
 
-        // The reference car only needs a simulator
-        // But that needs a model (which this class implements)
-        SimpleSimulator simpleSimulator = new SimpleSimulator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), this);
         this.carFollowingModel = new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
                 new Acceleration(1.5, METER_PER_SECOND_2), new Length(2, METER), new Duration(1, SECOND), 1d);
         this.carFollowingModel = new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
                 new Length(2, METER), new Duration(1, SECOND), 1d);
 
-        Parameters parameters = new ParameterSet();
         LaneBasedIndividualGTU referenceCar = new LaneBasedIndividualGTU("ReferenceCar", gtuType, new Length(4, METER),
-                new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.createSI(2.0), simpleSimulator, this.network);
+                new Length(2, METER), new Speed(150, KM_PER_HOUR), Length.createSI(2.0), simulator, this.network);
+        referenceCar.setParameters(DefaultsFactory.getDefaultParameters());
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, laneChangeModel, referenceCar), referenceCar);
-        referenceCar.setParameters(parameters);
         referenceCar.init(strategicalPlanner, initialLongitudinalPositions, referenceSpeed);
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
         sameLaneGTUs.add(
@@ -371,13 +379,12 @@ public class LaneChangeGraph extends JFrame extends AbstractOTSModel implements 
     {
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(otherCarLane, otherCarPosition, GTUDirectionality.DIR_PLUS));
-        Parameters parameters = new ParameterSet();
         LaneBasedIndividualGTU otherCar =
                 new LaneBasedIndividualGTU("otherCar", referenceCar.getGTUType(), new Length(4, METER), new Length(2, METER),
                         new Speed(150, KM_PER_HOUR), Length.createSI(2.0), referenceCar.getSimulator(), this.network);
+        otherCar.setParameters(DefaultsFactory.getDefaultParameters());
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCFLCTacticalPlanner(this.carFollowingModel, laneChangeModel, otherCar), otherCar);
-        otherCar.setParameters(parameters);
         otherCar.init(strategicalPlanner, initialLongitudinalPositions, referenceCar.getSpeed().plus(deltaV));
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<>();
@@ -437,16 +444,9 @@ public class LaneChangeGraph extends JFrame extends AbstractOTSModel implements 
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator) throws SimRuntimeException
+    public void constructModel()
     {
         // Do nothing
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-    {
-        return null;
     }
 
     /** {@inheritDoc} */
@@ -454,6 +454,41 @@ public class LaneChangeGraph extends JFrame extends AbstractOTSModel implements 
     public final OTSNetwork getNetwork()
     {
         return this.network;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OTSSimulatorInterface getSimulator()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public InputParameterMap getInputParameterMap()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<OutputStatistic<?>> getOutputStatistics()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getShortName()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDescription()
+    {
+        return null;
     }
 
 }
