@@ -7,48 +7,30 @@ import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
-import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
-import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
-import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
@@ -85,7 +67,7 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
     private OTSAnimationPanel animationPanel;
 
     /**
-     * Create a T-Junction demo.
+     * Create a TrafcodAndTurbo demo.
      * @param title the title of the Frame
      * @param panel the tabbed panel to display
      * @param model the model
@@ -366,40 +348,5 @@ public class DemoTrafcodAndTurbo extends AbstractOTSSwingApplication
                 System.out.println("]");
             }
         }
-
-        /**
-         * Put a block at the end of a Lane.
-         * @param lane Lane; the lane on which the block is placed
-         * @param simulator OTSSimulatorInterface; the simulator
-         * @param gtuColorer GTUColorer; the gtu colorer to use
-         * @return Lane; the lane
-         * @throws NamingException on ???
-         * @throws NetworkException on network inconsistency
-         * @throws SimRuntimeException on ???
-         * @throws GTUException when construction of the GTU (the block is a GTU) fails
-         * @throws OTSGeometryException when the initial path is wrong
-         */
-        private Lane setupBlock(final Lane lane, final OTSSimulatorInterface simulator, final GTUColorer gtuColorer)
-                throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
-        {
-            Length initialPosition = lane.getLength();
-            Duration tSafe = new Duration(0, DurationUnit.SECOND);
-            Acceleration ac1 = new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2);
-            Length l = new Length(1.0, LengthUnit.METER);
-            IDMPlusOld carFollowingModelCars = new IDMPlusOld(ac1, ac1, l, tSafe, 1.0);
-            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-            initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            GTUType gtuType = GTUType.CAR;
-            Parameters parameters = DefaultsFactory.getDefaultParameters();
-            LaneBasedIndividualGTU block = new LaneBasedIndividualGTU("999999", gtuType, new Length(1, LengthUnit.METER),
-                    lane.getWidth(1), Speed.ZERO, Length.createSI(0.5), this.simulator, this.network);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                    new LaneBasedGTUFollowingTacticalPlanner(carFollowingModelCars, block), block);
-            block.setParameters(parameters);
-            block.init(strategicalPlanner, initialPositions, Speed.ZERO);
-            return lane;
-        }
-
     }
-
 }
