@@ -216,16 +216,9 @@ public class StraightModel extends AbstractOTSModel implements UNITS
             gtu.setMaximumDeceleration(Acceleration.createSI(-8.0));
 
             // strategical planner
-            LaneBasedStrategicalPlanner strategicalPlanner;
-            Route route = null;
-            if (!generateTruck)
-            {
-                strategicalPlanner = this.strategicalPlannerGeneratorCars.create(gtu, route, null, null);
-            }
-            else
-            {
-                strategicalPlanner = this.strategicalPlannerGeneratorTrucks.create(gtu, route, null, null);
-            }
+            LaneBasedStrategicalPlanner strategicalPlanner =
+                    generateTruck ? this.strategicalPlannerGeneratorTrucks.create(gtu, null, null, null)
+                            : this.strategicalPlannerGeneratorCars.create(gtu, null, null, null);
 
             Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
             Length initialPosition = new Length(20, METER);
