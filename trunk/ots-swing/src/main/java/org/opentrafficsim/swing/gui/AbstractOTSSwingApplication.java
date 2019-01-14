@@ -96,4 +96,12 @@ public abstract class AbstractOTSSwingApplication extends JFrame
         return this.closed;
     }
 
+    /**
+     * @return model
+     */
+    public final OTSModelInterface getModel()
+    {
+        return this.model;
+    }
+
 }

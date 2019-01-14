@@ -1,6 +1,8 @@
 package org.opentrafficsim.demo.conflict;
 
+import java.awt.Dimension;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
-import javax.swing.SwingUtilities;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
@@ -27,11 +28,11 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUCharacteristics;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -40,10 +41,10 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
@@ -78,12 +79,9 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
-import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -101,35 +99,75 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class BusStreetDemo extends AbstractOTSSwingApplication
 {
-
     /** */
     private static final long serialVersionUID = 20161211L;
 
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
+    /**
+     * Create a CrossingTrafficLights Swing application.
+     * @param title the title of the Frame
+     * @param panel the tabbed panel to display
+     * @param model the model
+     * @throws OTSDrawingException on animation error
+     */
+    public BusStreetDemo(final String title, final OTSAnimationPanel panel, final BusStreetModel model)
+            throws OTSDrawingException
     {
-        return "Bus street demonstration";
+        super(model, panel);
+        OTSNetwork network = model.getNetwork();
+        System.out.println(network.getLinkMap());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(panel);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
+    /**
+     * Main program.
+     * @param args String[]; the command line arguments (not used)
+     */
+    public static void main(final String[] args)
     {
-        return "Bus street demonstration";
+        demo(true);
+    }
+
+    /**
+     * Start the demo.
+     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     */
+    public static void demo(final boolean exitOnClose)
+    {
+        try
+        {
+            OTSAnimator simulator = new OTSAnimator();
+            BusStreetModel busModel = new BusStreetModel(simulator);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), busModel);
+            OTSAnimationPanel animationPanel = new OTSAnimationPanel(busModel.getNetwork().getExtent(), new Dimension(800, 600),
+                    simulator, busModel, new DefaultSwitchableGTUColorer(), busModel.getNetwork());
+            BusStreetDemo app = new BusStreetDemo("Bus street demo", animationPanel, busModel);
+            app.setExitOnClose(exitOnClose);
+        }
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
      * The simulation model.
      */
-    class BusStreetModel extends AbstractOTSModel
+    static class BusStreetModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20161211L;
 
         /** The network. */
         private OTSNetwork network;
+
+        /**
+         * @param simulator the simulator for this model
+         */
+        BusStreetModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -228,34 +266,6 @@ public class BusStreetDemo extends AbstractOTSSwingApplication
     }
 
     /**
-     * Main program.
-     * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException should never happen
-     */
-    public static void main(final String[] args) throws SimRuntimeException
-    {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    BusStreetDemo animation = new BusStreetDemo();
-                    // 1 hour simulation run for testing
-                    animation.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(60.0, DurationUnit.MINUTE),
-                            new ArrayList<InputParameter<?, ?>>(), null, true);
-
-                }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        });
-    }
-
-    /**
      * <p>
      * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -266,7 +276,7 @@ public class BusStreetDemo extends AbstractOTSSwingApplication
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private class HeadwayGenerator implements Generator<Duration>
+    private static class HeadwayGenerator implements Generator<Duration>
     {
 
         /** Demand level. */
@@ -307,7 +317,7 @@ public class BusStreetDemo extends AbstractOTSSwingApplication
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    public class CharacteristicsGenerator implements LaneBasedGTUCharacteristicsGenerator
+    public static class CharacteristicsGenerator implements LaneBasedGTUCharacteristicsGenerator
     {
 
         /** Simulator. */
@@ -498,7 +508,7 @@ public class BusStreetDemo extends AbstractOTSSwingApplication
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private class LMRSFactoryCarBus implements LaneBasedTacticalPlannerFactory<LMRS>
+    private static class LMRSFactoryCarBus implements LaneBasedTacticalPlannerFactory<LMRS>
     {
 
         /** */
@@ -548,7 +558,7 @@ public class BusStreetDemo extends AbstractOTSSwingApplication
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private class ParameterFactoryCarBus implements ParameterFactory
+    private static class ParameterFactoryCarBus implements ParameterFactory
     {
 
         /** */

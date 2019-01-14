@@ -12,6 +12,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -45,7 +46,7 @@ public class DefaultCarAnimation extends Renderable2D<LaneBasedGTU>
     private static final long serialVersionUID = 20150000L;
 
     /** The GTUColorer that determines the fill color for the car. */
-    private GTUColorer gtuColorer;
+    private GTUColorer gtuColorer = new DefaultSwitchableGTUColorer();
 
     /** the Text object to destroy when the GTU animation is destroyed. */
     private Text text;
