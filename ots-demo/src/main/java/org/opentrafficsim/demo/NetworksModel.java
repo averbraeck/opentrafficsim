@@ -57,6 +57,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.route.RouteSupplier;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -135,8 +136,11 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     /** The random number generator used to decide what kind of GTU to generate. */
     private StreamInterface stream = new MersenneTwister(12345);
 
-    /** The route generator. */
-    private RouteGenerator routeGenerator;
+    /** The route generator for the main line. */
+    private RouteGenerator routeGeneratorMain;
+
+    /** The route generator for the onramp. */
+    private RouteGenerator routeGeneratorRamp;
 
     /** The speed limit. */
     private Speed speedLimit = new Speed(60, KM_PER_HOUR);
@@ -235,11 +239,21 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
             {
                 // provide a route -- at the merge point, the GTU can otherwise decide to "go back"
                 ArrayList<Node> mainRouteNodes = new ArrayList<>();
+                mainRouteNodes.add(from);
                 mainRouteNodes.add(firstVia);
                 mainRouteNodes.add(secondVia);
                 mainRouteNodes.add(end);
                 Route mainRoute = new Route("main", mainRouteNodes);
-                this.routeGenerator = new FixedRouteGenerator(mainRoute);
+                this.routeGeneratorMain = new FixedRouteGenerator(mainRoute);
+
+                ArrayList<Node> rampRouteNodes = new ArrayList<>();
+                rampRouteNodes.add(from2a);
+                rampRouteNodes.add(from2b);
+                rampRouteNodes.add(firstVia);
+                rampRouteNodes.add(secondVia);
+                rampRouteNodes.add(end);
+                Route rampRoute = new Route("ramp", rampRouteNodes);
+                this.routeGeneratorRamp = new FixedRouteGenerator(rampRoute);
             }
             else
             {
@@ -247,6 +261,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
                 List<FrequencyAndObject<Route>> routeProbabilities = new ArrayList<>();
 
                 ArrayList<Node> mainRouteNodes = new ArrayList<>();
+                mainRouteNodes.add(from);
                 mainRouteNodes.add(firstVia);
                 mainRouteNodes.add(secondVia);
                 mainRouteNodes.add(end);
@@ -254,6 +269,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
                 routeProbabilities.add(new FrequencyAndObject<>(lanesOnMain, mainRoute));
 
                 ArrayList<Node> sideRouteNodes = new ArrayList<>();
+                sideRouteNodes.add(from);
                 sideRouteNodes.add(firstVia);
                 sideRouteNodes.add(secondVia);
                 sideRouteNodes.add(end2a);
@@ -262,7 +278,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
                 routeProbabilities.add(new FrequencyAndObject<>(lanesOnBranch, sideRoute));
                 try
                 {
-                    this.routeGenerator = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
+                    this.routeGeneratorMain = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
                 }
                 catch (ProbabilityException exception)
                 {
@@ -439,7 +455,8 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
             {
                 return maximumSpeedDistribution.draw();
             }
-        }, strategicalPlannerFactory, this.routeGenerator);
+        }, strategicalPlannerFactory, lane.getParentLink().getStartNode().getId().equals("From") ? this.routeGeneratorMain
+                : this.routeGeneratorRamp);
 
     }
 
