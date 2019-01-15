@@ -76,6 +76,8 @@ public class SuperDemo extends JFrame
                 "Creating fundamental diagrams for a straight road.\n"));
         this.demos.add(new Demo("ShortMerge", ShortMerge.class, "Short merge on a highway, followed by a destination split,\n"
                 + "forcing cars to change lanes in a relative short distance."));
+        this.demos.add(new Demo("Networks", NetworksSwing.class,
+                "A number of different networks with merging and splitting,\n" + "forcing cars to change lanes and to merge."));
         this.demos.add(new Demo("CrossingTrafficLights", CrossingTrafficLightsSwing.class,
                 "Model of a crossing with traffic lights.\n"));
         this.demos.add(new Demo("TrafCODDemoSimple", TrafCODDemo.class,
