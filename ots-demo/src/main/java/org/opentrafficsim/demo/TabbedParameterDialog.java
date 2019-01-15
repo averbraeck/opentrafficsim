@@ -63,10 +63,12 @@ public class TabbedParameterDialog extends JDialog implements ActionListener
     private static final long serialVersionUID = 1L;
 
     /** The parameter map. */
-    private final InputParameterMap inputParameterMap;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected final InputParameterMap inputParameterMap;
 
     /** the fields with the parameters. */
-    private List<InputField> fields = new ArrayList<>();
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected List<InputField> fields = new ArrayList<>();
 
     /** indication that the user has indicated to stop, leading to a dispose of the parameter dialog. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -173,12 +175,13 @@ public class TabbedParameterDialog extends JDialog implements ActionListener
     }
 
     /**
-     * Add the right type of field for this parameter and do the housekeeping to retrieve the value.
+     * Add the right type of field for this parameter and do the housekeeping to retrieve the value. When overriding, do not
+     * forget to call super.addParameterField() for the options that should be handled in a standard way.
      * @param panel the panel in which to put the parameter
      * @param parameter the input parameter to display
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void addParameterField(final JPanel panel, final InputParameter<?, ?> parameter)
+    public void addParameterField(final JPanel panel, final InputParameter<?, ?> parameter)
     {
         if (parameter instanceof InputParameterDouble)
         {

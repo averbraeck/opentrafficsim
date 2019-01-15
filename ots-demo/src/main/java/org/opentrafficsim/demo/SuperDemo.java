@@ -24,6 +24,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
 
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo;
+import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 
 /**
@@ -72,8 +74,14 @@ public class SuperDemo extends JFrame
                 + "Users can specify the fraction of cars and trucks, as well as some driving parameters."));
         this.demos.add(new Demo("FundamentalDiagrams", FundamentalDiagrams.class,
                 "Creating fundamental diagrams for a straight road.\n"));
+        this.demos.add(new Demo("ShortMerge", ShortMerge.class, "Short merge on a highway, followed by a destination split,\n"
+                + "forcing cars to change lanes in a relative short distance."));
         this.demos.add(new Demo("CrossingTrafficLights", CrossingTrafficLightsSwing.class,
-                "Model of a a crossing with traffic lights.\n"));
+                "Model of a crossing with traffic lights.\n"));
+        this.demos.add(new Demo("TrafCODDemoSimple", TrafCODDemo.class,
+                "Model of a simple crossing with traffic lights.\n" + "using a TrafCOD controller"));
+        this.demos.add(new Demo("TrafCODDemoComplex", TrafCODDemo2.class,
+                "Model of a complex crossing with traffic lights.\n" + "using a TrafCOD controller"));
     }
 
     /**
