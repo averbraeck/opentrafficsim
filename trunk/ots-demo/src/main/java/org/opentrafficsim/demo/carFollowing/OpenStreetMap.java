@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.djunits.unit.UNITS;
@@ -83,11 +84,15 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
     /** Bounding rectangle of the loaded map. */
     Rectangle2D rectangle = null;
 
-    /** Construct the OpenStreetMap demo. */
-    public OpenStreetMap()
+    /** Construct the OpenStreetMap demo.
+     * @param model the model
+     * @param panel the Swing panel
+     */
+    public OpenStreetMap(final OTSModelInterface model, final JPanel panel)
     {
-        // The work is done in buildSimulator which, in turn, calls makeModel.
+        super(model, panel);
     }
+
 
     /**
      * @param args String[]; the command line arguments (not used)
@@ -101,6 +106,7 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
             {
                 try
                 {
+                    
                     OpenStreetMap osm = new OpenStreetMap();
                     List<InputParameter<?, ?>> localProperties = osm.getProperties();
                     try
@@ -137,8 +143,10 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
 
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * choose a file and construct the model. 
+     * @return 
+     */
     protected final OTSModelInterface makeModel()
     {
         JFrame frame = new JFrame();
@@ -226,7 +234,7 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
             exception.printStackTrace();
             return null;
         }
-        this.model = new OSMModel(getSi, this.osmNetwork, this.warningListener, this.progressListener,
+        this.model = new OSMModel(getSimulator(), this.osmNetwork, this.warningListener, this.progressListener,
                 converter);
         Iterator<Node> count = this.otsNetwork.getNodeMap().values().iterator();
         Rectangle2D area = null;
@@ -244,27 +252,6 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
         }
         this.rectangle = area;
         return this.model;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "Open Street Map Demonstration";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "Load an OpenStreetMap file and show it";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setTextAnimationTogglesStandard(this);
     }
 
     /** {@inheritDoc} */
@@ -310,15 +297,16 @@ class OSMModel extends AbstractOTSModel
     private final Convert converter;
 
     /**
-     * @param properties List&lt;InputParameter&lt;?&gt;&gt;; the properties (not used)
+     * @param simulator the simulator
      * @param osmNetwork OSMNetwork; the OSM network structure
      * @param wL WarningListener; the receiver of warning events
      * @param pL ProgressListener; the receiver of progress events
      * @param converter Convert; the output converter
      */
-    OSMModel(final List<InputParameter<?, ?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
+    OSMModel(final OTSSimulatorInterface simulator, final OSMNetwork osmNetwork, final WarningListener wL,
             final ProgressListener pL, final Convert converter)
     {
+        super(simulator);
         this.osmNetwork = osmNetwork;
         this.warningListener = wL;
         this.progressListener = pL;

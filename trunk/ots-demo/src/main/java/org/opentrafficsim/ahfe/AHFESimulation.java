@@ -58,7 +58,6 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  */
 public class AHFESimulation extends AbstractWrappableSimulation
 {
-
     /** Warm-up time. */
     static final Time WARMUP = Time.createSI(360);
 
@@ -538,28 +537,19 @@ public class AHFESimulation extends AbstractWrappableSimulation
         });
     }
 
-    /** The simulator. */
-    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "AFFE Simulation";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "Simulation for AHFE congress";
-    }
-
     /**
      * The AHFE simulation model.
      */
     class AHFEModel extends AbstractOTSModel
     {
+
+        /**
+         * @param simulator the simulator
+         */
+        AHFEModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
 
         /** */
         private static final long serialVersionUID = 20170228L;
@@ -567,11 +557,6 @@ public class AHFESimulation extends AbstractWrappableSimulation
         /** The network. */
         private OTSNetwork network;
 
-        /**
-         */
-        AHFEModel()
-        {
-        }
 
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
@@ -579,15 +564,13 @@ public class AHFESimulation extends AbstractWrappableSimulation
         public void constructModel()
                 throws SimRuntimeException
         {
-            AHFESimulation.this.simulator = this.simulator;
-
-            AHFESimulation.this.sampler = new RoadSampler((DEVSSimulatorInterface.TimeDoubleUnit) this.simulator);
+            AHFESimulation.this.sampler = new RoadSampler(this.simulator);
             AHFESimulation.this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
                 // InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml"); // Running from eclipse
                 URL stream = URLResource.getResource("./Network.xml"); // Running Jar
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) this.simulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
                 this.network = new OTSNetwork("AHFE");
                 nlp.build(stream, this.network, true);
 
@@ -604,7 +587,7 @@ public class AHFESimulation extends AbstractWrappableSimulation
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, null, (OTSSimulatorInterface) this.simulator, getReplication(),
+                AHFEUtil.createDemand(this.network, null, this.simulator, getReplication(),
                         getAnticipationStrategy(), getReactionTime(), getAnticipationTime(), getTruckFraction(), SIMEND,
                         getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(), getSpeedError(),
                         getAccelerationError());
@@ -641,14 +624,4 @@ public class AHFESimulation extends AbstractWrappableSimulation
         }
 
     }
-
-    /**
-     * Retrieve the simulator.
-     * @return SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulator.
-     */
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-    {
-        return this.simulator;
-    }
-
 }

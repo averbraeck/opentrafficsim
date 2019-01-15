@@ -690,7 +690,7 @@ public class XMLNetworks extends AbstractOTSSwingApplication implements UNITS
                 {
                     return new Duration(XMLNetworkModel.this.headwayGenerator.draw(), DurationUnit.SECOND);
                 }
-            }, XMLNetworks.this.getColorer(), templateDistribution, GeneratorPositions.create(initialPositions, this.stream),
+            }, templateDistribution, GeneratorPositions.create(initialPositions, this.stream),
                     this.network, this.simulator,
                     /*-
                     new LaneBasedGTUGenerator.RoomChecker()
