@@ -71,7 +71,6 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
     public OpenStreetMap(final OSMModel model, final OTSAnimationPanel panel) throws OTSDrawingException
     {
         super(model, panel);
-        this.model = model;
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
         AnimationToggles.setTextAnimationTogglesFull(panel);
     }
