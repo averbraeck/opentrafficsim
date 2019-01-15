@@ -1,34 +1,34 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.naming.NamingException;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.djunits.unit.UNITS;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.modelproperties.ProbabilityDistributionProperty;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.modelproperties.IDMPropertySet;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.factory.osm.OSMLink;
 import org.opentrafficsim.road.network.factory.osm.OSMNetwork;
 import org.opentrafficsim.road.network.factory.osm.OSMNode;
@@ -43,13 +43,9 @@ import org.opentrafficsim.road.network.factory.osm.output.Convert;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionList;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * <p>
@@ -66,88 +62,67 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
     /** */
     private static final long serialVersionUID = 1L;
 
-    /** The model. */
-    private OSMModel model;
-
-    /** The OSMNetwork. */
-    private OSMNetwork osmNetwork;
-
-    /** The OTS network. */
-    private OTSNetwork otsNetwork;
-
-    /** The ProgressListener. */
-    private ProgressListener progressListener;
-
-    /** The WarningListener. */
-    private WarningListener warningListener;
-
-    /** Bounding rectangle of the loaded map. */
-    Rectangle2D rectangle = null;
-
-    /** Construct the OpenStreetMap demo.
+    /**
+     * Construct the OpenStreetMap demo.
      * @param model the model
      * @param panel the Swing panel
+     * @throws OTSDrawingException on animation error
      */
-    public OpenStreetMap(final OTSModelInterface model, final JPanel panel)
+    public OpenStreetMap(final OSMModel model, final OTSAnimationPanel panel) throws OTSDrawingException
     {
         super(model, panel);
+        this.model = model;
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesFull(panel);
     }
 
-
     /**
+     * Main program.
      * @param args String[]; the command line arguments (not used)
      */
     public static void main(final String[] args)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    
-                    OpenStreetMap osm = new OpenStreetMap();
-                    List<InputParameter<?, ?>> localProperties = osm.getProperties();
-                    try
-                    {
-                        localProperties.add(new ProbabilityDistributionProperty("TrafficComposition", "Traffic composition",
-                                "<html>Mix of passenger cars and trucks</html>", new String[] { "passenger car", "truck" },
-                                new Double[] { 0.8, 0.2 }, false, 10));
-                    }
-                    catch (InputParameterException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                    localProperties.add(new InputParameterSelectionList("CarFollowingModel", "Car following model",
-                            "<html>The car following model determines "
-                                    + "the acceleration that a vehicle will make taking into account "
-                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                                    + "curvature of the road) capabilities of the vehicle and personality "
-                                    + "of the driver.</html>",
-                            new String[] { "IDM", "IDM+" }, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMCar", "Car",
-                            new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
-                            new Length(2.0, METER), new Duration(1.0, SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("IDMTruck", "Truck",
-                            new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
-                            new Length(2.0, METER), new Duration(1.0, SECOND), 3));
-                    osm.buildAnimator(Time.ZERO, Duration.ZERO, new Duration(3600.0, SECOND), localProperties, null, true);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        });
-
+        demo(true);
     }
 
     /**
-     * choose a file and construct the model. 
-     * @return 
+     * Start the demo.
+     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
      */
-    protected final OTSModelInterface makeModel()
+    public static void demo(final boolean exitOnClose)
+    {
+        try
+        {
+            String filepath = chooseFile();
+            if (filepath != null)
+            {
+                OTSAnimator simulator = new OTSAnimator();
+                final OSMModel osmModel = new OSMModel(simulator, filepath);
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), osmModel);
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(osmModel.getNetwork().getExtent(),
+                        new Dimension(800, 600), simulator, osmModel, new DefaultSwitchableGTUColorer(), osmModel.getNetwork());
+                OpenStreetMap app = new OpenStreetMap(osmModel, animationPanel);
+                app.setExitOnClose(exitOnClose);
+            }
+            else
+            {
+                if (exitOnClose)
+                {
+                    System.exit(0);
+                }
+            }
+        }
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * choose a file and construct the model.
+     * @return a model based on a given file
+     */
+    protected static final String chooseFile()
     {
         JFrame frame = new JFrame();
         FileDialog fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
@@ -173,8 +148,65 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
             System.out.println("You cancelled the choice");
             return null;
         }
-        Convert converter = new Convert();
-        System.out.println("Opening file " + filename);
+        return filepath;
+    }
+}
+
+/**
+ * <p>
+ * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * <p>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Feb 10, 2015 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author Moritz Bergmann
+ */
+class OSMModel extends AbstractOTSModel
+{
+    /** */
+    private static final long serialVersionUID = 20150227L;
+
+    /** Provided Network. */
+    private OSMNetwork osmNetwork;
+
+    /** Provided lanes. */
+    private List<Lane> lanes = new ArrayList<>();
+
+    /** The OTS network. */
+    private OTSNetwork otsNetwork = new OTSNetwork("network");
+
+    /** The ProgressListener. */
+    private ProgressListener progressListener;
+
+    /** The WarningListener. */
+    private WarningListener warningListener;
+
+    /** The coordinate converter. */
+    private Convert converter;
+
+    /** Bounding rectangle of the loaded map. */
+    private Rectangle2D rectangle = null;
+
+    /** the file path. */
+    private String filepath;
+
+    /**
+     * @param simulator the simulator
+     * @param filepath the path to the OSM file
+     */
+    OSMModel(final OTSSimulatorInterface simulator, final String filepath)
+    {
+        super(simulator);
+        this.filepath = filepath;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void constructModel() throws SimRuntimeException
+    {
+        this.converter = new Convert();
+        System.out.println("Opening file " + this.filepath);
         ArrayList<OSMTag> wantedTags = new ArrayList<>();
         wantedTags.add(new OSMTag("highway", "primary"));
         wantedTags.add(new OSMTag("highway", "secondary"));
@@ -202,10 +234,10 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
         ArrayList<String> ft = new ArrayList<>();
         try
         {
-            System.out.println(filepath);
+            System.out.println(this.filepath);
             this.progressListener = new ProgressListenerImpl();
             this.warningListener = new WarningListenerImpl();
-            ReadOSMFile osmf = new ReadOSMFile(filepath, wantedTags, ft, this.progressListener);
+            ReadOSMFile osmf = new ReadOSMFile(this.filepath, wantedTags, ft, this.progressListener);
             OSMNetwork net = osmf.getNetwork();
             // net.removeRedundancy(); // Defective; do not call removeRedundancy
             this.osmNetwork = net; // new OSMNetwork(net); // Why would you make a copy?
@@ -214,7 +246,7 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
             {
                 try
                 {
-                    converter.convertNode(this.otsNetwork, osmNode);
+                    this.converter.convertNode(this.otsNetwork, osmNode);
                 }
                 catch (NetworkException ne)
                 {
@@ -224,7 +256,7 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
             for (OSMLink osmLink : this.osmNetwork.getLinks())
             {
                 // TODO OTS-256
-                Link link = converter.convertLink(this.otsNetwork, osmLink, null);
+                Link link = this.converter.convertLink(this.otsNetwork, osmLink, null);
                 this.otsNetwork.addLink(link);
             }
             this.osmNetwork.makeLinks(this.warningListener, this.progressListener);
@@ -232,10 +264,9 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
         catch (URISyntaxException | IOException | NetworkException | OTSGeometryException exception)
         {
             exception.printStackTrace();
-            return null;
+            return;
         }
-        this.model = new OSMModel(getSimulator(), this.osmNetwork, this.warningListener, this.progressListener,
-                converter);
+
         Iterator<Node> count = this.otsNetwork.getNodeMap().values().iterator();
         Rectangle2D area = null;
         while (count.hasNext())
@@ -251,78 +282,13 @@ public class OpenStreetMap extends AbstractOTSSwingApplication implements UNITS
             }
         }
         this.rectangle = area;
-        return this.model;
-    }
 
-    /** {@inheritDoc} */
-    @Override
-    protected final java.awt.geom.Rectangle2D.Double makeAnimationRectangle()
-    {
-        return new Rectangle2D.Double(this.rectangle.getX(), this.rectangle.getY(), this.rectangle.getWidth(),
-                this.rectangle.getHeight());
-    }
-}
-
-/**
- * <p>
- * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version Feb 10, 2015 <br>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author Moritz Bergmann
- */
-class OSMModel extends AbstractOTSModel
-{
-    /** */
-    private static final long serialVersionUID = 20150227L;
-
-    /** The network. */
-    private OTSNetwork network = new OTSNetwork("network");
-
-    /** Provided Network. */
-    private OSMNetwork osmNetwork;
-
-    /** Provided lanes. */
-    private List<Lane> lanes = new ArrayList<>();
-
-    /** */
-    private ProgressListener progressListener;
-
-    /** */
-    private WarningListener warningListener;
-
-    /** The coordinate converter. */
-    private final Convert converter;
-
-    /**
-     * @param simulator the simulator
-     * @param osmNetwork OSMNetwork; the OSM network structure
-     * @param wL WarningListener; the receiver of warning events
-     * @param pL ProgressListener; the receiver of progress events
-     * @param converter Convert; the output converter
-     */
-    OSMModel(final OTSSimulatorInterface simulator, final OSMNetwork osmNetwork, final WarningListener wL,
-            final ProgressListener pL, final Convert converter)
-    {
-        super(simulator);
-        this.osmNetwork = osmNetwork;
-        this.warningListener = wL;
-        this.progressListener = pL;
-        this.converter = converter;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void constructModel() throws SimRuntimeException
-    {
-        OTSNetwork otsNetwork = new OTSNetwork(this.osmNetwork.getName());
+        this.otsNetwork = new OTSNetwork(this.osmNetwork.getName());
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
             try
             {
-                this.converter.convertNode(otsNetwork, osmNode);
+                this.converter.convertNode(this.otsNetwork, osmNode);
             }
             catch (Exception e)
             {
@@ -333,7 +299,7 @@ class OSMModel extends AbstractOTSModel
         {
             try
             {
-                this.converter.convertLink(otsNetwork, osmLink, this.simulator);
+                this.converter.convertLink(this.otsNetwork, osmLink, this.simulator);
             }
             catch (Exception e)
             {
@@ -350,8 +316,7 @@ class OSMModel extends AbstractOTSModel
         {
             try
             {
-                this.lanes.addAll(
-                        this.converter.makeLanes(otsNetwork, link, this.simulator, this.warningListener));
+                this.lanes.addAll(this.converter.makeLanes(this.otsNetwork, link, this.simulator, this.warningListener));
             }
             catch (Exception e)
             {
@@ -366,8 +331,8 @@ class OSMModel extends AbstractOTSModel
                 nextPercentage += 5.0D;
             }
         }
-        System.out.println("Number of Links: " + this.network.getLinkMap().size());
-        System.out.println("Number of Nodes: " + this.network.getNodeMap().size());
+        System.out.println("Number of Links: " + this.otsNetwork.getLinkMap().size());
+        System.out.println("Number of Nodes: " + this.otsNetwork.getNodeMap().size());
         System.out.println("Number of Lanes: " + this.lanes.size());
     }
 
@@ -375,6 +340,14 @@ class OSMModel extends AbstractOTSModel
     @Override
     public OTSNetwork getNetwork()
     {
-        return this.network;
+        return this.otsNetwork;
+    }
+
+    /**
+     * @return rectangle
+     */
+    public final Rectangle2D getRectangle()
+    {
+        return this.rectangle;
     }
 }
