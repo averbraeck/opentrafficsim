@@ -1,14 +1,10 @@
 package org.opentrafficsim.swing.script;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.naming.NamingException;
-import javax.swing.JPanel;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -20,24 +16,11 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.draw.network.LinkAnimation;
-import org.opentrafficsim.draw.network.NodeAnimation;
-import org.opentrafficsim.draw.road.LaneAnimation;
-import org.opentrafficsim.draw.road.ShoulderAnimation;
-import org.opentrafficsim.draw.road.StripeAnimation;
-import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.Shoulder;
-import org.opentrafficsim.road.network.lane.Stripe;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -79,6 +62,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /** GTU colorer. */
     private GTUColorer gtuColorer = new DefaultSwitchableGTUColorer();
+    
+    /** animation panel. */
+    protected OTSAnimationPanel animationPanel = null;
 
     /**
      * Constructor.
@@ -248,10 +234,11 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
                 this.simulator = new OTSAnimator();
                 final ScriptModel scriptModel = new ScriptModel(this.simulator);
                 this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
-                OTSAnimationPanel animationPanel =
+                this.animationPanel =
                         new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
                                 (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
-                ScriptAnimation app = new ScriptAnimation(scriptModel, animationPanel);
+                ScriptAnimation app = new ScriptAnimation(scriptModel, this.animationPanel);
+                addTabs(this.simulator, app);
                 app.setExitOnClose(true);
             }
             catch (Exception exception)
@@ -302,6 +289,16 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     {
         try
         {
+            DefaultAnimationFactory.animateNetwork(net, getSimulator());
+        }
+        catch (OTSDrawingException exception)
+        {
+            throw new RuntimeException("Exception while creating network animation.", exception);
+        }
+        
+        /*-
+        try
+        {
             for (Node node : net.getNodeMap().values())
             {
                 new NodeAnimation(node, AbstractSimulationScript.this.simulator);
@@ -346,6 +343,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         {
             throw new RuntimeException("Exception while creating network animation.", exception);
         }
+        */
     }
 
     /**
@@ -435,9 +433,10 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
          * @param model the model
          * @param panel the panel for the Swing application
          */
-        public ScriptAnimation(final OTSModelInterface model, final JPanel panel)
+        public ScriptAnimation(final OTSModelInterface model, final OTSAnimationPanel panel)
         {
             super(model, panel);
+            AnimationToggles.setTextAnimationTogglesStandard(panel);
         }
     }
 
