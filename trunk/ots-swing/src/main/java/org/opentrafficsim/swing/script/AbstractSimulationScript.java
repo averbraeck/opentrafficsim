@@ -1,8 +1,8 @@
 package org.opentrafficsim.swing.script;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,39 +16,33 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.ShoulderAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
-import org.opentrafficsim.road.gtu.generator.GTUGenerator;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
-import org.opentrafficsim.swing.script.AbstractSimulationScript.ScriptAnimation;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.outputstatistics.OutputStatistic;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -69,10 +63,10 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public abstract class AbstractSimulationScript implements EventListenerInterface
 {
     /** Name. */
-    private final String name;
+    final String name;
 
     /** Description. */
-    private final String description;
+    final String description;
 
     /** The simulator. */
     OTSSimulatorInterface simulator;
@@ -146,7 +140,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @param propertyName String; property name
      * @return double; value of property
      */
-    public final boolean getInputParameterBoolean(final String propertyName)
+    public final boolean getBooleanProperty(final String propertyName)
     {
         return Boolean.parseBoolean(getProperty(propertyName));
     }
@@ -156,7 +150,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @param propertyName String; property name
      * @return int; value of property
      */
-    public final int getInputParameterInteger(final String propertyName)
+    public final int getIntegerProperty(final String propertyName)
     {
         return Integer.parseInt(getProperty(propertyName));
     }
@@ -217,21 +211,22 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         Time startTime = getTimeProperty("startTime");
         Duration warmupTime = getDurationProperty("warmupTime");
         Duration simulationTime = getDurationProperty("simulationTime");
-        if (getInputParameterBoolean("autorun"))
+        if (getBooleanProperty("autorun"))
         {
-
-            ScriptSimulation scriptSimulation = this.new ScriptSimulation();
             try
             {
-                DEVSSimulatorInterface.TimeDoubleUnit sim = scriptSimulation.buildSimulator(startTime, warmupTime,
-                        simulationTime, new ArrayList<InputParameter<?, ?>>());
-                sim.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
+                this.simulator = new OTSSimulator();
+                final ScriptModel scriptModel = new ScriptModel(this.simulator);
+                @SuppressWarnings("unused")
+                ScriptSimulation scriptSimulation = new ScriptSimulation();
+                this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
+                this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
                 double tReport = 60.0;
-                Time t = sim.getSimulatorTime();
+                Time t = this.simulator.getSimulatorTime();
                 while (t.si < simulationTime.si)
                 {
-                    sim.step();
-                    t = sim.getSimulatorTime();
+                    this.simulator.step();
+                    t = this.simulator.getSimulatorTime();
                     if (t.si >= tReport)
                     {
                         System.out.println("Simulation time is " + t);
@@ -248,10 +243,21 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
         else
         {
-            Try.execute(
-                    () -> new ScriptAnimation().buildAnimator(startTime, warmupTime, simulationTime,
-                            new ArrayList<InputParameter<?, ?>>(), null, true),
-                    RuntimeException.class, "Exception from properties.");
+            try
+            {
+                this.simulator = new OTSAnimator();
+                final ScriptModel scriptModel = new ScriptModel(this.simulator);
+                this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
+                OTSAnimationPanel animationPanel =
+                        new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
+                                (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
+                ScriptAnimation app = new ScriptAnimation(scriptModel, animationPanel);
+                app.setExitOnClose(true);
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
+            }
         }
     }
 
@@ -487,7 +493,6 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
         @Override
         public OTSSimulatorInterface getSimulator()
         {
@@ -520,14 +525,14 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         @Override
         public String getShortName()
         {
-            return null;
+            return AbstractSimulationScript.this.name;
         }
 
         /** {@inheritDoc} */
         @Override
         public String getDescription()
         {
-            return null;
+            return AbstractSimulationScript.this.description;
         }
     }
 
