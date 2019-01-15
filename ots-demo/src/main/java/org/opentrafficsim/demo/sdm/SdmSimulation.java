@@ -20,7 +20,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vfloat.scalar.FloatDuration;
-import org.jgrapht.GraphPath;
 import org.opentrafficsim.base.compressedfiles.CompressionType;
 import org.opentrafficsim.base.compressedfiles.Writer;
 import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
@@ -37,6 +36,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.perception.HistoryManagerDEVS;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotSpeed;
+import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -92,7 +92,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class SdmSimulation extends AbstractSimulationScript
 {
-
     /** Network. */
     private OTSNetwork network;
 
@@ -214,7 +213,7 @@ public class SdmSimulation extends AbstractSimulationScript
         odMatrix.putDemandVector(nodeA, nodeF, truCategory, freq(new double[] { f1 * 1500.0, f1 * 1500.0, f1 * 3400.0, 0.0 }));
         odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] { f2 * 1500.0, f2 * 1500.0, f2 * 3400.0, 0.0 }));
         odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] { f1 * 1500.0, f1 * 1500.0, f1 * 3400.0, 0.0 }));
-        ODOptions odOptions = new ODOptions().set(ODOptions.GTU_COLORER, getGtuColorer()).set(ODOptions.ANIMATION, true)
+        ODOptions odOptions = new ODOptions().set(ODOptions.ANIMATION, true)
                 .set(ODOptions.NO_LC_DIST, Length.createSI(200))
                 .set(ODOptions.GTU_TYPE, new DefaultGTUCharacteristicsGeneratorOD(
                         new SdmStrategicalPlannerFactory(sim.getReplication().getStream("generation"))));
@@ -283,6 +282,7 @@ public class SdmSimulation extends AbstractSimulationScript
                     .getContentPane(), 0, 1);
             charts.setCell(new ContourPlotSpeed("Right road, right lane", sim, new ContourDataSource<>(this.sampler, path4))
                     .getContentPane(), 1, 1);
+            this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "statistics ", charts);
             animation.addTab(animation.getTabCount(), "contour plots", charts);
         }
         catch (NetworkException exception)

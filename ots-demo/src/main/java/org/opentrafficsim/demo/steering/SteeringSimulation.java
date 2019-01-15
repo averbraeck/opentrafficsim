@@ -28,7 +28,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.units.distributions.ContinuousDistMass;
-import org.opentrafficsim.road.animation.AbstractSimulationScript;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
@@ -60,6 +59,7 @@ import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.sensor.Detector;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
+import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;

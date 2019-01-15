@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
@@ -541,23 +542,6 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
         });
     }
 
-    /** The simulator. */
-    private SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simulator;
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "AFFE Simulation";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "Simulation for AHFE congress";
-    }
-
     /** {@inheritDoc} */
     @Override
     protected final Double makeAnimationRectangle()
@@ -570,27 +554,31 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
      */
     class AHFEModel extends AbstractOTSModel
     {
-
         /** */
         private static final long serialVersionUID = 20170228L;
 
         /** The network. */
         private OTSNetwork network;
 
+        /**
+         * @param simulator the simulator
+         */
+        AHFEModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
+
         /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel()
-                throws SimRuntimeException
+        public void constructModel() throws SimRuntimeException
         {
-            AHFEAnimation.this.simulator = this.simulator;
-
-            AHFEAnimation.this.sampler = new RoadSampler((DEVSSimulatorInterface.TimeDoubleUnit) this.simulator);
+            AHFEAnimation.this.sampler = new RoadSampler(this.simulator);
             AHFEAnimation.this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser((OTSSimulatorInterface) this.simulator);
+                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
                 this.network = new OTSNetwork("AHFE");
                 nlp.build(stream, this.network, true);
 
@@ -607,7 +595,7 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, AHFEAnimation.this.getColorer(), (OTSSimulatorInterface) this.simulator,
+                AHFEUtil.createDemand(this.network, new DefaultSwitchableGTUColorer(), this.simulator,
                         getReplication(), getAnticipationStrategy(), getReactionTime(), getAnticipationTime(),
                         getTruckFraction(), SIMEND, getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(),
                         getSpeedError(), getAccelerationError());
@@ -643,15 +631,6 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
             return this.network;
         }
 
-    }
-
-    /**
-     * Retrieve the simulator.
-     * @return SimulatorInterface&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulator.
-     */
-    public final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-    {
-        return this.simulator;
     }
 
 }

@@ -48,7 +48,6 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
@@ -587,7 +586,7 @@ public class StrategiesDemo extends AbstractSimulationScript
             Length prevPos = prevLane.getLength().plus(pos.plus(gtu.getRear().getDx()));
             initialPositions.add(new DirectedLanePosition(prevLane, prevPos, GTUDirectionality.DIR_PLUS));
         }
-        gtu.init(strategicalPlanner, initialPositions, initialSpeed, DefaultCarAnimation.class, getGtuColorer());
+        gtu.init(strategicalPlanner, initialPositions, initialSpeed);
 
         Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGTU.LANE_CHANGE_EVENT),
                 "Exception while adding lane change listener");

@@ -3,6 +3,7 @@ package org.opentrafficsim.demo.carFollowing;
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
 
+import java.awt.Dimension;
 import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
+import javax.naming.NamingException;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
@@ -28,6 +31,7 @@ import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
@@ -35,8 +39,7 @@ import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -53,6 +56,8 @@ import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.gtu.colorer.LmrsSwitchableColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
@@ -92,11 +97,9 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -114,6 +117,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class ShortMerge extends AbstractOTSSwingApplication
 {
+    /** */
+    private static final long serialVersionUID = 20170407L;
 
     /** Network. */
     static final String NETWORK = "shortWeave";
@@ -142,87 +147,52 @@ public class ShortMerge extends AbstractOTSSwingApplication
     /** Simulation time. */
     public static final Time SIMTIME = Time.createSI(3600);
 
-    /** */
-    private static final long serialVersionUID = 20170407L;
-
-    /** Colorer. */
-    private GTUColorer colorer = new LmrsSwitchableColorer();
-
-    /** The simulator. */
-    private OTSSimulatorInterface simulator;
-
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "ShortMerge";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "Short merge to test lane change models.";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected final void addAnimationToggles()
-    {
-        AnimationToggles.setIconAnimationTogglesFull(this);
-        toggleAnimationClass(OTSLink.class);
-        toggleAnimationClass(OTSNode.class);
-        showAnimationClass(SpeedSign.class);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public GTUColorer getColorer()
-    {
-        return this.colorer;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected OTSModelInterface makeModel() throws OTSSimulationException
-    {
-        return new ShortMergeModel();
-    }
-
     /**
-     * @return simulator.
+     * Create a ShortMerge Swing application.
+     * @param title the title of the Frame
+     * @param panel the tabbed panel to display
+     * @param model the model
+     * @throws OTSDrawingException on animation error
      */
-    public final OTSSimulatorInterface getSimulator()
+    public ShortMerge(final String title, final OTSAnimationPanel panel, final ShortMergeModel model) throws OTSDrawingException
     {
-        return this.simulator;
+        super(model, panel);
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesFull(panel);
+        panel.getAnimationPanel().toggleClass(OTSLink.class);
+        panel.getAnimationPanel().toggleClass(OTSNode.class);
+        panel.getAnimationPanel().showClass(SpeedSign.class);
     }
 
     /**
-     * @param simulator OTSSimulatorInterface; set simulator.
-     */
-    public final void setSimulator(final OTSSimulatorInterface simulator)
-    {
-        this.simulator = simulator;
-    }
-
-    /**
-     * Main method.
-     * @param args String[]; args for main program
+     * Main program.
+     * @param args String[]; the command line arguments (not used)
      */
     public static void main(final String[] args)
     {
+        demo(true);
+    }
 
-        ShortMerge shortMerge = new ShortMerge();
+    /**
+     * Start the demo.
+     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     */
+    public static void demo(final boolean exitOnClose)
+    {
         try
         {
-            shortMerge.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si),
-                    new ArrayList<InputParameter<?, ?>>(), null, true);
+            OTSAnimator simulator = new OTSAnimator();
+            final ShortMergeModel otsModel = new ShortMergeModel(simulator);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+            OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
+                    simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
+            ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
+            app.setExitOnClose(exitOnClose);
         }
-        catch (Exception exception)
+        catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
         {
             exception.printStackTrace();
         }
-
     }
 
     /**
@@ -236,8 +206,21 @@ public class ShortMerge extends AbstractOTSSwingApplication
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    class ShortMergeModel extends AbstractOTSModel
+    static class ShortMergeModel extends AbstractOTSModel
     {
+        /** */
+        private static final long serialVersionUID = 20170407L;
+
+        /** The network. */
+        private OTSNetwork network;
+
+        /**
+         * @param simulator the simulator
+         */
+        ShortMergeModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
 
         /**
          * @param network OTSNetwork; set network.
@@ -247,19 +230,10 @@ public class ShortMerge extends AbstractOTSSwingApplication
             this.network = network;
         }
 
-        /** */
-        private static final long serialVersionUID = 20170407L;
-
-        /** The network. */
-        private OTSNetwork network;
-
         /** {@inheritDoc} */
         @Override
-        public void constructModel()
-                throws SimRuntimeException
+        public void constructModel() throws SimRuntimeException
         {
-            ShortMerge.this.setSimulator(this.simulator);
-
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/lmrs/" + NETWORK + ".xml");
@@ -364,10 +338,10 @@ public class ShortMerge extends AbstractOTSSwingApplication
             bcFactory.addParameter(truck, LmrsParameters.SOCIO, new DistNormal(stream, 0.5, 0.1));
             bcFactory.addParameter(Tailgating.RHO, Tailgating.RHO.getDefaultValue());
 
-            Generator<Duration> headwaysA1 = new HeadwayGenerator(MAIN_DEMAND);
-            Generator<Duration> headwaysA2 = new HeadwayGenerator(MAIN_DEMAND);
-            Generator<Duration> headwaysA3 = new HeadwayGenerator(MAIN_DEMAND);
-            Generator<Duration> headwaysF = new HeadwayGenerator(RAMP_DEMAND);
+            Generator<Duration> headwaysA1 = new HeadwayGenerator(getSimulator(), MAIN_DEMAND);
+            Generator<Duration> headwaysA2 = new HeadwayGenerator(getSimulator(), MAIN_DEMAND);
+            Generator<Duration> headwaysA3 = new HeadwayGenerator(getSimulator(), MAIN_DEMAND);
+            Generator<Duration> headwaysF = new HeadwayGenerator(getSimulator(), RAMP_DEMAND);
 
             // speed generators
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar =
@@ -406,26 +380,26 @@ public class ShortMerge extends AbstractOTSSwingApplication
             gtuType3rdLaneA.add(new FrequencyAndObject<>(1.0 - 3 * TRUCK_FRACTION, carA));
             gtuType3rdLaneA.add(new FrequencyAndObject<>(3 * TRUCK_FRACTION, truckA));
 
-            GTUColorer color = ShortMerge.this.getColorer();
-            makeGenerator(getLane(linkA, "FORWARD1"), speedA, "gen1", idGenerator, gtuTypeAllCarA, headwaysA1, color,
+            GTUColorer colorer = new LmrsSwitchableColorer();
+            makeGenerator(getLane(linkA, "FORWARD1"), speedA, "gen1", idGenerator, gtuTypeAllCarA, headwaysA1, colorer,
                     roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             if (NETWORK.equals("shortWeave"))
             {
-                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuTypeAllCarA, headwaysA2, color,
+                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuTypeAllCarA, headwaysA2, colorer,
                         roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
-                makeGenerator(getLane(linkA, "FORWARD3"), speedA, "gen3", idGenerator, gtuType3rdLaneA, headwaysA3, color,
+                makeGenerator(getLane(linkA, "FORWARD3"), speedA, "gen3", idGenerator, gtuType3rdLaneA, headwaysA3, colorer,
                         roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             }
             else
             {
-                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuType2ndLaneA, headwaysA2, color,
+                makeGenerator(getLane(linkA, "FORWARD2"), speedA, "gen2", idGenerator, gtuType2ndLaneA, headwaysA2, colorer,
                         roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
             }
-            makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, color, roomChecker,
-                    bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
+            makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, colorer,
+                    roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
 
             new SpeedSign("sign1", getLane(linkA, "FORWARD1"), LongitudinalDirectionality.DIR_PLUS, Length.createSI(10),
-                    (SimulatorInterface.TimeDoubleUnit) this.getSimulator(), new Speed(130.0, SpeedUnit.KM_PER_HOUR));
+                    this.getSimulator(), new Speed(130.0, SpeedUnit.KM_PER_HOUR));
 
         }
 
@@ -472,8 +446,8 @@ public class ShortMerge extends AbstractOTSSwingApplication
             LaneBasedTemplateGTUTypeDistribution characteristicsGenerator =
                     new LaneBasedTemplateGTUTypeDistribution(distribution);
             new LaneBasedGTUGenerator(id, headwayGenerator, characteristicsGenerator,
-                    GeneratorPositions.create(initialLongitudinalPositions, stream), this.network,
-                    ShortMerge.this.getSimulator(), roomChecker, idGenerator);
+                    GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, getSimulator(), roomChecker,
+                    idGenerator);
         }
 
     }
@@ -489,17 +463,21 @@ public class ShortMerge extends AbstractOTSSwingApplication
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    private class HeadwayGenerator implements Generator<Duration>
+    private static class HeadwayGenerator implements Generator<Duration>
     {
+        /** the simulator. */
+        private final OTSSimulatorInterface simulator;
 
         /** Demand level. */
         private final Frequency demand;
 
         /**
+         * @param simulator the simulator
          * @param demand Frequency; demand
          */
-        HeadwayGenerator(final Frequency demand)
+        HeadwayGenerator(final OTSSimulatorInterface simulator, final Frequency demand)
         {
+            this.simulator = simulator;
             this.demand = demand;
         }
 
@@ -508,8 +486,7 @@ public class ShortMerge extends AbstractOTSSwingApplication
         public Duration draw() throws ProbabilityException, ParameterException
         {
             return new Duration(
-                    -Math.log(ShortMerge.this.getSimulator().getReplication().getStream("headwayGeneration").nextDouble())
-                            / this.demand.si,
+                    -Math.log(this.simulator.getReplication().getStream("headwayGeneration").nextDouble()) / this.demand.si,
                     DurationUnit.SI);
         }
 

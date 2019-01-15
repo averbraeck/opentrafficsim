@@ -71,6 +71,7 @@ import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
+import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
@@ -555,17 +556,23 @@ public class LmrsStrategies implements EventListenerInterface
      */
     class LmrsStrategiesModel extends AbstractOTSModel
     {
+        /**
+         * @param simulator the simulator
+         */
+        LmrsStrategiesModel(final OTSSimulatorInterface simulator)
+        {
+            super(simulator);
+        }
 
         /** */
         private static final long serialVersionUID = 20180303L;
 
         /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
         @Override
-        public void constructModel(final SimulatorInterface<Time, Duration, SimTimeDoubleUnit> simul) throws SimRuntimeException
+        @SuppressWarnings({"synthetic-access", "checkstyle:methodlength"})
+        public void constructModel() 
         {
-            OTSSimulatorInterface sim = (OTSSimulatorInterface) simul;
-            LmrsStrategies.this.simulator = sim;
+            LmrsStrategies.this.simulator = getSimulator();
             OTSNetwork net = new OTSNetwork("LMRS strategies");
             try
             {
@@ -581,7 +588,7 @@ public class LmrsStrategies implements EventListenerInterface
             Map<String, StreamInterface> streams = new HashMap<>();
             StreamInterface stream = new MersenneTwister(LmrsStrategies.this.seed);
             streams.put("generation", stream);
-            sim.getReplication().setStreams(streams);
+            getSimulator().getReplication().setStreams(streams);
 
             // Vehicle-driver classes
             // characteristics generator using the input available in this context
@@ -734,9 +741,9 @@ public class LmrsStrategies implements EventListenerInterface
                 OTSNode nodeB = new OTSNode(net, "B", pointB);
                 OTSNode nodeC = new OTSNode(net, "C", pointC);
                 CrossSectionLink linkAB = new CrossSectionLink(net, "AB", nodeA, nodeB, LinkType.FREEWAY,
-                        new OTSLine3D(pointA, pointB), sim, LaneKeepingPolicy.KEEP_RIGHT);
+                        new OTSLine3D(pointA, pointB), getSimulator(), LaneKeepingPolicy.KEEP_RIGHT);
                 CrossSectionLink linkBC = new CrossSectionLink(net, "BC", nodeB, nodeC, LinkType.FREEWAY,
-                        new OTSLine3D(pointB, pointC), sim, LaneKeepingPolicy.KEEP_RIGHT);
+                        new OTSLine3D(pointB, pointC), getSimulator(), LaneKeepingPolicy.KEEP_RIGHT);
                 Lane laneAB1 = new Lane(linkAB, "laneAB1", Length.createSI(0.0), Length.createSI(3.5), LaneType.HIGHWAY,
                         new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Lane laneAB2 = new Lane(linkAB, "laneAB2", Length.createSI(3.5), Length.createSI(3.5), LaneType.HIGHWAY,
@@ -762,26 +769,26 @@ public class LmrsStrategies implements EventListenerInterface
                         gtuTypes, Permeable.BOTH);
                 Stripe stripeBC3 = new Stripe(linkBC, Length.createSI(5.25), Length.createSI(5.25), Length.createSI(0.2),
                         gtuTypes, Permeable.BOTH);
-                new NodeAnimation(nodeA, sim);
-                new NodeAnimation(nodeB, sim);
-                new NodeAnimation(nodeC, sim);
-                new LinkAnimation(linkAB, sim, 0.5f);
-                new LinkAnimation(linkBC, sim, 0.5f);
-                new LaneAnimation(laneAB1, sim, Color.GRAY.brighter(), false);
-                new LaneAnimation(laneAB2, sim, Color.GRAY.brighter(), false);
-                new LaneAnimation(laneAB3, sim, Color.GRAY.brighter(), false);
-                new LaneAnimation(laneBC1, sim, Color.GRAY.brighter(), false);
-                new LaneAnimation(laneBC2, sim, Color.GRAY.brighter(), false);
-                new StripeAnimation(stripeAB1, sim, TYPE.SOLID);
-                new StripeAnimation(stripeAB2, sim, TYPE.DASHED);
-                new StripeAnimation(stripeAB3, sim, TYPE.DASHED);
-                new StripeAnimation(stripeAB4, sim, TYPE.SOLID);
-                new StripeAnimation(stripeBC1, sim, TYPE.SOLID);
-                new StripeAnimation(stripeBC2, sim, TYPE.DASHED);
-                new StripeAnimation(stripeBC3, sim, TYPE.SOLID);
+                new NodeAnimation(nodeA, getSimulator());
+                new NodeAnimation(nodeB, getSimulator());
+                new NodeAnimation(nodeC, getSimulator());
+                new LinkAnimation(linkAB, getSimulator(), 0.5f);
+                new LinkAnimation(linkBC, getSimulator(), 0.5f);
+                new LaneAnimation(laneAB1, getSimulator(), Color.GRAY.brighter(), false);
+                new LaneAnimation(laneAB2, getSimulator(), Color.GRAY.brighter(), false);
+                new LaneAnimation(laneAB3, getSimulator(), Color.GRAY.brighter(), false);
+                new LaneAnimation(laneBC1, getSimulator(), Color.GRAY.brighter(), false);
+                new LaneAnimation(laneBC2, getSimulator(), Color.GRAY.brighter(), false);
+                new StripeAnimation(stripeAB1, getSimulator(), TYPE.SOLID);
+                new StripeAnimation(stripeAB2, getSimulator(), TYPE.DASHED);
+                new StripeAnimation(stripeAB3, getSimulator(), TYPE.DASHED);
+                new StripeAnimation(stripeAB4, getSimulator(), TYPE.SOLID);
+                new StripeAnimation(stripeBC1, getSimulator(), TYPE.SOLID);
+                new StripeAnimation(stripeBC2, getSimulator(), TYPE.DASHED);
+                new StripeAnimation(stripeBC3, getSimulator(), TYPE.SOLID);
                 // sensors
-                new SinkSensor(laneBC1, laneBC1.getLength().minus(Length.createSI(100.0)), sim);
-                new SinkSensor(laneBC2, laneBC2.getLength().minus(Length.createSI(100.0)), sim);
+                new SinkSensor(laneBC1, laneBC1.getLength().minus(Length.createSI(100.0)), getSimulator());
+                new SinkSensor(laneBC2, laneBC2.getLength().minus(Length.createSI(100.0)), getSimulator());
 
                 // detectors
                 Lane[][] grid = new Lane[][] { new Lane[] { laneAB3 }, new Lane[] { laneAB2, laneBC2 },
@@ -832,14 +839,14 @@ public class LmrsStrategies implements EventListenerInterface
                 LaneBiases biases = new LaneBiases().addBias(GTUType.VEHICLE, LaneBias.bySpeed(140, 100)).addBias(GTUType.TRUCK,
                         LaneBias.TRUCK_RIGHT);
                 ODOptions odOptions =
-                        new ODOptions().set(ODOptions.GTU_COLORER, LmrsStrategies.this.colorer).set(ODOptions.MARKOV, markov)
+                        new ODOptions().set(ODOptions.MARKOV, markov)
                                 .set(ODOptions.LANE_BIAS, biases).set(ODOptions.NO_LC_DIST, Length.createSI(100.0))
                                 .set(ODOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator(stream))
                                 .set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
-                Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(net, od, sim, odOptions);
+                Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(net, od, getSimulator(), odOptions);
                 for (String str : generatedObjects.keySet())
                 {
-                    new GTUGeneratorAnimation(generatedObjects.get(str).getGenerator(), sim);
+                    new GTUGeneratorAnimation(generatedObjects.get(str).getGenerator(), getSimulator());
                 }
 
                 // Sampler
@@ -908,7 +915,7 @@ public class LmrsStrategies implements EventListenerInterface
                 }
             }
             catch (NetworkException | OTSGeometryException | NamingException | ValueException | ParameterException
-                    | RemoteException exception)
+                    | RemoteException | SimRuntimeException exception)
             {
                 exception.printStackTrace();
             }
@@ -924,14 +931,6 @@ public class LmrsStrategies implements EventListenerInterface
             LmrsStrategies.this.sampler.registerSpaceTimeRegion(
                     new SpaceTimeRegion(new KpiLaneDirection(new LaneData(lane), KpiGtuDirectionality.DIR_PLUS), Length.ZERO,
                             lane.getLength(), Time.createSI(300), SIMTIME));
-        }
-
-        /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public SimulatorInterface<Time, Duration, SimTimeDoubleUnit> getSimulator()
-        {
-            return LmrsStrategies.this.simulator;
         }
 
         /** {@inheritDoc} */
