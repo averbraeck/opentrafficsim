@@ -213,8 +213,7 @@ public class SdmSimulation extends AbstractSimulationScript
         odMatrix.putDemandVector(nodeA, nodeF, truCategory, freq(new double[] { f1 * 1500.0, f1 * 1500.0, f1 * 3400.0, 0.0 }));
         odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] { f2 * 1500.0, f2 * 1500.0, f2 * 3400.0, 0.0 }));
         odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] { f1 * 1500.0, f1 * 1500.0, f1 * 3400.0, 0.0 }));
-        ODOptions odOptions = new ODOptions().set(ODOptions.ANIMATION, true)
-                .set(ODOptions.NO_LC_DIST, Length.createSI(200))
+        ODOptions odOptions = new ODOptions().set(ODOptions.ANIMATION, true).set(ODOptions.NO_LC_DIST, Length.createSI(200))
                 .set(ODOptions.GTU_TYPE, new DefaultGTUCharacteristicsGeneratorOD(
                         new SdmStrategicalPlannerFactory(sim.getReplication().getStream("generation"))));
         ODApplier.applyOD(this.network, odMatrix, sim, odOptions);
@@ -229,10 +228,10 @@ public class SdmSimulation extends AbstractSimulationScript
             DefaultDistraction dist = DefaultDistraction.values()[Integer.parseInt(distraction) - 1];
             distFactory.addDistraction(dist, getTaskSupplier(dist, sim.getReplication().getStream("default")));
         }
-        new StochasticDistractionModel(getInputParameterBoolean("allowMultiTasking"), distFactory.build(), sim, this.network);
+        new StochasticDistractionModel(getBooleanProperty("allowMultiTasking"), distFactory.build(), sim, this.network);
 
         // sampler
-        if (getInputParameterBoolean("output"))
+        if (getBooleanProperty("output"))
         {
             this.sampler = new RoadSampler(sim);
             Time start = new Time(0.05, TimeUnit.BASE_HOUR);
@@ -255,7 +254,7 @@ public class SdmSimulation extends AbstractSimulationScript
     @Override
     protected void addTabs(final OTSSimulatorInterface sim, final AbstractOTSSwingApplication animation)
     {
-        if (!getInputParameterBoolean("output") || !getInputParameterBoolean("plots"))
+        if (!getBooleanProperty("output") || !getBooleanProperty("plots"))
         {
             return;
         }
@@ -282,8 +281,8 @@ public class SdmSimulation extends AbstractSimulationScript
                     .getContentPane(), 0, 1);
             charts.setCell(new ContourPlotSpeed("Right road, right lane", sim, new ContourDataSource<>(this.sampler, path4))
                     .getContentPane(), 1, 1);
-            this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "statistics ", charts);
-            animation.addTab(animation.getTabCount(), "contour plots", charts);
+            this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "statistics ",
+                    charts);
         }
         catch (NetworkException exception)
         {
@@ -347,7 +346,7 @@ public class SdmSimulation extends AbstractSimulationScript
     @Override
     protected void onSimulationEnd()
     {
-        if (getInputParameterBoolean("output"))
+        if (getBooleanProperty("output"))
         {
             Length detectorPosition = Length.createSI(100.0);
             double tts = 0.0;

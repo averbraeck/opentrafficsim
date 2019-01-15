@@ -91,6 +91,15 @@ public class SteeringSimulation extends AbstractSimulationScript
     }
 
     /**
+     * Start a simulation.
+     * @param args String...; command line arguments
+     */
+    public static void main(final String... args)
+    {
+        new SteeringSimulation(args).start();
+    }
+
+    /**
      * @param properties properties
      */
     protected SteeringSimulation(final String[] properties)
