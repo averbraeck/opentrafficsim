@@ -1,4 +1,4 @@
-package org.opentrafficsim.demo.carFollowing;
+package org.opentrafficsim.demo;
 
 import static org.opentrafficsim.core.gtu.GTUType.CAR;
 import static org.opentrafficsim.core.gtu.GTUType.TRUCK;
