@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.naming.NamingException;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -40,6 +42,8 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionMap;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.AbstractInputField;
+import nl.tudelft.simulation.dsol.swing.gui.inputparameters.InputField;
+import nl.tudelft.simulation.dsol.swing.gui.inputparameters.InputFieldSelectionMap;
 
 /**
  * Simplest contour plots demonstration.
@@ -182,6 +186,33 @@ public class NetworksSwing extends AbstractOTSSwingApplication implements UNITS
             else
             {
                 super.addParameterField(panel, parameter);
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void actionPerformed(final ActionEvent e)
+        {
+            boolean ok = true;
+            try
+            {
+                for (InputField field : this.fields)
+                {
+                    if (field instanceof InputFieldSelectionMapRadio<?, ?>)
+                    {
+                        InputFieldSelectionMapRadio<?, ?> f = (InputFieldSelectionMapRadio<?, ?>) field;
+                        f.getParameter().setObjectValue(f.getValue());
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                JOptionPane.showMessageDialog(null, exception.getMessage(), "Data Entry Error", JOptionPane.ERROR_MESSAGE);
+                ok = false;
+            }
+            if (ok)
+            {
+                super.actionPerformed(e);
             }
         }
 
