@@ -43,7 +43,6 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionM
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.AbstractInputField;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.InputField;
-import nl.tudelft.simulation.dsol.swing.gui.inputparameters.InputFieldSelectionMap;
 
 /**
  * Simplest contour plots demonstration.
