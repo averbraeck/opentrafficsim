@@ -35,6 +35,8 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -57,7 +59,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.RouteSupplier;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -117,12 +118,6 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
 
     /** Strategical planner generator for trucks. */
     private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerGeneratorTrucks = null;
-
-    /** Car parameters. */
-    private Parameters parametersCar;
-
-    /** Truck parameters. */
-    private Parameters parametersTruck;
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
@@ -204,13 +199,12 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
         try
         {
             this.carProbability = (double) getInputParameter("generic.carProbability");
-            this.parametersCar = InputParameterHelper.getParametersCar(getInputParameterMap());
-            this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
 
+            ParameterFactory params = new InputParameterHelper(getInputParameterMap());
             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
+                    new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()), params);
 
             OTSNode from = new OTSNode(this.network, "From", new OTSPoint3D(0, 0, 0));
             OTSNode end = new OTSNode(this.network, "End", new OTSPoint3D(2000, 0, 0));

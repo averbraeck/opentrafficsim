@@ -9,6 +9,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
 
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDoubleScalar;
@@ -23,12 +25,44 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
  * source code and binary code of this software is proprietary information of Delft University of Technology.
  * @author <a href="https://www.tudelft.nl/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public final class InputParameterHelper
+public final class InputParameterHelper implements ParameterFactory
 {
-    /** */
-    private InputParameterHelper()
+
+    /** Input parameter map. */
+    private final InputParameterMap rootMap;
+
+    /**
+     * Constructor.
+     * @param rootMap input parameter map
+     */
+    public InputParameterHelper(final InputParameterMap rootMap)
     {
-        // static class
+        this.rootMap = rootMap;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setValues(final Parameters parameters, final GTUType gtuType) throws ParameterException
+    {
+        try
+        {
+            if (gtuType.isOfType(GTUType.CAR))
+            {
+                getParametersCar(this.rootMap).setAllIn(parameters);
+            }
+            else if (gtuType.isOfType(GTUType.TRUCK))
+            {
+                getParametersTruck(this.rootMap).setAllIn(parameters);
+            }
+            else
+            {
+                throw new ParameterException("GTUType " + gtuType + " not supported in demo parameter factory.");
+            }
+        }
+        catch (InputParameterException exception)
+        {
+            throw new ParameterException(exception);
+        }
     }
 
     /**
@@ -185,4 +219,5 @@ public final class InputParameterHelper
         parametersTruck.setParameter(ParameterTypes.T, tSafeTruck);
         return parametersTruck;
     }
+
 }
