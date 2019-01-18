@@ -17,6 +17,7 @@ import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
@@ -72,7 +73,7 @@ public class TestGeometry extends DSOLApplication implements UNITS
                 new OTSAnimationPanel(extent, size, simulator, model, new DefaultSwitchableGTUColorer(), model.getNetwork());
         panel.getTabbedPane().addTab(0, "animation", animationPanel);
 
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), OTSSwingApplication.DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
 
         // tell the animation panel to update its statistics

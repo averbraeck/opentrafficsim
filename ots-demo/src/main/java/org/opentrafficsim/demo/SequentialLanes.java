@@ -20,7 +20,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -60,9 +59,9 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
@@ -109,7 +108,7 @@ public class SequentialLanes extends OTSSwingApplication implements UNITS
         this.animationPanel = panel;
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
         addStatisticsTabs(model.getSimulator());
     }
@@ -137,7 +136,7 @@ public class SequentialLanes extends OTSSwingApplication implements UNITS
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
+                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 SequentialLanes app = new SequentialLanes("SequentialLanes", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
             }

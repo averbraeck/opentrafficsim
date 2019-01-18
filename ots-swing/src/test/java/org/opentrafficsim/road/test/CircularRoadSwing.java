@@ -11,7 +11,6 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -35,9 +34,9 @@ import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -82,7 +81,7 @@ public class CircularRoadSwing extends OTSSwingApplication
         // networkAnimation.addDrawingInfoClass(Lane.class, new DrawingInfoShape<>(Color.GRAY));
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
         addStatisticsTabs(model.getSimulator());
     }
@@ -100,7 +99,7 @@ public class CircularRoadSwing extends OTSSwingApplication
             new TabbedParameterDialog(otsModel.getInputParameterMap());
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(new Rectangle2D.Double(-500, -500, 1000, 1000),
-                    new Dimension(200, 200), simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
+                    new Dimension(200, 200), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
             new CircularRoadSwing("Circular Road", animationPanel, otsModel);
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)

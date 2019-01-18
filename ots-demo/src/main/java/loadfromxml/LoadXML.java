@@ -24,7 +24,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
@@ -49,9 +48,9 @@ import org.opentrafficsim.road.gtu.colorer.SplitColorer;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -81,7 +80,7 @@ public class LoadXML extends OTSSwingApplication
     public LoadXML(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
     }
 
@@ -144,7 +143,7 @@ public class LoadXML extends OTSSwingApplication
             XMLModel xmlModel = new XMLModel(simulator, xml);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, xmlModel, new DefaultSwitchableGTUColorer(), xmlModel.getNetwork());
+                    simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
             new LoadXML(xmlModel, animationPanel);
         }
         catch (SimRuntimeException | OTSDrawingException sre)

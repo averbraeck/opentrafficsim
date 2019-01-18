@@ -18,7 +18,6 @@ import javax.swing.JFrame;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -41,9 +40,9 @@ import org.opentrafficsim.road.network.factory.osm.events.WarningListenerImpl;
 import org.opentrafficsim.road.network.factory.osm.input.ReadOSMFile;
 import org.opentrafficsim.road.network.factory.osm.output.Convert;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -71,7 +70,7 @@ public class OpenStreetMap extends OTSSwingApplication implements UNITS
     public OpenStreetMap(final OSMModel model, final OTSAnimationPanel panel) throws OTSDrawingException
     {
         super(model, panel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesFull(panel);
     }
 
@@ -99,7 +98,7 @@ public class OpenStreetMap extends OTSSwingApplication implements UNITS
                 final OSMModel osmModel = new OSMModel(simulator, filepath);
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), osmModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(osmModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, osmModel, new DefaultSwitchableGTUColorer(), osmModel.getNetwork());
+                        new Dimension(800, 600), simulator, osmModel, DEFAULT_COLORER, osmModel.getNetwork());
                 OpenStreetMap app = new OpenStreetMap(osmModel, animationPanel);
                 app.setExitOnClose(exitOnClose);
             }

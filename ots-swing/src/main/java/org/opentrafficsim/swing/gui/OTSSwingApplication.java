@@ -32,6 +32,8 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 
 import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
@@ -53,6 +55,9 @@ public class OTSSwingApplication extends JFrame
     /** */
     private static final long serialVersionUID = 20141216L;
 
+    /** Single instance of default colorer, reachable from various places. */
+    public static final GTUColorer DEFAULT_COLORER = new DefaultSwitchableGTUColorer();
+
     /** the model. */
     private final OTSModelInterface model;
 
@@ -67,7 +72,7 @@ public class OTSSwingApplication extends JFrame
     private Appearance appearance = Appearance.GRAY;
 
     /**
-     * Wrap an OTSModel in a JFrame.
+     * Wrap an OTSModel in a JFrame. Uses a default GTU colorer.
      * @param model OTSModelInterface; the model that will be shown in the JFrame
      * @param panel JPanel; this should be the JPanel of the simulation
      */
@@ -202,7 +207,7 @@ public class OTSSwingApplication extends JFrame
         // Set the Appearance as by frame properties
         setAppearance(getAppearance()); // color elements that were just added
     }
-    
+
     /**
      * Sets an appearance.
      * @param appearance Appearance; appearance
@@ -292,7 +297,7 @@ public class OTSSwingApplication extends JFrame
     {
         return this.appearance;
     }
-    
+
     /**
      * Adds an appearance to the menu.
      * @param group JMenu; menu to add item to

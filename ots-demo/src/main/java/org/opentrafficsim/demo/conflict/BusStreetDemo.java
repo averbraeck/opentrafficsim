@@ -28,7 +28,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
@@ -77,9 +76,9 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.BusStop;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -115,7 +114,7 @@ public class BusStreetDemo extends OTSSwingApplication
         super(model, panel);
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(panel);
     }
 
@@ -140,7 +139,7 @@ public class BusStreetDemo extends OTSSwingApplication
             BusStreetModel busModel = new BusStreetModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), busModel);
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(busModel.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, busModel, new DefaultSwitchableGTUColorer(), busModel.getNetwork());
+                    simulator, busModel, DEFAULT_COLORER, busModel.getNetwork());
             BusStreetDemo app = new BusStreetDemo("Bus street demo", animationPanel, busModel);
             app.setExitOnClose(exitOnClose);
         }

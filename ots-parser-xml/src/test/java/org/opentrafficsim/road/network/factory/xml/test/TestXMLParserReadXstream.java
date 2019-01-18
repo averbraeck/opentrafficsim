@@ -22,9 +22,9 @@ import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -55,7 +55,7 @@ public class TestXMLParserReadXstream extends OTSSwingApplication
             throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
     }
 

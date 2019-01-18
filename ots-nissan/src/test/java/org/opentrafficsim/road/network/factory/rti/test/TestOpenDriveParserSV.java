@@ -27,7 +27,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -65,9 +64,9 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -103,7 +102,7 @@ public class TestOpenDriveParserSV extends OTSSwingApplication
             throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
     }
 
@@ -124,9 +123,8 @@ public class TestOpenDriveParserSV extends OTSSwingApplication
                     OTSAnimator simulator = new OTSAnimator();
                     TestOpenDriveModel openDriveModel = new TestOpenDriveModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), openDriveModel);
-                    OTSAnimationPanel animationPanel =
-                            new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
-                                    openDriveModel, new DefaultSwitchableGTUColorer(), openDriveModel.getNetwork());
+                    OTSAnimationPanel animationPanel = new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(),
+                            new Dimension(800, 600), simulator, openDriveModel, DEFAULT_COLORER, openDriveModel.getNetwork());
                     new TestOpenDriveParserSV(openDriveModel, animationPanel);
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)

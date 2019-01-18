@@ -16,7 +16,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -33,9 +32,9 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
@@ -73,7 +72,7 @@ public class TrafCODDemo2 extends OTSSwingApplication
     {
         super(model, panel);
         this.animationPanel = panel;
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(panel);
         addTabs();
     }
@@ -98,9 +97,8 @@ public class TrafCODDemo2 extends OTSSwingApplication
             OTSAnimator simulator = new OTSAnimator();
             final TrafCODModel trafcodModel = new TrafCODModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), trafcodModel);
-            OTSAnimationPanel animationPanel =
-                    new OTSAnimationPanel(trafcodModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
-                            trafcodModel, new DefaultSwitchableGTUColorer(), trafcodModel.getNetwork());
+            OTSAnimationPanel animationPanel = new OTSAnimationPanel(trafcodModel.getNetwork().getExtent(),
+                    new Dimension(800, 600), simulator, trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
             TrafCODDemo2 app = new TrafCODDemo2("TrafCOD demo complex crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
         }

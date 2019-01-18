@@ -26,7 +26,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -66,9 +65,9 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -106,7 +105,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSwingApplication
             throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
     }
 
@@ -127,9 +126,8 @@ public class TestOpenDriveParserNoRTINew extends OTSSwingApplication
                     OTSAnimator simulator = new OTSAnimator();
                     TestOpenDriveModel openDriveModel = new TestOpenDriveModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), openDriveModel);
-                    OTSAnimationPanel animationPanel =
-                            new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
-                                    openDriveModel, new DefaultSwitchableGTUColorer(), openDriveModel.getNetwork());
+                    OTSAnimationPanel animationPanel = new OTSAnimationPanel(openDriveModel.getNetwork().getExtent(),
+                            new Dimension(800, 600), simulator, openDriveModel, DEFAULT_COLORER, openDriveModel.getNetwork());
                     new TestOpenDriveParserNoRTINew(openDriveModel, animationPanel);
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
@@ -756,48 +754,48 @@ public class TestOpenDriveParserNoRTINew extends OTSSwingApplication
         {
             try
             {
-            CrossSectionLink sLink = (CrossSectionLink) network.getLink(sLinkStr);
-            OTSNode sNode = (OTSNode) network.getNode(sNodeStr);
-            Lane sLane = (Lane) sLink.getCrossSectionElement(sLaneStr);
-            CrossSectionLink eLink = (CrossSectionLink) network.getLink(eLinkStr);
-            OTSNode eNode = (OTSNode) network.getNode(eNodeStr);
-            Lane eLane = (Lane) eLink.getCrossSectionElement(eLaneStr);
-            DirectedPoint sp, ep;
-            Length beginWidth, endWidth;
-            if (sLink.getStartNode().equals(sNode))
-            {
-                OTSPoint3D p1 = sLane.getCenterLine().get(1);
-                OTSPoint3D p2 = sLane.getCenterLine().get(0);
-                sp = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
-                beginWidth = sLane.getBeginWidth();
-            }
-            else
-            {
-                OTSPoint3D p1 = sLane.getCenterLine().get(sLane.getCenterLine().size() - 2);
-                OTSPoint3D p2 = sLane.getCenterLine().get(sLane.getCenterLine().size() - 1);
-                sp = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
-                beginWidth = sLane.getEndWidth();
-            }
-            if (eLink.getStartNode().equals(eNode))
-            {
-                OTSPoint3D p1 = eLane.getCenterLine().get(1);
-                OTSPoint3D p2 = eLane.getCenterLine().get(0);
-                ep = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p1.y - p2.y, p1.x - p2.x));
-                endWidth = eLane.getBeginWidth();
-            }
-            else
-            {
-                OTSPoint3D p1 = eLane.getCenterLine().get(eLane.getCenterLine().size() - 2);
-                OTSPoint3D p2 = eLane.getCenterLine().get(eLane.getCenterLine().size() - 1);
-                ep = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p1.y - p2.y, p1.x - p2.x));
-                endWidth = eLane.getEndWidth();
-            }
-            OTSLine3D designLine = Bezier.cubic(64, sp, ep);
-            CrossSectionLink newLink = new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine, this.simulator,
-                    laneKeepingPolicy);
-            Lane newLane = new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
-                    sLane.getSpeedLimit(GTUType.VEHICLE), sLane.getOvertakingConditions());
-            return newLane;
+                CrossSectionLink sLink = (CrossSectionLink) network.getLink(sLinkStr);
+                OTSNode sNode = (OTSNode) network.getNode(sNodeStr);
+                Lane sLane = (Lane) sLink.getCrossSectionElement(sLaneStr);
+                CrossSectionLink eLink = (CrossSectionLink) network.getLink(eLinkStr);
+                OTSNode eNode = (OTSNode) network.getNode(eNodeStr);
+                Lane eLane = (Lane) eLink.getCrossSectionElement(eLaneStr);
+                DirectedPoint sp, ep;
+                Length beginWidth, endWidth;
+                if (sLink.getStartNode().equals(sNode))
+                {
+                    OTSPoint3D p1 = sLane.getCenterLine().get(1);
+                    OTSPoint3D p2 = sLane.getCenterLine().get(0);
+                    sp = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+                    beginWidth = sLane.getBeginWidth();
+                }
+                else
+                {
+                    OTSPoint3D p1 = sLane.getCenterLine().get(sLane.getCenterLine().size() - 2);
+                    OTSPoint3D p2 = sLane.getCenterLine().get(sLane.getCenterLine().size() - 1);
+                    sp = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+                    beginWidth = sLane.getEndWidth();
+                }
+                if (eLink.getStartNode().equals(eNode))
+                {
+                    OTSPoint3D p1 = eLane.getCenterLine().get(1);
+                    OTSPoint3D p2 = eLane.getCenterLine().get(0);
+                    ep = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p1.y - p2.y, p1.x - p2.x));
+                    endWidth = eLane.getBeginWidth();
+                }
+                else
+                {
+                    OTSPoint3D p1 = eLane.getCenterLine().get(eLane.getCenterLine().size() - 2);
+                    OTSPoint3D p2 = eLane.getCenterLine().get(eLane.getCenterLine().size() - 1);
+                    ep = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p1.y - p2.y, p1.x - p2.x));
+                    endWidth = eLane.getEndWidth();
+                }
+                OTSLine3D designLine = Bezier.cubic(64, sp, ep);
+                CrossSectionLink newLink = new CrossSectionLink(network, linkId, sNode, eNode, linkType, designLine,
+                        this.simulator, laneKeepingPolicy);
+                Lane newLane = new Lane(newLink, laneId, Length.ZERO, Length.ZERO, beginWidth, endWidth, sLane.getLaneType(),
+                        sLane.getSpeedLimit(GTUType.VEHICLE), sLane.getOvertakingConditions());
+                return newLane;
             }
             catch (Exception e)
             {
