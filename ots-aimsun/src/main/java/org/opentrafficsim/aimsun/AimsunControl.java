@@ -232,9 +232,6 @@ public class AimsunControl
                             new AimsunSwingApplication(this.model, animationPanel);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
                             animator.setSpeedFactor(1000.0, true);
-                            DefaultAnimationFactory.animateNetwork(this.model.getNetwork(), this.model.getSimulator(),
-                                    OTSSwingApplication.DEFAULT_COLORER);
-                            AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
                         }
                         catch (SimRuntimeException | NamingException | OTSDrawingException exception1)
                         {
