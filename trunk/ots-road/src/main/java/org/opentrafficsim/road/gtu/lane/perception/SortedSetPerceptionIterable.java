@@ -1,8 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
+import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
@@ -17,21 +20,41 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  * @param <H> headway type
- * @param <U> underlying object type
  */
 @Deprecated
-public class SortedSetPerceptionIterable<H extends Headway, U> extends TreeSet<H> implements PerceptionCollectable<H, U>
+public class SortedSetPerceptionIterable<H extends Headway> extends TreeSet<H> implements PerceptionCollectable<H, LaneBasedGTU>
 {
 
     /** */
     private static final long serialVersionUID = 20180219L;
 
+    /** Network to obtain LaneBasedGTU. */
+    private final OTSNetwork network;
+
+    /**
+     * Constructor.
+     * @param otsNetwork network to obtain LaneBasedGTU
+     */
+    public SortedSetPerceptionIterable(final OTSNetwork otsNetwork)
+    {
+        this.network = otsNetwork;
+    }
+
     /** {@inheritDoc} */
     @Override
-    public <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super U, I> accumulator,
+    public <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super LaneBasedGTU, I> accumulator,
             final PerceptionFinalizer<C, I> finalizer)
     {
-        throw new UnsupportedOperationException();
+        Intermediate<I> intermediate = new Intermediate<>(identity.get());
+        Iterator<H> it = iterator();
+        while (it.hasNext() && !intermediate.isStop())
+        {
+            H next = it.next();
+            intermediate =
+                    accumulator.accumulate(intermediate, (LaneBasedGTU) this.network.getGTU(next.getId()), next.getDistance());
+            intermediate.step();
+        }
+        return finalizer.collect(intermediate.getObject());
     }
 
 }

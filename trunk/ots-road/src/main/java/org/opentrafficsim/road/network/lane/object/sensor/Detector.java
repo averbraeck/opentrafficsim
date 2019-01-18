@@ -473,6 +473,28 @@ public class Detector extends AbstractSensor
         Time time = Time.createSI(t);
         Try.execute(() -> getSimulator().scheduleEventAbs(time, this, this, "aggregate", null), "");
     }
+    
+    /**
+     * Returns the last flow.
+     * @return last flow
+     */
+    public Frequency getLastFlow()
+    {
+        return this.count.get(this.count.size() - 1);
+    }
+    
+    /**
+     * Returns the last value of the detector measurement.
+     * @param detectorMeasurement detector measurement
+     * @return last value of the detector measurement
+     * @param <A> aggregate value type of the detector measurement
+     */
+    public <A> A getLastValue(final DetectorMeasurement<?, A> detectorMeasurement)
+    {
+        @SuppressWarnings("unchecked")
+        List<A> list = (List<A>) this.dataMap.get(detectorMeasurement);
+        return list.get(list.size() - 1);
+    }
 
     /**
      * Aggregates a periodic measurement.
@@ -507,7 +529,7 @@ public class Detector extends AbstractSensor
      * Returns a map of non-periodical measurements.
      * @return Map&lt;DetectorMeasurement, Object&gt;; map of non-periodical measurements
      */
-    public Map<DetectorMeasurement<?, ?>, Object> getMesoMeasurements()
+    private Map<DetectorMeasurement<?, ?>, Object> getMesoMeasurements()
     {
         Map<DetectorMeasurement<?, ?>, Object> map = new LinkedHashMap<>();
         for (DetectorMeasurement<?, ?> measurement : this.cumulDataMap.keySet())

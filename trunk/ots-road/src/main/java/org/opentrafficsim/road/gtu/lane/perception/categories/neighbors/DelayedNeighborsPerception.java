@@ -22,6 +22,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -240,15 +241,19 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 }
 
                 // initiate sets
-                SortedSetPerceptionIterable<HeadwayGTU, LaneBasedGTU> followersSet = new SortedSetPerceptionIterable<>();
+                SortedSetPerceptionIterable<HeadwayGTU> followersSet = new SortedSetPerceptionIterable<>(
+                        (OTSNetwork) getPerception().getGtu().getReferencePosition().getLane().getParentLink().getNetwork());
                 this.followers.put(lane, followersSet);
-                SortedSetPerceptionIterable<HeadwayGTU, LaneBasedGTU> leadersSet = new SortedSetPerceptionIterable<>();
+                SortedSetPerceptionIterable<HeadwayGTU> leadersSet = new SortedSetPerceptionIterable<>(
+                        (OTSNetwork) getPerception().getGtu().getReferencePosition().getLane().getParentLink().getNetwork());
                 this.leaders.put(lane, leadersSet);
 
                 // followers
-                TimeStampedObject<SortedSet<HeadwayGTU>> delayedFollowers =
-                        getInfo(NeighborsInfoType.getSortedSetType(FOLLOWERS), lane);
+                TimeStampedObject<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> delayedFollowers =
+                        getInfo(NeighborsInfoType.getIterableType(FOLLOWERS), lane);
                 Duration d = time.minus(delayedFollowers.getTimestamp()).plus(ta);
+
+                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> perc = delayedFollowers.getObject();
                 for (HeadwayGTU gtu : delayedFollowers.getObject())
                 {
                     NeighborTriplet info = this.anticipation.anticipate(
@@ -267,8 +272,8 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 }
 
                 // leaders
-                TimeStampedObject<SortedSet<HeadwayGTU>> delayedLeaders =
-                        getInfo(NeighborsInfoType.getSortedSetType(LEADERS), lane);
+                TimeStampedObject<PerceptionCollectable<HeadwayGTU, LaneBasedGTU>> delayedLeaders =
+                        getInfo(NeighborsInfoType.getIterableType(LEADERS), lane);
                 d = time.minus(delayedLeaders.getTimestamp()).plus(ta);
                 for (HeadwayGTU gtu : delayedLeaders.getObject())
                 {
@@ -291,7 +296,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             }
 
         }
-        catch (PerceptionException exception)
+        catch (PerceptionException | GTUException exception)
         {
             // lane change performed, info on a lane not present
         }
@@ -303,11 +308,13 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             {
                 if (!this.followers.containsKey(lane))
                 {
-                    this.followers.put(lane, new SortedSetPerceptionIterable<>());
+                    this.followers.put(lane, new SortedSetPerceptionIterable<>((OTSNetwork) getPerception().getGtu()
+                            .getReferencePosition().getLane().getParentLink().getNetwork()));
                 }
                 if (!this.leaders.containsKey(lane))
                 {
-                    this.leaders.put(lane, new SortedSetPerceptionIterable<>());
+                    this.leaders.put(lane, new SortedSetPerceptionIterable<>((OTSNetwork) getPerception().getGtu()
+                            .getReferencePosition().getLane().getParentLink().getNetwork()));
                 }
                 if (lane.isLeft() || lane.isRight())
                 {
@@ -326,7 +333,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 }
             }
         }
-        catch (ParameterException pe)
+        catch (ParameterException | GTUException pe)
         {
             //
         }

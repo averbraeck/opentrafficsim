@@ -115,7 +115,7 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
     public HeadwayGTU perceive(final LaneBasedGTU perceivingGtu, final LaneBasedGTU object, final Length distance)
             throws GTUException, ParameterException
     {
-        return this.headwayGtuType.createUpstreamGtu(perceivingGtu, object, distance.neg());
+        return this.headwayGtuType.createUpstreamGtu(perceivingGtu, object, distance);
     }
 
 }

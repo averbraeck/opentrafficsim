@@ -75,10 +75,6 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
         // Forward to method with desired speed and headway predetermined by this car-following model.
         Acceleration acc = followingAcceleration(parameters, speed, desiredSpeed(parameters, speedLimitInfo),
                 desiredHeadway(parameters, speed), leaders);
-        if (speed.eq0() && acc.lt0())
-        {
-            return Acceleration.ZERO;
-        }
         return acc;
     }
 

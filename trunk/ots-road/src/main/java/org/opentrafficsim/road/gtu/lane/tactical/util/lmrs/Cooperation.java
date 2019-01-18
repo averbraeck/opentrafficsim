@@ -66,7 +66,7 @@ public interface Cooperation extends LmrsParameters
         }
     };
 
-    /** Simple passive cooperation. */
+    /** Same as passive cooperation, except that cooperation is fully ignored if the potential lane changer brakes heavily. */
     Cooperation PASSIVE_MOVING = new Cooperation()
     {
         @Override
@@ -79,7 +79,7 @@ public interface Cooperation extends LmrsParameters
             {
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
-            Acceleration b = params.getParameter(ParameterTypes.B);
+            // Acceleration b = params.getParameter(ParameterTypes.B);
             Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -91,15 +91,21 @@ public interface Cooperation extends LmrsParameters
                 Parameters params2 = leader.getParameters();
                 double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
                         : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
-                if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0())
-                        && leader.getAcceleration().gt(params.getParameter(ParameterTypes.BCRIT).neg()))
+                if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
                 {
                     Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
                             desire, params, sli, cfm);
                     a = Acceleration.min(a, aSingle);
+                    a = Acceleration.max(a, params.getParameter(ParameterTypes.B).neg());
+//                    if (aSingle.gt(leader.getAcceleration()) || aSingle.gt(params.getParameter(ParameterTypes.B).neg()))
+//                    {
+//                        a = Acceleration.min(a, aSingle);
+//                        a = Synchronization.gentleUrgency(a, desire, params);
+//                    }
                 }
             }
-            return Acceleration.max(a, b.neg());
+            return a;
+            // return Acceleration.max(a, b.neg());
         }
     };
 

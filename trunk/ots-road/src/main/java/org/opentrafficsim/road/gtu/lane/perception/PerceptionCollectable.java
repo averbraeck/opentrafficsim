@@ -192,7 +192,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
         }
 
         /**
-         * Method for the iterator the increase the underlying object number.
+         * Method for the iterator to increase the underlying object number.
          */
         public void step()
         {

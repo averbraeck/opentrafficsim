@@ -319,6 +319,7 @@ public abstract class Platoons<T>
                     if (s.lt(e))
                     {
                         Frequency fStart = interpolation.interpolateVector(s, demand, time, true);
+                        // TODO: end time of platoon may be in next demand period, which makes the demand non-linear
                         Frequency fEnd = interpolation.interpolateVector(e, demand, time, false);
                         weightedSumLost.add((fStart.si + fEnd.si) / 2, e.si - s.si);
                     }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance.egoAcceleration;
+
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -58,6 +60,7 @@ public interface GapAcceptance
              * What needs to be done, is to find a better way to deal with the cooperation and gap-acceptance, such that this  
              * hack is not required.
              */
+            
             Acceleration b = params.getParameter(ParameterTypes.B);
             Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
             for (HeadwayGTU follower : neighbors.getFirstFollowers(lat))

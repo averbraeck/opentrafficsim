@@ -19,7 +19,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Supplies a route by determining one.
+ * Generates a route by determining one. This class is different from {@code RouteGenerator} in that it has the origin,
+ * destination and GTU type as input.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -29,10 +30,10 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface RouteSupplier
+public interface RouteGeneratorOD
 {
-    /** No route route supplier. */
-    RouteSupplier NULL = new RouteSupplier()
+    /** No route route generator. */
+    RouteGeneratorOD NULL = new RouteGeneratorOD()
     {
         @Override
         public Route getRoute(final Node origin, final Node destination, final GTUType gtuType)
@@ -41,27 +42,27 @@ public interface RouteSupplier
         }
     };
 
-    /** Cache of default route suppliers per stream. */
-    Map<StreamInterface, RouteSupplier> DEFAULT_MAP = new LinkedHashMap<>();
+    /** Cache of default route generators per stream. */
+    Map<StreamInterface, RouteGeneratorOD> DEFAULT_MAP = new LinkedHashMap<>();
 
     /**
-     * Returns a default route supplier for shortest routes based on the given stream.
+     * Returns a default route generator for shortest routes based on the given stream.
      * @param stream StreamInterface; random number stream
-     * @return RouteSupplier; default route supplier for shortest routes based on the given stream
+     * @return RouteSupplier; default route generator for shortest routes based on the given stream
      */
-    static RouteSupplier getDefaultRouteSupplier(final StreamInterface stream)
+    static RouteGeneratorOD getDefaultRouteSupplier(final StreamInterface stream)
     {
-        RouteSupplier def = DEFAULT_MAP.get(stream);
+        RouteGeneratorOD def = DEFAULT_MAP.get(stream);
         if (def == null)
         {
-            def = new DefaultRouteSupplier(stream);
+            def = new DefaultRouteGenerator(stream);
             DEFAULT_MAP.put(stream, def);
         }
         return def;
     }
 
-    /** Shortest route route supplier. */
-    class DefaultRouteSupplier implements RouteSupplier
+    /** Shortest route route generator. */
+    class DefaultRouteGenerator implements RouteGeneratorOD
     {
         /** Shortest route cache. */
         private NestedCache<Route> shortestRouteCache = new NestedCache<>(GTUType.class, Node.class, Node.class, List.class);
@@ -73,7 +74,7 @@ public interface RouteSupplier
          * Constructor.
          * @param stream StreamInterface; stream of random numbers
          */
-        public DefaultRouteSupplier(final StreamInterface stream)
+        public DefaultRouteGenerator(final StreamInterface stream)
         {
             Throw.whenNull(stream, "Stream may not be null.");
             this.stream = stream;

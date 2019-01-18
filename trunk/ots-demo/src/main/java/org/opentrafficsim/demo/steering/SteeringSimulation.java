@@ -202,6 +202,26 @@ public class SteeringSimulation extends AbstractSimulationScript
         odMatrix.putDemandVector(nodeE, nodeD, carCategory, freq(new double[] { 500.0, 1000.0, 0.0 }));
 
         // anonymous tactical-planner-factory supplier
+        AbstractLaneBasedTacticalPlannerFactory<SteeringLmrs> car = new AbstractLaneBasedTacticalPlannerFactory<SteeringLmrs>(
+                new IDMPlusFactory(sim.getReplication().getStream("generation")), new DefaultLMRSPerceptionFactory())
+        {
+            @Override
+            public SteeringLmrs create(final LaneBasedGTU gtu) throws GTUException
+            {
+                return new SteeringLmrs(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu),
+                        Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, FEEDBACK_CAR);
+            }
+
+            @Override
+            public Parameters getParameters() throws ParameterException
+            {
+                // TODO: add parameters if required (run and wait for ParameterException to find missing parameters)
+                ParameterSet parameters = new ParameterSet();
+                getCarFollowingParameters().setAllIn(parameters);
+                parameters.setDefaultParameters(Steering.class);
+                return parameters;
+            }
+        };
         TacticalPlannerFactorySupplierOD tacticalPlannerFactorySupplierOD = new TacticalPlannerFactorySupplierOD()
         {
             @Override
@@ -211,27 +231,7 @@ public class SteeringSimulation extends AbstractSimulationScript
                 GTUType gtuType = category.get(GTUType.class);
                 if (gtuType.equals(GTUType.CAR))
                 {
-                    return new AbstractLaneBasedTacticalPlannerFactory<SteeringLmrs>(new IDMPlusFactory(randomStream),
-                            new DefaultLMRSPerceptionFactory())
-                    {
-                        @Override
-                        public SteeringLmrs create(final LaneBasedGTU gtu) throws GTUException
-                        {
-                            return new SteeringLmrs(nextCarFollowingModel(gtu), gtu,
-                                    getPerceptionFactory().generatePerception(gtu), Synchronization.PASSIVE,
-                                    Cooperation.PASSIVE, GapAcceptance.INFORMED, FEEDBACK_CAR);
-                        }
-
-                        @Override
-                        public Parameters getParameters() throws ParameterException
-                        {
-                            // TODO: add parameters if required (run and wait for ParameterException to find missing parameters)
-                            ParameterSet parameters = new ParameterSet();
-                            getCarFollowingParameters().setAllIn(parameters);
-                            parameters.setDefaultParameters(Steering.class);
-                            return parameters;
-                        }
-                    };
+                    return car;
                 }
                 else
                 {
@@ -247,7 +247,7 @@ public class SteeringSimulation extends AbstractSimulationScript
         ContinuousDistMass massDistTruck =
                 new ContinuousDistMass(new DistUniform(sim.getReplication().getStream("generation"), 2000, 10000), MassUnit.SI);
         double momentOfInertiaAboutZ = 100; // no idea...
-        VehicleModelFactory vehicleModelFactory = new VehicleModelFactory()
+        VehicleModelFactory vehicleModelGenerator = new VehicleModelFactory()
         {
             @Override
             public VehicleModel create(final GTUType gtuType)
@@ -259,7 +259,7 @@ public class SteeringSimulation extends AbstractSimulationScript
         // characteristics generator using OD info and default route based strategical level
         DefaultGTUCharacteristicsGeneratorOD characteristicsGenerator = new DefaultGTUCharacteristicsGeneratorOD.Factory()
                 .setFactorySupplier(StrategicalPlannerFactorySupplierOD.route(tacticalPlannerFactorySupplierOD))
-                .setVehicleModelFactory(vehicleModelFactory).create();
+                .setVehicleModelGenerator(vehicleModelGenerator).create();
 
         // od options
         ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.createSI(300.0)).set(ODOptions.GTU_TYPE,

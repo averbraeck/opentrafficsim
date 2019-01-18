@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
@@ -18,6 +19,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -27,6 +29,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Permeable;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -200,6 +203,62 @@ public final class LaneFactory
             {
                 stripe.addPermeability(GTUType.VEHICLE, perm);
             }
+        }
+        return this;
+    }
+
+    /**
+     * Adds 1 or 2 shoulders to the current set of lanes.
+     * @param width Length; width of the shoulder
+     * @param lat LateralDirectionality; side of shoulder, use {@code null} or {@code NONE} for both
+     * @return LaneFactory this lane factory for method chaining
+     * @throws IllegalStateException if no lanes are defined
+     */
+    public LaneFactory addShoulder(final Length width, final LateralDirectionality lat)
+    {
+        Throw.when(this.lanes.isEmpty(), IllegalStateException.class, "Lanes should be defined before adding shoulder(s).");
+        if (lat == null || lat.isNone() || lat.isLeft())
+        {
+            Length startOffset = null;
+            Length endOffset = null;
+            for (Lane lane : this.lanes)
+            {
+                if (startOffset == null
+                        || lane.getDesignLineOffsetAtBegin().plus(lane.getBeginWidth().multiplyBy(0.5)).gt(startOffset))
+                {
+                    startOffset = lane.getDesignLineOffsetAtBegin().plus(lane.getBeginWidth().multiplyBy(0.5));
+                }
+                if (endOffset == null || lane.getDesignLineOffsetAtEnd().plus(lane.getEndWidth().multiplyBy(0.5)).gt(endOffset))
+                {
+                    endOffset = lane.getDesignLineOffsetAtEnd().plus(lane.getEndWidth().multiplyBy(0.5));
+                }
+            }
+            Length start = startOffset.plus(width.multiplyBy(0.5));
+            Length end = endOffset.plus(width.multiplyBy(0.5));
+            Try.assign(() -> new Shoulder(this.link, "Left shoulder", start, end, width, width),
+                    "Unexpected exception while building link.");
+        }
+        if (lat == null || lat.isNone() || lat.isRight())
+        {
+            Length startOffset = null;
+            Length endOffset = null;
+            for (Lane lane : this.lanes)
+            {
+                if (startOffset == null
+                        || lane.getDesignLineOffsetAtBegin().minus(lane.getBeginWidth().multiplyBy(0.5)).lt(startOffset))
+                {
+                    startOffset = lane.getDesignLineOffsetAtBegin().minus(lane.getBeginWidth().multiplyBy(0.5));
+                }
+                if (endOffset == null
+                        || lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().multiplyBy(0.5)).lt(endOffset))
+                {
+                    endOffset = lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().multiplyBy(0.5));
+                }
+            }
+            Length start = startOffset.minus(width.multiplyBy(0.5));
+            Length end = endOffset.minus(width.multiplyBy(0.5));
+            Try.assign(() -> new Shoulder(this.link, "Right shoulder", start, end, width, width),
+                    "Unexpected exception while building link.");
         }
         return this;
     }
