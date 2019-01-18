@@ -43,7 +43,7 @@ import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.xml.sax.SAXException;
@@ -436,7 +436,7 @@ public class AimsunControl
     /**
      * The application.
      */
-    class AimsunSwingApplication extends AbstractOTSSwingApplication
+    class AimsunSwingApplication extends OTSSwingApplication
     {
         /** */
         private static final long serialVersionUID = 1L;

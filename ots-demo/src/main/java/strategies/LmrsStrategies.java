@@ -153,7 +153,7 @@ import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -492,7 +492,7 @@ public class LmrsStrategies implements EventListenerInterface
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    class LmrsStrategiesAnimation extends AbstractOTSSwingApplication
+    class LmrsStrategiesAnimation extends OTSSwingApplication
     {
 
         /** */
@@ -633,7 +633,7 @@ public class LmrsStrategies implements EventListenerInterface
                 public LanePerception generatePerception(final LaneBasedGTU gtu)
                 {
                     LanePerception perception = new CategoricalLanePerception(gtu);
-                    perception.addPerceptionCategory(new DirectEgoPerception(perception));
+                    perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
                     perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
                     perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
                     perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));

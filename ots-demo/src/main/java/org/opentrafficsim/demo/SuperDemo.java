@@ -26,7 +26,7 @@ import javax.swing.WindowConstants;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo;
 import org.opentrafficsim.demo.trafficcontrol.TrafCODDemo2;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 /**
  * SuperDemo.java. <br>
@@ -168,7 +168,7 @@ public class SuperDemo extends JFrame
 
         /** the demo class. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
-        protected final Class<? extends AbstractOTSSwingApplication> clazz;
+        protected final Class<? extends OTSSwingApplication> clazz;
 
         /** the demo description. */
         private final String description;
@@ -178,7 +178,7 @@ public class SuperDemo extends JFrame
          * @param clazz the demo class
          * @param description the demo description
          */
-        Demo(final String name, final Class<? extends AbstractOTSSwingApplication> clazz, final String description)
+        Demo(final String name, final Class<? extends OTSSwingApplication> clazz, final String description)
         {
             super();
             this.name = name;
