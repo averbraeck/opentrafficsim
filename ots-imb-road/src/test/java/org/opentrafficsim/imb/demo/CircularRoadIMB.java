@@ -25,6 +25,7 @@ import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -81,9 +82,9 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
@@ -107,16 +108,10 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularRoadIMB extends OTSSwingApplication implements UNITS
+public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelIMB> implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
-
-    /** The model. */
-    private CircularRoadModelIMB model;
-
-    /** the panel. */
-    private OTSAnimationPanel animationPanel;
 
     /**
      * Create a CircularRoadIMB Swing application.
@@ -129,14 +124,15 @@ public class CircularRoadIMB extends OTSSwingApplication implements UNITS
             throws OTSDrawingException
     {
         super(model, panel);
-        this.model = model;
-        this.animationPanel = panel;
-
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
-        AnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
-        addStatisticsTabs(model.getSimulator());
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void addTabs()
+    {
+        addStatisticsTabs(getModel().getSimulator());
     }
 
     /**
@@ -195,8 +191,8 @@ public class CircularRoadIMB extends OTSSwingApplication implements UNITS
             names.add("Left lane");
             names.add("Right lane");
             List<LaneDirection> start = new ArrayList<>();
-            start.add(new LaneDirection(this.model.getPath(0).get(0), GTUDirectionality.DIR_PLUS));
-            start.add(new LaneDirection(this.model.getPath(1).get(0), GTUDirectionality.DIR_PLUS));
+            start.add(new LaneDirection(getModel().getPath(0).get(0), GTUDirectionality.DIR_PLUS));
+            start.add(new LaneDirection(getModel().getPath(1).get(0), GTUDirectionality.DIR_PLUS));
             path01 = GraphLaneUtil.createPath(names, start);
             path0 = GraphLaneUtil.createPath(names.get(0), start.get(0));
             path1 = GraphLaneUtil.createPath(names.get(1), start.get(1));
@@ -228,7 +224,7 @@ public class CircularRoadIMB extends OTSSwingApplication implements UNITS
         names.add("Left lane");
         names.add("Right lane");
         DirectedLinkPosition linkPosition =
-                new DirectedLinkPosition(this.model.getPath(0).get(0).getParentLink(), 0.0, GTUDirectionality.DIR_PLUS);
+                new DirectedLinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0, GTUDirectionality.DIR_PLUS);
         GraphCrossSection<KpiLaneDirection> crossSection;
         try
         {
@@ -247,7 +243,7 @@ public class CircularRoadIMB extends OTSSwingApplication implements UNITS
                 crossSection, false, Duration.createSI(60.0), false);
         trajectoryChart.setCell(plot.getContentPane(), 1, 1);
 
-        this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "Trajectories",
+        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
                 trajectoryChart);
 
         for (int lane : new int[] { 0, 1 })
@@ -271,7 +267,7 @@ public class CircularRoadIMB extends OTSSwingApplication implements UNITS
             plot = new ContourPlotAcceleration("Accceleration lane " + lane, simulator, dataPool);
             charts.setCell(plot.getContentPane(), 2, 1);
 
-            this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "stats lane " + lane,
+            getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "stats lane " + lane,
                     charts);
         }
     }

@@ -23,7 +23,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.draw.graphs.AbstractPlot;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
@@ -31,9 +30,8 @@ import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
@@ -54,16 +52,10 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
  * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class NetworksSwing extends OTSSwingApplication implements UNITS
+public class NetworksSwing extends OTSSimulationApplication<NetworksModel> implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
-
-    /** The model. */
-    private NetworksModel model;
-
-    /** the panel. */
-    private OTSAnimationPanel animationPanel;
 
     /**
      * Create a Networks Swing application.
@@ -76,13 +68,15 @@ public class NetworksSwing extends OTSSwingApplication implements UNITS
             throws OTSDrawingException
     {
         super(model, panel);
-        this.model = model;
-        this.animationPanel = panel;
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
-        addStatisticsTabs(model.getSimulator());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void addTabs()
+    {
+        addStatisticsTabs(getModel().getSimulator());
     }
 
     /**
@@ -132,7 +126,7 @@ public class NetworksSwing extends OTSSwingApplication implements UNITS
      */
     protected final void addStatisticsTabs(final OTSSimulatorInterface simulator)
     {
-        int graphCount = this.model.pathCount();
+        int graphCount = getModel().pathCount();
         int columns = 1;
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
         TablePanel charts = new TablePanel(columns, rows);
@@ -141,7 +135,7 @@ public class NetworksSwing extends OTSSwingApplication implements UNITS
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
             List<LaneDirection> start = new ArrayList<>();
-            start.add(new LaneDirection(this.model.getPath(graphIndex).get(0), GTUDirectionality.DIR_PLUS));
+            start.add(new LaneDirection(getModel().getPath(graphIndex).get(0), GTUDirectionality.DIR_PLUS));
             GraphPath<KpiLaneDirection> path;
             try
             {
@@ -156,7 +150,7 @@ public class NetworksSwing extends OTSSwingApplication implements UNITS
             charts.setCell(plot.getContentPane(), graphIndex % columns, graphIndex / columns);
         }
 
-        this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "statistics ", charts);
+        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "statistics ", charts);
     }
 
     /** A parameter dialog with a radio button for the network choice tab. */

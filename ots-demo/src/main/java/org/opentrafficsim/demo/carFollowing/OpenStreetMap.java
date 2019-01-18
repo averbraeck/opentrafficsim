@@ -27,7 +27,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.factory.osm.OSMLink;
 import org.opentrafficsim.road.network.factory.osm.OSMNetwork;
 import org.opentrafficsim.road.network.factory.osm.OSMNode;
@@ -42,7 +41,7 @@ import org.opentrafficsim.road.network.factory.osm.output.Convert;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -56,7 +55,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Moritz Bergmann
  */
-public class OpenStreetMap extends OTSSwingApplication implements UNITS
+public class OpenStreetMap extends OTSSimulationApplication<OSMModel> implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -70,8 +69,13 @@ public class OpenStreetMap extends OTSSwingApplication implements UNITS
     public OpenStreetMap(final OSMModel model, final OTSAnimationPanel panel) throws OTSDrawingException
     {
         super(model, panel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesFull(panel);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void setAnimationToggles()
+    {
+        AnimationToggles.setTextAnimationTogglesFull(getAnimationPanel());
     }
 
     /**

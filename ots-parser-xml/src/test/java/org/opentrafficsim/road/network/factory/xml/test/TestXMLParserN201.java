@@ -23,11 +23,10 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
-import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.road.network.factory.xml.test.TestXMLParserN201.TestXMLModelN201;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -43,7 +42,7 @@ import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestXMLParserN201 extends OTSSwingApplication
+public class TestXMLParserN201 extends OTSSimulationApplication<TestXMLModelN201>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -56,9 +55,14 @@ public class TestXMLParserN201 extends OTSSwingApplication
     public TestXMLParserN201(final TestXMLModelN201 model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
-        animationPanel.addAllToggleGISButtonText(" GIS Layers:", model.getGisMap(), "Turn GIS map layer on or off");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void setAnimationToggles()
+    {
+        super.setAnimationToggles();
+        getAnimationPanel().addAllToggleGISButtonText(" GIS Layers:", getModel().getGisMap(), "Turn GIS map layer on or off");
     }
 
     /**

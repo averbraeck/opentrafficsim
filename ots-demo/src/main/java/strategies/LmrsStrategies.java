@@ -69,7 +69,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
+import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.gtu.GTUGeneratorAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
@@ -158,7 +158,7 @@ import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -407,7 +407,7 @@ public class LmrsStrategies implements EventListenerInterface
                 final LmrsStrategiesModel lmrsModel = lmrsStrategies.new LmrsStrategiesModel(simulator);
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si + 1e-9), lmrsModel);
-                LmrsStrategiesSimulation lmrsStrategiesSimulation = lmrsStrategies.new LmrsStrategiesSimulation(lmrsModel);
+                lmrsStrategies.new LmrsStrategiesSimulation(lmrsModel);
                 double tReport = 60.0;
                 Time t = simulator.getSimulatorTime();
                 while (t.le(SIMTIME))
@@ -436,13 +436,9 @@ public class LmrsStrategies implements EventListenerInterface
                 final LmrsStrategiesModel lmrsModel = lmrsStrategies.new LmrsStrategiesModel(simulator);
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si + 1e-9), lmrsModel);
-                OTSAnimationPanel animationPanel =
-                        new OTSAnimationPanel(lmrsModel.getNetwork().getExtent(), new Dimension(800, 600),
-                                simulator, lmrsModel, LmrsStrategies.colorer, lmrsModel.getNetwork());
-                LmrsStrategiesAnimation lmrsStrategiesAnimation =
-                        lmrsStrategies.new LmrsStrategiesAnimation(lmrsModel, animationPanel);
-                // TODO: this is double now -- the code itself also animates a few things, but not the GTUs.
-                DefaultAnimationFactory.animateNetwork(lmrsModel.getNetwork(), simulator, LmrsStrategies.colorer);
+                OTSAnimationPanel animationPanel = new OTSAnimationPanel(lmrsModel.getNetwork().getExtent(),
+                        new Dimension(800, 600), simulator, lmrsModel, LmrsStrategies.colorer, lmrsModel.getNetwork());
+                lmrsStrategies.new LmrsStrategiesAnimation(lmrsModel, animationPanel);
             }
             catch (Exception exception)
             {
@@ -471,7 +467,7 @@ public class LmrsStrategies implements EventListenerInterface
         /**
          * @param model model
          */
-        public LmrsStrategiesSimulation(final OTSModelInterface model)
+        LmrsStrategiesSimulation(final OTSModelInterface model)
         {
             super(model);
         }
@@ -489,7 +485,7 @@ public class LmrsStrategies implements EventListenerInterface
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    class LmrsStrategiesAnimation extends OTSSwingApplication
+    class LmrsStrategiesAnimation extends OTSSimulationApplication<OTSModelInterface>
     {
         /** */
         private static final long serialVersionUID = 20180303L;
@@ -497,16 +493,24 @@ public class LmrsStrategies implements EventListenerInterface
         /**
          * @param model the model
          * @param panel the animation panel
+         * @throws OTSDrawingException
          */
-        LmrsStrategiesAnimation(final OTSModelInterface model, final OTSAnimationPanel panel)
+        LmrsStrategiesAnimation(final OTSModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
         {
             super(model, panel);
-            AnimationToggles.setIconAnimationTogglesFull(panel);
-            panel.getAnimationPanel().toggleClass(OTSLink.class);
-            panel.getAnimationPanel().toggleClass(OTSNode.class);
-            panel.getAnimationPanel().toggleClass(GTUGenerator.class);
-            panel.getAnimationPanel().showClass(SpeedSign.class);
         }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void setAnimationToggles()
+        {
+            AnimationToggles.setIconAnimationTogglesFull(getAnimationPanel());
+            getAnimationPanel().getAnimationPanel().toggleClass(OTSLink.class);
+            getAnimationPanel().getAnimationPanel().toggleClass(OTSNode.class);
+            getAnimationPanel().getAnimationPanel().toggleClass(GTUGenerator.class);
+            getAnimationPanel().getAnimationPanel().showClass(SpeedSign.class);
+        }
+
     }
 
     /**

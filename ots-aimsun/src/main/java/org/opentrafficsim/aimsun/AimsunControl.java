@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.unit.DurationUnit;
@@ -44,6 +43,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.xml.sax.SAXException;
 
@@ -436,7 +436,7 @@ public class AimsunControl
     /**
      * The application.
      */
-    class AimsunSwingApplication extends OTSSwingApplication
+    class AimsunSwingApplication extends OTSSimulationApplication<OTSModelInterface>
     {
         /** */
         private static final long serialVersionUID = 1L;
@@ -444,8 +444,9 @@ public class AimsunControl
         /**
          * @param model the model
          * @param panel the panel of the main screen
+         * @throws OTSDrawingException on animation error
          */
-        public AimsunSwingApplication(final OTSModelInterface model, final JPanel panel)
+        public AimsunSwingApplication(final OTSModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
         {
             super(model, panel);
         }

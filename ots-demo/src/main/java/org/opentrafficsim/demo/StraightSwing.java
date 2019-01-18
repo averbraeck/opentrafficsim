@@ -14,7 +14,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.draw.graphs.AbstractPlot;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
@@ -27,9 +26,8 @@ import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -45,16 +43,10 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
  * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class StraightSwing extends OTSSwingApplication implements UNITS
+public class StraightSwing extends OTSSimulationApplication<StraightModel> implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
-
-    /** The model. */
-    private StraightModel model;
-
-    /** the panel. */
-    private OTSAnimationPanel animationPanel;
 
     /**
      * Create a Straight Swing application.
@@ -67,13 +59,15 @@ public class StraightSwing extends OTSSwingApplication implements UNITS
             throws OTSDrawingException
     {
         super(model, panel);
-        this.model = model;
-        this.animationPanel = panel;
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
-        addStatisticsTabs(model.getSimulator());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void addTabs()
+    {
+        addStatisticsTabs(getModel().getSimulator());
     }
 
     /**
@@ -126,7 +120,7 @@ public class StraightSwing extends OTSSwingApplication implements UNITS
         GraphPath<KpiLaneDirection> path;
         try
         {
-            path = GraphLaneUtil.createPath("Lane", new LaneDirection(this.model.getPath().get(0), GTUDirectionality.DIR_PLUS));
+            path = GraphLaneUtil.createPath("Lane", new LaneDirection(getModel().getPath().get(0), GTUDirectionality.DIR_PLUS));
         }
         catch (NetworkException exception)
         {
@@ -153,6 +147,6 @@ public class StraightSwing extends OTSSwingApplication implements UNITS
         plot = new ContourPlotAcceleration("AccelerationPlot", simulator, dataPool);
         charts.setCell(plot.getContentPane(), 2, 1);
 
-        this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "statistics ", charts);
+        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "statistics ", charts);
     }
 }

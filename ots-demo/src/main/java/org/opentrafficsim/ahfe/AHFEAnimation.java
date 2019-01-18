@@ -22,6 +22,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.ahfe.AHFEAnimation.AHFEModel;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -29,7 +30,6 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -41,9 +41,8 @@ import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -58,7 +57,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class AHFEAnimation extends OTSSwingApplication
+public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
 {
 
     /** Warm-up time. */
@@ -85,8 +84,6 @@ public class AHFEAnimation extends OTSSwingApplication
     public AHFEAnimation(final String title, final OTSAnimationPanel panel, final AHFEModel model) throws OTSDrawingException
     {
         super(model, panel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(panel);
     }
 
     /**
@@ -301,9 +298,8 @@ public class AHFEAnimation extends OTSSwingApplication
                             finalAccelerationError, finalLeftDemand, finalRightDemand, finalLeftFraction);
                     System.out.println("Setting up replication " + finalReplication);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), ahfeModel, finalReplication);
-                    OTSAnimationPanel animationPanel =
-                            new OTSAnimationPanel(ahfeModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
-                                    ahfeModel, DEFAULT_COLORER, ahfeModel.getNetwork());
+                    OTSAnimationPanel animationPanel = new OTSAnimationPanel(ahfeModel.getNetwork().getExtent(),
+                            new Dimension(800, 600), simulator, ahfeModel, DEFAULT_COLORER, ahfeModel.getNetwork());
                     new AHFEAnimation("AHFE", animationPanel, ahfeModel);
                     if (finalAutoRun)
                     {

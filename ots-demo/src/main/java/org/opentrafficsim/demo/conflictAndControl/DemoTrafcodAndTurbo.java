@@ -26,6 +26,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.demo.conflictAndControl.DemoTrafcodAndTurbo.TrafCODModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
@@ -36,9 +37,8 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
 
@@ -58,13 +58,10 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class DemoTrafcodAndTurbo extends OTSSwingApplication
+public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
 {
     /** */
     private static final long serialVersionUID = 20161118L;
-
-    /** the panel. */
-    private OTSAnimationPanel animationPanel;
 
     /**
      * Create a TrafcodAndTurbo demo.
@@ -77,10 +74,6 @@ public class DemoTrafcodAndTurbo extends OTSSwingApplication
             throws OTSDrawingException
     {
         super(model, panel);
-        this.animationPanel = panel;
-        // DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
-        AnimationToggles.setTextAnimationTogglesStandard(panel);
-        addTabs();
     }
 
     /**
@@ -118,14 +111,13 @@ public class DemoTrafcodAndTurbo extends OTSSwingApplication
     /**
      * Add tab with trafCOD status.
      */
-    private void addTabs()
+    protected void addTabs()
     {
-        TrafCODModel model = (TrafCODModel) getModel();
-        JScrollPane scrollPane = new JScrollPane(model.getControllerDisplayPanel());
+        JScrollPane scrollPane = new JScrollPane(getModel().getControllerDisplayPanel());
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.add(scrollPane);
-        this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount() - 1,
-                model.getTrafCOD().getId(), wrapper);
+        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount() - 1,
+                getModel().getTrafCOD().getId(), wrapper);
     }
 
     /**
