@@ -54,13 +54,15 @@ public class DefaultAnimationFactory implements EventListenerInterface
     private Map<LaneBasedGTU, Renderable2D<LaneBasedGTU>> animatedGTUs = new HashMap<>();
 
     /**
-     * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML. The class will
-     * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
+     * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
+     * adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
      * @param simulator the simulator
+     * @param animateNetwork whether to animate the current network objects
      * @throws OTSDrawingException on drawing error
      */
-    protected DefaultAnimationFactory(final OTSNetwork network, final OTSSimulatorInterface simulator) throws OTSDrawingException
+    protected DefaultAnimationFactory(final OTSNetwork network, final OTSSimulatorInterface simulator,
+            final boolean animateNetwork) throws OTSDrawingException
     {
         this.simulator = simulator;
 
@@ -73,40 +75,43 @@ public class DefaultAnimationFactory implements EventListenerInterface
         // model the current infrastructure
         try
         {
-            for (Node node : network.getNodeMap().values())
+            if (animateNetwork)
             {
-                new NodeAnimation(node, simulator);
-            }
-            for (Link link : network.getLinkMap().values())
-            {
-                new LinkAnimation(link, simulator, 0.5f);
-                if (link instanceof CrossSectionLink)
+                for (Node node : network.getNodeMap().values())
                 {
-                    for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
+                    new NodeAnimation(node, simulator);
+                }
+                for (Link link : network.getLinkMap().values())
+                {
+                    new LinkAnimation(link, simulator, 0.5f);
+                    if (link instanceof CrossSectionLink)
                     {
-                        if (element instanceof Lane)
+                        for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
                         {
-                            new LaneAnimation((Lane) element, simulator, Color.GRAY.brighter(), false);
-                        }
-                        else if (element instanceof Shoulder)
-                        {
-                            new ShoulderAnimation((Shoulder) element, simulator, Color.DARK_GRAY);
-                        }
-                        else if (element instanceof Stripe)
-                        {
-                            Stripe stripe = (Stripe) element;
-                            TYPE type;
-                            if (stripe.isPermeable(GTUType.CAR, LateralDirectionality.LEFT))
+                            if (element instanceof Lane)
                             {
-                                type = stripe.isPermeable(GTUType.CAR, LateralDirectionality.RIGHT) ? TYPE.DASHED
-                                        : TYPE.LEFTONLY;
+                                new LaneAnimation((Lane) element, simulator, Color.GRAY.brighter(), false);
                             }
-                            else
+                            else if (element instanceof Shoulder)
                             {
-                                type = stripe.isPermeable(GTUType.CAR, LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY
-                                        : TYPE.SOLID;
+                                new ShoulderAnimation((Shoulder) element, simulator, Color.DARK_GRAY);
                             }
-                            new StripeAnimation((Stripe) element, simulator, type);
+                            else if (element instanceof Stripe)
+                            {
+                                Stripe stripe = (Stripe) element;
+                                TYPE type;
+                                if (stripe.isPermeable(GTUType.CAR, LateralDirectionality.LEFT))
+                                {
+                                    type = stripe.isPermeable(GTUType.CAR, LateralDirectionality.RIGHT) ? TYPE.DASHED
+                                            : TYPE.LEFTONLY;
+                                }
+                                else
+                                {
+                                    type = stripe.isPermeable(GTUType.CAR, LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY
+                                            : TYPE.SOLID;
+                                }
+                                new StripeAnimation((Stripe) element, simulator, type);
+                            }
                         }
                     }
                 }
@@ -122,19 +127,32 @@ public class DefaultAnimationFactory implements EventListenerInterface
             throw new OTSDrawingException("Exception while creating network animation.", exception);
         }
     }
-    
+
     /**
-     * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML. The class will
+     * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is not read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
      * @param simulator the simulator
      * @throws OTSDrawingException on drawing error
      */
-    public static void animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator) throws OTSDrawingException
+    public static void animateNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator)
+            throws OTSDrawingException
     {
-        new DefaultAnimationFactory(network, simulator);
+        new DefaultAnimationFactory(network, simulator, true);
     }
-    
+
+    /**
+     * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is read from XML. The class will
+     * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
+     * @param network OTSNetwork; the network
+     * @param simulator the simulator
+     * @throws OTSDrawingException on drawing error
+     */
+    public static void animateXmlNetwork(final OTSNetwork network, final OTSSimulatorInterface simulator)
+            throws OTSDrawingException
+    {
+        new DefaultAnimationFactory(network, simulator, false);
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -146,14 +164,14 @@ public class DefaultAnimationFactory implements EventListenerInterface
             {
                 // schedule the addition of the GTU to prevent it from not having an operational plan
                 LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
-                this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] {gtu});
+                this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] { gtu });
             }
             else if (event.getType().equals(Network.ANIMATION_GTU_REMOVE_EVENT))
             {
                 LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
                 if (this.animatedGTUs.containsKey(gtu))
                 {
-                    this.animatedGTUs.get(gtu).destroy(); 
+                    this.animatedGTUs.get(gtu).destroy();
                     this.animatedGTUs.remove(gtu);
                 }
             }
