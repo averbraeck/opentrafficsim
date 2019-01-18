@@ -47,6 +47,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 import org.opentrafficsim.road.gtu.colorer.DesiredHeadwayColorer;
 import org.opentrafficsim.road.gtu.colorer.DistractionColorer;
 import org.opentrafficsim.road.gtu.colorer.FixedColor;
+import org.opentrafficsim.road.gtu.colorer.SynchronizationColorer;
 import org.opentrafficsim.road.gtu.colorer.TaskSaturationColorer;
 import org.opentrafficsim.road.gtu.generator.od.DefaultGTUCharacteristicsGeneratorOD;
 import org.opentrafficsim.road.gtu.generator.od.ODApplier;
@@ -113,6 +114,7 @@ public class SdmSimulation extends AbstractSimulationScript
         super("SDM simulation", "Simulations using the Stochastic Distraction Model", properties);
         // set GTU colorers to use
         setGtuColorer(SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
+                .addColorer(new SynchronizationColorer())
                 .addColorer(new DistractionColorer(DefaultDistraction.ANSWERING_CELL_PHONE, DefaultDistraction.CONVERSING,
                         DefaultDistraction.MANIPULATING_AUDIO_CONTROLS, DefaultDistraction.EXTERNAL_DISTRACTION))
                 .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
@@ -134,6 +136,21 @@ public class SdmSimulation extends AbstractSimulationScript
     @Override
     protected void setDefaultProperties()
     {
+        // output
+        setProperty("outputFile", "output.txt");
+        setProperty("output", true);
+        setProperty("plots", false);
+
+        // traffic
+        setProperty("startTime", "0");
+        setProperty("warmupTime", "300");
+        setProperty("simulationTime", "3900");
+        setProperty("truckFraction", 0.05);
+        setProperty("leftDemand", 3600);
+        setProperty("rightDemand", 3600);
+        setProperty("startDemandFactor", 0.45);
+
+        // distractions
         setProperty("allowMultiTasking", "false");
         // 1=TALKING_CELL_PHONE,12=CONVERSING,5=MANIPULATING_AUDIO_CONTROLS,16=EXTERNAL_DISTRACTION
         setProperty("distractions", "1,12,5,16");
@@ -144,10 +161,24 @@ public class SdmSimulation extends AbstractSimulationScript
         setProperty("audio", 0.3);
         setProperty("externalBase", 0.2);
         setProperty("externalVar", 0.3);
-        setProperty("truckFraction", 0.05);
-        setProperty("outputFile", "output.txt");
-        setProperty("output", true);
-        setProperty("plots", true);
+
+        // basic behavioral parameters
+        setProperty("DT", 0.5);
+        setProperty("TMIN", 0.56);
+        setProperty("TMAX", 1.2);
+        setProperty("A_CAR", 1.25);
+        setProperty("A_TRUCK", 0.8);
+        setProperty("B", 2.09);
+
+        // human factors
+        setProperty("SA_MIN", 0.5);
+        setProperty("SA_MAX", 1.0);
+        setProperty("TR_MAX", 2.0);
+        setProperty("TC", 1.0);
+        setProperty("TS_CRIT", 0.8);
+        setProperty("TS_MAX", 2.0);
+        setProperty("BETA_T", 1.0);
+
     }
 
     /** {@inheritDoc} */
@@ -201,7 +232,10 @@ public class SdmSimulation extends AbstractSimulationScript
         origins.add(nodeB);
         List<OTSNode> destinations = new ArrayList<>();
         destinations.add(nodeF);
-        TimeVector timeVector = new TimeVector(new double[] { 0.0, 0.05, 0.55, 1.05 }, TimeUnit.BASE_HOUR, StorageType.DENSE);
+        double wut = sim.getReplication().getTreatment().getWarmupPeriod().si;
+        double rl = sim.getReplication().getTreatment().getRunLength().si;
+        TimeVector timeVector =
+                new TimeVector(new double[] { 0.0, wut, wut + (rl - wut) * 0.5, rl }, TimeUnit.BASE, StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR;
         Categorization categorization = new Categorization("GTU categorization", GTUType.class);
         ODMatrix odMatrix = new ODMatrix("OD", origins, destinations, categorization, timeVector, interpolation);
@@ -209,13 +243,18 @@ public class SdmSimulation extends AbstractSimulationScript
         Category truCategory = new Category(categorization, GTUType.TRUCK);
         double f1 = getDoubleProperty("truckFraction");
         double f2 = 1.0 - f1;
-        odMatrix.putDemandVector(nodeA, nodeF, carCategory, freq(new double[] { f2 * 1500.0, f2 * 1500.0, f2 * 3400.0, 0.0 }));
-        odMatrix.putDemandVector(nodeA, nodeF, truCategory, freq(new double[] { f1 * 1500.0, f1 * 1500.0, f1 * 3400.0, 0.0 }));
-        odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] { f2 * 1500.0, f2 * 1500.0, f2 * 3400.0, 0.0 }));
-        odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] { f1 * 1500.0, f1 * 1500.0, f1 * 3400.0, 0.0 }));
-        ODOptions odOptions = new ODOptions().set(ODOptions.ANIMATION, true).set(ODOptions.NO_LC_DIST, Length.createSI(200))
-                .set(ODOptions.GTU_TYPE, new DefaultGTUCharacteristicsGeneratorOD(
-                        new SdmStrategicalPlannerFactory(sim.getReplication().getStream("generation"))));
+        double left2 = getDoubleProperty("leftDemand");
+        double right2 = getDoubleProperty("rightDemand");
+        double startDemandFactor = getDoubleProperty("startDemandFactor");
+        double left1 = left2 * startDemandFactor;
+        double right1 = right2 * startDemandFactor;
+        odMatrix.putDemandVector(nodeA, nodeF, carCategory, freq(new double[] { f2 * left1, f2 * left1, f2 * left2, 0.0 }));
+        odMatrix.putDemandVector(nodeA, nodeF, truCategory, freq(new double[] { f1 * left1, f1 * left1, f1 * left2, 0.0 }));
+        odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] { f2 * right1, f2 * right1, f2 * right2, 0.0 }));
+        odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] { f1 * right1, f1 * right1, f1 * right2, 0.0 }));
+        ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.createSI(200)).set(ODOptions.GTU_TYPE,
+                new DefaultGTUCharacteristicsGeneratorOD(
+                        new SdmStrategicalPlannerFactory(sim.getReplication().getStream("generation"), this)));
         ODApplier.applyOD(this.network, odMatrix, sim, odOptions);
 
         // animation
@@ -348,11 +387,14 @@ public class SdmSimulation extends AbstractSimulationScript
     {
         if (getBooleanProperty("output"))
         {
-            Length detectorPosition = Length.createSI(100.0);
+            Length preDetectorPosition = Length.createSI(400.0); // on link DE, upstream of lane drop
+            Length postDetectorPosition = Length.createSI(100.0); // on link EF, downstream of lane drop
             double tts = 0.0;
             List<Float> ttcList = new ArrayList<>();
             List<Float> decList = new ArrayList<>();
             int[] counts = new int[60];
+            int[] speedCounts = new int[60];
+            double[] speedSum = new double[60];
             for (SpaceTimeRegion region : this.regions)
             {
                 TrajectoryGroup<?> trajectoryGroup =
@@ -377,11 +419,20 @@ public class SdmSimulation extends AbstractSimulationScript
                                 decList.add(decVal);
                             }
                         }
-                        if (region.getLaneDirection().getLaneData().getLinkData().getId().equals("EF") && trajectory.size() > 1
-                                && trajectory.getX(0) < detectorPosition.si
-                                && trajectory.getX(trajectory.size() - 1) > detectorPosition.si)
+                        if (region.getLaneDirection().getLaneData().getLinkData().getId().equals("DE") && trajectory.size() > 1
+                                && trajectory.getX(0) < preDetectorPosition.si
+                                && trajectory.getX(trajectory.size() - 1) > preDetectorPosition.si)
                         {
-                            double t = trajectory.getTimeAtPosition(detectorPosition).si - region.getStartTime().si;
+                            double t = trajectory.getTimeAtPosition(postDetectorPosition).si - region.getStartTime().si;
+                            double v = trajectory.getSpeedAtPosition(postDetectorPosition).si;
+                            speedCounts[(int) (t / 60.0)]++;
+                            speedSum[(int) (t / 60.0)] += v;
+                        }
+                        if (region.getLaneDirection().getLaneData().getLinkData().getId().equals("EF") && trajectory.size() > 1
+                                && trajectory.getX(0) < postDetectorPosition.si
+                                && trajectory.getX(trajectory.size() - 1) > postDetectorPosition.si)
+                        {
+                            double t = trajectory.getTimeAtPosition(postDetectorPosition).si - region.getStartTime().si;
                             counts[(int) (t / 60.0)]++;
                         }
                     }
@@ -392,7 +443,7 @@ public class SdmSimulation extends AbstractSimulationScript
                     }
                 }
             }
-            int qMax = 0;
+            double qMax = 0;
             for (int i = 0; i < counts.length - 4; i++)
             {
                 int q = 0;
@@ -402,6 +453,19 @@ public class SdmSimulation extends AbstractSimulationScript
                 }
                 qMax = qMax > q ? qMax : q;
             }
+            qMax *= 12; // twelve periods of 5min in an hour
+            int n = 0;
+            int countSum = 0;
+            for (int i = 0; i < counts.length; i++)
+            {
+                double v = speedSum[i] / speedCounts[i];
+                if (v < 80 / 3.6)
+                {
+                    countSum += counts[i];
+                    n++;
+                }
+            }
+            double qSat = n == 0 ? Double.NaN : 60.0 * countSum / n; // per min -> per hour
             BufferedWriter bw;
             try
             {
@@ -409,7 +473,9 @@ public class SdmSimulation extends AbstractSimulationScript
                         new OutputStreamWriter(Writer.createOutputStream(getProperty("outputFile"), CompressionType.ZIP)));
                 bw.write(String.format("total time spent [s]: %.0f", tts));
                 bw.newLine();
-                bw.write(String.format("maximum flow [veh/5min]: %d", qMax));
+                bw.write(String.format("maximum flow [veh/h]: %.3f", qMax));
+                bw.newLine();
+                bw.write(String.format("saturation flow [veh/h]: %.3f", qSat));
                 bw.newLine();
                 bw.write(String.format("time to collision [s]: %s", ttcList));
                 bw.newLine();
