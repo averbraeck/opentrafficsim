@@ -60,11 +60,11 @@ public final class Steering
 
     /**
      * Translates a reference trajectory in to steering angles and a resulting trajectory.
-     * @param gtu GTU
-     * @param params parameters
-     * @param steeringState steering state between operational plans
-     * @param referencePlan operational reference plan
-     * @param feedbackTable table of feedback values
+     * @param gtu LaneBasedGTU; GTU
+     * @param params Parameters; parameters
+     * @param steeringState SteeringState; steering state between operational plans
+     * @param referencePlan OperationalPlan; operational reference plan
+     * @param feedbackTable FeedbackTable; table of feedback values
      * @return actual operational plan
      * @throws ParameterException undefined parameter
      */
@@ -143,11 +143,11 @@ public final class Steering
 
     /**
      * Translates reference points in to steering angles and a resulting trajectory.
-     * @param gtu GTU
-     * @param params parameters
-     * @param steeringState steering state between operational plans
-     * @param points reference points
-     * @param segments speed segments
+     * @param gtu GTU; GTU
+     * @param params Parameters; parameters
+     * @param steeringState SteeringState; steering state between operational plans
+     * @param points Set&lt;DirectedPoint&gt;; reference points
+     * @param segments List&lt;Segment&gt;; speed segments
      * @return operational plan
      * @throws ParameterException undefined parameter
      */
@@ -197,7 +197,7 @@ public final class Steering
         }
 
         /**
-         * @param steeringAngle set steeringAngle.
+         * @param steeringAngle Angle; set steeringAngle.
          */
         protected void setSteeringAngle(final Angle steeringAngle)
         {
@@ -213,7 +213,7 @@ public final class Steering
         }
 
         /**
-         * @param angularError set angularError.
+         * @param angularError Angle; set angularError.
          */
         protected void setAngularError(final Angle angularError)
         {
@@ -229,7 +229,7 @@ public final class Steering
         }
 
         /**
-         * @param angularErrorDerivative set angularErrorDerivative.
+         * @param angularErrorDerivative double; set angularErrorDerivative.
          */
         protected void setAngularErrorDerivative(final double angularErrorDerivative)
         {
@@ -245,7 +245,7 @@ public final class Steering
         }
 
         /**
-         * @param positionError set positionError.
+         * @param positionError Length; set positionError.
          */
         protected void setPositionError(final Length positionError)
         {
@@ -261,7 +261,7 @@ public final class Steering
         }
 
         /**
-         * @param positionErrorDerivative set positionErrorDerivative.
+         * @param positionErrorDerivative Speed; set positionErrorDerivative.
          */
         protected void setPositionErrorDerivative(final Speed positionErrorDerivative)
         {
@@ -289,7 +289,7 @@ public final class Steering
         private final List<FeedbackVector> feedbackVectors;
 
         /**
-         * @param feedbackVectors feedback vector per speed
+         * @param feedbackVectors List&lt;FeedbackVector&gt;; feedback vector per speed
          */
         public FeedbackTable(final List<FeedbackVector> feedbackVectors)
         {
@@ -300,7 +300,7 @@ public final class Steering
 
         /**
          * Returns the feedback vector pertaining to the speed closest to the input speed.
-         * @param speed speed
+         * @param speed Speed; speed
          * @return feedback vector pertaining to the speed closest to the input speed
          */
         protected FeedbackVector getAngularErrorFeedback(final Speed speed)
@@ -350,11 +350,11 @@ public final class Steering
             private final double positionErrorDerivativeFeedback;
 
             /**
-             * @param speed speed
-             * @param angularErrorFeedback angular error feedback
-             * @param angularErrorDerivateFeedback angular error derivative feedback
-             * @param positionErrorFeedback position error feedback
-             * @param positionErrorDerivativeFeedback position error derivative feedback
+             * @param speed Speed; speed
+             * @param angularErrorFeedback double; angular error feedback
+             * @param angularErrorDerivateFeedback double; angular error derivative feedback
+             * @param positionErrorFeedback double; position error feedback
+             * @param positionErrorDerivativeFeedback double; position error derivative feedback
              */
             public FeedbackVector(final Speed speed, final double angularErrorFeedback,
                     final double angularErrorDerivateFeedback, final double positionErrorFeedback,

@@ -50,7 +50,7 @@ public class RelativePosition implements Serializable
 
     /** Standard relative position type CONTOUR. There can be multiple points of type CONTOUR for one GTU. */
     public static final TYPE CONTOUR = new TYPE("CONTOUR");
-    
+
     /** Center of gravity. */
     public static final TYPE CENTER_GRAVITY = new TYPE("CENTER_GRAVITY");
 

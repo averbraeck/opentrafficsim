@@ -56,9 +56,9 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
 
     /**
      * Create a CircularRoad Swing application.
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model CircularRoadModel; the model
      * @throws OTSDrawingException on animation error
      */
     public CircularRoadSwing(final String title, final OTSAnimationPanel panel, final CircularRoadModel model)
@@ -122,7 +122,7 @@ public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadMode
 
     /**
      * Add the statistics tabs.
-     * @param simulator the simulator on which sampling can be scheduled
+     * @param simulator OTSSimulatorInterface; the simulator on which sampling can be scheduled
      */
     protected final void addStatisticsTabs(final OTSSimulatorInterface simulator)
     {

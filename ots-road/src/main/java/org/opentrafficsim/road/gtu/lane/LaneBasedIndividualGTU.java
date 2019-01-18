@@ -426,6 +426,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;? extends
          *            LaneBasedStrategicalPlanner&gt;; LaneBasedStrategicalPlannerFactory&lt;? extends
          *            LaneBasedStrategicalPlanner&gt;; LaneBasedStrategicalPlannerFactory&lt;? extends
+         *            LaneBasedStrategicalPlanner&gt;; LaneBasedStrategicalPlannerFactory&lt;? extends
          *            LaneBasedStrategicalPlanner&gt;; factory for the strategical planner
          * @param route Route; route
          * @param origin Node; origin
@@ -434,7 +435,8 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
          * @throws Exception when not all required values have been set
          */
         public final LaneBasedIndividualGTU build(
-                final LaneBasedStrategicalPlannerFactory<? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory,
+                final LaneBasedStrategicalPlannerFactory<
+                        ? extends LaneBasedStrategicalPlanner> laneBasedStrategicalPlannerFactory,
                 final Route route, final Node origin, final Node destination) throws Exception
         {
             if (null == this.id || null == this.gtuType || null == this.initialLongitudinalPositions

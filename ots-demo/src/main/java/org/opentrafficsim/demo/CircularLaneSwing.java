@@ -49,9 +49,9 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
 
     /**
      * Create a CircularLane Swing application.
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model CircularLaneModel; the model
      * @throws OTSDrawingException on animation error
      */
     public CircularLaneSwing(final String title, final OTSAnimationPanel panel, final CircularLaneModel model)
@@ -113,7 +113,7 @@ public class CircularLaneSwing extends OTSSimulationApplication<CircularLaneMode
 
     /**
      * Add the statistics tabs.
-     * @param simulator the simulator on which sampling can be scheduled
+     * @param simulator OTSSimulatorInterface; the simulator on which sampling can be scheduled
      */
     protected final void addStatisticsTabs(final OTSSimulatorInterface simulator)
     {

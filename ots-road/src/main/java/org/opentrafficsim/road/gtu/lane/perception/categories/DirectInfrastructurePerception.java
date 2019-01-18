@@ -397,6 +397,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      * @param possibilityMap
      *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
      *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
+     *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
      *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;; legal
      *            or physical possibility map
      * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section

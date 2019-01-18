@@ -69,7 +69,8 @@ public interface StrategicalPlannerFactorySupplierOD
      * Returns a {@code StrategicalPlannerFactorySupplierOD} using a {@code LaneBasedStrategicalRoutePlannerFactory} with a
      * tactical planner factory based on the given supplier. Simulations using this strategical level can be more easily
      * specified in this manner.
-     * @param tacticalPlannerFactorySupplierOD tactical planner factory based on OD information
+     * @param tacticalPlannerFactorySupplierOD TacticalPlannerFactorySupplierOD; tactical planner factory based on OD
+     *            information
      * @return strategical factory with default strategical layer and specified tactical layer
      */
     static StrategicalPlannerFactorySupplierOD route(final TacticalPlannerFactorySupplierOD tacticalPlannerFactorySupplierOD)

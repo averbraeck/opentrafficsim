@@ -402,9 +402,9 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
 
     /**
      * Add buttons for toggling all GIS layers on or off.
-     * @param header the name of the group of layers
-     * @param gisMap the GIS map for which the toggles have to be added
-     * @param toolTipText the tool tip text to show when hovering over the button
+     * @param header String; the name of the group of layers
+     * @param gisMap GisRenderable2D; the GIS map for which the toggles have to be added
+     * @param toolTipText String; the tool tip text to show when hovering over the button
      */
     public final void addAllToggleGISButtonText(final String header, final GisRenderable2D gisMap, final String toolTipText)
     {

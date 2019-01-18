@@ -432,7 +432,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
         private Sampler<GtuData> sampler;
 
         /**
-         * @param simulator the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @param replication Integer; replication
          * @param anticipationStrategy String; anticipation strategy
          * @param reactionTime Duration; reaction time
@@ -474,7 +474,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
             this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
-                
+
                 InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml"); // Running from eclipse
                 // URL stream = URLResource.getResource("./Network.xml"); // Running Jar
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);

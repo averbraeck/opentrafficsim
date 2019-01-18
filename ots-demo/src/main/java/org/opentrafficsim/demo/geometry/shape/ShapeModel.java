@@ -37,7 +37,7 @@ public class ShapeModel extends AbstractOTSModel
     private OTSNetwork network = new OTSNetwork("shape model network");
 
     /**
-     * @param simulator the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      */
     public ShapeModel(final OTSSimulatorInterface simulator)
     {

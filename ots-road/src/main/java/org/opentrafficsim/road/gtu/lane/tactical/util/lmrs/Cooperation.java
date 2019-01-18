@@ -97,11 +97,11 @@ public interface Cooperation extends LmrsParameters
                             desire, params, sli, cfm);
                     a = Acceleration.min(a, aSingle);
                     a = Acceleration.max(a, params.getParameter(ParameterTypes.B).neg());
-//                    if (aSingle.gt(leader.getAcceleration()) || aSingle.gt(params.getParameter(ParameterTypes.B).neg()))
-//                    {
-//                        a = Acceleration.min(a, aSingle);
-//                        a = Synchronization.gentleUrgency(a, desire, params);
-//                    }
+                    // if (aSingle.gt(leader.getAcceleration()) || aSingle.gt(params.getParameter(ParameterTypes.B).neg()))
+                    // {
+                    // a = Acceleration.min(a, aSingle);
+                    // a = Synchronization.gentleUrgency(a, desire, params);
+                    // }
                 }
             }
             return a;

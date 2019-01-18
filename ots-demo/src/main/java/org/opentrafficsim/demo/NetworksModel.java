@@ -22,7 +22,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
@@ -36,7 +35,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactory;
-import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -150,7 +148,7 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
     private DistContinuous headwayGenerator;
 
     /**
-     * @param simulator the simulator for this model
+     * @param simulator OTSSimulatorInterface; the simulator for this model
      */
     public NetworksModel(final OTSSimulatorInterface simulator)
     {
@@ -449,8 +447,8 @@ public class NetworksModel extends AbstractOTSModel implements EventListenerInte
             {
                 return maximumSpeedDistribution.draw();
             }
-        }, strategicalPlannerFactory, lane.getParentLink().getStartNode().getId().equals("From") ? this.routeGeneratorMain
-                : this.routeGeneratorRamp);
+        }, strategicalPlannerFactory,
+                lane.getParentLink().getStartNode().getId().equals("From") ? this.routeGeneratorMain : this.routeGeneratorRamp);
 
     }
 

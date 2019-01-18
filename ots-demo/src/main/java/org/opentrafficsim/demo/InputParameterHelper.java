@@ -33,7 +33,7 @@ public final class InputParameterHelper implements ParameterFactory
 
     /**
      * Constructor.
-     * @param rootMap input parameter map
+     * @param rootMap InputParameterMap; input parameter map
      */
     public InputParameterHelper(final InputParameterMap rootMap)
     {
@@ -178,7 +178,7 @@ public final class InputParameterHelper implements ParameterFactory
 
     /**
      * Get the car parameters as entered.
-     * @param rootMap the root map of the model with a 'car' tab with the parameters
+     * @param rootMap InputParameterMap; the root map of the model with a 'car' tab with the parameters
      * @return the parameters where a, b, s0 and tSafe have been updated with the user's choices
      * @throws ParameterException when the parameter was given an illegal setting
      * @throws InputParameterException when the input parameter could not be found
@@ -200,7 +200,7 @@ public final class InputParameterHelper implements ParameterFactory
 
     /**
      * Get the truck parameters as entered.
-     * @param rootMap the root map of the model with a 'truck' tab with the parameters
+     * @param rootMap InputParameterMap; the root map of the model with a 'truck' tab with the parameters
      * @return the parameters where a, b, s0 and tSafe have been updated with the user's choices
      * @throws ParameterException when the parameter was given an illegal setting
      * @throws InputParameterException when the input parameter could not be found

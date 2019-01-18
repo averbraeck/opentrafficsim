@@ -81,9 +81,9 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
 
     /**
      * Create a Straight Swing application.
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model FundamentalDiagramPlotsModel; the model
      * @throws OTSDrawingException on animation error
      * @throws OTSSimulationException on graph error
      */
@@ -146,7 +146,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
 
     /**
      * Add the statistics tabs.
-     * @param simulator the simulator on which sampling can be scheduled
+     * @param simulator OTSSimulatorInterface; the simulator on which sampling can be scheduled
      * @throws OTSSimulationException on error
      */
     protected final void addStatisticsTabs(final OTSSimulatorInterface simulator) throws OTSSimulationException
@@ -241,7 +241,7 @@ public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDia
         private StreamInterface stream = new MersenneTwister(12345);
 
         /**
-         * @param simulator the simulator for this model
+         * @param simulator OTSSimulatorInterface; the simulator for this model
          */
         FundamentalDiagramPlotsModel(final OTSSimulatorInterface simulator)
         {

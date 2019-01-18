@@ -41,7 +41,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class TestModel extends AbstractOTSModel implements UNITS
 {
     /**
-     * @param simulator the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      */
     public TestModel(final OTSSimulatorInterface simulator)
     {

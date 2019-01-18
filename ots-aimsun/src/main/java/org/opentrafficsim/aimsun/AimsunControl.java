@@ -442,8 +442,8 @@ public class AimsunControl
         private static final long serialVersionUID = 1L;
 
         /**
-         * @param model the model
-         * @param panel the panel of the main screen
+         * @param model OTSModelInterface; the model
+         * @param panel OTSAnimationPanel; the panel of the main screen
          * @throws OTSDrawingException on animation error
          */
         public AimsunSwingApplication(final OTSModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
@@ -458,9 +458,9 @@ public class AimsunControl
     class AimsunModel extends AbstractOTSModel implements EventListenerInterface
     {
         /**
-         * @param simulator the simulator
-         * @param shortName the model name
-         * @param description the model description
+         * @param simulator OTSSimulatorInterface; the simulator
+         * @param shortName String; the model name
+         * @param description String; the model description
          */
         public AimsunModel(OTSSimulatorInterface simulator, String shortName, String description)
         {

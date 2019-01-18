@@ -465,7 +465,7 @@ public class LmrsStrategies implements EventListenerInterface
         private static final long serialVersionUID = 1L;
 
         /**
-         * @param model model
+         * @param model OTSModelInterface; model
          */
         LmrsStrategiesSimulation(final OTSModelInterface model)
         {
@@ -491,8 +491,8 @@ public class LmrsStrategies implements EventListenerInterface
         private static final long serialVersionUID = 20180303L;
 
         /**
-         * @param model the model
-         * @param panel the animation panel
+         * @param model OTSModelInterface; the model
+         * @param panel OTSAnimationPanel; the animation panel
          * @throws OTSDrawingException
          */
         LmrsStrategiesAnimation(final OTSModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
@@ -528,7 +528,7 @@ public class LmrsStrategies implements EventListenerInterface
     class LmrsStrategiesModel extends AbstractOTSModel
     {
         /**
-         * @param simulator the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          */
         LmrsStrategiesModel(final OTSSimulatorInterface simulator)
         {

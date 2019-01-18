@@ -61,9 +61,9 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
      * adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
-     * @param simulator the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param gtuColorer GTUColorer; GTU colorer
-     * @param animateNetwork whether to animate the current network objects
+     * @param animateNetwork boolean; whether to animate the current network objects
      * @throws OTSDrawingException on drawing error
      */
     protected DefaultAnimationFactory(final OTSNetwork network, final OTSSimulatorInterface simulator,
@@ -139,7 +139,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is not read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
-     * @param simulator the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param gtuColorer GTUColorer; GTU colorer
      * @throws OTSDrawingException on drawing error
      */
@@ -153,7 +153,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network OTSNetwork; the network
-     * @param simulator the simulator
+     * @param simulator OTSSimulatorInterface; the simulator
      * @param gtuColorer GTUColorer; GTU colorer
      * @throws OTSDrawingException on drawing error
      */
@@ -201,7 +201,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
 
     /**
      * Draw the GTU (scheduled method).
-     * @param gtu the GTU to draw
+     * @param gtu LaneBasedGTU; the GTU to draw
      */
     protected void animateGTU(LaneBasedGTU gtu)
     {

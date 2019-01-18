@@ -100,7 +100,7 @@ public class SteeringSimulation extends AbstractSimulationScript
     }
 
     /**
-     * @param properties properties
+     * @param properties String[]; properties
      */
     protected SteeringSimulation(final String[] properties)
     {

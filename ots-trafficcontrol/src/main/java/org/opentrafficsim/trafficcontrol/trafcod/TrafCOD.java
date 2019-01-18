@@ -146,7 +146,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
      *            that match the stream numbers as used in the traffic control program
      * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic sensors. The ids of the traffic sensors must end with three
      *            digits; the first two of those must match the stream and sensor numbers used in the traffic control program
-     * @param simulator DEVSSimulator&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulation engine
+     * @param simulator OTSSimulatorInterface; the simulation engine
      * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
@@ -221,7 +221,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
 
     /**
      * @param controllerName String; name of this TrafCOD traffic light controller
-     * @param simulator DEVSSimulator&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulation engine
+     * @param simulator OTSSimulatorInterface; the simulation engine
      * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails

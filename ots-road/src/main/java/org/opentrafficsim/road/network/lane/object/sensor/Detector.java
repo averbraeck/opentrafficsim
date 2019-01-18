@@ -473,7 +473,7 @@ public class Detector extends AbstractSensor
         Time time = Time.createSI(t);
         Try.execute(() -> getSimulator().scheduleEventAbs(time, this, this, "aggregate", null), "");
     }
-    
+
     /**
      * Returns the last flow.
      * @return last flow
@@ -482,10 +482,10 @@ public class Detector extends AbstractSensor
     {
         return this.count.get(this.count.size() - 1);
     }
-    
+
     /**
      * Returns the last value of the detector measurement.
-     * @param detectorMeasurement detector measurement
+     * @param detectorMeasurement DetectorMeasurement&lt;?,A&gt;; detector measurement
      * @return last value of the detector measurement
      * @param <A> aggregate value type of the detector measurement
      */

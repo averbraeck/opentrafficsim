@@ -124,7 +124,7 @@ public class StraightModel extends AbstractOTSModel implements UNITS
     private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
     /**
-     * @param simulator the simulator for this model
+     * @param simulator OTSSimulatorInterface; the simulator for this model
      */
     public StraightModel(final OTSSimulatorInterface simulator)
     {
