@@ -65,6 +65,7 @@ import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DelayedNeighborsPerception;
@@ -483,6 +484,7 @@ public final class AHFEUtil
             // perception.addPerceptionCategory(new DirectNeighborsPerception(perception));
             perception.addPerceptionCategory(new DelayedNeighborsPerception(perception, this.anticipation));
             // perception.addPerceptionCategory(new DirectIntersectionPerception(perception));
+            perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
             return perception;
         }
 

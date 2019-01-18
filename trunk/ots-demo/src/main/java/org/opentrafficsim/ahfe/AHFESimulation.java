@@ -3,8 +3,8 @@ package org.opentrafficsim.ahfe;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.net.URL;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -85,7 +85,7 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
     {
         AbstractGTU.ALIGNED = false;
         long t1 = System.currentTimeMillis();
-        boolean autorun = false;
+        boolean autorun = true;
         int replication = 1;
         String anticipationStrategy = "none";
         Duration reactionTime = Duration.createSI(0.0);
@@ -474,8 +474,9 @@ public class AHFESimulation extends AbstractOTSSimulationApplication
             this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
-                // InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml"); // Running from eclipse
-                URL stream = URLResource.getResource("./Network.xml"); // Running Jar
+                
+                InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml"); // Running from eclipse
+                // URL stream = URLResource.getResource("./Network.xml"); // Running Jar
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
                 this.network = new OTSNetwork("AHFE");
                 nlp.build(stream, this.network, true);

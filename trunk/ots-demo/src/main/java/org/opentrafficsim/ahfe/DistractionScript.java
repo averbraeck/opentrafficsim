@@ -241,7 +241,7 @@ public final class DistractionScript extends AbstractSimulationScript
         od.putDemandVector(network.getNode("LEFTINPRE"), network.getNode("EXIT"), truckCategory, leftDemandPatternTruck);
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), carCategory, rightDemandPatternCar);
         od.putDemandVector(network.getNode("RIGHTINPRE"), network.getNode("EXIT"), truckCategory, rightDemandPatternTruck);
-        ODOptions odOptions = new ODOptions().set(ODOptions.ANIMATION, true).set(ODOptions.GTU_TYPE,
+        ODOptions odOptions = new ODOptions().set(ODOptions.GTU_TYPE,
                 new DefaultGTUCharacteristicsGeneratorOD(new DistractionFactorySupplier()));
         ODApplier.applyOD(network, od, sim, odOptions);
 
@@ -263,6 +263,7 @@ public final class DistractionScript extends AbstractSimulationScript
         registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
         // return
+        animateNetwork(network, true);
         return network;
     }
 
