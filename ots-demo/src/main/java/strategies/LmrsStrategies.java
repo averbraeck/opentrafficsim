@@ -438,7 +438,7 @@ public class LmrsStrategies implements EventListenerInterface
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si + 1e-9), lmrsModel);
                 OTSAnimationPanel animationPanel =
                         new OTSAnimationPanel(lmrsModel.getNetwork().getExtent(), new Dimension(800, 600),
-                                (OTSAnimator) simulator, lmrsModel, LmrsStrategies.colorer, lmrsModel.getNetwork());
+                                simulator, lmrsModel, LmrsStrategies.colorer, lmrsModel.getNetwork());
                 LmrsStrategiesAnimation lmrsStrategiesAnimation =
                         lmrsStrategies.new LmrsStrategiesAnimation(lmrsModel, animationPanel);
                 // TODO: this is double now -- the code itself also animates a few things, but not the GTUs.
