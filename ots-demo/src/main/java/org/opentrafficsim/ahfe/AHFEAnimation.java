@@ -1,5 +1,6 @@
 package org.opentrafficsim.ahfe;
 
+import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.io.BufferedWriter;
@@ -7,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
+import java.rmi.RemoteException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -23,10 +24,12 @@ import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.kpi.interfaces.LaneDataInterface;
 import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
@@ -39,10 +42,10 @@ import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 
 /**
  * Simulation for AHFE congress.
@@ -73,160 +76,17 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
     /** */
     private static final long serialVersionUID = 20170228L;
 
-    /** Replication. */
-    private final Integer replication;
-
-    /** Anticipation strategy. */
-    private final String anticipationStrategy;
-
-    /** Reaction time. */
-    private final Duration reactionTime;
-
-    /** Future anticipation time. */
-    private final Duration anticipationTime;
-
-    /** Truck fraction. */
-    private final double truckFraction;
-
-    /** Distance error. */
-    private final double distanceError;
-
-    /** Speed error. */
-    private final double speedError;
-
-    /** Acceleration error. */
-    private final double accelerationError;
-
-    /** Left demand. */
-    private final Frequency leftDemand;
-
-    /** Right demand. */
-    private final Frequency rightDemand;
-
-    /** Left fraction, per road. */
-    private final double leftFraction;
-
-    /** Sampler. */
-    Sampler<GtuData> sampler;
-
     /**
-     * @param replication Integer; replication
-     * @param anticipationStrategy String; anticipation strategy
-     * @param reactionTime Duration; reaction time
-     * @param anticipationTime Duration; anticipation time
-     * @param truckFraction double; truck fraction
-     * @param distanceError double; distance error
-     * @param speedError double; speed error
-     * @param accelerationError double; acceleration error
-     * @param leftFraction double; left demand
-     * @param rightDemand Frequency; right demand
-     * @param leftDemand Frequency; left fraction, per road
+     * @param title the title of the Frame
+     * @param panel the tabbed panel to display
+     * @param model the model
+     * @throws OTSDrawingException on animation error
      */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public AHFEAnimation(final Integer replication, final String anticipationStrategy, final Duration reactionTime,
-            final Duration anticipationTime, final double truckFraction, final double distanceError, final double speedError,
-            final double accelerationError, final Frequency leftDemand, final Frequency rightDemand, final double leftFraction)
+    public AHFEAnimation(final String title, final OTSAnimationPanel panel, final AHFEModel model) throws OTSDrawingException
     {
-        super();
-        this.replication = replication;
-        this.anticipationStrategy = anticipationStrategy;
-        this.reactionTime = reactionTime;
-        this.anticipationTime = anticipationTime;
-        this.truckFraction = truckFraction;
-        this.distanceError = distanceError;
-        this.speedError = speedError;
-        this.accelerationError = accelerationError;
-        this.leftDemand = leftDemand;
-        this.rightDemand = rightDemand;
-        this.leftFraction = leftFraction;
-    }
-
-    /**
-     * @return replication.
-     */
-    public Integer getReplication()
-    {
-        return this.replication;
-    }
-
-    /**
-     * @return anticipationStrategy.
-     */
-    public String getAnticipationStrategy()
-    {
-        return this.anticipationStrategy;
-    }
-
-    /**
-     * @return reactionTime.
-     */
-    public Duration getReactionTime()
-    {
-        return this.reactionTime;
-    }
-
-    /**
-     * @return anticipationTime.
-     */
-    public Duration getAnticipationTime()
-    {
-        return this.anticipationTime;
-    }
-
-    /**
-     * @return truckFraction.
-     */
-    public double getTruckFraction()
-    {
-        return this.truckFraction;
-    }
-
-    /**
-     * @return distanceError.
-     */
-    public double getDistanceError()
-    {
-        return this.distanceError;
-    }
-
-    /**
-     * @return speedError.
-     */
-    public double getSpeedError()
-    {
-        return this.speedError;
-    }
-
-    /**
-     * @return accelerationError.
-     */
-    public double getAccelerationError()
-    {
-        return this.accelerationError;
-    }
-
-    /**
-     * @return leftDemand.
-     */
-    public Frequency getLeftDemand()
-    {
-        return this.leftDemand;
-    }
-
-    /**
-     * @return rightDemand.
-     */
-    public Frequency getRightDemand()
-    {
-        return this.rightDemand;
-    }
-
-    /**
-     * @return leftFraction.
-     */
-    public double getLeftFraction()
-    {
-        return this.leftFraction;
+        super(model, panel);
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        AnimationToggles.setTextAnimationTogglesStandard(panel);
     }
 
     /**
@@ -234,6 +94,7 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
      * @param args String[]; the command line arguments
      * @throws SimRuntimeException should never happen
      */
+    @SuppressWarnings("checkstyle:methodlength")
     public static void main(final String[] args) throws SimRuntimeException
     {
         AbstractGTU.ALIGNED = false;
@@ -434,29 +295,31 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
             {
                 try
                 {
-                    AHFEAnimation model = new AHFEAnimation(finalReplication, finalAnticipationStrategy, finalReactionTime,
-                            finalAnticipationTime, finalTruckFraction, finalDistanceError, finalSpeedError,
+                    OTSAnimator simulator = new OTSAnimator();
+                    final AHFEModel ahfeModel = new AHFEModel(simulator, finalReplication, finalAnticipationStrategy,
+                            finalReactionTime, finalAnticipationTime, finalTruckFraction, finalDistanceError, finalSpeedError,
                             finalAccelerationError, finalLeftDemand, finalRightDemand, finalLeftFraction);
                     System.out.println("Setting up replication " + finalReplication);
-                    model.setNextReplication(finalReplication);
-                    // 1 hour simulation run for testing
-                    model.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si),
-                            new ArrayList<InputParameter<?, ?>>(), null, true);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), ahfeModel, finalReplication);
+                    OTSAnimationPanel animationPanel =
+                            new OTSAnimationPanel(ahfeModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+                                    ahfeModel, new DefaultSwitchableGTUColorer(), ahfeModel.getNetwork());
+                    new AHFEAnimation("AHFE", animationPanel, ahfeModel);
                     if (finalAutoRun)
                     {
                         int lastReportedTime = -1;
                         int reportTimeClick = 60;
                         while (true)
                         {
-                            int currentTime = (int) model.getSimulator().getSimulatorTime().si;
+                            int currentTime = (int) simulator.getSimulatorTime().si;
                             if (currentTime >= lastReportedTime + reportTimeClick)
                             {
                                 lastReportedTime = currentTime / reportTimeClick * reportTimeClick;
-                                System.out.println("time is " + model.getSimulator().getSimulatorTime());
+                                System.out.println("time is " + simulator.getSimulatorTime());
                             }
                             try
                             {
-                                model.getSimulator().step();
+                                simulator.step();
                             }
                             catch (SimRuntimeException sre)
                             {
@@ -478,7 +341,7 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
                                         osw = new OutputStreamWriter(zos);
                                         bw = new BufferedWriter(osw);
                                         bw.write("Collision");
-                                        bw.write(model.getSimulator().getSimulatorTime().toString());
+                                        bw.write(simulator.getSimulatorTime().toString());
                                     }
                                     catch (IOException exception2)
                                     {
@@ -514,10 +377,10 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
                                 }
                                 else
                                 {
-                                    System.out.println("Simulation ends; time is " + model.getSimulator().getSimulatorTime());
-                                    if (model.sampler != null)
+                                    System.out.println("Simulation ends; time is " + simulator.getSimulatorTime());
+                                    if (ahfeModel.getSampler() != null)
                                     {
-                                        model.sampler.writeToFile(finalScenario + ".csv");
+                                        ahfeModel.getSampler().writeToFile(finalScenario + ".csv");
                                     }
                                 }
                                 long t2 = System.currentTimeMillis();
@@ -529,7 +392,7 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
 
                     }
                 }
-                catch (SimRuntimeException | NamingException | OTSSimulationException | InputParameterException exception)
+                catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -547,7 +410,7 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
     /**
      * The AHFE simulation model.
      */
-    class AHFEModel extends AbstractOTSModel
+    static class AHFEModel extends AbstractOTSModel
     {
         /** */
         private static final long serialVersionUID = 20170228L;
@@ -555,12 +418,74 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
         /** The network. */
         private OTSNetwork network;
 
+        /** Replication. */
+        private final Integer replication;
+
+        /** Anticipation strategy. */
+        private final String anticipationStrategy;
+
+        /** Reaction time. */
+        private final Duration reactionTime;
+
+        /** Future anticipation time. */
+        private final Duration anticipationTime;
+
+        /** Truck fraction. */
+        private final double truckFraction;
+
+        /** Distance error. */
+        private final double distanceError;
+
+        /** Speed error. */
+        private final double speedError;
+
+        /** Acceleration error. */
+        private final double accelerationError;
+
+        /** Left demand. */
+        private final Frequency leftDemand;
+
+        /** Right demand. */
+        private final Frequency rightDemand;
+
+        /** Left fraction, per road. */
+        private final double leftFraction;
+
+        /** Sampler. */
+        private Sampler<GtuData> sampler;
+
         /**
          * @param simulator the simulator
+         * @param replication Integer; replication
+         * @param anticipationStrategy String; anticipation strategy
+         * @param reactionTime Duration; reaction time
+         * @param anticipationTime Duration; anticipation time
+         * @param truckFraction double; truck fraction
+         * @param distanceError double; distance error
+         * @param speedError double; speed error
+         * @param accelerationError double; acceleration error
+         * @param leftFraction double; left demand
+         * @param rightDemand Frequency; right demand
+         * @param leftDemand Frequency; left fraction, per road
          */
-        AHFEModel(final OTSSimulatorInterface simulator)
+        @SuppressWarnings("checkstyle:parameternumber")
+        AHFEModel(final OTSSimulatorInterface simulator, final Integer replication, final String anticipationStrategy,
+                final Duration reactionTime, final Duration anticipationTime, final double truckFraction,
+                final double distanceError, final double speedError, final double accelerationError, final Frequency leftDemand,
+                final Frequency rightDemand, final double leftFraction)
         {
             super(simulator);
+            this.replication = replication;
+            this.anticipationStrategy = anticipationStrategy;
+            this.reactionTime = reactionTime;
+            this.anticipationTime = anticipationTime;
+            this.truckFraction = truckFraction;
+            this.distanceError = distanceError;
+            this.speedError = speedError;
+            this.accelerationError = accelerationError;
+            this.leftDemand = leftDemand;
+            this.rightDemand = rightDemand;
+            this.leftFraction = leftFraction;
         }
 
         /** {@inheritDoc} */
@@ -568,8 +493,8 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            AHFEAnimation.this.sampler = new RoadSampler(this.simulator);
-            AHFEAnimation.this.sampler.registerExtendedDataType(new TimeToCollision());
+            this.sampler = new RoadSampler(this.simulator);
+            this.sampler.registerExtendedDataType(new TimeToCollision());
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
@@ -590,10 +515,10 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
                 registerLinkToSampler(linkData, Length.ZERO, linkData.getLength().minus(ignoreEnd));
 
                 // Generator
-                AHFEUtil.createDemand(this.network, new DefaultSwitchableGTUColorer(), this.simulator,
-                        getReplication(), getAnticipationStrategy(), getReactionTime(), getAnticipationTime(),
-                        getTruckFraction(), SIMEND, getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(),
-                        getSpeedError(), getAccelerationError());
+                AHFEUtil.createDemand(this.network, new DefaultSwitchableGTUColorer(), this.simulator, getReplication(),
+                        getAnticipationStrategy(), getReactionTime(), getAnticipationTime(), getTruckFraction(), SIMEND,
+                        getLeftDemand(), getRightDemand(), getLeftFraction(), getDistanceError(), getSpeedError(),
+                        getAccelerationError());
 
             }
             catch (Exception exception)
@@ -614,7 +539,7 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
             {
                 Length start = laneData.getLength().multiplyBy(startDistance.si / linkData.getLength().si);
                 Length end = laneData.getLength().multiplyBy(endDistance.si / linkData.getLength().si);
-                AHFEAnimation.this.sampler.registerSpaceTimeRegion(new SpaceTimeRegion(
+                this.sampler.registerSpaceTimeRegion(new SpaceTimeRegion(
                         new KpiLaneDirection(laneData, KpiGtuDirectionality.DIR_PLUS), start, end, WARMUP, SIMEND));
             }
         }
@@ -624,6 +549,102 @@ public class AHFEAnimation extends AbstractOTSSwingApplication
         public OTSNetwork getNetwork()
         {
             return this.network;
+        }
+
+        /**
+         * @return replication.
+         */
+        public Integer getReplication()
+        {
+            return this.replication;
+        }
+
+        /**
+         * @return anticipationStrategy.
+         */
+        public String getAnticipationStrategy()
+        {
+            return this.anticipationStrategy;
+        }
+
+        /**
+         * @return reactionTime.
+         */
+        public Duration getReactionTime()
+        {
+            return this.reactionTime;
+        }
+
+        /**
+         * @return anticipationTime.
+         */
+        public Duration getAnticipationTime()
+        {
+            return this.anticipationTime;
+        }
+
+        /**
+         * @return truckFraction.
+         */
+        public double getTruckFraction()
+        {
+            return this.truckFraction;
+        }
+
+        /**
+         * @return distanceError.
+         */
+        public double getDistanceError()
+        {
+            return this.distanceError;
+        }
+
+        /**
+         * @return speedError.
+         */
+        public double getSpeedError()
+        {
+            return this.speedError;
+        }
+
+        /**
+         * @return accelerationError.
+         */
+        public double getAccelerationError()
+        {
+            return this.accelerationError;
+        }
+
+        /**
+         * @return leftDemand.
+         */
+        public Frequency getLeftDemand()
+        {
+            return this.leftDemand;
+        }
+
+        /**
+         * @return rightDemand.
+         */
+        public Frequency getRightDemand()
+        {
+            return this.rightDemand;
+        }
+
+        /**
+         * @return leftFraction.
+         */
+        public double getLeftFraction()
+        {
+            return this.leftFraction;
+        }
+
+        /**
+         * @return sampler
+         */
+        public final Sampler<GtuData> getSampler()
+        {
+            return this.sampler;
         }
 
     }
