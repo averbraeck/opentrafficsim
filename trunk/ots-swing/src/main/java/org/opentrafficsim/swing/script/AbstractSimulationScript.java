@@ -65,7 +65,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     private final Map<String, String> props = new HashMap<>();
 
     /** GTU colorer. */
-    private GTUColorer gtuColorer = new DefaultSwitchableGTUColorer();
+    private GTUColorer gtuColorer = OTSSwingApplication.DEFAULT_COLORER;
 
     /** animation panel. */
     protected OTSAnimationPanel animationPanel = null;
