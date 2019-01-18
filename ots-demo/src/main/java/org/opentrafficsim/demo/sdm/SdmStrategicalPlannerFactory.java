@@ -74,14 +74,31 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
     /**
      * Constructor.
      * @param stream StreamInterface; random number stream
+     * @param simulation SdmSimulation; simulation to obtain properties from
      */
     @SuppressWarnings("synthetic-access")
-    SdmStrategicalPlannerFactory(final StreamInterface stream)
+    SdmStrategicalPlannerFactory(final StreamInterface stream, final SdmSimulation simulation)
     {
         ParameterFactoryByType paramFactory = new ParameterFactoryByType();
-        paramFactory.addParameter(ParameterTypes.TMAX, Duration.createSI(1.0));
-        paramFactory.addParameter(ParameterTypes.T, Duration.createSI(1.0));
-        paramFactory.addParameter(GTUType.TRUCK, ParameterTypes.A, Acceleration.createSI(0.8));
+
+        paramFactory.addParameter(Fuller.TC, simulation.getDoubleProperty("TC"));
+        paramFactory.addParameter(Fuller.TS_CRIT, simulation.getDoubleProperty("TS_CRIT"));
+        paramFactory.addParameter(Fuller.TS_MAX, simulation.getDoubleProperty("TS_MAX"));
+
+        paramFactory.addParameter(AdaptationSituationalAwareness.SA_MIN, simulation.getDoubleProperty("SA_MIN"));
+        paramFactory.addParameter(AdaptationSituationalAwareness.SA_MAX, simulation.getDoubleProperty("SA_MAX"));
+        paramFactory.addParameter(AdaptationSituationalAwareness.TR_MAX, simulation.getDurationProperty("TR_MAX"));
+
+        paramFactory.addParameter(AdaptationHeadway.BETA_T, simulation.getDoubleProperty("BETA_T"));
+
+        paramFactory.addParameter(ParameterTypes.DT, simulation.getDurationProperty("DT"));
+        paramFactory.addParameter(ParameterTypes.TMIN, simulation.getDurationProperty("TMIN"));
+        paramFactory.addParameter(ParameterTypes.TMAX, simulation.getDurationProperty("TMAX"));
+        paramFactory.addParameter(ParameterTypes.T, simulation.getDurationProperty("TMAX"));
+        paramFactory.addParameter(GTUType.CAR, ParameterTypes.A, Acceleration.createSI(simulation.getDoubleProperty("A_CAR")));
+        paramFactory.addParameter(GTUType.TRUCK, ParameterTypes.A,
+                Acceleration.createSI(simulation.getDoubleProperty("A_TRUCK")));
+        paramFactory.addParameter(ParameterTypes.B, Acceleration.createSI(simulation.getDoubleProperty("B")));
 
         Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
         mandatoryIncentives.add(new IncentiveRoute());
@@ -89,15 +106,16 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
         voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
         voluntaryIncentives.add(new IncentiveKeep());
         Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
+        // accelerationIncentives.add(new AccelerationNoRightOvertake());
         PerceptionFactory perceptionFactory = new SdmPerception();
         this.carFactory = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(stream),
-                perceptionFactory, Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, Tailgating.NONE,
+                perceptionFactory, Synchronization.ALIGN_GAP, Cooperation.PASSIVE, GapAcceptance.INFORMED, Tailgating.NONE,
                 mandatoryIncentives, voluntaryIncentives, accelerationIncentives), paramFactory);
 
         voluntaryIncentives = new LinkedHashSet<>(voluntaryIncentives);
         voluntaryIncentives.add(new IncentiveStayRight());
         this.truckFactory = new LaneBasedStrategicalRoutePlannerFactory(new LMRSFactory(new IDMPlusFactory(stream),
-                perceptionFactory, Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, Tailgating.NONE,
+                perceptionFactory, Synchronization.ALIGN_GAP, Cooperation.PASSIVE, GapAcceptance.INFORMED, Tailgating.NONE,
                 mandatoryIncentives, voluntaryIncentives, accelerationIncentives), paramFactory);
     }
 
@@ -134,7 +152,6 @@ public class SdmStrategicalPlannerFactory implements StrategicalPlannerFactorySu
             ParameterSet params = new ParameterSet();
             params.setDefaultParameters(Fuller.class);
             params.setDefaultParameters(AdaptationSituationalAwareness.class);
-            // params.setParameter(AdaptationSituationalAwareness.TR_MAX, Duration.createSI(1.0));
             params.setDefaultParameter(AdaptationHeadway.BETA_T);
             params.setDefaultParameter(ParameterTypes.PERCEPTION);
             params.setDefaultParameter(ParameterTypes.LOOKBACK);
