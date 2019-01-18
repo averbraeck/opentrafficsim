@@ -1,6 +1,7 @@
 package strategies;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -44,8 +45,10 @@ import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
+import org.opentrafficsim.core.dsol.AbstractOTSSimulationApplication;
+import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.dsol.OTSSimulationException;
+import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -66,6 +69,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.draw.gtu.GTUGeneratorAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
@@ -152,12 +156,11 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
+import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
@@ -254,9 +257,9 @@ public class LmrsStrategies implements EventListenerInterface
     private Sampler<GtuData> sampler;
 
     /** GTU colorer. */
-    private final GTUColorer colorer = SwitchableGTUColorer.builder().addActiveColorer(new FixedColor(Color.BLUE, "Blue"))
-            .addColorer(GTUTypeColorer.DEFAULT).addColorer(new IDGTUColorer())
-            .addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
+    private static final GTUColorer colorer = SwitchableGTUColorer.builder()
+            .addActiveColorer(new FixedColor(Color.BLUE, "Blue")).addColorer(GTUTypeColorer.DEFAULT)
+            .addColorer(new IDGTUColorer()).addColorer(new SpeedGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
             .addColorer(new DesiredSpeedColorer(new Speed(80, SpeedUnit.KM_PER_HOUR), new Speed(150, SpeedUnit.KM_PER_HOUR)))
             .addColorer(new AccelerationGTUColorer(Acceleration.createSI(-6.0), Acceleration.createSI(2)))
             .addColorer(new SynchronizationColorer())
@@ -292,7 +295,7 @@ public class LmrsStrategies implements EventListenerInterface
         double tMax = 1.6;
         double fTruck = 0.1;
         double qMax = 5500;
-        String folder = null;
+        String folder = "D:/";
         boolean sampling = false;
         Tailgating tailgating = Tailgating.PRESSURE;
 
@@ -398,25 +401,26 @@ public class LmrsStrategies implements EventListenerInterface
         // run
         if (autorun)
         {
-            LmrsStrategiesSimulation lmrsStrategiesSimulation = lmrsStrategies.new LmrsStrategiesSimulation();
             try
             {
+                OTSSimulator simulator = new OTSSimulator();
+                final LmrsStrategiesModel lmrsModel = lmrsStrategies.new LmrsStrategiesModel(simulator);
                 // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
-                DEVSSimulatorInterface.TimeDoubleUnit sim = lmrsStrategiesSimulation.buildSimulator(Time.ZERO, Duration.ZERO,
-                        Duration.createSI(SIMTIME.si + 1e-9), new ArrayList<InputParameter<?, ?>>());
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si + 1e-9), lmrsModel);
+                LmrsStrategiesSimulation lmrsStrategiesSimulation = lmrsStrategies.new LmrsStrategiesSimulation(lmrsModel);
                 double tReport = 60.0;
-                Time t = sim.getSimulatorTime();
+                Time t = simulator.getSimulatorTime();
                 while (t.le(SIMTIME))
                 {
-                    sim.step();
-                    t = sim.getSimulatorTime();
+                    simulator.step();
+                    t = simulator.getSimulatorTime();
                     if (t.si >= tReport)
                     {
                         System.out.println("Simulation time is " + t);
                         tReport += 60.0;
                     }
                 }
-                sim.stop(); // end of simulation event
+                simulator.stop(); // end of simulation event
             }
             catch (Exception exception)
             {
@@ -426,11 +430,19 @@ public class LmrsStrategies implements EventListenerInterface
         }
         else
         {
-            LmrsStrategiesAnimation lmrsStrategiesAnimation = lmrsStrategies.new LmrsStrategiesAnimation();
             try
             {
-                lmrsStrategiesAnimation.buildAnimator(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si),
-                        new ArrayList<InputParameter<?, ?>>(), null, true);
+                OTSAnimator simulator = new OTSAnimator();
+                final LmrsStrategiesModel lmrsModel = lmrsStrategies.new LmrsStrategiesModel(simulator);
+                // + 1e-9 is a hack to allow step() to perform detector aggregation of more than 1 detectors -at- the sim end
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(SIMTIME.si + 1e-9), lmrsModel);
+                OTSAnimationPanel animationPanel =
+                        new OTSAnimationPanel(lmrsModel.getNetwork().getExtent(), new Dimension(800, 600),
+                                (OTSAnimator) simulator, lmrsModel, LmrsStrategies.colorer, lmrsModel.getNetwork());
+                LmrsStrategiesAnimation lmrsStrategiesAnimation =
+                        lmrsStrategies.new LmrsStrategiesAnimation(lmrsModel, animationPanel);
+                // TODO: this is double now -- the code itself also animates a few things, but not the GTUs.
+                DefaultAnimationFactory.animateNetwork(lmrsModel.getNetwork(), simulator);
             }
             catch (Exception exception)
             {
@@ -451,33 +463,18 @@ public class LmrsStrategies implements EventListenerInterface
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
      */
-    class LmrsStrategiesSimulation extends AbstractWrappableSimulation
+    class LmrsStrategiesSimulation extends AbstractOTSSimulationApplication
     {
-
         /** */
-        private static final long serialVersionUID = 20180321L;
+        private static final long serialVersionUID = 1L;
 
-        /** {@inheritDoc} */
-        @Override
-        public String shortName()
+        /**
+         * @param model model
+         */
+        public LmrsStrategiesSimulation(final OTSModelInterface model)
         {
-            return "LMRS Strategies";
+            super(model);
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public String description()
-        {
-            return "Simulation to test the effects of lane change strategies using the LMRS.";
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected OTSModelInterface makeModel() throws OTSSimulationException
-        {
-            return new LmrsStrategiesModel();
-        }
-
     }
 
     /**
@@ -494,50 +491,22 @@ public class LmrsStrategies implements EventListenerInterface
      */
     class LmrsStrategiesAnimation extends OTSSwingApplication
     {
-
         /** */
         private static final long serialVersionUID = 20180303L;
 
-        /** {@inheritDoc} */
-        @Override
-        public String shortName()
+        /**
+         * @param model the model
+         * @param panel the animation panel
+         */
+        LmrsStrategiesAnimation(final OTSModelInterface model, final OTSAnimationPanel panel)
         {
-            return "LMRS Strategies";
+            super(model, panel);
+            AnimationToggles.setIconAnimationTogglesFull(panel);
+            panel.getAnimationPanel().toggleClass(OTSLink.class);
+            panel.getAnimationPanel().toggleClass(OTSNode.class);
+            panel.getAnimationPanel().toggleClass(GTUGenerator.class);
+            panel.getAnimationPanel().showClass(SpeedSign.class);
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public String description()
-        {
-            return "Simulation to test the effects of lane change strategies using the LMRS.";
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected OTSModelInterface makeModel() throws OTSSimulationException
-        {
-            return new LmrsStrategiesModel();
-        }
-
-        /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public GTUColorer getColorer()
-        {
-            return LmrsStrategies.this.colorer;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected final void addAnimationToggles()
-        {
-            AnimationToggles.setIconAnimationTogglesFull(this);
-            toggleAnimationClass(OTSLink.class);
-            toggleAnimationClass(OTSNode.class);
-            toggleAnimationClass(GTUGenerator.class);
-            showAnimationClass(SpeedSign.class);
-        }
-
     }
 
     /**
@@ -567,8 +536,8 @@ public class LmrsStrategies implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        @SuppressWarnings({"synthetic-access", "checkstyle:methodlength"})
-        public void constructModel() 
+        @SuppressWarnings({ "synthetic-access", "checkstyle:methodlength" })
+        public void constructModel()
         {
             LmrsStrategies.this.simulator = getSimulator();
             OTSNetwork net = new OTSNetwork("LMRS strategies");
@@ -836,11 +805,10 @@ public class LmrsStrategies implements EventListenerInterface
                 markov.addState(GTUType.TRUCK, 0.4);
                 LaneBiases biases = new LaneBiases().addBias(GTUType.VEHICLE, LaneBias.bySpeed(140, 100)).addBias(GTUType.TRUCK,
                         LaneBias.TRUCK_RIGHT);
-                ODOptions odOptions =
-                        new ODOptions().set(ODOptions.MARKOV, markov)
-                                .set(ODOptions.LANE_BIAS, biases).set(ODOptions.NO_LC_DIST, Length.createSI(100.0))
-                                .set(ODOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator(stream))
-                                .set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
+                ODOptions odOptions = new ODOptions().set(ODOptions.MARKOV, markov).set(ODOptions.LANE_BIAS, biases)
+                        .set(ODOptions.NO_LC_DIST, Length.createSI(100.0))
+                        .set(ODOptions.GTU_TYPE, new LmrsStrategyCharacteristicsGenerator(stream))
+                        .set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
                 Map<String, GeneratorObjects> generatedObjects = ODApplier.applyOD(net, od, getSimulator(), odOptions);
                 for (String str : generatedObjects.keySet())
                 {
