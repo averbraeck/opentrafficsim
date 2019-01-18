@@ -54,7 +54,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
@@ -75,7 +75,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagrams extends AbstractOTSSwingApplication implements UNITS
+public class FundamentalDiagrams extends OTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;

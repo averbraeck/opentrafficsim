@@ -81,7 +81,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
@@ -107,7 +107,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularRoadIMB extends AbstractOTSSwingApplication implements UNITS
+public class CircularRoadIMB extends OTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -367,7 +367,7 @@ class CircularRoadModelIMB extends AbstractOTSModel implements UNITS
         {
             InputParameterMap imbSettings = (InputParameterMap) getInputParameterMap().get("imb");
             Throw.whenNull(imbSettings, "IMB Settings not found in properties");
-            this.imbConnector = OTSIMBConnector.create(imbSettings, "OTS");
+            this.imbConnector = OTSIMBConnector.create(imbSettings);
             new NetworkTransceiver(this.imbConnector, getSimulator(), this.network);
             new NodeTransceiver(this.imbConnector, getSimulator(), this.network);
             new LinkGTUTransceiver(this.imbConnector, getSimulator(), this.network);

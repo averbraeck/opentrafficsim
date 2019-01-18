@@ -47,7 +47,7 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.SpeedLimit;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.xml.sax.SAXException;
@@ -66,7 +66,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestXMLParserKPIs extends AbstractOTSSwingApplication
+public class TestXMLParserKPIs extends OTSSwingApplication
 {
     /** */
     private static final long serialVersionUID = 1L;

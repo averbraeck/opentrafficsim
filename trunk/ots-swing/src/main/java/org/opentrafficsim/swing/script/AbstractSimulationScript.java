@@ -16,10 +16,14 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.road.gtu.generator.GTUGenerator;
+import org.opentrafficsim.road.network.lane.object.SpeedSign;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
@@ -62,7 +66,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /** GTU colorer. */
     private GTUColorer gtuColorer = new DefaultSwitchableGTUColorer();
-    
+
     /** animation panel. */
     protected OTSAnimationPanel animationPanel = null;
 
@@ -203,8 +207,6 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
             {
                 this.simulator = new OTSSimulator();
                 final ScriptModel scriptModel = new ScriptModel(this.simulator);
-                @SuppressWarnings("unused")
-                ScriptSimulation scriptSimulation = new ScriptSimulation();
                 this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
                 this.simulator.addListener(this, SimulatorInterface.END_REPLICATION_EVENT);
                 double tReport = 60.0;
@@ -234,10 +236,11 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
                 this.simulator = new OTSAnimator();
                 final ScriptModel scriptModel = new ScriptModel(this.simulator);
                 this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
-                this.animationPanel =
-                        new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
-                                (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
-                ScriptAnimation app = new ScriptAnimation(scriptModel, this.animationPanel);
+                this.animationPanel = new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
+                        (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
+                addAnimationToggles(this.animationPanel);
+                setupDemo(this.animationPanel, scriptModel.getNetwork());
+                OTSSwingApplication app = new OTSSwingApplication(scriptModel, this.animationPanel);
                 addTabs(this.simulator, app);
                 app.setExitOnClose(true);
             }
@@ -284,66 +287,25 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     /**
      * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML.
      * @param net OTSNetwork; network
+     * @param xmlNetwork boolean; whether the network was loaded from xml
      */
-    protected void animateNetwork(final OTSNetwork net)
+    protected void animateNetwork(final OTSNetwork net, final boolean xmlNetwork)
     {
         try
         {
-            DefaultAnimationFactory.animateNetwork(net, getSimulator());
+            if (xmlNetwork)
+            {
+                DefaultAnimationFactory.animateXmlNetwork(net, getSimulator());
+            }
+            else
+            {
+                DefaultAnimationFactory.animateNetwork(net, getSimulator());
+            }
         }
         catch (OTSDrawingException exception)
         {
             throw new RuntimeException("Exception while creating network animation.", exception);
         }
-        
-        /*-
-        try
-        {
-            for (Node node : net.getNodeMap().values())
-            {
-                new NodeAnimation(node, AbstractSimulationScript.this.simulator);
-            }
-            for (Link link : net.getLinkMap().values())
-            {
-                new LinkAnimation(link, AbstractSimulationScript.this.simulator, 0.5f);
-                if (link instanceof CrossSectionLink)
-                {
-                    for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
-                    {
-                        if (element instanceof Lane)
-                        {
-                            new LaneAnimation((Lane) element, AbstractSimulationScript.this.simulator, Color.GRAY.brighter(),
-                                    false);
-                        }
-                        else if (element instanceof Shoulder)
-                        {
-                            new ShoulderAnimation((Shoulder) element, AbstractSimulationScript.this.simulator, Color.DARK_GRAY);
-                        }
-                        else if (element instanceof Stripe)
-                        {
-                            Stripe stripe = (Stripe) element;
-                            TYPE type;
-                            if (stripe.isPermeable(GTUType.CAR, LateralDirectionality.LEFT))
-                            {
-                                type = stripe.isPermeable(GTUType.CAR, LateralDirectionality.RIGHT) ? TYPE.DASHED
-                                        : TYPE.LEFTONLY;
-                            }
-                            else
-                            {
-                                type = stripe.isPermeable(GTUType.CAR, LateralDirectionality.RIGHT) ? TYPE.RIGHTONLY
-                                        : TYPE.SOLID;
-                            }
-                            new StripeAnimation((Stripe) element, AbstractSimulationScript.this.simulator, type);
-                        }
-                    }
-                }
-            }
-        }
-        catch (RemoteException | NamingException | OTSGeometryException exception)
-        {
-            throw new RuntimeException("Exception while creating network animation.", exception);
-        }
-        */
     }
 
     /**
@@ -351,7 +313,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * @param sim OTSSimulatorInterface; simulator
      * @param animation AbstractOTSSwingApplication; animation to add tabs to
      */
-    protected void addTabs(final OTSSimulatorInterface sim, final AbstractOTSSwingApplication animation)
+    protected void addTabs(final OTSSimulatorInterface sim, final OTSSwingApplication animation)
     {
         //
     }
@@ -374,12 +336,25 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /**
      * Method that is called when the animation has been created, to add components for a demo.
-     * @param animation AbstractOTSSwingApplication; animation
+     * @param animationPanel OTSAnimationPanel; animation panel
      * @param net OTSNetwork; network
      */
-    protected void setupDemo(final AbstractOTSSwingApplication animation, final OTSNetwork net)
+    protected void setupDemo(final OTSAnimationPanel animationPanel, final OTSNetwork net)
     {
         //
+    }
+
+    /**
+     * Sets the animation toggles. May be overridden.
+     * @param animation AbstractWrappableAnimation; animation to set the toggle on
+     */
+    protected void addAnimationToggles(final OTSAnimationPanel animation)
+    {
+        AnimationToggles.setIconAnimationTogglesFull(animation);
+        animation.getAnimationPanel().toggleClass(OTSLink.class);
+        animation.getAnimationPanel().toggleClass(OTSNode.class);
+        animation.getAnimationPanel().toggleClass(GTUGenerator.class);
+        animation.getAnimationPanel().showClass(SpeedSign.class);
     }
 
     // Abstract methods
@@ -394,51 +369,6 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     protected abstract OTSNetwork setupSimulation(OTSSimulatorInterface sim) throws Exception;
 
     // Nested classes
-
-    /**
-     * Simulation.
-     * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 9 apr. 2018 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    static class ScriptSimulation
-    {
-        // nothing for now...
-    }
-
-    /**
-     * Animated simulation.
-     * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 9 apr. 2018 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    static class ScriptAnimation extends AbstractOTSSwingApplication
-    {
-        /** */
-        private static final long serialVersionUID = 20180409L;
-
-        /**
-         * @param model the model
-         * @param panel the panel for the Swing application
-         */
-        public ScriptAnimation(final OTSModelInterface model, final OTSAnimationPanel panel)
-        {
-            super(model, panel);
-            AnimationToggles.setTextAnimationTogglesStandard(panel);
-        }
-    }
 
     /**
      * Model.

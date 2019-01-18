@@ -27,7 +27,7 @@ import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
@@ -45,7 +45,7 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
  * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularLaneSwing extends AbstractOTSSwingApplication
+public class CircularLaneSwing extends OTSSwingApplication
 {
     /** */
     private static final long serialVersionUID = 1L;

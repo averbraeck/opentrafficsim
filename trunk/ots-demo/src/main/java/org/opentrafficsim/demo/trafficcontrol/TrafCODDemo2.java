@@ -33,7 +33,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.trafficcontrol.TrafficController;
@@ -54,7 +54,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCODDemo2 extends AbstractOTSSwingApplication
+public class TrafCODDemo2 extends OTSSwingApplication
 {
     /** */
     private static final long serialVersionUID = 20161118L;

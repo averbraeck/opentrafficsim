@@ -13,7 +13,7 @@ import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
@@ -30,7 +30,7 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
  * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CrossingTrafficLightsSwing extends AbstractOTSSwingApplication implements UNITS
+public class CrossingTrafficLightsSwing extends OTSSwingApplication implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;

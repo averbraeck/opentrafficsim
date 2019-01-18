@@ -40,7 +40,7 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.xml.sax.SAXException;
@@ -61,7 +61,7 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class A58IMB extends AbstractOTSSwingApplication
+public class A58IMB extends OTSSwingApplication
 {
     /** */
     private static final long serialVersionUID = 20161007L;
@@ -178,7 +178,7 @@ public class A58IMB extends AbstractOTSSwingApplication
             {
                 InputParameterMap imbSettings = (InputParameterMap) getInputParameterMap().get("imb");
                 Throw.whenNull(imbSettings, "IMB Settings not found in properties");
-                this.imbConnector = OTSIMBConnector.create(imbSettings, "OTS");
+                this.imbConnector = OTSIMBConnector.create(imbSettings);
                 new NetworkTransceiver(this.imbConnector, getSimulator(), this.network);
                 new NodeTransceiver(this.imbConnector, getSimulator(), this.network);
                 new LinkGTUTransceiver(this.imbConnector, getSimulator(), this.network);

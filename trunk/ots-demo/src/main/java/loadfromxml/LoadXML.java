@@ -49,7 +49,7 @@ import org.opentrafficsim.road.gtu.colorer.SplitColorer;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.xml.sax.SAXException;
@@ -68,7 +68,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class LoadXML extends AbstractOTSSwingApplication
+public class LoadXML extends OTSSwingApplication
 {
     /** */
     private static final long serialVersionUID = 20170421L;

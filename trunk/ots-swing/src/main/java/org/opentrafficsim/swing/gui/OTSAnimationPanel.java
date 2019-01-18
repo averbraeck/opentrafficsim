@@ -7,6 +7,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -32,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.border.EmptyBorder;
 
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
@@ -77,6 +80,9 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
 
     /** Toggle panel with which animation features can be shown/hidden. */
     private final JPanel togglePanel;
+
+    /** Demo panel. */
+    private JPanel demoPanel = null;
 
     /** Map of toggle names to toggle animation classes. */
     private Map<String, Class<? extends Locatable>> toggleLocatableMap = new HashMap<>();
@@ -262,6 +268,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
 
         // make sure the thread gets killed when the window closes.
         installWindowCloseHandler();
+
     }
 
     /**
@@ -566,6 +573,44 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     public final AnimationPanel getAnimationPanel()
     {
         return this.animationPanel;
+    }
+
+    /**
+     * Return a panel for on-screen demo controls. The panel is create on first call.
+     * @return JPanel; panel
+     */
+    public JPanel getDemoPanel()
+    {
+        if (this.demoPanel == null)
+        {
+            this.demoPanel = new JPanel();
+            this.demoPanel.setLayout(new BoxLayout(this.demoPanel, BoxLayout.Y_AXIS));
+            this.demoPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+            this.demoPanel.setPreferredSize(new Dimension(300, 300));
+            getAnimationPanel().getParent().add(this.demoPanel, BorderLayout.EAST);
+            this.demoPanel.addContainerListener(new ContainerListener()
+            {
+                @Override
+                public void componentAdded(final ContainerEvent e)
+                {
+                    try
+                    {
+                        // setAppearance(getAppearance());
+                    }
+                    catch (@SuppressWarnings("unused") NullPointerException exception)
+                    {
+                        //
+                    }
+                }
+
+                @Override
+                public void componentRemoved(final ContainerEvent e)
+                {
+                    //
+                }
+            });
+        }
+        return this.demoPanel;
     }
 
     /**
