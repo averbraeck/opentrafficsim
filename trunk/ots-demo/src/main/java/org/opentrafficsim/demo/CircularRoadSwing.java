@@ -10,7 +10,6 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -18,7 +17,6 @@ import org.opentrafficsim.core.network.DirectedLinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.draw.graphs.AbstractPlot;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
@@ -34,9 +32,8 @@ import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.road.network.lane.LaneDirection;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -52,16 +49,10 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
  * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularRoadSwing extends OTSSwingApplication
+public class CircularRoadSwing extends OTSSimulationApplication<CircularRoadModel>
 {
     /** */
     private static final long serialVersionUID = 1L;
-
-    /** The model. */
-    private CircularRoadModel model;
-
-    /** the panel. */
-    private OTSAnimationPanel animationPanel;
 
     /**
      * Create a CircularRoad Swing application.
@@ -74,16 +65,18 @@ public class CircularRoadSwing extends OTSSwingApplication
             throws OTSDrawingException
     {
         super(model, panel);
-        this.model = model;
-        this.animationPanel = panel;
 
         // NetworkAnimation networkAnimation = new NetworkAnimation(model.getNetwork());
         // networkAnimation.addDrawingInfoClass(Lane.class, new DrawingInfoShape<>(Color.GRAY));
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
-        addStatisticsTabs(model.getSimulator());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void addTabs()
+    {
+        addStatisticsTabs(getModel().getSimulator());
     }
 
     /**
@@ -109,7 +102,7 @@ public class CircularRoadSwing extends OTSSwingApplication
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
                 OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
+                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
             }
@@ -142,8 +135,8 @@ public class CircularRoadSwing extends OTSSwingApplication
             names.add("Left lane");
             names.add("Right lane");
             List<LaneDirection> start = new ArrayList<>();
-            start.add(new LaneDirection(this.model.getPath(0).get(0), GTUDirectionality.DIR_PLUS));
-            start.add(new LaneDirection(this.model.getPath(1).get(0), GTUDirectionality.DIR_PLUS));
+            start.add(new LaneDirection(getModel().getPath(0).get(0), GTUDirectionality.DIR_PLUS));
+            start.add(new LaneDirection(getModel().getPath(1).get(0), GTUDirectionality.DIR_PLUS));
             path01 = GraphLaneUtil.createPath(names, start);
             path0 = GraphLaneUtil.createPath(names.get(0), start.get(0));
             path1 = GraphLaneUtil.createPath(names.get(1), start.get(1));
@@ -175,7 +168,7 @@ public class CircularRoadSwing extends OTSSwingApplication
         names.add("Left lane");
         names.add("Right lane");
         DirectedLinkPosition linkPosition =
-                new DirectedLinkPosition(this.model.getPath(0).get(0).getParentLink(), 0.0, GTUDirectionality.DIR_PLUS);
+                new DirectedLinkPosition(getModel().getPath(0).get(0).getParentLink(), 0.0, GTUDirectionality.DIR_PLUS);
         GraphCrossSection<KpiLaneDirection> crossSection;
         try
         {
@@ -194,7 +187,7 @@ public class CircularRoadSwing extends OTSSwingApplication
                 crossSection, false, Duration.createSI(60.0), false);
         trajectoryChart.setCell(plot.getContentPane(), 1, 1);
 
-        this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "Trajectories",
+        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
                 trajectoryChart);
 
         for (int lane : new int[] { 0, 1 })
@@ -218,7 +211,7 @@ public class CircularRoadSwing extends OTSSwingApplication
             plot = new ContourPlotAcceleration("Accceleration lane " + lane, simulator, dataPool);
             charts.setCell(plot.getContentPane(), 2, 1);
 
-            this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "stats lane " + lane,
+            getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "stats lane " + lane,
                     charts);
         }
     }

@@ -597,7 +597,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                     {
                         // setAppearance(getAppearance());
                     }
-                    catch (@SuppressWarnings("unused") NullPointerException exception)
+                    catch (NullPointerException exception)
                     {
                         //
                     }

@@ -49,8 +49,9 @@ import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
  * initial version 16 dec. 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <T> model type
  */
-public class OTSSwingApplication extends JFrame
+public class OTSSwingApplication<T extends OTSModelInterface> extends JFrame
 {
     /** */
     private static final long serialVersionUID = 20141216L;
@@ -59,7 +60,7 @@ public class OTSSwingApplication extends JFrame
     public static final GTUColorer DEFAULT_COLORER = new DefaultSwitchableGTUColorer();
 
     /** the model. */
-    private final OTSModelInterface model;
+    private final T model;
 
     /** whether the application has been closed or not. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -76,7 +77,7 @@ public class OTSSwingApplication extends JFrame
      * @param model OTSModelInterface; the model that will be shown in the JFrame
      * @param panel JPanel; this should be the JPanel of the simulation
      */
-    public OTSSwingApplication(final OTSModelInterface model, final JPanel panel)
+    public OTSSwingApplication(final T model, final JPanel panel)
     {
         super();
         this.model = model;
@@ -356,7 +357,7 @@ public class OTSSwingApplication extends JFrame
     /**
      * @return model
      */
-    public final OTSModelInterface getModel()
+    public final T getModel()
     {
         return this.model;
     }

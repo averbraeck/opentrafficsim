@@ -42,8 +42,8 @@ import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.demo.conflict.BusStreetDemo.BusStreetModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator.RoomChecker;
@@ -76,9 +76,8 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.BusStop;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -96,7 +95,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class BusStreetDemo extends OTSSwingApplication
+public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
 {
     /** */
     private static final long serialVersionUID = 20161211L;
@@ -114,8 +113,6 @@ public class BusStreetDemo extends OTSSwingApplication
         super(model, panel);
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(panel);
     }
 
     /**

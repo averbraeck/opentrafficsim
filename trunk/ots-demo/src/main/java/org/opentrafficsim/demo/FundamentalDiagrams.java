@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
@@ -31,8 +32,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.demo.FundamentalDiagrams.FundamentalDiagramPlotsModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.draw.graphs.road.GraphLaneUtil;
@@ -53,9 +54,8 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
@@ -74,16 +74,10 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagrams extends OTSSwingApplication implements UNITS
+public class FundamentalDiagrams extends OTSSimulationApplication<FundamentalDiagramPlotsModel> implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
-
-    /** The model. */
-    private FundamentalDiagramPlotsModel model;
-
-    /** the panel. */
-    private OTSAnimationPanel animationPanel;
 
     /**
      * Create a Straight Swing application.
@@ -97,13 +91,16 @@ public class FundamentalDiagrams extends OTSSwingApplication implements UNITS
             throws OTSDrawingException, OTSSimulationException
     {
         super(model, panel);
-        this.model = model;
-        this.animationPanel = panel;
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
-        addStatisticsTabs(model.getSimulator());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void addTabs()
+    {
+        Try.execute(() -> addStatisticsTabs(getModel().getSimulator()), RuntimeException.class,
+                "Exception while setting up the statistics tabs.");
     }
 
     /**
@@ -166,7 +163,7 @@ public class FundamentalDiagrams extends OTSSwingApplication implements UNITS
             {
                 graph = new FundamentalDiagram(name, Quantity.DENSITY, Quantity.FLOW, simulator, sampler,
                         GraphLaneUtil.createCrossSection(name,
-                                new DirectedLanePosition(this.model.getLane(), detectorLocation, GTUDirectionality.DIR_PLUS)),
+                                new DirectedLanePosition(getModel().getLane(), detectorLocation, GTUDirectionality.DIR_PLUS)),
                         false, Duration.createSI(60.0), false);
             }
             catch (NetworkException | GTUException exception)
@@ -175,7 +172,7 @@ public class FundamentalDiagrams extends OTSSwingApplication implements UNITS
             }
             charts.setCell(graph.getContentPane(), plotNumber / panelsPerRow, plotNumber % panelsPerRow);
         }
-        this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "statistics ", charts);
+        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "statistics ", charts);
     }
 
     /**
@@ -389,7 +386,7 @@ public class FundamentalDiagrams extends OTSSwingApplication implements UNITS
     @Override
     public final String toString()
     {
-        return "FundamentalDiagrams [model=" + this.model + "]";
+        return "FundamentalDiagrams [model=" + getModel() + "]";
     }
 
 }

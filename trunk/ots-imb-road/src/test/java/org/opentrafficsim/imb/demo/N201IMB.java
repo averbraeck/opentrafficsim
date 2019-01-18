@@ -30,9 +30,9 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.imb.IMBException;
 import org.opentrafficsim.imb.connector.OTSIMBConnector;
+import org.opentrafficsim.imb.demo.N201IMB.N201Model;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.GTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.LaneGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.LinkGTUTransceiver;
@@ -44,9 +44,8 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransce
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -65,7 +64,7 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class N201IMB extends OTSSwingApplication
+public class N201IMB extends OTSSimulationApplication<N201Model>
 {
     /** */
     private static final long serialVersionUID = 20161007L;
@@ -78,9 +77,14 @@ public class N201IMB extends OTSSwingApplication
     public N201IMB(final N201Model model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
-        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
-        animationPanel.addAllToggleGISButtonText(" GIS Layers:", model.getGisMap(), "Turn GIS map layer on or off");
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void setAnimationToggles()
+    {
+        super.setAnimationToggles();
+        getAnimationPanel().addAllToggleGISButtonText(" GIS Layers:", getModel().getGisMap(), "Turn GIS map layer on or off");
     }
 
     /**

@@ -21,10 +21,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gis.CoordinateTransformWGS84toRDNew;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -41,7 +39,7 @@ import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestXMLParserReadXstream extends OTSSwingApplication
+public class TestXMLParserReadXstream extends OTSSimulationApplication<OTSModelInterface>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -55,8 +53,6 @@ public class TestXMLParserReadXstream extends OTSSwingApplication
             throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
     }
 
     /**

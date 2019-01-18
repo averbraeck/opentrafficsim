@@ -11,10 +11,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
@@ -29,7 +27,7 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
  * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CrossingTrafficLightsSwing extends OTSSwingApplication implements UNITS
+public class CrossingTrafficLightsSwing extends OTSSimulationApplication<CrossingTrafficLightsModel> implements UNITS
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -47,8 +45,6 @@ public class CrossingTrafficLightsSwing extends OTSSwingApplication implements U
         super(model, panel);
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(panel);
     }
 
     /**

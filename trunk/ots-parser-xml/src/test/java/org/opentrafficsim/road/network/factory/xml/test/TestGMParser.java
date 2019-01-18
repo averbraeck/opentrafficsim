@@ -12,24 +12,17 @@ import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.SwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -43,7 +36,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlannerFactory;
@@ -55,9 +47,8 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.xml.test.TestGMParser.WGS84ToRDNewTransform.Coords;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -77,7 +68,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestGMParser extends OTSSwingApplication
+public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -90,8 +81,6 @@ public class TestGMParser extends OTSSwingApplication
     public TestGMParser(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
     }
 
     /**
@@ -195,10 +184,6 @@ public class TestGMParser extends OTSSwingApplication
             int maxGTUs = Integer.MAX_VALUE;
             Time startTime = Time.ZERO;
             Time endTime = new Time(1E24, TimeUnit.BASE_HOUR);
-            GTUColorer gtuColorer = new SwitchableGTUColorer(0, new IDGTUColorer(),
-                    new SpeedGTUColorer(new Speed(100.0, SpeedUnit.KM_PER_HOUR)),
-                    new AccelerationGTUColorer(new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2),
-                            new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)));
 
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> strategicalPlannerFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(

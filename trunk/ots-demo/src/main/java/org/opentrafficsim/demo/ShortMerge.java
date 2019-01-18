@@ -55,8 +55,8 @@ import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.demo.ShortMerge.ShortMergeModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.gtu.colorer.LmrsSwitchableColorer;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
@@ -96,7 +96,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -114,13 +114,13 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class ShortMerge extends OTSSwingApplication
+public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
 {
     /** */
     private static final long serialVersionUID = 20170407L;
 
     /** Network. */
-    static final String NETWORK = "shortWeave";
+    static final String NETWORK = "shortMerge";
 
     /** Truck fraction. */
     static final double TRUCK_FRACTION = 0.15;
@@ -151,18 +151,21 @@ public class ShortMerge extends OTSSwingApplication
      * @param title the title of the Frame
      * @param panel the tabbed panel to display
      * @param model the model
-     * @param gtuColorer GTUColorer; GTU colorer
      * @throws OTSDrawingException on animation error
      */
-    public ShortMerge(final String title, final OTSAnimationPanel panel, final ShortMergeModel model,
-            final GTUColorer gtuColorer) throws OTSDrawingException
+    public ShortMerge(final String title, final OTSAnimationPanel panel, final ShortMergeModel model) throws OTSDrawingException
     {
         super(model, panel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), gtuColorer);
-        AnimationToggles.setTextAnimationTogglesFull(panel);
-        panel.getAnimationPanel().toggleClass(OTSLink.class);
-        panel.getAnimationPanel().toggleClass(OTSNode.class);
-        panel.getAnimationPanel().showClass(SpeedSign.class);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void setAnimationToggles()
+    {
+        AnimationToggles.setTextAnimationTogglesFull(getAnimationPanel());
+        getAnimationPanel().getAnimationPanel().toggleClass(OTSLink.class);
+        getAnimationPanel().getAnimationPanel().toggleClass(OTSNode.class);
+        getAnimationPanel().getAnimationPanel().showClass(SpeedSign.class);
     }
 
     /**
@@ -185,10 +188,9 @@ public class ShortMerge extends OTSSwingApplication
             OTSAnimator simulator = new OTSAnimator();
             final ShortMergeModel otsModel = new ShortMergeModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
-            GTUColorer gtuColorer = new LmrsSwitchableColorer();
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, otsModel, gtuColorer, otsModel.getNetwork());
-            ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel, gtuColorer);
+                    simulator, otsModel, new LmrsSwitchableColorer(), otsModel.getNetwork());
+            ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
             app.setExitOnClose(exitOnClose);
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)

@@ -44,7 +44,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
@@ -62,9 +61,8 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -86,7 +84,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestOpenDriveParserNASA extends OTSSwingApplication
+public class TestOpenDriveParserNASA extends OTSSimulationApplication<OTSModelInterface>
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -100,8 +98,6 @@ public class TestOpenDriveParserNASA extends OTSSwingApplication
             throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
-        AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
     }
 
     /**
@@ -177,7 +173,7 @@ public class TestOpenDriveParserNASA extends OTSSwingApplication
         @Override
         public final void constructModel() throws SimRuntimeException
         {
-            this.rtiCars = new ArrayList<LaneBasedIndividualGTU>();
+            this.rtiCars = new ArrayList<>();
 
             URL url = URLResource.getResource("/NASAames.xodr");
             // URL url = URLResource.getResource("/OpenDrive.xodr");
@@ -345,7 +341,7 @@ public class TestOpenDriveParserNASA extends OTSSwingApplication
 
             CompleteRoute cr1 = null, cr2 = null, cr3 = null, cr4 = null, cr5 = null, cr6 = null;
 
-            List<Node> nodesVia1 = new ArrayList<Node>();
+            List<Node> nodesVia1 = new ArrayList<>();
             nodesVia1.add(link1.getStartNode());
             // nodesVia1.add(link7.getStartNode());
             // nodesVia1.add(link8.getStartNode());
@@ -362,7 +358,7 @@ public class TestOpenDriveParserNASA extends OTSSwingApplication
                 exception.printStackTrace();
             }
 
-            List<Node> nodesVia2 = new ArrayList<Node>();
+            List<Node> nodesVia2 = new ArrayList<>();
             nodesVia2.add(link5.getEndNode());
             nodesVia2.add(link6.getEndNode());
             try
@@ -378,7 +374,7 @@ public class TestOpenDriveParserNASA extends OTSSwingApplication
                 exception.printStackTrace();
             }
 
-            List<Node> nodesVia3 = new ArrayList<Node>();
+            List<Node> nodesVia3 = new ArrayList<>();
             nodesVia3.add(link5.getEndNode());
             nodesVia3.add(link8.getEndNode());
             try
@@ -455,7 +451,7 @@ public class TestOpenDriveParserNASA extends OTSSwingApplication
                 {
                     exception1.printStackTrace();
                 }
-                Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
+                Set<DirectedLanePosition> lanepositionSet = new HashSet<>();
                 lanepositionSet.add(directedLanePosition);
 
                 Length carLength = lengthDist.draw();
