@@ -26,6 +26,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -121,12 +122,9 @@ public interface Synchronization extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
 
-            PerceptionCollectable<HeadwayGTU,
-                    LaneBasedGTU> set =
-                            removeAllUpstreamOfConflicts(
-                                    removeAllUpstreamOfConflicts(perception.getPerceptionCategory(NeighborsPerception.class)
-                                            .getLeaders(relativeLane), perception, relativeLane),
-                                    perception, RelativeLane.CURRENT);
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
+                    relativeLane), perception, RelativeLane.CURRENT);
             HeadwayGTU leader = null;
             if (set != null)
             {
@@ -159,13 +157,84 @@ public interface Synchronization extends LmrsParameters
             }
 
             // check merge distance
-            Length xMerge = getMergeDistance(perception, lat);
-            Acceleration aMerge = LmrsUtil.singleAcceleration(xMerge, ownSpeed, Speed.ZERO, desire, params, sli, cfm);
-            a = Acceleration.max(a, aMerge);
-
+            Length xMerge =
+                    getMergeDistance(perception, lat).minus(perception.getPerceptionCategory(EgoPerception.class).getLength());
+            if (xMerge.gt0())
+            {
+                Acceleration aMerge = LmrsUtil.singleAcceleration(xMerge, ownSpeed, Speed.ZERO, desire, params, sli, cfm);
+                a = Acceleration.max(a, aMerge);
+            }
             return a;
         }
 
+    };
+
+    /**
+     * Synchronization by following the adjacent leader or aligning with the middle of the gap, whichever allows the largest
+     * acceleration. Note that aligning with the middle of the gap then means the gap is too small, as following would cause
+     * lower acceleration. Aligning with the middle of the gap will however provide a better starting point for the rest of the
+     * process. Mainly, the adjacent follower can decelerate less, allowing more smooth merging.
+     */
+    Synchronization ALIGN_GAP = new Synchronization()
+    {
+        @Override
+        public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
+                final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData)
+                throws ParameterException, OperationalPlanException
+        {
+            Acceleration a = Acceleration.POSITIVE_INFINITY;
+            EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
+            Speed ownSpeed = ego.getSpeed();
+            RelativeLane relativeLane = new RelativeLane(lat, 1);
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders =
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane);
+            if (!leaders.isEmpty())
+            {
+                HeadwayGTU leader = leaders.first();
+                Length gap = leader.getDistance();
+                LmrsUtil.setDesiredHeadway(params, desire);
+                PerceptionCollectable<HeadwayGTU, LaneBasedGTU> followers =
+                        perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(relativeLane);
+                if (!followers.isEmpty())
+                {
+                    HeadwayGTU follower = followers.first();
+                    Length netGap = leader.getDistance().plus(follower.getDistance()).multiplyBy(0.5);
+                    gap = Length.max(gap, leader.getDistance().minus(netGap).plus(cfm.desiredHeadway(params, ownSpeed)));
+                }
+                a = CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli, gap, leader.getSpeed());
+                LmrsUtil.resetDesiredHeadway(params);
+                // limit deceleration based on desire
+                a = gentleUrgency(a, desire, params);
+
+                // brake for dead-end
+                // a = Acceleration.min(a, DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData));
+            }
+            // brake for dead-end
+            Length remainingDist = null;
+            for (InfrastructureLaneChangeInfo ili : perception.getPerceptionCategory(InfrastructurePerception.class)
+                    .getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
+            {
+                if (remainingDist == null || remainingDist.gt(ili.getRemainingDistance()))
+                {
+                    remainingDist = ili.getRemainingDistance();
+                }
+            }
+            if (remainingDist != null)
+            {
+                params.setParameterResettable(ParameterTypes.B, Acceleration.interpolate(params.getParameter(ParameterTypes.B),
+                        params.getParameter(ParameterTypes.BCRIT), 0.99));
+                a = Acceleration.min(a, CarFollowingUtil.stop(cfm, params, ownSpeed, sli, remainingDist));
+                params.resetParameter(ParameterTypes.B);
+            }
+            // never stop before we can actually merge
+            Length xMerge = getMergeDistance(perception, lat);
+            if (xMerge.gt0())
+            {
+                Acceleration aMerge = LmrsUtil.singleAcceleration(xMerge, ownSpeed, Speed.ZERO, desire, params, sli, cfm);
+                a = Acceleration.max(a, aMerge);
+            }
+            return a;
+        }
     };
 
     /** Synchronization where current leaders are taken. Synchronization is disabled for d_sync&lt;d&lt;d_coop at low speeds. */
@@ -205,7 +274,7 @@ public interface Synchronization extends LmrsParameters
             Duration lc = params.getParameter(ParameterTypes.LCDUR);
             Speed tagSpeed = x0.divideBy(t0);
             double dCoop = params.getParameter(DCOOP);
-            EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
+            EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
             Speed ownSpeed = ego.getSpeed();
             Length ownLength = ego.getLength();
             Length dx;
@@ -441,7 +510,16 @@ public interface Synchronization extends LmrsParameters
         // return set;
         // }
         // TODO find a better solution for this inefficient hack... when to ignore a vehicle for synchronization?
-        SortedSetPerceptionIterable<HeadwayGTU, LaneBasedGTU> out = new SortedSetPerceptionIterable<>();
+        SortedSetPerceptionIterable<HeadwayGTU> out;
+        try
+        {
+            out = new SortedSetPerceptionIterable<HeadwayGTU>(
+                    (OTSNetwork) perception.getGtu().getReferencePosition().getLane().getParentLink().getNetwork());
+        }
+        catch (GTUException exception)
+        {
+            throw new OperationalPlanException(exception);
+        }
         if (set == null)
         {
             return out;

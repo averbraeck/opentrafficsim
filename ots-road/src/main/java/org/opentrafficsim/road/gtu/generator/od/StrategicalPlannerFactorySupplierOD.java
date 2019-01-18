@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.gtu.generator.od;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.behavioralcharacteristics.ParameterFactoryByType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
@@ -10,7 +13,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LMRSFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.gtu.strategical.route.RouteSupplier;
+import org.opentrafficsim.road.gtu.strategical.route.RouteGeneratorOD;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -27,18 +30,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public interface StrategicalPlannerFactorySupplierOD
 {
-    /** Default LMRS model. */
-    StrategicalPlannerFactorySupplierOD LMRS = new StrategicalPlannerFactorySupplierOD()
-    {
-        @Override
-        public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,
-                final Category category, final StreamInterface randomStream) throws GTUException
-        {
-            return new LaneBasedStrategicalRoutePlannerFactory(
-                    new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()),
-                    RouteSupplier.getDefaultRouteSupplier(randomStream));
-        }
-    };
 
     /**
      * Supplies a strategical factory.
@@ -53,6 +44,28 @@ public interface StrategicalPlannerFactorySupplierOD
             StreamInterface randomStream) throws GTUException;
 
     /**
+     * Returns a standard implementation for LMRS.
+     * @return standard implementation for LMRS
+     */
+    static StrategicalPlannerFactorySupplierOD lmrs()
+    {
+        return new StrategicalPlannerFactorySupplierOD()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,
+                    final Category category, final StreamInterface randomStream) throws GTUException
+            {
+                ParameterFactoryByType params = new ParameterFactoryByType();
+                params.addParameter(ParameterTypes.A, Acceleration.createSI(0.4));
+                return new LaneBasedStrategicalRoutePlannerFactory(
+                        new LMRSFactory(new IDMPlusFactory(randomStream), new DefaultLMRSPerceptionFactory()), params,
+                        RouteGeneratorOD.getDefaultRouteSupplier(randomStream));
+            }
+        };
+    }
+
+    /**
      * Returns a {@code StrategicalPlannerFactorySupplierOD} using a {@code LaneBasedStrategicalRoutePlannerFactory} with a
      * tactical planner factory based on the given supplier. Simulations using this strategical level can be more easily
      * specified in this manner.
@@ -63,6 +76,7 @@ public interface StrategicalPlannerFactorySupplierOD
     {
         return new StrategicalPlannerFactorySupplierOD()
         {
+            /** {@inheritDoc} */
             @Override
             public LaneBasedStrategicalPlannerFactory<?> getFactory(final Node origin, final Node destination,
                     final Category category, final StreamInterface randomStream) throws GTUException

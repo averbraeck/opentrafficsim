@@ -49,6 +49,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -172,6 +173,8 @@ public final class ODApplier
                     MarkovCorrelation<GTUType, Frequency> correlation = odOptions.get(ODOptions.MARKOV, null, origin, linkType);
                     if (correlation != null)
                     {
+                        Throw.when(!od.getCategorization().entails(GTUType.class), IllegalArgumentException.class,
+                                "Markov correlation can only be used on OD categorization entailing GTU type.");
                         markovChain = new MarkovChain(correlation);
                     }
                 }
@@ -209,6 +212,9 @@ public final class ODApplier
                                             odOptions.get(ODOptions.MARKOV, lane, origin, lane.getParentLink().getLinkType());
                                     if (correlation != null)
                                     {
+                                        Throw.when(!od.getCategorization().entails(GTUType.class),
+                                                IllegalArgumentException.class,
+                                                "Markov correlation can only be used on OD categorization entailing GTU type.");
                                         markovChain = new MarkovChain(correlation); // 1 for each generator
                                     }
                                 }
@@ -340,7 +346,6 @@ public final class ODApplier
                 RoomChecker roomChecker = odOptions.get(ODOptions.ROOM_CHECKER, lane, o, linkType);
                 IdGenerator idGenerator = odOptions.get(ODOptions.GTU_ID, lane, o, linkType);
                 LaneBiases biases = odOptions.get(ODOptions.LANE_BIAS, lane, o, linkType);
-                boolean animation = odOptions.get(ODOptions.ANIMATION, lane, o, linkType);
                 // and finally, the generator
                 try
                 {

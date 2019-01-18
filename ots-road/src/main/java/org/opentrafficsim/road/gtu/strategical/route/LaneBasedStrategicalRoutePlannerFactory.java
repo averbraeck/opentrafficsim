@@ -32,7 +32,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
     private static final long serialVersionUID = 20160811L;
 
     /** Route supplier. */
-    private final RouteSupplier routeSupplier;
+    private final RouteGeneratorOD routeGenerator;
 
     /**
      * Constructor with factory for tactical planners.
@@ -43,21 +43,21 @@ public class LaneBasedStrategicalRoutePlannerFactory
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory)
     {
         super(tacticalPlannerFactory);
-        this.routeSupplier = null;
+        this.routeGenerator = null;
     }
 
     /**
      * Constructor with factory for tactical planners.
      * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
      *            tactical planners
-     * @param routeSupplier RouteSupplier; route supplier
+     * @param routeGenerator RouteGeneratorOD; route generator
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
-            final RouteSupplier routeSupplier)
+            final RouteGeneratorOD routeGenerator)
     {
         super(tacticalPlannerFactory);
-        this.routeSupplier = routeSupplier;
+        this.routeGenerator = routeGenerator;
     }
 
     /**
@@ -71,7 +71,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
             final ParameterFactory parametersFactory)
     {
         super(tacticalPlannerFactory, parametersFactory);
-        this.routeSupplier = null;
+        this.routeGenerator = null;
     }
 
     /**
@@ -79,14 +79,14 @@ public class LaneBasedStrategicalRoutePlannerFactory
      * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
      *            tactical planners
      * @param parametersFactory ParameterFactory; factory for parameters
-     * @param routeSupplier RouteSupplier; route supplier
+     * @param routeGenerator RouteGeneratorOD; route supplier
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
-            final ParameterFactory parametersFactory, final RouteSupplier routeSupplier)
+            final ParameterFactory parametersFactory, final RouteGeneratorOD routeGenerator)
     {
         super(tacticalPlannerFactory, parametersFactory);
-        this.routeSupplier = routeSupplier;
+        this.routeGenerator = routeGenerator;
     }
 
     /** {@inheritDoc} */
@@ -95,7 +95,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
             final Node destination) throws GTUException
     {
         LaneBasedStrategicalRoutePlanner strategicalPlanner;
-        if (this.routeSupplier == null)
+        if (this.routeGenerator == null)
         {
             strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(nextTacticalPlanner(gtu), route, gtu, origin, destination);
@@ -103,7 +103,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
         else
         {
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(nextTacticalPlanner(gtu), route, gtu, origin, destination,
-                    this.routeSupplier);
+                    this.routeGenerator);
         }
         gtu.setParameters(nextParameters(gtu.getGTUType()));
         return strategicalPlanner;

@@ -56,9 +56,6 @@ public class ODOptions
     /** Initial distance over which lane changes shouldn't be performed option. */
     public static final Option<Length> NO_LC_DIST = new Option<>("no lc distance", null);
 
-    /** Show generator animation option. */
-    public static final Option<Boolean> ANIMATION = new Option<>("show generator animation", false);
-
     /** Options overall. */
     private OptionSet<Void> options = new OptionSet<>();
 
