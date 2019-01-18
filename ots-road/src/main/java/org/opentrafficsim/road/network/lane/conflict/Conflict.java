@@ -541,7 +541,7 @@ public final class Conflict extends AbstractLaneBasedObject
         public HeadwayGTU createDownstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
                 final Length distance) throws GTUException, ParameterException
         {
-            throw new UnsupportedOperationException("ConflictGtuType is a pass-through type, no actual perception is allowed.");
+            return new ConflictGtu(perceivedGtu, distance); // actually do not change it, called by iterable assuming downstream
         }
 
         /** {@inheritDoc} */
@@ -549,7 +549,7 @@ public final class Conflict extends AbstractLaneBasedObject
         public HeadwayGTU createUpstreamGtu(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
                 final Length distance) throws GTUException, ParameterException
         {
-            throw new UnsupportedOperationException("ConflictGtuType is a pass-through type, no actual perception is allowed.");
+            return new ConflictGtu(perceivedGtu, distance); // actually do not change it, called by iterable assuming upstream
         }
 
         /** {@inheritDoc} */
@@ -737,8 +737,7 @@ public final class Conflict extends AbstractLaneBasedObject
         protected HeadwayGTU perceive(final LaneBasedGTU perceivingGtu, final LaneBasedGTU object, final Length distance)
                 throws GTUException, ParameterException
         {
-            Length dist = this.downstream ? distance : distance.neg();
-            return this.headwayGtuType.createHeadwayGtu(perceivingGtu, object, dist, this.downstream);
+            return this.headwayGtuType.createHeadwayGtu(perceivingGtu, object, distance, this.downstream);
         }
     }
 
