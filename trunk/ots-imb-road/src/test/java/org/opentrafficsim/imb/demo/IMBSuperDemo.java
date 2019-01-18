@@ -62,8 +62,9 @@ public class IMBSuperDemo extends JFrame
      */
     private void addDemos()
     {
-        this.demos.add(new Demo("CircularRoad", CircularRoadIMB.class, "IMB model of a two-lane circular road with overtaking.\n"
-                + "Users can specify the fraction of cars and trucks, as well as some driving parameters."));
+        this.demos
+                .add(new Demo("CircularRoad", CircularRoadIMB.class, "IMB model of a two-lane circular road with overtaking.\n"
+                        + "Users can specify the fraction of cars and trucks, as well as some driving parameters."));
         this.demos.add(new Demo("N201", N201IMB.class, "IMB model of a the N201 road near Schiphol Airport.\n"
                 + "The model shows the effect of traffic lights on the traffic flow."));
         this.demos.add(new Demo("A58", A58IMB.class, "Model of a the A58 highway near Eindhoven.\n"
