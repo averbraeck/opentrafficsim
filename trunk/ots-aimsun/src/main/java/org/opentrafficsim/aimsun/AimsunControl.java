@@ -27,7 +27,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -43,9 +42,9 @@ import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -229,11 +228,12 @@ public class AimsunControl
                             animator.initialize(Time.ZERO, warmupDuration, runDuration, this.model);
                             OTSAnimationPanel animationPanel = new OTSAnimationPanel(
                                     new Rectangle2D.Double(-500, -500, 1000, 1000), new Dimension(200, 200), animator,
-                                    this.model, new DefaultSwitchableGTUColorer(), this.model.getNetwork());
+                                    this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
                             new AimsunSwingApplication(this.model, animationPanel);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
                             animator.setSpeedFactor(1000.0, true);
-                            DefaultAnimationFactory.animateNetwork(this.model.getNetwork(), this.model.getSimulator());
+                            DefaultAnimationFactory.animateNetwork(this.model.getNetwork(), this.model.getSimulator(),
+                                    OTSSwingApplication.DEFAULT_COLORER);
                             AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
                         }
                         catch (SimRuntimeException | NamingException | OTSDrawingException exception1)

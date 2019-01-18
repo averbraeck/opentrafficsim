@@ -26,7 +26,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.animation.gtu.colorer.AccelerationGTUColorer;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.SpeedGTUColorer;
@@ -56,9 +55,9 @@ import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.xml.test.TestGMParser.WGS84ToRDNewTransform.Coords;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.xml.sax.SAXException;
 
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
@@ -91,7 +90,7 @@ public class TestGMParser extends OTSSwingApplication
     public TestGMParser(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
     }
 
@@ -112,9 +111,8 @@ public class TestGMParser extends OTSSwingApplication
                     OTSAnimator simulator = new OTSAnimator();
                     TestGMModel xmlModel = new TestGMModel(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), xmlModel);
-                    OTSAnimationPanel animationPanel =
-                            new OTSAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
-                                    xmlModel, new DefaultSwitchableGTUColorer(), xmlModel.getNetwork());
+                    OTSAnimationPanel animationPanel = new OTSAnimationPanel(xmlModel.getNetwork().getExtent(),
+                            new Dimension(800, 600), simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
                     new TestGMParser(xmlModel, animationPanel);
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
@@ -177,7 +175,7 @@ public class TestGMParser extends OTSSwingApplication
             }
 
             URL gisURL = URLResource.getResource("/N201/map.xml");
-            System.err.println("GIS-map file: " + gisURL.toString()); 
+            System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformRD(104450, 478845);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
 

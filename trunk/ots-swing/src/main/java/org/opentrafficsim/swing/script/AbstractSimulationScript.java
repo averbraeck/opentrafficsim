@@ -295,11 +295,11 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         {
             if (xmlNetwork)
             {
-                DefaultAnimationFactory.animateXmlNetwork(net, getSimulator());
+                DefaultAnimationFactory.animateXmlNetwork(net, getSimulator(), getGtuColorer());
             }
             else
             {
-                DefaultAnimationFactory.animateNetwork(net, getSimulator());
+                DefaultAnimationFactory.animateNetwork(net, getSimulator(), getGtuColorer());
             }
         }
         catch (OTSDrawingException exception)

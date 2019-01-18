@@ -85,7 +85,7 @@ public class AHFEAnimation extends OTSSwingApplication
     public AHFEAnimation(final String title, final OTSAnimationPanel panel, final AHFEModel model) throws OTSDrawingException
     {
         super(model, panel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(panel);
     }
 
@@ -303,7 +303,7 @@ public class AHFEAnimation extends OTSSwingApplication
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(SIMEND.si), ahfeModel, finalReplication);
                     OTSAnimationPanel animationPanel =
                             new OTSAnimationPanel(ahfeModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
-                                    ahfeModel, new DefaultSwitchableGTUColorer(), ahfeModel.getNetwork());
+                                    ahfeModel, DEFAULT_COLORER, ahfeModel.getNetwork());
                     new AHFEAnimation("AHFE", animationPanel, ahfeModel);
                     if (finalAutoRun)
                     {

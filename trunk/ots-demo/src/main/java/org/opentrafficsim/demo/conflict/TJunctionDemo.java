@@ -29,9 +29,9 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -61,7 +61,7 @@ public class TJunctionDemo extends OTSSwingApplication
             throws OTSDrawingException
     {
         super(model, panel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(panel);
     }
 
@@ -85,9 +85,8 @@ public class TJunctionDemo extends OTSSwingApplication
             OTSAnimator simulator = new OTSAnimator();
             final TJunctionModel junctionModel = new TJunctionModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), junctionModel);
-            OTSAnimationPanel animationPanel =
-                    new OTSAnimationPanel(junctionModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
-                            junctionModel, new DefaultSwitchableGTUColorer(), junctionModel.getNetwork());
+            OTSAnimationPanel animationPanel = new OTSAnimationPanel(junctionModel.getNetwork().getExtent(),
+                    new Dimension(800, 600), simulator, junctionModel, DEFAULT_COLORER, junctionModel.getNetwork());
             TJunctionDemo app = new TJunctionDemo("T-Junction demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
         }
@@ -96,7 +95,7 @@ public class TJunctionDemo extends OTSSwingApplication
             exception.printStackTrace();
         }
     }
-    
+
     /**
      * The simulation model.
      */
@@ -107,7 +106,7 @@ public class TJunctionDemo extends OTSSwingApplication
 
         /** The network. */
         private OTSNetwork network;
-        
+
         /**
          * @param simulator the simulator for this model
          */

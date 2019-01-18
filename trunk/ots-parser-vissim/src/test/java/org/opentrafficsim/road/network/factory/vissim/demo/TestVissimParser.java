@@ -13,7 +13,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -25,9 +24,9 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.factory.vissim.VissimNetworkLaneParser;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.xml.sax.SAXException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -53,7 +52,7 @@ public class TestVissimParser extends OTSSwingApplication
     public TestVissimParser(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
     {
         super(model, animationPanel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), DEFAULT_COLORER);
         AnimationToggles.setTextAnimationTogglesStandard(animationPanel);
     }
 
@@ -75,7 +74,7 @@ public class TestVissimParser extends OTSSwingApplication
                     VissimImport model = new VissimImport(simulator);
                     simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), model);
                     OTSAnimationPanel animationPanel = new OTSAnimationPanel(model.getNetwork().getExtent(),
-                            new Dimension(800, 600), simulator, model, new DefaultSwitchableGTUColorer(), model.getNetwork());
+                            new Dimension(800, 600), simulator, model, DEFAULT_COLORER, model.getNetwork());
                     new TestVissimParser(model, animationPanel);
                 }
                 catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)

@@ -31,7 +31,6 @@ import org.djutils.io.URLResource;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.animation.gtu.colorer.GTUColorer;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
@@ -95,9 +94,9 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -152,12 +151,14 @@ public class ShortMerge extends OTSSwingApplication
      * @param title the title of the Frame
      * @param panel the tabbed panel to display
      * @param model the model
+     * @param gtuColorer GTUColorer; GTU colorer
      * @throws OTSDrawingException on animation error
      */
-    public ShortMerge(final String title, final OTSAnimationPanel panel, final ShortMergeModel model) throws OTSDrawingException
+    public ShortMerge(final String title, final OTSAnimationPanel panel, final ShortMergeModel model,
+            final GTUColorer gtuColorer) throws OTSDrawingException
     {
         super(model, panel);
-        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator());
+        DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getSimulator(), gtuColorer);
         AnimationToggles.setTextAnimationTogglesFull(panel);
         panel.getAnimationPanel().toggleClass(OTSLink.class);
         panel.getAnimationPanel().toggleClass(OTSNode.class);
@@ -184,9 +185,10 @@ public class ShortMerge extends OTSSwingApplication
             OTSAnimator simulator = new OTSAnimator();
             final ShortMergeModel otsModel = new ShortMergeModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
+            GTUColorer gtuColorer = new LmrsSwitchableColorer();
             OTSAnimationPanel animationPanel = new OTSAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, otsModel, new DefaultSwitchableGTUColorer(), otsModel.getNetwork());
-            ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
+                    simulator, otsModel, gtuColorer, otsModel.getNetwork());
+            ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel, gtuColorer);
             app.setExitOnClose(exitOnClose);
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
