@@ -10,11 +10,11 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.demo.CircularRoadModel;
-import org.opentrafficsim.demo.TabbedParameterDialog;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.jetty.test.sse.DSOLWebServer;
+import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 
 /**
  * CircularRoadWebpplication.java. <br>

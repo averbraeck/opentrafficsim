@@ -158,7 +158,6 @@ import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
@@ -275,7 +274,6 @@ public class LmrsStrategies implements EventListenerInterface
     @SuppressWarnings("unchecked")
     public static void main(final String[] args)
     {
-
         LaneChange.MIN_LC_LENGTH_FACTOR = 1.0;
         LaneOperationalPlanBuilder.INSTANT_LANE_CHANGES = true;
 

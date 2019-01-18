@@ -43,6 +43,7 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterSelectionM
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.AbstractInputField;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.InputField;
+import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 
 /**
  * Simplest contour plots demonstration.
@@ -159,7 +160,7 @@ public class NetworksSwing extends AbstractOTSSwingApplication implements UNITS
         this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "statistics ", charts);
     }
 
-    /** A parameter dialog with a radio buttron for the network choice tab. */
+    /** A parameter dialog with a radio button for the network choice tab. */
     private static class NetworksParameterDialog extends TabbedParameterDialog
     {
         /** */
