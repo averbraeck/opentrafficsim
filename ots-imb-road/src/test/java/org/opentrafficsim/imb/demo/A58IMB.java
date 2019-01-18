@@ -182,7 +182,7 @@ public class A58IMB extends OTSSimulationApplication<A58Model>
             {
                 InputParameterMap imbSettings = (InputParameterMap) getInputParameterMap().get("imb");
                 Throw.whenNull(imbSettings, "IMB Settings not found in properties");
-                this.imbConnector = OTSIMBConnector.create(imbSettings);
+                this.imbConnector = OTSIMBConnector.create(imbSettings, "A58IMB");
                 new NetworkTransceiver(this.imbConnector, getSimulator(), this.network);
                 new NodeTransceiver(this.imbConnector, getSimulator(), this.network);
                 new LinkGTUTransceiver(this.imbConnector, getSimulator(), this.network);

@@ -25,7 +25,6 @@ import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer
 import org.opentrafficsim.core.compatibility.Compatible;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -39,7 +38,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.draw.graphs.AbstractPlot;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
@@ -82,7 +80,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.sensor.AbstractSensor;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 
@@ -127,7 +124,7 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
         OTSNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected void addTabs()
@@ -363,7 +360,7 @@ class CircularRoadModelIMB extends AbstractOTSModel implements UNITS
         {
             InputParameterMap imbSettings = (InputParameterMap) getInputParameterMap().get("imb");
             Throw.whenNull(imbSettings, "IMB Settings not found in properties");
-            this.imbConnector = OTSIMBConnector.create(imbSettings);
+            this.imbConnector = OTSIMBConnector.create(imbSettings, "CircularRoadIMB");
             new NetworkTransceiver(this.imbConnector, getSimulator(), this.network);
             new NodeTransceiver(this.imbConnector, getSimulator(), this.network);
             new LinkGTUTransceiver(this.imbConnector, getSimulator(), this.network);

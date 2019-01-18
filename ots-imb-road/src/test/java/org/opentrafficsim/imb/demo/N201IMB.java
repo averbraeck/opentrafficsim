@@ -78,7 +78,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
     {
         super(model, animationPanel);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected void setAnimationToggles()
@@ -187,7 +187,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
             {
                 InputParameterMap imbSettings = (InputParameterMap) getInputParameterMap().get("imb");
                 Throw.whenNull(imbSettings, "IMB Settings not found in properties");
-                this.imbConnector = OTSIMBConnector.create(imbSettings);
+                this.imbConnector = OTSIMBConnector.create(imbSettings, "N201IMB");
                 new NetworkTransceiver(this.imbConnector, getSimulator(), this.network);
                 new NodeTransceiver(this.imbConnector, getSimulator(), this.network);
                 new LinkGTUTransceiver(this.imbConnector, getSimulator(), this.network);
