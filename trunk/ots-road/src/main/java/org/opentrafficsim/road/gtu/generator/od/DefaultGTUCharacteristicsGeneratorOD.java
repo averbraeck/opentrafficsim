@@ -72,7 +72,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
 
     /**
      * Constructor using route supplier, provided GTU templates and LMRS.
-     * @param routeSupplier RouteSupplier; route supplier
+     * @param routeSupplier RouteGeneratorOD; route supplier
      * @param templates Set&lt;TemplateGTUType&gt;; templates
      */
     public DefaultGTUCharacteristicsGeneratorOD(final RouteGeneratorOD routeSupplier, final Set<TemplateGTUType> templates)
@@ -82,7 +82,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
 
     /**
      * Constructor using route supplier, default GTU characteristics and provided strategical planner factory supplier.
-     * @param routeGenerator RouteGenerator; route generator
+     * @param routeGenerator RouteGeneratorOD; route generator
      * @param factorySupplier StrategicalPlannerFactorySupplierOD; strategical factory supplier
      */
     public DefaultGTUCharacteristicsGeneratorOD(final RouteGeneratorOD routeGenerator,
@@ -93,8 +93,8 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
 
     /**
      * Constructor using route supplier, provided GTU templates and provided strategical planner factory supplier.
-     * @param gtuTypeGenerator GTU type generator
-     * @param routeGenerator RouteGenerator; route generator
+     * @param gtuTypeGenerator Generator&lt;GTUType&gt;; GTU type generator
+     * @param routeGenerator RouteGeneratorOD; route generator
      * @param templates Set&lt;TemplateGTUType&gt;; templates
      * @param factorySupplier StrategicalPlannerFactorySupplierOD; strategical factory supplier
      */
@@ -156,8 +156,8 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
 
     /**
      * Constructor using route supplier, provided GTU templates and provided strategical planner factory supplier.
-     * @param gtuTypeGenerator GTU type generator
-     * @param routeSupplier RouteSupplier; route supplier
+     * @param gtuTypeGenerator Generator&lt;GTUType&gt;; GTU type generator
+     * @param routeSupplier RouteGeneratorOD; route supplier
      * @param templates Set&lt;TemplateGTUType&gt;; templates
      * @param factorySupplier StrategicalPlannerFactorySupplierOD; strategical factory supplier
      * @param vehicleModelFactory VehicleModelFactory; vehicle model factory
@@ -277,7 +277,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
         private VehicleModelFactory vehicleModelFactory = VehicleModelFactory.MINMAX;
 
         /**
-         * @param gtuTypeGenerator set gtuTypeGenerator.
+         * @param gtuTypeGenerator Generator&lt;GTUType&gt;; set gtuTypeGenerator.
          * @return Factory; this factory for method chaining
          */
         public Factory setGtuTypeGenerator(final Generator<GTUType> gtuTypeGenerator)
@@ -287,7 +287,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
         }
 
         /**
-         * @param templates set templates.
+         * @param templates Set&lt;TemplateGTUType&gt;; set templates.
          * @return Factory; this factory for method chaining
          */
         public Factory setTemplates(final Set<TemplateGTUType> templates)
@@ -297,7 +297,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
         }
 
         /**
-         * @param routeSupplier set routeSupplier.
+         * @param routeSupplier RouteGeneratorOD; set routeSupplier.
          * @return Factory; this factory for method chaining
          */
         public Factory setRouteSupplier(final RouteGeneratorOD routeSupplier)
@@ -307,7 +307,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
         }
 
         /**
-         * @param factorySupplier set factorySupplier.
+         * @param factorySupplier StrategicalPlannerFactorySupplierOD; set factorySupplier.
          * @return Factory; this factory for method chaining
          */
         public Factory setFactorySupplier(final StrategicalPlannerFactorySupplierOD factorySupplier)
@@ -317,7 +317,7 @@ public final class DefaultGTUCharacteristicsGeneratorOD implements GTUCharacteri
         }
 
         /**
-         * @param vehicleModelFactory set vehicleModelFactory.
+         * @param vehicleModelFactory VehicleModelFactory; set vehicleModelFactory.
          * @return Factory; this factory for method chaining
          */
         public Factory setVehicleModelGenerator(final VehicleModelFactory vehicleModelFactory)

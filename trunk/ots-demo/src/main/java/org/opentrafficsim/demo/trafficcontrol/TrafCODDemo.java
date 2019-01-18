@@ -59,9 +59,9 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
 
     /**
      * Create a TrafcodAndTurbo demo.
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model TrafCODModel; the model
      * @throws OTSDrawingException on animation error
      */
     public TrafCODDemo(final String title, final OTSAnimationPanel panel, final TrafCODModel model) throws OTSDrawingException
@@ -130,7 +130,7 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
         private JPanel controllerDisplayPanel = new JPanel(new BorderLayout());
 
         /**
-         * @param simulator the simulator for this model
+         * @param simulator OTSSimulatorInterface; the simulator for this model
          */
         TrafCODModel(final OTSSimulatorInterface simulator)
         {

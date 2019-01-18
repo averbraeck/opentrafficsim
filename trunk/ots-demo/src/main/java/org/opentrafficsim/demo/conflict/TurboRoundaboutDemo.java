@@ -51,9 +51,9 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
 
     /**
      * Create a T-Junction demo.
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model TurboRoundaboutModel; the model
      * @throws OTSDrawingException on animation error
      */
     public TurboRoundaboutDemo(final String title, final OTSAnimationPanel panel, final TurboRoundaboutModel model)
@@ -106,7 +106,7 @@ public class TurboRoundaboutDemo extends OTSSimulationApplication<TurboRoundabou
         private OTSNetwork network;
 
         /**
-         * @param simulator the simulator for this model
+         * @param simulator OTSSimulatorInterface; the simulator for this model
          */
         TurboRoundaboutModel(final OTSSimulatorInterface simulator)
         {

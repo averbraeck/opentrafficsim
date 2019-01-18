@@ -104,7 +104,7 @@ public class CircularLaneModel extends AbstractOTSModel implements UNITS
     private final OTSNetwork network = new OTSNetwork("network");
 
     /**
-     * @param simulator the simulator for this model
+     * @param simulator OTSSimulatorInterface; the simulator for this model
      */
     public CircularLaneModel(final OTSSimulatorInterface simulator)
     {

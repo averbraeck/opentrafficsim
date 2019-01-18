@@ -62,8 +62,8 @@ public class OpenStreetMap extends OTSSimulationApplication<OSMModel> implements
 
     /**
      * Construct the OpenStreetMap demo.
-     * @param model the model
-     * @param panel the Swing panel
+     * @param model OSMModel; the model
+     * @param panel OTSAnimationPanel; the Swing panel
      * @throws OTSDrawingException on animation error
      */
     public OpenStreetMap(final OSMModel model, final OTSAnimationPanel panel) throws OTSDrawingException
@@ -194,8 +194,8 @@ class OSMModel extends AbstractOTSModel
     private String filepath;
 
     /**
-     * @param simulator the simulator
-     * @param filepath the path to the OSM file
+     * @param simulator OTSSimulatorInterface; the simulator
+     * @param filepath String; the path to the OSM file
      */
     OSMModel(final OTSSimulatorInterface simulator, final String filepath)
     {

@@ -34,9 +34,9 @@ public class CrossingTrafficLightsSwing extends OTSSimulationApplication<Crossin
 
     /**
      * Create a CrossingTrafficLights Swing application.
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model CrossingTrafficLightsModel; the model
      * @throws OTSDrawingException on animation error
      */
     public CrossingTrafficLightsSwing(final String title, final OTSAnimationPanel panel, final CrossingTrafficLightsModel model)

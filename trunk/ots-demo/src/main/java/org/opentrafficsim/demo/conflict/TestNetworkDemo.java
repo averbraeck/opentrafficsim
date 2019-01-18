@@ -46,9 +46,9 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
 
     /**
      * Create a network test demo.
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model TestNetworkModel; the model
      * @throws OTSDrawingException on animation error
      */
     public TestNetworkDemo(final String title, final OTSAnimationPanel panel, final TestNetworkModel model)
@@ -102,7 +102,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
         private OTSNetwork network;
 
         /**
-         * @param simulator the simulator for this model
+         * @param simulator OTSSimulatorInterface; the simulator for this model
          */
         TestNetworkModel(final OTSSimulatorInterface simulator)
         {

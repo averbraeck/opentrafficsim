@@ -102,9 +102,9 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
 
     /**
      * Create a CrossingTrafficLights Swing application.
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model BusStreetModel; the model
      * @throws OTSDrawingException on animation error
      */
     public BusStreetDemo(final String title, final OTSAnimationPanel panel, final BusStreetModel model)
@@ -158,7 +158,7 @@ public class BusStreetDemo extends OTSSimulationApplication<BusStreetModel>
         private OTSNetwork network;
 
         /**
-         * @param simulator the simulator for this model
+         * @param simulator OTSSimulatorInterface; the simulator for this model
          */
         BusStreetModel(final OTSSimulatorInterface simulator)
         {

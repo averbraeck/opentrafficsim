@@ -95,7 +95,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
     private final OTSNetwork network = new OTSNetwork("network");
 
     /**
-     * @param simulator the simulator for this model
+     * @param simulator OTSSimulatorInterface; the simulator for this model
      */
     public CircularRoadModel(final OTSSimulatorInterface simulator)
     {
@@ -111,7 +111,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
         try
         {
             InputParameterHelper.makeInputParameterMapCarTruck(this.inputParameterMap, 1.0);
-            
+
             InputParameterMap genericMap = null;
             if (this.inputParameterMap.getValue().containsKey("generic"))
             {
@@ -166,7 +166,7 @@ public class CircularRoadModel extends AbstractOTSModel implements UNITS
 
             this.parametersCar = InputParameterHelper.getParametersCar(getInputParameterMap());
             this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
-            
+
             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
                     new LMRSFactory(new IDMPlusFactory(this.stream), new DefaultLMRSPerceptionFactory()));
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(

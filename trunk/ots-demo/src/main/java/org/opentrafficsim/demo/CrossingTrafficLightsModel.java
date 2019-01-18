@@ -109,7 +109,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
     private static final Duration TRED = new Duration(45.0, DurationUnit.SI);
 
     /**
-     * @param simulator the simulator for this model
+     * @param simulator OTSSimulatorInterface; the simulator for this model
      */
     public CrossingTrafficLightsModel(final OTSSimulatorInterface simulator)
     {

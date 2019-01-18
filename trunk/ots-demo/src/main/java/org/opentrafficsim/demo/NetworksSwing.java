@@ -59,9 +59,9 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
 
     /**
      * Create a Networks Swing application.
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model NetworksModel; the model
      * @throws OTSDrawingException on animation error
      */
     public NetworksSwing(final String title, final OTSAnimationPanel panel, final NetworksModel model)
@@ -122,7 +122,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
 
     /**
      * Add the statistics tabs.
-     * @param simulator the simulator on which sampling can be scheduled
+     * @param simulator OTSSimulatorInterface; the simulator on which sampling can be scheduled
      */
     protected final void addStatisticsTabs(final OTSSimulatorInterface simulator)
     {
@@ -160,7 +160,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
         private static final long serialVersionUID = 1L;
 
         /**
-         * @param inputParameterMap the parameter map to display
+         * @param inputParameterMap InputParameterMap; the parameter map to display
          */
         NetworksParameterDialog(final InputParameterMap inputParameterMap)
         {
@@ -236,8 +236,8 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
 
         /**
          * Create a string field on the screen.
-         * @param panel panel to add the field to
-         * @param parameter the parameter
+         * @param panel JPanel; panel to add the field to
+         * @param parameter InputParameterSelectionMap&lt;K,T&gt;; the parameter
          */
         public InputFieldSelectionMapRadio(final JPanel panel, final InputParameterSelectionMap<K, T> parameter)
         {

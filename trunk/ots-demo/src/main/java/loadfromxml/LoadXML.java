@@ -71,8 +71,8 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
     private static final long serialVersionUID = 20170421L;
 
     /**
-     * @param model the model
-     * @param animationPanel the animation panel
+     * @param model OTSModelInterface; the model
+     * @param animationPanel OTSAnimationPanel; the animation panel
      * @throws OTSDrawingException on drawing error
      */
     public LoadXML(final OTSModelInterface model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
@@ -173,8 +173,8 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
                 .addColorer(new SplitColorer()).addColorer(new BlockingColorer()).build();
 
         /**
-         * @param simulator the simulator
-         * @param xml the XML string
+         * @param simulator OTSSimulatorInterface; the simulator
+         * @param xml String; the XML string
          */
         XMLModel(final OTSSimulatorInterface simulator, final String xml)
         {

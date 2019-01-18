@@ -74,7 +74,7 @@ public class OTSSwingApplication<T extends OTSModelInterface> extends JFrame
 
     /**
      * Wrap an OTSModel in a JFrame. Uses a default GTU colorer.
-     * @param model OTSModelInterface; the model that will be shown in the JFrame
+     * @param model T; the model that will be shown in the JFrame
      * @param panel JPanel; this should be the JPanel of the simulation
      */
     public OTSSwingApplication(final T model, final JPanel panel)
@@ -332,7 +332,7 @@ public class OTSSwingApplication<T extends OTSModelInterface> extends JFrame
     }
 
     /**
-     * @param exitOnClose set exitOnClose
+     * @param exitOnClose boolean; set exitOnClose
      */
     public final void setExitOnClose(final boolean exitOnClose)
     {

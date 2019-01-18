@@ -310,7 +310,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     /**
      * Adds tabs to the animation. May be overridden.
      * @param sim OTSSimulatorInterface; simulator
-     * @param animation AbstractOTSSwingApplication; animation to add tabs to
+     * @param animation OTSSwingApplication; animation to add tabs to
      */
     protected void addTabs(final OTSSimulatorInterface sim, final OTSSwingApplication animation)
     {
@@ -345,7 +345,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /**
      * Sets the animation toggles. May be overridden.
-     * @param animation AbstractWrappableAnimation; animation to set the toggle on
+     * @param animation OTSAnimationPanel; animation to set the toggle on
      */
     protected void addAnimationToggles(final OTSAnimationPanel animation)
     {
@@ -387,7 +387,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
         private static final long serialVersionUID = 20180409L;
 
         /**
-         * @param simulator the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          */
         ScriptModel(final OTSSimulatorInterface simulator)
         {

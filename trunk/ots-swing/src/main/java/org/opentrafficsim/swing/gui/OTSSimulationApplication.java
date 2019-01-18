@@ -26,7 +26,7 @@ public class OTSSimulationApplication<T extends OTSModelInterface> extends OTSSw
     private final OTSAnimationPanel animationPanel;
 
     /**
-     * @param model OTSModelInterface; model
+     * @param model T; model
      * @param panel OTSAnimationPanel; animation panel
      * @throws OTSDrawingException on animation error
      */

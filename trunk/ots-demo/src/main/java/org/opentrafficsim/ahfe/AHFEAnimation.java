@@ -76,9 +76,9 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
     private static final long serialVersionUID = 20170228L;
 
     /**
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model AHFEModel; the model
      * @throws OTSDrawingException on animation error
      */
     public AHFEAnimation(final String title, final OTSAnimationPanel panel, final AHFEModel model) throws OTSDrawingException
@@ -451,7 +451,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
         private Sampler<GtuData> sampler;
 
         /**
-         * @param simulator the simulator
+         * @param simulator OTSSimulatorInterface; the simulator
          * @param replication Integer; replication
          * @param anticipationStrategy String; anticipation strategy
          * @param reactionTime Duration; reaction time

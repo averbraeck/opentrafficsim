@@ -81,7 +81,7 @@ public class SteeringLmrs extends AbstractLaneBasedTacticalPlanner
      * @param synchronization Synchronization; type of synchronization
      * @param cooperation Cooperation; type of cooperation
      * @param gapAcceptance GapAcceptance; gap-acceptance
-     * @param feedbackTable feedback table
+     * @param feedbackTable FeedbackTable; feedback table
      */
     public SteeringLmrs(final CarFollowingModel carFollowingModel, final LaneBasedGTU gtu, final LanePerception lanePerception,
             final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,

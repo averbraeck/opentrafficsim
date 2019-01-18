@@ -174,9 +174,9 @@ public class SuperDemo extends JFrame
         private final String description;
 
         /**
-         * @param name the demo name
-         * @param clazz the demo class
-         * @param description the demo description
+         * @param name String; the demo name
+         * @param clazz Class&lt;? extends OTSSwingApplication&gt;; the demo class
+         * @param description String; the demo description
          */
         Demo(final String name, final Class<? extends OTSSwingApplication> clazz, final String description)
         {

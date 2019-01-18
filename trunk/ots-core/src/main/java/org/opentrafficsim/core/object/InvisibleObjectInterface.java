@@ -24,7 +24,7 @@ public interface InvisibleObjectInterface extends Identifiable, Drawable
 
     /**
      * Duplicate the invisibleObject in a new simulator and network.
-     * @param newSimulator SimulatorInterface.TimeDoubleUnit; the new simulator
+     * @param newSimulator OTSSimulatorInterface; the new simulator
      * @param newNetwork Network; the new network
      * @return InvisibleObjectInterface; clone of this, but living in the new network and simulator
      * @throws NetworkException when the new Network is not compatible

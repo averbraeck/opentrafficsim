@@ -18,10 +18,10 @@ public interface VehicleModelFactory
 
     /** No vehicle model. */
     VehicleModelFactory NONE = fixed(VehicleModel.NONE);
-    
+
     /** Acceleration bounded vehicle model. */
     VehicleModelFactory MINMAX = fixed(VehicleModel.MINMAX);
-    
+
     /**
      * Factory returning the same instance always.
      * @param vehicleModel VehicleModel; vehicle model

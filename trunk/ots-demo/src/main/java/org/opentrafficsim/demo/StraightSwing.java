@@ -50,9 +50,9 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
 
     /**
      * Create a Straight Swing application.
-     * @param title the title of the Frame
-     * @param panel the tabbed panel to display
-     * @param model the model
+     * @param title String; the title of the Frame
+     * @param panel OTSAnimationPanel; the tabbed panel to display
+     * @param model StraightModel; the model
      * @throws OTSDrawingException on animation error
      */
     public StraightSwing(final String title, final OTSAnimationPanel panel, final StraightModel model)
@@ -113,7 +113,7 @@ public class StraightSwing extends OTSSimulationApplication<StraightModel> imple
 
     /**
      * Add the statistics tabs.
-     * @param simulator the simulator on which sampling can be scheduled
+     * @param simulator OTSSimulatorInterface; the simulator on which sampling can be scheduled
      */
     protected final void addStatisticsTabs(final OTSSimulatorInterface simulator)
     {

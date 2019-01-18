@@ -27,7 +27,7 @@ public class OTSReplication extends Replication.TimeDoubleUnit<OTSSimulatorInter
     private HistoryManager historyManager;
 
     /**
-     * @param id the id of the Replication.
+     * @param id String; the id of the Replication.
      * @param experiment Experiment.TimeDoubleUnit&lt;OTSSimulatorInterface&gt;; Experiment
      * @throws NamingException when the context for the replication cannot be created
      */

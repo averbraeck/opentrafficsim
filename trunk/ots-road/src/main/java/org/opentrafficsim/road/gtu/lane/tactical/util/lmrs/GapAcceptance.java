@@ -60,7 +60,7 @@ public interface GapAcceptance
              * What needs to be done, is to find a better way to deal with the cooperation and gap-acceptance, such that this  
              * hack is not required.
              */
-            
+
             Acceleration b = params.getParameter(ParameterTypes.B);
             Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
             for (HeadwayGTU follower : neighbors.getFirstFollowers(lat))
