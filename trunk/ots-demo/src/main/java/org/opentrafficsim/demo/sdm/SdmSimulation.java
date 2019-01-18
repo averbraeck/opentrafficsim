@@ -258,7 +258,7 @@ public class SdmSimulation extends AbstractSimulationScript
         ODApplier.applyOD(this.network, odMatrix, sim, odOptions);
 
         // animation
-        this.animateNetwork(this.network);
+        this.animateNetwork(this.network, false);
 
         // setup the SDM
         DistractionFactory distFactory = new DistractionFactory(sim.getReplication().getStream("default"));
