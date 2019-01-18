@@ -40,6 +40,7 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
+import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 
 /**
  * Circular road simulation demo.

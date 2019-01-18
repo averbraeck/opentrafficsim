@@ -21,7 +21,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.dsol.swing.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLApplication;
 import nl.tudelft.simulation.dsol.swing.gui.DSOLPanel;
 import nl.tudelft.simulation.event.Event;

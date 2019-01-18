@@ -50,6 +50,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
+import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 
 /**
  * <p>

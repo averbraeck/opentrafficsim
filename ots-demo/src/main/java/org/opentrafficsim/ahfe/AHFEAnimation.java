@@ -23,7 +23,6 @@ import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
-import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimulationException;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
@@ -40,14 +39,10 @@ import org.opentrafficsim.road.network.sampling.LinkData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
 import org.opentrafficsim.swing.gui.AbstractOTSSwingApplication;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
-import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
  * Simulation for AHFE congress.
