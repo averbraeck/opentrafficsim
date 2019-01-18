@@ -156,9 +156,9 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -442,7 +442,7 @@ public class LmrsStrategies implements EventListenerInterface
                 LmrsStrategiesAnimation lmrsStrategiesAnimation =
                         lmrsStrategies.new LmrsStrategiesAnimation(lmrsModel, animationPanel);
                 // TODO: this is double now -- the code itself also animates a few things, but not the GTUs.
-                DefaultAnimationFactory.animateNetwork(lmrsModel.getNetwork(), simulator);
+                DefaultAnimationFactory.animateNetwork(lmrsModel.getNetwork(), simulator, LmrsStrategies.colorer);
             }
             catch (Exception exception)
             {
