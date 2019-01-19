@@ -27,6 +27,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.RouteGenerator;
@@ -46,6 +47,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
@@ -63,7 +65,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
+public abstract class AbstractGTUGenerator extends EventProducer implements Serializable, GTUGenerator
 {
     /** */
     private static final long serialVersionUID = 20150202L;
@@ -179,6 +181,10 @@ public abstract class AbstractGTUGenerator implements Serializable, GTUGenerator
             throw new RuntimeException("Bounds for generator cannot be determined.");
         }
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
+        
+        // notify the potential animation of the existence of a GTUGenerator
+        fireEvent(Network.GENERATOR_ADD_EVENT, name);
+        fireEvent(Network.ANIMATION_GENERATOR_ADD_EVENT, this);
     }
 
     /**
