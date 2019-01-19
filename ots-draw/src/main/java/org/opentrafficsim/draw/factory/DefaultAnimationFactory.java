@@ -17,20 +17,31 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.object.ObjectInterface;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
+import org.opentrafficsim.draw.gtu.GTUGeneratorAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
+import org.opentrafficsim.draw.road.BusStopAnimation;
+import org.opentrafficsim.draw.road.ConflictAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
+import org.opentrafficsim.draw.road.SensorAnimation;
 import org.opentrafficsim.draw.road.ShoulderAnimation;
+import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
+import org.opentrafficsim.road.gtu.generator.AbstractGTUGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.network.lane.object.BusStop;
+import org.opentrafficsim.road.network.lane.object.SpeedSign;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -57,6 +68,9 @@ public class DefaultAnimationFactory implements EventListenerInterface
     /** rendered gtus. */
     private Map<LaneBasedGTU, Renderable2D<LaneBasedGTU>> animatedGTUs = new HashMap<>();
 
+    /** rendered static objects. */
+    private Map<ObjectInterface, Renderable2D<?>> animatedObjects = new HashMap<>();
+
     /**
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
      * adding and removing of GTUs and Objects is animated correctly.
@@ -77,7 +91,9 @@ public class DefaultAnimationFactory implements EventListenerInterface
         network.addListener(this, Network.ANIMATION_GTU_REMOVE_EVENT);
         network.addListener(this, Network.ANIMATION_OBJECT_ADD_EVENT);
         network.addListener(this, Network.ANIMATION_OBJECT_REMOVE_EVENT);
-
+        network.addListener(this, Network.ANIMATION_GENERATOR_ADD_EVENT);
+        network.addListener(this, Network.ANIMATION_GENERATOR_REMOVE_EVENT);
+        
         // model the current infrastructure
         try
         {
@@ -122,11 +138,17 @@ public class DefaultAnimationFactory implements EventListenerInterface
                     }
                 }
             }
+
             for (GTU gtu : network.getGTUs())
             {
                 Renderable2D<LaneBasedGTU> gtuAnimation =
                         new DefaultCarAnimation((LaneBasedGTU) gtu, simulator, this.gtuColorer);
                 this.animatedGTUs.put((LaneBasedGTU) gtu, gtuAnimation);
+            }
+
+            for (ObjectInterface object : network.getObjectMap().values())
+            {
+                animateStaticObject(object);
             }
         }
         catch (RemoteException | NamingException | OTSGeometryException exception)
@@ -165,7 +187,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
 
     /** {@inheritDoc} */
     @Override
-    public void notify(EventInterface event) throws RemoteException
+    public void notify(final EventInterface event) throws RemoteException
     {
         try
         {
@@ -186,11 +208,26 @@ public class DefaultAnimationFactory implements EventListenerInterface
             }
             else if (event.getType().equals(Network.ANIMATION_OBJECT_ADD_EVENT))
             {
-                // TODO ANIMATION_OBJECT_ADD_EVENT
+                ObjectInterface object = (ObjectInterface) event.getContent();
+                animateStaticObject(object);
             }
             else if (event.getType().equals(Network.ANIMATION_OBJECT_REMOVE_EVENT))
             {
-                // TODO ANIMATION_OBJECT_REMOVE_EVENT
+                ObjectInterface object = (ObjectInterface) event.getContent();
+                if (this.animatedObjects.containsKey(object))
+                {
+                    this.animatedObjects.get(object).destroy();
+                    this.animatedObjects.remove(object);
+                }
+            }
+            else if (event.getType().equals(Network.ANIMATION_GENERATOR_ADD_EVENT))
+            {
+                AbstractGTUGenerator gtuGenerator = (AbstractGTUGenerator) event.getContent();
+                animateGTUGenerator(gtuGenerator);
+            }
+            else if (event.getType().equals(Network.ANIMATION_GENERATOR_REMOVE_EVENT))
+            {
+                // TODO change the way generators are animated
             }
         }
         catch (NamingException | SimRuntimeException exception)
@@ -203,7 +240,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
      * Draw the GTU (scheduled method).
      * @param gtu LaneBasedGTU; the GTU to draw
      */
-    protected void animateGTU(LaneBasedGTU gtu)
+    protected void animateGTU(final LaneBasedGTU gtu)
     {
         try
         {
@@ -215,4 +252,61 @@ public class DefaultAnimationFactory implements EventListenerInterface
             SimLogger.always().error(exception, "Exception while drawing GTU.");
         }
     }
+
+    /**
+     * Draw the static object.
+     * @param object ObjectInterface; the object to draw
+     */
+    protected void animateStaticObject(final ObjectInterface object)
+    {
+        try
+        {
+            if (object instanceof SingleSensor)
+            {
+                SingleSensor sensor = (SingleSensor) object;
+                Renderable2D<SingleSensor> objectAnimation =
+                        new SensorAnimation(sensor, sensor.getLongitudinalPosition(), this.simulator, Color.GREEN);
+                this.animatedObjects.put(object, objectAnimation);
+            }
+            else if (object instanceof Conflict)
+            {
+                Conflict conflict = (Conflict) object;
+                Renderable2D<Conflict> objectAnimation = new ConflictAnimation(conflict, this.simulator);
+                this.animatedObjects.put(object, objectAnimation);
+            }
+            else if (object instanceof SpeedSign)
+            {
+                SpeedSign speedSign = (SpeedSign) object;
+                Renderable2D<SpeedSign> objectAnimation = new SpeedSignAnimation(speedSign, this.simulator);
+                this.animatedObjects.put(object, objectAnimation);
+            }
+            else if (object instanceof BusStop)
+            {
+                BusStop busStop = (BusStop) object;
+                Renderable2D<BusStop> objectAnimation = new BusStopAnimation(busStop, this.simulator);
+                this.animatedObjects.put(object, objectAnimation);
+            }
+        }
+        catch (RemoteException | NamingException exception)
+        {
+            SimLogger.always().error(exception, "Exception while drawing Object of class ObjectInterface.");
+        }
+    }
+
+    /**
+     * Draw the GTUGenerator.
+     * @param gtuGenerator AbstractGTUGenerator; the GTUGenerator to draw
+     */
+    protected void animateGTUGenerator(final AbstractGTUGenerator gtuGenerator)
+    {
+        try
+        {
+            new GTUGeneratorAnimation(gtuGenerator, this.simulator);
+        }
+        catch (RemoteException | NamingException exception)
+        {
+            SimLogger.always().error(exception, "Exception while drawing GTUGenerator.");
+        }
+    }
+
 }

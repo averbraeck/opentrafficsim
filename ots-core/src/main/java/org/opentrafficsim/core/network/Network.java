@@ -459,6 +459,18 @@ public interface Network extends EventProducerInterface, Identifiable
      */
     EventType ANIMATION_GTU_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.GTU.REMOVE");
 
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the addition of an GTUGenerator implementing object. <br>
+     * Payload: AbstractGTUGenerator object (not an array, just an Object)
+     */
+    EventType ANIMATION_GENERATOR_ADD_EVENT = new EventType("ANIMATION.NETWORK.GENERATOR.ADD");
+
+    /**
+     * The (regular, not timed) event type for pub/sub indicating the removal of an GTUGenerator implementing object. <br>
+     * Payload: AbstractGTUGenerator object (not an array, just an Object)
+     */
+    EventType ANIMATION_GENERATOR_REMOVE_EVENT = new EventType("ANIMATION.NETWORK.GENERATOR.REMOVE");
+
     /***************************************************************************************/
     /*************************************** EVENTS ****************************************/
     /***************************************************************************************/
@@ -537,4 +549,15 @@ public interface Network extends EventProducerInterface, Identifiable
      */
     EventType GTU_REMOVE_EVENT = new EventType("NETWORK.GTU.REMOVE");
 
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the addition of a GTUGenerator to the network. <br>
+     * Payload: String generatorName (not an array, just a String)
+     */
+    EventType GENERATOR_ADD_EVENT = new EventType("NETWORK.GENERATOR.ADD");
+
+    /**
+     * The <b>timed</b> event type for pub/sub indicating the removal of a GTUGenerator from the network. <br>
+     * Payload: String generatorName (not an array, just a String)
+     */
+    EventType GENERATOR_REMOVE_EVENT = new EventType("NETWORK.GENERATOR.REMOVE");
 }
