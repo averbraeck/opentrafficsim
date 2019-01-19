@@ -84,7 +84,7 @@ public class WeightedMeanAndSum<V extends Number, W extends Number>
      * @param values Iterable&lt;V&gt;; values
      * @param weights Iterable&lt;W&gt;; weights
      * @return this WeightedMeanAndSum&lt;V, W&gt; for method chaining
-     * @throw IllegalArgumentException if the number of values and weights are unequal
+     * @throws IllegalArgumentException if the number of values and weights are unequal
      */
     public final WeightedMeanAndSum<V, W> add(final Iterable<V> values, final Iterable<W> weights)
     {
