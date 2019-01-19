@@ -1,8 +1,11 @@
 <document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
+    <release version="1.01.01" date="2019-XX-XX" description="">
 
-    <release version="1.01.00" date="2019-01-14" description="Update to ots 1.01.00, djutils, animation, major refactoring">
+    </release>
+
+    <release version="1.01.00" date="2019-01-19" description="Update to ots 1.01.00, djutils, animation, major refactoring">
       <action dev="averbraeck" type="update">
         All demos and tests have been updated and repaired to be in line with DSOL version 3.03. 
       </action>
