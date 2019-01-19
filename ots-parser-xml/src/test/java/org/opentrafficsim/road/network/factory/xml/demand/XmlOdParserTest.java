@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
@@ -91,6 +92,7 @@ public class XmlOdParserTest
                 return XmlOdParserTest.this.network;
             }
         };
+        this.simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), model);
         this.gtuTypes.add(GTUType.CAR);
         this.gtuTypes.add(GTUType.TRUCK);
         OTSNode A = new OTSNode(this.network, "A", new OTSPoint3D(0, 0, 0));
