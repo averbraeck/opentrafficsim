@@ -74,7 +74,7 @@ import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
 import org.opentrafficsim.road.network.sampling.LaneData;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.sampling.data.TimeToCollision;
-import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -291,7 +291,7 @@ public class SdmSimulation extends AbstractSimulationScript
 
     /** {@inheritDoc} */
     @Override
-    protected void addTabs(final OTSSimulatorInterface sim, final OTSSwingApplication animation)
+    protected void addTabs(final OTSSimulatorInterface sim, final OTSSimulationApplication<?> animation)
     {
         if (!getBooleanProperty("output") || !getBooleanProperty("plots"))
         {
@@ -320,8 +320,8 @@ public class SdmSimulation extends AbstractSimulationScript
                     .getContentPane(), 0, 1);
             charts.setCell(new ContourPlotSpeed("Right road, right lane", sim, new ContourDataSource<>(this.sampler, path4))
                     .getContentPane(), 1, 1);
-            this.animationPanel.getTabbedPane().addTab(this.animationPanel.getTabbedPane().getTabCount(), "statistics ",
-                    charts);
+            animation.getAnimationPanel().getTabbedPane().addTab(animation.getAnimationPanel().getTabbedPane().getTabCount(),
+                    "statistics ", charts);
         }
         catch (NetworkException exception)
         {
