@@ -24,6 +24,7 @@ import org.opentrafficsim.road.gtu.generator.GTUGenerator;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
+import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -65,9 +66,6 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
 
     /** GTU colorer. */
     private GTUColorer gtuColorer = OTSSwingApplication.DEFAULT_COLORER;
-
-    /** animation panel. */
-    protected OTSAnimationPanel animationPanel = null;
 
     /**
      * Constructor.
@@ -235,11 +233,12 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
                 this.simulator = new OTSAnimator();
                 final ScriptModel scriptModel = new ScriptModel(this.simulator);
                 this.simulator.initialize(startTime, warmupTime, simulationTime, scriptModel);
-                this.animationPanel = new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
-                        (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
-                addAnimationToggles(this.animationPanel);
-                setupDemo(this.animationPanel, scriptModel.getNetwork());
-                OTSSwingApplication app = new OTSSwingApplication(scriptModel, this.animationPanel);
+                OTSAnimationPanel animationPanel =
+                        new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
+                                (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
+                addAnimationToggles(animationPanel);
+                setupDemo(animationPanel, scriptModel.getNetwork());
+                OTSSimulationApplication<ScriptModel> app = new OTSSimulationApplication<>(scriptModel, animationPanel);
                 addTabs(this.simulator, app);
                 app.setExitOnClose(true);
             }
@@ -310,9 +309,9 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     /**
      * Adds tabs to the animation. May be overridden.
      * @param sim OTSSimulatorInterface; simulator
-     * @param animation OTSSwingApplication; animation to add tabs to
+     * @param animation OTSSimulationApplication&lt;?&gt;; animation to add tabs to
      */
-    protected void addTabs(final OTSSimulatorInterface sim, final OTSSwingApplication animation)
+    protected void addTabs(final OTSSimulatorInterface sim, final OTSSimulationApplication<?> animation)
     {
         //
     }
