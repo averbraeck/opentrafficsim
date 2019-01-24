@@ -52,11 +52,6 @@
     </dependency>
     
     <dependency>
-      <groupId>opentrafficsim</groupId>
-      <artifactId>ots-kpi</artifactId>
-    </dependency>
-    
-    <dependency>
       <groupId>dsol</groupId>
       <artifactId>dsol-core</artifactId>
     </dependency>
