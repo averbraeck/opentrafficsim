@@ -7,10 +7,12 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.demo.CircularRoadModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.jetty.test.sse.DSOLWebServer;
@@ -51,6 +53,7 @@ public class CircularRoadWebApplication extends DSOLWebServer
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), otsModel);
                 new CircularRoadWebApplication("Circular Road", simulator);
             }
+            DefaultAnimationFactory.animateNetwork(otsModel.getNetwork(), simulator, new DefaultSwitchableGTUColorer());
         }
         catch (SimRuntimeException | NamingException | RemoteException | OTSDrawingException exception)
         {
