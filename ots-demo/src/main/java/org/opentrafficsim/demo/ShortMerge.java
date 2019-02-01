@@ -128,14 +128,14 @@ public class ShortMerge extends OTSSimulationApplication<ShortMergeModel>
     /** Left traffic fraction. */
     static final double LEFT_FRACTION = 0.3;
 
-    /** Main demand. */
+    /** Main demand per lane. */
     static final Frequency MAIN_DEMAND = new Frequency(1000, FrequencyUnit.PER_HOUR);
 
     /** Ramp demand. */
-    static final Frequency RAMP_DEMAND = new Frequency(200, FrequencyUnit.PER_HOUR);
+    static final Frequency RAMP_DEMAND = new Frequency(500, FrequencyUnit.PER_HOUR);
 
     /** Synchronization. */
-    static final Synchronization SYNCHRONIZATION = Synchronization.PASSIVE_MOVING;
+    static final Synchronization SYNCHRONIZATION = Synchronization.ALIGN_GAP;
 
     /** Cooperation. */
     static final Cooperation COOPERATION = Cooperation.PASSIVE_MOVING;

@@ -6,7 +6,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
+import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;

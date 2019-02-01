@@ -34,25 +34,24 @@ public interface Estimation
     };
 
     /** Underestimation based on situational awareness. */
-    Estimation UNDERESTIMATION = new Estimation()
+    Estimation UNDERESTIMATION = new FactorEstimation()
     {
+        /** {@inheritDoc} */
         @Override
-        public NeighborTriplet estimate(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
-                final Length distance, final boolean downstream, final Time when) throws ParameterException
+        boolean overEstimation()
         {
-            double factor = 1.0 - (perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA_MAX)
-                    - perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA));
-            double delta = (perceivedGtu.getOdometer().si - perceivedGtu.getOdometer(when).si)
-                    - (perceivingGtu.getOdometer().si - perceivingGtu.getOdometer(when).si);
-            if (downstream)
-            {
-                delta = -delta; // faster leader increases the headway, faster follower reduces the headway
-            }
-            Length headway = Length.createSI((distance.si + delta) * factor);
-            double egoSpeed = perceivingGtu.getSpeed(when).si;
-            Speed speed = Speed.createSI(egoSpeed + factor * (perceivedGtu.getSpeed(when).si - egoSpeed));
-            Acceleration acceleration = perceivedGtu.getAcceleration(when);
-            return new NeighborTriplet(headway, speed, acceleration);
+            return false;
+        }
+    };
+
+    /** OVerestimation based on situational awareness. */
+    Estimation OVERESTIMATION = new FactorEstimation()
+    {
+        /** {@inheritDoc} */
+        @Override
+        boolean overEstimation()
+        {
+            return true;
         }
     };
 
@@ -68,4 +67,58 @@ public interface Estimation
      */
     NeighborTriplet estimate(LaneBasedGTU perceivingGtu, LaneBasedGTU perceivedGtu, Length distance, boolean downstream,
             Time when) throws ParameterException;
+
+    /**
+     * Estimation based on a factor.
+     * <p>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 31 jan. 2019 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    abstract class FactorEstimation implements Estimation
+    {
+
+        /** Sign. */
+        private final double sign;
+
+        /**
+         * Constructor.
+         */
+        FactorEstimation()
+        {
+            this.sign = overEstimation() ? 1.0 : -1.0;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public NeighborTriplet estimate(final LaneBasedGTU perceivingGtu, final LaneBasedGTU perceivedGtu,
+                final Length distance, final boolean downstream, final Time when) throws ParameterException
+        {
+            double factor = 1.0 + this.sign * (perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA_MAX)
+                    - perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA));
+            double delta = (perceivedGtu.getOdometer().si - perceivedGtu.getOdometer(when).si)
+                    - (perceivingGtu.getOdometer().si - perceivingGtu.getOdometer(when).si);
+            if (downstream)
+            {
+                delta = -delta; // faster leader increases the headway, faster follower reduces the headway
+            }
+            Length headway = Length.createSI((distance.si + delta) * factor);
+            double egoSpeed = perceivingGtu.getSpeed(when).si;
+            Speed speed = Speed.createSI(egoSpeed + factor * (perceivedGtu.getSpeed(when).si - egoSpeed));
+            Acceleration acceleration = perceivedGtu.getAcceleration(when);
+            return new NeighborTriplet(headway, speed, acceleration);
+        }
+
+        /**
+         * Returns whether this is over-estimation.
+         * @return boolean; whether this is over-estimation
+         */
+        abstract boolean overEstimation();
+    }
+
 }

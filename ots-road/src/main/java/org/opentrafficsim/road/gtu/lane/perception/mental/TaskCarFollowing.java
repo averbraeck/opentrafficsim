@@ -22,6 +22,12 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Neighbor
 public class TaskCarFollowing extends TaskHeadwayBased
 {
 
+    /** Constructor. */
+    public TaskCarFollowing()
+    {
+        super("car-following");
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected Duration getHeadway(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)

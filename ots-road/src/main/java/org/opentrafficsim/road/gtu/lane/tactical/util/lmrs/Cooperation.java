@@ -9,7 +9,9 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -79,33 +81,34 @@ public interface Cooperation extends LmrsParameters
             {
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
-            // Acceleration b = params.getParameter(ParameterTypes.B);
+            Acceleration bCrit = params.getParameter(ParameterTypes.BCRIT);
+            Acceleration b = params.getParameter(ParameterTypes.B);
             Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGTU leader : Synchronization.removeAllUpstreamOfConflicts(Synchronization.removeAllUpstreamOfConflicts(
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
-                    relativeLane), perception, RelativeLane.CURRENT))
+            NeighborsPerception neighbours = perception.getPerceptionCategory(NeighborsPerception.class);
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbours.getLeaders(RelativeLane.CURRENT);
+            Speed thresholdSpeed = Speed.createSI(40.0 / 3.6);
+            boolean leaderInCongestion = leaders.isEmpty() ? false : leaders.first().getSpeed().lt(thresholdSpeed);
+            for (HeadwayGTU leader : Synchronization.removeAllUpstreamOfConflicts(
+                    Synchronization.removeAllUpstreamOfConflicts(neighbours.getLeaders(relativeLane), perception, relativeLane),
+                    perception, RelativeLane.CURRENT))
             {
                 Parameters params2 = leader.getParameters();
                 double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
                         : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
-                if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
+                // TODO: only cooperate if merger still quite fast or there's congestion downstream anyway (which we can better
+                // estimate than only considering the direct leader
+                if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0())
+                        && (leader.getSpeed().ge(thresholdSpeed) || leaderInCongestion))
                 {
                     Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
                             desire, params, sli, cfm);
                     a = Acceleration.min(a, aSingle);
-                    a = Acceleration.max(a, params.getParameter(ParameterTypes.B).neg());
-                    // if (aSingle.gt(leader.getAcceleration()) || aSingle.gt(params.getParameter(ParameterTypes.B).neg()))
-                    // {
-                    // a = Acceleration.min(a, aSingle);
-                    // a = Synchronization.gentleUrgency(a, desire, params);
-                    // }
                 }
             }
-            return a;
-            // return Acceleration.max(a, b.neg());
+            return Acceleration.max(a, bCrit.neg());
         }
     };
 

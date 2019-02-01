@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVE;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVEZERO;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -10,15 +11,13 @@ import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager.SummativeTaskManager;
 
 /**
  * Task-capability interface in accordance to Fuller (2011). Task demand is the sum of demands described by individual
@@ -94,18 +93,35 @@ public class Fuller implements Mental
 
     /** Behavioral adaptations depending on task saturation. */
     private final Set<BehavioralAdaptation> behavioralAdapatations;
+    
+    /** Task manager. */
+    private final TaskManager taskManager;
 
     /**
      * Constructor with custom situational awareness.
-     * @param tasks Set&lt;Task&gt;; tasks
+     * @param tasks Set&lt;? extends Task&gt;; tasks
      * @param behavioralAdapatations Set&lt;BehavioralAdaptation&gt;; behavioralAdapatations
      */
-    public Fuller(final Set<Task> tasks, final Set<BehavioralAdaptation> behavioralAdapatations)
+    public Fuller(final Set<? extends Task> tasks, final Set<BehavioralAdaptation> behavioralAdapatations)
+    {
+        this(tasks, behavioralAdapatations, new SummativeTaskManager());
+    }
+
+    /**
+     * Constructor with custom situational awareness.
+     * @param tasks Set&lt;? extends Task&gt;; tasks
+     * @param behavioralAdapatations Set&lt;BehavioralAdaptation&gt;; behavioralAdapatations
+     * @param taskManager TaskManager; task manager
+     */
+    public Fuller(final Set<? extends Task> tasks, final Set<BehavioralAdaptation> behavioralAdapatations,
+            final TaskManager taskManager)
     {
         Throw.whenNull(tasks, "Tasks may not be null.");
         Throw.whenNull(behavioralAdapatations, "Behavioral adaptations may not be null.");
-        this.tasks = tasks;
+        this.tasks = new LinkedHashSet<>();
+        this.tasks.addAll(tasks);
         this.behavioralAdapatations = behavioralAdapatations;
+        this.taskManager = taskManager;
     }
 
     /**
@@ -144,9 +160,10 @@ public class Fuller implements Mental
         double taskDemand = 0.0;
         // a) the fundamental diagrams of task workload are defined in the tasks
         // b) sum task demand
+        this.taskManager.manage(this.tasks, perception, gtu, parameters);
         for (Task task : this.tasks)
         {
-            taskDemand += task.demand(perception, gtu, parameters);
+            taskDemand += (task.getTaskDemand() - task.getAnticipationReliance());
         }
         double taskSaturation = taskDemand / parameters.getParameter(TC);
         parameters.setParameter(TS, taskSaturation);
@@ -165,150 +182,6 @@ public class Fuller implements Mental
     public String toString()
     {
         return "Fuller [tasks=" + this.tasks + ", behavioralAdapatations=" + this.behavioralAdapatations + "]";
-    }
-
-    /**
-     * Interface for tasks, where each describes a fundamental relation between exogenous inputs causing a mental demand.
-     * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 3 apr. 2018 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    @FunctionalInterface
-    public interface Task
-    {
-        /**
-         * Returns the demand of this task.
-         * @param perception LanePerception; perception
-         * @param gtu LaneBasedGTU; gtu
-         * @param parameters Parameters; parameters
-         * @return double; demand of this task
-         * @throws ParameterException if a parameter is missing or out of bounds
-         * @throws GTUException exceptions pertaining to the GTU
-         */
-        double demand(LanePerception perception, LaneBasedGTU gtu, Parameters parameters)
-                throws ParameterException, GTUException;
-
-        /**
-         * Class for constant demand.
-         */
-        class Constant extends IdentifiableTask
-        {
-            /** Task demand. */
-            private final double taskDemand;
-
-            /**
-             * Constructor.
-             * @param id String; id
-             * @param taskDemand double; task demand
-             */
-            public Constant(final String id, final double taskDemand)
-            {
-                super(id);
-                this.taskDemand = taskDemand;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public double demand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
-                    throws ParameterException, GTUException
-            {
-                return this.taskDemand;
-            }
-
-        }
-
-        /**
-         * Class for exponential demand.
-         */
-        class Exponential extends IdentifiableTask
-        {
-            /** Initial level of task demand. */
-            private final double initialTaskDemand;
-
-            /** Additional task demand. */
-            private final double additionalTaskDemand;
-
-            /** Time scale at which task demand changes from the initial to the final value. */
-            private final double tau;
-
-            /** Start time of the distraction. */
-            private final double start;
-
-            /**
-             * Constructor.
-             * @param id String; id
-             * @param initialTaskDemand double; initial level of task demand
-             * @param finalTaskDemand double; final level of task demand
-             * @param tau double; time scale at which task demand changes from the initial to the final value
-             * @param simulator SimulatorInterface.TimeDoubleUnit; simulator
-             */
-            public Exponential(final String id, final double initialTaskDemand, final double finalTaskDemand, final double tau,
-                    final SimulatorInterface.TimeDoubleUnit simulator)
-            {
-                super(id);
-                this.initialTaskDemand = initialTaskDemand;
-                this.additionalTaskDemand = finalTaskDemand - initialTaskDemand;
-                this.tau = tau;
-                this.start = simulator.getSimulatorTime().si;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public double demand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
-                    throws ParameterException, GTUException
-            {
-                double t = gtu.getSimulator().getSimulatorTime().si - this.start;
-                return this.initialTaskDemand + this.additionalTaskDemand * (1.0 - Math.exp(-t / this.tau));
-            }
-
-        }
-    }
-
-    /**
-     * Task that makes itself identifiable. This is intended for inspection and visualization.
-     * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 6 nov. 2018 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
-     */
-    public abstract static class IdentifiableTask implements Task, Identifiable
-    {
-        /** Id. */
-        private final String id;
-
-        /**
-         * Constructor.
-         * @param id String; id
-         */
-        public IdentifiableTask(final String id)
-        {
-            this.id = id;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getId()
-        {
-            return this.id;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
-        {
-            return "IdentifiableTask [id=" + getId() + "]";
-        }
     }
 
     /**

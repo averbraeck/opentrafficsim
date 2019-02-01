@@ -294,25 +294,39 @@ public final class LaneOperationalPlanBuilder // class package private for sched
         {
             DirectedLanePosition ref = gtu.getReferencePosition();
             double f = ref.getLane().fraction(ref.getPosition());
-            path = ref.getGtuDirection().isPlus() ? ref.getLane().getCenterLine().extractFractional(f, 1.0)
-                    : ref.getLane().getCenterLine().extractFractional(0.0, f).reverse();
+            if (ref.getGtuDirection().isPlus() && f < 1.0)
+            {
+                path = ref.getLane().getCenterLine().extractFractional(f, 1.0);
+            }
+            else if (ref.getGtuDirection().isMinus() && f > 0.0)
+            {
+                path = ref.getLane().getCenterLine().extractFractional(0.0, f).reverse();
+            }
             LaneDirection prevFrom = null;
             LaneDirection from = ref.getLaneDirection();
             int n = 1;
-            while (path.getLength().si < distance.si + n * Lane.MARGIN.si)
+            while (path == null || path.getLength().si < distance.si + n * Lane.MARGIN.si)
             {
                 n++;
                 prevFrom = from;
                 from = from.getNextLaneDirection(gtu);
-                try
+                if (path == null)
                 {
-                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getDirection().isPlus()
-                            ? from.getLane().getCenterLine() : from.getLane().getCenterLine().reverse());
+                    path = from.getDirection().isPlus() ? from.getLane().getCenterLine()
+                            : from.getLane().getCenterLine().reverse();
                 }
-                catch (NullPointerException nas)
+                else
                 {
-                    prevFrom.getNextLaneDirection(gtu);
-                    ref.getLaneDirection().getNextLaneDirection(gtu);
+                    try
+                    {
+                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, from.getDirection().isPlus()
+                                ? from.getLane().getCenterLine() : from.getLane().getCenterLine().reverse());
+                    }
+                    catch (NullPointerException nas)
+                    {
+                        prevFrom.getNextLaneDirection(gtu);
+                        ref.getLaneDirection().getNextLaneDirection(gtu);
+                    }
                 }
             }
         }

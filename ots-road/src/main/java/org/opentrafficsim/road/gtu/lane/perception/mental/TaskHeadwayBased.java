@@ -16,7 +16,6 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Interme
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionCollector;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionFinalizer;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
 
 /**
  * Task class that translates a (composite) headway in to a task demand.
@@ -29,15 +28,24 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class TaskHeadwayBased implements Task
+public abstract class TaskHeadwayBased extends AbstractTask
 {
+
+    /**
+     * Constructor.
+     * @param id String; id
+     */
+    public TaskHeadwayBased(final String id)
+    {
+        super(id);
+    }
 
     /** Current speed. */
     private Speed speed;
 
     /** {@inheritDoc} */
     @Override
-    public double demand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
+    public double calculateTaskDemand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
             throws ParameterException
     {
         double a = gtu.getAcceleration().si;

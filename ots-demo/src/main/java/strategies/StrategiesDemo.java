@@ -592,8 +592,6 @@ public class StrategiesDemo extends AbstractSimulationScript
         this.nextGtuType = this.stream.nextDouble() < this.truckFraction ? GTUType.TRUCK : GTUType.CAR;
         sim.scheduleEventNow(this, this, "checkVehicleNumber", new Object[] {});
 
-        animateNetwork(net, false);
-
         return net;
     }
 
