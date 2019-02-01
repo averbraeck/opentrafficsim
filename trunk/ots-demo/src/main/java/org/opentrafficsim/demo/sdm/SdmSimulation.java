@@ -54,7 +54,8 @@ import org.opentrafficsim.road.gtu.generator.od.ODApplier;
 import org.opentrafficsim.road.gtu.generator.od.ODOptions;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ExponentialTask;
+import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.sdm.DefaultDistraction;
 import org.opentrafficsim.road.gtu.lane.perception.mental.sdm.DistractionFactory;
 import org.opentrafficsim.road.gtu.lane.perception.mental.sdm.StochasticDistractionModel;
@@ -257,9 +258,6 @@ public class SdmSimulation extends AbstractSimulationScript
                         new SdmStrategicalPlannerFactory(sim.getReplication().getStream("generation"), this)));
         ODApplier.applyOD(this.network, odMatrix, sim, odOptions);
 
-        // animation
-        this.animateNetwork(this.network, false);
-
         // setup the SDM
         DistractionFactory distFactory = new DistractionFactory(sim.getReplication().getStream("default"));
         for (String distraction : getProperty("distractions").split(","))
@@ -358,7 +356,7 @@ public class SdmSimulation extends AbstractSimulationScript
                     @Override
                     public Task getTask(final LaneBasedGTU gtu)
                     {
-                        return new Task.Exponential(distraction.getId(), getDoubleProperty("phoneInit"),
+                        return new ExponentialTask(distraction.getId(), getDoubleProperty("phoneInit"),
                                 getDoubleProperty("phoneFinal"), getDoubleProperty("phoneTau"), gtu.getSimulator());
                     }
                 };

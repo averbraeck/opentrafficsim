@@ -14,7 +14,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructure.Entry;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
 import org.opentrafficsim.road.network.lane.object.Distraction;
 
 /**
@@ -28,15 +27,21 @@ import org.opentrafficsim.road.network.lane.object.Distraction;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TaskRoadSideDistraction implements Task
+public class TaskRoadSideDistraction extends AbstractTask
 {
 
     /** Odometer values at distraction. */
     private Map<Distraction, Double> odos = new HashMap<>();
 
+    /** Constructor. */
+    public TaskRoadSideDistraction()
+    {
+        super("road-side distraction");
+    }
+
     /** {@inheritDoc} */
     @Override
-    public double demand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
+    public double calculateTaskDemand(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)
             throws ParameterException, GTUException
     {
         Map<RelativeLane, SortedSet<Entry<Distraction>>> map =

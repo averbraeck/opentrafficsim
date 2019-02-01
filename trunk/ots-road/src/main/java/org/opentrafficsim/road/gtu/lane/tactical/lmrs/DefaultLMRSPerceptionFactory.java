@@ -34,7 +34,7 @@ public class DefaultLMRSPerceptionFactory implements PerceptionFactory
     public LanePerception generatePerception(final LaneBasedGTU gtu)
     {
         LanePerception perception = new CategoricalLanePerception(gtu);
-        perception.addPerceptionCategory(new DirectEgoPerception(perception));
+        perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
         perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
         perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
         perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));

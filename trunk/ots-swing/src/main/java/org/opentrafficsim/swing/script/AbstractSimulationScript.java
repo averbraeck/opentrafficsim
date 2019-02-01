@@ -236,9 +236,29 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
                 OTSAnimationPanel animationPanel =
                         new OTSAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
                                 (OTSAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
-                addAnimationToggles(animationPanel);
+                setAnimationToggles(animationPanel);
+                animateNetwork(scriptModel.getNetwork());
                 setupDemo(animationPanel, scriptModel.getNetwork());
-                OTSSimulationApplication<ScriptModel> app = new OTSSimulationApplication<>(scriptModel, animationPanel);
+                OTSSimulationApplication<ScriptModel> app =
+                        new OTSSimulationApplication<ScriptModel>(scriptModel, animationPanel)
+                        {
+                            /** */
+                            private static final long serialVersionUID = 20190130L;
+
+                            /** {@inheritDoc} */
+                            @Override
+                            protected void animateNetwork() throws OTSDrawingException
+                            {
+                                // override with nothing to prevent double toggles
+                            }
+
+                            /** {@inheritDoc} */
+                            @Override
+                            protected void setAnimationToggles()
+                            {
+                                // override with nothing to prevent double toggles
+                            }
+                        };
                 addTabs(this.simulator, app);
                 app.setExitOnClose(true);
             }
@@ -285,20 +305,12 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
     /**
      * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML.
      * @param net OTSNetwork; network
-     * @param xmlNetwork boolean; whether the network was loaded from xml
      */
-    protected void animateNetwork(final OTSNetwork net, final boolean xmlNetwork)
+    protected void animateNetwork(final OTSNetwork net)
     {
         try
         {
-            if (xmlNetwork)
-            {
-                DefaultAnimationFactory.animateXmlNetwork(net, getSimulator(), getGtuColorer());
-            }
-            else
-            {
-                DefaultAnimationFactory.animateNetwork(net, getSimulator(), getGtuColorer());
-            }
+            DefaultAnimationFactory.animateNetwork(net, getSimulator(), getGtuColorer());
         }
         catch (OTSDrawingException exception)
         {
@@ -346,7 +358,7 @@ public abstract class AbstractSimulationScript implements EventListenerInterface
      * Sets the animation toggles. May be overridden.
      * @param animation OTSAnimationPanel; animation to set the toggle on
      */
-    protected void addAnimationToggles(final OTSAnimationPanel animation)
+    protected void setAnimationToggles(final OTSAnimationPanel animation)
     {
         AnimationToggles.setIconAnimationTogglesFull(animation);
         animation.getAnimationPanel().toggleClass(OTSLink.class);

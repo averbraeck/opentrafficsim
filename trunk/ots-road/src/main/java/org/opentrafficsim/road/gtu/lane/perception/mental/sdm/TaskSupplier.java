@@ -1,7 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.sdm;
 
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ConstantTask;
+import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 
 /**
  * Supplies a Task for within Fullers model.
@@ -51,7 +52,7 @@ public interface TaskSupplier
         @Override
         public Task getTask(final LaneBasedGTU gtu)
         {
-            return new Task.Constant(this.id, this.taskDemand);
+            return new ConstantTask(this.id, this.taskDemand);
         }
     }
 

@@ -13,9 +13,8 @@ import org.opentrafficsim.core.animation.gtu.colorer.IDGTUColorer;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.IdentifiableTask;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
+import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.sdm.DefaultDistraction;
 
 /**
@@ -28,9 +27,9 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.sdm.DefaultDistraction
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-
 public class DistractionColorer implements GTUColorer, Serializable
 {
+
     /** */
     private static final long serialVersionUID = 20181106L;
 
@@ -69,13 +68,10 @@ public class DistractionColorer implements GTUColorer, Serializable
             {
                 for (Task task : ((Fuller) mental).getTasks())
                 {
-                    if (task instanceof IdentifiableTask)
+                    String id = task.getId();
+                    if (this.colors.containsKey(id))
                     {
-                        String id = ((IdentifiableTask) task).getId();
-                        if (this.colors.containsKey(id))
-                        {
-                            return this.colors.get(id);
-                        }
+                        return this.colors.get(id);
                     }
                 }
             }

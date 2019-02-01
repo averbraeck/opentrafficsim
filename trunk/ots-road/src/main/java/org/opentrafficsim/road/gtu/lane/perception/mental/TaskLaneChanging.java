@@ -35,6 +35,7 @@ public class TaskLaneChanging extends TaskHeadwayBased
      */
     public TaskLaneChanging(final LateralConsideration lateralConsideration)
     {
+        super("lane-changing");
         this.lateralConsideration = lateralConsideration;
     }
 

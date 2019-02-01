@@ -29,7 +29,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.Task;
+import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskCarFollowing;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
