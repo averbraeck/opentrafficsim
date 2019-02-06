@@ -1,11 +1,10 @@
 package org.opentrafficsim.demo.ntm;
 
+import org.locationtech.jts.geom.Coordinate;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * <p>

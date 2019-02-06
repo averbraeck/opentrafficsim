@@ -2,10 +2,9 @@ package org.opentrafficsim.demo.ntm;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.locationtech.jts.geom.Coordinate;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * <p>

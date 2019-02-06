@@ -5,7 +5,7 @@ package org.opentrafficsim.water;
 
 import javax.vecmath.Point3d;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 import nl.tudelft.simulation.event.EventProducer;
 

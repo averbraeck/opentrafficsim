@@ -3,7 +3,7 @@
  */
 package org.opentrafficsim.water;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 /**
  * Base abstract class for a named, located object that produces events.

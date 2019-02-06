@@ -3,9 +3,8 @@
  */
 package org.opentrafficsim.road.network.factory.shape;
 
+import org.locationtech.jts.geom.Geometry;
 import org.opentrafficsim.core.network.OTSNode;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @author P070518

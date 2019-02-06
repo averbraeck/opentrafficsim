@@ -14,11 +14,11 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * <p>
@@ -258,7 +258,7 @@ public class DataIO
             out = new BufferedWriter(new FileWriter(fileNew));
             for (ShapeObject point : areas.getGeoObjects())
             {
-                com.vividsolutions.jts.geom.Point centroid = point.getDesignLine().getCentroid();
+                Point centroid = point.getDesignLine().getCentroid();
                 Coordinate[] coords = new Coordinate[999];
                 // String text = point.getValues().get(0) + " ," + centroid.getCoordinate().x + " ," +
                 // centroid.getCoordinate().y ;
@@ -277,7 +277,7 @@ public class DataIO
             }
             for (ShapeObject point : roads.getGeoObjects())
             {
-                com.vividsolutions.jts.geom.Point centroid = point.getDesignLine().getCentroid();
+                Point centroid = point.getDesignLine().getCentroid();
                 Coordinate[] coords = new Coordinate[999];
                 // String text = point.getValues().get(0) + " ," + centroid.getCoordinate().x + " ," +
                 // centroid.getCoordinate().y ;
@@ -310,18 +310,18 @@ public class DataIO
              * objectsToDetect.getGeoObjects()) { mapRoads.put(road.getValues().get(indexFieldNameToDetect), road); } int
              * indexFieldNameLength = -1;
              *//*
-               * for (String name : objectsToDetect.getVariableNames()) { if (name.equals("LENGTH")) { indexFieldNameLength =
-               * objectsToDetect.getVariableNames().indexOf(name); break; } } int indexFieldNameWegbeheerder = -1; for (String
-               * name : objectsToDetect.getVariableNames()) { if (name.equals("WEGDEELLTR")) { indexFieldNameWegbeheerder =
-               * objectsToDetect.getVariableNames().indexOf(name); break; } } int indexFieldNameSTT_NAAM = -1; for (String name
-               * : objectsToDetect.getVariableNames()) { if (name.equals("STT_NAAM")) { indexFieldNameSTT_NAAM =
-               * objectsToDetect.getVariableNames().indexOf(name); break; } } for (ShapeObject road :
-               * objectsToDetect.getGeoObjects()) { mapRoadLengths .put(road.getValues().get(indexFieldNameToDetect),
-               * road.getValues().get(indexFieldNameLength)); mapRoadCTM.put(road.getValues().get(indexFieldNameToDetect),
-               * road.getValues().get(indexFieldNameWegbeheerder));
-               * mapRoadSTT_NAAM.put(road.getValues().get(indexFieldNameToDetect),
-               * road.getValues().get(indexFieldNameSTT_NAAM)); }
-               */
+                * for (String name : objectsToDetect.getVariableNames()) { if (name.equals("LENGTH")) { indexFieldNameLength =
+                * objectsToDetect.getVariableNames().indexOf(name); break; } } int indexFieldNameWegbeheerder = -1; for (String
+                * name : objectsToDetect.getVariableNames()) { if (name.equals("WEGDEELLTR")) { indexFieldNameWegbeheerder =
+                * objectsToDetect.getVariableNames().indexOf(name); break; } } int indexFieldNameSTT_NAAM = -1; for (String name
+                * : objectsToDetect.getVariableNames()) { if (name.equals("STT_NAAM")) { indexFieldNameSTT_NAAM =
+                * objectsToDetect.getVariableNames().indexOf(name); break; } } for (ShapeObject road :
+                * objectsToDetect.getGeoObjects()) { mapRoadLengths .put(road.getValues().get(indexFieldNameToDetect),
+                * road.getValues().get(indexFieldNameLength)); mapRoadCTM.put(road.getValues().get(indexFieldNameToDetect),
+                * road.getValues().get(indexFieldNameWegbeheerder));
+                * mapRoadSTT_NAAM.put(road.getValues().get(indexFieldNameToDetect),
+                * road.getValues().get(indexFieldNameSTT_NAAM)); }
+                */
 
             // write the data with the corresponding area ID to a new file
             /*
@@ -673,7 +673,7 @@ public class DataIO
             out = new BufferedWriter(new FileWriter(fileNew));
             for (ShapeObject point : searchLocations.getGeoObjects())
             {
-                com.vividsolutions.jts.geom.Point centroid = point.getDesignLine().getCentroid();
+                Point centroid = point.getDesignLine().getCentroid();
                 Coordinate[] coords = new Coordinate[999];
                 // String text = point.getValues().get(0) + " ," + centroid.getCoordinate().x + " ," +
                 // centroid.getCoordinate().y ;

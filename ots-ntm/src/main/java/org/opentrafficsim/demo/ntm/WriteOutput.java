@@ -16,14 +16,13 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.SeriesException;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.linearref.LengthIndexedLine;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.demo.ntm.NTMNode.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.animation.TimeSeriesChart;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfo;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
 /**
  * <p>

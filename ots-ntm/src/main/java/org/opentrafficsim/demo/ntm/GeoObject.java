@@ -3,7 +3,7 @@ package org.opentrafficsim.demo.ntm;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * <p>
