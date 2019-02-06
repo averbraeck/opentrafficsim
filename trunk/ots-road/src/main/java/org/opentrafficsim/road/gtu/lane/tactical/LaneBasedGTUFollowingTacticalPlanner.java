@@ -70,9 +70,6 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
             return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, DurationUnit.SECOND));
         }
 
-        // perceive every time step... This is the 'classical' way of tactical planning.
-        perception.perceive();
-
         // see how far we can drive
         Length maxDistance = laneBasedGTU.getParameters().getParameter(LOOKAHEAD);
         LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, maxDistance);

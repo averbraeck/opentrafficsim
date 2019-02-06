@@ -34,7 +34,6 @@ public class TaskCarFollowing extends TaskHeadwayBased
     {
         NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
                 "NeighborsPerception not available.");
-        Try.execute(() -> neighbors.updateLeaders(RelativeLane.CURRENT), "Exception while updating adjacent leaders.");
         return neighbors.getLeaders(RelativeLane.CURRENT).collect(new TaskHeadwayCollector(getSpeed()));
     }
 

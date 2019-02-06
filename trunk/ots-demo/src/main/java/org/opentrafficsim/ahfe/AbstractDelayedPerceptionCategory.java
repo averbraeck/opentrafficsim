@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.perception.categories;
+package org.opentrafficsim.ahfe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +18,8 @@ import org.opentrafficsim.core.gtu.perception.PerceptionException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedAbstractPerceptionCategory;
+import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedPerceptionCategory;
 
 /**
  * Utility superclass for perception categories with single delayed snapshots.
@@ -30,6 +32,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
+@Deprecated
 public abstract class AbstractDelayedPerceptionCategory extends LaneBasedAbstractPerceptionCategory
         implements LaneBasedPerceptionCategory
 {

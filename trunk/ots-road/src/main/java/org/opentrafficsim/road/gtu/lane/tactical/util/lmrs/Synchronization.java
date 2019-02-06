@@ -27,6 +27,7 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -122,12 +123,9 @@ public interface Synchronization extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
 
-            PerceptionCollectable<HeadwayGTU,
-                    LaneBasedGTU> set =
-                            removeAllUpstreamOfConflicts(
-                                    removeAllUpstreamOfConflicts(perception.getPerceptionCategory(NeighborsPerception.class)
-                                            .getLeaders(relativeLane), perception, relativeLane),
-                                    perception, RelativeLane.CURRENT);
+            PerceptionCollectable<HeadwayGTU, LaneBasedGTU> set = removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
+                    relativeLane), perception, RelativeLane.CURRENT);
             HeadwayGTU leader = null;
             if (set != null)
             {

@@ -30,13 +30,13 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
 {
 
     /** Set of iterators per lane. */
-    final Map<RelativeLane, Iterator<PrimaryIteratorEntry>> iterators = new HashMap<>();
+    private final Map<RelativeLane, Iterator<PrimaryIteratorEntry>> iterators = new HashMap<>();
 
     /** Map of lane per object. */
-    final Map<U, RelativeLane> laneMap = new HashMap<>();
+    private final Map<U, RelativeLane> laneMap = new HashMap<>();
 
     /** Map of iterable per lane. */
-    final Map<RelativeLane, AbstractPerceptionReiterable<H, U>> iterables = new HashMap<>();
+    private final Map<RelativeLane, AbstractPerceptionReiterable<H, U>> iterables = new HashMap<>();
 
     /**
      * Constructor.
@@ -81,7 +81,7 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
     {
 
         /** Sorted elements per lane. */
-        SortedMap<PrimaryIteratorEntry, RelativeLane> elements;
+        private SortedMap<PrimaryIteratorEntry, RelativeLane> elements;
 
         /** Constructor. */
         MultiLaneIterator()
@@ -98,6 +98,7 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("synthetic-access")
         @Override
         public PrimaryIteratorEntry next()
         {
@@ -127,13 +128,14 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
                 }
             }
 
-            MultiLanePerceptionIterable.this.laneMap.put(next.object, lane);
+            MultiLanePerceptionIterable.this.laneMap.put(next.getObject(), lane);
             return next;
         }
 
         /**
          * Starts the process.
          */
+        @SuppressWarnings("synthetic-access")
         public void assureNext()
         {
             if (this.elements == null)

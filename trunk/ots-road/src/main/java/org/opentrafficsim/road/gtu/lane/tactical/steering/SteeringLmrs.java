@@ -121,9 +121,6 @@ public class SteeringLmrs extends AbstractLaneBasedTacticalPlanner
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
-        // obtain objects to get info
-        getPerception().perceive();
-
         // LMRS
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
                 this.lmrsData, getPerception(), this.mandatoryIncentives, this.voluntaryIncentives);

@@ -111,18 +111,26 @@ public final class LmrsUtil implements LmrsParameters
         SpeedLimitProspect slp = infra.getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
         Parameters params = gtu.getParameters();
-        EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
+        EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
         Speed speed = ego.getSpeed();
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
 
         // regular car-following
-        lmrsData.getTailGating().tailgate(perception, params);
-        if (!leaders.isEmpty() && lmrsData.isNewLeader(leaders.first()))
+        Acceleration a;
+        if (lmrsData.isHumanLongitudinalControl())
         {
-            initHeadwayRelaxation(params, leaders.first());
+            lmrsData.getTailGating().tailgate(perception, params);
+            if (!leaders.isEmpty() && lmrsData.isNewLeader(leaders.first()))
+            {
+                initHeadwayRelaxation(params, leaders.first());
+            }
+            a = gtu.getCarFollowingAcceleration();
         }
-        Acceleration a = gtu.getCarFollowingAcceleration();
+        else
+        {
+            a = Acceleration.POS_MAXVALUE;
+        }
 
         // during a lane change, both leaders are followed
         LateralDirectionality initiatedLaneChange;
@@ -144,7 +152,7 @@ public final class LmrsUtil implements LmrsParameters
 
             // determine lane change desire based on incentives
             Desire desire = getLaneChangeDesire(params, perception, carFollowingModel, mandatoryIncentives, voluntaryIncentives,
-                    lmrsData.desireMap);
+                    lmrsData.getDesireMap());
 
             // lane change decision
             double dFree = params.getParameter(DFREE);
@@ -267,7 +275,7 @@ public final class LmrsUtil implements LmrsParameters
             }
             else
             {
-                lmrsData.synchronizationState = Synchronizable.State.NONE;
+                lmrsData.setSynchronizationState(Synchronizable.State.NONE);
             }
 
             // cooperate
@@ -312,7 +320,7 @@ public final class LmrsUtil implements LmrsParameters
         {
             return a;
         }
-        lmrsData.synchronizationState = state;
+        lmrsData.setSynchronizationState(state);
         return aNew;
     }
 

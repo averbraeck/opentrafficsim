@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
@@ -83,7 +84,7 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
             n = record.getLane().indexOfGtu(next);
             pos = next.position(record.getLane(), next.getFront());
 
-            if (this.gtu != null && next.getId().equals(this.gtu.getId()))
+            if (this.getGtu() != null && next.getId().equals(this.getGtu().getId()))
             {
                 // ignore self
                 pos = plus ? pos.minus(next.getLength()) : pos.plus(next.getLength());
@@ -100,6 +101,7 @@ public class UpstreamNeighborsIterable extends AbstractPerceptionIterable<Headwa
             next = record.getLane().getGtu(n);
             pos = next.position(record.getLane(), next.getFront());
         }
+        Break.on(next, "44", 4 * 60 + 0.99, record.getLane().getFullId().equals("BB1.LANE"));
         return new Entry(next, n, pos);
     }
 

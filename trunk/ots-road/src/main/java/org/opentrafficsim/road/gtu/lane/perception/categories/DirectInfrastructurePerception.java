@@ -31,7 +31,10 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 /**
- * Perceives information concerning the infrastructure, including slits, lanes, speed limits and road markings.
+ * Perceives information concerning the infrastructure, including splits, lanes, speed limits and road markings. This category
+ * is optimized by cooperating closely with the {@code LaneStructure} and only updating internal information when the GTU is on
+ * a new {@code Lane}. On the {@code Lane} information is defined relative to the start, and thus easily calculated at each
+ * time.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
@@ -41,6 +44,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
+// TODO: more than the lane speed limit and maximum vehicle speed in the speed limit prospect
 public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionCategory implements InfrastructurePerception
 {
 
@@ -55,13 +59,12 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     private Map<RelativeLane, TimeStampedObject<SpeedLimitProspect>> speedLimitProspect = new HashMap<>();
 
     /** Legal Lane change possibilities per relative lane and lateral direction. */
-    private final Map<RelativeLane,
-            Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> legalLaneChangePossibility = new HashMap<>();
+    private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> legalLaneChangePossibility =
+            new HashMap<>();
 
     /** Physical Lane change possibilities per relative lane and lateral direction. */
-    private final Map<RelativeLane,
-            Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> physicalLaneChangePossibility =
-                    new HashMap<>();
+    private final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> physicalLaneChangePossibility =
+            new HashMap<>();
 
     /** Cross-section. */
     private TimeStampedObject<SortedSet<RelativeLane>> crossSection;
@@ -111,6 +114,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             this.root = newRoot;
             this.lanes = getPerception().getGtu().positions(RelativePosition.REFERENCE_POSITION).keySet();
             this.route = getPerception().getGtu().getStrategicalPlanner().getRoute();
+            // TODO: this is not suitable if we change lane and consider e.g. dynamic speed signs, they will be forgotten
             this.speedLimitProspect.clear();
             for (RelativeLane lane : getCrossSection())
             {
@@ -249,18 +253,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             }
             if (bestOk == null)
             {
-                // if (lane.isCurrent())
-                // {
-                // // on the current lane, we need something to drive to
-                // throw new GTUException("No lane was found on which to continue from link "
-                // + currentSet.keySet().iterator().next().getLane().getParentLink().getId() + " for route "
-                // + getGtu().getStrategicalPlanner().getRoute().getId());
-                // }
-                // else
-                // {
-                // empty set on other lanes permissible, on adjacent lanes, we might not be able to continue on our route
                 break;
-                // }
             }
             // if there are lanes that are not okay and only -further- lanes that are ok, we need to change to one of the ok's
             if (bestNotOk != null && bestOk.getRequiredNumberOfLaneChanges() > bestNotOk.getRequiredNumberOfLaneChanges())
@@ -395,9 +388,6 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
      * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
      * @param legal boolean; legal, or physical otherwise
      * @param possibilityMap
-     *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
-     *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
-     *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
      *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;; legal
      *            or physical possibility map
      * @throws GTUException if the GTU was not initialized or if the lane is not in the cross section
@@ -452,7 +442,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             while (record != null
                     && ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal))))
             {
-                // TODO splits
+                // TODO: splits
                 prevRecord = record;
                 record = record.getNext().isEmpty() ? null : record.getNext().get(0);
             }
@@ -463,7 +453,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             while (record != null
                     && ((lat.isLeft() && !record.possibleLeft(legal)) || (lat.isRight() && !record.possibleRight(legal))))
             {
-                // TODO splits
+                // TODO: splits
                 prevRecord = record;
                 record = record.getNext().isEmpty() ? null : record.getNext().get(0);
             }

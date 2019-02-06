@@ -124,10 +124,6 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 return new OperationalPlan(getGtu(), locationAtStartTime, startTime, new Duration(1.0, DurationUnit.SECOND));
             }
 
-            // perceive every time step... This is the 'classical' way of tactical planning.
-            // NOTE: delete this if perception takes place independent of the tactical planning (different frequency)
-            perception.perceive();
-
             Length maximumForwardHeadway = laneBasedGTU.getParameters().getParameter(LOOKAHEAD);
             DefaultSimplePerception simplePerception = perception.getPerceptionCategory(DefaultSimplePerception.class);
             Speed speedLimit = simplePerception.getSpeedLimit();

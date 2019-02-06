@@ -22,6 +22,10 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
  * to the back (important if we want to change lanes), and information about obstacles, traffic lights, speed signs, and ending
  * lanes.
  * <p>
+ * This class allows {@code PerceptionCategory}s that are either eager or lazy. All categories will have the {@code updateAll}
+ * method invoked prior to an operational plan being determined. Categories may ignore this and instead evaluate results only
+ * when the tactical planner requests them.
+ * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
