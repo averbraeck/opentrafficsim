@@ -17,13 +17,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.naming.NamingException;
+import javax.xml.crypto.dsig.TransformException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
+import org.locationtech.jts.geom.Coordinate;
 import org.opentrafficsim.core.compatibility.GTUCompatibility;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -50,8 +50,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.lane.object.sensor.SinkSensor;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -83,10 +81,9 @@ public final class Convert
     /**
      * @param c Coordinate; Coordinate in WGS84
      * @return Coordinate in Geocentric Cartesian system
-     * @throws FactoryException on ???
      * @throws TransformException on problems with the coordinate transformation
      */
-    public static Coordinate transform(final Coordinate c) throws FactoryException, TransformException
+    public static Coordinate transform(final Coordinate c) throws TransformException
     {
         // final CoordinateReferenceSystem wgs84 = DefaultGeographicCRS.WGS84;
         // final CoordinateReferenceSystem cartesianCRS = DefaultGeocentricCRS.CARTESIAN;
@@ -205,7 +202,7 @@ public final class Convert
                 {
                     return new OTSNode(network, Objects.toString(node.getId()), new OTSPoint3D(transform(coordWGS84)));
                 }
-                catch (FactoryException | TransformException exception)
+                catch (TransformException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -227,7 +224,7 @@ public final class Convert
             }
             return otsNode;
         }
-        catch (FactoryException | TransformException exception)
+        catch (TransformException exception)
         {
             exception.printStackTrace();
             // FIXME: how does the caller deal with a null result? (Answer: not!)

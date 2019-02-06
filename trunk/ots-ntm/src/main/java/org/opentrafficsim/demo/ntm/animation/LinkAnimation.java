@@ -10,9 +10,8 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.locationtech.jts.geom.Coordinate;
 import org.opentrafficsim.demo.ntm.NTMLink;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;

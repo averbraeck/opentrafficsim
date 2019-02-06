@@ -7,9 +7,8 @@ import java.io.Serializable;
 
 import javax.vecmath.Point3d;
 
+import org.locationtech.jts.geom.Coordinate;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.language.d3.DirectedPoint;

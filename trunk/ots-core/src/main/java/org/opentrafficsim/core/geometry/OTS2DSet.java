@@ -8,8 +8,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
-
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import nl.tudelft.simulation.dsol.logger.SimLogger;
 

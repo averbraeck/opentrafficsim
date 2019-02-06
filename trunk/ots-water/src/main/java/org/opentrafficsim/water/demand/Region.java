@@ -3,16 +3,11 @@
  */
 package org.opentrafficsim.water.demand;
 
-import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.jaitools.jts.CoordinateSequence2D;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
 import org.opentrafficsim.water.AbstractNamed;
 import org.opentrafficsim.water.RepeatableRandomStream;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -260,27 +255,6 @@ public class Region extends AbstractNamed implements Comparable<Region>
     public final void setArea(final MultiPolygon area)
     {
         this.area = area;
-    }
-
-    /**
-     * @return random point within a region
-     */
-    public final Coordinate getNextLocationInArea()
-    {
-        Envelope bounds = this.area.getEnvelopeInternal();
-
-        GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-
-        Point p = new Point(new CoordinateSequence2D(0, 0), geometryFactory);
-        while (!isInArea(p))
-        {
-            double latitude = bounds.getMinX() + (randomStream.nextDouble() * ((bounds.getMaxX() - bounds.getMinX())));
-            double longitude = bounds.getMinY() + (randomStream.nextDouble() * ((bounds.getMaxY() - bounds.getMinY())));
-
-            p = new Point(new CoordinateSequence2D(latitude, longitude), geometryFactory);
-        }
-
-        return p.getCoordinate();
     }
 
     /**
