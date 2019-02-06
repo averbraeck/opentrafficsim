@@ -5,11 +5,11 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionIterable;
@@ -43,9 +43,6 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
-    /** Bus stops. */
-    private TimeStampedObject<PerceptionCollectable<HeadwayBusStop, BusStop>> busStops;
-
     /**
      * @param perception LanePerception; perception
      */
@@ -54,56 +51,63 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
         super(perception);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final void updateBusStops() throws GTUException, ParameterException
+    /**
+     * Returns bus stops.
+     * @return PerceptionCollectable&lt;HeadwayBusStop, BusStop&gt;; bus stops
+     */
+    public final PerceptionCollectable<HeadwayBusStop, BusStop> computeBusStops()
     {
-        Route route = getGtu().getStrategicalPlanner().getRoute();
-        MultiLanePerceptionIterable<HeadwayBusStop, BusStop> stops = new MultiLanePerceptionIterable<>(getGtu());
-        for (RelativeLane lane : getPerception().getLaneStructure().getExtendedCrossSection())
+        try
         {
-            LaneRecord<?> record = getPerception().getLaneStructure().getFirstRecord(lane);
-            Length pos = record.getStartDistance().neg();
-            pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
-                    : pos.minus(getGtu().getFront().getDx());
-            AbstractPerceptionIterable<HeadwayBusStop, BusStop,
-                    ?> it = new LaneBasedObjectIterable<HeadwayBusStop, BusStop>(getGtu(), BusStop.class, record,
-                            Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
-                            route)
-                    {
-                        /** {@inheritDoc} */
-                        @Override
-                        public HeadwayBusStop perceive(final LaneBasedGTU perceivingGtu, final BusStop busStop,
-                                final Length distance)
+            Route route = getGtu().getStrategicalPlanner().getRoute();
+            MultiLanePerceptionIterable<HeadwayBusStop, BusStop> stops = new MultiLanePerceptionIterable<>(getGtu());
+            for (RelativeLane lane : getPerception().getLaneStructure().getExtendedCrossSection())
+            {
+                LaneRecord<?> record = getPerception().getLaneStructure().getFirstRecord(lane);
+                Length pos = record.getStartDistance().neg();
+                pos = record.getDirection().isPlus() ? pos.plus(getGtu().getFront().getDx())
+                        : pos.minus(getGtu().getFront().getDx());
+                AbstractPerceptionIterable<HeadwayBusStop, BusStop, ?> it =
+                        new LaneBasedObjectIterable<HeadwayBusStop, BusStop>(getGtu(), BusStop.class, record,
+                                Length.max(Length.ZERO, pos), getGtu().getParameters().getParameter(LOOKAHEAD),
+                                getGtu().getFront(), route)
                         {
-                            Set<String> conflictIds = new HashSet<>();
-                            for (Conflict conflict : busStop.getConflicts())
+                            /** {@inheritDoc} */
+                            @Override
+                            public HeadwayBusStop perceive(final LaneBasedGTU perceivingGtu, final BusStop busStop,
+                                    final Length distance)
                             {
-                                conflictIds.add(conflict.getId());
+                                Set<String> conflictIds = new HashSet<>();
+                                for (Conflict conflict : busStop.getConflicts())
+                                {
+                                    conflictIds.add(conflict.getId());
+                                }
+                                return Try.assign(() -> new HeadwayBusStop(busStop, distance, lane, conflictIds),
+                                        "Exception while creating bus stop headway.");
                             }
-                            return Try.assign(() -> new HeadwayBusStop(busStop, distance, lane, conflictIds),
-                                    "Exception while creating bus stop headway.");
-                        }
-                    };
-            stops.addIterable(lane, it);
+                        };
+                stops.addIterable(lane, it);
+            }
+            return stops;
         }
-        this.busStops = new TimeStampedObject<>(stops, getTimestamp());
+        catch (GTUException | ParameterException exception)
+        {
+            throw new RuntimeException("Unexpected exception while perceiving bus stops.");
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final PerceptionCollectable<HeadwayBusStop, BusStop> getBusStops()
     {
-        return this.busStops.getObject();
+        return this.computeIfAbsent("busStops", () -> computeBusStops());
     }
 
-    /**
-     * Returns the time stamped bus stops.
-     * @return time stamped bus stops
-     */
-    public final TimeStampedObject<PerceptionCollectable<HeadwayBusStop, BusStop>> getTimeStampedBusStops()
+    /** {@inheritDoc} */
+    @Override
+    public void updateAll() throws GTUException, NetworkException, ParameterException
     {
-        return this.busStops;
+        // lazy evaluation
     }
 
     /** {@inheritDoc} */

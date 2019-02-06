@@ -99,7 +99,6 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
         // obtain objects to get info
         LanePerception perception = getPerception();
-        perception.perceive();
         SpeedLimitProspect slp =
                 perception.getPerceptionCategory(ToledoPerception.class).getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);

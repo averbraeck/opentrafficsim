@@ -15,11 +15,11 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DelayedNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
@@ -168,8 +168,9 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
     public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint locationAtStartTime)
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
+        Break.on(getGtu(), "WWP.LANE:4", 41, true);
+        
         // obtain objects to get info
-        getPerception().perceive();
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
                 .getSpeedLimitProspect(RelativeLane.CURRENT);
         SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
@@ -213,12 +214,6 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
         {
             this.laneChange.setDesiredLaneChangeDuration(getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
             // adjust lane based data in perception
-            // TODO make this automatic within the perception itself, e.g. by a lane change event from the tactical planner
-            if (getPerception().contains(DelayedNeighborsPerception.class))
-            {
-                getPerception().getPerceptionCategory(DelayedNeighborsPerception.class)
-                        .changeLane(simplePlan.getLaneChangeDirection());
-            }
         }
 
         // set turn indicator

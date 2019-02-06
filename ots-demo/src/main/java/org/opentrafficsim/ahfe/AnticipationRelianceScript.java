@@ -488,12 +488,11 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
             try
             {
                 NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-                neighbors.updateLeaders(RelativeLane.CURRENT);
                 PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
                 return leaders.isEmpty() ? 0.0 : Math.exp(-leaders.first().getDistance().si
                         / (perception.getGtu().getSpeed().si * parameters.getParameter(HEXP).si));
             }
-            catch (OperationalPlanException | NetworkException ex)
+            catch (OperationalPlanException ex)
             {
                 throw new GTUException(ex);
             }

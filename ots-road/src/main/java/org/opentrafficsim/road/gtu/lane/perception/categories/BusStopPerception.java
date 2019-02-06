@@ -1,8 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
 import org.opentrafficsim.road.network.lane.object.BusStop;
@@ -22,23 +19,9 @@ public interface BusStopPerception extends LaneBasedPerceptionCategory
 {
 
     /**
-     * Updates the bus stops.
-     * @throws GTUException if the GTU has not been initialized
-     * @throws ParameterException if lane structure cannot be made due to missing parameter
-     */
-    void updateBusStops() throws GTUException, ParameterException;
-
-    /**
      * Returns the bus stops.
      * @return bus stops
      */
     PerceptionCollectable<HeadwayBusStop, BusStop> getBusStops();
-
-    /** {@inheritDoc} */
-    @Override
-    default void updateAll() throws GTUException, NetworkException, ParameterException
-    {
-        updateBusStops();
-    }
 
 }

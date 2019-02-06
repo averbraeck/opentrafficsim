@@ -44,13 +44,16 @@ public final class LmrsData implements DesireBased, Synchronizable
     private final Set<String> tempLeaders = new HashSet<>();
 
     /** Latest desire value for visualization. */
-    final Map<Class<? extends Incentive>, Desire> desireMap = new HashMap<>();
+    private final Map<Class<? extends Incentive>, Desire> desireMap = new HashMap<>();
 
     /** Synchronization state. */
-    Synchronizable.State synchronizationState;
+    private Synchronizable.State synchronizationState;
 
     /** Vehicle that is being synchronized to. */
     private String syncVehicle;
+    
+    /** Whether the longitudinal control is human. */
+    private boolean humanLongitudinalControl = true;
 
     /**
      * @param synchronization Synchronization; synchronization
@@ -171,12 +174,46 @@ public final class LmrsData implements DesireBased, Synchronizable
     {
         return this.desireMap.get(incentiveClass);
     }
+    
+    /**
+     * Returns the desire map.
+     * @return Map&lt;Class&lt;? extends Incentive&gt;, Desire&gt;; desire map
+     */
+    Map<Class<? extends Incentive>, Desire> getDesireMap()
+    {
+        return this.desireMap;
+    }
 
+    /**
+     * Sets the synchronization state.
+     * @param synchronizationState Synchronizable.State; synchronization step
+     */
+    void setSynchronizationState(final Synchronizable.State synchronizationState)
+    {
+        this.synchronizationState = synchronizationState;
+    }
+    
     /** {@inheritDoc} */
     @Override
     public Synchronizable.State getSynchronizationState()
     {
         return this.synchronizationState;
+    }
+    
+    /**
+     * @return humanLongitudinalControl.
+     */
+    boolean isHumanLongitudinalControl()
+    {
+        return this.humanLongitudinalControl;
+    }
+
+    /**
+ * @param humanLongitudinalControl boolean; set humanLongitudinalControl.
+     */
+    public void setHumanLongitudinalControl(final boolean humanLongitudinalControl)
+    {
+        this.humanLongitudinalControl = humanLongitudinalControl;
     }
 
     /** {@inheritDoc} */

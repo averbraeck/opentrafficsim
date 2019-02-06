@@ -6,7 +6,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation.NeighborTriplet;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 
 /**

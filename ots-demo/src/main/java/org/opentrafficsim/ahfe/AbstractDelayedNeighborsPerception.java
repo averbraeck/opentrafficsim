@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
+package org.opentrafficsim.ahfe;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +22,9 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.AbstractDelayedPerceptionCategory;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -37,6 +39,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
+@Deprecated
 public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayedPerceptionCategory
         implements NeighborsPerception
 {
@@ -176,9 +179,6 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
          */
         if (getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
         {
-            this.direct.updateFirstFollowers(LateralDirectionality.LEFT);
-            this.direct.updateFirstLeaders(LateralDirectionality.LEFT);
-            this.direct.updateGtuAlongside(LateralDirectionality.LEFT);
             this.gtuAlongsideLeftOverride = newFirstLeaderOrFollower(getFollowers(RelativeLane.LEFT),
                     this.direct.getFirstFollowers(LateralDirectionality.LEFT))
                     || newFirstLeaderOrFollower(getLeaders(RelativeLane.LEFT),
@@ -187,9 +187,6 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
         }
         if (getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT))
         {
-            this.direct.updateFirstFollowers(LateralDirectionality.RIGHT);
-            this.direct.updateFirstLeaders(LateralDirectionality.RIGHT);
-            this.direct.updateGtuAlongside(LateralDirectionality.RIGHT);
             this.gtuAlongsideRightOverride = newFirstLeaderOrFollower(getFollowers(RelativeLane.RIGHT),
                     this.direct.getFirstFollowers(LateralDirectionality.RIGHT))
                     || newFirstLeaderOrFollower(getLeaders(RelativeLane.RIGHT),
@@ -255,67 +252,11 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
 
         this.direct.updateAll();
         // below code is a copy of the updateAll() method in the direct perception TODO structure better
-        if (getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
-        {
-            updateFirstLeaders(LateralDirectionality.LEFT);
-            updateFirstFollowers(LateralDirectionality.LEFT);
-            updateGtuAlongside(LateralDirectionality.LEFT);
-        }
-        if (getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT))
-        {
-            updateFirstLeaders(LateralDirectionality.RIGHT);
-            updateFirstFollowers(LateralDirectionality.RIGHT);
-            updateGtuAlongside(LateralDirectionality.RIGHT);
-        }
-        for (RelativeLane lane : getPerception().getLaneStructure().getExtendedCrossSection())
-        {
-            updateLeaders(lane);
-            updateFollowers(lane);
-        }
         setInfo(CROSSSECTION,
                 new TimeStampedObject<>(getPerception().getLaneStructure().getExtendedCrossSection(), getTimestamp()));
         setInfo(ODOMETER, new TimeStampedObject<>(getGtu().getOdometer(), getTimestamp()));
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final void updateFirstLeaders(final LateralDirectionality lat)
-            throws ParameterException, GTUException, NetworkException
-    {
-        setInfo(NeighborsInfoType.getSortedSetType(FIRSTLEADERS), new RelativeLane(lat, 1),
-                this.direct.getTimeStampedFirstLeaders(lat));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void updateFirstFollowers(final LateralDirectionality lat)
-            throws GTUException, ParameterException, NetworkException
-    {
-        setInfo(NeighborsInfoType.getSortedSetType(FIRSTFOLLOWERS), new RelativeLane(lat, 1),
-                this.direct.getTimeStampedFirstFollowers(lat));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void updateGtuAlongside(final LateralDirectionality lat) throws GTUException, ParameterException
-    {
-        setInfo(NeighborsInfoType.getBooleanType(GTUALONGSIDE), new RelativeLane(lat, 1),
-                this.direct.isGtuAlongsideTimeStamped(lat));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void updateLeaders(final RelativeLane lane) throws ParameterException, GTUException, NetworkException
-    {
-        setInfo(NeighborsInfoType.getIterableType(LEADERS), lane, this.direct.getTimeStampedLeaders(lane));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void updateFollowers(final RelativeLane lane) throws GTUException, NetworkException, ParameterException
-    {
-        setInfo(NeighborsInfoType.getIterableType(FOLLOWERS), lane, this.direct.getTimeStampedFollowers(lane));
-    }
 
     /**
      * Returns the cross-section on which the most recent observed neighbors were determined.

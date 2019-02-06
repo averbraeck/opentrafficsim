@@ -101,7 +101,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord" 
+  <interface id="10" language="java" name="org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord" 
     project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/LaneStructureRecord.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -111,7 +111,7 @@
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
-  </class>  
+  </interface>  
   <class id="11" language="java" 
     name="org.opentrafficsim.road.gtu.lane.perception.MultiLanePerceptionIterable.MultiLaneIterator" project="ots-road" 
     file="/ots-road/src/main/java/org/opentrafficsim/road/gtu/lane/perception/MultiLanePerceptionIterable.java" 
@@ -180,75 +180,75 @@
   </interface>  
   <dependency id="17">    
     <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="8"/>  
-  </dependency>  
-  <dependency id="18">    
-    <end type="SOURCE" refId="12"/>    
     <end type="TARGET" refId="3"/>  
   </dependency>  
-  <nesting id="19">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="4"/>  
-  </nesting>  
-  <dependency id="20">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="8"/>  
-  </dependency>  
-  <dependency id="21">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="1"/>  
-  </dependency>  
-  <nesting id="22">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="2"/>  
-  </nesting>  
-  <nesting id="23">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="6"/>  
-  </nesting>  
-  <nesting id="24">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="11"/>  
-  </nesting>  
-  <dependency id="25">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="16"/>  
-  </dependency>  
-  <dependency id="26">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="8"/>  
-  </dependency>  
-  <dependency id="27">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="7"/>  
-  </dependency>  
-  <dependency id="28">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="8"/>  
-  </dependency>  
-  <nesting id="29">    
+  <nesting id="18">    
     <end type="SOURCE" refId="7"/>    
     <end type="TARGET" refId="5"/>  
   </nesting>  
-  <dependency id="30">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="3"/>  
-  </dependency>  
-  <dependency id="31">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="8"/>  
-  </dependency>  
-  <dependency id="32">    
+  <dependency id="19">    
     <end type="SOURCE" refId="9"/>    
     <end type="TARGET" refId="8"/>  
   </dependency>  
-  <dependency id="33">    
+  <dependency id="20">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <dependency id="21">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <dependency id="22">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <nesting id="23">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="11"/>  
+  </nesting>  
+  <dependency id="24">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <dependency id="25">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="1"/>  
+  </dependency>  
+  <dependency id="26">    
     <end type="SOURCE" refId="14"/>    
     <end type="TARGET" refId="7"/>  
   </dependency>  
-  <dependency id="34">    
+  <nesting id="27">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </nesting>  
+  <dependency id="28">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <dependency id="29">    
     <end type="SOURCE" refId="15"/>    
     <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <dependency id="30">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <nesting id="31">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="4"/>  
+  </nesting>  
+  <dependency id="32">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="16"/>  
+  </dependency>  
+  <nesting id="33">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="6"/>  
+  </nesting>  
+  <dependency id="34">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="3"/>  
   </dependency>  
   <classifier-display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    

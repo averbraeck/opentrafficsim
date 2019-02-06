@@ -35,11 +35,4 @@ public interface TrafficPerception extends LaneBasedPerceptionCategory
      */
     LinearDensity getDensity(RelativeLane lane) throws ParameterException;
 
-    /** {@inheritDoc} */
-    @Override
-    default void updateAll()
-    {
-        // on demand
-    }
-
 }

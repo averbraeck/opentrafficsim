@@ -281,6 +281,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             tactPlanner = this.strategicalPlanner.get().getTacticalPlanner();
             this.tacticalPlanner.set(tactPlanner);
         }
+        tactPlanner.getPerception().perceive();
         OperationalPlan newOperationalPlan = tactPlanner.generateOperationalPlan(now, fromLocation);
         this.operationalPlan.set(newOperationalPlan);
         this.cachedSpeedTime = Double.NaN;

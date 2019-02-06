@@ -13,6 +13,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
@@ -78,11 +79,25 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
         else if (!conflicts.isEmpty() && conflicts.first().getDistance().gt0())
         {
             // TODO this is too simple, needs to be consistent with gap-acceptance or GTU's may not change
-            a = CarFollowingUtil.followSingleLeader(carFollowingModel, params, speed, speedLimitInfo,
-                    conflicts.first().getDistance(), Speed.ZERO);
-            // limit deceleration on adjacent lanes
-            a = Acceleration.max(a, params.getParameter(ParameterTypes.BCRIT).neg());
-            simplePlan.minimizeAcceleration(a);
+            Length lcDistance = perception.getPerceptionCategory(InfrastructurePerception.class)
+                    .getLegalLaneChangePossibility(RelativeLane.CURRENT, lane.getLateralDirectionality()).neg();
+            HeadwayConflict conflict = null;
+            for (HeadwayConflict c : conflicts)
+            {
+                if (c.getDistance().gt(lcDistance))
+                {
+                    conflict = c;
+                    break;
+                }
+            }
+            if (conflict != null)
+            {
+                a = CarFollowingUtil.followSingleLeader(carFollowingModel, params, speed, speedLimitInfo,
+                        conflicts.first().getDistance(), Speed.ZERO);
+                // limit deceleration on adjacent lanes
+                a = Acceleration.max(a, params.getParameter(ParameterTypes.BCRIT).neg());
+                simplePlan.minimizeAcceleration(a);
+            }
         }
     }
 

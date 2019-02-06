@@ -203,7 +203,7 @@ public final class ConflictUtil
             {
                 case PRIORITY:
                 {
-                    stop = stopForPriorityConflict(conflict, leaders, speed, vehicleLength, parameters, conflictPlans);
+                    stop = stopForPriorityConflict(conflict, leaders, speed, vehicleLength, parameters);
                     break;
                 }
                 case YIELD: // TODO depending on rules, we may need to stop and not just yield
@@ -511,13 +511,12 @@ public final class ConflictUtil
      * @param speed Speed; current speed
      * @param vehicleLength Length; vehicle length
      * @param parameters Parameters; parameters
-     * @param yieldPlans ConflictPlans; set of plans for yielding with priority
      * @return whether to stop for this conflict
      * @throws ParameterException if parameter B is not defined
      */
     public static boolean stopForPriorityConflict(final HeadwayConflict conflict,
             final PerceptionCollectable<HeadwayGTU, LaneBasedGTU> leaders, final Speed speed, final Length vehicleLength,
-            final Parameters parameters, final ConflictPlans yieldPlans) throws ParameterException
+            final Parameters parameters) throws ParameterException
     {
 
         if (leaders.isEmpty() || conflict.getUpstreamConflictingGTUs().isEmpty())

@@ -1,5 +1,6 @@
-package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
+package org.opentrafficsim.ahfe;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -28,9 +29,12 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.SortedSetPerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation.NeighborTriplet;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborTriplet;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGTU;
 
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 
 /**
@@ -44,7 +48,8 @@ import nl.tudelft.simulation.jstats.distributions.DistNormal;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPerception
+@Deprecated
+public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPerception implements EventListenerInterface
 {
 
     /** Parameter for anticipating beyond current time. */
@@ -112,11 +117,19 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
         try
         {
             this.norm = new DistNormal(perception.getGtu().getSimulator().getReplication().getStream("perception"));
+            perception.getGtu().addListener(this, LaneBasedGTU.LANE_CHANGE_EVENT);
         }
-        catch (GTUException exception)
+        catch (GTUException | RemoteException exception)
         {
             throw new RuntimeException("GTU not initialized.", exception);
         }
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        changeLane((LateralDirectionality) ((Object[]) event.getContent())[1]);
     }
 
     /**
@@ -541,4 +554,5 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
                 + ", firstLeaders=" + this.firstLeaders + ", gtuAlongside=" + this.gtuAlongside + ", errors=" + this.errors
                 + ", norm=" + this.norm + "]";
     }
+
 }

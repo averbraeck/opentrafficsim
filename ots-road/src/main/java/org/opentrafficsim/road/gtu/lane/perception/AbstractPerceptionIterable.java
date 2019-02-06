@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -132,8 +133,11 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
         /** Map containing the objects found per branch. */
         private SortedMap<PrimaryIteratorEntry, LaneRecord<?>> map;
 
-        /** Position on the lane of each object. */
-        private Map<U, Length> positions = new HashMap<>();
+        /** Position per record where the search was halted. */
+        private Map<LaneRecord<?>, Length> positions = new HashMap<>();
+
+        /** Items returned to prevent duplicates. */
+        private Set<U> returnedItems = new HashSet<>();
 
         /** Sets of remaining objects at the same location. */
         private Map<LaneRecord<?>, Queue<PrimaryIteratorEntry>> queues = new HashMap<>();
@@ -173,9 +177,8 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
             // get and remove next
             PrimaryIteratorEntry nextEntry = this.map.firstKey();
-            U next = nextEntry.object;
+            U next = nextEntry.getObject();
             LaneRecord<?> record = this.map.get(nextEntry);
-            Length position = this.positions.get(next);
             this.map.remove(nextEntry);
 
             // see if we can obtain the next from a queue
@@ -184,18 +187,37 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
             {
                 PrimaryIteratorEntry nextNext = queue.poll();
                 this.map.put(nextNext, record); // next object is made available in the map
-                this.positions.put(nextNext.object, position);
                 if (queue.isEmpty())
                 {
                     this.queues.remove(record);
                 }
-                return new PrimaryIteratorEntry(nextNext.object, getDistance(nextNext.object, record, position));
+                preventDuplicateEntries(nextEntry.getObject());
+                return nextNext;
             }
 
             // prepare for next
             this.postponedRecord = record;
-            this.postponedPosition = position;
-            return new PrimaryIteratorEntry(next, getDistance(next, record, position));
+            this.postponedPosition = this.positions.get(record); // position;
+            preventDuplicateEntries(nextEntry.getObject());
+            return nextEntry;
+        }
+
+        /**
+         * Prevents that duplicate (and further) records are returned for the given object as splits later on merge.
+         * @param object U; object for which a {@code PrimaryIteratorEntry} will be returned
+         */
+        private void preventDuplicateEntries(final U object)
+        {
+            this.returnedItems.add(object); // prevents new items to be added over alive branches (that should die out)
+            Iterator<PrimaryIteratorEntry> it = this.map.keySet().iterator();
+            while (it.hasNext())
+            {
+                PrimaryIteratorEntry entry = it.next();
+                if (entry.getObject().equals(object))
+                {
+                    it.remove();
+                }
+            }
         }
 
         /**
@@ -266,27 +288,30 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
                 {
                     Iterator<U> it = next.set.iterator();
                     U nextNext = it.next();
-                    Length distance = getDistance(nextNext, record, next.position);
-                    if (distance == null // null means the object overlaps and is close
-                            || distance.si <= AbstractPerceptionIterable.this.maxDistance)
+                    if (!this.returnedItems.contains(nextNext))
                     {
-                        // next object is made available in the map
-                        this.map.put(new PrimaryIteratorEntry(nextNext, distance), record);
-                        this.positions.put(nextNext, next.position);
-                        if (next.set.size() > 1)
+                        Length distance = getDistance(nextNext, record, next.position);
+                        if (distance == null // null means the object overlaps and is close
+                                || distance.si <= AbstractPerceptionIterable.this.maxDistance)
                         {
-                            // remaining at this location are made available in a queue
-                            Queue<PrimaryIteratorEntry> queue = new LinkedList<>();
-                            while (it.hasNext())
+                            // next object is made available in the map
+                            this.map.put(new PrimaryIteratorEntry(nextNext, distance), record);
+                            this.positions.put(record, next.position);
+                            if (next.set.size() > 1)
                             {
-                                nextNext = it.next();
-                                queue.add(new PrimaryIteratorEntry(nextNext, getDistance(nextNext, record, next.position)));
+                                // remaining at this location are made available in a queue
+                                Queue<PrimaryIteratorEntry> queue = new LinkedList<>();
+                                while (it.hasNext())
+                                {
+                                    nextNext = it.next();
+                                    queue.add(new PrimaryIteratorEntry(nextNext, getDistance(nextNext, record, next.position)));
+                                }
+                                this.queues.put(record, queue);
                             }
-                            this.queues.put(record, queue);
                         }
                     }
                 }
-                else
+                else if (!this.returnedItems.contains(next.object))
                 {
                     Length distance = getDistance(next.object, record, next.position);
                     if (distance == null // null means the object overlaps and is close
@@ -294,7 +319,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
                     {
                         // next object is made available in the map
                         this.map.put(new PrimaryIteratorEntry(next.object, distance), record);
-                        this.positions.put(next.object, next.position);
+                        this.positions.put(record, next.position);
                     }
                 }
             }

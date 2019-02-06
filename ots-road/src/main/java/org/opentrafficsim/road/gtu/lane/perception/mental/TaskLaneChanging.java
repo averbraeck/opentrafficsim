@@ -62,13 +62,10 @@ public class TaskLaneChanging extends TaskHeadwayBased
         {
             lane = RelativeLane.RIGHT;
         }
-        Try.execute(() -> neighbors.updateGtuAlongside(lane.getLateralDirectionality()), "Exception while updating alongside.");
         if (neighbors.isGtuAlongside(lane.getLateralDirectionality()))
         {
             return Duration.ZERO;
         }
-        Try.execute(() -> neighbors.updateLeaders(lane), "Exception while updating adjacent leaders.");
-        Try.execute(() -> neighbors.updateFollowers(lane), "Exception while updating adjacent followers.");
         Duration h1 = neighbors.getLeaders(lane).collect(new TaskHeadwayCollector(getSpeed()));
         Duration h2 = neighbors.getFollowers(lane).collect(new TaskHeadwayCollector(getSpeed()));
         if (h1 == null)
