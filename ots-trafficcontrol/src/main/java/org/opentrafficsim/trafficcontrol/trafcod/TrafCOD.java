@@ -34,6 +34,8 @@ import org.opentrafficsim.road.network.lane.object.sensor.NonDirectionalOccupanc
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+import org.opentrafficsim.trafficcontrol.AbstractTrafficController;
+import org.opentrafficsim.trafficcontrol.ActuatedTrafficController;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 
@@ -42,7 +44,6 @@ import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventProducer;
 import nl.tudelft.simulation.event.EventType;
 
 /**
@@ -55,13 +56,10 @@ import nl.tudelft.simulation.event.EventType;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 5, 2016 <br>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class TrafCOD extends EventProducer implements TrafficController, EventListenerInterface
+public class TrafCOD extends AbstractTrafficController implements ActuatedTrafficController, EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 20161014L;
-
-    /** Name of this TrafCod controller. */
-    final String controllerName;
 
     /** Version of the supported TrafCOD files. */
     final static int TRAFCOD_VERSION = 100;
@@ -198,8 +196,6 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
             // trafCodURL.replaceFirst("\\.[Tt][Ff][Cc]$", ".tfg");
             // // System.out.println("mapFileURL is \"" + tfgFileURL + "\"");
         }
-        fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_CREATED,
-                new Object[] { this.controllerName, TrafficController.STARTING_UP }, simulator.getSimulatorTime());
         // Initialize the variables that have a non-zero initial value
         for (Variable v : this.variablesInDefinitionOrder)
         {
@@ -210,7 +206,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                 value /= 10.0;
             }
             fireTimedEvent(TrafficController.TRAFFICCONTROL_VARIABLE_CREATED,
-                    new Object[] { this.controllerName, v.getName(), v.getStream(), value }, simulator.getSimulatorTime());
+                    new Object[] { getId(), v.getName(), v.getStream(), value }, simulator.getSimulatorTime());
         }
         // Schedule the consistency check (don't call it directly) to allow interested parties to subscribe before the
         // consistency check is performed
@@ -229,10 +225,10 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
     private TrafCOD(String controllerName, final OTSSimulatorInterface simulator, Container display)
             throws TrafficControlException, SimRuntimeException
     {
+        super(controllerName, simulator);
         Throw.whenNull(controllerName, "controllerName may not be null");
         Throw.whenNull(simulator, "simulator may not be null");
         this.simulator = simulator;
-        this.controllerName = controllerName;
     }
 
     /**
@@ -477,7 +473,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
             {
                 // System.out.println("Warning: " + v.getName() + v.getStream() + " is never referenced");
                 fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
-                        new Object[] { this.controllerName, v.toString(EnumSet.of(PrintFlags.ID)) + " is never referenced" },
+                        new Object[] { getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " is never referenced" },
                         this.simulator.getSimulatorTime());
             }
             if (!v.isDetector())
@@ -486,14 +482,14 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                 {
                     // System.out.println("Warning: " + v.getName() + v.getStream() + " has no start rule");
                     fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
-                            new Object[] { this.controllerName, v.toString(EnumSet.of(PrintFlags.ID)) + " has no start rule" },
+                            new Object[] { getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " has no start rule" },
                             this.simulator.getSimulatorTime());
                 }
                 if ((!v.getFlags().contains(Flags.HAS_END_RULE)) && (!v.isTimer()))
                 {
                     // System.out.println("Warning: " + v.getName() + v.getStream() + " has no end rule");
                     fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
-                            new Object[] { this.controllerName, v.toString(EnumSet.of(PrintFlags.ID)) + " has no end rule" },
+                            new Object[] { getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " has no end rule" },
                             this.simulator.getSimulatorTime());
                 }
             }
@@ -698,7 +694,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
     @SuppressWarnings("unused")
     private void evalExprs() throws TrafficControlException, SimRuntimeException
     {
-        fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING, new Object[] { this.controllerName },
+        fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING, new Object[] { getId() },
                 this.simulator.getSimulatorTime());
         // System.out.println("evalExprs: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().si));
         // insert some delay for testing; without this the simulation runs too fast
@@ -739,7 +735,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                 }
             }
             fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING,
-                    new Object[] { this.controllerName, warningMessage.toString() }, this.simulator.getSimulatorTime());
+                    new Object[] { getId(), warningMessage.toString() }, this.simulator.getSimulatorTime());
         }
         this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, this, "evalExprs", null);
     }
@@ -871,7 +867,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
             if (destination.isOutput())
             {
                 fireEvent(TRAFFIC_LIGHT_CHANGED,
-                        new Object[] { this.controllerName, new Integer(destination.getStream()), destination.getColor() });
+                        new Object[] { getId(), new Integer(destination.getStream()), destination.getColor() });
             }
             if (destination.isConflictGroup() && resultValue != 0)
             {
@@ -886,7 +882,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
                     conflictGroupList.append(String.format("%02d", stream));
                 }
                 fireEvent(TRAFFICCONTROL_CONFLICT_GROUP_CHANGED,
-                        new Object[] { this.controllerName, this.currentConflictGroup, conflictGroupList.toString() });
+                        new Object[] { getId(), this.currentConflictGroup, conflictGroupList.toString() });
                 // System.out.println("Conflict group changed from " + this.currentConflictGroup + " to "
                 // + conflictGroupList.toString());
                 this.currentConflictGroup = conflictGroupList.toString();
@@ -1807,17 +1803,17 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
             if (!(content instanceof Object[]))
             {
                 System.err.println(
-                        "TrafCOD controller " + this.controllerName + " received event with bad payload (" + content + ")");
+                        "TrafCOD controller " + getId() + " received event with bad payload (" + content + ")");
                 return;
             }
             Object[] fields = (Object[]) event.getContent();
-            if (this.controllerName.equals(fields[0]))
+            if (getId().equals(fields[0]))
             {
                 if (fields.length < 4 || !(fields[1] instanceof String) || !(fields[2] instanceof Integer)
                         || !(fields[3] instanceof Boolean))
                 {
                     System.err.println(
-                            "TrafCOD controller " + this.controllerName + " received event with bad payload (" + content + ")");
+                            "TrafCOD controller " + getId() + " received event with bad payload (" + content + ")");
                     return;
                 }
                 String name = (String) fields[1];
@@ -1875,16 +1871,9 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
 
     /** {@inheritDoc} */
     @Override
-    public String getId()
-    {
-        return this.controllerName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String getFullId()
     {
-        return this.controllerName;
+        return getId();
     }
 
     /** {@inheritDoc} */
@@ -1897,7 +1886,7 @@ public class TrafCOD extends EventProducer implements TrafficController, EventLi
             // TODO figure out how to provide a display for the clone
             TrafCOD result = new TrafCOD(getId(), newSimulator, null);
             result.fireTimedEvent(TRAFFICCONTROL_CONTROLLER_CREATED,
-                    new Object[] { this.controllerName, TrafficController.BEING_CLONED }, newSimulator.getSimulatorTime());
+                    new Object[] { getId(), TrafficController.BEING_CLONED }, newSimulator.getSimulatorTime());
             // Clone the variables
             for (Variable v : this.variablesInDefinitionOrder)
             {

@@ -1,5 +1,6 @@
 package org.opentrafficsim.trafficcontrol;
 
+import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 
 import nl.tudelft.simulation.event.EventListenerInterface;
@@ -17,7 +18,8 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public interface TrafficController extends EventProducerInterface, EventListenerInterface, InvisibleObjectInterface
+public interface TrafficController
+        extends EventProducerInterface, EventListenerInterface, InvisibleObjectInterface, Identifiable
 {
     /**
      * Retrieve the Id of the traffic light controller.
@@ -25,13 +27,6 @@ public interface TrafficController extends EventProducerInterface, EventListener
      */
     @Override
     public String getId();
-
-    /**
-     * Tell the traffic controller that the state of a detector has changed.
-     * @param detectorId String; id of the detector
-     * @param detectingGTU boolean;
-     */
-    public void updateDetector(String detectorId, boolean detectingGTU);
 
     /** Traffic controller is starting up. Particular traffic control programs may use additional states not listed here. */
     final String STARTING_UP = "starting up";

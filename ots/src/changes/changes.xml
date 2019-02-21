@@ -2,6 +2,9 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
     <release version="1.01.01" date="2019-XX-XX" description="">
+      <action issue="OTS-383"  dev="wjschakel" type="add">
+        OTS-383. Develop fixed time traffic light control
+      </action>
       <action issue="OTS-382" dev="wjschakel" type="update">
         OTS-382. Apply lazy evaluation and memoization in perception categories
       </action>

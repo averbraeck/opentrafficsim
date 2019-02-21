@@ -18,8 +18,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.trafficcontrol.ActuatedTrafficController;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
-import org.opentrafficsim.trafficcontrol.TrafficController;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
@@ -40,7 +40,7 @@ import nl.tudelft.simulation.event.EventType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public class CCOL extends EventProducer implements TrafficController
+public class CCOL extends EventProducer implements ActuatedTrafficController
 {
     /** */
     private static final long serialVersionUID = 20170126L;
