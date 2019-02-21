@@ -23,6 +23,9 @@ public enum TrafficLightColor
     /** GTU is allowed to drive. */
     GREEN,
 
+    /** Pre-green indication. */
+    PREGREEN,
+    
     /** Traffic light is not working. */
     BLACK;
 
@@ -48,6 +51,12 @@ public enum TrafficLightColor
     public final boolean isGreen()
     {
         return this.equals(GREEN);
+    }
+    
+    /** @return whether the light is pre-green. */
+    public final boolean isPreGreen()
+    {
+        return this.equals(PREGREEN);
     }
 
     /** @return whether the light is black (off). */
