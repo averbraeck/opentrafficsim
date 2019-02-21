@@ -1,0 +1,166 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots</artifactId>
+    <version>1.01.01-SNAPSHOT</version>
+    <relativePath>../ots/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-xsd</artifactId>
+  <name>OTS XSD schema definitions</name>
+  <description>OTS XSD schema definitions for XML files</description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>wagon-maven-plugin</artifactId>
+        <version>${wagon.maven.version}</version>
+        <executions>
+          <execution>
+            <id>upload-schema-current</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>upload</goal>
+            </goals>
+            <configuration>
+              <fromDir>${basedir}/src/main/resources</fromDir>
+              <includes>ots-types.xsd, ots-definitions.xsd, ots-network.xsd</includes>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
+              <toDir>current</toDir>
+              <serverId>ots-deployment</serverId>
+            </configuration>
+          </execution>
+          <execution>
+            <id>upload-schema-version</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>upload</goal>
+            </goals>
+            <configuration>
+              <fromDir>${basedir}/src/main/resources</fromDir>
+              <includes>ots-types.xsd, ots-definitions.xsd, ots-network.xsd</includes>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
+              <toDir>${version}</toDir>
+              <serverId>ots-deployment</serverId>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
+        <version>${jaxb2-maven.version}</version>
+        <executions>
+          <execution>
+            <id>xjc</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <xjbSources>
+            <xjbSource>src/main/resources/bindings.xjb</xjbSource>
+          </xjbSources>
+          <sources>
+            <source>src/main/resources</source>
+          </sources>
+          <outputDirectory>src/main/java</outputDirectory>
+          <clearOutputDir>false</clearOutputDir>
+          <packageName>org.opentrafficsim.xml.generated</packageName>
+        </configuration>
+      </plugin -->
+
+      <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <version>0.14.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <schemaDirectory>src/main/resources</schemaDirectory>
+          <generateDirectory>src/main/java</generateDirectory>
+          <generatePackage>org.opentrafficsim.xml.generated</generatePackage>
+          <markGenerated>true</markGenerated>
+          <cleanPackageDirectories>true</cleanPackageDirectories>
+          <scanDependenciesForBindings>false</scanDependenciesForBindings>
+          <strict>false</strict>
+          <specVersion>2.2</specVersion>
+          <verbose>true</verbose>
+          <schemaIncludes>
+            <schemaInclude>ots-types.xsd</schemaInclude>
+            <schemaInclude>ots-definitions.xsd</schemaInclude>
+            <schemaInclude>ots-network.xsd</schemaInclude>
+            <schemaExclude>ots-demand.xsd</schemaExclude>
+           </schemaIncludes>
+          <schemaExcludes>
+         </schemaExcludes>
+        </configuration>
+      </plugin>
+
+      <!-- plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/main/generated</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin -->
+
+    </plugins>
+
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>2.3.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-xjc</artifactId>
+      <version>2.3.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-core</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+  </dependencies>
+
+</project>
