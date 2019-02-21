@@ -3,7 +3,9 @@ package org.opentrafficsim.trafficcontrol;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -47,7 +49,7 @@ public class FixedTimeController extends AbstractTrafficController
     private final Duration offset;
 
     /** Signal groups, for cloning. */
-    private final List<SignalGroup> signalGroups;
+    private final Set<SignalGroup> signalGroups;
 
     /**
      * Constructor for fixed time traffic controller.
@@ -56,12 +58,12 @@ public class FixedTimeController extends AbstractTrafficController
      * @param network Network; network
      * @param offset Duration; off set from simulation start time
      * @param cycleTime Duration; cycle time
-     * @param signalGroups List&lt;SignalGroup&gt;; signal groups
+     * @param signalGroups Set&lt;SignalGroup&gt;; signal groups
      * @throws SimRuntimeException simulator is past zero time
      */
     @SuppressWarnings("synthetic-access")
     public FixedTimeController(final String id, final OTSSimulatorInterface simulator, final Network network,
-            final Duration cycleTime, final Duration offset, final List<SignalGroup> signalGroups) throws SimRuntimeException
+            final Duration cycleTime, final Duration offset, final Set<SignalGroup> signalGroups) throws SimRuntimeException
     {
         super(id, simulator);
         Throw.whenNull(simulator, "Simulator may not be null.");
@@ -71,13 +73,13 @@ public class FixedTimeController extends AbstractTrafficController
         Throw.whenNull(signalGroups, "Signal groups may not be null.");
         Throw.when(cycleTime.le0(), IllegalArgumentException.class, "Cycle time must be positive.");
         Throw.when(signalGroups.isEmpty(), IllegalArgumentException.class, "Signal groups may not be empty.");
-        for (int i = 0; i < signalGroups.size(); i++)
+        for (SignalGroup signalGroup1 : signalGroups)
         {
-            for (int j = i + 1; j < signalGroups.size(); j++)
+            for (SignalGroup signalGroup2 : signalGroups)
             {
-                Throw.when(!Collections.disjoint(signalGroups.get(i).trafficLights, signalGroups.get(j).trafficLights),
+                Throw.when(!Collections.disjoint(signalGroup1.trafficLights, signalGroup2.trafficLights),
                         IllegalArgumentException.class, "A traffic light is in both signal group %s and signal group %s.",
-                        signalGroups.get(i).getId(), signalGroups.get(j).getId());
+                        signalGroup1.getId(), signalGroup2.getId());
             }
         }
         this.cycleTime = cycleTime;
@@ -99,6 +101,48 @@ public class FixedTimeController extends AbstractTrafficController
         {
             signalGroup.startup(this.offset, this.cycleTime, simulator, network);
         }
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void notify(final EventInterface event) throws RemoteException
+    {
+        // nothing
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork)
+            throws NetworkException
+    {
+        Set<SignalGroup> signalGroupsCloned = new LinkedHashSet<>();
+        for (SignalGroup signalGroup : this.signalGroups)
+        {
+            signalGroupsCloned.add(signalGroup.clone());
+        }
+        try
+        {
+            return new FixedTimeController(getId(), newSimulator, newNetwork, this.cycleTime, this.offset, signalGroupsCloned);
+        }
+        catch (SimRuntimeException exception)
+        {
+            throw new RuntimeException("Cloning using a simulator that is not at time 0.");
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getFullId()
+    {
+        return getId();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "FixedTimeController [cycleTime=" + this.cycleTime + ", offset=" + this.offset + ", signalGroups="
+                + this.signalGroups + ", full id=" + this.getFullId() + "]";
     }
 
     /**
@@ -313,40 +357,55 @@ public class FixedTimeController extends AbstractTrafficController
             return new SignalGroup(getId(), this.trafficLightIds.toList(), this.offset, this.preGreen, this.green, this.yellow);
         }
 
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void notify(final EventInterface event) throws RemoteException
-    {
-        // nothing
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public InvisibleObjectInterface clone(final OTSSimulatorInterface newSimulator, final Network newNetwork)
-            throws NetworkException
-    {
-        List<SignalGroup> signalGroupsCloned = new ArrayList<>();
-        for (SignalGroup signalGroup : this.signalGroups)
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode()
         {
-            signalGroupsCloned.add(signalGroup.clone());
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+            return result;
         }
-        try
-        {
-            return new FixedTimeController(getId(), newSimulator, newNetwork, this.cycleTime, this.offset, signalGroupsCloned);
-        }
-        catch (SimRuntimeException exception)
-        {
-            throw new RuntimeException("Cloning using a simulator that is not at time 0.");
-        }
-    }
 
-    /** {@inheritDoc} */
-    @Override
-    public String getFullId()
-    {
-        return getId();
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (obj == null)
+            {
+                return false;
+            }
+            if (getClass() != obj.getClass())
+            {
+                return false;
+            }
+            SignalGroup other = (SignalGroup) obj;
+            if (this.id == null)
+            {
+                if (other.id != null)
+                {
+                    return false;
+                }
+            }
+            else if (!this.id.equals(other.id))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "SignalGroup [id=" + this.id + ", trafficLightIds=" + this.trafficLightIds + ", offset=" + this.offset
+                    + ", preGreen=" + this.preGreen + ", green=" + this.green + ", yellow=" + this.yellow + "]";
+        }
+        
     }
 
 }

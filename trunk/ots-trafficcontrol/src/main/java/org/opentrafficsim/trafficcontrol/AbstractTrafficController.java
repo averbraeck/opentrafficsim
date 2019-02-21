@@ -1,5 +1,6 @@
 package org.opentrafficsim.trafficcontrol;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 import nl.tudelft.simulation.event.EventProducer;
@@ -30,6 +31,7 @@ public abstract class AbstractTrafficController extends EventProducer implements
      */
     public AbstractTrafficController(final String id, final OTSSimulatorInterface simulator)
     {
+        Throw.whenNull(id, "Id may not be null.");
         this.id = id;
         fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_CREATED,
                 new Object[] { this.id, TrafficController.STARTING_UP }, simulator.getSimulatorTime());        
