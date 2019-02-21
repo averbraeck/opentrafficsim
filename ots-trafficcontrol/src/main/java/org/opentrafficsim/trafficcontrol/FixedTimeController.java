@@ -2,6 +2,7 @@ package org.opentrafficsim.trafficcontrol;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -58,6 +59,7 @@ public class FixedTimeController extends AbstractTrafficController
      * @param signalGroups List&lt;SignalGroup&gt;; signal groups
      * @throws SimRuntimeException simulator is past zero time
      */
+    @SuppressWarnings("synthetic-access")
     public FixedTimeController(final String id, final OTSSimulatorInterface simulator, final Network network,
             final Duration cycleTime, final Duration offset, final List<SignalGroup> signalGroups) throws SimRuntimeException
     {
@@ -69,6 +71,15 @@ public class FixedTimeController extends AbstractTrafficController
         Throw.whenNull(signalGroups, "Signal groups may not be null.");
         Throw.when(cycleTime.le0(), IllegalArgumentException.class, "Cycle time must be positive.");
         Throw.when(signalGroups.isEmpty(), IllegalArgumentException.class, "Signal groups may not be empty.");
+        for (int i = 0; i < signalGroups.size(); i++)
+        {
+            for (int j = i + 1; j < signalGroups.size(); j++)
+            {
+                Throw.when(!Collections.disjoint(signalGroups.get(i).trafficLights, signalGroups.get(j).trafficLights),
+                        IllegalArgumentException.class, "A traffic light is in both signal group %s and signal group %s.",
+                        signalGroups.get(i).getId(), signalGroups.get(j).getId());
+            }
+        }
         this.cycleTime = cycleTime;
         this.offset = offset;
         this.signalGroups = signalGroups;
@@ -82,8 +93,7 @@ public class FixedTimeController extends AbstractTrafficController
      * @throws SimRuntimeException when traffic light does not exist in the network
      */
     @SuppressWarnings("unused")
-    private void setup(final OTSSimulatorInterface simulator, final Network network)
-            throws SimRuntimeException
+    private void setup(final OTSSimulatorInterface simulator, final Network network) throws SimRuntimeException
     {
         for (SignalGroup signalGroup : this.signalGroups)
         {
@@ -178,6 +188,7 @@ public class FixedTimeController extends AbstractTrafficController
         /**
          * @return id.
          */
+        @Override
         public String getId()
         {
             return this.id;
@@ -296,6 +307,7 @@ public class FixedTimeController extends AbstractTrafficController
         /**
          * Clones the object for a cloned simulation.
          */
+        @Override
         public SignalGroup clone()
         {
             return new SignalGroup(getId(), this.trafficLightIds.toList(), this.offset, this.preGreen, this.green, this.yellow);

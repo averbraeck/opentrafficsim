@@ -38,6 +38,7 @@ public abstract class AbstractTrafficController extends EventProducer implements
     /**
      * @return id.
      */
+    @Override
     public String getId()
     {
         return this.id;
