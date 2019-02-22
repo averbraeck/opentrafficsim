@@ -100,6 +100,7 @@
             <schemaInclude>ots-types.xsd</schemaInclude>
             <schemaInclude>ots-definitions.xsd</schemaInclude>
             <schemaInclude>ots-network.xsd</schemaInclude>
+            <schemaInclude>ots-control.xsd</schemaInclude>
             <schemaExclude>ots-demand.xsd</schemaExclude>
            </schemaIncludes>
           <schemaExcludes>
