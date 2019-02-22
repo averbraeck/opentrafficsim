@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
+
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
+
+  <xsd:include schemaLocation="ots-definitions.xsd" />
+  <xsd:include schemaLocation="ots-types.xsd" />
+
+  <xsd:element name="CONTROL">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="FIXEDTIME" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="SIGNALGROUP" minOccurs="1" maxOccurs="unbounded">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="TRAFFICLIGHT" minOccurs="1" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:attribute name="ID" type="xsd:string" use="required" />
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                  <xsd:attribute name="ID" type="xsd:string" use="required" />
+                  <xsd:attribute name="OFFSET" type="TIMETYPE" use="required" />
+                  <xsd:attribute name="PREGREEN" type="TIMETYPE" use="optional" />
+                  <xsd:attribute name="GREEN" type="TIMETYPE" use="required" />
+                  <xsd:attribute name="YELLOW" type="TIMETYPE" use="required" />
+                </xsd:complexType>
+              </xsd:element>     
+            </xsd:sequence>
+            <xsd:attribute name="CYCLETIME" type="TIMETYPE" use="required" />
+            <xsd:attribute name="OFFSET" type="TIMETYPE" use="optional" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  
+</xsd:schema>
