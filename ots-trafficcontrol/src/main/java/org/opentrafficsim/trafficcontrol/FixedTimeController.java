@@ -80,7 +80,7 @@ public class FixedTimeController extends AbstractTrafficController
         {
             for (SignalGroup signalGroup2 : signalGroups)
             {
-                // TODO: implement disjoint in ImmutableCollections.
+                // TODO: implement disjoint in ImmutableCollections; the implementation below is slow and complex.
                 Set<String> setA = null;
                 if (!signalGroup1.equals(signalGroup2))
                 {
@@ -366,8 +366,8 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
-         * Change color of a list of traffic lights.
-         * @param trafficLightColor traffic light color
+         * Change the color of our traffic lights.
+         * @param trafficLightColor the new traffic light color
          */
         private void setTrafficLights(final TrafficLightColor trafficLightColor)
         {
