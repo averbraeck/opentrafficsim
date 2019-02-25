@@ -3,17 +3,23 @@ package org.opentrafficsim.trafficcontrol;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.event.EventInterface;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
+import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
@@ -21,9 +27,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.InvisibleObjectInterface;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
 
 /**
  * Fixed time traffic light control.
@@ -61,7 +64,7 @@ public class FixedTimeController extends AbstractTrafficController
      * @param signalGroups Set&lt;SignalGroup&gt;; signal groups
      * @throws SimRuntimeException simulator is past zero time
      */
-    @SuppressWarnings("synthetic-access")
+    @SuppressWarnings({ "synthetic-access", "unchecked" })
     public FixedTimeController(final String id, final OTSSimulatorInterface simulator, final Network network,
             final Duration cycleTime, final Duration offset, final Set<SignalGroup> signalGroups) throws SimRuntimeException
     {
@@ -77,9 +80,23 @@ public class FixedTimeController extends AbstractTrafficController
         {
             for (SignalGroup signalGroup2 : signalGroups)
             {
-                Throw.when(!Collections.disjoint(signalGroup1.trafficLights, signalGroup2.trafficLights),
-                        IllegalArgumentException.class, "A traffic light is in both signal group %s and signal group %s.",
-                        signalGroup1.getId(), signalGroup2.getId());
+                // TODO: implement disjoint in ImmutableCollections.
+                Set<String> setA = null;
+                if (!signalGroup1.equals(signalGroup2))
+                {
+                    if (null == setA)
+                    {
+                        setA = new HashSet<String>(signalGroup1.trafficLightIds.toCollection());
+                    }
+                    Set<String> setB = new HashSet<String>(signalGroup2.trafficLightIds.toCollection());
+                    Throw.when(!Collections.disjoint(setA, setB), IllegalArgumentException.class,
+                            "A traffic light is in both signal group %s and signal group %s.", signalGroup1.getId(),
+                            signalGroup2.getId());
+                    // Throw.when(!ImmutableCollections.disjoint(signalGroup1.trafficLightIds, signalGroup2.trafficLightIds),
+                    // IllegalArgumentException.class,
+                    // "A traffic light is in both signal group %s and signal group %s.", signalGroup1.getId(),
+                    // signalGroup2.getId());
+                }
             }
         }
         this.cycleTime = cycleTime;
@@ -102,7 +119,7 @@ public class FixedTimeController extends AbstractTrafficController
             signalGroup.startup(this.offset, this.cycleTime, simulator, network);
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void notify(final EventInterface event) throws RemoteException
@@ -122,7 +139,8 @@ public class FixedTimeController extends AbstractTrafficController
         }
         try
         {
-            return new FixedTimeController(getId(), newSimulator, newNetwork, this.cycleTime, this.offset, signalGroupsCloned);
+            return new FixedTimeController(getId(), newSimulator, newNetwork, this.cycleTime, this.offset,
+                    signalGroupsCloned);
         }
         catch (SimRuntimeException exception)
         {
@@ -136,7 +154,7 @@ public class FixedTimeController extends AbstractTrafficController
     {
         return getId();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()
@@ -147,8 +165,7 @@ public class FixedTimeController extends AbstractTrafficController
 
     /**
      * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 21 feb. 2019 <br>
@@ -163,7 +180,7 @@ public class FixedTimeController extends AbstractTrafficController
         private final String id;
 
         /** Traffic light ids. */
-        private final ImmutableList<String> trafficLightIds;
+        private final ImmutableSet<String> trafficLightIds;
 
         /** Offset from start of cycle. */
         private final Duration offset;
@@ -196,7 +213,7 @@ public class FixedTimeController extends AbstractTrafficController
          * @param green Duration; green duration
          * @param yellow Duration; yellow duration
          */
-        public SignalGroup(final String id, final List<String> trafficLightIds, final Duration offset, final Duration green,
+        public SignalGroup(final String id, final Set<String> trafficLightIds, final Duration offset, final Duration green,
                 final Duration yellow)
         {
             this(id, trafficLightIds, offset, Duration.ZERO, green, yellow);
@@ -211,18 +228,21 @@ public class FixedTimeController extends AbstractTrafficController
          * @param green Duration; green duration
          * @param yellow Duration; yellow duration
          */
-        public SignalGroup(final String id, final List<String> trafficLightIds, final Duration offset, final Duration preGreen,
-                final Duration green, final Duration yellow)
+        public SignalGroup(final String id, final Set<String> trafficLightIds, final Duration offset,
+                final Duration preGreen, final Duration green, final Duration yellow)
         {
             Throw.whenNull(id, "Id may not be null.");
             Throw.whenNull(trafficLightIds, "Traffic light ids may not be null.");
             Throw.whenNull(offset, "Offset may not be null.");
             Throw.whenNull(preGreen, "Pre-green may not be null.");
+            Throw.when(preGreen.lt(Duration.ZERO), IllegalArgumentException.class, "Pre green duration may not be negative");
             Throw.whenNull(green, "Green may not be null.");
+            Throw.when(green.lt(Duration.ZERO), IllegalArgumentException.class, "Green duration may not be negative");
             Throw.whenNull(yellow, "Yellow may not be null.");
+            Throw.when(yellow.lt(Duration.ZERO), IllegalArgumentException.class, "Yellow duration may not be negative");
             Throw.when(trafficLightIds.isEmpty(), IllegalArgumentException.class, "Traffic light ids may not be empty.");
             this.id = id;
-            this.trafficLightIds = new ImmutableArrayList<>(trafficLightIds, Immutable.COPY);
+            this.trafficLightIds = new ImmutableHashSet<>(trafficLightIds, Immutable.COPY);
             this.offset = offset;
             this.preGreen = preGreen;
             this.green = green;
@@ -248,6 +268,7 @@ public class FixedTimeController extends AbstractTrafficController
         public void startup(final Duration controllerOffset, final Duration cycleTime, final OTSSimulatorInterface sim,
                 final Network network) throws SimRuntimeException
         {
+            this.simulator = sim;
             double totalOffsetSI = this.offset.si + controllerOffset.si;
             while (totalOffsetSI < 0.0)
             {
@@ -262,12 +283,20 @@ public class FixedTimeController extends AbstractTrafficController
             for (String trafficLightId : this.trafficLightIds)
             {
                 TrafficLight trafficLight = trafficLightObjects.get(trafficLightId);
-                Throw.when(trafficLight == null, SimRuntimeException.class,
-                        "Traffic light in fixed time controller could not be found.");
+                if (null == trafficLight) // Traffic light not found using id; try to find it by full id
+                {
+                    trafficLight = trafficLightObjects.get(network.getId() + "." + trafficLightId);
+                }
+                Throw.when(trafficLight == null, SimRuntimeException.class, "Traffic light \"" + trafficLightId
+                        + "\" in fixed time controller could not be found in network " + network.getId() + ".");
                 this.trafficLights.add(trafficLight);
             }
 
-            Duration inCycleTime = Duration.createSI(cycleTime.si - totalOffset.si);
+            Duration inCycleTime = Duration.createSI(totalOffset.si - cycleTime.si);
+            while (inCycleTime.si < 0)
+            {
+                inCycleTime = inCycleTime.plus(cycleTime);
+            }
             Duration duration;
             if (inCycleTime.si < this.preGreen.si)
             {
@@ -298,33 +327,33 @@ public class FixedTimeController extends AbstractTrafficController
         @SuppressWarnings("unused")
         private void updateColors()
         {
-            TrafficLightColor nextColor = null;
             Duration duration = Duration.ZERO;
+            TrafficLightColor color = this.trafficLights.get(0).getTrafficLightColor();
             while (duration.le0())
             {
-                switch (this.trafficLights.get(0).getTrafficLightColor())
+                switch (color)
                 {
                     case PREGREEN:
-                        nextColor = TrafficLightColor.GREEN;
-                        duration = this.preGreen;
+                        color = TrafficLightColor.GREEN;
+                        duration = this.green;
                         break;
                     case GREEN:
-                        nextColor = TrafficLightColor.YELLOW;
+                        color = TrafficLightColor.YELLOW;
                         duration = this.yellow;
                         break;
                     case YELLOW:
-                        nextColor = TrafficLightColor.RED;
+                        color = TrafficLightColor.RED;
                         duration = this.red;
                         break;
                     case RED:
-                        nextColor = TrafficLightColor.PREGREEN;
+                        color = TrafficLightColor.PREGREEN;
                         duration = this.preGreen;
                         break;
                     default:
                         throw new RuntimeException("Cannot happen.");
                 }
             }
-            setTrafficLights(nextColor);
+            setTrafficLights(color);
             try
             {
                 this.simulator.scheduleEventRel(duration, this, this, "updateColors", null);
@@ -354,7 +383,8 @@ public class FixedTimeController extends AbstractTrafficController
         @Override
         public SignalGroup clone()
         {
-            return new SignalGroup(getId(), this.trafficLightIds.toList(), this.offset, this.preGreen, this.green, this.yellow);
+            return new SignalGroup(getId(), this.trafficLightIds.toSet(), this.offset, this.preGreen, this.green,
+                    this.yellow);
         }
 
         /** {@inheritDoc} */
@@ -398,6 +428,62 @@ public class FixedTimeController extends AbstractTrafficController
             return true;
         }
 
+        /**
+         * @return trafficLights.
+         */
+        public final ImmutableList<TrafficLight> getTrafficLights()
+        {
+            return new ImmutableArrayList<TrafficLight>(this.trafficLights);
+        }
+
+        /**
+         * @return red.
+         */
+        public final Duration getRed()
+        {
+            return this.red;
+        }
+
+        /**
+         * @return trafficLightIds.
+         */
+        public final ImmutableSet<String> getTrafficLightIds()
+        {
+            return this.trafficLightIds;
+        }
+
+        /**
+         * @return offset.
+         */
+        public final Duration getOffset()
+        {
+            return this.offset;
+        }
+
+        /**
+         * @return preGreen.
+         */
+        public final Duration getPreGreen()
+        {
+            return this.preGreen;
+        }
+
+        /**
+         * @return green.
+         */
+        public final Duration getGreen()
+        {
+            return this.green;
+        }
+
+        /**
+         * @return yellow.
+         */
+        public final Duration getYellow()
+        {
+            return this.yellow;
+        }
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -405,7 +491,31 @@ public class FixedTimeController extends AbstractTrafficController
             return "SignalGroup [id=" + this.id + ", trafficLightIds=" + this.trafficLightIds + ", offset=" + this.offset
                     + ", preGreen=" + this.preGreen + ", green=" + this.green + ", yellow=" + this.yellow + "]";
         }
-        
+
+    }
+
+    /**
+     * @return cycleTime.
+     */
+    public final Duration getCycleTime()
+    {
+        return this.cycleTime;
+    }
+
+    /**
+     * @return offset.
+     */
+    public final Duration getOffset()
+    {
+        return this.offset;
+    }
+
+    /**
+     * @return signalGroups.
+     */
+    public final Set<SignalGroup> getSignalGroups()
+    {
+        return this.signalGroups;
     }
 
 }
