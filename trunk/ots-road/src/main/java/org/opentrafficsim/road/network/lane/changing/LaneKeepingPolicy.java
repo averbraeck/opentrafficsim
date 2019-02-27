@@ -15,11 +15,11 @@ package org.opentrafficsim.road.network.lane.changing;
 public enum LaneKeepingPolicy
 {
     /** Constant to indicate that the general policy is to keep right. */
-    KEEP_RIGHT,
+    KEEPRIGHT,
 
     /** Constant to indicate that the general policy is to keep left. */
-    KEEP_LEFT,
+    KEEPLEFT,
 
     /** Constant to indicate that the general policy is to keep lane. */
-    KEEP_LANE;
+    KEEPLANE;
 }

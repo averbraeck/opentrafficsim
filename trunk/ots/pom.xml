@@ -45,6 +45,7 @@
         <module>../ots-sim0mq-kpi</module>
         <module>../ots-sim0mq-road</module>
         <module>../ots-sim0mq-multimodal</module>
+        <module>../ots-xsd</module>
         <module>../ots-parser-xml</module>
         <module>../ots-parser-opendrive</module>
         <module>../ots-parser-osm</module>
@@ -69,7 +70,7 @@
     <tinylog.version>1.3.5</tinylog.version>
     <ots.version>${project.version}</ots.version>
     <djunits.version>3.00.08</djunits.version>
-    <djutils.version>1.00.03</djutils.version>
+    <djutils.version>1.00.05</djutils.version>
     <dsol.version>3.03.05</dsol.version>
     <sim0mq.version>0.05.00</sim0mq.version>
     <junit.version>4.12</junit.version>
@@ -109,6 +110,7 @@
     <wagon.maven.version>2.0.0</wagon.maven.version>
     <wagon.ssh.version>3.3.1</wagon.ssh.version>
     <wagon.ftp.version>3.3.1</wagon.ftp.version>
+    <maven-jaxb2.version>0.14.0</maven-jaxb2.version>
 
   </properties>
 
@@ -333,6 +335,7 @@
             <link>https://opentrafficsim.org/docs/current/ots-aimsun/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-aimsun-proto/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-aimsun-demo/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-xsd/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-xml/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-opendrive/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-osm/apidocs</link>
@@ -550,6 +553,7 @@
             <link>https://opentrafficsim.org/docs/current/ots-aimsun/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-aimsun-proto/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-aimsun-demo/apidocs</link>
+            <link>https://opentrafficsim.org/docs/current/ots-xsd/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-xml/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-opendrive/apidocs</link>
             <link>https://opentrafficsim.org/docs/current/ots-parser-osm/apidocs</link>
@@ -939,6 +943,12 @@
       <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-sim0mq-multimodal</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-xsd</artifactId>
         <version>${ots.version}</version>
       </dependency>
 

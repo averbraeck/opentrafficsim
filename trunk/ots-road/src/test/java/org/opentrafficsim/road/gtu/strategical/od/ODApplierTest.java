@@ -158,7 +158,7 @@ public class ODApplierTest
         OTSNode nodeA = new OTSNode(this.network, "A", pointA);
         OTSNode nodeB = new OTSNode(this.network, "B", pointB);
         CrossSectionLink linkAB = new CrossSectionLink(this.network, "AB", nodeA, nodeB, LinkType.ROAD,
-                new OTSLine3D(pointA, pointB), this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
+                new OTSLine3D(pointA, pointB), this.simulator, LaneKeepingPolicy.KEEPRIGHT);
         this.lanes.put("lane1", new Lane(linkAB, "lane1", Length.createSI(1.75), Length.createSI(3.5), LaneType.HIGHWAY,
                 new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly()));
         this.lanes.put("lane2", new Lane(linkAB, "lane2", Length.createSI(-1.75), Length.createSI(3.5), LaneType.HIGHWAY,

@@ -12,10 +12,6 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import org.djunits.unit.AngleUnit;
-import org.djunits.unit.DirectionUnit;
-import org.djunits.value.vdouble.scalar.Angle;
-import org.djunits.value.vdouble.scalar.Direction;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -49,15 +45,11 @@ public class OTSNodeTest
     public final void testOTSNode() throws NetworkException, OTSGeometryException
     {
         Network network = new OTSNetwork("Node test network");
-        Direction direction = new Direction(2.3, DirectionUnit.NORTH_RADIAN);
-        Angle slope = new Angle(10, AngleUnit.PERCENT);
         OTSPoint3D point1 = new OTSPoint3D(20, 40, 60);
-        OTSNode node1 = new OTSNode(network, "node 1", point1, direction, slope);
+        OTSNode node1 = new OTSNode(network, "node 1", point1);
         assertEquals("network matches", network, node1.getNetwork());
         assertEquals("name matches", "node 1", node1.getId());
         assertEquals("point matches", point1, node1.getPoint());
-        assertEquals("direction matches", direction, node1.getDirection());
-        assertEquals("slope matches", slope, node1.getSlope());
         assertEquals("getLocation", new DirectedPoint(point1.x, point1.y, point1.z), node1.getLocation());
         assertTrue("name is in toString", node1.toString().contains(node1.getId()));
         OTSPoint3D point2 = new OTSPoint3D(120, 240, 60);
@@ -65,11 +57,8 @@ public class OTSNodeTest
         assertEquals("network matches", network, node2.getNetwork());
         assertEquals("name matches", "node 2", node2.getId());
         assertEquals("point matches", point2, node2.getPoint());
-        assertEquals("direction matches", Direction.ZERO, node2.getDirection());
-        assertEquals("slope matches", Angle.ZERO, node2.getSlope());
         assertTrue("Node 1 matches itself", node1.equals(node1));
         assertFalse("Node 1 does not match null", node1.equals(null));
-        assertFalse("Node 1 does not match some String", node1.equals("Hello World!"));
         assertFalse("Node 1 does not match node 2", node1.equals(node2));
         // Create another node with name node 1 in another network
         Network otherNetwork = new OTSNetwork("Node test network 2");

@@ -278,7 +278,6 @@ public class XMLNetworkWriter
             NODE node = new NODE();
             node.setNAME(inputNode.name);
             node.setCOORDINATE(inputNode.coordinate.toString());
-            node.setANGLE(inputNode.angle.getInUnit(DirectionUnit.EAST_DEGREE) + " deg");
             nodes.add(node);
         }
     }

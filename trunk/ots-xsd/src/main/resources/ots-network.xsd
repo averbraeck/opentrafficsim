@@ -19,8 +19,8 @@
   <xsd:element name="NODE">
     <xsd:complexType>
       <xsd:attribute name="NAME" type="xsd:ID" use="required" />
-      <xsd:attribute name="COORDINATE" type="COORDINATETYPE" use="optional" />
-      <xsd:attribute name="ANGLE" type="ANGLETYPE" use="optional" />
+      <xsd:attribute name="COORDINATE" type="COORDINATETYPE" use="required" />
+      <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="optional" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -29,32 +29,35 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
-          <xsd:element name="BEZIER" />
+          <xsd:element name="STRAIGHT" />
+          <xsd:element name="BEZIER">
+            <xsd:complexType>
+              <xsd:attribute name="STARTDIRECTION" type="DIRECTIONTYPE" use="optional" />
+              <xsd:attribute name="ENDDIRECTION" type="DIRECTIONTYPE" use="optional" />
+              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64"/>
+            </xsd:complexType>
+          </xsd:element>
           <xsd:element name="CLOTHOID">
             <xsd:complexType>
-              <xsd:attribute name="STARTANGLE" type="ANGLETYPE" use="optional" />
+              <xsd:attribute name="STARTDIRECTION" type="DIRECTIONTYPE" use="optional" />
               <xsd:attribute name="STARTCURVATURE" type="PERLENGTHTYPE" use="required" />
+              <xsd:attribute name="ENDDIRECTION" type="DIRECTIONTYPE" use="optional" />
               <xsd:attribute name="ENDCURVATURE" type="PERLENGTHTYPE" use="required" />
               <xsd:attribute name="LENGTH" type="LENGTHTYPE" use="optional" />
               <xsd:attribute name="ENDELEVATION" type="LENGTHTYPE" use="optional" />
-              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="STRAIGHT">
-            <xsd:complexType>
-              <xsd:attribute name="LENGTH" type="LENGTHTYPE" use="optional" />
+              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="ARC">
             <xsd:complexType>
               <xsd:attribute name="RADIUS" type="LENGTHTYPE" use="required" />
               <xsd:attribute name="DIRECTION" type="LEFTRIGHTTYPE" use="required" />
+              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="POLYLINE">
             <xsd:complexType>
-              <xsd:attribute name="LENGTH" type="LENGTHTYPE" use="optional" />
-              <xsd:attribute name="INTERMEDIATEPOINTS" type="COORDINATELISTTYPE" use="optional" />
+              <xsd:attribute name="INTERMEDIATEPOINTS" type="COORDINATELISTTYPE" use="required" />
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -68,7 +71,7 @@
               <xsd:complexType>
                 <xsd:attribute name="LANE" type="xsd:string" use="required" />
                 <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
-                <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="optional" />
+                <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="optional" />
                 <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
                 <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
               </xsd:complexType>
@@ -86,8 +89,8 @@
                 <xsd:attribute name="IAT" type="TIMEDISTTYPE" use="required" />
                 <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required" />
                 <xsd:attribute name="MAXGTU" type="xsd:double" use="optional" />
-                <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional" />
-                <xsd:attribute name="ENDTIME" type="TIMETYPE" use="optional" />
+                <xsd:attribute name="STARTTIME" type="DURATIONTYPE" use="optional" />
+                <xsd:attribute name="ENDTIME" type="DURATIONTYPE" use="optional" />
                 <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
                 <xsd:attribute name="ROUTEMIX" type="xsd:string" use="optional" />
                 <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required" />
@@ -163,11 +166,11 @@
       <xsd:attribute name="NODESTART" type="xsd:IDREF" use="required" />
       <xsd:attribute name="NODEEND" type="xsd:IDREF" use="required" />
       <xsd:attribute name="LAYOUT" type="xsd:string" use="optional" /> <!-- was ROADLAYOUT ==> error -->
-      <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" />
-      <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" />
-      <xsd:attribute name="ROTATIONSTART" type="ANGLETYPE" use="optional" />
-      <xsd:attribute name="ROTATIONEND" type="ANGLETYPE" use="optional" />
-      <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
+      <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" default="0.0 m" />
+      <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" default="0.0 m" />
+      <xsd:attribute name="ROTATIONSTART" type="DIRECTIONTYPE" use="optional" />
+      <xsd:attribute name="ROTATIONEND" type="DIRECTIONTYPE" use="optional" />
+      <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional" default="KEEPRIGHT" />
       <xsd:attribute name="PRIORITY" type="PRIORITYTYPE" use="optional" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>

@@ -117,7 +117,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
         {
             this.lanes.add((Lane) cse);
             fireEvent(LANE_ADD_EVENT,
-                    new Object[] { getNetwork().getId(), getId(), cse.getId(), (Lane) cse, this.lanes.indexOf(cse) });
+                    new Object[] {getNetwork().getId(), getId(), cse.getId(), (Lane) cse, this.lanes.indexOf(cse)});
         }
     }
 
@@ -214,8 +214,9 @@ public class CrossSectionLink extends OTSLink implements Serializable
     @Override
     public final String toString()
     {
-        return "CrossSectionLink [crossSectionElementList=" + this.crossSectionElementList + ", lanes=" + this.lanes
-                + ", laneKeepingPolicy=" + this.laneKeepingPolicy + "]";
+        return "CrossSectionLink [name=" + this.getId() + ", nodes=" + getStartNode().getId() + "-" + getEndNode().getId()
+                + ", crossSectionElementList=" + this.crossSectionElementList + ", lanes=" + this.lanes + ", laneKeepingPolicy="
+                + this.laneKeepingPolicy + "]";
     }
 
     /** {@inheritDoc} */

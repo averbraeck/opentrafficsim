@@ -9,9 +9,6 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.djunits.value.vdouble.scalar.Angle;
-import org.djunits.value.vdouble.scalar.Direction;
-import org.djutils.exceptions.Throw;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -42,14 +39,6 @@ class NodeTag implements Serializable
     /** Coordinate (null at first, can be calculated later when connected to a link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSPoint3D coordinate = null;
-
-    /** Absolute angle of the node. 0 is "East", pi/2 = "North". */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    Direction angle = null;
-
-    /** TODO slope as an angle. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle slope = null;
 
     /** The calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -89,9 +78,9 @@ class NodeTag implements Serializable
      */
     private static void generateOTSNode(final VissimNetworkLaneParser parser, final NodeTag nodeTag) throws NetworkException
     {
-        if (nodeTag.coordinate != null && nodeTag.angle != null)
+        if (nodeTag.coordinate != null)
         {
-            // only make a node if we know the coordinate and angle. Otherwise, wait till we can calculate it.
+            // only make a node if we know the coordinate. Otherwise, wait till we can calculate it.
             try
             {
                 makeOTSNode(nodeTag, parser);
@@ -138,15 +127,12 @@ class NodeTag implements Serializable
     static OTSNode makeOTSNode(final NodeTag nodeTag, final VissimNetworkLaneParser parser)
             throws NetworkException, NamingException
     {
-        Throw.whenNull(nodeTag.angle, "NodeTag: " + nodeTag.name + " angle == null");
         if (nodeTag.node != null)
         {
             nodeTag.node.getNetwork().removeNode(nodeTag.node);
         }
         String id = nodeTag.name;
-        Direction angle = nodeTag.angle;
-        Angle slope = nodeTag.slope == null ? Angle.ZERO : nodeTag.slope;
-        OTSNode node = new OTSNode(parser.getNetwork(), id, nodeTag.coordinate, angle, slope);
+        OTSNode node = new OTSNode(parser.getNetwork(), id, nodeTag.coordinate);
         nodeTag.node = node;
         return node;
     }

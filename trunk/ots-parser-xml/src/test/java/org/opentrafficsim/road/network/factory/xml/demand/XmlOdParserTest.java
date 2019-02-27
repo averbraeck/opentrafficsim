@@ -111,7 +111,7 @@ public class XmlOdParserTest
         this.network.addRoute(GTUType.VEHICLE, new Route("CB").addNode(C).addNode(B));
         this.network.addRoute(GTUType.VEHICLE, new Route("CB2").addNode(C).addNode(A).addNode(B));
         CrossSectionLink AB = new CrossSectionLink(this.network, "AB", A, B, LinkType.FREEWAY,
-                new OTSLine3D(A.getPoint(), B.getPoint()), this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
+                new OTSLine3D(A.getPoint(), B.getPoint()), this.simulator, LaneKeepingPolicy.KEEPRIGHT);
         new Lane(AB, "left", Length.ZERO, Length.ZERO, LaneType.FREEWAY, new HashMap<>(), new OvertakingConditions.LeftOnly());
     }
 

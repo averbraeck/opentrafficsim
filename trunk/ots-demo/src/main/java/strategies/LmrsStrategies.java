@@ -712,9 +712,9 @@ public class LmrsStrategies implements EventListenerInterface
                 OTSNode nodeB = new OTSNode(net, "B", pointB);
                 OTSNode nodeC = new OTSNode(net, "C", pointC);
                 CrossSectionLink linkAB = new CrossSectionLink(net, "AB", nodeA, nodeB, LinkType.FREEWAY,
-                        new OTSLine3D(pointA, pointB), getSimulator(), LaneKeepingPolicy.KEEP_RIGHT);
+                        new OTSLine3D(pointA, pointB), getSimulator(), LaneKeepingPolicy.KEEPRIGHT);
                 CrossSectionLink linkBC = new CrossSectionLink(net, "BC", nodeB, nodeC, LinkType.FREEWAY,
-                        new OTSLine3D(pointB, pointC), getSimulator(), LaneKeepingPolicy.KEEP_RIGHT);
+                        new OTSLine3D(pointB, pointC), getSimulator(), LaneKeepingPolicy.KEEPRIGHT);
                 Lane laneAB1 = new Lane(linkAB, "laneAB1", Length.createSI(0.0), Length.createSI(3.5), LaneType.HIGHWAY,
                         new Speed(120, SpeedUnit.KM_PER_HOUR), new OvertakingConditions.LeftOnly());
                 Lane laneAB2 = new Lane(linkAB, "laneAB2", Length.createSI(3.5), Length.createSI(3.5), LaneType.HIGHWAY,

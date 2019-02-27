@@ -196,7 +196,7 @@ final class LinkTag implements Serializable
 
                 // Lane keeping± currently with this default behaviour
                 // TODO: differentiate by road type
-                linkTag.laneKeepingPolicy = LaneKeepingPolicy.KEEP_LANE;
+                linkTag.laneKeepingPolicy = LaneKeepingPolicy.KEEPLANE;
 
                 if (attributes.getNamedItem("no") == null)
                 {

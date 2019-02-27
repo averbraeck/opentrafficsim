@@ -27,4 +27,7 @@ public final class Cat
     /** ROAD project. */
     public static final LogCategory ROAD = new LogCategory("ROAD");
 
+    /** PARSER projects. */
+    public static final LogCategory PARSER = new LogCategory("PARSER");
+
 }

@@ -136,13 +136,13 @@ public class SteeringSimulation extends AbstractSimulationScript
 
         // links
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, LinkType.FREEWAY,
-                new OTSLine3D(pointA, pointB), sim, LaneKeepingPolicy.KEEP_RIGHT);
+                new OTSLine3D(pointA, pointB), sim, LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink linkBC = new CrossSectionLink(network, "BC", nodeB, nodeC, LinkType.FREEWAY,
-                new OTSLine3D(pointB, pointC), sim, LaneKeepingPolicy.KEEP_RIGHT);
+                new OTSLine3D(pointB, pointC), sim, LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink linkCD = new CrossSectionLink(network, "CD", nodeC, nodeD, LinkType.FREEWAY,
-                new OTSLine3D(pointC, pointD), sim, LaneKeepingPolicy.KEEP_RIGHT);
+                new OTSLine3D(pointC, pointD), sim, LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink linkEB = new CrossSectionLink(network, "EB", nodeE, nodeB, LinkType.FREEWAY,
-                Bezier.cubic(nodeE.getLocation(), nodeB.getLocation()), sim, LaneKeepingPolicy.KEEP_RIGHT);
+                Bezier.cubic(nodeE.getLocation(), nodeB.getLocation()), sim, LaneKeepingPolicy.KEEPRIGHT);
 
         // lanes and stripes
         int n = getIntegerProperty("numberOfLanes");

@@ -37,15 +37,15 @@ public final class LaneAttributes
     {
         if (lkpStr.equals("KEEPRIGHT"))
         {
-            return LaneKeepingPolicy.KEEP_RIGHT;
+            return LaneKeepingPolicy.KEEPRIGHT;
         }
         else if (lkpStr.equals("KEEPLEFT"))
         {
-            return LaneKeepingPolicy.KEEP_LEFT;
+            return LaneKeepingPolicy.KEEPLEFT;
         }
         else if (lkpStr.equals("KEEPLANE"))
         {
-            return LaneKeepingPolicy.KEEP_LANE;
+            return LaneKeepingPolicy.KEEPLANE;
         }
         throw new NetworkException("Unknown lane keeping policy string: " + lkpStr);
     }

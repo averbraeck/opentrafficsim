@@ -132,7 +132,7 @@
               <xsd:attribute name="LANETYPE" type="xsd:string" use="optional" />
               <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
-              <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="required" />
+              <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="required" />
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
               <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
             </xsd:complexType>
