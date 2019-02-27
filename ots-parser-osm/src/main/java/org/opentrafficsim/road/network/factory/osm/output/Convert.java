@@ -155,7 +155,7 @@ public final class Convert
                 continue;
             }
             result = new CrossSectionLink(network, linkId, start, end, LinkType.ROAD, designLine, simulator,
-                    LaneKeepingPolicy.KEEP_RIGHT);
+                    LaneKeepingPolicy.KEEPRIGHT);
             return result;
         }
     }

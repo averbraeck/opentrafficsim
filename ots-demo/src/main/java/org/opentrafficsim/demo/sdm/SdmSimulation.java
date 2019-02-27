@@ -205,7 +205,7 @@ public class SdmSimulation extends AbstractSimulationScript
         OTSNode nodeE = new OTSNode(this.network, "E", pointE);
         OTSNode nodeF = new OTSNode(this.network, "F", pointF);
         LinkType type = LinkType.FREEWAY;
-        LaneKeepingPolicy policy = LaneKeepingPolicy.KEEP_RIGHT;
+        LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.createSI(3.5);
         LaneType laneType = LaneType.FREEWAY;
         Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);

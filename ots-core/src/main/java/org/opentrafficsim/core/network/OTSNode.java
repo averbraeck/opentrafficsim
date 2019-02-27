@@ -11,8 +11,6 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import org.djunits.value.vdouble.scalar.Angle;
-import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
@@ -49,12 +47,6 @@ public class OTSNode implements Node, Locatable, Serializable
     /** The point. */
     private final OTSPoint3D point;
 
-    /** The 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
-    private final Direction direction;
-
-    /** The slope as an angle. Horizontal is 0 degrees. */
-    private final Angle slope;
-
     /** The links connected to the Node. */
     private final Set<Link> links = new LinkedHashSet<>();
 
@@ -74,38 +66,20 @@ public class OTSNode implements Node, Locatable, Serializable
      * @param network Network; the network.
      * @param id String; the id of the Node.
      * @param point OTSPoint3D; the point with usually an x and y setting.
-     * @param direction Direction; the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
-     * @param slope Angle; the slope as an angle. Horizontal is 0 degrees.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSNode(final Network network, final String id, final OTSPoint3D point, final Direction direction, final Angle slope)
+    public OTSNode(final Network network, final String id, final OTSPoint3D point)
             throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
         Throw.whenNull(point, "point cannot be null");
-        Throw.whenNull(direction, "direction cannot be null");
-        Throw.whenNull(slope, "slope cannot be null");
 
         this.network = network;
         this.id = id;
         this.point = point;
-        this.direction = direction;
-        this.slope = slope;
 
         this.network.addNode(this);
-    }
-
-    /**
-     * Construction of a Node.
-     * @param network Network; the network.
-     * @param id String; the id of the Node.
-     * @param point OTSPoint3D; the point with usually an x and y setting.
-     * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
-     */
-    public OTSNode(final Network network, final String id, final OTSPoint3D point) throws NetworkException
-    {
-        this(network, id, point, Direction.ZERO, Angle.ZERO);
     }
 
     /** {@inheritDoc} */
@@ -354,20 +328,6 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Direction getDirection()
-    {
-        return this.direction;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Angle getSlope()
-    {
-        return this.slope;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public DirectedPoint getLocation()
     {
@@ -434,7 +394,7 @@ public class OTSNode implements Node, Locatable, Serializable
     public OTSNode clone1(final Network newNetwork, final SimulatorInterface.TimeDoubleUnit newSimulator)
             throws NetworkException
     {
-        return new OTSNode(newNetwork, this.id, this.point, this.direction, this.slope);
+        return new OTSNode(newNetwork, this.id, this.point);
     }
 
     /**

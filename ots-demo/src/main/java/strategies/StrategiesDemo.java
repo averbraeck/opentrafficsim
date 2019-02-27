@@ -503,7 +503,7 @@ public class StrategiesDemo extends AbstractSimulationScript
             double angle = Math.PI * (i) / (coordsHalf1.length - 1);
             coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
-        List<Lane> lanes1 = new LaneFactory(net, nodeB, nodeA, LinkType.FREEWAY, sim, LaneKeepingPolicy.KEEP_LEFT,
+        List<Lane> lanes1 = new LaneFactory(net, nodeB, nodeA, LinkType.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
                 new OTSLine3D(coordsHalf1)).leftToRight(0.0, Length.createSI(3.5), LaneType.FREEWAY, speedLimit)
                         .addLanes(Permeable.BOTH).getLanes();
         OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
@@ -512,7 +512,7 @@ public class StrategiesDemo extends AbstractSimulationScript
             double angle = Math.PI + Math.PI * (i) / (coordsHalf2.length - 1);
             coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
         }
-        List<Lane> lanes2 = new LaneFactory(net, nodeA, nodeB, LinkType.FREEWAY, sim, LaneKeepingPolicy.KEEP_LEFT,
+        List<Lane> lanes2 = new LaneFactory(net, nodeA, nodeB, LinkType.FREEWAY, sim, LaneKeepingPolicy.KEEPLEFT,
                 new OTSLine3D(coordsHalf2)).leftToRight(0.0, Length.createSI(3.5), LaneType.FREEWAY, speedLimit)
                         .addLanes(Permeable.BOTH).getLanes();
 

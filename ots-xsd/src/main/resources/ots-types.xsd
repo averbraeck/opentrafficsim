@@ -65,19 +65,25 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="PERTIMETYPE">
+  <xsd:simpleType name="DURATIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="FREQUENCYTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="VEHICLESTYPE">
+  <xsd:simpleType name="VEHICLEINTENSITYTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*veh"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="VEHICLESPERTIMETYPE">
+  <xsd:simpleType name="VEHICLEFREQUENCYTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*veh\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
     </xsd:restriction>
@@ -112,6 +118,12 @@
   </xsd:simpleType>
 
   <xsd:simpleType name="ANGLETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(deg|rad)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DIRECTIONTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?\d+\.?\d*\s*(deg|rad)"></xsd:pattern>
     </xsd:restriction>
@@ -168,7 +180,7 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DIRECTIONTYPE">
+  <xsd:simpleType name="DRIVINGDIRECTIONTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="FORWARD|BACKWARD|BOTH"></xsd:pattern>
     </xsd:restriction>

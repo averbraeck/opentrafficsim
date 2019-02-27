@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:fn="http://www.w3.org/2005/xpath-functions" elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  elementFormDefault="qualified">
 
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
-  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace"
+    schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
+  <xsd:import namespace="http://www.w3.org/2001/XInclude"
+    schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
 
   <xsd:include schemaLocation="ots-types.xsd" />
 
@@ -105,6 +108,53 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:complexType name="CROSSSECTIONELEMENT">
+    <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+    <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
+    <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
+    <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="CSELANE">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="CROSSSECTIONELEMENT">
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="SPEEDLIMIT" minOccurs="1" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
+              <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="LANETYPE" type="xsd:string" use="optional" />
+        <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="required" />
+        <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="CSENOTRAFFICLANE">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="CROSSSECTIONELEMENT">
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="CSESHOULDER">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="CROSSSECTIONELEMENT">
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="CSESTRIPE">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="CROSSSECTIONELEMENT">
+        <xsd:attribute name="TYPE" type="STRIPETYPE" use="required" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
   <xsd:element name="ROADLAYOUT">
     <xsd:complexType>
       <xsd:sequence>
@@ -117,56 +167,12 @@
         </xsd:element>
 
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
-
-          <xsd:element name="LANE" minOccurs="0" maxOccurs="unbounded">
-            <xsd:complexType>
-              <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-                <xsd:element name="SPEEDLIMIT" minOccurs="1" maxOccurs="unbounded">
-                  <xsd:complexType>
-                    <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
-                    <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
-                  </xsd:complexType>
-                </xsd:element>
-              </xsd:sequence>
-              <xsd:attribute name="NAME" type="xsd:string" use="required" />
-              <xsd:attribute name="LANETYPE" type="xsd:string" use="optional" />
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
-              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
-              <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="required" />
-              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
-              <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional" />
-            </xsd:complexType>
-          </xsd:element>
-
-          <xsd:element name="NOTRAFFICLANE" minOccurs="0" maxOccurs="unbounded">
-            <xsd:complexType>
-              <xsd:attribute name="NAME" type="xsd:string" use="optional" />
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
-              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
-              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
-            </xsd:complexType>
-          </xsd:element>
-
-          <xsd:element name="SHOULDER" minOccurs="0" maxOccurs="unbounded">
-            <xsd:complexType>
-              <xsd:attribute name="NAME" type="xsd:string" use="optional" />
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
-              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
-              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
-            </xsd:complexType>
-          </xsd:element>
-
-          <xsd:element name="STRIPE" minOccurs="0" maxOccurs="unbounded">
-            <xsd:complexType>
-              <xsd:attribute name="NAME" type="xsd:string" use="optional" />
-              <xsd:attribute name="TYPE" type="STRIPETYPE" use="required" />
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
-              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
-              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
-            </xsd:complexType>
-          </xsd:element>
-
+          <xsd:element name="LANE" type="CSELANE" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="NOTRAFFICLANE" type="CSENOTRAFFICLANE" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="SHOULDER" type="CSESHOULDER" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element name="STRIPE" type="CSESTRIPE" minOccurs="0" maxOccurs="unbounded" />
         </xsd:choice>
+        
       </xsd:sequence>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute name="ROADTYPE" type="xsd:string" use="required" />

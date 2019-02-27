@@ -181,9 +181,6 @@ public class VissimNetworkLaneParser implements Serializable
         // the sensor are defined separate also. Read them first, connect to links later on
         SensorTag.parseSensor(networkXMLNodeList, this);
 
-        // process nodes and links to calculate coordinates and positions
-        Links.calculateNodeCoordinates(this);
-
         // add the signalHeads to the links
         LinkTag.addSignalHeads(this);
 
@@ -216,9 +213,6 @@ public class VissimNetworkLaneParser implements Serializable
         // action: the connectors become shorter than they were
         // LinkTag.shortenConnectors(this);
 
-        // again process nodes and links to calculate coordinates and positions for the new link/nodes
-        Links.calculateNodeCoordinates(this);
-
         // Create links to connect the shortened connectors and links by means of bezier curved links
         createLinkBetweenConnectorAndLink(this);
 
@@ -227,9 +221,6 @@ public class VissimNetworkLaneParser implements Serializable
         Double splitMetersAfterSignalHead = 1.5;
         margin = 4.0;
         splitLinkAtSignalAndDetector(this.linkTags, margin, splitMetersAfterSignalHead);
-
-        // again process nodes and links to calculate coordinates and positions for the new link/nodes
-        Links.calculateNodeCoordinates(this);
 
         // remove double links with the same start and end node
         HashMap<String, LinkTag> removeConnectorTags = new HashMap<>();

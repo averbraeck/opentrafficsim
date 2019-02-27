@@ -2,6 +2,34 @@
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
     <release version="1.01.01" date="2019-XX-XX" description="">
+      <action dev="averbraeck" type="update">
+        In XML-parsing, the use of nodes and links has been simplified. All nodes have to be given 
+        full coordinates. Slope and direction are calculated automatically. Lengths for links do not
+        have to be provided as a result; they will be calculated and correspond to the actual lengths
+        of what is drawn, not the theoretical lengths. An arc has a theoretical length that is different
+        from the e.g., 32 or 64, segments from which it is created, and algorithms make false calculations
+        based on the difference between the length of OTSLine3D and the provided length of the link.
+        For now, arcs, Bezier curves, and clothoids have to be in a fixed plane (z-coordinate of start
+        and end have to be the same). Polylines and straight segments can have a slope. Again, the correct
+        length including the slope is calculated (note that this this differs from the length of the 
+        projection in the animation).
+      </action>
+      <action dev="averbraeck" type="update">
+        In XML-parsing, directions are taken as ENU (East=x, North=y, z=up) coordinates, where
+        absolute direction goes counter-clockwise. E = +x = 0 degrees, N = +y = 90 degrees,
+        W = -x = 180 degrees, S = -y = 270 degrees. See https://en.wikipedia.org/wiki/Axes_conventions
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-types.xsd got several changes: DURATIONTYPE has been added, and all relative times in 
+        ots-network.xsd have been changed to DURATIONTYPE. PERTIMETYPE has been renamed to 
+        FREQUENCYTYPE. VEHICLESTYPE has been renamed to VEHICLEINTENSITYTYPE. VEHICLESPERTIMETYPE
+        has been renamed to VEHICLEFREQUENCYTYPE. DIRECTIONTYPE has been added. ANGLETYPE has been
+        replaced by DIRECTIONTYPE where an absolute angle was intended. The old DIRECTIONTYPE that
+        indicated the driving direction of a vehicle has been renamed to DRIVINGDIRECTIONTYPE.
+      </action>
+      <action dev="averbraeck" type="add">
+        JAXB parsing has been introduced in the new ots-xsd project.
+      </action>
       <action issue="OTS-383"  dev="wjschakel" type="add">
         OTS-383. Develop fixed time traffic light control
       </action>

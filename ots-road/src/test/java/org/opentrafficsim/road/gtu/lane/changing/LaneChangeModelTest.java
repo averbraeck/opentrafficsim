@@ -106,7 +106,7 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0) };
         OTSLine3D line = new OTSLine3D(coordinates);
         CrossSectionLink link =
-                new CrossSectionLink(network, name, from, to, LinkType.ROAD, line, simulator, LaneKeepingPolicy.KEEP_RIGHT);
+                new CrossSectionLink(network, name, from, to, LinkType.ROAD, line, simulator, LaneKeepingPolicy.KEEPRIGHT);
         return link;
     }
 

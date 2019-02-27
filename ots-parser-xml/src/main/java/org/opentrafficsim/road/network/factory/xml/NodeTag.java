@@ -6,9 +6,7 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -41,13 +39,9 @@ class NodeTag implements Serializable
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSPoint3D coordinate = null;
 
-    /** Absolute angle of the node. 0 is "East", pi/2 = "North". */
+    /** Default direction of the node. 0 is "East", pi/2 = "North". */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Direction angle = null;
-
-    /** TODO slope as an angle. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle slope = null;
+    Direction direction = null;
 
     /** The calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -76,25 +70,21 @@ class NodeTag implements Serializable
 
             if (attributes.getNamedItem("COORDINATE") != null)
                 nodeTag.coordinate = Coordinates.parseCoordinate(attributes.getNamedItem("COORDINATE").getNodeValue());
+            else
+                throw new SAXException("NODE: missing attribute COORDINATE");
 
-            if (attributes.getNamedItem("ANGLE") != null)
-                nodeTag.angle = AngleUnits.parseDirection(attributes.getNamedItem("ANGLE").getNodeValue());
-
-            // TODO slope for the Node.
+            if (attributes.getNamedItem("DIRECTION") != null)
+                nodeTag.direction = AngleUnits.parseDirection(attributes.getNamedItem("DIRECTION").getNodeValue());
 
             parser.nodeTags.put(nodeTag.name, nodeTag);
 
-            if (nodeTag.coordinate != null && nodeTag.angle != null)
+            try
             {
-                // only make a node if we know the coordinate and angle. Otherwise, wait till we can calculate it.
-                try
-                {
-                    makeOTSNode(nodeTag, parser);
-                }
-                catch (NamingException exception)
-                {
-                    throw new NetworkException(exception);
-                }
+                makeOTSNode(nodeTag, parser);
+            }
+            catch (NamingException exception)
+            {
+                throw new NetworkException(exception);
             }
         }
     }
@@ -134,11 +124,8 @@ class NodeTag implements Serializable
     static OTSNode makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser)
             throws NetworkException, NamingException
     {
-        Throw.whenNull(nodeTag.angle, "NodeTag: " + nodeTag.name + " angle == null");
         String id = nodeTag.name;
-        Direction angle = nodeTag.angle;
-        Angle slope = nodeTag.slope == null ? Angle.ZERO : nodeTag.slope;
-        OTSNode node = new OTSNode(parser.network, id, nodeTag.coordinate, angle, slope);
+        OTSNode node = new OTSNode(parser.network, id, nodeTag.coordinate);
         nodeTag.node = node;
         return node;
     }

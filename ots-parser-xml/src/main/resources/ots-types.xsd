@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" elementFormDefault="qualified">
+<?xml version="1.0" encoding="UTF-8"?> <xsd:schema targetNamespace="http://www.opentrafficsim.org/ots" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns:ots="http://www.opentrafficsim.org/ots" 
+  xmlns="http://www.opentrafficsim.org/ots" elementFormDefault="qualified">
 
   <!-- ================================================================================================== -->
   <!-- ================================================= TYPES ========================================== -->
@@ -12,7 +13,7 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="SPEEDTYPE">
+  <xsd:simpleType name="SPEEDTYPE"> 
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)"></xsd:pattern>
     </xsd:restriction>
@@ -64,19 +65,25 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="PERTIMETYPE">
+  <xsd:simpleType name="DURATIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+\.?\d*\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="FREQUENCYTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="VEHICLESTYPE">
+  <xsd:simpleType name="VEHICLEINTENSITYTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*veh"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="VEHICLESPERTIMETYPE">
+  <xsd:simpleType name="VEHICLEFREQUENCYTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*veh\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
     </xsd:restriction>

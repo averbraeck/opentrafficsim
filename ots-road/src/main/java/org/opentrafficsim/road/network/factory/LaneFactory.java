@@ -331,7 +331,7 @@ public final class LaneFactory
 
         OTSLine3D designLine = new OTSLine3D(pointList);
         CrossSectionLink link = new CrossSectionLink(network, name, from, to, LinkType.ROAD, designLine, simulator,
-                LaneKeepingPolicy.KEEP_RIGHT);
+                LaneKeepingPolicy.KEEPRIGHT);
         return link;
     }
 

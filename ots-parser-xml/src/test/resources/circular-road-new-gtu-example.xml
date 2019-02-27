@@ -84,7 +84,7 @@
 
   </DEFINITIONS>
 
-  <NODE NAME="N1" COORDINATE="(0.0,0.0)" ANGLE="90 deg" />
+  <NODE NAME="N1" COORDINATE="(0.0,0.0)" DIRECTION="90 deg" />
   <NODE NAME="N1a" />
   <NODE NAME="N2" />
   <NODE NAME="NE" />

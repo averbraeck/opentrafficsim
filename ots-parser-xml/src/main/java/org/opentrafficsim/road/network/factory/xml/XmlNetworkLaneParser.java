@@ -339,7 +339,8 @@ public class XmlNetworkLaneParser implements Serializable
         LinkTag.parseLinks(networkNodeList, this);
 
         // process nodes and links to calculate coordinates and positions
-        Links.calculateNodeCoordinates(this);
+        for (LinkTag linkTag : this.linkTags.values())
+            Links.calculateNodeAngles(linkTag);
         for (ConnectorTag connectorTag : this.connectorTags.values())
             Links.buildConnector(connectorTag, this, this.simulator);
         for (LinkTag linkTag : this.linkTags.values())
@@ -507,7 +508,7 @@ public class XmlNetworkLaneParser implements Serializable
             {
                 System.out.println("Constructing connector link " + linkName);
                 connectorLink = new CrossSectionLink(otsNetwork, linkName, from, to, LinkType.CONNECTOR, designLine,
-                        this.simulator, LaneKeepingPolicy.KEEP_RIGHT);
+                        this.simulator, LaneKeepingPolicy.KEEPRIGHT);
             }
         }
         if (startTimeStrings.size() > 1)

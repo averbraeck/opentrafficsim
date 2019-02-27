@@ -2,10 +2,7 @@ package org.opentrafficsim.road.network.factory.xml;
 
 import java.io.Serializable;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -23,10 +20,6 @@ class StraightTag implements Serializable
     /** */
     private static final long serialVersionUID = 20150724L;
 
-    /** Length. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length length = null;
-
     /**
      * Parse the LINK.STRAIGHT tag.
      * @param straightNode Node; the XML-node to parse
@@ -39,17 +32,13 @@ class StraightTag implements Serializable
     static void parseStraight(final Node straightNode, final XmlNetworkLaneParser parser, final LinkTag linkTag)
             throws SAXException, NetworkException
     {
-        NamedNodeMap straightAttributes = straightNode.getAttributes();
         linkTag.straightTag = new StraightTag();
-
-        if (straightAttributes.getNamedItem("LENGTH") != null)
-            linkTag.straightTag.length = LengthUnits.parseLength(straightAttributes.getNamedItem("LENGTH").getNodeValue());
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "StraightTag [length=" + this.length + "]";
+        return "StraightTag";
     }
 }

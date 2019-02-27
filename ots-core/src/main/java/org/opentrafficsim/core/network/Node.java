@@ -3,8 +3,6 @@ package org.opentrafficsim.core.network;
 import java.io.Serializable;
 import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Angle;
-import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.Identifiable;
 import org.opentrafficsim.core.animation.Drawable;
@@ -39,12 +37,6 @@ public interface Node extends Locatable, Serializable, Identifiable, Drawable
 
     /** @return point. */
     OTSPoint3D getPoint();
-
-    /** @return the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
-    Direction getDirection();
-
-    /** @return the slope as an angle. Horizontal is 0 degrees. */
-    Angle getSlope();
 
     /**
      * Add a link to this Node.

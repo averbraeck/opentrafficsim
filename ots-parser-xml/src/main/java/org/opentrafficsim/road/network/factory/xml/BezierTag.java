@@ -16,7 +16,6 @@ import org.xml.sax.SAXException;
  */
 class BezierTag
 {
-
     /** The shape factor. Will be filled after parsing. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     double shape;
