@@ -2,8 +2,6 @@ package org.opentrafficsim.trafficcontrol;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
+import org.djutils.immutablecollections.ImmutableCollections;
 import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -80,22 +79,12 @@ public class FixedTimeController extends AbstractTrafficController
         {
             for (SignalGroup signalGroup2 : signalGroups)
             {
-                // TODO: implement disjoint in ImmutableCollections; the implementation below is slow and complex.
-                Set<String> setA = null;
                 if (!signalGroup1.equals(signalGroup2))
                 {
-                    if (null == setA)
-                    {
-                        setA = new HashSet<String>(signalGroup1.trafficLightIds.toCollection());
-                    }
-                    Set<String> setB = new HashSet<String>(signalGroup2.trafficLightIds.toCollection());
-                    Throw.when(!Collections.disjoint(setA, setB), IllegalArgumentException.class,
+                    Throw.when(!ImmutableCollections.disjoint(signalGroup1.trafficLightIds, signalGroup2.trafficLightIds),
+                            IllegalArgumentException.class,
                             "A traffic light is in both signal group %s and signal group %s.", signalGroup1.getId(),
                             signalGroup2.getId());
-                    // Throw.when(!ImmutableCollections.disjoint(signalGroup1.trafficLightIds, signalGroup2.trafficLightIds),
-                    // IllegalArgumentException.class,
-                    // "A traffic light is in both signal group %s and signal group %s.", signalGroup1.getId(),
-                    // signalGroup2.getId());
                 }
             }
         }
