@@ -2,7 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.djunits.unit.LengthUnit;
+import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
@@ -56,63 +56,13 @@ public class LengthBeginEndAdapter extends XmlAdapter<String, LengthBeginEnd>
                 clean = clean.substring(4);
             }
 
-            // mm|cm|dm|m|dam|hm|km|mi|y|ft
-            if (clean.endsWith("mm"))
-            {
-                double d = Double.parseDouble(clean.substring(0, clean.length() - 2).trim());
-                return new LengthBeginEnd(begin, new Length(d, LengthUnit.MILLIMETER));
-            }
-            else if (clean.endsWith("cm"))
-            {
-                double d = Double.parseDouble(clean.substring(0, clean.length() - 2).trim());
-                return new LengthBeginEnd(begin, new Length(d, LengthUnit.CENTIMETER));
-            }
-            else if (clean.endsWith("dm"))
-            {
-                double d = Double.parseDouble(clean.substring(0, clean.length() - 2).trim());
-                return new LengthBeginEnd(begin, new Length(d, LengthUnit.DECIMETER));
-            }
-            else if (clean.endsWith("dam"))
-            {
-                double d = Double.parseDouble(clean.substring(0, clean.length() - 3).trim());
-                return new LengthBeginEnd(begin, new Length(d, LengthUnit.DEKAMETER));
-            }
-            else if (clean.endsWith("hm"))
-            {
-                double d = Double.parseDouble(clean.substring(0, clean.length() - 2).trim());
-                return new LengthBeginEnd(begin, new Length(d, LengthUnit.HECTOMETER));
-            }
-            else if (clean.endsWith("km"))
-            {
-                double d = Double.parseDouble(clean.substring(0, clean.length() - 2).trim());
-                return new LengthBeginEnd(begin, new Length(d, LengthUnit.KILOMETER));
-            }
-            else if (clean.endsWith("m"))
-            {
-                double d = Double.parseDouble(clean.substring(0, clean.length() - 1).trim());
-                return new LengthBeginEnd(begin, new Length(d, LengthUnit.METER));
-            }
-            else if (clean.endsWith("mi"))
-            {
-                double d = Double.parseDouble(clean.substring(0, clean.length() - 2).trim());
-                return new LengthBeginEnd(begin, new Length(d, LengthUnit.MILE));
-            }
-            else if (clean.endsWith("y"))
-            {
-                double d = Double.parseDouble(clean.substring(0, clean.length() - 1).trim());
-                return new LengthBeginEnd(begin, new Length(d, LengthUnit.YARD));
-            }
-            else if (clean.endsWith("ft"))
-            {
-                double d = Double.parseDouble(clean.substring(0, clean.length() - 2).trim());
-                return new LengthBeginEnd(begin, new Length(d, LengthUnit.FOOT));
-            }
+            Length length = Length.valueOf(clean);
+            return new LengthBeginEnd(begin, length);
         }
         catch (Exception exception)
         {
             throw new IllegalArgumentException("Error parsing LengthBeginEnd " + field, exception);
         }
-        throw new IllegalArgumentException("Error parsing LengthBeginEnd " + field);
     }
 
     /** {@inheritDoc} */
@@ -132,56 +82,7 @@ public class LengthBeginEndAdapter extends XmlAdapter<String, LengthBeginEnd>
         }
 
         String prefix = lbe.isBegin() ? "" : "END-";
-
-        // mm|cm|dm|m|dam|hm|km|mi|y|ft
-        try
-        {
-            if (lbe.getOffset().getUnit().equals(LengthUnit.MILLIMETER))
-            {
-                return prefix + lbe.getOffset().getInUnit() + " mm";
-            }
-            else if (lbe.getOffset().getUnit().equals(LengthUnit.CENTIMETER))
-            {
-                return prefix + lbe.getOffset().getInUnit() + " cm";
-            }
-            else if (lbe.getOffset().getUnit().equals(LengthUnit.DECIMETER))
-            {
-                return prefix + lbe.getOffset().getInUnit() + " dm";
-            }
-            else if (lbe.getOffset().getUnit().equals(LengthUnit.METER))
-            {
-                return prefix + lbe.getOffset().getInUnit() + " m";
-            }
-            else if (lbe.getOffset().getUnit().equals(LengthUnit.DEKAMETER))
-            {
-                return prefix + lbe.getOffset().getInUnit() + " dam";
-            }
-            else if (lbe.getOffset().getUnit().equals(LengthUnit.HECTOMETER))
-            {
-                return prefix + lbe.getOffset().getInUnit() + " hm";
-            }
-            else if (lbe.getOffset().getUnit().equals(LengthUnit.KILOMETER))
-            {
-                return prefix + lbe.getOffset().getInUnit() + " km";
-            }
-            else if (lbe.getOffset().getUnit().equals(LengthUnit.MILE))
-            {
-                return prefix + lbe.getOffset().getInUnit() + " mi";
-            }
-            else if (lbe.getOffset().getUnit().equals(LengthUnit.YARD))
-            {
-                return prefix + lbe.getOffset().getInUnit() + " y";
-            }
-            else if (lbe.getOffset().getUnit().equals(LengthUnit.FOOT))
-            {
-                return prefix + lbe.getOffset().getInUnit() + " ft";
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new IllegalArgumentException("Error printing LengthBeginEnd   " + lbe, exception);
-        }
-        return prefix + lbe.getOffset().getSI() + " m";
+        return prefix + Scalar.stringOf(lbe.getOffset());
     }
 
 }
