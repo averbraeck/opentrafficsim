@@ -4,12 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventType;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -31,16 +34,10 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
 import org.opentrafficsim.road.network.lane.object.trafficlight.SimpleTrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * <p>
@@ -106,7 +103,7 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
      * Add tab with trafCOD status.
      */
     @Override
-    protected void addTabs()
+    protected final void addTabs()
     {
         JScrollPane scrollPane = new JScrollPane(getModel().getControllerDisplayPanel());
         JPanel wrapper = new JPanel(new BorderLayout());
