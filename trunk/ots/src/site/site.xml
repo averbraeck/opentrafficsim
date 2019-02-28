@@ -21,6 +21,7 @@
       <item name="ots-water" href="http://opentrafficsim.org/docs/${project.version}/ots-water/index.html" />
       <item name="ots-multimodal" href="http://opentrafficsim.org/docs/${project.version}/ots-multimodal/index.html" />
       <item name="ots-trafficcontrol" href="http://opentrafficsim.org/docs/${project.version}/ots-trafficcontrol/index.html" />
+      <item name="ots-xsd" href="http://opentrafficsim.org/docs/${project.version}/ots-xsd/index.html" />
       <item name="ots-parser-xml" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-xml/index.html" />
       <item name="ots-parser-opendrive" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-opendrive/index.html" />
       <item name="ots-parser-osm" href="http://opentrafficsim.org/docs/${project.version}/ots-parser-osm/index.html" />
@@ -51,6 +52,7 @@
       <item name="OTS Manual" href="http://opentrafficsim.org" target="_blank" />
       <item name="DSOL" href="http://simulation.tudelft.nl/dsol/3.0/dsol-core/index.html" target="_blank" />
       <item name="DJUNITS manual" href="http://djunits.org" target="_blank" />
+      <item name="DJUTILS manual" href="http://djutils.org" target="_blank" />
       <item name="Sim0MQ" href="http://sim0mq.org" target="_blank" />
       <item name="DITTLab" href="http://dittlab.tudelft.nl" target="_blank" />
       <item name="Simulation@TU Delft" href="http://simulation.tudelft.nl" target="_blank" />

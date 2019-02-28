@@ -1,0 +1,34 @@
+                   -----------------------
+                   OTS-XSD
+                   -----------------------
+                   February, 2019
+                   -----------------------
+                   
+OTS - Open Traffic Simulation Web-based XML Schema parsing classes.
+
+	The ots-xsd project provides classes to parse XML files. Parsing uses auto-generated JAXB classes. Bindings and 
+	adapters are available to provide seamless mappings between the generated Java classes and the classes in the 
+	other OTS projects. The project has been built in such a way, however, that the ots-xsd project is not dependent on
+	other ots projects. Intermediate classes are used when necessary. The main components are:  
+
+	* xsd definitions for ots.
+	
+	* bindings.xsd making the link between the tags and the adapter classes.
+	
+    * Generated classes using the JAXB protocol.
+    
+    * Binding adapter classes to do transformations.
+      
+    []
+
+======
+
+	OpenTrafficSim has an open source BSD 3-clause license.
+
+    * Third party components used in OpenTrafficSim can not have a license that is more restrictive than BSD, Apache, MIT, LGPL, Eclipse.
+
+    * OpenTrafficSim can be incorporated in part or in full in other products for any use (educational, commercial, whatever).
+
+    * OpenTrafficSim may be extended, evolved by anyone into anything else for any purpose.
+	
+	[]
