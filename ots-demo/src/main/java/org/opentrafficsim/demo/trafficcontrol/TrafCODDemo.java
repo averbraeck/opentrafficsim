@@ -64,7 +64,8 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
      * @param model TrafCODModel; the model
      * @throws OTSDrawingException on animation error
      */
-    public TrafCODDemo(final String title, final OTSAnimationPanel panel, final TrafCODModel model) throws OTSDrawingException
+    public TrafCODDemo(final String title, final OTSAnimationPanel panel, final TrafCODModel model)
+            throws OTSDrawingException
     {
         super(model, panel);
     }
@@ -89,8 +90,9 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
             OTSAnimator simulator = new OTSAnimator();
             final TrafCODModel trafcodModel = new TrafCODModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.createSI(3600.0), trafcodModel);
-            OTSAnimationPanel animationPanel = new OTSAnimationPanel(trafcodModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
+            OTSAnimationPanel animationPanel =
+                    new OTSAnimationPanel(trafcodModel.getNetwork().getExtent(), new Dimension(800, 600), simulator,
+                            trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
             TrafCODDemo app = new TrafCODDemo("TrafCOD demo simple crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
         }
@@ -103,6 +105,7 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
     /**
      * Add tab with trafCOD status.
      */
+    @Override
     protected void addTabs()
     {
         JScrollPane scrollPane = new JScrollPane(getModel().getControllerDisplayPanel());
@@ -146,14 +149,13 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
                 URL url = URLResource.getResource("/TrafCODDemo1/TrafCODDemo1.xml");
                 XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(getSimulator());
                 this.network = nlp.build(url, true);
+                String controllerName = "TrafCOD_simple";
 
                 Lane laneNX = (Lane) ((CrossSectionLink) this.network.getLink("N", "X")).getCrossSectionElement("FORWARD");
                 Lane laneWX = (Lane) ((CrossSectionLink) this.network.getLink("W", "X")).getCrossSectionElement("FORWARD");
-                Set<TrafficLight> trafficLights = new HashSet<>();
                 SimpleTrafficLight tl08 =
-                        new SimpleTrafficLight("TL08", laneWX, new Length(296, LengthUnit.METER), getSimulator());
-                trafficLights.add(tl08);
-
+                        new SimpleTrafficLight(String.format("%s.%02d", controllerName, 8), laneWX, new Length(296,
+                                LengthUnit.METER), getSimulator());
                 try
                 {
                     new TrafficLightAnimation(tl08, this.simulator);
@@ -164,9 +166,8 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
                 }
 
                 SimpleTrafficLight tl11 =
-                        new SimpleTrafficLight("TL11", laneNX, new Length(296, LengthUnit.METER), getSimulator());
-                trafficLights.add(tl11);
-
+                        new SimpleTrafficLight(String.format("%s.%02d", controllerName, 11), laneNX, new Length(296,
+                                LengthUnit.METER), getSimulator());
                 try
                 {
                     new TrafficLightAnimation(tl11, this.simulator);
@@ -176,22 +177,21 @@ public class TrafCODDemo extends OTSSimulationApplication<TrafCODModel>
                     throw new NetworkException(exception);
                 }
 
-                Set<TrafficLightSensor> sensors = new HashSet<>();
-                sensors.add(new TrafficLightSensor("D081", laneWX, new Length(292, LengthUnit.METER), laneWX,
-                        new Length(294, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR, getSimulator(),
-                        Compatible.EVERYTHING));
-                sensors.add(new TrafficLightSensor("D082", laneWX, new Length(260, LengthUnit.METER), laneWX,
-                        new Length(285, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR, getSimulator(),
-                        Compatible.EVERYTHING));
-                sensors.add(new TrafficLightSensor("D111", laneNX, new Length(292, LengthUnit.METER), laneNX,
-                        new Length(294, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR, getSimulator(),
-                        Compatible.EVERYTHING));
-                sensors.add(new TrafficLightSensor("D112", laneNX, new Length(260, LengthUnit.METER), laneNX,
-                        new Length(285, LengthUnit.METER), null, RelativePosition.FRONT, RelativePosition.REAR, getSimulator(),
-                        Compatible.EVERYTHING));
-                String controllerName = "Simple TrafCOD controller";
-                this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"),
-                        trafficLights, sensors, getSimulator(), this.controllerDisplayPanel);
+                new TrafficLightSensor(String.format("%s.D%02d1", controllerName, 8), laneWX, new Length(292,
+                        LengthUnit.METER), laneWX, new Length(294, LengthUnit.METER), null, RelativePosition.FRONT,
+                        RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
+                new TrafficLightSensor(String.format("%s.D%02d2", controllerName, 8), laneWX, new Length(260,
+                        LengthUnit.METER), laneWX, new Length(285, LengthUnit.METER), null, RelativePosition.FRONT,
+                        RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
+                new TrafficLightSensor(String.format("%s.D%02d1", controllerName, 11), laneNX, new Length(292,
+                        LengthUnit.METER), laneNX, new Length(294, LengthUnit.METER), null, RelativePosition.FRONT,
+                        RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
+                new TrafficLightSensor(String.format("%s.D%02d2", controllerName, 11), laneNX, new Length(260,
+                        LengthUnit.METER), laneNX, new Length(285, LengthUnit.METER), null, RelativePosition.FRONT,
+                        RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
+                this.trafCOD =
+                        new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo1/simpleTest.tfc"), getSimulator(),
+                                this.controllerDisplayPanel);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);

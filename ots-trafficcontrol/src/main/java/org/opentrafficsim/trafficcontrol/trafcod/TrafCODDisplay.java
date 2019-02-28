@@ -65,6 +65,23 @@ public class TrafCODDisplay extends JPanel implements MouseMotionListener, Mouse
         super.setPreferredSize(new Dimension(this.image.getWidth(), this.image.getHeight()));
         addMouseMotionListener(this);
     }
+    
+    /**
+     * Look up a DetectorImage.
+     * @param id String; id of the DetectorImage
+     * @return DetectorImage; the detector image with matching id or null.
+     */
+    public DetectorImage getDetectorImage(final String id)
+    {
+        for (TrafCODObject tco : this.trafCODObjects)
+        {
+            if (tco instanceof DetectorImage && ((DetectorImage) tco).getId().equals(id))
+            {
+                return (DetectorImage) tco;
+            }
+        }
+        return null;
+    }
 
     @Override
     protected void paintComponent(final Graphics g)
@@ -186,6 +203,9 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
 
     /** Tool tip text for this detector image. */
     private final String description;
+    
+    /** String used to match this detector with the TrafCOD detector input. */
+    private final String id;
 
     /** Fill color (used to indicate the occupancy state of the detector). */
     private Color fillColor = Color.WHITE;
@@ -203,13 +223,15 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
      * Construct a new DetectorImage.
      * @param display TrafCODDisplay; the TrafCOD display on which this detector image will be rendered
      * @param center Point2D; the center location of the detector image on the TrafCOD display
+     * @param id String; id used to match this detector with the TrafCOD detector input
      * @param description String; name of the detector (displayed as tool tip text)
      */
-    public DetectorImage(final TrafCODDisplay display, Point2D center, String description)
+    public DetectorImage(final TrafCODDisplay display, Point2D center, String id, String description)
     {
         this.display = display;
         this.x = (int) center.getX();
         this.y = (int) center.getY();
+        this.id = id;
         this.description = description;
         display.addTrafCODObject(this);
     }
@@ -249,6 +271,15 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
             return null;
         }
         return this.description;
+    }
+    
+    /**
+     * Retrieve the id of this DetectorImage.
+     * @return String; the id of this DetectorImage
+     */
+    public String getId()
+    {
+        return this.id;
     }
 
 }

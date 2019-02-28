@@ -20,31 +20,39 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
-import org.djunits.unit.DurationUnit;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.object.InvisibleObjectInterface;
-import org.opentrafficsim.core.object.ObjectInterface;
-import org.opentrafficsim.road.network.lane.object.sensor.NonDirectionalOccupancySensor;
-import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
-import org.opentrafficsim.trafficcontrol.AbstractTrafficController;
-import org.opentrafficsim.trafficcontrol.ActuatedTrafficController;
-import org.opentrafficsim.trafficcontrol.TrafficControlException;
-import org.opentrafficsim.trafficcontrol.TrafficController;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simtime.SimTimeDoubleUnit;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.EventInterface;
 import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.event.EventType;
+
+import org.djunits.unit.DurationUnit;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableCollection;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.object.InvisibleObjectInterface;
+import org.opentrafficsim.core.object.ObjectInterface;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.sensor.NonDirectionalOccupancySensor;
+import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
+import org.opentrafficsim.road.network.lane.object.sensor.TrafficLightSensor;
+import org.opentrafficsim.road.network.lane.object.trafficlight.FlankSensor;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+import org.opentrafficsim.trafficcontrol.AbstractTrafficController;
+import org.opentrafficsim.trafficcontrol.ActuatedTrafficController;
+import org.opentrafficsim.trafficcontrol.TrafficControlException;
+import org.opentrafficsim.trafficcontrol.TrafficController;
 
 /**
  * TrafCOD evaluator. TrafCOD is a language for writing traffic control programs. A TrafCOD program consists of a set of rules
@@ -130,6 +138,9 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     /** The current time in units of 0.1 s */
     private int currentTime10 = 0;
 
+    /** Animation of the current state of this TrafCOD contoller. */
+    private TrafCODDisplay stateDisplay = null;
+
     /** The simulation engine. */
     private final OTSSimulatorInterface simulator;
 
@@ -140,25 +151,19 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
      * Construct a new TrafCOD traffic light controller.
      * @param controllerName String; name of this TrafCOD traffic light controller
      * @param trafCodURL URL; the URL of the TrafCOD rules
-     * @param trafficLights Set&lt;TrafficLight&gt;; the traffic lights. The ids of the traffic lights must end with two digits
-     *            that match the stream numbers as used in the traffic control program
-     * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic sensors. The ids of the traffic sensors must end with three
-     *            digits; the first two of those must match the stream and sensor numbers used in the traffic control program
      * @param simulator OTSSimulatorInterface; the simulation engine
      * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
      */
-    public TrafCOD(String controllerName, final URL trafCodURL, final Set<TrafficLight> trafficLights,
-            final Set<TrafficLightSensor> sensors, final OTSSimulatorInterface simulator, Container display)
-            throws TrafficControlException, SimRuntimeException
+    public TrafCOD(String controllerName, final URL trafCodURL, final OTSSimulatorInterface simulator,
+            Container display) throws TrafficControlException, SimRuntimeException
     {
         this(controllerName, simulator, display);
         Throw.whenNull(trafCodURL, "trafCodURL may not be null");
-        Throw.whenNull(trafficLights, "trafficLights may not be null");
         try
         {
-            parseTrafCODRules(trafCodURL, trafficLights, sensors);
+            parseTrafCODRules(loadTextFromURL(trafCodURL));
         }
         catch (IOException exception)
         {
@@ -183,11 +188,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             {
                 URL mapFileURL = new URL(trafCodURL, path);
                 // System.out.println("path of mapFileURL is \"" + mapFileURL.getPath() + "\"");
-                TrafCODDisplay tcd = makeDisplay(mapFileURL, sensors);
-                if (null != tcd)
-                {
-                    display.add(tcd);
-                }
+                this.stateDisplay = makeDisplay(mapFileURL);
+                display.add(this.stateDisplay);
             }
             catch (MalformedURLException exception)
             {
@@ -230,7 +232,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
         Throw.whenNull(simulator, "simulator may not be null");
         this.simulator = simulator;
     }
-    
+
     /**
      * Read a text from a URL and convert it to a list of strings.
      * @param url URL; the URL to open and read
@@ -251,26 +253,23 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Read and parse the TrafCOD traffic control program.
-     * @param trafCodURL URL; the URL where the TrafCOD file is to be read from
-     * @param trafficLights Set&lt;TrafficLight&gt;; the traffic lights that may be referenced from the TrafCOD file
-     * @param sensors Set&lt;TrafficLightSensor&gt;; the detectors that may be referenced from the TrafCOD file
+     * @param trafCodSource List&lt;String&gt;; the TrafCOD program lines
      * @throws MalformedURLException when the URL is invalid
      * @throws IOException when the TrafCOD file could not be read
      * @throws TrafficControlException when the TrafCOD file contains errors
      */
-    private void parseTrafCODRules(final URL trafCodURL, final Set<TrafficLight> trafficLights,
-            final Set<TrafficLightSensor> sensors) throws MalformedURLException, IOException, TrafficControlException
+    private void parseTrafCODRules(final List<String> trafCodSource) throws MalformedURLException, IOException,
+            TrafficControlException
     {
-        List<String> inputLines = loadTextFromURL(trafCodURL);
-        for (int lineno = 0; lineno < inputLines.size(); lineno++)
+        for (int lineno = 0; lineno < trafCodSource.size(); lineno++)
         {
-            String trimmedLine = inputLines.get(lineno);
+            String trimmedLine = trafCodSource.get(lineno);
             // System.out.println(lineno + ":\t" + inputLine);
             if (trimmedLine.length() == 0)
             {
                 continue;
             }
-            String locationDescription = trafCodURL + "(" + lineno + ") ";
+            String locationDescription = "TrafCOD rule" + "(" + lineno + ") ";
             if (trimmedLine.startsWith(COMMENT_PREFIX))
             {
                 String commentStripped = trimmedLine.substring(1).trim();
@@ -296,12 +295,12 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 {
                     while (trimmedLine.startsWith(COMMENT_PREFIX))
                     {
-                        if (++lineno >= inputLines.size())
+                        if (++lineno >= trafCodSource.size())
                         {
                             throw new TrafficControlException("Unexpected EOF (reading sequence key at "
                                     + locationDescription + ")");
                         }
-                        trimmedLine = inputLines.get(lineno);
+                        trimmedLine = trafCodSource.get(lineno);
                     }
                     String[] fields = trimmedLine.split("\t");
                     if (fields.length != 2)
@@ -338,20 +337,20 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     }
                     for (int conflictMemberLine = 0; conflictMemberLine < this.numberOfConflictGroups; conflictMemberLine++)
                     {
-                        if (++lineno >= inputLines.size())
+                        if (++lineno >= trafCodSource.size())
                         {
                             throw new TrafficControlException("Unexpected EOF (reading conflict groups at "
                                     + locationDescription + ")");
                         }
-                        trimmedLine = inputLines.get(lineno);
+                        trimmedLine = trafCodSource.get(lineno);
                         while (trimmedLine.startsWith(COMMENT_PREFIX))
                         {
-                            if (++lineno >= inputLines.size())
+                            if (++lineno >= trafCodSource.size())
                             {
                                 throw new TrafficControlException("Unexpected EOF (reading conflict groups at "
                                         + locationDescription + ")");
                             }
-                            trimmedLine = inputLines.get(lineno);
+                            trimmedLine = trafCodSource.get(lineno);
                         }
                         String[] fields = trimmedLine.split("\t");
                         if (fields.length != this.conflictGroupSize)
@@ -409,34 +408,6 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                                 locationDescription);
                 int value = Integer.parseInt(fields[1]);
                 variable.setOutput(value);
-                int added = 0;
-                // TODO create the set of traffic lights of this stream only once (not repeat for each possible color)
-                for (TrafficLight trafficLight : trafficLights)
-                {
-                    String id = trafficLight.getId();
-                    if (id.length() < 2)
-                    {
-                        throw new TrafficControlException("Id of traffic light " + trafficLight
-                                + " does not end on two digits");
-                    }
-                    String streamLetters = id.substring(id.length() - 2);
-                    if (!Character.isDigit(streamLetters.charAt(0)) || !Character.isDigit(streamLetters.charAt(1)))
-                    {
-                        throw new TrafficControlException("Id of traffic light " + trafficLight
-                                + " does not end on two digits");
-                    }
-                    int stream = Integer.parseInt(streamLetters);
-                    if (variable.getStream() == stream)
-                    {
-                        variable.addOutput(trafficLight);
-                        added++;
-                    }
-                }
-                if (0 == added)
-                {
-                    throw new TrafficControlException("No traffic light provided that matches stream "
-                            + variable.getStream());
-                }
                 continue;
             }
             this.trafcodRules.add(trimmedLine);
@@ -447,43 +418,14 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 // System.out.println(printRule(tokenisedRule, false));
             }
         }
-        for (Variable variable : this.variables.values())
-        {
-            if (variable.isDetector())
-            {
-                String detectorName = variable.toString(EnumSet.of(PrintFlags.ID));
-                int detectorNumber = variable.getStream() * 10 + detectorName.charAt(detectorName.length() - 1) - '0';
-                TrafficLightSensor sensor = null;
-                for (TrafficLightSensor tls : sensors)
-                {
-                    if (tls.getId().endsWith(detectorName))
-                    {
-                        sensor = tls;
-                    }
-                }
-                if (null == sensor)
-                {
-                    throw new TrafficControlException("Cannot find detector " + detectorName + " with number "
-                            + detectorNumber + " among the provided sensors");
-                }
-                variable.subscribeToDetector(sensor);
-            }
-        }
-        // System.out.println("Installed " + this.variables.size() + " variables");
-        // for (String key : this.variables.keySet())
-        // {
-        // Variable v = this.variables.get(key);
-        // System.out.println(key
-        // + ":\t"
-        // + v.toString(EnumSet.of(PrintFlags.ID, PrintFlags.VALUE, PrintFlags.INITTIMER, PrintFlags.REINITTIMER,
-        // PrintFlags.S, PrintFlags.E)));
-        // }
     }
 
     /**
      * Check the consistency of the traffic control program.
+     * @throws SimRuntimeException when the simulation model is not an OTSModelInterface
+     * @throws TrafficControlException when a required traffic light or sensor is not present in the network
      */
-    public void checkConsistency()
+    public void checkConsistency() throws SimRuntimeException, TrafficControlException
     {
         for (Variable v : this.variablesInDefinitionOrder)
         {
@@ -512,17 +454,142 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 }
             }
         }
+        Network network = null;
+        try
+        {
+            network = ((OTSModelInterface) this.simulator.getReplication().getExperiment().getModel()).getNetwork();
+        }
+        catch (ClassCastException e)
+        {
+            throw new SimRuntimeException("Model is not an OTSModelInterface");
+        }
+        ImmutableCollection<TrafficLight> trafficLights = network.getObjectMap(TrafficLight.class).values();
+        Map<String, List<TrafficLight>> trafficLightMap = new HashMap<>();
+        for (TrafficLight tl : trafficLights)
+        {
+            String trafficLightName = tl.getId();
+            if (trafficLightName.startsWith(getId()))
+            {
+                trafficLightName = trafficLightName.substring(getId().length());
+                if (trafficLightName.startsWith("."))
+                {
+                    trafficLightName = trafficLightName.substring(1);
+                }
+            }
+            if (trafficLightName.substring(trafficLightName.length() - 2).startsWith("."))
+            {
+                trafficLightName = trafficLightName.substring(0, trafficLightName.length() - 2);
+            }
+            List<TrafficLight> list = trafficLightMap.get(trafficLightName);
+            if (null == list)
+            {
+                list = new ArrayList<>();
+                trafficLightMap.put(trafficLightName, list);
+            }
+            list.add(tl);
+        }
+        Map<String, TrafficLightSensor> sensors = new HashMap<>();
+        // Search the entire network for all traffic light sensors; there should be an easier way
+        for (Link link : network.getLinkMap().values())
+        {
+            if (link instanceof CrossSectionLink)
+            {
+                for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
+                {
+                    if (cse instanceof Lane)
+                    {
+                        Lane lane = (Lane) cse;
+                        for (SingleSensor singleSensor : lane.getSensors())
+                        {
+                            if (singleSensor instanceof FlankSensor)
+                            {
+                                TrafficLightSensor tls = ((FlankSensor) singleSensor).getParent();
+                                String sensorName = tls.getId();
+                                if (sensorName.startsWith(getId()))
+                                {
+                                    sensorName = sensorName.substring(getId().length());
+                                    if (sensorName.startsWith("."))
+                                    {
+                                        sensorName = sensorName.substring(1);
+                                    }
+                                    sensors.put(sensorName, tls);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (Variable variable : this.variables.values())
+        {
+            if (variable.isOutput())
+            {
+                int added = 0;
+                String name = String.format("%s%02d", variable.getName(), variable.getStream());
+                String digits = String.format("%02d", variable.getStream());
+                List<TrafficLight> matchingLights = trafficLightMap.get(digits);
+                for (TrafficLight tl : matchingLights)
+                {
+                    try
+                    {
+                        variable.addOutput(tl);
+                    }
+                    catch (TrafficControlException exception)
+                    {
+                        // CANNOT HAPPEN
+                        exception.printStackTrace();
+                        throw new RuntimeException(exception);
+                    }
+                    if (variable.getValue() != 0)
+                    {
+                        tl.setTrafficLightColor(variable.getColor());
+                    }
+                    added++;
+                }
+                if (0 == added)
+                {
+                    throw new TrafficControlException("No traffic light found that matches output " + name + " and "
+                            + getId());
+                }
+            }
+            else if (variable.isDetector())
+            {
+                String name = variable.getName();
+                String subNumber = name.substring(name.length() - 1);
+                name = name.substring(0, name.length() - 1);
+                name = String.format("%s%02d", name, variable.getStream());
+                String digits = String.format("%02d", variable.getStream());
+                TrafficLightSensor tls = sensors.get("D" + digits + subNumber);
+                if (null == tls)
+                {
+                    throw new TrafficControlException("No sensor found that matches " + name + " and " + getId());
+                }
+                variable.subscribeToDetector(tls);
+                if (null != this.stateDisplay)
+                {
+                    // Lookup the detector
+                    EventListenerInterface eli =
+                            this.stateDisplay.getDetectorImage(String.format("%02d.%s", variable.getStream(), subNumber));
+                    if (null == eli)
+                    {
+                        throw new TrafficControlException("Cannor find detector image matching variable " + variable);
+                    }
+                    System.out.println("creating subscriptions to sensor " + tls);
+                    tls.addListener(eli, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
+                    tls.addListener(eli, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
+                }
+            }
+        }
     }
 
     /**
      * Construct the display of this TrafCOD machine and connect the displayed traffic lights and sensors to this TrafCOD
      * machine.
      * @param tfgFileURL URL; the URL where the display information is to be read from
-     * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic light sensors
      * @return TrafCODDisplay, or null when the display information could not be read, was incomplete, or invalid
      * @throws TrafficControlException when the tfg file could not be read or is invalid
      */
-    private TrafCODDisplay makeDisplay(final URL tfgFileURL, Set<TrafficLightSensor> sensors) throws TrafficControlException
+    private TrafCODDisplay makeDisplay(final URL tfgFileURL) throws TrafficControlException
     {
         TrafCODDisplay result = null;
         boolean useFirstCoordinates = true;
@@ -608,25 +675,27 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                         throw new TrafficControlException("tfg file defines detector " + detectorName
                                 + " which does not exist in the TrafCOD program");
                     }
-                    DetectorImage di =
-                            new DetectorImage(result, getCoordinates(inputLine.substring(14), useFirstCoordinates),
-                                    String.format("Detector %02d%d", detectorStream, detectorSubNumber));
-                    TrafficLightSensor sensor = null;
-                    for (TrafficLightSensor tls : sensors)
-                    {
-                        if (tls.getId().endsWith(detectorName))
-                        {
-                            sensor = tls;
-                        }
-                    }
-                    if (null == sensor)
-                    {
-                        throw new TrafficControlException("Cannot find detector " + detectorName + " with number "
-                                + detectorName + " among the provided sensors");
-                    }
-                    sensor.addListener(di,
-                            NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
-                    sensor.addListener(di, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
+                    // DetectorImage di =
+                    new DetectorImage(result, getCoordinates(inputLine.substring(14), useFirstCoordinates), String.format(
+                            "%02d.%d", detectorStream, detectorSubNumber), String.format("Detector %02d.%d", detectorStream,
+                            detectorSubNumber));
+                    // TrafficLightSensor sensor = null;
+                    // for (TrafficLightSensor tls : sensors)
+                    // {
+                    // if (tls.getId().endsWith(detectorName))
+                    // {
+                    // sensor = tls;
+                    // }
+                    // }
+                    // if (null == sensor)
+                    // {
+                    // throw new TrafficControlException("Cannot find detector " + detectorName + " with number "
+                    // + detectorName + " among the provided sensors");
+                    // }
+                    // sensor.addListener(di,
+                    // NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
+                    // sensor.addListener(di,
+                    // NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
                 }
                 else
                 {

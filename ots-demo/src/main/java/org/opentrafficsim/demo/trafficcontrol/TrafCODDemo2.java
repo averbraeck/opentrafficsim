@@ -4,12 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.event.EventType;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -36,11 +39,6 @@ import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCOD;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.event.EventType;
 
 /**
  * <p>
@@ -149,23 +147,21 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
                 this.network = nlp.build(url, true);
                 String[] directions = { "E", "S", "W", "N" };
                 // Add the traffic lights and the detectors
-                Set<TrafficLight> trafficLights = new HashSet<>();
-                Set<TrafficLightSensor> sensors = new HashSet<>();
                 Length stopLineMargin = new Length(0.1, LengthUnit.METER);
                 Length headDetectorLength = new Length(1, LengthUnit.METER);
                 Length headDetectorMargin = stopLineMargin.plus(headDetectorLength).plus(new Length(3, LengthUnit.METER));
                 Length longDetectorLength = new Length(30, LengthUnit.METER);
                 Length longDetectorMargin = stopLineMargin.plus(longDetectorLength).plus(new Length(10, LengthUnit.METER));
                 int stream = 1;
+                String controllerName = "TrafCOD_complex";
                 for (String direction : directions)
                 {
                     for (int laneNumber = 3; laneNumber >= 1; laneNumber--)
                     {
                         Lane lane = (Lane) ((CrossSectionLink) this.network.getLink(direction, direction + "C"))
                                 .getCrossSectionElement("FORWARD" + laneNumber);
-                        TrafficLight tl = new SimpleTrafficLight(String.format("TL%02d", stream), lane,
+                        TrafficLight tl = new SimpleTrafficLight(String.format("%s.%02d", controllerName, stream), lane,
                                 lane.getLength().minus(stopLineMargin), getSimulator());
-                        trafficLights.add(tl);
 
                         try
                         {
@@ -176,20 +172,19 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
                             throw new NetworkException(exception);
                         }
 
-                        sensors.add(new TrafficLightSensor(String.format("D%02d1", stream), lane,
+                        new TrafficLightSensor(String.format("%s.D%02d1", controllerName, stream), lane,
                                 lane.getLength().minus(headDetectorMargin), lane,
                                 lane.getLength().minus(headDetectorMargin).plus(headDetectorLength), null,
-                                RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING));
-                        sensors.add(new TrafficLightSensor(String.format("D%02d2", stream), lane,
+                                RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
+                        new TrafficLightSensor(String.format("%s.D%02d2", controllerName, stream), lane,
                                 lane.getLength().minus(longDetectorMargin), lane,
                                 lane.getLength().minus(longDetectorMargin).plus(longDetectorLength), null,
-                                RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING));
+                                RelativePosition.FRONT, RelativePosition.REAR, getSimulator(), Compatible.EVERYTHING);
                         stream++;
                     }
                 }
-                String controllerName = "Not so simple TrafCOD controller";
                 this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/TrafCODDemo2/Intersection12Dir.tfc"),
-                        trafficLights, sensors, getSimulator(), this.controllerDisplayPanel);
+                        getSimulator(), this.controllerDisplayPanel);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
