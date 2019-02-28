@@ -2,7 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.djunits.unit.DirectionUnit;
+import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Direction;
 
 /**
@@ -21,46 +21,14 @@ public class DirectionAdapter extends XmlAdapter<String, Direction>
     @Override
     public Direction unmarshal(final String field) throws IllegalArgumentException
     {
-        try
-        {
-            if (field.endsWith("deg"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 3).trim());
-                return new Direction(d, DirectionUnit.EAST_DEGREE);
-            }
-            else if (field.endsWith("rad"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 3).trim());
-                return new Direction(d, DirectionUnit.EAST_RADIAN);
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new IllegalArgumentException("Error parsing Direction " + field, exception);
-        }
-        throw new IllegalArgumentException("Error parsing Direction " + field);
+        return Direction.valueOf(field);
     }
 
     /** {@inheritDoc} */
     @Override
     public String marshal(final Direction direction) throws IllegalArgumentException
     {
-        try
-        {
-            if (direction.getUnit().equals(DirectionUnit.EAST_DEGREE))
-            {
-                return direction.getInUnit() + " deg";
-            }
-            else if (direction.getUnit().equals(DirectionUnit.EAST_RADIAN))
-            {
-                return direction.getInUnit() + " rad";
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new IllegalArgumentException("Error printing Direction " + direction, exception);
-        }
-        throw new IllegalArgumentException("Error printing Direction " + direction);
+        return Scalar.stringOf(direction);
     }
 
 }

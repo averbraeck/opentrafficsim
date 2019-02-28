@@ -23,10 +23,18 @@
       adapter="org.opentrafficsim.xml.bindings.FractionAdapter" />
     <xjc:javaType name="javax.vecmath.Point3d" xmlType="ots:COORDINATETYPE"
       adapter="org.opentrafficsim.xml.bindings.CoordinateAdapter" />
+    <xjc:javaType name="javax.vecmath.Point3d" xmlType="ots:COORDINATENOSPACETYPE"
+      adapter="org.opentrafficsim.xml.bindings.CoordinateAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.Point3dList" xmlType="ots:COORDINATELISTTYPE"
       adapter="org.opentrafficsim.xml.bindings.CoordinateListAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.ArcDirection" xmlType="ots:LEFTRIGHTTYPE"
       adapter="org.opentrafficsim.xml.bindings.LeftRightAdapter" />
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Time" xmlType="ots:TIMETYPE"
+      adapter="org.opentrafficsim.xml.bindings.TimeAdapter" />
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Duration" xmlType="ots:DURATIONTYPE"
+      adapter="org.opentrafficsim.xml.bindings.DurationAdapter" />
+    <xjc:javaType name="org.djunits.value.vdouble.scalar.Frequency" xmlType="ots:FREQUENCYTYPE"
+      adapter="org.opentrafficsim.xml.bindings.FrequencyAdapter" />
   </jaxb:globalBindings>
 
   <jaxb:bindings schemaLocation="ots-network.xsd">

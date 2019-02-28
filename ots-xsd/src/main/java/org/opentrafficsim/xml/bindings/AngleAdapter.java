@@ -2,7 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.djunits.unit.AngleUnit;
+import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Angle;
 
 /**
@@ -19,46 +19,14 @@ public class AngleAdapter extends XmlAdapter<String, Angle>
     @Override
     public Angle unmarshal(final String field) throws IllegalArgumentException
     {
-        try
-        {
-            if (field.endsWith("deg"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 3).trim());
-                return new Angle(d, AngleUnit.DEGREE);
-            }
-            else if (field.endsWith("rad"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 3).trim());
-                return new Angle(d, AngleUnit.RADIAN);
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new IllegalArgumentException("Error parsing Angle " + field, exception);
-        }
-        throw new IllegalArgumentException("Error parsing Angle " + field);
+        return Angle.valueOf(field);
     }
 
     /** {@inheritDoc} */
     @Override
     public String marshal(final Angle angle) throws IllegalArgumentException
     {
-        try
-        {
-            if (angle.getUnit().equals(AngleUnit.DEGREE))
-            {
-                return angle.getInUnit() + " deg";
-            }
-            else if (angle.getUnit().equals(AngleUnit.RADIAN))
-            {
-                return angle.getInUnit() + " rad";
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new IllegalArgumentException("Error printing Angle " + angle, exception);
-        }
-        return angle.getSI() + " rad";
+        return Scalar.stringOf(angle);
     }
 
 }

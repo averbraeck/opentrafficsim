@@ -2,7 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.djunits.unit.LengthUnit;
+import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Length;
 
 /**
@@ -23,66 +23,7 @@ public class LengthAdapter extends XmlAdapter<String, Length>
         {
             throw new IllegalArgumentException("Length cannot be negative: " + field);
         }
-
-        // mm|cm|dm|m|dam|hm|km|mi|y|ft
-        try
-        {
-            if (field.endsWith("mm"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 2).trim());
-                return new Length(d, LengthUnit.MILLIMETER);
-            }
-            else if (field.endsWith("cm"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 2).trim());
-                return new Length(d, LengthUnit.CENTIMETER);
-            }
-            else if (field.endsWith("dm"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 2).trim());
-                return new Length(d, LengthUnit.DECIMETER);
-            }
-            else if (field.endsWith("dam"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 3).trim());
-                return new Length(d, LengthUnit.DEKAMETER);
-            }
-            else if (field.endsWith("hm"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 2).trim());
-                return new Length(d, LengthUnit.HECTOMETER);
-            }
-            else if (field.endsWith("km"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 2).trim());
-                return new Length(d, LengthUnit.KILOMETER);
-            }
-            else if (field.endsWith("m"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 1).trim());
-                return new Length(d, LengthUnit.METER);
-            }
-            else if (field.endsWith("mi"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 2).trim());
-                return new Length(d, LengthUnit.MILE);
-            }
-            else if (field.endsWith("y"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 1).trim());
-                return new Length(d, LengthUnit.YARD);
-            }
-            else if (field.endsWith("ft"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 2).trim());
-                return new Length(d, LengthUnit.FOOT);
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new IllegalArgumentException("Error parsing Length " + field, exception);
-        }
-        throw new IllegalArgumentException("Error parsing Length " + field);
+        return Length.valueOf(field);
     }
 
     /** {@inheritDoc} */
@@ -93,56 +34,7 @@ public class LengthAdapter extends XmlAdapter<String, Length>
         {
             throw new IllegalArgumentException("Length cannot be negative: " + length);
         }
-
-        // mm|cm|dm|m|dam|hm|km|mi|y|ft
-        try
-        {
-            if (length.getUnit().equals(LengthUnit.MILLIMETER))
-            {
-                return length.getInUnit() + " mm";
-            }
-            else if (length.getUnit().equals(LengthUnit.CENTIMETER))
-            {
-                return length.getInUnit() + " cm";
-            }
-            else if (length.getUnit().equals(LengthUnit.DECIMETER))
-            {
-                return length.getInUnit() + " dm";
-            }
-            else if (length.getUnit().equals(LengthUnit.METER))
-            {
-                return length.getInUnit() + " m";
-            }
-            else if (length.getUnit().equals(LengthUnit.DEKAMETER))
-            {
-                return length.getInUnit() + " dam";
-            }
-            else if (length.getUnit().equals(LengthUnit.HECTOMETER))
-            {
-                return length.getInUnit() + " hm";
-            }
-            else if (length.getUnit().equals(LengthUnit.KILOMETER))
-            {
-                return length.getInUnit() + " km";
-            }
-            else if (length.getUnit().equals(LengthUnit.MILE))
-            {
-                return length.getInUnit() + " mi";
-            }
-            else if (length.getUnit().equals(LengthUnit.YARD))
-            {
-                return length.getInUnit() + " y";
-            }
-            else if (length.getUnit().equals(LengthUnit.FOOT))
-            {
-                return length.getInUnit() + " ft";
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new IllegalArgumentException("Error printing Length " + length, exception);
-        }
-        return length.getSI() + " m";
+        return Scalar.stringOf(length);
     }
 
 }
