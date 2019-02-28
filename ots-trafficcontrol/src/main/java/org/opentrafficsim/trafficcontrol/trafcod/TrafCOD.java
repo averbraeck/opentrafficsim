@@ -230,6 +230,24 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
         Throw.whenNull(simulator, "simulator may not be null");
         this.simulator = simulator;
     }
+    
+    /**
+     * Read a text from a URL and convert it to a list of strings.
+     * @param url URL; the URL to open and read
+     * @return List&lt;String&gt;; the lines read from the URL (trimmed).
+     * @throws IOException when opening or reading the URL failed.
+     */
+    private List<String> loadTextFromURL(final URL url) throws IOException
+    {
+        List<String> result = new ArrayList<>();
+        BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+        String inputLine;
+        while ((inputLine = in.readLine()) != null)
+        {
+            result.add(inputLine.trim());
+        }
+        return result;
+    }
 
     /**
      * Read and parse the TrafCOD traffic control program.
@@ -243,14 +261,11 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     private void parseTrafCODRules(final URL trafCodURL, final Set<TrafficLight> trafficLights,
             final Set<TrafficLightSensor> sensors) throws MalformedURLException, IOException, TrafficControlException
     {
-        BufferedReader in = new BufferedReader(new InputStreamReader(trafCodURL.openStream()));
-        String inputLine;
-        int lineno = 0;
-        while ((inputLine = in.readLine()) != null)
+        List<String> inputLines = loadTextFromURL(trafCodURL);
+        for (int lineno = 0; lineno < inputLines.size(); lineno++)
         {
-            ++lineno;
+            String trimmedLine = inputLines.get(lineno);
             // System.out.println(lineno + ":\t" + inputLine);
-            String trimmedLine = inputLine.trim();
             if (trimmedLine.length() == 0)
             {
                 continue;
@@ -267,8 +282,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                         int observedVersion = Integer.parseInt(versionString);
                         if (TRAFCOD_VERSION != observedVersion)
                         {
-                            throw new TrafficControlException(
-                                    "Wrong TrafCOD version (expected " + TRAFCOD_VERSION + ", got " + observedVersion + ")");
+                            throw new TrafficControlException("Wrong TrafCOD version (expected " + TRAFCOD_VERSION
+                                    + ", got " + observedVersion + ")");
                         }
                     }
                     catch (NumberFormatException nfe)
@@ -281,16 +296,14 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 {
                     while (trimmedLine.startsWith(COMMENT_PREFIX))
                     {
-                        inputLine = in.readLine();
-                        if (null == inputLine)
+                        if (++lineno >= inputLines.size())
                         {
-                            throw new TrafficControlException(
-                                    "Unexpected EOF (reading sequence key at " + locationDescription + ")");
+                            throw new TrafficControlException("Unexpected EOF (reading sequence key at "
+                                    + locationDescription + ")");
                         }
-                        ++lineno;
-                        trimmedLine = inputLine.trim();
+                        trimmedLine = inputLines.get(lineno);
                     }
-                    String[] fields = inputLine.split("\t");
+                    String[] fields = trimmedLine.split("\t");
                     if (fields.length != 2)
                     {
                         throw new TrafficControlException("Wrong number of fields in Sequence information");
@@ -316,8 +329,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     catch (NumberFormatException nfe)
                     {
                         nfe.printStackTrace();
-                        throw new TrafficControlException(
-                                "Bad structure number (got \"" + structureNumberString + "\" at " + locationDescription + ")");
+                        throw new TrafficControlException("Bad structure number (got \"" + structureNumberString + "\" at "
+                                + locationDescription + ")");
                     }
                     for (int i = 0; i < this.conflictGroupSize; i++)
                     {
@@ -325,21 +338,22 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     }
                     for (int conflictMemberLine = 0; conflictMemberLine < this.numberOfConflictGroups; conflictMemberLine++)
                     {
-                        inputLine = in.readLine();
-                        ++lineno;
-                        trimmedLine = inputLine.trim();
+                        if (++lineno >= inputLines.size())
+                        {
+                            throw new TrafficControlException("Unexpected EOF (reading conflict groups at "
+                                    + locationDescription + ")");
+                        }
+                        trimmedLine = inputLines.get(lineno);
                         while (trimmedLine.startsWith(COMMENT_PREFIX))
                         {
-                            inputLine = in.readLine();
-                            if (null == inputLine)
+                            if (++lineno >= inputLines.size())
                             {
-                                throw new TrafficControlException(
-                                        "Unexpected EOF (reading sequence key at " + locationDescription + ")");
+                                throw new TrafficControlException("Unexpected EOF (reading conflict groups at "
+                                        + locationDescription + ")");
                             }
-                            ++lineno;
-                            trimmedLine = inputLine.trim();
+                            trimmedLine = inputLines.get(lineno);
                         }
-                        String[] fields = inputLine.split("\t");
+                        String[] fields = trimmedLine.split("\t");
                         if (fields.length != this.conflictGroupSize)
                         {
                             throw new TrafficControlException("Wrong number of conflict groups in Structure information");
@@ -373,22 +387,26 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             }
             if (stringBeginsWithIgnoreCase(TIME_PREFIX, trimmedLine))
             {
-                String timerNameAndMaximumValue = trimmedLine.substring(INIT_PREFIX.length()).trim().replaceAll("[ \t]+", " ");
+                String timerNameAndMaximumValue =
+                        trimmedLine.substring(INIT_PREFIX.length()).trim().replaceAll("[ \t]+", " ");
                 String[] fields = timerNameAndMaximumValue.split(" ");
                 NameAndStream nameAndStream = new NameAndStream(fields[0], locationDescription);
-                Variable variable = installVariable(nameAndStream.getName(), nameAndStream.getStream(),
-                        EnumSet.noneOf(Flags.class), locationDescription);
+                Variable variable =
+                        installVariable(nameAndStream.getName(), nameAndStream.getStream(), EnumSet.noneOf(Flags.class),
+                                locationDescription);
                 int value10 = Integer.parseInt(fields[1]);
                 variable.setTimerMax(value10);
                 continue;
             }
             if (stringBeginsWithIgnoreCase(EXPORT_PREFIX, trimmedLine))
             {
-                String varNameAndOutputValue = trimmedLine.substring(EXPORT_PREFIX.length()).trim().replaceAll("[ \t]+", " ");
+                String varNameAndOutputValue =
+                        trimmedLine.substring(EXPORT_PREFIX.length()).trim().replaceAll("[ \t]+", " ");
                 String[] fields = varNameAndOutputValue.split(" ");
                 NameAndStream nameAndStream = new NameAndStream(fields[0], locationDescription);
-                Variable variable = installVariable(nameAndStream.getName(), nameAndStream.getStream(),
-                        EnumSet.noneOf(Flags.class), locationDescription);
+                Variable variable =
+                        installVariable(nameAndStream.getName(), nameAndStream.getStream(), EnumSet.noneOf(Flags.class),
+                                locationDescription);
                 int value = Integer.parseInt(fields[1]);
                 variable.setOutput(value);
                 int added = 0;
@@ -398,14 +416,14 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     String id = trafficLight.getId();
                     if (id.length() < 2)
                     {
-                        throw new TrafficControlException(
-                                "Id of traffic light " + trafficLight + " does not end on two digits");
+                        throw new TrafficControlException("Id of traffic light " + trafficLight
+                                + " does not end on two digits");
                     }
                     String streamLetters = id.substring(id.length() - 2);
                     if (!Character.isDigit(streamLetters.charAt(0)) || !Character.isDigit(streamLetters.charAt(1)))
                     {
-                        throw new TrafficControlException(
-                                "Id of traffic light " + trafficLight + " does not end on two digits");
+                        throw new TrafficControlException("Id of traffic light " + trafficLight
+                                + " does not end on two digits");
                     }
                     int stream = Integer.parseInt(streamLetters);
                     if (variable.getStream() == stream)
@@ -416,7 +434,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 }
                 if (0 == added)
                 {
-                    throw new TrafficControlException("No traffic light provided that matches stream " + variable.getStream());
+                    throw new TrafficControlException("No traffic light provided that matches stream "
+                            + variable.getStream());
                 }
                 continue;
             }
@@ -428,7 +447,6 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 // System.out.println(printRule(tokenisedRule, false));
             }
         }
-        in.close();
         for (Variable variable : this.variables.values())
         {
             if (variable.isDetector())
@@ -445,8 +463,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 }
                 if (null == sensor)
                 {
-                    throw new TrafficControlException("Cannot find detector " + detectorName + " with number " + detectorNumber
-                            + " among the provided sensors");
+                    throw new TrafficControlException("Cannot find detector " + detectorName + " with number "
+                            + detectorNumber + " among the provided sensors");
                 }
                 variable.subscribeToDetector(sensor);
             }
@@ -587,11 +605,12 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     Variable detectorVariable = this.variables.get(detectorName);
                     if (null == detectorVariable)
                     {
-                        throw new TrafficControlException(
-                                "tfg file defines detector " + detectorName + " which does not exist in the TrafCOD program");
+                        throw new TrafficControlException("tfg file defines detector " + detectorName
+                                + " which does not exist in the TrafCOD program");
                     }
-                    DetectorImage di = new DetectorImage(result, getCoordinates(inputLine.substring(14), useFirstCoordinates),
-                            String.format("Detector %02d%d", detectorStream, detectorSubNumber));
+                    DetectorImage di =
+                            new DetectorImage(result, getCoordinates(inputLine.substring(14), useFirstCoordinates),
+                                    String.format("Detector %02d%d", detectorStream, detectorSubNumber));
                     TrafficLightSensor sensor = null;
                     for (TrafficLightSensor tls : sensors)
                     {
@@ -605,7 +624,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                         throw new TrafficControlException("Cannot find detector " + detectorName + " with number "
                                 + detectorName + " among the provided sensors");
                     }
-                    sensor.addListener(di, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
+                    sensor.addListener(di,
+                            NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT);
                     sensor.addListener(di, NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT);
                 }
                 else
@@ -725,8 +745,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
         if (loop >= this.maxLoopCount)
         {
             StringBuffer warningMessage = new StringBuffer();
-            warningMessage.append(String
-                    .format("Control program did not settle to a final state in %d iterations; oscillating variables:", loop));
+            warningMessage.append(String.format(
+                    "Control program did not settle to a final state in %d iterations; oscillating variables:", loop));
             for (Variable v : this.variablesInDefinitionOrder)
             {
                 if (v.getFlags().contains(Flags.CHANGED))
@@ -881,8 +901,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     }
                     conflictGroupList.append(String.format("%02d", stream));
                 }
-                fireEvent(TRAFFICCONTROL_CONFLICT_GROUP_CHANGED,
-                        new Object[] { getId(), this.currentConflictGroup, conflictGroupList.toString() });
+                fireEvent(TRAFFICCONTROL_CONFLICT_GROUP_CHANGED, new Object[] { getId(), this.currentConflictGroup,
+                        conflictGroupList.toString() });
                 // System.out.println("Conflict group changed from " + this.currentConflictGroup + " to "
                 // + conflictGroupList.toString());
                 this.currentConflictGroup = conflictGroupList.toString();
@@ -1200,7 +1220,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                         break;
 
                     case REINIT_TIMER:
-                        result.append(((Variable) tokens[++inPos]).toString(EnumSet.of(PrintFlags.ID, PrintFlags.REINITTIMER)));
+                        result.append(((Variable) tokens[++inPos]).toString(EnumSet
+                                .of(PrintFlags.ID, PrintFlags.REINITTIMER)));
                         result.append(".=");
                         break;
 
@@ -1271,8 +1292,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                         break;
 
                     default:
-                        System.out.println(
-                                "<<<ERROR>>> encountered a non-Token object: " + token + " after " + result.toString());
+                        System.out.println("<<<ERROR>>> encountered a non-Token object: " + token + " after "
+                                + result.toString());
                         throw new TrafficControlException("Unknown token");
                 }
             }
@@ -1473,8 +1494,9 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                     {
                         lhsFlags.add(Flags.HAS_END_RULE);
                     }
-                    Variable lhsVariable = installVariable(lhsNameAndStream.getName(), lhsNameAndStream.getStream(), lhsFlags,
-                            locationDescription);
+                    Variable lhsVariable =
+                            installVariable(lhsNameAndStream.getName(), lhsNameAndStream.getStream(), lhsFlags,
+                                    locationDescription);
                     tokens.add(lhsVariable);
                     state = ParserState.MAY_UMINUS;
                     break;
@@ -1624,8 +1646,9 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                             {
                                 tokens.add(Token.VARIABLE);
                             }
-                            Variable variable = installVariable(nas.getName(), nas.getStream(), EnumSet.noneOf(Flags.class),
-                                    locationDescription);
+                            Variable variable =
+                                    installVariable(nas.getName(), nas.getStream(), EnumSet.noneOf(Flags.class),
+                                            locationDescription);
                             variable.incrementReferenceCount();
                             tokens.add(variable);
                         }
@@ -1736,10 +1759,11 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
     public void updateDetector(String detectorId, boolean detectingGTU)
     {
         Variable detector = this.detectors.get(detectorId);
-        detector.setValue(detectingGTU ? 1 : 0, this.currentTime10,
-                new CausePrinter(
-                        String.format("Detector %s becoming %s", detectorId, (detectingGTU ? "occupied" : "unoccupied"))),
-                this);
+        detector.setValue(
+                detectingGTU ? 1 : 0,
+                this.currentTime10,
+                new CausePrinter(String.format("Detector %s becoming %s", detectorId, (detectingGTU ? "occupied"
+                        : "unoccupied"))), this);
     }
 
     /**
@@ -1802,8 +1826,7 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             Object content = event.getContent();
             if (!(content instanceof Object[]))
             {
-                System.err.println(
-                        "TrafCOD controller " + getId() + " received event with bad payload (" + content + ")");
+                System.err.println("TrafCOD controller " + getId() + " received event with bad payload (" + content + ")");
                 return;
             }
             Object[] fields = (Object[]) event.getContent();
@@ -1812,8 +1835,8 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
                 if (fields.length < 4 || !(fields[1] instanceof String) || !(fields[2] instanceof Integer)
                         || !(fields[3] instanceof Boolean))
                 {
-                    System.err.println(
-                            "TrafCOD controller " + getId() + " received event with bad payload (" + content + ")");
+                    System.err.println("TrafCOD controller " + getId() + " received event with bad payload (" + content
+                            + ")");
                     return;
                 }
                 String name = (String) fields[1];
@@ -1890,13 +1913,15 @@ public class TrafCOD extends AbstractTrafficController implements ActuatedTraffi
             // Clone the variables
             for (Variable v : this.variablesInDefinitionOrder)
             {
-                Variable clonedVariable = result.installVariable(v.getName(), v.getStream(), EnumSet.noneOf(Flags.class), null);
+                Variable clonedVariable =
+                        result.installVariable(v.getName(), v.getStream(), EnumSet.noneOf(Flags.class), null);
                 clonedVariable.setStartSource(v.getStartSource());
                 clonedVariable.setEndSource(v.getEndSource());
                 if (clonedVariable.isDetector())
                 {
                     String detectorName = clonedVariable.toString(EnumSet.of(PrintFlags.ID));
-                    int detectorNumber = clonedVariable.getStream() * 10 + detectorName.charAt(detectorName.length() - 1) - '0';
+                    int detectorNumber =
+                            clonedVariable.getStream() * 10 + detectorName.charAt(detectorName.length() - 1) - '0';
                     TrafficLightSensor clonedSensor = null;
                     for (ObjectInterface oi : newNetwork.getObjectMap().values())
                     {
@@ -2006,7 +2031,8 @@ class NameAndStream
                     nameBuilder.deleteCharAt(nameBuilder.length() - 1);
                     // Move the 'N' after the digits
                     trimmed =
-                            trimmed.substring(0, pos - 1) + trimmed.substring(pos, pos + 2) + trimmed.substring(pos + 2) + "N";
+                            trimmed.substring(0, pos - 1) + trimmed.substring(pos, pos + 2) + trimmed.substring(pos + 2)
+                                    + "N";
                     pos--;
                 }
                 this.stream = (short) (10 * (trimmed.charAt(pos) - '0') + trimmed.charAt(pos + 1) - '0');
@@ -2122,7 +2148,8 @@ class Variable implements EventListenerInterface
      * @throws NetworkException when a traffic light or sensor is not present in newNetwork
      * @throws TrafficControlException when the output for the cloned traffic light cannot be created
      */
-    final Variable clone(final OTSNetwork newNetwork, final TrafCOD newTrafCOD) throws NetworkException, TrafficControlException
+    final Variable clone(final OTSNetwork newNetwork, final TrafCOD newTrafCOD) throws NetworkException,
+            TrafficControlException
     {
         Variable result = new Variable(getName(), getStream(), newTrafCOD);
         result.flags = EnumSet.copyOf(this.flags);
@@ -2336,8 +2363,9 @@ class Variable implements EventListenerInterface
         {
             // System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue
             // + " due to " + cause.toString());
-            trafCOD.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED, new Object[] { trafCOD.getId(),
-                    toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value, newValue, cause.toString() });
+            trafCOD.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED,
+                    new Object[] { trafCOD.getId(), toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value, newValue,
+                            cause.toString() });
         }
         this.value = newValue;
         return result;
@@ -2365,8 +2393,8 @@ class Variable implements EventListenerInterface
                 }
                 if (clonedTrafficLight instanceof TrafficLight)
                 {
-                    throw new NetworkException(
-                            "newNetwork contains an object with name " + tl.getId() + " but this object is not a TrafficLight");
+                    throw new NetworkException("newNetwork contains an object with name " + tl.getId()
+                            + " but this object is not a TrafficLight");
                 }
                 this.trafficLights.add((TrafficLight) clonedTrafficLight);
             }
@@ -2514,8 +2542,8 @@ class Variable implements EventListenerInterface
     {
         if (!this.flags.contains(Flags.IS_TIMER))
         {
-            throw new TrafficControlException(
-                    "Cannot set maximum timer value of " + this.toString() + " because this is not a timer");
+            throw new TrafficControlException("Cannot set maximum timer value of " + this.toString()
+                    + " because this is not a timer");
         }
         this.timerMax10 = value10;
     }
@@ -2672,7 +2700,8 @@ class Variable implements EventListenerInterface
                 || printFlags.contains(PrintFlags.FLAGS))
         {
             result.append("<");
-            if (printFlags.contains(PrintFlags.VALUE) || printFlags.contains(PrintFlags.S) || printFlags.contains(PrintFlags.E))
+            if (printFlags.contains(PrintFlags.VALUE) || printFlags.contains(PrintFlags.S)
+                    || printFlags.contains(PrintFlags.E))
             {
                 result.append(printValue);
             }
