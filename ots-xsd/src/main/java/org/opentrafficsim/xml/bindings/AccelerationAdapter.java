@@ -2,7 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.djunits.unit.AccelerationUnit;
+import org.djunits.value.Scalar;
 import org.djunits.value.vdouble.scalar.Acceleration;
 
 /**
@@ -19,66 +19,14 @@ public class AccelerationAdapter extends XmlAdapter<String, Acceleration>
     @Override
     public Acceleration unmarshal(final String field) throws IllegalArgumentException
     {
-        // km/h\^2|m/s\^2|mi/h\^2|ft/s\^2
-        try
-        {
-            if (field.endsWith("km/h^2"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 6).trim());
-                return new Acceleration(d, AccelerationUnit.KM_PER_HOUR_2);
-            }
-            else if (field.endsWith("m/s^2"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 5).trim());
-                return new Acceleration(d, AccelerationUnit.METER_PER_SECOND_2);
-            }
-            else if (field.endsWith("mi/h^2"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 6).trim());
-                return new Acceleration(d, AccelerationUnit.MILE_PER_HOUR_2);
-            }
-            else if (field.endsWith("ft/s^2"))
-            {
-                double d = Double.parseDouble(field.substring(0, field.length() - 6).trim());
-                return new Acceleration(d, AccelerationUnit.FOOT_PER_SECOND_2);
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new IllegalArgumentException("Error parsing Acceleration " + field, exception);
-        }
-        throw new IllegalArgumentException("Error parsing Acceleration " + field);
+        return Acceleration.valueOf(field);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String marshal(final Acceleration Acceleration) throws IllegalArgumentException
+    public String marshal(final Acceleration acceleration) throws IllegalArgumentException
     {
-        // km/h\^2|m/s\^2|mi/h\^2|ft/s\^2
-        try
-        {
-            if (Acceleration.getUnit().equals(AccelerationUnit.KM_PER_HOUR_2))
-            {
-                return Acceleration.getInUnit() + " km/h^2";
-            }
-            else if (Acceleration.getUnit().equals(AccelerationUnit.METER_PER_SECOND_2))
-            {
-                return Acceleration.getInUnit() + " m/s^2";
-            }
-            else if (Acceleration.getUnit().equals(AccelerationUnit.MILE_PER_HOUR_2))
-            {
-                return Acceleration.getInUnit() + " mi/h^2";
-            }
-            else if (Acceleration.getUnit().equals(AccelerationUnit.FOOT_PER_SECOND_2))
-            {
-                return Acceleration.getInUnit() + " ft/s^2";
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new IllegalArgumentException("Error printing Acceleration " + Acceleration, exception);
-        }
-        return Acceleration.getSI() + " m";
+        return Scalar.stringOf(acceleration);
     }
 
 }

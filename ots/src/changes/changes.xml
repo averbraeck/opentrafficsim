@@ -3,14 +3,20 @@
   <body>
     <release version="1.01.01" date="2019-XX-XX" description="">
       <action dev="averbraeck" type="update">
+        djunits version has been updated to 3.00.09, which includes Scalar.stringOf(SomeScalar) and e.g., 
+        Length.valueOf(String).
+      </action>
+      <action dev="averbraeck" type="update">
+        djutils version has been updated to 1.00.05, which includes the ImmutableCollections (static) class.
+      </action>
+      <action dev="averbraeck" type="update">
         In XML-parsing, the use of nodes and links has been simplified. All nodes have to be given 
         full coordinates. Slope and direction are calculated automatically. Lengths for links do not
         have to be provided as a result; they will be calculated and correspond to the actual lengths
         of what is drawn, not the theoretical lengths. An arc has a theoretical length that is different
         from the e.g., 32 or 64, segments from which it is created, and algorithms make false calculations
         based on the difference between the length of OTSLine3D and the provided length of the link.
-        For now, arcs, Bezier curves, and clothoids have to be in a fixed plane (z-coordinate of start
-        and end have to be the same). Polylines and straight segments can have a slope. Again, the correct
+        Arcs, Bezier curves, clothoids, polylines and straight segments can have a slope. The correct
         length including the slope is calculated (note that this this differs from the length of the 
         projection in the animation).
       </action>
