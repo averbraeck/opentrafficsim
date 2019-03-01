@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -43,7 +44,7 @@ import org.opentrafficsim.xml.generated.CONTROL.FIXEDTIME;
 import org.opentrafficsim.xml.generated.LINK;
 import org.opentrafficsim.xml.generated.NETWORK;
 import org.opentrafficsim.xml.generated.NODE;
-import org.opentrafficsim.xml.generated.SINGALGROUPFIXEDTIMETYPE;
+import org.opentrafficsim.xml.generated.SIGNALGROUP;
 import org.opentrafficsim.xml.generated.TRAFFICLIGHTTYPE;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -320,89 +321,6 @@ public class XmlNetworkLaneParserXsd implements Serializable
         }
     }
 
-    /*-*
-     * Build the links with the correct design line.
-     * @param otsNetwork the network to insert the parsed objects in
-     * @param networkObjects the objects in the NETWORK tag
-     * @param simulator the simulator
-     * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     * @throws OTSGeometryException when the design line is invalid
-     */
-    /*
-     * static void applyRoadTypes(final OTSNetwork otsNetwork, final List<Object> networkObjects, OTSSimulatorInterface
-     * simulator) throws NetworkException, OTSGeometryException { for (Object networkObject : networkObjects) { if
-     * (networkObject instanceof LINK) { LINK xmlLink = (LINK) networkObject; CrossSectionLink csl = (CrossSectionLink)
-     * otsNetwork.getLink(xmlLink.getNAME()); List<CrossSectionElement> cseList = new ArrayList<>(); List<Lane> lanes = new
-     * ArrayList<>(); // TODO: Map<GTUType, LongitudinalDirectionality> linkDirections = new HashMap<>();
-     * LongitudinalDirectionality linkDirection = LongitudinalDirectionality.DIR_NONE; for (CROSSSECTIONELEMENT cse :
-     * xmlLink.getROADLAYOUT().getLANEOrNOTRAFFICLANEOrSHOULDER()) { LaneOverrideTag laneOverrideTag = null; if
-     * (xmlLink.laneOverrideTags.containsKey(cse.name)) laneOverrideTag = xmlLink.laneOverrideTags.get(cse.name); Length
-     * startOffset = cse.getOFFSET() != null ? cse.getOFFSET() : cse.offSetStart; Length endOffset = cse.getOFFSET() != null ?
-     * cse.getOFFSET() : cse.offSetEnd; // STRIPE if (cse instanceof CSESTRIPE) { switch (cse.stripeType) { case BLOCKED: case
-     * DASHED: Stripe dashedLine = new Stripe(csl, startOffset, endOffset, cse.width);
-     * dashedLine.addPermeability(GTUType.VEHICLE, Permeable.BOTH); parser.networkAnimation.addDrawingInfoBase(dashedLine, new
-     * DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.DASHED)); cseList.add(dashedLine); break; case DOUBLE: Stripe
-     * doubleLine = new Stripe(csl, startOffset, endOffset, cse.width); parser.networkAnimation.addDrawingInfoBase(doubleLine,
-     * new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.DOUBLE)); cseList.add(doubleLine); break; case LEFTONLY:
-     * Stripe leftOnlyLine = new Stripe(csl, startOffset, endOffset, cse.width); leftOnlyLine.addPermeability(GTUType.VEHICLE,
-     * Permeable.LEFT); // TODO correct? parser.networkAnimation.addDrawingInfoBase(leftOnlyLine, new
-     * DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.LEFTONLY)); cseList.add(leftOnlyLine); break; case RIGHTONLY:
-     * Stripe rightOnlyLine = new Stripe(csl, startOffset, endOffset, cse.width); rightOnlyLine.addPermeability(GTUType.VEHICLE,
-     * Permeable.RIGHT); // TODO correct? parser.networkAnimation.addDrawingInfoBase(rightOnlyLine, new
-     * DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f, StripeType.RIGHTONLY)); cseList.add(rightOnlyLine); break; case SOLID:
-     * Stripe solidLine = new Stripe(csl, startOffset, endOffset, cse.width);
-     * parser.networkAnimation.addDrawingInfoBase(solidLine, new DrawingInfoStripe<Stripe>(Color.BLACK, 0.5f,
-     * StripeType.SOLID)); cseList.add(solidLine); break; default: throw new SAXException("Unknown Stripe type: " +
-     * cse.stripeType.toString()); } } // LANE if (cse instanceof CSELANE) { LongitudinalDirectionality direction =
-     * cse.direction; Color color = cse.color; OvertakingConditions overtakingConditions = cse.overtakingConditions; if
-     * (laneOverrideTag != null) { if (laneOverrideTag.overtakingConditions != null) overtakingConditions =
-     * laneOverrideTag.overtakingConditions; if (laneOverrideTag.color != null) color = laneOverrideTag.color; if
-     * (laneOverrideTag.direction != null) direction = laneOverrideTag.direction; } if
-     * (linkDirection.equals(LongitudinalDirectionality.DIR_NONE)) { linkDirection = direction; } else if
-     * (linkDirection.isForward()) { if (direction.isBackwardOrBoth()) { linkDirection = LongitudinalDirectionality.DIR_BOTH; }
-     * } else if (linkDirection.isBackward()) { if (direction.isForwardOrBoth()) { linkDirection =
-     * LongitudinalDirectionality.DIR_BOTH; } } // XXX: LaneTypes with compatibilities might have to be defined in a new way --
-     * LaneType.FREEWAY for // now... Lane lane = new Lane(csl, cse.name, startOffset, endOffset, cse.width, cse.width,
-     * LaneType.FREEWAY, cse.legalSpeedLimits, overtakingConditions); cseList.add(lane); lanes.add(lane);
-     * xmlLink.lanes.put(cse.name, lane); if (simulator != null && simulator instanceof AnimatorInterface) { try { new
-     * LaneAnimation(lane, simulator, color, false); } catch (RemoteException exception) { exception.printStackTrace(); } } //
-     * SINK if (xmlLink.sinkTags.keySet().contains(cse.name)) { SinkTag sinkTag = xmlLink.sinkTags.get(cse.name); Length
-     * position = LinkTag.parseBeginEndPosition(sinkTag.positionStr, lane); new SinkSensor(lane, position, simulator); } //
-     * TRAFFICLIGHT if (xmlLink.trafficLightTags.containsKey(cse.name)) { for (TrafficLightTag trafficLightTag :
-     * xmlLink.trafficLightTags.get(cse.name)) { try { Class<?> clazz = Class.forName(trafficLightTag.className); Constructor<?>
-     * trafficLightConstructor = ClassUtil.resolveConstructor(clazz, new Class[] {String.class, Lane.class, Length.class,
-     * DEVSSimulatorInterface.TimeDoubleUnit.class}); Length position =
-     * LinkTag.parseBeginEndPosition(trafficLightTag.positionStr, lane); trafficLightConstructor .newInstance(new Object[]
-     * {trafficLightTag.name, lane, position, simulator}); } catch (ClassNotFoundException | NoSuchMethodException |
-     * InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NetworkException
-     * exception) { throw new NetworkException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className + " for traffic light " +
-     * trafficLightTag.name + " on lane " + lane.toString() + " -- class not found or constructor not right", exception); } } }
-     * // GENERATOR if (xmlLink.generatorTags.containsKey(cse.name)) { GeneratorTag generatorTag =
-     * xmlLink.generatorTags.get(cse.name); GeneratorTag.makeGenerator(generatorTag, parser, xmlLink, simulator); } // TODO
-     * LISTGENERATOR // SENSOR if (xmlLink.sensorTags.containsKey(cse.name)) { for (SensorTag sensorTag :
-     * xmlLink.sensorTags.get(cse.name)) { try { Class<?> clazz = Class.forName(sensorTag.className); Constructor<?>
-     * sensorConstructor = ClassUtil.resolveConstructor(clazz, new Class[] {String.class, Lane.class, Length.class,
-     * RelativePosition.TYPE.class, DEVSSimulatorInterface.TimeDoubleUnit.class, Compatible.class}); Length position =
-     * LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane); // { String.class, Lane.class, Length.class,
-     * RelativePosition.TYPE.class, // DEVSSimulatorInterface.TimeDoubleUnit.class } sensorConstructor.newInstance(new Object[]
-     * {sensorTag.name, lane, position, sensorTag.triggerPosition, simulator, Compatible.EVERYTHING}); } catch
-     * (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
-     * IllegalArgumentException | InvocationTargetException | NetworkException exception) { throw new
-     * NetworkException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name + " on lane " +
-     * lane.toString() + " -- class not found or constructor not right", exception); } } } // FILL if
-     * (xmlLink.fillTags.containsKey(cse.name)) { FillTag fillTag = xmlLink.fillTags.get(cse.name); FillTag.makeFill(fillTag,
-     * parser, xmlLink, simulator); } } // NOTRAFFICLANE if (cse instanceof CSENOTRAFFICLANE) { Lane lane = new
-     * NoTrafficLane(csl, cse.name, startOffset, endOffset, cse.width, cse.width); cseList.add(lane); if (simulator != null &&
-     * simulator instanceof AnimatorInterface) { try { Color color = cse.color; if (laneOverrideTag != null) { if
-     * (laneOverrideTag.color != null) color = laneOverrideTag.color; } new LaneAnimation(lane, simulator, color, false); }
-     * catch (RemoteException exception) { exception.printStackTrace(); } } } // SHOULDER if (cse instanceof CSESHOULDER) {
-     * Shoulder shoulder = new Shoulder(csl, cse.name, startOffset, endOffset, cse.width, cse.width); cseList.add(shoulder); if
-     * (simulator != null && simulator instanceof AnimatorInterface) { try { Color color = cse.color; if (laneOverrideTag !=
-     * null) { if (laneOverrideTag.color != null) color = laneOverrideTag.color; } new ShoulderAnimation(shoulder, simulator,
-     * color); } catch (RemoteException exception) { exception.printStackTrace(); } } } } // for (CrossSectionElementTag cseTag
-     * : roadTypeTag.cseTags.values()) } } }
-     */
-
     /**
      * Creates control objects.
      * @param otsNetwork OTSNetwork; network
@@ -421,29 +339,33 @@ public class XmlNetworkLaneParserXsd implements Serializable
                 Duration cycleTime = fixedTime.getCYCLETIME();
                 Duration offset = fixedTime.getOFFSET();
                 Set<SignalGroup> signalGroups = new LinkedHashSet<>();
-                for (SINGALGROUPFIXEDTIMETYPE signalGroup : fixedTime.getSIGNALGROUP())
+                for (CONTROL.FIXEDTIME.SIGNALGROUP signalGroup : fixedTime.getSIGNALGROUP())
                 {
                     String signalGroupId = signalGroup.getID();
                     Duration signalGroupOffset = signalGroup.getOFFSET();
-                    Duration preGreen = signalGroup.getPREGREEN() == null ? null : signalGroup.getPREGREEN();
+                    Duration preGreen = signalGroup.getPREGREEN() == null ? Duration.ZERO : signalGroup.getPREGREEN();
                     Duration green = signalGroup.getGREEN();
                     Duration yellow = signalGroup.getYELLOW();
+
+                    // TODO: is there a better way to obtain a referenced object?
+                    SIGNALGROUP referencedSignalGroup =
+                            findObject(networkObjects, SIGNALGROUP.class, new Predicate<SIGNALGROUP>()
+                            {
+                                /** {@inheritDoc} */
+                                @Override
+                                public boolean test(final SIGNALGROUP t)
+                                {
+                                    return t.getID().equals(signalGroupId);
+                                }
+                            });
+
                     Set<String> trafficLightIds = new LinkedHashSet<>();
-                    for (TRAFFICLIGHTTYPE trafficLight : signalGroup.getTRAFFICLIGHT())
+                    for (TRAFFICLIGHTTYPE trafficLight : referencedSignalGroup.getTRAFFICLIGHT())
                     {
                         trafficLightIds.add(trafficLight.getNAME());
                     }
-                    SignalGroup signalGroupOts;
-                    if (preGreen == null)
-                    {
-                        signalGroupOts = new SignalGroup(signalGroupId, trafficLightIds, signalGroupOffset, green, yellow);
-                    }
-                    else
-                    {
-                        signalGroupOts =
-                                new SignalGroup(signalGroupId, trafficLightIds, signalGroupOffset, preGreen, green, yellow);
-                    }
-                    signalGroups.add(signalGroupOts);
+                    signalGroups
+                            .add(new SignalGroup(signalGroupId, trafficLightIds, signalGroupOffset, preGreen, green, yellow));
                 }
                 try
                 {
@@ -477,6 +399,31 @@ public class XmlNetworkLaneParserXsd implements Serializable
             }
         }
         return list;
+    }
+
+    /**
+     * Select object of given type by predicate.
+     * @param networkObjects List&lt;Object&gt;; list of objects
+     * @param clazz Class&lt;T&gt;; class of type of objects to return
+     * @param predicate Predicate&lt;T&gt;; predicate
+     * @param <T> type
+     * @return (first) object of given type that matches the predicate
+     */
+    public static <T> T findObject(final List<Object> networkObjects, final Class<T> clazz, final Predicate<T> predicate)
+    {
+        for (Object networkObject : networkObjects)
+        {
+            if (clazz.isAssignableFrom(networkObject.getClass()))
+            {
+                @SuppressWarnings("unchecked")
+                T t = (T) networkObject;
+                if (predicate.test(t))
+                {
+                    return t;
+                }
+            }
+        }
+        throw new RuntimeException(String.format("Object of type %s could not be found.", clazz));
     }
 
     /**
