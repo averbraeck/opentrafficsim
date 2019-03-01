@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONTROL xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-xsd/src/main/resources/ots-control.xsd">
+  
+  <FIXEDTIME ID="N333-dorpsweg" CYCLETIME="90s" OFFSET="12s">
+    <SIGNALGROUP ID="1234" OFFSET="0s" GREEN="20s" YELLOW="3.5s">
+      <TRAFFICLIGHT ID="212313123" />
+    </SIGNALGROUP>
+  </FIXEDTIME>
+  
+ </CONTROL>

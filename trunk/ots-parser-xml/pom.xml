@@ -19,6 +19,11 @@
       <groupId>opentrafficsim</groupId>
       <artifactId>ots-road</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>opentrafficsim</groupId>
+      <artifactId>ots-trafficcontrol</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>opentrafficsim</groupId>

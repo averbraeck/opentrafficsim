@@ -9,35 +9,29 @@
 package org.opentrafficsim.xml.generated;
 
 import javax.annotation.Generated;
-import javax.vecmath.Point3d;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.djunits.value.vdouble.scalar.Direction;
-import org.opentrafficsim.xml.bindings.CoordinateAdapter;
-import org.opentrafficsim.xml.bindings.DirectionAdapter;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.xml.bindings.DurationAdapter;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for SINGALGROUPFIXEDTIMETYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType&gt;
+ * &lt;complexType name="SINGALGROUPFIXEDTIMETYPE"&gt;
  *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;attribute name="NAME" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
- *       &lt;attribute name="COORDINATE" use="required" type="{http://www.opentrafficsim.org/ots}COORDINATETYPE" /&gt;
- *       &lt;attribute name="DIRECTION" type="{http://www.opentrafficsim.org/ots}DIRECTIONTYPE" /&gt;
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
- *     &lt;/restriction&gt;
+ *     &lt;extension base="{http://www.opentrafficsim.org/ots}SIGNALGROUPTYPE"&gt;
+ *       &lt;attribute name="OFFSET" use="required" type="{http://www.opentrafficsim.org/ots}DURATIONTYPE" /&gt;
+ *       &lt;attribute name="PREGREEN" type="{http://www.opentrafficsim.org/ots}DURATIONTYPE" /&gt;
+ *       &lt;attribute name="GREEN" use="required" type="{http://www.opentrafficsim.org/ots}DURATIONTYPE" /&gt;
+ *       &lt;attribute name="YELLOW" use="required" type="{http://www.opentrafficsim.org/ots}DURATIONTYPE" /&gt;
+ *     &lt;/extension&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -45,32 +39,31 @@ import org.opentrafficsim.xml.bindings.DirectionAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
-@XmlRootElement(name = "NODE")
+@XmlType(name = "SINGALGROUPFIXEDTIMETYPE")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-public class NODE {
+public class SINGALGROUPFIXEDTIMETYPE
+    extends SIGNALGROUPTYPE
+{
 
-    @XmlAttribute(name = "NAME", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")
+    @XmlAttribute(name = "OFFSET", required = true)
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    protected String name;
-    @XmlAttribute(name = "COORDINATE", required = true)
-    @XmlJavaTypeAdapter(CoordinateAdapter.class)
+    protected Duration offset;
+    @XmlAttribute(name = "PREGREEN")
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    protected Point3d coordinate;
-    @XmlAttribute(name = "DIRECTION")
-    @XmlJavaTypeAdapter(DirectionAdapter.class)
+    protected Duration pregreen;
+    @XmlAttribute(name = "GREEN", required = true)
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    protected Direction direction;
-    @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
-    @XmlSchemaType(name = "anyURI")
+    protected Duration green;
+    @XmlAttribute(name = "YELLOW", required = true)
+    @XmlJavaTypeAdapter(DurationAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    protected String base;
+    protected Duration yellow;
 
     /**
-     * Gets the value of the name property.
+     * Gets the value of the offset property.
      * 
      * @return
      *     possible object is
@@ -78,12 +71,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public String getNAME() {
-        return name;
+    public Duration getOFFSET() {
+        return offset;
     }
 
     /**
-     * Sets the value of the name property.
+     * Sets the value of the offset property.
      * 
      * @param value
      *     allowed object is
@@ -91,12 +84,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public void setNAME(String value) {
-        this.name = value;
+    public void setOFFSET(Duration value) {
+        this.offset = value;
     }
 
     /**
-     * Gets the value of the coordinate property.
+     * Gets the value of the pregreen property.
      * 
      * @return
      *     possible object is
@@ -104,12 +97,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public Point3d getCOORDINATE() {
-        return coordinate;
+    public Duration getPREGREEN() {
+        return pregreen;
     }
 
     /**
-     * Sets the value of the coordinate property.
+     * Sets the value of the pregreen property.
      * 
      * @param value
      *     allowed object is
@@ -117,12 +110,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public void setCOORDINATE(Point3d value) {
-        this.coordinate = value;
+    public void setPREGREEN(Duration value) {
+        this.pregreen = value;
     }
 
     /**
-     * Gets the value of the direction property.
+     * Gets the value of the green property.
      * 
      * @return
      *     possible object is
@@ -130,12 +123,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public Direction getDIRECTION() {
-        return direction;
+    public Duration getGREEN() {
+        return green;
     }
 
     /**
-     * Sets the value of the direction property.
+     * Sets the value of the green property.
      * 
      * @param value
      *     allowed object is
@@ -143,12 +136,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public void setDIRECTION(Direction value) {
-        this.direction = value;
+    public void setGREEN(Duration value) {
+        this.green = value;
     }
 
     /**
-     * Gets the value of the base property.
+     * Gets the value of the yellow property.
      * 
      * @return
      *     possible object is
@@ -156,12 +149,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public String getBase() {
-        return base;
+    public Duration getYELLOW() {
+        return yellow;
     }
 
     /**
-     * Sets the value of the base property.
+     * Sets the value of the yellow property.
      * 
      * @param value
      *     allowed object is
@@ -169,8 +162,8 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public void setBase(String value) {
-        this.base = value;
+    public void setYELLOW(Duration value) {
+        this.yellow = value;
     }
 
 }

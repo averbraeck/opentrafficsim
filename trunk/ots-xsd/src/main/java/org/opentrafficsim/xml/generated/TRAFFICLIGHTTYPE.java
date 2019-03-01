@@ -9,34 +9,32 @@
 package org.opentrafficsim.xml.generated;
 
 import javax.annotation.Generated;
-import javax.vecmath.Point3d;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.djunits.value.vdouble.scalar.Direction;
-import org.opentrafficsim.xml.bindings.CoordinateAdapter;
-import org.opentrafficsim.xml.bindings.DirectionAdapter;
+import org.opentrafficsim.xml.bindings.ClassNameAdapter;
+import org.opentrafficsim.xml.bindings.LengthBeginEndAdapter;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEnd;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for TRAFFICLIGHTTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType&gt;
+ * &lt;complexType name="TRAFFICLIGHTTYPE"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;attribute name="NAME" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
- *       &lt;attribute name="COORDINATE" use="required" type="{http://www.opentrafficsim.org/ots}COORDINATETYPE" /&gt;
- *       &lt;attribute name="DIRECTION" type="{http://www.opentrafficsim.org/ots}DIRECTIONTYPE" /&gt;
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
+ *       &lt;attribute name="NAME" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="LANE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="POSITION" use="required" type="{http://www.opentrafficsim.org/ots}LENGTHBEGINENDTYPE" /&gt;
+ *       &lt;attribute name="CLASS" use="required" type="{http://www.opentrafficsim.org/ots}CLASSNAMETYPE" /&gt;
+ *       &lt;attribute name="CONTROLLER" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -45,29 +43,29 @@ import org.opentrafficsim.xml.bindings.DirectionAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
-@XmlRootElement(name = "NODE")
+@XmlType(name = "TRAFFICLIGHTTYPE")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-public class NODE {
+public class TRAFFICLIGHTTYPE {
 
-    @XmlAttribute(name = "NAME", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")
+    @XmlAttribute(name = "NAME")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
     protected String name;
-    @XmlAttribute(name = "COORDINATE", required = true)
-    @XmlJavaTypeAdapter(CoordinateAdapter.class)
+    @XmlAttribute(name = "LANE", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    protected Point3d coordinate;
-    @XmlAttribute(name = "DIRECTION")
-    @XmlJavaTypeAdapter(DirectionAdapter.class)
+    protected String lane;
+    @XmlAttribute(name = "POSITION", required = true)
+    @XmlJavaTypeAdapter(LengthBeginEndAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    protected Direction direction;
-    @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
-    @XmlSchemaType(name = "anyURI")
+    protected LengthBeginEnd position;
+    @XmlAttribute(name = "CLASS", required = true)
+    @XmlJavaTypeAdapter(ClassNameAdapter.class)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    protected String base;
+    protected Class _class;
+    @XmlAttribute(name = "CONTROLLER", required = true)
+    @XmlIDREF
+    @XmlSchemaType(name = "IDREF")
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
+    protected Object controller;
 
     /**
      * Gets the value of the name property.
@@ -96,7 +94,7 @@ public class NODE {
     }
 
     /**
-     * Gets the value of the coordinate property.
+     * Gets the value of the lane property.
      * 
      * @return
      *     possible object is
@@ -104,12 +102,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public Point3d getCOORDINATE() {
-        return coordinate;
+    public String getLANE() {
+        return lane;
     }
 
     /**
-     * Sets the value of the coordinate property.
+     * Sets the value of the lane property.
      * 
      * @param value
      *     allowed object is
@@ -117,12 +115,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public void setCOORDINATE(Point3d value) {
-        this.coordinate = value;
+    public void setLANE(String value) {
+        this.lane = value;
     }
 
     /**
-     * Gets the value of the direction property.
+     * Gets the value of the position property.
      * 
      * @return
      *     possible object is
@@ -130,12 +128,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public Direction getDIRECTION() {
-        return direction;
+    public LengthBeginEnd getPOSITION() {
+        return position;
     }
 
     /**
-     * Sets the value of the direction property.
+     * Sets the value of the position property.
      * 
      * @param value
      *     allowed object is
@@ -143,12 +141,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public void setDIRECTION(Direction value) {
-        this.direction = value;
+    public void setPOSITION(LengthBeginEnd value) {
+        this.position = value;
     }
 
     /**
-     * Gets the value of the base property.
+     * Gets the value of the class property.
      * 
      * @return
      *     possible object is
@@ -156,12 +154,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public String getBase() {
-        return base;
+    public Class getCLASS() {
+        return _class;
     }
 
     /**
-     * Sets the value of the base property.
+     * Sets the value of the class property.
      * 
      * @param value
      *     allowed object is
@@ -169,8 +167,34 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public void setBase(String value) {
-        this.base = value;
+    public void setCLASS(Class value) {
+        this._class = value;
+    }
+
+    /**
+     * Gets the value of the controller property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Object }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
+    public Object getCONTROLLER() {
+        return controller;
+    }
+
+    /**
+     * Sets the value of the controller property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Object }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
+    public void setCONTROLLER(Object value) {
+        this.controller = value;
     }
 
 }
