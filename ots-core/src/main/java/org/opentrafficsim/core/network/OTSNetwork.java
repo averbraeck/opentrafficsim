@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.vecmath.Point3d;
@@ -297,6 +298,21 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             }
         }
         return new ImmutableHashMap<>(result, Immutable.WRAP);
+    }
+    
+    /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
+    @Override
+    public final <T extends ObjectInterface> T getObject(final Class<T> objectType, final String objectId)
+    {
+        for (Entry<String, ObjectInterface> entry : this.objectMap.entrySet())
+        {
+            if (entry.getKey().equals(objectId) && objectType.isInstance(entry.getValue()))
+            {
+                return (T) entry.getValue();
+            }
+        }
+        return null;
     }
 
     /** {@inheritDoc} */
