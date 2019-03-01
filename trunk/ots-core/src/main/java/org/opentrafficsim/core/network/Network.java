@@ -162,6 +162,15 @@ public interface Network extends EventProducerInterface, Identifiable
     <T extends ObjectInterface> ImmutableMap<String, T> getObjectMap(Class<T> objectType);
 
     /**
+     * Return object of given type with given id.
+     * @param objectType T; object type class
+     * @param objectId String; id of object
+     * @param <T> object type
+     * @return T; object of given type with given id, {@code null} if no such object
+     */
+    <T extends ObjectInterface> T getObject(Class<T> objectType, String objectId);
+    
+    /**
      * Add an ObjectInterface implementing object to the Network.
      * @param object ObjectInterface; the object that implements ObjectInterface
      * @throws NetworkException if link already exists in the network, if name of the object is not unique.
