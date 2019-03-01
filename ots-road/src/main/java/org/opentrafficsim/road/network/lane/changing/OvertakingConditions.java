@@ -5,8 +5,6 @@ import java.util.Collection;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * This class implements the overtaking conditions. Examples are:
@@ -25,8 +23,9 @@ import org.opentrafficsim.road.network.lane.Lane;
  * <li>Overtaking on the left and the right is allowed for all GTUs. This can e.g. be used on an American highway where all GTUs
  * that are allowed on the highway can indeed overtake on the right or the left.</li>
  * </ul>
- * <b>Note:</b> The class only checks whether it is <b>allowed</b> to overtake another GTU on this road, not whether it is
- * possible or safe to do so. That has to be checked by the GTU itself based on e.g., gap acceptance.
+ * <b>Note:</b> The class does not check whether it is <b>allowed</b> to overtake another GTU on this road, neither whether it
+ * is possible or safe to do so. That has to be checked by the GTU itself based on e.g., gap acceptance and other behavioral
+ * rules.
  * <p>
  * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -37,16 +36,6 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public interface OvertakingConditions
 {
-    /**
-     * Implementation of the overtaking conditions. E.g., is a car allowed on this road to overtake a tractor? If so, on which
-     * side(s)?
-     * @param lane Lane; the lane for which to evaluate the overtaking conditions
-     * @param gtu LaneBasedGTU; the GTU that might overtake another GTU
-     * @param leaderGTU LaneBasedGTU; the GTU in front of the GTU that might want to overtake
-     * @return an overtaking direction: LEFT, RIGHT, BOTH or NONE
-     */
-    OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leaderGTU);
-
     /********************************************************************************************************************/
     /********************** IMPLEMENTATION CLASSES OF MOST COMMON OVERTAKING CONDITIONS *****************************/
     /********************************************************************************************************************/
@@ -65,21 +54,12 @@ public interface OvertakingConditions
      */
     class LeftOnly implements OvertakingConditions
     {
-
-        /** {@inheritDoc} */
-        @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
-        {
-            return OvertakingDirection.LEFT;
-        }
-
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
             return "LeftOnly []";
         }
-
     }
 
     /**
@@ -96,21 +76,12 @@ public interface OvertakingConditions
      */
     class RightOnly implements OvertakingConditions
     {
-
-        /** {@inheritDoc} */
-        @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
-        {
-            return OvertakingDirection.RIGHT;
-        }
-
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
             return "RightOnly []";
         }
-
     }
 
     /**
@@ -125,21 +96,12 @@ public interface OvertakingConditions
      */
     class None implements OvertakingConditions
     {
-
-        /** {@inheritDoc} */
-        @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
-        {
-            return OvertakingDirection.NONE;
-        }
-
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
             return "None []";
         }
-
     }
 
     /**
@@ -154,21 +116,12 @@ public interface OvertakingConditions
      */
     class LeftAndRight implements OvertakingConditions
     {
-
-        /** {@inheritDoc} */
-        @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
-        {
-            return OvertakingDirection.BOTH;
-        }
-
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
             return "LeftAndRight []";
         }
-
     }
 
     /**
@@ -183,21 +136,12 @@ public interface OvertakingConditions
      */
     class SameLaneLeft implements OvertakingConditions
     {
-
-        /** {@inheritDoc} */
-        @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
-        {
-            return OvertakingDirection.LEFT;
-        }
-
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
             return "SameLaneLeft []";
         }
-
     }
 
     /**
@@ -212,21 +156,12 @@ public interface OvertakingConditions
      */
     class SameLaneRight implements OvertakingConditions
     {
-
-        /** {@inheritDoc} */
-        @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
-        {
-            return OvertakingDirection.RIGHT;
-        }
-
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
             return "SameLaneRight []";
         }
-
     }
 
     /**
@@ -241,21 +176,12 @@ public interface OvertakingConditions
      */
     class SameLaneBoth implements OvertakingConditions
     {
-
-        /** {@inheritDoc} */
-        @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
-        {
-            return OvertakingDirection.BOTH;
-        }
-
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
             return "SameLaneBoth []";
         }
-
     }
 
     /**
@@ -286,18 +212,33 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
+        public final String toString()
         {
-            return gtu.getSpeed().lt(this.rightOvertakingSpeedMax) ? OvertakingDirection.BOTH : OvertakingDirection.LEFT;
+            return "LeftAlwaysRightSpeed [rightOvertakingSpeedMax=" + this.rightOvertakingSpeedMax + "]";
         }
+    }
+
+    /**
+     * Overtaking on the left allowed for all GTUs, and overtaking on the right allowed when there is a traffic jam.
+     * <p>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+     * initial version Sep 13, 2015
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     */
+    class LeftAlwaysRightJam implements OvertakingConditions, Serializable
+    {
+        /** */
+        private static final long serialVersionUID = 20150913L;
 
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
-            return "LeftAlwaysRightSpeed [rightOvertakingSpeedMax=" + this.rightOvertakingSpeedMax + "]";
+            return "LeftAlwaysRightJam []";
         }
-
     }
 
     /**
@@ -328,18 +269,33 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
+        public final String toString()
         {
-            return gtu.getSpeed().lt(this.leftOvertakingSpeedMax) ? OvertakingDirection.BOTH : OvertakingDirection.RIGHT;
+            return "RightAlwaysLeftSpeed [leftOvertakingSpeedMax=" + this.leftOvertakingSpeedMax + "]";
         }
+    }
+
+    /**
+     * Overtaking on the right allowed for all GTUs, and overtaking on the left allowed when there is a traffic jam.
+     * <p>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+     * initial version Sep 13, 2015
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     */
+    class RightAlwaysLeftJam implements OvertakingConditions, Serializable
+    {
+        /** */
+        private static final long serialVersionUID = 20150913L;
 
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
-            return "RightAlwaysLeftSpeed [leftOvertakingSpeedMax=" + this.leftOvertakingSpeedMax + "]";
+            return "RightAlwaysLeftJam []";
         }
-
     }
 
     /**
@@ -385,23 +341,11 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leaderGTU)
-        {
-            if (this.overtakingGTUTypes.contains(gtu.getGTUType()) && this.overtakenGTUTypes.contains(leaderGTU.getGTUType()))
-            {
-                return OvertakingDirection.LEFT;
-            }
-            return OvertakingDirection.NONE;
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public final String toString()
         {
             return "LeftSet [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes=" + this.overtakenGTUTypes
                     + "]";
         }
-
     }
 
     /**
@@ -445,23 +389,11 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leaderGTU)
-        {
-            if (this.overtakingGTUTypes.contains(gtu.getGTUType()) && this.overtakenGTUTypes.contains(leaderGTU.getGTUType()))
-            {
-                return OvertakingDirection.RIGHT;
-            }
-            return OvertakingDirection.NONE;
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public final String toString()
         {
             return "RightSet [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes=" + this.overtakenGTUTypes
                     + "]";
         }
-
     }
 
     /**
@@ -512,16 +444,51 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
+        public final String toString()
         {
-            boolean left = (this.overtakingGTUTypes.contains(gtu.getGTUType())
-                    && this.overtakenGTUTypes.contains(leadereGTU.getGTUType()));
-            boolean right = gtu.getSpeed().lt(this.rightOvertakingSpeedMax);
-            if (left)
-            {
-                return right ? OvertakingDirection.BOTH : OvertakingDirection.LEFT;
-            }
-            return right ? OvertakingDirection.RIGHT : OvertakingDirection.NONE;
+            return "LeftSetRightSpeed [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
+                    + this.overtakenGTUTypes + ", rightOvertakingSpeedMax=" + this.rightOvertakingSpeedMax + "]";
+        }
+    }
+
+    /**
+     * Provide a collection of GTUs that can overtake another collection of GTUs on the left side, but not vice versa. Example:
+     * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE, SCOOTER}.
+     * In the latter case, cars, trucks and busses can overtake all other GTUs, but bicycles and scooters cannot overtake cars,
+     * trucks or busses. Another example is a lane where cars and motors can overtake all other road users, but trucks are not
+     * allowed to overtake. In that case, we would allow {CAR, MOTOR} to overtake {ALL} or {CAR, MOTOR} to overtake {CAR, MOTOR,
+     * TRUCK} in that lane. In addition, overtaking on the other side is allowed when there is a traffic jam.
+     * <p>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+     * initial version Sep 13, 2015
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     */
+    class LeftSetRightJam implements OvertakingConditions, Serializable
+    {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+
+        /** A collection of GTUs that can overtake another collection of GTUs. */
+        private final Collection<GTUType> overtakingGTUTypes;
+
+        /** A collection of GTUs that can be overtaken by another collection of GTUs. */
+        private final Collection<GTUType> overtakenGTUTypes;
+
+        /**
+         * Provide a collection of GTUs that can overtake another collection of GTUs on the left, but not vice versa. Example:
+         * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
+         * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}. In addition, overtaking on the other side is allowed when
+         * there is a traffic jam.
+         * @param overtakingGTUs Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
+         * @param overtakenGTUs Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         */
+        public LeftSetRightJam(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs)
+        {
+            this.overtakingGTUTypes = overtakingGTUs;
+            this.overtakenGTUTypes = overtakenGTUs;
         }
 
         /** {@inheritDoc} */
@@ -529,9 +496,8 @@ public interface OvertakingConditions
         public final String toString()
         {
             return "LeftSetRightSpeed [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
-                    + this.overtakenGTUTypes + ", rightOvertakingSpeedMax=" + this.rightOvertakingSpeedMax + "]";
+                    + this.overtakenGTUTypes + "]";
         }
-
     }
 
     /**
@@ -582,26 +548,60 @@ public interface OvertakingConditions
 
         /** {@inheritDoc} */
         @Override
-        public final OvertakingDirection checkOvertaking(final Lane lane, final LaneBasedGTU gtu, final LaneBasedGTU leadereGTU)
+        public final String toString()
         {
-            boolean right = ((this.overtakingGTUTypes.contains(gtu.getGTUType())
-                    && (this.overtakenGTUTypes.contains(leadereGTU.getGTUType()))));
-            boolean left = gtu.getSpeed().lt(this.leftOvertakingSpeedMax);
-            if (right)
-            {
-                return left ? OvertakingDirection.BOTH : OvertakingDirection.RIGHT;
-            }
-            return left ? OvertakingDirection.LEFT : OvertakingDirection.NONE;
+            return "RightSetLeftSpeed [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
+                    + this.overtakenGTUTypes + ", leftOvertakingSpeedMax=" + this.leftOvertakingSpeedMax + "]";
+        }
+    }
+
+    /**
+     * Provide a collection of GTUs that can overtake another collection of GTUs on the right side, but not vice versa. Example:
+     * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE, SCOOTER}.
+     * In the latter case, cars, trucks and busses can overtake all other GTUs, but bicycles and scooters cannot overtake cars,
+     * trucks or busses. Another example is a lane where cars and motors can overtake all other road users, but trucks are not
+     * allowed to overtake. In that case, we would allow {CAR, MOTOR} to overtake {ALL} or {CAR, MOTOR} to overtake {CAR, MOTOR,
+     * TRUCK} in that lane. In addition, overtaking on the other side is allowed when there is a traffic jam.
+     * <p>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+     * initial version Sep 13, 2015
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     */
+    class RightSetLeftJam implements OvertakingConditions, Serializable
+    {
+        /** */
+        private static final long serialVersionUID = 20150913L;
+
+        /** A collection of GTUs that can overtake another collection of GTUs. */
+        private final Collection<GTUType> overtakingGTUTypes;
+
+        /** A collection of GTUs that can be overtaken by another collection of GTUs. */
+        private final Collection<GTUType> overtakenGTUTypes;
+
+        /**
+         * Provide a collection of GTUs that can overtake another collection of GTUs on the left, but not vice versa. Example:
+         * {CAR, TRUCK, BUS} can overtake {BICYCLE, SCOOTER}, or {CAR, TRUCK, BUS} can overtake {CAR, TRUCK, BUS, BICYCLE,
+         * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}. In addition, overtaking on the other side is allowed when
+         * there is a traffic jam.
+         * @param overtakingGTUs Collection&lt;GTUType&gt;; the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK.
+         * @param overtakenGTUs Collection&lt;GTUType&gt;; the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER.
+         */
+        public RightSetLeftJam(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs)
+        {
+            this.overtakingGTUTypes = overtakingGTUs;
+            this.overtakenGTUTypes = overtakenGTUs;
         }
 
         /** {@inheritDoc} */
         @Override
         public final String toString()
         {
-            return "RightSetLeftSpeed [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
-                    + this.overtakenGTUTypes + ", leftOvertakingSpeedMax=" + this.leftOvertakingSpeedMax + "]";
+            return "RightSetLeftJam [overtakingGTUTypes=" + this.overtakingGTUTypes + ", overtakenGTUTypes="
+                    + this.overtakenGTUTypes + "]";
         }
-
     }
 
 }
