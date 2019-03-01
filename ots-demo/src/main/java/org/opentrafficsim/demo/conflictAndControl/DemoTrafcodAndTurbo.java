@@ -245,7 +245,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                 }
                 String controllerName = "Not so simple TrafCOD controller";
                 this.trafCOD = new TrafCOD(controllerName, URLResource.getResource("/conflictAndControl/Intersection12Dir.tfc"),
-                        trafficLights, sensors, this.simulator, this.controllerDisplayPanel);
+                        this.simulator, this.controllerDisplayPanel);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
                 this.trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
