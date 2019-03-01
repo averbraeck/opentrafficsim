@@ -8,29 +8,34 @@
 
 package org.opentrafficsim.xml.generated;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.xml.bindings.TimeAdapter;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for SIGNALGROUPTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType&gt;
+ * &lt;complexType name="SIGNALGROUPTYPE"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;attribute name="VALUE" use="required" type="{http://www.opentrafficsim.org/ots}TIMETYPE" /&gt;
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="TRAFFICLIGHT" type="{http://www.opentrafficsim.org/ots}TRAFFICLIGHTTYPE" maxOccurs="unbounded"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="ID" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -39,22 +44,57 @@ import org.opentrafficsim.xml.bindings.TimeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
-@XmlRootElement(name = "TIME")
+@XmlType(name = "SIGNALGROUPTYPE", propOrder = {
+    "trafficlight"
+})
+@XmlSeeAlso({
+    SINGALGROUPFIXEDTIMETYPE.class
+})
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-public class TIME {
+public class SIGNALGROUPTYPE {
 
-    @XmlAttribute(name = "VALUE", required = true)
-    @XmlJavaTypeAdapter(TimeAdapter.class)
+    @XmlElement(name = "TRAFFICLIGHT", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    protected Time value;
-    @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
-    @XmlSchemaType(name = "anyURI")
+    protected List<TRAFFICLIGHTTYPE> trafficlight;
+    @XmlAttribute(name = "ID", required = true)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlID
+    @XmlSchemaType(name = "ID")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    protected String base;
+    protected String id;
 
     /**
-     * Gets the value of the value property.
+     * Gets the value of the trafficlight property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the trafficlight property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getTRAFFICLIGHT().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link TRAFFICLIGHTTYPE }
+     * 
+     * 
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
+    public List<TRAFFICLIGHTTYPE> getTRAFFICLIGHT() {
+        if (trafficlight == null) {
+            trafficlight = new ArrayList<TRAFFICLIGHTTYPE>();
+        }
+        return this.trafficlight;
+    }
+
+    /**
+     * Gets the value of the id property.
      * 
      * @return
      *     possible object is
@@ -62,12 +102,12 @@ public class TIME {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public Time getVALUE() {
-        return value;
+    public String getID() {
+        return id;
     }
 
     /**
-     * Sets the value of the value property.
+     * Sets the value of the id property.
      * 
      * @param value
      *     allowed object is
@@ -75,34 +115,8 @@ public class TIME {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public void setVALUE(Time value) {
-        this.value = value;
-    }
-
-    /**
-     * Gets the value of the base property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public String getBase() {
-        return base;
-    }
-
-    /**
-     * Sets the value of the base property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-01T12:13:51+01:00", comments = "JAXB RI v2.3.0")
-    public void setBase(String value) {
-        this.base = value;
+    public void setID(String value) {
+        this.id = value;
     }
 
 }

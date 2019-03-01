@@ -7,14 +7,15 @@
   <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
 
   <xsd:include schemaLocation="ots-definitions.xsd" />
+  <xsd:include schemaLocation="ots-control.xsd" />
 
   <!-- https://www.opentrafficsim.org/docs/current/ots-definitions.xsd -->
-  
+
   <!-- ================================================================================================== -->
   <!-- ================================================ NETWORK ========================================= -->
   <!-- ================================================================================================== -->
 
-  <!-- The node name is the only key used as an ID, to allow for easy route and intermediate point definition  -->
+  <!-- The node name is the only key used as an ID, to allow for easy route and intermediate point definition -->
 
   <xsd:element name="NODE">
     <xsd:complexType>
@@ -34,7 +35,7 @@
             <xsd:complexType>
               <xsd:attribute name="STARTDIRECTION" type="DIRECTIONTYPE" use="optional" />
               <xsd:attribute name="ENDDIRECTION" type="DIRECTIONTYPE" use="optional" />
-              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64"/>
+              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="CLOTHOID">
@@ -45,14 +46,14 @@
               <xsd:attribute name="ENDCURVATURE" type="PERLENGTHTYPE" use="required" />
               <xsd:attribute name="LENGTH" type="LENGTHTYPE" use="optional" />
               <xsd:attribute name="ENDELEVATION" type="LENGTHTYPE" use="optional" />
-              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64"/>
+              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="ARC">
             <xsd:complexType>
               <xsd:attribute name="RADIUS" type="LENGTHTYPE" use="required" />
               <xsd:attribute name="DIRECTION" type="LEFTRIGHTTYPE" use="required" />
-              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64"/>
+              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional" default="64" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="POLYLINE">
@@ -143,14 +144,9 @@
               </xsd:complexType>
             </xsd:element>
 
-            <xsd:element name="TRAFFICLIGHT" minOccurs="0" maxOccurs="unbounded">
-              <xsd:complexType>
-                <xsd:attribute name="NAME" type="xsd:string" use="optional" />
-                <xsd:attribute name="LANE" type="xsd:string" use="required" />
-                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required" />
-                <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required" />
-              </xsd:complexType>
-            </xsd:element>
+            <xsd:element name="TRAFFICLIGHT" type="TRAFFICLIGHTTYPE" minOccurs="0" maxOccurs="unbounded" />
+
+            <xsd:element name="SIGNALGROUP" type="SIGNALGROUPTYPE" minOccurs="0" maxOccurs="unbounded" />
 
             <xsd:element name="SINK" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
@@ -242,7 +238,7 @@
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
-    
+
     <!-- define the DEFINITIONS.GTUTYPE.NAME key -->
 
     <xsd:key name="gtuTypeKey">
@@ -327,6 +323,12 @@
       <xsd:field xpath="@NAME" />
     </xsd:key>
 
+    <!-- define the TRAFFICLIGHT.NAME key -->
+
+    <xsd:key name="trafficLightKey">
+      <xsd:selector xpath="ots:TRAFFICLIGHT" />
+      <xsd:field xpath="@NAME" />
+    </xsd:key>
 
     <!-- DEFINITIONS.GTU.GTUTYPE defined by DEFINITIONS.GTUTYPE.NAME -->
 
@@ -334,7 +336,7 @@
       <xsd:selector xpath="ots:DEFINITIONS/ots:GTU" />
       <xsd:field xpath="@GTUTYPE" />
     </xsd:keyref>
-    
+
     <!-- DEFINITIONS.GTUMIX.GTU.NAME defined by DEFINITIONS.GTU.NAME -->
 
     <xsd:keyref name="gtuMixGtuRef" refer="ots:gtuKey">
@@ -355,7 +357,7 @@
       <xsd:selector xpath="ots:DEFINITIONS/ots:LANETYPE/ots:GTUTYPE" />
       <xsd:field xpath="@NAME" />
     </xsd:keyref>
-    
+
     <!-- DEFINITIONS.ROADLAYOUT.ROADTYPE defined by DEFINITIONS.ROADTYPE.NAME -->
 
     <xsd:keyref name="roadLayoutRoadTypeRef" refer="ots:roadTypeKey">
@@ -383,14 +385,14 @@
       <xsd:selector xpath="ots:LINK" />
       <xsd:field xpath="@NODEEND" />
     </xsd:keyref>
-    
+
     <!-- LINK.GENERATOR.GTU defined by DEFINITIONS.GTU.NAME -->
 
     <xsd:keyref name="linkGeneratorGtuRef" refer="ots:gtuKey">
       <xsd:selector xpath="ots:LINK/ots:GENERATOR" />
       <xsd:field xpath="@GTU" />
     </xsd:keyref>
-    
+
     <!-- LINK.GENERATOR.GTUMIX defined by DEFINITIONS.GTUMIX.NAME -->
 
     <xsd:keyref name="linkGeneratorGtuMixRef" refer="ots:gtuMixKey">
@@ -404,14 +406,14 @@
       <xsd:selector xpath="ots:LINK/ots:GENERATOR" />
       <xsd:field xpath="@ROUTE" />
     </xsd:keyref>
-    
+
     <!-- LINK.LISTGENERATOR.GTU defined by DEFINITIONS.GTU.NAME -->
 
     <xsd:keyref name="linkListGeneratorGtuRef" refer="ots:gtuKey">
       <xsd:selector xpath="ots:LINK/ots:LISTGENERATOR" />
       <xsd:field xpath="@GTU" />
     </xsd:keyref>
-    
+
     <!-- LINK.LISTGENERATOR.GTUMIX defined by DEFINITIONS.GTUMIX.NAME -->
 
     <xsd:keyref name="linkListGeneratorGtuMixRef" refer="ots:gtuMixKey">
@@ -425,14 +427,14 @@
       <xsd:selector xpath="ots:LINK/ots:FILL" />
       <xsd:field xpath="@GTU" />
     </xsd:keyref>
-    
+
     <!-- LINK.LISTGENERATOR.ROUTE defined by ROUTE.NAME -->
 
     <xsd:keyref name="linkListGeneratorRouteRef" refer="ots:routeKey">
       <xsd:selector xpath="ots:LINK/ots:LISTGENERATOR" />
       <xsd:field xpath="@ROUTE" />
     </xsd:keyref>
-    
+
     <!-- LINK.FILL.GTUMIX defined by DEFINITIONS.GTUMIX.NAME -->
 
     <xsd:keyref name="linkFillGtuMixRef" refer="ots:gtuMixKey">
@@ -446,7 +448,7 @@
       <xsd:selector xpath="ots:LINK/ots:FILL" />
       <xsd:field xpath="@ROUTE" />
     </xsd:keyref>
-    
+
     <!-- LINK.ROADTYPE defined by DEFINITIONS.ROADTYPE.NAME -->
 
     <xsd:keyref name="linkRoadTypeRef" refer="ots:roadTypeKey">
@@ -480,6 +482,13 @@
     <xsd:keyref name="shortestRouteMixShortestRouteRef" refer="ots:shortestRouteKey">
       <xsd:selector xpath="ots:SHORTESTROUTEMIX" />
       <xsd:field xpath="@SHORTESTROUTE" />
+    </xsd:keyref>
+
+    <!-- CONTROL.FIXEDTIME.SIGNALGROUP.TRAFFICLIGHT.ID defined by TRAFFICLIGHT.NAME -->
+
+    <xsd:keyref name="fixedTimeControlTrafficLightRef" refer="ots:trafficLightKey">
+      <xsd:selector xpath="ots:CONTROL/ots:FIXEDTIME/ots:SIGNALGROUP/ots:TRAFFICLIGHT" />
+      <xsd:field xpath="@ID" />
     </xsd:keyref>
 
   </xsd:element>

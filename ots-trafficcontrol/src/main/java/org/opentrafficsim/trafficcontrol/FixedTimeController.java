@@ -63,7 +63,7 @@ public class FixedTimeController extends AbstractTrafficController
      * @param signalGroups Set&lt;SignalGroup&gt;; signal groups
      * @throws SimRuntimeException simulator is past zero time
      */
-    @SuppressWarnings({ "synthetic-access", "unchecked" })
+    @SuppressWarnings({ "synthetic-access" })
     public FixedTimeController(final String id, final OTSSimulatorInterface simulator, final Network network,
             final Duration cycleTime, final Duration offset, final Set<SignalGroup> signalGroups) throws SimRuntimeException
     {
@@ -422,7 +422,7 @@ public class FixedTimeController extends AbstractTrafficController
          */
         public final ImmutableList<TrafficLight> getTrafficLights()
         {
-            return new ImmutableArrayList<TrafficLight>(this.trafficLights);
+            return new ImmutableArrayList<>(this.trafficLights);
         }
 
         /**
