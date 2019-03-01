@@ -31,6 +31,7 @@ import org.opentrafficsim.draw.road.ShoulderAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation.TYPE;
+import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.gtu.generator.AbstractGTUGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -42,6 +43,8 @@ import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.road.network.lane.object.sensor.SingleSensor;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
@@ -137,6 +140,12 @@ public class DefaultAnimationFactory implements EventListenerInterface
                         }
                     }
                 }
+                
+                for (TrafficLight tl : network.getObjectMap(TrafficLight.class).values())
+                {
+                    new TrafficLightAnimation(tl, simulator);
+                }
+
             }
 
             for (GTU gtu : network.getGTUs())
