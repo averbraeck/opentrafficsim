@@ -146,8 +146,6 @@
 
             <xsd:element name="TRAFFICLIGHT" type="TRAFFICLIGHTTYPE" minOccurs="0" maxOccurs="unbounded" />
 
-            <xsd:element name="SIGNALGROUP" type="SIGNALGROUPTYPE" minOccurs="0" maxOccurs="unbounded" />
-
             <xsd:element name="SINK" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
                 <xsd:attribute name="LANE" type="xsd:string" use="required" />
@@ -221,6 +219,15 @@
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
+  
+  <xsd:element name="SIGNALGROUP">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="TRAFFICLIGHT" type="SIGNALGROUPTRAFFICLIGHTTYPE" minOccurs="1" maxOccurs="unbounded" />
+      </xsd:sequence>
+      <xsd:attribute name="ID" type="xsd:string" use="required" />
+    </xsd:complexType>
+  </xsd:element>
 
   <xsd:element name="NETWORK">
     <xsd:complexType>
@@ -234,6 +241,8 @@
           <xsd:element ref="ROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="SHORTESTROUTE" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="SHORTESTROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="SIGNALGROUP" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="CONTROL" minOccurs="0" maxOccurs="unbounded" />
         </xsd:choice>
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
@@ -323,11 +332,11 @@
       <xsd:field xpath="@NAME" />
     </xsd:key>
 
-    <!-- define the TRAFFICLIGHT.NAME key -->
+    <!-- define the SIGNALGROUP.ID key -->
 
-    <xsd:key name="trafficLightKey">
-      <xsd:selector xpath="ots:TRAFFICLIGHT" />
-      <xsd:field xpath="@NAME" />
+    <xsd:key name="signalGroupKey">
+      <xsd:selector xpath="ots:SIGNALGROUP" />
+      <xsd:field xpath="@ID" />
     </xsd:key>
 
     <!-- DEFINITIONS.GTU.GTUTYPE defined by DEFINITIONS.GTUTYPE.NAME -->
@@ -484,11 +493,18 @@
       <xsd:field xpath="@SHORTESTROUTE" />
     </xsd:keyref>
 
-    <!-- CONTROL.FIXEDTIME.SIGNALGROUP.TRAFFICLIGHT.ID defined by TRAFFICLIGHT.NAME -->
+    <!-- CONTROL.FIXEDTIME.SIGNALGROUP.ID defined by SIGNALGROUP.ID -->
 
-    <xsd:keyref name="fixedTimeControlTrafficLightRef" refer="ots:trafficLightKey">
-      <xsd:selector xpath="ots:CONTROL/ots:FIXEDTIME/ots:SIGNALGROUP/ots:TRAFFICLIGHT" />
+    <xsd:keyref name="signalGroupFixedTimeRef" refer="ots:signalGroupKey">
+      <xsd:selector xpath="ots:CONTROL/ots:FIXEDTIME/ots:SIGNALGROUP" />
       <xsd:field xpath="@ID" />
+    </xsd:keyref>
+    
+    <!-- SIGNALGROUP.TRAFFICLIGHT.LINK defined by LINK.ID -->
+
+    <xsd:keyref name="signalgroupTrafficLightLink" refer="ots:linkKey">
+      <xsd:selector xpath="ots:SIGNALGROUP/ots:TRAFFICLIGHT" />
+      <xsd:field xpath="@LINK" />
     </xsd:keyref>
 
   </xsd:element>
