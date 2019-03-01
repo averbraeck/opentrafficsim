@@ -25,6 +25,8 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.road.network.factory.xml.test.TestXMLParserN201.TestXMLModelN201;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
@@ -146,6 +148,11 @@ public class TestXMLParserN201 extends OTSSimulationApplication<TestXMLModelN201
                     | OTSGeometryException | ValueException | ParameterException exception)
             {
                 exception.printStackTrace();
+            }
+            
+            for (TrafficLight tl : this.network.getObjectMap(TrafficLight.class).values())
+            {
+                tl.setTrafficLightColor(TrafficLightColor.GREEN);
             }
 
             URL gisURL = URLResource.getResource("/N201/map.xml");
