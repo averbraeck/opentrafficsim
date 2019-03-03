@@ -35,6 +35,14 @@
       adapter="org.opentrafficsim.xml.bindings.DurationAdapter" />
     <xjc:javaType name="org.djunits.value.vdouble.scalar.Frequency" xmlType="ots:FREQUENCYTYPE"
       adapter="org.opentrafficsim.xml.bindings.FrequencyAdapter" />
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeType" xmlType="ots:STRIPETYPE"
+      adapter="org.opentrafficsim.xml.bindings.StripeTypeAdapter" />
+    <xjc:javaType name="java.awt.Color" xmlType="ots:COLORTYPE"
+      adapter="org.opentrafficsim.xml.bindings.ColorAdapter" />
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DrivingDirectionType"
+      xmlType="ots:DRIVINGDIRECTIONTYPE" adapter="org.opentrafficsim.xml.bindings.DrivingDirectionAdapter" />
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LaneKeepingType"
+      xmlType="ots:LANEKEEPINGTYPE" adapter="org.opentrafficsim.xml.bindings.LaneKeepingAdapter" />
   </jaxb:globalBindings>
 
   <jaxb:bindings schemaLocation="ots-network.xsd">
@@ -49,5 +57,5 @@
       </jaxb:property>
     </jaxb:bindings>
   </jaxb:bindings>
-  
+
 </jaxb:bindings>
