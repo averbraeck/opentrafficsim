@@ -188,7 +188,7 @@
   <!-- ================================================================================================== -->
 
   <xsd:element name="DEFINITIONS">
-    <xsd:complexType mixed="true">
+    <xsd:complexType>
       <xsd:sequence>
         <xsd:element ref="GLOBAL" minOccurs="0" maxOccurs="1" />
         <xsd:choice minOccurs="1" maxOccurs="unbounded">

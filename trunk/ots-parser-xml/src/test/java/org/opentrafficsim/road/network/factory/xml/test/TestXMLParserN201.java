@@ -23,7 +23,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.factory.xml.test.TestXMLParserN201.TestXMLModelN201;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
@@ -139,7 +139,7 @@ public class TestXMLParserN201 extends OTSSimulationApplication<TestXMLModelN201
         public final void constructModel() throws SimRuntimeException
         {
             URL url = URLResource.getResource("/N201v8.xml");
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
             try
             {
                 this.network = nlp.build(url, true);

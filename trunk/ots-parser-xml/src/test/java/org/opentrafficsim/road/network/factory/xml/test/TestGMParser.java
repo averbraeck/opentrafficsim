@@ -43,7 +43,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.factory.xml.test.TestGMParser.WGS84ToRDNewTransform.Coords;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -152,7 +152,7 @@ public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
         public final void constructModel() throws SimRuntimeException
         {
             URL url = URLResource.getResource("/networkv2_90km_V5i.xml");
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
             try
             {
                 this.network = nlp.build(url, true);

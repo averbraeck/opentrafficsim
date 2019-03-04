@@ -66,7 +66,7 @@
           </xsd:element>
         </xsd:choice>
 
-        <xsd:element ref="ROADLAYOUT" minOccurs="0" maxOccurs="1" />
+        <!-- xsd:element ref="ROADLAYOUT" minOccurs="0" maxOccurs="1" / -->
 
         <xsd:element name="LANEOVERRIDE" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
@@ -159,7 +159,7 @@
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute name="NODESTART" type="xsd:IDREF" use="required" />
       <xsd:attribute name="NODEEND" type="xsd:IDREF" use="required" />
-      <xsd:attribute name="LAYOUT" type="xsd:string" use="optional" /> <!-- was ROADLAYOUT ==> error -->
+      <xsd:attribute name="ROADLAYOUT" type="xsd:string" use="optional" />
       <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" default="0.0 m" />
       <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" default="0.0 m" />
       <xsd:attribute name="ROTATIONSTART" type="DIRECTIONTYPE" use="optional" />
@@ -219,11 +219,12 @@
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
-  
+
   <xsd:element name="SIGNALGROUP">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="TRAFFICLIGHT" type="SIGNALGROUPTRAFFICLIGHTTYPE" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element name="TRAFFICLIGHT" type="SIGNALGROUPTRAFFICLIGHTTYPE" minOccurs="1"
+          maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:string" use="required" />
     </xsd:complexType>
@@ -232,18 +233,16 @@
   <xsd:element name="NETWORK">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:choice minOccurs="1" maxOccurs="unbounded">
-          <xsd:element ref="DEFINITIONS" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="xi:include" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="NODE" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="LINK" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="ROUTE" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="ROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="SHORTESTROUTE" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="SHORTESTROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="SIGNALGROUP" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="CONTROL" minOccurs="0" maxOccurs="unbounded" />
-        </xsd:choice>
+        <xsd:element ref="DEFINITIONS" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="xi:include" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="NODE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="LINK" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ROUTE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="SHORTESTROUTE" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="SHORTESTROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="SIGNALGROUP" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="CONTROL" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>

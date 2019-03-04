@@ -38,7 +38,6 @@ import org.opentrafficsim.road.gtu.strategical.od.Categorization;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
-import org.opentrafficsim.road.network.factory.xml.XMLParser;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;

@@ -17,7 +17,6 @@ import org.opentrafficsim.core.network.factory.xml.units.DurationUnits;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
-import org.opentrafficsim.road.network.factory.xml.XMLParser;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
