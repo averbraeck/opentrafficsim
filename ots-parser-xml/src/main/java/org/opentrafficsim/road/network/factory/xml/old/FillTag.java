@@ -82,7 +82,7 @@ class FillTag implements Serializable
     /**
      * Parse the FILL tag.
      * @param node Node; the FILL node to parse
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param linkTag LinkTag; the parent LINK tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
@@ -203,7 +203,7 @@ class FillTag implements Serializable
     /**
      * Make a fill of a Lane.
      * @param fillTag FillTag; XML tag for the generator to build
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param linkTag LinkTag; the parent LINK tag
      * @param simulator DEVSSimulatorInterface.TimeDoubleUnit; the simulator to schedule GTU generation
      * @throws SimRuntimeException in case of simulation problems building the car generator

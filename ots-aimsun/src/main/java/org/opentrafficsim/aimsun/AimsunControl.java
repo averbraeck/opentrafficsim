@@ -38,10 +38,8 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
-import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
@@ -484,7 +482,7 @@ public class AimsunControl
                 exception1.printStackTrace();
             }
             // URL url = URLResource.getResource("/aimsun/singleRoad.xml");
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
             @SuppressWarnings("synthetic-access")
             String xml = AimsunControl.this.networkXML;
             try

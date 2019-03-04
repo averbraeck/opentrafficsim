@@ -20,7 +20,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.demo.conflict.TestNetworkDemo.TestNetworkModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
-import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
@@ -116,7 +116,7 @@ public class TestNetworkDemo extends OTSSimulationApplication<TestNetworkModel>
             try
             {
                 URL url = URLResource.getResource("/conflict/Test-Network-14.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
                 this.network = nlp.build(url, true);
 
                 LaneCombinationList ignoreList = new LaneCombinationList();

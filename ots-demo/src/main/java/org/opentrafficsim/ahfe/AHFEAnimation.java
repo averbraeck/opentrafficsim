@@ -35,7 +35,7 @@ import org.opentrafficsim.kpi.sampling.KpiGtuDirectionality;
 import org.opentrafficsim.kpi.sampling.KpiLaneDirection;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
-import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.sampling.GtuData;
 import org.opentrafficsim.road.network.sampling.LinkData;
@@ -494,7 +494,7 @@ public class AHFEAnimation extends OTSSimulationApplication<AHFEModel>
             try
             {
                 InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
                 this.network = new OTSNetwork("AHFE");
                 nlp.build(stream, this.network, true);
 

@@ -50,7 +50,7 @@ class SensorTag implements Serializable
     /**
      * Parse the SENSOR tag.
      * @param node Node; the SENSOR node to parse
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param linkTag LinkTag; the parent LINK tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails

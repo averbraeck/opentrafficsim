@@ -45,7 +45,7 @@ import org.opentrafficsim.road.gtu.colorer.FixedColor;
 import org.opentrafficsim.road.gtu.colorer.GTUTypeColorer;
 import org.opentrafficsim.road.gtu.colorer.SplitColorer;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
-import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -186,7 +186,7 @@ public class LoadXML extends OTSSimulationApplication<OTSModelInterface>
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator, this.colorer);
+            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator, this.colorer);
             try
             {
                 this.network = nlp.build(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)), false);
