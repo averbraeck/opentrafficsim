@@ -39,7 +39,7 @@ class RouteMixTag implements Serializable
     /**
      * Parse the ROUTE tag.
      * @param nodeList NodeList; nodeList the top-level nodes of the XML-file
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
@@ -72,7 +72,7 @@ class RouteMixTag implements Serializable
     /**
      * Parse the ROUTEMIX's ROUTE tag.
      * @param routeNode Node; the ROUTE node to parse
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param routeMixTag RouteMixTag; the parent tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails

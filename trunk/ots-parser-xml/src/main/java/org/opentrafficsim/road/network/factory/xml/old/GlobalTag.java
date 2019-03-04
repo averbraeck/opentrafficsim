@@ -81,7 +81,7 @@ class GlobalTag implements Serializable
 
     /**
      * @param nodeList NodeList; nodeList the top-level nodes of the XML-file
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @throws NetworkException when parsing of units fails
      * @throws SAXException when parsing of GLOBAL tag fails
      */

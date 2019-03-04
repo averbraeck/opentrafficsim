@@ -2,7 +2,7 @@
 
 <NETWORK xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots http://www.opentrafficsim.org/docs/current/ots-network.xsd">
-
+  
   <DEFINITIONS>
 
     <GLOBAL />

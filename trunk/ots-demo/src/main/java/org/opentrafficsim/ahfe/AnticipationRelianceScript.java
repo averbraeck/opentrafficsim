@@ -124,7 +124,7 @@ import org.opentrafficsim.road.gtu.strategical.od.Category;
 import org.opentrafficsim.road.gtu.strategical.od.Interpolation;
 import org.opentrafficsim.road.gtu.strategical.od.ODMatrix;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.object.Distraction;
 import org.opentrafficsim.road.network.lane.object.Distraction.TrapezoidProfile;
@@ -253,7 +253,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
 
         // Network
         InputStream stream = URLResource.getResourceAsStream("/AHFE/Network.xml");
-        XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(sim);
+        XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(sim);
         OTSNetwork network = new OTSNetwork("Distraction");
         try
         {

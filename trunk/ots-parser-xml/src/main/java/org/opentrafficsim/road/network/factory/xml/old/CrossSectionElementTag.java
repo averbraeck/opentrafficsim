@@ -175,7 +175,7 @@ class CrossSectionElementTag implements Serializable
     /**
      * Parse the ROADLAYOUT.LANE tag.
      * @param node Node; the node of the XML-file
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param roadLayoutTag RoadLayoutTag; the tag with the enclosing information
      * @return the cross section element for this part of the road
      * @throws SAXException when parsing of the tag fails
@@ -283,7 +283,7 @@ class CrossSectionElementTag implements Serializable
     /**
      * Parse the ROADLAYOUT.NOTRAFFICLANE tag.
      * @param node Node; the node of the XML-file
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param roadLayoutTag RoadLayoutTag; the tag with the enclosing information
      * @return the cross section element for this part of the road
      * @throws SAXException when parsing of the tag fails
@@ -335,7 +335,7 @@ class CrossSectionElementTag implements Serializable
     /**
      * Parse the ROADLAYOUT.SHOULDER tag.
      * @param node Node; the node of the XML-file
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param roadLayoutTag RoadLayoutTag; the tag with the enclosing information
      * @return the cross section element for this part of the road
      * @throws SAXException when parsing of the tag fails
@@ -387,7 +387,7 @@ class CrossSectionElementTag implements Serializable
     /**
      * Parse the ROADLAYOUT.STRIPE tag.
      * @param node Node; the node of the XML-file
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param roadLayoutTag RoadLayoutTag; the tag with the enclosing information
      * @return the cross section element for this part of the road
      * @throws SAXException when parsing of the tag fails

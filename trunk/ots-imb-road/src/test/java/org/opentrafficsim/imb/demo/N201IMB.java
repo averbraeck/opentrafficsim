@@ -42,7 +42,7 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.StatisticsGTULaneTransceiver;
 import org.opentrafficsim.kpi.sampling.Query;
-import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
@@ -203,7 +203,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
 
             // Stream to allow the xml-file to be retrievable from a JAR file
             InputStream stream = URLResource.getResourceAsStream("/N201v8.xml");
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
             try
             {
                 nlp.build(stream, this.network, true);

@@ -44,7 +44,7 @@ public class ConnectorTag implements Serializable
     /**
      * Parse the CONNECTOR tags.
      * @param nodeList NodeList; nodeList the top-level nodes of the XML-file
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

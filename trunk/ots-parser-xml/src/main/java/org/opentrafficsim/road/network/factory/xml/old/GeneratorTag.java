@@ -131,7 +131,7 @@ class GeneratorTag implements Serializable
     /**
      * Parse the GENERATOR tag.
      * @param node Node; the GENERATOR node to parse
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param linkTag LinkTag; the parent LINK tag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
@@ -285,7 +285,7 @@ class GeneratorTag implements Serializable
     /**
      * Make the generators for this link, if available.
      * @param linkTag LinkTag; the parent LINK tag
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param simulator OTSSimulatorInterface; the simulator to schedule GTU generation
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws NetworkException when route generator cannot be instantiated
@@ -303,7 +303,7 @@ class GeneratorTag implements Serializable
     /**
      * Make a generator.
      * @param generatorTag GeneratorTag; XML tag for the generator to build
-     * @param parser XmlNetworkLaneParser; the parser with the lists of information
+     * @param parser XmlNetworkLaneParserOld; the parser with the lists of information
      * @param linkTag LinkTag; the parent LINK tag
      * @param simulator OTSSimulatorInterface; the simulator to schedule GTU generation
      * @throws SimRuntimeException in case of simulation problems building the car generator

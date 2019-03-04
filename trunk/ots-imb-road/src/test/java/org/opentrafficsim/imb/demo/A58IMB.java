@@ -39,7 +39,7 @@ import org.opentrafficsim.imb.transceiver.urbanstrategy.NetworkTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.NodeTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SensorGTUTransceiver;
 import org.opentrafficsim.imb.transceiver.urbanstrategy.SimulatorTransceiver;
-import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.xml.sax.SAXException;
@@ -198,7 +198,7 @@ public class A58IMB extends OTSSimulationApplication<A58Model>
 
             // Stream to allow the xml-file to be retrievable from a JAR file
             InputStream stream = URLResource.getResourceAsStream("/A58v2.xml");
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+            XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator);
             try
             {
                 nlp.build(stream, this.network, true);
@@ -285,7 +285,7 @@ public class A58IMB extends OTSSimulationApplication<A58Model>
         public float[] floatTransform(double x, double y)
         {
             double[] d = doubleTransform(x, y);
-            return new float[] { (float) d[0], (float) d[1] };
+            return new float[] {(float) d[0], (float) d[1]};
         }
 
         /** {@inheritDoc} */
@@ -295,12 +295,12 @@ public class A58IMB extends OTSSimulationApplication<A58Model>
             try
             {
                 Point2D c = TransformWGS84DutchRDNew.fromWGS84(x, y);
-                return new double[] { c.getX() - this.dx, c.getY() - this.dy };
+                return new double[] {c.getX() - this.dx, c.getY() - this.dy};
             }
             catch (Exception exception)
             {
                 System.err.println(exception.getMessage());
-                return new double[] { 0, 0 };
+                return new double[] {0, 0};
             }
         }
 

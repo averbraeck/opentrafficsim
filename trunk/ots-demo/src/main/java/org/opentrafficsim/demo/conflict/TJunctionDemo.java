@@ -23,7 +23,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.demo.conflict.TJunctionDemo.TJunctionModel;
 import org.opentrafficsim.draw.core.OTSDrawingException;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
-import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -119,7 +119,7 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
             try
             {
                 URL url = URLResource.getResource("/conflict/TJunction.xml");
-                XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator, new DefaultSwitchableGTUColorer());
+                XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(this.simulator, new DefaultSwitchableGTUColorer());
                 this.network = nlp.build(url, false);
 
                 // add conflicts
