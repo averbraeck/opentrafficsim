@@ -8,8 +8,7 @@
 
   <xsd:simpleType name="DURATIONTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="[+-]?\d+\.?\d*\s*(ms|msec|s|sec|m|min|h|hr|hour|day|wk|week|as|asec|ns|nsec|mus|musec|fs|fsec|ps|psec)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(ms|msec|s|sec|m|min|h|hr|hour|day|wk|week|as|asec|ns|nsec|mus|musec|fs|fsec|ps|psec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -21,29 +20,25 @@
 
   <xsd:simpleType name="LENGTHTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="[+-]?\d+\.?\d*\s*(m|mm|cm|dm|dam|hm|km|ft|in|mi|NM|yd|A|fm|am|Mm|AU|mum|nm|pc|ly|pm)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(m|mm|cm|dm|dam|hm|km|ft|in|mi|NM|yd|A|fm|am|Mm|AU|mum|nm|pc|ly|pm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="POSITIONTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="[+-]?\d+\.?\d*\s*(m|mm|cm|dm|dam|hm|km|ft|in|mi|NM|yd|A|fm|am|Mm|AU|mum|nm|pc|ly|pm)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(m|mm|cm|dm|dam|hm|km|ft|in|mi|NM|yd|A|fm|am|Mm|AU|mum|nm|pc|ly|pm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="SPEEDTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="[+-]?\d+\.?\d*\s*(m/s|km/h|mi/h|ft/s|kt|m/h|km/s|mi/min|in/min|ft/min|ft/h|mi/s|in/h|in/s)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(m/s|km/h|mi/h|ft/s|kt|m/h|km/s|mi/min|in/min|ft/min|ft/h|mi/s|in/h|in/s)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="ACCELERATIONTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="[+-]?\d+\.?\d*\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(km/h\^2|m/s\^2|ft/s\^2|in/s\^2|mi/h\^2|mi/s\^2|kt/s|mi/h/s|g|Gal)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -94,8 +89,7 @@
 
   <xsd:simpleType name="FREQUENCYTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="[+-]?\d+\.?\d*\s*(Hz|kHz|MHz|GHz|THz|rpm|/ms|/s|/min|/h|/day|/wk|/fs|/ns|/mus|/ps|/as)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(Hz|kHz|MHz|GHz|THz|rpm|/ms|/s|/min|/h|/day|/wk|/fs|/ns|/mus|/ps|/as)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -120,8 +114,7 @@
 
   <xsd:simpleType name="PRESSURETYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="[+-]?\d+\.?\d*\s*(Pa|hPa|kPa|atm|Torr|at|Ba|bar|mbar|cmHg|mmHg|ftHg|inHg|kgf/mm\^2|lbf/ft\^2|lbf/in\^2|pz)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(Pa|hPa|kPa|atm|Torr|at|Ba|bar|mbar|cmHg|mmHg|ftHg|inHg|kgf/mm\^2|lbf/ft\^2|lbf/in\^2|pz)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -133,8 +126,7 @@
 
   <xsd:simpleType name="POWERTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="[+-]?\d+\.?\d*\s*(W|kW|MW|GW|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\)|sn\.m/s|erg/s|fW|mW|nW|pW|PW|muW|TW)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(W|kW|MW|GW|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\)|sn\.m/s|erg/s|fW|mW|nW|pW|PW|muW|TW)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -183,8 +175,7 @@
 
   <xsd:simpleType name="LINEARDENSITYTYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="[+-]?\d+\.?\d*\s*(/m|/mm|/cm|/dm|/dam|/hm|/km|/ft|/in|/mi|/NM|/yd|/nm|/ly|/pm|/Mm|/A|/fm|/am|/pc|/mum|/AU)"></xsd:pattern>
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(/m|/mm|/cm|/dm|/dam|/hm|/km|/ft|/in|/mi|/NM|/yd|/nm|/ly|/pm|/Mm|/A|/fm|/am|/pc|/mum|/AU)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -341,18 +332,6 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="GTUCOLORERTYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="ID|VELOCITY|ACCELERATION|LANECHANGEURGE|SWITCHABLE"></xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="TACTICALPLANNERTYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="IDM|MOBIL/IDM|DIRECTION/IDM|LMRS|TOLEDO"></xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
   <xsd:simpleType name="CONTDISTTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -452,5 +431,21 @@
       </xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
+
+  <xsd:complexType name="PARAMETERTYPE">
+    <xsd:attribute name="TYPE" use="required" >
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:pattern value="(\
+{0})CLASS|STRING|DOUBLE|INTEGER|(\
+{0})LENGTH|POSITION|DURATION|TIME|SPEED|ACCELERATION|FREQUENCY|LINEARDENSITY|(\
+{0})FRACTION" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="VALUE" type="xsd:string" use="required" />
+    <xsd:attribute name="NAME" type="xsd:string" use="required" />
+    <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="optional" />
+  </xsd:complexType>
 
 </xsd:schema>
