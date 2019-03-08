@@ -16,15 +16,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for CSESTRIPE complex type.
+ * <p>Java class for MODELPARAMETERTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CSESTRIPE"&gt;
+ * &lt;complexType name="MODELPARAMETERTYPE"&gt;
  *   &lt;complexContent&gt;
- *     &lt;extension base="{http://www.opentrafficsim.org/ots}CROSSSECTIONELEMENT"&gt;
- *       &lt;attribute name="TYPE" use="required" type="{http://www.opentrafficsim.org/ots}STRIPETYPE" /&gt;
+ *     &lt;extension base="{http://www.opentrafficsim.org/ots}PARAMETERTYPE"&gt;
+ *       &lt;attribute name="GTUTYPE" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *     &lt;/extension&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -33,18 +33,18 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CSESTRIPE")
+@XmlType(name = "MODELPARAMETERTYPE")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-public class CSESTRIPE
-    extends CROSSSECTIONELEMENT
+public class MODELPARAMETERTYPE
+    extends PARAMETERTYPE
 {
 
-    @XmlAttribute(name = "TYPE", required = true)
+    @XmlAttribute(name = "GTUTYPE")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected String type;
+    protected String gtutype;
 
     /**
-     * Gets the value of the type property.
+     * Gets the value of the gtutype property.
      * 
      * @return
      *     possible object is
@@ -52,12 +52,12 @@ public class CSESTRIPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public String getTYPE() {
-        return type;
+    public String getGTUTYPE() {
+        return gtutype;
     }
 
     /**
-     * Sets the value of the type property.
+     * Sets the value of the gtutype property.
      * 
      * @param value
      *     allowed object is
@@ -65,8 +65,8 @@ public class CSESTRIPE
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public void setTYPE(String value) {
-        this.type = value;
+    public void setGTUTYPE(String value) {
+        this.gtutype = value;
     }
 
 }

@@ -41,7 +41,7 @@
             </goals>
             <configuration>
               <fromDir>${basedir}/src/main/resources</fromDir>
-              <includes>ots-types.xsd, ots-definitions.xsd, ots-network.xsd, ots-demand.xsd, ots-control.xsd</includes>
+              <includes>**/*.xsd</includes>
               <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
               <toDir>${version}</toDir>
               <serverId>ots-deployment</serverId>
@@ -73,7 +73,16 @@
           <verbose>true</verbose>
           <extension>true</extension>
           <schemaIncludes>
-            <schemaInclude>**/*.xsd</schemaInclude>
+            <schemaInclude>ots-animation.xsd</schemaInclude>
+            <schemaInclude>ots-control.xsd</schemaInclude>
+            <schemaInclude>ots-definitions.xsd</schemaInclude>
+            <schemaInclude>ots-demand.xsd</schemaInclude>
+            <schemaInclude>ots-model.xsd</schemaInclude>
+            <schemaInclude>ots-network.xsd</schemaInclude>
+            <schemaInclude>ots-run.xsd</schemaInclude>
+            <schemaInclude>ots-scenario.xsd</schemaInclude>
+            <schemaInclude>ots-types.xsd</schemaInclude>
+            <schemaInclude>ots.xsd</schemaInclude>
           </schemaIncludes>
         </configuration>
       </plugin>
