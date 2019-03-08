@@ -385,7 +385,7 @@ public class DistributionsTest
          */
         JunkUnit(final LengthUnit lengthUnit, final String name, final String abbreviation, final UnitSystem unitSystem)
         {
-            super(name, abbreviation, unitSystem, false);
+            super(name, abbreviation, unitSystem);
         }
 
         static
@@ -427,7 +427,7 @@ public class DistributionsTest
          */
         AbsJunkUnit(final PositionUnit positionUnit, final String name, final String abbreviation, final UnitSystem unitSystem)
         {
-            super(name, abbreviation, unitSystem, 1.0, 0.0, false, JunkUnit.SI);
+            super(name, abbreviation, unitSystem, 1.0, 0.0, JunkUnit.SI);
         }
 
         static
