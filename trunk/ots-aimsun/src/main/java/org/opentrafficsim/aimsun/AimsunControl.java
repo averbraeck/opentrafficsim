@@ -1,14 +1,11 @@
 package org.opentrafficsim.aimsun;
 
 import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -17,15 +14,25 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.logger.SimLogger;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.logger.LogCategory;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf;
 import org.opentrafficsim.aimsun.proto.AimsunControlProtoBuf.GTUPositions;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.animation.gtu.colorer.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.dsol.AbstractOTSModel;
 import org.opentrafficsim.core.dsol.OTSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -38,19 +45,14 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.draw.core.OTSDrawingException;
+import org.opentrafficsim.draw.factory.DefaultAnimationFactory;
 import org.opentrafficsim.road.network.factory.xml.old.XmlNetworkLaneParserOld;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.swing.gui.OTSAnimationPanel;
 import org.opentrafficsim.swing.gui.OTSSimulationApplication;
 import org.opentrafficsim.swing.gui.OTSSwingApplication;
+import org.pmw.tinylog.Level;
 import org.xml.sax.SAXException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.event.EventInterface;
-import nl.tudelft.simulation.event.EventListenerInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 /**
  * <p>
@@ -80,9 +82,12 @@ public class AimsunControl
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException, ValueException,
-            ParameterException, SimRuntimeException
+    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException,
+            ValueException, ParameterException, SimRuntimeException
     {
+        SimLogger.setAllLogLevel(Level.WARNING);
+        SimLogger.setLogCategories(LogCategory.ALL);
+
         String ip = null;
         Integer port = null;
 
@@ -124,7 +129,7 @@ public class AimsunControl
         {
             System.out.println("Creating server socket for port " + port);
             ServerSocket serverSocket = new ServerSocket(port);
-            serverSocket.setReuseAddress(true); // Ensure we can be restarted without the normal delay
+            serverSocket.setReuseAddress(true); // Ensure we can be restarted without the normal 2 minute delay
             System.out.println("Waiting for client to connect");
             Socket clientSocket = serverSocket.accept();
             System.out.println("Client connected; closing server socket");
@@ -132,7 +137,6 @@ public class AimsunControl
             System.out.println("Socket time out is " + clientSocket.getSoTimeout());
             clientSocket.setSoTimeout(0);
             System.out.println("Constructing animation/simulation");
-
             AimsunControl aimsunControl = new AimsunControl();
             aimsunControl.commandLoop(clientSocket);
         }
@@ -143,32 +147,80 @@ public class AimsunControl
         System.exit(0);
     }
 
+    /** Shared between sendGTUPositionsToAimsun and the commandLoop methods. */
+    private Time simulateUntil = null;
+
     /**
-     * Create a nice hex dump of a bunch of bytes.
-     * @param bytes byte[]; the bytes
-     * @return String; the hex dump
+     * Construct a GTU positions message, clear the simulateUntil value, transmit all GTU positions to Aimsun and wait for the
+     * simulateUntil value to be set again.
+     * @param outputStream
      */
-    public static String hexDump(final byte[] bytes)
+    protected void sendGTUPositionsToAimsun(final OutputStream outputStream)
     {
-        StringBuilder result = new StringBuilder();
-        int pos = 0;
-        for (byte b : bytes)
+        OTSSimulatorInterface simulator = this.model.getSimulator();
+        System.out.println("Simulator has stopped at time " + simulator.getSimulatorTime());
+        Time stopTime = simulator.getSimulatorTime();
+        AimsunControlProtoBuf.GTUPositions.Builder builder = AimsunControlProtoBuf.GTUPositions.newBuilder();
+        for (GTU gtu : this.model.getNetwork().getGTUs())
         {
-            result.append(String.format("%02x", b));
-            if (pos % 16 == 0)
+            AimsunControlProtoBuf.GTUPositions.GTUPosition.Builder gpb =
+                    AimsunControlProtoBuf.GTUPositions.GTUPosition.newBuilder();
+            gpb.setGtuId(gtu.getId());
+            DirectedPoint dp;
+            try
             {
-                result.append("\r\n");
+                dp = gtu.getOperationalPlan().getLocation(stopTime);
+                gpb.setX(dp.x);
+                gpb.setY(dp.y);
+                gpb.setZ(dp.z);
+                gpb.setAngle(dp.getRotZ());
+                gpb.setLength(gtu.getLength().si);
+                gpb.setWidth(gtu.getWidth().si);
+                gpb.setGtuTypeId(Integer.parseInt(gtu.getGTUType().getId().split("\\.")[1]));
+                gpb.setSpeed(gtu.getSpeed().si);
+                builder.addGtuPos(gpb.build());
             }
-            else if (pos % 8 == 0)
+            catch (OperationalPlanException exception)
             {
-                result.append("  ");
-            }
-            else
-            {
-                result.append(" ");
+                exception.printStackTrace();
             }
         }
-        return result.toString();
+        builder.setStatus("OK");
+        GTUPositions gtuPositions = builder.build();
+        AimsunControlProtoBuf.OTSMessage.Builder resultBuilder = AimsunControlProtoBuf.OTSMessage.newBuilder();
+        resultBuilder.setGtuPositions(gtuPositions);
+        AimsunControlProtoBuf.OTSMessage result = resultBuilder.build();
+        this.simulateUntil = null;
+        try
+        {
+            transmitMessage(result, outputStream);
+        }
+        catch (IOException exception)
+        {
+            exception.printStackTrace();
+        }
+        System.out.println("Simulator waiting for new simulateUntil value");
+        while (this.simulateUntil == null)
+        {
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException exception)
+            {
+                // exception.printStackTrace();
+            }
+        }
+        try
+        {
+            simulator.scheduleEventAbs(this.simulateUntil, this, this, "sendGTUPositionsToAimsun",
+                    new Object[] { outputStream });
+        }
+        catch (SimRuntimeException exception)
+        {
+            exception.printStackTrace();
+        }
+        System.out.println("Simulator resuming");
     }
 
     /**
@@ -182,21 +234,23 @@ public class AimsunControl
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    private void commandLoop(final Socket socket) throws IOException, NetworkException, OTSGeometryException, NamingException,
-            ValueException, ParameterException, SimRuntimeException
+    private void commandLoop(final Socket socket) throws IOException, NetworkException, OTSGeometryException,
+            NamingException, ValueException, ParameterException, SimRuntimeException
     {
         System.out.println("Entering command loop");
         InputStream inputStream = socket.getInputStream();
         OutputStream outputStream = socket.getOutputStream();
         String error = null;
-        while (true)
+        boolean simulatorStarted = false;
+        while (null == error)
         {
             try
             {
                 byte[] sizeBytes = new byte[4];
                 fillBuffer(inputStream, sizeBytes);
-                int size = ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
-                        + (sizeBytes[3] & 0xff);
+                int size =
+                        ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
+                                + (sizeBytes[3] & 0xff);
                 System.out.println("expecting message of " + size + " bytes");
                 byte[] buffer = new byte[size];
                 fillBuffer(inputStream, buffer);
@@ -223,10 +277,14 @@ public class AimsunControl
                         try
                         {
                             OTSAnimator animator = new OTSAnimator();
+                            this.model = new AimsunModel(animator, "", "");
                             animator.initialize(Time.ZERO, warmupDuration, runDuration, this.model);
-                            OTSAnimationPanel animationPanel = new OTSAnimationPanel(
-                                    new Rectangle2D.Double(-500, -500, 1000, 1000), new Dimension(200, 200), animator,
-                                    this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
+                            OTSAnimationPanel animationPanel =
+                                    new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(800, 600),
+                                            animator, this.model, OTSSwingApplication.DEFAULT_COLORER,
+                                            this.model.getNetwork());
+                            DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), animator,
+                                    new DefaultSwitchableGTUColorer());
                             new AimsunSwingApplication(this.model, animationPanel);
                             animator.setSpeedFactor(Double.MAX_VALUE, true);
                             animator.setSpeedFactor(1000.0, true);
@@ -240,109 +298,33 @@ public class AimsunControl
                         break;
 
                     case SIMULATEUNTIL:
+                    {
                         System.out.println("Received SIMULATEUNTIL message");
-                        if (null == this.model)
-                        {
-                            System.err.println("No model active");
-                            socket.close();
-                            break;
-                        }
-                        AimsunControlProtoBuf.SimulateUntil simulateUntil = message.getSimulateUntil();
-                        Time stopTime = new Time(simulateUntil.getTime(), TimeUnit.BASE_SECOND);
+                        AimsunControlProtoBuf.SimulateUntil simulateUntilThing = message.getSimulateUntil();
+                        Time stopTime = new Time(simulateUntilThing.getTime(), TimeUnit.BASE_SECOND);
                         System.out.println("Simulate until " + stopTime + " ");
                         OTSSimulatorInterface simulator = this.model.getSimulator();
-                        try
+                        if (!simulatorStarted)
                         {
-                            if (null != error)
-                            {
-                                throw new SimRuntimeException(error);
-                            }
-                            simulator.runUpTo(stopTime);
-                            int attempt = 0;
-                            while (simulator.isRunning())
-                            {
-                                attempt++;
-                                try
-                                {
-                                    Thread.sleep(10);
-                                    // System.out.println("Simulation time is now " + simulator.getSimulatorTime());
-                                    if (Integer.toBinaryString(attempt).matches("10*"))
-                                    {
-                                        System.out.print(".");
-                                    }
-                                    if (attempt % 1000 == 0)
-                                    {
-                                        ThreadMXBean mxBean = ManagementFactory.getThreadMXBean();
-                                        long[] threadIds = mxBean.findDeadlockedThreads();
-                                        if (null == threadIds)
-                                        {
-                                            System.out.println("Hmmm... There are no dead locked threads");
-                                        }
-                                        else
-                                        {
-                                            for (long threadId : threadIds)
-                                            {
-                                                System.out.println("Thread id of dead locked thread is " + threadId);
-                                            }
-                                        }
-                                        // System.out.println(mxBean);
-                                        System.out.println("Simulator time is " + simulator.getSimulatorTime());
-                                        System.out.println("Kicking simulator...");
-                                        simulator.stop();
-                                        simulator.runUpTo(stopTime);
-                                    }
-                                }
-                                catch (InterruptedException ie)
-                                {
-                                    ie.printStackTrace();
-                                    // ie = null; // ignore
-                                }
-                            }
-                            System.out.println("Simulator has stopped at time " + simulator.getSimulatorTime());
-                            AimsunControlProtoBuf.GTUPositions.Builder builder =
-                                    AimsunControlProtoBuf.GTUPositions.newBuilder();
-                            for (GTU gtu : this.model.getNetwork().getGTUs())
-                            {
-                                AimsunControlProtoBuf.GTUPositions.GTUPosition.Builder gpb =
-                                        AimsunControlProtoBuf.GTUPositions.GTUPosition.newBuilder();
-                                gpb.setGtuId(gtu.getId());
-                                DirectedPoint dp = gtu.getOperationalPlan().getLocation(stopTime);
-                                gpb.setX(dp.x);
-                                gpb.setY(dp.y);
-                                gpb.setZ(dp.z);
-                                gpb.setAngle(dp.getRotZ());
-                                gpb.setLength(gtu.getLength().si);
-                                gpb.setWidth(gtu.getWidth().si);
-                                gpb.setGtuTypeId(Integer.parseInt(gtu.getGTUType().getId().split("\\.")[1]));
-                                gpb.setSpeed(gtu.getSpeed().si);
-                                builder.addGtuPos(gpb.build());
-                            }
-                            builder.setStatus("OK");
-                            GTUPositions gtuPositions = builder.build();
-                            AimsunControlProtoBuf.OTSMessage.Builder resultBuilder =
-                                    AimsunControlProtoBuf.OTSMessage.newBuilder();
-                            resultBuilder.setGtuPositions(gtuPositions);
-                            AimsunControlProtoBuf.OTSMessage result = resultBuilder.build();
-                            transmitMessage(result, outputStream);
+                            simulatorStarted = true;
+                            simulator.scheduleEventAbs(stopTime, this, this, "sendGTUPositionsToAimsun",
+                                    new Object[] { outputStream });
+                            System.out.println("Starting simulator");
+                            this.simulateUntil = stopTime;
+                            simulator.start();
                         }
-                        catch (SimRuntimeException | OperationalPlanException exception)
+                        else if (!simulator.isRunning())
                         {
-                            if (null == error)
-                            {
-                                error = "Error while handling SIMULATEUNTIL";
-                                System.out.println(error);
-                                exception.printStackTrace();
-                            }
-                            // Stop the simulation
-                            AimsunControlProtoBuf.GTUPositions.Builder builder =
-                                    AimsunControlProtoBuf.GTUPositions.newBuilder();
-                            builder.setStatus("FAILED (" + error + ")");
-                            AimsunControlProtoBuf.OTSMessage.Builder resultBuilder =
-                                    AimsunControlProtoBuf.OTSMessage.newBuilder();
-                            resultBuilder.setGtuPositions(builder);
-                            transmitMessage(resultBuilder.build(), outputStream);
+                            // Whoops: simulator has stopped
+                            error = "HMM Simulator stopped";
+                        }
+                        else
+                        {
+                            System.out.println("Resuming simulator");
+                            this.simulateUntil = stopTime;
                         }
                         break;
+                    }
 
                     case GTUPOSITIONS:
                         System.out.println("Received GTUPOSITIONS message SHOULD NOT HAPPEN");
@@ -389,7 +371,7 @@ public class AimsunControl
         byte[] buffer = new byte[size];
         buffer = message.toByteArray();
         outputStream.write(buffer);
-        System.out.println("Done");
+        System.out.println("Message sent");
     }
 
     /**
@@ -441,7 +423,8 @@ public class AimsunControl
          * @param panel OTSAnimationPanel; the panel of the main screen
          * @throws OTSDrawingException on animation error
          */
-        public AimsunSwingApplication(final OTSModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
+        public AimsunSwingApplication(final OTSModelInterface model, final OTSAnimationPanel panel)
+                throws OTSDrawingException
         {
             super(model, panel);
         }
@@ -491,8 +474,8 @@ public class AimsunControl
                 ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
-                    | OTSGeometryException | ValueException | ParameterException | SimRuntimeException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
+                    | GTUException | OTSGeometryException | ValueException | ParameterException | SimRuntimeException exception)
             {
                 exception.printStackTrace();
                 throw new SimRuntimeException(exception);
