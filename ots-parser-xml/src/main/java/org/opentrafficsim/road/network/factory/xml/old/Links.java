@@ -98,7 +98,7 @@ final class Links
     {
         if (linkTag.straightTag != null)
         {
-            double direction = Math.atan2(linkTag.nodeEndTag.coordinate.y - linkTag.nodeStartTag.coordinate.y, 
+            double direction = Math.atan2(linkTag.nodeEndTag.coordinate.y - linkTag.nodeStartTag.coordinate.y,
                     linkTag.nodeEndTag.coordinate.x - linkTag.nodeStartTag.coordinate.x);
             if (linkTag.nodeStartTag.direction == null)
             {
@@ -125,7 +125,7 @@ final class Links
     {
         NodeTag from = linkTag.nodeStartTag;
         OTSPoint3D startPoint = new OTSPoint3D(from.coordinate);
-        double startAngle = linkTag.nodeStartTag.direction.getInUnit();
+        double startAngle = linkTag.nodeStartTag.direction == null ? 0.0 : linkTag.nodeStartTag.direction.getInUnit();
         if (linkTag.offsetStart != null && linkTag.offsetStart.si != 0.0)
         {
             // shift the start point perpendicular to the node direction or read from tag
@@ -138,7 +138,7 @@ final class Links
 
         NodeTag to = linkTag.nodeEndTag;
         OTSPoint3D endPoint = new OTSPoint3D(to.coordinate);
-        double endAngle = linkTag.nodeEndTag.direction.getInUnit();
+        double endAngle = linkTag.nodeEndTag.direction == null ? 0.0 : linkTag.nodeEndTag.direction.getInUnit();
         if (linkTag.offsetEnd != null && linkTag.offsetEnd.si != 0.0)
         {
             // shift the end point perpendicular to the node direction or read from tag
