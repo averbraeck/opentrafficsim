@@ -72,6 +72,10 @@
           <specVersion>2.3</specVersion>
           <verbose>true</verbose>
           <extension>true</extension>
+          <bindingDirectory>src/main/resources</bindingDirectory>
+          <bindingIncludes>
+            <bindingInclude>bindings.xsd</bindingInclude>
+          </bindingIncludes>
           <schemaIncludes>
             <schemaInclude>ots-animation.xsd</schemaInclude>
             <schemaInclude>ots-control.xsd</schemaInclude>

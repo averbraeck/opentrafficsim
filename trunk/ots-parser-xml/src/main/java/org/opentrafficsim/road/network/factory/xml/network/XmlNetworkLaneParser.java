@@ -18,7 +18,15 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.xml.generated.ANIMATION;
+import org.opentrafficsim.xml.generated.CONTROL;
+import org.opentrafficsim.xml.generated.DEFINITIONS;
+import org.opentrafficsim.xml.generated.MODEL;
 import org.opentrafficsim.xml.generated.NETWORK;
+import org.opentrafficsim.xml.generated.NETWORKDEMAND;
+import org.opentrafficsim.xml.generated.OTS;
+import org.opentrafficsim.xml.generated.RUN;
+import org.opentrafficsim.xml.generated.SCENARIO;
 import org.xml.sax.SAXException;
 
 /**
@@ -51,11 +59,20 @@ public class XmlNetworkLaneParser implements Serializable
     public static OTSNetwork build(final String filename, final OTSNetwork otsNetwork, final OTSSimulatorInterface simulator)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException
     {
-        JAXBContext jc = JAXBContext.newInstance(NETWORK.class);
+        JAXBContext jc = JAXBContext.newInstance(OTS.class);
 
         Unmarshaller unmarshaller = jc.createUnmarshaller();
         File xml = new File(URLResource.getResource(filename).toURI().getPath());
-        NETWORK network = (NETWORK) unmarshaller.unmarshal(xml);
+        OTS ots = (OTS) unmarshaller.unmarshal(xml);
+        
+        DEFINITIONS definitions = ots.getDEFINITIONS();
+        NETWORK network = ots.getNETWORK();
+        List<NETWORKDEMAND> demands = ots.getNETWORKDEMAND();
+        List<CONTROL> controls = ots.getCONTROL();
+        MODEL modelParameters = ots.getMODEL();
+        SCENARIO scenario = ots.getSCENARIO();
+        RUN run = ots.getRUN();
+        ANIMATION animation = ots.getANIMATION();
 
         NodeParser.parseNodes(otsNetwork, network);
         Map<String, Direction> nodeDirections = NodeParser.calculateNodeAngles(otsNetwork, network);
