@@ -86,7 +86,6 @@
             <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional" />
             <xsd:attribute name="GTU" type="xsd:string" use="optional" />
             <xsd:attribute name="GTUMIX" type="xsd:string" use="optional" />
-            <xsd:attribute name="TACTICALPLANNER" type="TACTICALPLANNERTYPE" use="optional" />
             <xsd:attribute name="IAT" type="TIMEDISTTYPE" use="required" />
             <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required" />
             <xsd:attribute name="MAXGTU" type="xsd:double" use="optional" />
@@ -94,7 +93,6 @@
             <xsd:attribute name="ENDTIME" type="DURATIONTYPE" use="optional" />
             <xsd:attribute name="ROUTE" type="xsd:string" use="optional" />
             <xsd:attribute name="ROUTEMIX" type="xsd:string" use="optional" />
-            <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required" />
           </xsd:complexType>
         </xsd:element>
 
@@ -109,7 +107,6 @@
             <xsd:attribute name="GTUMIX" type="xsd:string" use="optional" />
             <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required" />
             <xsd:attribute name="ROUTE" type="xsd:string" use="required" />
-            <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required" />
           </xsd:complexType>
         </xsd:element>
 
