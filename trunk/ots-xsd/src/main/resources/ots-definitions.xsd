@@ -4,41 +4,16 @@
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fn="http://www.w3.org/2005/xpath-functions"
   elementFormDefault="qualified">
 
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace"
-    schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
-  <xsd:import namespace="http://www.w3.org/2001/XInclude"
-    schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
+  <!-- http://www.w3.org/2009/01/xml.xsd -->
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd" />
+  <!-- http://www.w3.org/2001/xinclude.xsd -->
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="xinclude.xsd" />
 
   <xsd:include schemaLocation="ots-types.xsd" />
 
   <!-- ================================================================================================== -->
   <!-- =============================================== ELEMENTS ========================================= -->
   <!-- ================================================================================================== -->
-
-  <xsd:element name="GLOBAL">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="SPEEDGTUCOLORER" minOccurs="0" maxOccurs="1">
-          <xsd:complexType>
-            <xsd:attribute name="MAXSPEED" type="SPEEDTYPE" use="required" />
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="ACCELERATIONGTUCOLORER" minOccurs="0" maxOccurs="1">
-          <xsd:complexType>
-            <xsd:attribute name="MAXDECELERATION" type="ACCELERATIONTYPE" use="required" />
-            <xsd:attribute name="MAXACCELERATION" type="ACCELERATIONTYPE" use="required" />
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="LANECHANGEURGEGTUCOLORER" minOccurs="0" maxOccurs="1">
-          <xsd:complexType>
-            <xsd:attribute name="MINLANECHANGEDISTANCE" type="LENGTHTYPE" use="required" />
-            <xsd:attribute name="HORIZON" type="LENGTHTYPE" use="required" />
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:sequence>
-      <xsd:attribute ref="xml:base" />
-    </xsd:complexType>
-  </xsd:element>
 
   <xsd:element name="GTUTYPE">
     <xsd:complexType>
@@ -190,7 +165,6 @@
   <xsd:element name="DEFINITIONS">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="GLOBAL" minOccurs="0" maxOccurs="1" />
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
           <xsd:element ref="xi:include" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="GTUTYPE" minOccurs="0" maxOccurs="unbounded" />
@@ -203,7 +177,6 @@
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
-
   </xsd:element>
 
 </xsd:schema>

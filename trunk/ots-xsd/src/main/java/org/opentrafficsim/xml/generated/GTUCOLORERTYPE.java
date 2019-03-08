@@ -8,26 +8,36 @@
 
 package org.opentrafficsim.xml.generated;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for GTUCOLORERTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType&gt;
+ * &lt;complexType name="GTUCOLORERTYPE"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;attribute name="NAME" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="PARAMETER" type="{http://www.opentrafficsim.org/ots}PARAMETERTYPE" maxOccurs="unbounded"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="NAME" default="DEFAULT"&gt;
+ *         &lt;simpleType&gt;
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *             &lt;pattern value="(\ {0})DEFAULT|ID|SPEED|ACCELERATION"/&gt;
+ *           &lt;/restriction&gt;
+ *         &lt;/simpleType&gt;
+ *       &lt;/attribute&gt;
+ *       &lt;attribute name="CLASS" type="{http://www.opentrafficsim.org/ots}CLASSNAMETYPE" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -36,18 +46,51 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
-@XmlRootElement(name = "GTUTYPE")
+@XmlType(name = "GTUCOLORERTYPE", propOrder = {
+    "parameter"
+})
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-public class GTUTYPE {
+public class GTUCOLORERTYPE {
 
-    @XmlAttribute(name = "NAME", required = true)
+    @XmlElement(name = "PARAMETER", required = true)
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
+    protected List<PARAMETERTYPE> parameter;
+    @XmlAttribute(name = "NAME")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
     protected String name;
-    @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
-    @XmlSchemaType(name = "anyURI")
+    @XmlAttribute(name = "CLASS")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected String base;
+    protected String _class;
+
+    /**
+     * Gets the value of the parameter property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the parameter property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getPARAMETER().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link PARAMETERTYPE }
+     * 
+     * 
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
+    public List<PARAMETERTYPE> getPARAMETER() {
+        if (parameter == null) {
+            parameter = new ArrayList<PARAMETERTYPE>();
+        }
+        return this.parameter;
+    }
 
     /**
      * Gets the value of the name property.
@@ -59,7 +102,11 @@ public class GTUTYPE {
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
     public String getNAME() {
-        return name;
+        if (name == null) {
+            return "DEFAULT";
+        } else {
+            return name;
+        }
     }
 
     /**
@@ -76,7 +123,7 @@ public class GTUTYPE {
     }
 
     /**
-     * Gets the value of the base property.
+     * Gets the value of the class property.
      * 
      * @return
      *     possible object is
@@ -84,12 +131,12 @@ public class GTUTYPE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public String getBase() {
-        return base;
+    public String getCLASS() {
+        return _class;
     }
 
     /**
-     * Sets the value of the base property.
+     * Sets the value of the class property.
      * 
      * @param value
      *     allowed object is
@@ -97,8 +144,8 @@ public class GTUTYPE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public void setBase(String value) {
-        this.base = value;
+    public void setCLASS(String value) {
+        this._class = value;
     }
 
 }

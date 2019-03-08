@@ -12,27 +12,29 @@ import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for PARAMETERTYPE complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType&gt;
+ * &lt;complexType name="PARAMETERTYPE"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;attribute name="NAME" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
- *       &lt;attribute name="COORDINATE" use="required" type="{http://www.opentrafficsim.org/ots}COORDINATETYPE" /&gt;
- *       &lt;attribute name="DIRECTION" type="{http://www.opentrafficsim.org/ots}DIRECTIONTYPE" /&gt;
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
+ *       &lt;attribute name="TYPE" use="required"&gt;
+ *         &lt;simpleType&gt;
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *             &lt;pattern value="(\ {0})CLASS|STRING|DOUBLE|INTEGER|(\ {0})LENGTH|POSITION|DURATION|TIME|SPEED|ACCELERATION|FREQUENCY|LINEARDENSITY|(\ {0})FRACTION"/&gt;
+ *           &lt;/restriction&gt;
+ *         &lt;/simpleType&gt;
+ *       &lt;/attribute&gt;
+ *       &lt;attribute name="VALUE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="NAME" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="CLASS" type="{http://www.opentrafficsim.org/ots}CLASSNAMETYPE" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -41,27 +43,77 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
-@XmlRootElement(name = "NODE")
+@XmlType(name = "PARAMETERTYPE")
+@XmlSeeAlso({
+    MODELPARAMETERTYPE.class
+})
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-public class NODE {
+public class PARAMETERTYPE {
 
+    @XmlAttribute(name = "TYPE", required = true)
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
+    protected String type;
+    @XmlAttribute(name = "VALUE", required = true)
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
+    protected String value;
     @XmlAttribute(name = "NAME", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
     protected String name;
-    @XmlAttribute(name = "COORDINATE", required = true)
+    @XmlAttribute(name = "CLASS")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected String coordinate;
-    @XmlAttribute(name = "DIRECTION")
+    protected String _class;
+
+    /**
+     * Gets the value of the type property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected String direction;
-    @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
-    @XmlSchemaType(name = "anyURI")
+    public String getTYPE() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected String base;
+    public void setTYPE(String value) {
+        this.type = value;
+    }
+
+    /**
+     * Gets the value of the value property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
+    public String getVALUE() {
+        return value;
+    }
+
+    /**
+     * Sets the value of the value property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
+    public void setVALUE(String value) {
+        this.value = value;
+    }
 
     /**
      * Gets the value of the name property.
@@ -90,7 +142,7 @@ public class NODE {
     }
 
     /**
-     * Gets the value of the coordinate property.
+     * Gets the value of the class property.
      * 
      * @return
      *     possible object is
@@ -98,12 +150,12 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public String getCOORDINATE() {
-        return coordinate;
+    public String getCLASS() {
+        return _class;
     }
 
     /**
-     * Sets the value of the coordinate property.
+     * Sets the value of the class property.
      * 
      * @param value
      *     allowed object is
@@ -111,60 +163,8 @@ public class NODE {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public void setCOORDINATE(String value) {
-        this.coordinate = value;
-    }
-
-    /**
-     * Gets the value of the direction property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public String getDIRECTION() {
-        return direction;
-    }
-
-    /**
-     * Sets the value of the direction property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public void setDIRECTION(String value) {
-        this.direction = value;
-    }
-
-    /**
-     * Gets the value of the base property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public String getBase() {
-        return base;
-    }
-
-    /**
-     * Sets the value of the base property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public void setBase(String value) {
-        this.base = value;
+    public void setCLASS(String value) {
+        this._class = value;
     }
 
 }

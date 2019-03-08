@@ -8,6 +8,7 @@
 
 package org.opentrafficsim.xml.generated;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Generated;
@@ -15,7 +16,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
@@ -31,28 +31,21 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="SPEEDLIMIT" maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="SEED" maxOccurs="unbounded" minOccurs="0"&gt;
  *           &lt;complexType&gt;
  *             &lt;complexContent&gt;
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *                 &lt;attribute name="GTUTYPE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *                 &lt;attribute name="LEGALSPEEDLIMIT" type="{http://www.opentrafficsim.org/ots}SPEEDTYPE" /&gt;
+ *                 &lt;attribute name="STREAMNAME" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="SEEEDVALUE" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" /&gt;
  *               &lt;/restriction&gt;
  *             &lt;/complexContent&gt;
  *           &lt;/complexType&gt;
  *         &lt;/element&gt;
- *         &lt;choice maxOccurs="unbounded"&gt;
- *           &lt;element name="LANE" type="{http://www.opentrafficsim.org/ots}CSELANE" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="NOTRAFFICLANE" type="{http://www.opentrafficsim.org/ots}CSENOTRAFFICLANE" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="SHOULDER" type="{http://www.opentrafficsim.org/ots}CSESHOULDER" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="STRIPE" type="{http://www.opentrafficsim.org/ots}CSESTRIPE" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;/choice&gt;
  *       &lt;/sequence&gt;
- *       &lt;attribute name="NAME" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="ROADTYPE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="WIDTH" type="{http://www.opentrafficsim.org/ots}LENGTHTYPE" /&gt;
- *       &lt;attribute name="LANEKEEPING" type="{http://www.opentrafficsim.org/ots}LANEKEEPINGTYPE" /&gt;
- *       &lt;attribute name="OVERTAKING" type="{http://www.opentrafficsim.org/ots}OVERTAKINGTYPE" /&gt;
+ *       &lt;attribute name="STARTTIME" type="{http://www.opentrafficsim.org/ots}TIMETYPE" default="0s" /&gt;
+ *       &lt;attribute name="WARMUPPERIOD" type="{http://www.opentrafficsim.org/ots}DURATIONTYPE" default="0s" /&gt;
+ *       &lt;attribute name="RUNLENGTH" use="required" type="{http://www.opentrafficsim.org/ots}DURATIONTYPE" /&gt;
+ *       &lt;attribute name="NUMBERREPLICATIONS" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" default="1" /&gt;
  *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -63,122 +56,82 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "speedlimit",
-    "laneOrNOTRAFFICLANEOrSHOULDER"
+    "seed"
 })
-@XmlRootElement(name = "ROADLAYOUT")
+@XmlRootElement(name = "RUN")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-public class ROADLAYOUT {
+public class RUN {
 
-    @XmlElement(name = "SPEEDLIMIT")
+    @XmlElement(name = "SEED")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected List<ROADLAYOUT.SPEEDLIMIT> speedlimit;
-    @XmlElements({
-        @XmlElement(name = "LANE", type = CSELANE.class),
-        @XmlElement(name = "NOTRAFFICLANE", type = CSENOTRAFFICLANE.class),
-        @XmlElement(name = "SHOULDER", type = CSESHOULDER.class),
-        @XmlElement(name = "STRIPE", type = CSESTRIPE.class)
-    })
+    protected List<RUN.SEED> seed;
+    @XmlAttribute(name = "STARTTIME")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected List<CROSSSECTIONELEMENT> laneOrNOTRAFFICLANEOrSHOULDER;
-    @XmlAttribute(name = "NAME", required = true)
+    protected String starttime;
+    @XmlAttribute(name = "WARMUPPERIOD")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected String name;
-    @XmlAttribute(name = "ROADTYPE", required = true)
+    protected String warmupperiod;
+    @XmlAttribute(name = "RUNLENGTH", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected String roadtype;
-    @XmlAttribute(name = "WIDTH")
+    protected String runlength;
+    @XmlAttribute(name = "NUMBERREPLICATIONS")
+    @XmlSchemaType(name = "unsignedInt")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected String width;
-    @XmlAttribute(name = "LANEKEEPING")
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected String lanekeeping;
-    @XmlAttribute(name = "OVERTAKING")
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    protected String overtaking;
+    protected Long numberreplications;
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
     @XmlSchemaType(name = "anyURI")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
     protected String base;
 
     /**
-     * Gets the value of the speedlimit property.
+     * Gets the value of the seed property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the speedlimit property.
+     * This is why there is not a <CODE>set</CODE> method for the seed property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getSPEEDLIMIT().add(newItem);
+     *    getSEED().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ROADLAYOUT.SPEEDLIMIT }
+     * {@link RUN.SEED }
      * 
      * 
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public List<ROADLAYOUT.SPEEDLIMIT> getSPEEDLIMIT() {
-        if (speedlimit == null) {
-            speedlimit = new ArrayList<ROADLAYOUT.SPEEDLIMIT>();
+    public List<RUN.SEED> getSEED() {
+        if (seed == null) {
+            seed = new ArrayList<RUN.SEED>();
         }
-        return this.speedlimit;
+        return this.seed;
     }
 
     /**
-     * Gets the value of the laneOrNOTRAFFICLANEOrSHOULDER property.
+     * Gets the value of the starttime property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the laneOrNOTRAFFICLANEOrSHOULDER property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLANEOrNOTRAFFICLANEOrSHOULDER().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link CSELANE }
-     * {@link CSENOTRAFFICLANE }
-     * {@link CSESHOULDER }
-     * {@link CSESTRIPE }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public List<CROSSSECTIONELEMENT> getLANEOrNOTRAFFICLANEOrSHOULDER() {
-        if (laneOrNOTRAFFICLANEOrSHOULDER == null) {
-            laneOrNOTRAFFICLANEOrSHOULDER = new ArrayList<CROSSSECTIONELEMENT>();
+    public String getSTARTTIME() {
+        if (starttime == null) {
+            return "0s";
+        } else {
+            return starttime;
         }
-        return this.laneOrNOTRAFFICLANEOrSHOULDER;
     }
 
     /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public String getNAME() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
+     * Sets the value of the starttime property.
      * 
      * @param value
      *     allowed object is
@@ -186,12 +139,12 @@ public class ROADLAYOUT {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public void setNAME(String value) {
-        this.name = value;
+    public void setSTARTTIME(String value) {
+        this.starttime = value;
     }
 
     /**
-     * Gets the value of the roadtype property.
+     * Gets the value of the warmupperiod property.
      * 
      * @return
      *     possible object is
@@ -199,12 +152,16 @@ public class ROADLAYOUT {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public String getROADTYPE() {
-        return roadtype;
+    public String getWARMUPPERIOD() {
+        if (warmupperiod == null) {
+            return "0s";
+        } else {
+            return warmupperiod;
+        }
     }
 
     /**
-     * Sets the value of the roadtype property.
+     * Sets the value of the warmupperiod property.
      * 
      * @param value
      *     allowed object is
@@ -212,12 +169,12 @@ public class ROADLAYOUT {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public void setROADTYPE(String value) {
-        this.roadtype = value;
+    public void setWARMUPPERIOD(String value) {
+        this.warmupperiod = value;
     }
 
     /**
-     * Gets the value of the width property.
+     * Gets the value of the runlength property.
      * 
      * @return
      *     possible object is
@@ -225,12 +182,12 @@ public class ROADLAYOUT {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public String getWIDTH() {
-        return width;
+    public String getRUNLENGTH() {
+        return runlength;
     }
 
     /**
-     * Sets the value of the width property.
+     * Sets the value of the runlength property.
      * 
      * @param value
      *     allowed object is
@@ -238,60 +195,38 @@ public class ROADLAYOUT {
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public void setWIDTH(String value) {
-        this.width = value;
+    public void setRUNLENGTH(String value) {
+        this.runlength = value;
     }
 
     /**
-     * Gets the value of the lanekeeping property.
+     * Gets the value of the numberreplications property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Long }
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public String getLANEKEEPING() {
-        return lanekeeping;
+    public long getNUMBERREPLICATIONS() {
+        if (numberreplications == null) {
+            return  1L;
+        } else {
+            return numberreplications;
+        }
     }
 
     /**
-     * Sets the value of the lanekeeping property.
+     * Sets the value of the numberreplications property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Long }
      *     
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public void setLANEKEEPING(String value) {
-        this.lanekeeping = value;
-    }
-
-    /**
-     * Gets the value of the overtaking property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public String getOVERTAKING() {
-        return overtaking;
-    }
-
-    /**
-     * Sets the value of the overtaking property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public void setOVERTAKING(String value) {
-        this.overtaking = value;
+    public void setNUMBERREPLICATIONS(Long value) {
+        this.numberreplications = value;
     }
 
     /**
@@ -330,8 +265,8 @@ public class ROADLAYOUT {
      * &lt;complexType&gt;
      *   &lt;complexContent&gt;
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-     *       &lt;attribute name="GTUTYPE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
-     *       &lt;attribute name="LEGALSPEEDLIMIT" type="{http://www.opentrafficsim.org/ots}SPEEDTYPE" /&gt;
+     *       &lt;attribute name="STREAMNAME" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="SEEEDVALUE" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" /&gt;
      *     &lt;/restriction&gt;
      *   &lt;/complexContent&gt;
      * &lt;/complexType&gt;
@@ -342,17 +277,17 @@ public class ROADLAYOUT {
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-    public static class SPEEDLIMIT {
+    public static class SEED {
 
-        @XmlAttribute(name = "GTUTYPE", required = true)
+        @XmlAttribute(name = "STREAMNAME", required = true)
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-        protected String gtutype;
-        @XmlAttribute(name = "LEGALSPEEDLIMIT")
+        protected String streamname;
+        @XmlAttribute(name = "SEEEDVALUE", required = true)
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-        protected String legalspeedlimit;
+        protected BigInteger seeedvalue;
 
         /**
-         * Gets the value of the gtutype property.
+         * Gets the value of the streamname property.
          * 
          * @return
          *     possible object is
@@ -360,12 +295,12 @@ public class ROADLAYOUT {
          *     
          */
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-        public String getGTUTYPE() {
-            return gtutype;
+        public String getSTREAMNAME() {
+            return streamname;
         }
 
         /**
-         * Sets the value of the gtutype property.
+         * Sets the value of the streamname property.
          * 
          * @param value
          *     allowed object is
@@ -373,34 +308,34 @@ public class ROADLAYOUT {
          *     
          */
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-        public void setGTUTYPE(String value) {
-            this.gtutype = value;
+        public void setSTREAMNAME(String value) {
+            this.streamname = value;
         }
 
         /**
-         * Gets the value of the legalspeedlimit property.
+         * Gets the value of the seeedvalue property.
          * 
          * @return
          *     possible object is
-         *     {@link String }
+         *     {@link BigInteger }
          *     
          */
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-        public String getLEGALSPEEDLIMIT() {
-            return legalspeedlimit;
+        public BigInteger getSEEEDVALUE() {
+            return seeedvalue;
         }
 
         /**
-         * Sets the value of the legalspeedlimit property.
+         * Sets the value of the seeedvalue property.
          * 
          * @param value
          *     allowed object is
-         *     {@link String }
+         *     {@link BigInteger }
          *     
          */
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-08T06:55:33+01:00", comments = "JAXB RI v2.3.0")
-        public void setLEGALSPEEDLIMIT(String value) {
-            this.legalspeedlimit = value;
+        public void setSEEEDVALUE(BigInteger value) {
+            this.seeedvalue = value;
         }
 
     }

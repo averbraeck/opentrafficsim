@@ -3,8 +3,10 @@
   xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
 
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
-  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
+  <!-- http://www.w3.org/2009/01/xml.xsd -->
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd" />
+  <!-- http://www.w3.org/2001/xinclude.xsd -->
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="xinclude.xsd" />
 
   <xsd:include schemaLocation="ots-definitions.xsd" />
   <xsd:include schemaLocation="ots-network.xsd" />
@@ -12,6 +14,7 @@
   <xsd:include schemaLocation="ots-control.xsd" />
   <xsd:include schemaLocation="ots-model.xsd" />
   <xsd:include schemaLocation="ots-scenario.xsd" />
+  <xsd:include schemaLocation="ots-run.xsd" />
   <xsd:include schemaLocation="ots-animation.xsd" />
 
   <xsd:element name="OTS">
@@ -19,11 +22,11 @@
       <xsd:sequence>
         <xsd:element ref="DEFINITIONS" minOccurs="1" maxOccurs="1" />
         <xsd:element ref="NETWORK" minOccurs="1" maxOccurs="1" />
-        <xsd:element ref="DEMAND" minOccurs="1" maxOccurs="unbounded" />
+        <xsd:element ref="NETWORKDEMAND" minOccurs="1" maxOccurs="unbounded" />
         <xsd:element ref="CONTROL" minOccurs="1" maxOccurs="unbounded" />
         <xsd:element ref="MODEL" minOccurs="1" maxOccurs="1" />
         <xsd:element ref="SCENARIO" minOccurs="1" maxOccurs="1" />
-        <!-- xsd:element ref="RUN" minOccurs="1" maxOccurs="1" / -->
+        <xsd:element ref="RUN" minOccurs="1" maxOccurs="1" />
         <xsd:element ref="ANIMATION" minOccurs="1" maxOccurs="1" />
       </xsd:sequence>
     </xsd:complexType>
