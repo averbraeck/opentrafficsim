@@ -260,7 +260,7 @@ public final class Convert
                         laneType = makeLaneType(SHIP);
                         break;
                     default:
-                        laneType = makeLaneType(GTUType.WATER_WAY_USER);
+                        laneType = makeLaneType(GTUType.WATERWAY_USER);
                         break;
                 }
                 laneAttributes = new LaneAttributes(laneType, Color.CYAN, LongitudinalDirectionality.DIR_BOTH);

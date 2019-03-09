@@ -43,10 +43,10 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
     public static final LinkType FREEWAY;
 
     /** Two-directional water way. */
-    public static final LinkType WATER_WAY;
+    public static final LinkType WATERWAY;
 
     /** Two-directional rail link. */
-    public static final LinkType RAIL_WAY;
+    public static final LinkType RAILWAY;
 
     /** Virtual connection between nodes, e.g. to distribute demand. */
     public static final LinkType CONNECTOR;
@@ -67,17 +67,17 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
         FREEWAY = new LinkType("FREEWAY", ROAD, compatibility);
         //
         compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.WATER_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
-        WATER_WAY = new LinkType("WATER_WAY", null, compatibility);
+        compatibility.addAllowedGTUType(GTUType.WATERWAY_USER, LongitudinalDirectionality.DIR_BOTH);
+        WATERWAY = new LinkType("WATERWAY", null, compatibility);
         //
         compatibility = new GTUCompatibility<>((LinkType) null);
-        compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_BOTH);
-        RAIL_WAY = new LinkType("WATER_WAY", null, compatibility);
+        compatibility.addAllowedGTUType(GTUType.RAILWAY_USER, LongitudinalDirectionality.DIR_BOTH);
+        RAILWAY = new LinkType("RAILWAY", null, compatibility);
         //
         compatibility = new GTUCompatibility<>((LinkType) null);
         compatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGTUType(GTUType.WATER_WAY_USER, LongitudinalDirectionality.DIR_PLUS);
-        compatibility.addAllowedGTUType(GTUType.RAIL_WAY_USER, LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGTUType(GTUType.WATERWAY_USER, LongitudinalDirectionality.DIR_PLUS);
+        compatibility.addAllowedGTUType(GTUType.RAILWAY_USER, LongitudinalDirectionality.DIR_PLUS);
         CONNECTOR = new LinkType("CONNECTOR", null, compatibility);
     }
 
@@ -135,7 +135,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
      */
     public final boolean isWaterWay()
     {
-        return this.equals(WATER_WAY);
+        return this.equals(WATERWAY);
     }
 
     /**
@@ -143,7 +143,7 @@ public class LinkType extends HierarchicalType<LinkType> implements Serializable
      */
     public final boolean isRailWay()
     {
-        return this.equals(RAIL_WAY);
+        return this.equals(RAILWAY);
     }
 
     /**

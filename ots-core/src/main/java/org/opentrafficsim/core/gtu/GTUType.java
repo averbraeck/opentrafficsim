@@ -39,10 +39,10 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
     public static final GTUType ROAD_USER;
 
     /** Super type for all water way users. */
-    public static final GTUType WATER_WAY_USER;
+    public static final GTUType WATERWAY_USER;
 
     /** Super type for all rail users. */
-    public static final GTUType RAIL_WAY_USER;
+    public static final GTUType RAILWAY_USER;
 
     /** Super type for pedestrians. */
     public static final GTUType PEDESTRIAN;
@@ -79,15 +79,18 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
 
     /** Super type for scheduled busses. */
     public static final GTUType SCHEDULED_BUS;
+    
+    /** Map to store the global GTU information for a certain run. */
+    public static final Map<Object, Map<String, GTUType>> GLOBAL_GTU_TYPES = new HashMap<>(); 
 
     static
     {
         ROAD_USER = new GTUType("ROAD_USER", null);
-        WATER_WAY_USER = new GTUType("WATER_WAY_USER", null);
-        RAIL_WAY_USER = new GTUType("RAIL_WAY_USER", null);
+        WATERWAY_USER = new GTUType("WATERWAY_USER", null);
+        RAILWAY_USER = new GTUType("RAILWAY_USER", null);
 
-        SHIP = new GTUType("SHIP", WATER_WAY_USER);
-        TRAIN = new GTUType("TRAIN", RAIL_WAY_USER);
+        SHIP = new GTUType("SHIP", WATERWAY_USER);
+        TRAIN = new GTUType("TRAIN", RAILWAY_USER);
         PEDESTRIAN = new GTUType("PEDESTRIAN", ROAD_USER);
         BICYCLE = new GTUType("BICYCLE", ROAD_USER);
 

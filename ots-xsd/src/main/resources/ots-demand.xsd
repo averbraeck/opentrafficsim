@@ -44,6 +44,21 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="GTUMIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="GTU" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
   <!-- ================================================================================================== -->
   <!-- ================================================= TYPES ========================================== -->
   <!-- ================================================================================================== -->
