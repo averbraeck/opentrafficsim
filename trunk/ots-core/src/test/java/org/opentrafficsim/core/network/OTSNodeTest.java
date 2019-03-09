@@ -224,7 +224,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.RAIL_WAY,
+        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.RAILWAY,
                 new OTSLine3D(n2.getPoint(), node.getPoint()), simulator);
         try
         {
@@ -244,7 +244,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.RAIL_WAY,
+        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.RAILWAY,
                 new OTSLine3D(node.getPoint(), n2.getPoint()), simulator);
         try
         {
@@ -367,7 +367,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.RAIL_WAY,
+        Link noWay = new OTSLink(network, "no way traffic inbound link", n2, node, LinkType.RAILWAY,
                 new OTSLine3D(n2.getPoint(), node.getPoint()), simulator);
         try
         {
@@ -387,7 +387,7 @@ public class OTSNodeTest
         {
             // Ignore expected exception
         }
-        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.RAIL_WAY,
+        noWay = new OTSLink(network, "no way traffic outbound link", node, n2, LinkType.RAILWAY,
                 new OTSLine3D(node.getPoint(), n2.getPoint()), simulator);
         try
         {

@@ -18,7 +18,15 @@
   <xsd:element name="GTUTYPE">
     <xsd:complexType>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
-      <xsd:attribute ref="xml:base" />
+      <xsd:attribute name="PARENT" type="xsd:string" use="optional" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GTUTYPES">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="GTUTYPE" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
 
@@ -29,21 +37,6 @@
       <xsd:attribute name="LENGTH" type="LENGTHDISTTYPE" use="required" />
       <xsd:attribute name="WIDTH" type="LENGTHDISTTYPE" use="required" />
       <xsd:attribute name="MAXSPEED" type="SPEEDDISTTYPE" use="required" />
-      <xsd:attribute ref="xml:base" />
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="GTUMIX">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="GTU" minOccurs="1" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:string" use="required" />
-            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -87,7 +80,6 @@
     <xsd:attribute name="NAME" type="xsd:string" use="optional" />
     <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
     <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
-    <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
   </xsd:complexType>
 
   <xsd:complexType name="CSELANE">
@@ -147,7 +139,7 @@
           <xsd:element name="SHOULDER" type="CSESHOULDER" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element name="STRIPE" type="CSESTRIPE" minOccurs="0" maxOccurs="unbounded" />
         </xsd:choice>
-        
+
       </xsd:sequence>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute name="ROADTYPE" type="xsd:string" use="required" />
@@ -167,9 +159,8 @@
       <xsd:sequence>
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
           <xsd:element ref="xi:include" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="GTUTYPE" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="GTUTYPES" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="GTU" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="GTUMIX" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="ROADTYPE" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="LANETYPE" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="ROADLAYOUT" minOccurs="0" maxOccurs="unbounded" />
