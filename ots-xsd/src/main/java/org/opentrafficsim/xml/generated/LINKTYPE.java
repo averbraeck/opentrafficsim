@@ -18,6 +18,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.opentrafficsim.xml.bindings.DrivingDirectionAdapter;
+import org.opentrafficsim.xml.bindings.types.DrivingDirectionType;
 
 
 /**
@@ -30,18 +33,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="GTU" maxOccurs="unbounded"&gt;
+ *         &lt;element name="COMPATIBILITY" maxOccurs="unbounded" minOccurs="0"&gt;
  *           &lt;complexType&gt;
  *             &lt;complexContent&gt;
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *                 &lt;attribute name="NAME" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *                 &lt;attribute name="WEIGHT" use="required" type="{http://www.w3.org/2001/XMLSchema}double" /&gt;
+ *                 &lt;attribute name="GTUTYPE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="DIRECTION" type="{http://www.opentrafficsim.org/ots}DRIVINGDIRECTIONTYPE" /&gt;
  *               &lt;/restriction&gt;
  *             &lt;/complexContent&gt;
  *           &lt;/complexType&gt;
  *         &lt;/element&gt;
  *       &lt;/sequence&gt;
  *       &lt;attribute name="NAME" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="PARENT" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="DEFAULT" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
  *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}base"/&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -52,51 +57,57 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "gtu"
+    "compatibility"
 })
-@XmlRootElement(name = "GTUMIX")
+@XmlRootElement(name = "LINKTYPE")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-public class GTUMIX {
+public class LINKTYPE {
 
-    @XmlElement(name = "GTU", required = true)
+    @XmlElement(name = "COMPATIBILITY")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-    protected List<GTUMIX.GTU> gtu;
+    protected List<LINKTYPE.COMPATIBILITY> compatibility;
     @XmlAttribute(name = "NAME", required = true)
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
     protected String name;
+    @XmlAttribute(name = "PARENT")
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
+    protected String parent;
+    @XmlAttribute(name = "DEFAULT")
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
+    protected Boolean _default;
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
     @XmlSchemaType(name = "anyURI")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
     protected String base;
 
     /**
-     * Gets the value of the gtu property.
+     * Gets the value of the compatibility property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the gtu property.
+     * This is why there is not a <CODE>set</CODE> method for the compatibility property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getGTU().add(newItem);
+     *    getCOMPATIBILITY().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link GTUMIX.GTU }
+     * {@link LINKTYPE.COMPATIBILITY }
      * 
      * 
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-    public List<GTUMIX.GTU> getGTU() {
-        if (gtu == null) {
-            gtu = new ArrayList<GTUMIX.GTU>();
+    public List<LINKTYPE.COMPATIBILITY> getCOMPATIBILITY() {
+        if (compatibility == null) {
+            compatibility = new ArrayList<LINKTYPE.COMPATIBILITY>();
         }
-        return this.gtu;
+        return this.compatibility;
     }
 
     /**
@@ -123,6 +134,62 @@ public class GTUMIX {
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
     public void setNAME(String value) {
         this.name = value;
+    }
+
+    /**
+     * Gets the value of the parent property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
+    public String getPARENT() {
+        return parent;
+    }
+
+    /**
+     * Sets the value of the parent property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
+    public void setPARENT(String value) {
+        this.parent = value;
+    }
+
+    /**
+     * Gets the value of the default property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
+    public boolean isDEFAULT() {
+        if (_default == null) {
+            return false;
+        } else {
+            return _default;
+        }
+    }
+
+    /**
+     * Sets the value of the default property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
+    public void setDEFAULT(Boolean value) {
+        this._default = value;
     }
 
     /**
@@ -161,8 +228,8 @@ public class GTUMIX {
      * &lt;complexType&gt;
      *   &lt;complexContent&gt;
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-     *       &lt;attribute name="NAME" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
-     *       &lt;attribute name="WEIGHT" use="required" type="{http://www.w3.org/2001/XMLSchema}double" /&gt;
+     *       &lt;attribute name="GTUTYPE" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="DIRECTION" type="{http://www.opentrafficsim.org/ots}DRIVINGDIRECTIONTYPE" /&gt;
      *     &lt;/restriction&gt;
      *   &lt;/complexContent&gt;
      * &lt;/complexType&gt;
@@ -173,17 +240,18 @@ public class GTUMIX {
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-    public static class GTU {
+    public static class COMPATIBILITY {
 
-        @XmlAttribute(name = "NAME", required = true)
+        @XmlAttribute(name = "GTUTYPE", required = true)
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-        protected String name;
-        @XmlAttribute(name = "WEIGHT", required = true)
+        protected String gtutype;
+        @XmlAttribute(name = "DIRECTION")
+        @XmlJavaTypeAdapter(DrivingDirectionAdapter.class)
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-        protected double weight;
+        protected DrivingDirectionType direction;
 
         /**
-         * Gets the value of the name property.
+         * Gets the value of the gtutype property.
          * 
          * @return
          *     possible object is
@@ -191,12 +259,12 @@ public class GTUMIX {
          *     
          */
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-        public String getNAME() {
-            return name;
+        public String getGTUTYPE() {
+            return gtutype;
         }
 
         /**
-         * Sets the value of the name property.
+         * Sets the value of the gtutype property.
          * 
          * @param value
          *     allowed object is
@@ -204,26 +272,34 @@ public class GTUMIX {
          *     
          */
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-        public void setNAME(String value) {
-            this.name = value;
+        public void setGTUTYPE(String value) {
+            this.gtutype = value;
         }
 
         /**
-         * Gets the value of the weight property.
+         * Gets the value of the direction property.
          * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
          */
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-        public double getWEIGHT() {
-            return weight;
+        public DrivingDirectionType getDIRECTION() {
+            return direction;
         }
 
         /**
-         * Sets the value of the weight property.
+         * Sets the value of the direction property.
          * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
          */
         @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-        public void setWEIGHT(double value) {
-            this.weight = value;
+        public void setDIRECTION(DrivingDirectionType value) {
+            this.direction = value;
         }
 
     }

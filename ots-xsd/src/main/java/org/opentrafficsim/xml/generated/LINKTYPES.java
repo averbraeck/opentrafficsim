@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="MODELPARAMETER" type="{http://www.opentrafficsim.org/ots}MODELPARAMETERTYPE" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.opentrafficsim.org/ots}LINKTYPE" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -39,44 +39,44 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "modelparameter"
+    "linktype"
 })
-@XmlRootElement(name = "MODEL")
+@XmlRootElement(name = "LINKTYPES")
 @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-public class MODEL {
+public class LINKTYPES {
 
-    @XmlElement(name = "MODELPARAMETER")
+    @XmlElement(name = "LINKTYPE")
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-    protected List<MODELPARAMETERTYPE> modelparameter;
+    protected List<LINKTYPE> linktype;
 
     /**
-     * Gets the value of the modelparameter property.
+     * Gets the value of the linktype property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the modelparameter property.
+     * This is why there is not a <CODE>set</CODE> method for the linktype property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getMODELPARAMETER().add(newItem);
+     *    getLINKTYPE().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link MODELPARAMETERTYPE }
+     * {@link LINKTYPE }
      * 
      * 
      */
     @Generated(value = "com.sun.tools.xjc.Driver", date = "2019-03-10T05:15:51+01:00", comments = "JAXB RI v2.3.0")
-    public List<MODELPARAMETERTYPE> getMODELPARAMETER() {
-        if (modelparameter == null) {
-            modelparameter = new ArrayList<MODELPARAMETERTYPE>();
+    public List<LINKTYPE> getLINKTYPE() {
+        if (linktype == null) {
+            linktype = new ArrayList<LINKTYPE>();
         }
-        return this.modelparameter;
+        return this.linktype;
     }
 
 }

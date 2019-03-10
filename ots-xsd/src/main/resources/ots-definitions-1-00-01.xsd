@@ -54,16 +54,16 @@
   <xsd:element name="LANETYPE">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="SPEEDLIMIT" minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="COMPATIBILITY" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
-            <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="optional" />
+            <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="optional" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
-      <xsd:attribute name="DEFAULTLANEWIDTH" type="LENGTHTYPE" use="optional" />
-      <xsd:attribute name="DEFAULTLANEKEEPING" type="LANEKEEPINGTYPE" use="optional" />
+      <xsd:attribute name="PARENT" type="xsd:string" use="optional" />
+      <xsd:attribute name="DEFAULT" type="xsd:boolean" use="optional" default="false" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
@@ -76,24 +76,31 @@
     </xsd:complexType>
   </xsd:element>
   
-  <xsd:element name="ROADTYPE">
+  <xsd:element name="LINKTYPE">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="SPEEDLIMIT" minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="COMPATIBILITY" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
-            <xsd:attribute name="LEGALSPEEDLIMIT" type="SPEEDTYPE" use="required" />
+            <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="optional" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
-      <xsd:attribute name="DEFAULTLANEWIDTH" type="LENGTHTYPE" use="required" />
-      <xsd:attribute name="DEFAULTLANEKEEPING" type="LANEKEEPINGTYPE" use="required" />
-      <xsd:attribute name="DEFAULTOVERTAKING" type="OVERTAKINGTYPE" use="required" />
+      <xsd:attribute name="PARENT" type="xsd:string" use="optional" />
+      <xsd:attribute name="DEFAULT" type="xsd:boolean" use="optional" default="false" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="LINKTYPES">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="LINKTYPE" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  
   <xsd:complexType name="CROSSSECTIONELEMENT">
     <xsd:attribute name="NAME" type="xsd:string" use="optional" />
     <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
@@ -180,7 +187,7 @@
           <xsd:element ref="GTUTYPES" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="GTUS" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="LANETYPES" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="ROADTYPE" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="LINKTYPES" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="ROADLAYOUT" minOccurs="0" maxOccurs="unbounded" />
         </xsd:choice>
       </xsd:sequence>
