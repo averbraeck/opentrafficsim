@@ -85,7 +85,7 @@ public class LaneType extends HierarchicalType<LaneType> implements Serializable
         GTUCompatibility<LaneType> highwayLaneCompatibility = new GTUCompatibility<>(oneWayLaneCompatibility)
                 .addAllowedGTUType(GTUType.PEDESTRIAN, LongitudinalDirectionality.DIR_NONE);
         FREEWAY = new LaneType("FREEWAY", highwayLaneCompatibility);
-        HIGHWAY = new LaneType("FREEWAY", highwayLaneCompatibility);
+        HIGHWAY = new LaneType("HIGHWAY", highwayLaneCompatibility);
         GTUCompatibility<LaneType> busLaneCompatibility = new GTUCompatibility<>(roadCompatibility);
         busLaneCompatibility.addAllowedGTUType(GTUType.BUS, LongitudinalDirectionality.DIR_BOTH);
         busLaneCompatibility.addAllowedGTUType(GTUType.ROAD_USER, LongitudinalDirectionality.DIR_NONE);
