@@ -6,7 +6,7 @@
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
   <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
 
-  <xsd:include schemaLocation="http://www.opentrafficsim.org/docs/current/ots-types.xsd" />
+  <xsd:include schemaLocation="https://www.opentrafficsim.org/docs/xsd/ots-types-1-00-00.xsd" />
 
   <!-- ================================================================================================== -->
   <!-- =============================================== ELEMENTS ========================================= -->

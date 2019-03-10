@@ -102,7 +102,7 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
         VAN = new GTUType("VAN", VEHICLE);
         BUS = new GTUType("BUS", VEHICLE);
         TRUCK = new GTUType("TRUCK", VEHICLE);
-        SCHEDULED_BUS = new GTUType("SCHEDULED BUS", BUS);
+        SCHEDULED_BUS = new GTUType("SCHEDULED_BUS", BUS);
     }
 
     /** Templates for GTU characteristics. */

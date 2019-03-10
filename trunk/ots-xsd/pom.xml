@@ -74,19 +74,10 @@
           <extension>true</extension>
           <bindingDirectory>src/main/resources</bindingDirectory>
           <bindingIncludes>
-            <bindingInclude>bindings.xsd</bindingInclude>
+            <bindingInclude>bindings.xml</bindingInclude>
           </bindingIncludes>
           <schemaIncludes>
-            <schemaInclude>ots-animation.xsd</schemaInclude>
-            <schemaInclude>ots-control.xsd</schemaInclude>
-            <schemaInclude>ots-definitions.xsd</schemaInclude>
-            <schemaInclude>ots-demand.xsd</schemaInclude>
-            <schemaInclude>ots-model.xsd</schemaInclude>
-            <schemaInclude>ots-network.xsd</schemaInclude>
-            <schemaInclude>ots-run.xsd</schemaInclude>
-            <schemaInclude>ots-scenario.xsd</schemaInclude>
-            <schemaInclude>ots-types.xsd</schemaInclude>
-            <schemaInclude>ots.xsd</schemaInclude>
+            <schemaInclude>*.xsd</schemaInclude>
           </schemaIncludes>
         </configuration>
       </plugin>

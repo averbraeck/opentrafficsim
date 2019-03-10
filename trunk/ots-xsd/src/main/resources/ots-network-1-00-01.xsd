@@ -5,12 +5,12 @@
   elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd" />
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
   <!-- http://www.w3.org/2001/xinclude.xsd -->
-  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="xinclude.xsd" />
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="ref/xinclude.xsd" />
 
-  <xsd:include schemaLocation="ots-definitions.xsd" />
-  <xsd:include schemaLocation="ots-control.xsd" />
+  <xsd:include schemaLocation="ots-definitions-1-00-01.xsd" />
+  <xsd:include schemaLocation="ots-control-1-00-01.xsd" />
 
   <!-- https://www.opentrafficsim.org/docs/current/ots-definitions.xsd -->
 

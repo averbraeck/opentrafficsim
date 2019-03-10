@@ -4,18 +4,18 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd" />
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
   <!-- http://www.w3.org/2001/xinclude.xsd -->
-  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="xinclude.xsd" />
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="ref/xinclude.xsd" />
 
-  <xsd:include schemaLocation="ots-definitions.xsd" />
-  <xsd:include schemaLocation="ots-network.xsd" />
-  <xsd:include schemaLocation="ots-demand.xsd" />
-  <xsd:include schemaLocation="ots-control.xsd" />
-  <xsd:include schemaLocation="ots-model.xsd" />
-  <xsd:include schemaLocation="ots-scenario.xsd" />
-  <xsd:include schemaLocation="ots-run.xsd" />
-  <xsd:include schemaLocation="ots-animation.xsd" />
+  <xsd:include schemaLocation="ots-definitions-1-00-01.xsd" />
+  <xsd:include schemaLocation="ots-network-1-00-01.xsd" />
+  <xsd:include schemaLocation="ots-demand-1-00-01.xsd" />
+  <xsd:include schemaLocation="ots-control-1-00-01.xsd" />
+  <xsd:include schemaLocation="ots-model-1-00-01.xsd" />
+  <xsd:include schemaLocation="ots-scenario-1-00-01.xsd" />
+  <xsd:include schemaLocation="ots-run-1-00-01.xsd" />
+  <xsd:include schemaLocation="ots-animation-1-00-01.xsd" />
 
   <xsd:element name="OTS">
     <xsd:complexType>
