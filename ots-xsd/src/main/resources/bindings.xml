@@ -1,5 +1,9 @@
-<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc" jaxb:version="2.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+  jaxb:extensionBindingPrefixes="xjc" jaxb:version="2.0"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb ref/bindingschema_2_0.xsd">
+
   <jaxb:globalBindings>
     <xjc:javaType name="org.djunits.value.vdouble.scalar.Acceleration" xmlType="ots:ACCELERATIONTYPE"
       adapter="org.opentrafficsim.xml.bindings.AccelerationAdapter" />

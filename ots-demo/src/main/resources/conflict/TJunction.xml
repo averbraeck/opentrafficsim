@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <NETWORK xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots http://www.opentrafficsim.org/docs/current/ots-network.xsd">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots https://www.opentrafficsim.org/xsd/ots-network-1-00-00.xsd">
 
   <DEFINITIONS>
 
@@ -124,11 +124,11 @@
   </LINK>
 
   <LINK NAME="SCEC" NODESTART="SC" NODEEND="EC" ROADLAYOUT="RIGHT">
-    <ARC RADIUS="18.8m" DIRECTION="90 deg" DIRECTION="R" />
+    <ARC RADIUS="18.8m" ANGLE="90 deg" DIRECTION="R" />
   </LINK>
 
   <LINK NAME="SCWC" NODESTART="SC" NODEEND="WC" ROADLAYOUT="RIGHT">
-    <ARC RADIUS="18.8m" DIRECTION="90 deg" DIRECTION="L" />
+    <ARC RADIUS="18.8m" ANGLE="90 deg" DIRECTION="L" />
   </LINK>
 
   <LINK NAME="WCEC" NODESTART="WC" NODEEND="EC" ROADLAYOUT="RIGHT" PRIORITY="PRIORITY">
@@ -136,7 +136,7 @@
   </LINK>
 
   <LINK NAME="WCSC" NODESTART="WC" NODEEND="SC" ROADLAYOUT="RIGHT" PRIORITY="PRIORITY">
-    <ARC RADIUS="18.8m" DIRECTION="90 deg" DIRECTION="R" />
+    <ARC RADIUS="18.8m" ANGLE="90 deg" DIRECTION="R" />
   </LINK>
 
 </NETWORK>

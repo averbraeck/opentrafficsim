@@ -3,35 +3,58 @@
   xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
 
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
-  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
+  <!-- http://www.w3.org/2009/01/xml.xsd -->
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
+  <!-- http://www.w3.org/2001/xinclude.xsd -->
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="ref/xinclude.xsd" />
 
-  <xsd:include schemaLocation="http://www.opentrafficsim.org/docs/current/ots-definitions.xsd" />
-  <xsd:include schemaLocation="http://www.opentrafficsim.org/docs/current/ots-types.xsd" />
+  <xsd:include schemaLocation="ots-definitions-1-00-01.xsd" />
+  <xsd:include schemaLocation="ots-types-1-00-01.xsd" />
 
-  <xsd:element name="OD">
+  <xsd:element name="NETWORKDEMAND">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="GLOBALTIME" minOccurs="0" maxOccurs="1" />
-        <xsd:element name="CATEGORY" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="DEMAND" minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="OD">
           <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="LEVEL" minOccurs="0" maxOccurs="unbounded" />
+              <xsd:element name="GLOBALTIME" minOccurs="0" maxOccurs="1" />
+              <xsd:element name="CATEGORY" minOccurs="0" maxOccurs="unbounded" />
+              <xsd:element name="DEMAND" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="LEVEL" minOccurs="0" maxOccurs="unbounded" />
+                  </xsd:sequence>
+                  <xsd:attribute name="ORIGIN" type="xsd:string" use="required" />
+                  <xsd:attribute name="DESTINATION" type="xsd:string" use="required" />
+                  <xsd:attribute name="CATEGORY" type="xsd:string" use="optional" />
+                  <xsd:attribute name="INTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
+                  <xsd:attribute name="FACTOR" type="POSITIVEFACTOR" use="optional" />
+                  <xsd:attribute ref="xml:base" />
+                </xsd:complexType>
+              </xsd:element>
             </xsd:sequence>
-            <xsd:attribute name="ORIGIN" type="xsd:string" use="required" />
-            <xsd:attribute name="DESTINATION" type="xsd:string" use="required" />
-            <xsd:attribute name="CATEGORY" type="xsd:string" use="optional" />
-            <xsd:attribute name="INTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
-            <xsd:attribute name="FACTOR" type="POSITIVEFACTOR" use="optional" />
+            <xsd:attribute name="NAME" type="xsd:string" use="optional" />
+            <xsd:attribute name="GLOBALINTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
+            <xsd:attribute name="START" type="xsd:dateTime" use="optional" />
+            <xsd:attribute name="GLOBALFACTOR" type="POSITIVEFACTOR" use="optional" />
             <xsd:attribute ref="xml:base" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:string" use="optional" />
-      <xsd:attribute name="GLOBALINTERPOLATION" type="INTERPOLATIONTYPE" use="optional" />
-      <xsd:attribute name="START" type="xsd:dateTime" use="optional" />
-      <xsd:attribute name="GLOBALFACTOR" type="POSITIVEFACTOR" use="optional" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GTUMIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="GTU" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="NAME" type="xsd:string" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
   </xsd:element>

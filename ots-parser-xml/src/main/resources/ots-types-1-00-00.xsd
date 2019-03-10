@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?> <xsd:schema targetNamespace="http://www.opentrafficsim.org/ots" 
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-  xmlns:ots="http://www.opentrafficsim.org/ots" 
-  xmlns="http://www.opentrafficsim.org/ots" elementFormDefault="qualified">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.opentrafficsim.org/ots" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" elementFormDefault="qualified">
 
   <!-- ================================================================================================== -->
   <!-- ================================================= TYPES ========================================== -->
@@ -13,7 +12,7 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="SPEEDTYPE"> 
+  <xsd:simpleType name="SPEEDTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+\.?\d*\s*(km/h|m/s|mi/h|ft/s)"></xsd:pattern>
     </xsd:restriction>
@@ -91,8 +90,7 @@
 
   <xsd:simpleType name="COORDINATETYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="\(\s*[+-]?\d+\.?\d*\s*,\s*[+-]?\d+\.?\d*(\s*,\s*[+-]?\d+\.?\d*)?\s*\)">
+      <xsd:pattern value="\(\s*[+-]?\d+\.?\d*\s*,\s*[+-]?\d+\.?\d*(\s*,\s*[+-]?\d+\.?\d*)?\s*\)">
       </xsd:pattern>
       <xsd:whiteSpace value="collapse" />
     </xsd:restriction>
@@ -100,8 +98,7 @@
 
   <xsd:simpleType name="COORDINATENOSPACETYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="\([+-]?\d+\.?\d*,[+-]?\d+\.?\d*(,[+-]?\d+\.?\d*)?\)">
+      <xsd:pattern value="\([+-]?\d+\.?\d*,[+-]?\d+\.?\d*(,[+-]?\d+\.?\d*)?\)">
       </xsd:pattern>
       <xsd:whiteSpace value="collapse" />
     </xsd:restriction>
@@ -118,6 +115,12 @@
   </xsd:simpleType>
 
   <xsd:simpleType name="ANGLETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[+-]?\d+\.?\d*\s*(deg|rad)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DIRECTIONTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[+-]?\d+\.?\d*\s*(deg|rad)"></xsd:pattern>
     </xsd:restriction>
@@ -140,7 +143,7 @@
       <xsd:pattern value="KEEPLEFT|KEEPRIGHT|KEEPLANE"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="PRIORITYTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="PRIORITY|NONE|TURN_ON_RED|YIELD|STOP|ALL_STOP|BUS_STOP"></xsd:pattern>
@@ -174,18 +177,18 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DIRECTIONTYPE">
+  <xsd:simpleType name="DRIVINGDIRECTIONTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="FORWARD|BACKWARD|BOTH"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="INTERPOLATIONTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="STEPWISE|LINEAR"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="COLORTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern
