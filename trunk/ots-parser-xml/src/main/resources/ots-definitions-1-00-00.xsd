@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
   xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:fn="http://www.w3.org/2005/xpath-functions" elementFormDefault="qualified">
@@ -130,7 +129,10 @@
               </xsd:sequence>
               <xsd:attribute name="NAME" type="xsd:string" use="required" />
               <xsd:attribute name="LANETYPE" type="xsd:string" use="optional" />
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
+              <!-- either OFFSET, or OFFSETSTART and OFFSETEND... -->
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" />
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
               <xsd:attribute name="DIRECTION" type="DRIVINGDIRECTIONTYPE" use="required" />
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
@@ -141,7 +143,10 @@
           <xsd:element name="NOTRAFFICLANE" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
               <xsd:attribute name="NAME" type="xsd:string" use="optional" />
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
+              <!-- either OFFSET, or OFFSETSTART and OFFSETEND... -->
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" />
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
             </xsd:complexType>
@@ -150,7 +155,10 @@
           <xsd:element name="SHOULDER" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
               <xsd:attribute name="NAME" type="xsd:string" use="optional" />
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required" />
+              <!-- either OFFSET, or OFFSETSTART and OFFSETEND... -->
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETSTART" type="SIGNEDLENGTHTYPE" use="optional" />
+              <xsd:attribute name="OFFSETEND" type="SIGNEDLENGTHTYPE" use="optional" />
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional" />
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional" />
             </xsd:complexType>

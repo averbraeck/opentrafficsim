@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
 <GTUS xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd
-  http://www.opentrafficsim.org/ots https://opentrafficsim.org/docs/current/ots-definitions.xsd"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions-1-00-01.xsd
+  http://www.opentrafficsim.org/ots https://opentrafficsim.org/xsd/ots-definitions-1-00-01.xsd">
 
 <!--
       // GTUType.CAR
@@ -32,7 +33,14 @@
               new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
  -->
 
-  <GTU NAME="CAR" GTUTYPE="CAR" DEFAULT="true" LENGTH="DISTCONST(4.19m)" WIDTH="DISTCONST(1.7m)"
-    MAXSPEED="DISTCONST(180 km/h)" />
+  <GTU NAME="CAR" GTUTYPE="CAR" DEFAULT="true" LENGTH="CONST(4.19) m" WIDTH="CONST(1.7) m"
+    MAXSPEED="CONST(180) km/h" />
+  <GTU NAME="TRUCK" GTUTYPE="TRUCK" DEFAULT="true" LENGTH="CONST(12.0) m" WIDTH="CONST(2.55) m"
+    MAXSPEED="NORMAL(85.0, 2.5) km/h" />
+  <GTU NAME="BUS" GTUTYPE="BUS" DEFAULT="true" LENGTH="CONST(12.0) m" WIDTH="CONST(2.55) m"
+    MAXSPEED="CONST(90) km/h" />
+  <GTU NAME="VAN" GTUTYPE="VAN" DEFAULT="true" LENGTH="CONST(5.0) m" WIDTH="CONST(2.4) m" MAXSPEED="CONST(180) km/h" />
+  <GTU NAME="EMERGENCY_VEHICLE" GTUTYPE="EMERGENCY_VEHICLE" DEFAULT="true" LENGTH="CONST(5.0) m"
+    WIDTH="CONST(2.55) m" MAXSPEED="CONST(180) km/h" />
 
 </GTUS>
