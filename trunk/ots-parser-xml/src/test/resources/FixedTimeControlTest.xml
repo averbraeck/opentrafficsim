@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <NETWORK xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-xsd/src/main/resources/ots-network.xsd">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-xsd/src/main/resources/ots-network-1-00-01.xsd">
 
   <DEFINITIONS>
-    <ROADTYPE DEFAULTOVERTAKING="LEFTONLY" DEFAULTLANEKEEPING="KEEPLEFT" DEFAULTLANEWIDTH="3.5m" NAME="HIGHWAY">
-      <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="120km/h" />
-    </ROADTYPE>
+    <LINKTYPES>
+      <LINKTYPE NAME="HIGHWAY">
+      </LINKTYPE>
+    </LINKTYPES>
     <ROADLAYOUT NAME="Broad" ROADTYPE="HIGHWAY">
+      <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="120km/h" />
       <LANE NAME="LEFT" DIRECTION="FORWARD" OFFSET="-3.5m" />
     </ROADLAYOUT>
   </DEFINITIONS>
@@ -23,7 +25,7 @@
   </SIGNALGROUP>
 
   <CONTROL>
-    <FIXEDTIME ID="N333-dorpsweg" CYCLETIME="90s" OFFSET="12s">
+    <FIXEDTIME ID="N333-dorpsweg" CYCLETIME="90s" OFFSET="12s" STARTTIME="0s" ENDTIME="1000000h">
       <SIGNALGROUP ID="asd" OFFSET="0s" GREEN="20s" YELLOW="3.5s" />
     </FIXEDTIME>
   </CONTROL>
