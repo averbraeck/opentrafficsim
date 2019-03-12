@@ -108,7 +108,7 @@ public class XmlNetworkLaneParser implements Serializable
         LinkParser.parseLinks(otsNetwork, network, nodeDirections, simulator);
         LinkParser.applyRoadTypes(otsNetwork, network, simulator);
 
-        ControlParser.parseControl(otsNetwork, simulator, network);
+        ControlParser.parseControl(otsNetwork, simulator, ots);
 
         return otsNetwork;
     }

@@ -11,7 +11,7 @@ import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 import org.opentrafficsim.xml.generated.CONTROL;
 import org.opentrafficsim.xml.generated.CONTROL.FIXEDTIME;
-import org.opentrafficsim.xml.generated.NETWORK;
+import org.opentrafficsim.xml.generated.OTS;
 import org.opentrafficsim.xml.generated.SIGNALGROUP;
 import org.opentrafficsim.xml.generated.TRAFFICLIGHTTYPE;
 
@@ -37,11 +37,11 @@ public final class ControlParser
      * Creates control objects.
      * @param otsNetwork OTSNetwork; network
      * @param simulator OTSSimulatorInterface; simulator
-     * @param network NETWORK; XSD objects in the NETWORK tag
+     * @param ots OTS; XSD objects in the OTS tag
      */
-    public static void parseControl(final OTSNetwork otsNetwork, final OTSSimulatorInterface simulator, final NETWORK network)
+    public static void parseControl(final OTSNetwork otsNetwork, final OTSSimulatorInterface simulator, final OTS ots)
     {
-        for (CONTROL control : network.getCONTROL())
+        for (CONTROL control : ots.getCONTROL())
         {
             // Fixed time controllers
             for (FIXEDTIME fixedTime : control.getFIXEDTIME())
@@ -59,15 +59,16 @@ public final class ControlParser
                     Duration yellow = signalGroup.getYELLOW();
 
                     // TODO: is there a better way to obtain a referenced object?
-                    SIGNALGROUP referencedSignalGroup = Parser.findObject(network.getSIGNALGROUP(), new Predicate<SIGNALGROUP>()
-                    {
-                        /** {@inheritDoc} */
-                        @Override
-                        public boolean test(final SIGNALGROUP t)
-                        {
-                            return t.getID().equals(signalGroupId);
-                        }
-                    });
+                    SIGNALGROUP referencedSignalGroup =
+                            Parser.findObject(ots.getNETWORK().getSIGNALGROUP(), new Predicate<SIGNALGROUP>()
+                            {
+                                /** {@inheritDoc} */
+                                @Override
+                                public boolean test(final SIGNALGROUP t)
+                                {
+                                    return t.getID().equals(signalGroupId);
+                                }
+                            });
 
                     Set<String> trafficLightIds = new LinkedHashSet<>();
                     for (TRAFFICLIGHTTYPE trafficLight : referencedSignalGroup.getTRAFFICLIGHT())
