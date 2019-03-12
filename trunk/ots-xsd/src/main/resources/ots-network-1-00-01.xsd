@@ -239,7 +239,6 @@
         <xsd:element ref="SHORTESTROUTE" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="SHORTESTROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="SIGNALGROUP" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="CONTROL" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
       <xsd:attribute ref="xml:base" />
     </xsd:complexType>
