@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.network.factory.xml.network;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -27,7 +30,6 @@ import org.opentrafficsim.xml.generated.NETWORKDEMAND;
 import org.opentrafficsim.xml.generated.OTS;
 import org.opentrafficsim.xml.generated.RUN;
 import org.opentrafficsim.xml.generated.SCENARIO;
-import org.xml.sax.SAXException;
 
 /**
  * Parse an XML file for an OTS network, based on the ots-network.xsd definition.
@@ -59,11 +61,38 @@ public class XmlNetworkLaneParser implements Serializable
     public static OTSNetwork build(final String filename, final OTSNetwork otsNetwork, final OTSSimulatorInterface simulator)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException
     {
+        File xml = new File(URLResource.getResource(filename).toURI().getPath());
+        try
+        {
+            build(new FileInputStream(xml), otsNetwork, simulator);
+        }
+        catch (FileNotFoundException exception)
+        {
+            throw new XmlParserException("File could not be found.", exception);
+        }
+
+        return otsNetwork;
+    }
+    
+    /**
+     * Parse the XML file and build the network.
+     * @param xmlStream InputStream; the xml input stream
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param simulator the simulator
+     * @return the network that contains the parsed objects
+     * @throws JAXBException when the parsing fails
+     * @throws URISyntaxException when the filename is not valid
+     * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
+     * @throws OTSGeometryException when the design line of a link is invalid
+     * @throws XmlParserException when the stripe type cannot be recognized
+     */
+    public static OTSNetwork build(final InputStream xmlStream, final OTSNetwork otsNetwork, final OTSSimulatorInterface simulator)
+            throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException
+    {
         JAXBContext jc = JAXBContext.newInstance(OTS.class);
 
         Unmarshaller unmarshaller = jc.createUnmarshaller();
-        File xml = new File(URLResource.getResource(filename).toURI().getPath());
-        OTS ots = (OTS) unmarshaller.unmarshal(xml);
+        OTS ots = (OTS) unmarshaller.unmarshal(xmlStream);
         
         DEFINITIONS definitions = ots.getDEFINITIONS();
         NETWORK network = ots.getNETWORK();
