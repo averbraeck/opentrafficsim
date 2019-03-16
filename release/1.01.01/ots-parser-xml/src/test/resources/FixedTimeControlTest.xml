@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NETWORK xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-xsd/src/main/resources/ots-network-1-00-01.xsd">
+
+  <DEFINITIONS>
+    <LINKTYPES>
+      <LINKTYPE NAME="HIGHWAY">
+      </LINKTYPE>
+    </LINKTYPES>
+    <ROADLAYOUT NAME="Broad" ROADTYPE="HIGHWAY">
+      <SPEEDLIMIT GTUTYPE="CAR" LEGALSPEEDLIMIT="120km/h" />
+      <LANE NAME="LEFT" DIRECTION="FORWARD" OFFSET="-3.5m" />
+    </ROADLAYOUT>
+  </DEFINITIONS>
+
+  <NODE COORDINATE="(0,0)" NAME="A" />
+  <NODE COORDINATE="(1,0)" NAME="B" />
+  <LINK NODESTART="A" NODEEND="B" NAME="AB">
+    <STRAIGHT />
+    <TRAFFICLIGHT NAME="AB" CONTROLLER="N333-dorpsweg" LANE="LEFT" POSITION="300m" CLASS="simpleTrafficLight" />
+  </LINK>
+
+  <SIGNALGROUP ID="asd">
+    <TRAFFICLIGHT NAME="ABLane1" LINK="AB" LANE="Lane1" POSITION="100m" CLASS="SimpleTrafficLight" CONTROLLER="N333-dorpsweg" />
+  </SIGNALGROUP>
+
+  <CONTROL>
+    <FIXEDTIME ID="N333-dorpsweg" CYCLETIME="90s" OFFSET="12s" STARTTIME="0s" ENDTIME="1000000h">
+      <SIGNALGROUP ID="asd" OFFSET="0s" GREEN="20s" YELLOW="3.5s" />
+    </FIXEDTIME>
+  </CONTROL>
+
+</NETWORK>
