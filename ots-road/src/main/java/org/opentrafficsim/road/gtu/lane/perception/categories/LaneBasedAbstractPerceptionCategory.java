@@ -65,7 +65,7 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
      * internal use, then we could use the following line inside {@code getEgoSpeed()}:
      * 
      * <pre>
-     * return computeIfAbsent("speedLimit", () -> computeEgoSpeed());
+     * return computeIfAbsent("speedLimit", () -&gt; computeEgoSpeed());
      * </pre>
      * 
      * @param key Object; key defining which information is requested
@@ -103,7 +103,7 @@ public abstract class LaneBasedAbstractPerceptionCategory extends AbstractPercep
      * {@code getLeaders(Lane)}:
      * 
      * <pre>
-     * return computeIfAbsent("leaders", () -> computeLeaders(lane))
+     * return computeIfAbsent("leaders", () -&gt; computeLeaders(lane))
      * </pre>
      * 
      * @param key Object; key defining which information is requested, it may be contextual if it's context dependent
