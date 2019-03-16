@@ -1,7 +1,38 @@
 <document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <body>
-    <release version="1.01.01" date="2019-XX-XX" description="">
+    <release version="1.01.01" date="2019-03-16" description="ots-xsd project; geotools dependency removed">
+      <action dev="averbraeck" type="add">
+        XSDs versioned.
+      </action>
+      <action dev="averbraeck" type="add">
+        New folder for xsds on the Web: https: https://opentrafficsim.org/docs/xsd/
+      </action>
+      <action dev="averbraeck" type="update">
+        All demos now reference the new xsds (and the old parser).
+      </action>
+      <action dev="averbraeck" type="fix">
+        All xmls and xsds (including pom.xml, site.xml, and others) are error free with validation.
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-xsd: bindings.xsd renamed to bindings.xml (it is an xml...)
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-xsd: pom.xml updated with latest changes.
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-xsd: ROADTYPE renamed to LINKTYPE, consistent with java naming.
+      </action>
+      <action dev="averbraeck" type="update">
+        ots-xsd: defaults files for definitions added.
+      </action>
+      <action dev="averbraeck" type="update">
+        Naming of a few GTUTypes changed (WATER_WAY => WATERWAY; RAIL_WAY => RAILWAY)
+      </action>
+      <action dev="averbraeck" type="add">
+        Default GTUTypes XML file added to ots-xsd project.
+        In order to do so, GTUTYPES tag with multiple GTUTYPE entries added to DEFINITIONS.
+      </action>
       <action dev="averbraeck" type="update">
         djunits version has been updated to 3.00.09, which includes Scalar.stringOf(SomeScalar) and e.g., 
         Length.valueOf(String).
