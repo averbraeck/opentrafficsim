@@ -26,7 +26,7 @@ public class DurationAdapter extends XmlAdapter<String, Duration>
     @Override
     public String marshal(final Duration duration) throws IllegalArgumentException
     {
-        return Scalar.stringOf(duration);
+        return Scalar.textualStringOfDefaultLocale(duration);
     }
 
 }

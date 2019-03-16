@@ -26,7 +26,7 @@ public class PerLengthAdapter extends XmlAdapter<String, LinearDensity>
     @Override
     public String marshal(final LinearDensity linearDensity) throws IllegalArgumentException
     {
-        return Scalar.stringOf(linearDensity);
+        return Scalar.textualStringOfDefaultLocale(linearDensity);
     }
 
 }

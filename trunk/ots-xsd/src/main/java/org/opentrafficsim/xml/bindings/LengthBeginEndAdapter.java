@@ -82,7 +82,7 @@ public class LengthBeginEndAdapter extends XmlAdapter<String, LengthBeginEnd>
         }
 
         String prefix = lbe.isBegin() ? "" : "END-";
-        return prefix + Scalar.stringOf(lbe.getOffset());
+        return prefix + Scalar.textualStringOfDefaultLocale(lbe.getOffset());
     }
 
 }

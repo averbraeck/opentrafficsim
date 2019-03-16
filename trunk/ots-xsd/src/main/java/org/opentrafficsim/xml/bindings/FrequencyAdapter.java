@@ -26,7 +26,7 @@ public class FrequencyAdapter extends XmlAdapter<String, Frequency>
     @Override
     public String marshal(final Frequency frequency) throws IllegalArgumentException
     {
-        return Scalar.stringOf(frequency);
+        return Scalar.textualStringOfDefaultLocale(frequency);
     }
 
 }

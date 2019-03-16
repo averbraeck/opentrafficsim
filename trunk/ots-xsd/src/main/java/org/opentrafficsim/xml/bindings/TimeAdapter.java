@@ -26,7 +26,7 @@ public class TimeAdapter extends XmlAdapter<String, Time>
     @Override
     public String marshal(final Time time) throws IllegalArgumentException
     {
-        return Scalar.stringOf(time);
+        return Scalar.textualStringOfDefaultLocale(time);
     }
 
 }

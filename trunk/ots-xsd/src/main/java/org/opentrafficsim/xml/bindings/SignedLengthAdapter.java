@@ -27,7 +27,7 @@ public class SignedLengthAdapter extends XmlAdapter<String, Length>
     @Override
     public String marshal(final Length length) throws IllegalArgumentException
     {
-        return Scalar.stringOf(length);
+        return Scalar.textualStringOfDefaultLocale(length);
     }
 
 }
