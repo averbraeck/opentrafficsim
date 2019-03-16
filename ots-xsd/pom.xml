@@ -28,7 +28,7 @@
             <configuration>
               <fromDir>${basedir}/src/main/resources</fromDir>
               <includes>**/*</includes>
-              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org</url>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs</url>
               <toDir>xsd</toDir>
               <serverId>ots-deployment</serverId>
             </configuration>
