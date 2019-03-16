@@ -1,0 +1,47 @@
+                   -----------------------
+                   OTS-NISSAN
+                   -----------------------
+                   September, 2018
+                   -----------------------
+                   
+OTS - Open Traffic Simulation
+
+	OpenTrafficSim aims to bring traffic simulation to a new level:
+
+    * OpenTrafficSim combines micro-simulation, macro-simulation and meta-simulation in a single environment.
+
+    * OpenTrafficSim combines all traffic modes (private cars, buses, trains, bicycles, pedestrians, airlines, etc.) in a single simulator.
+    
+    * OpenTrafficSim uses DJUNITS for a strongly typed unit system for values. A length scalar cannot be added to a time scalar; if 
+      length is divided by time, a speed variable results. This is all checked at compile time rather than at run time.
+    
+    * OpenTrafficSim uses DSOL as the underlying, powerful simulation platform. DSOL takes care of time advance mechanisms, discrete-event
+      and continuous simulation, random streams, probability distribution functions, experiment management, etc..
+    
+    []
+
+======
+
+	OTS-NISSAN is the Open Traffic Simulation module for linking to the RTI-based driving simulator of Nissan.
+	
+	* OTS-NISSAN is built on top of the OTS-ROAD module that takes care of network structure, general movement of GTUs, 
+	  storage of routes, use of the DSOL simulator, etc., and the OTS-PARSER-OPENDRIVE module that takes care of parsing
+	  OpenDrive files.
+	
+	* OTS-NISSAN allows the vehicle(s) in the driving simulator to be seen as 'simulated' vehicles in OTS.
+	
+	* OTS-NISSAN allows the vehicle in OTS to be seen by the RTI software, so they are visible in the driving simulator.
+	
+	[]
+	
+======
+
+	OpenTrafficSim has an open source BSD 3-clause license.
+
+    * Third party components used in OpenTrafficSim can not have a license that is more restrictive than BSD, Apache, MIT, LGPL, Eclipse.
+
+    * OpenTrafficSim can be incorporated in part or in full in other products for any use (educational, commercial, whatever).
+
+    * OpenTrafficSim may be extended, evolved by anyone into anything else for any purpose.
+	
+	[]
