@@ -181,7 +181,7 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
     {
         // lazy evaluation
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()

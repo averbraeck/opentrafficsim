@@ -166,8 +166,8 @@ public class NodeTransceiver extends AbstractTransceiver
             Node node = this.network.getNode((String) event.getContent());
             try
             {
-                getConnector().postIMBMessage("Node", IMBEventType.NEW, new Object[] { getSimulator().getSimulatorTime().si,
-                        this.network.getId(), node.getId(), node.getPoint().x, node.getPoint().y, node.getPoint().z });
+                getConnector().postIMBMessage("Node", IMBEventType.NEW, new Object[] {getSimulator().getSimulatorTime().si,
+                        this.network.getId(), node.getId(), node.getPoint().x, node.getPoint().y, node.getPoint().z});
             }
             catch (IMBException exception)
             {
@@ -180,7 +180,7 @@ public class NodeTransceiver extends AbstractTransceiver
             try
             {
                 getConnector().postIMBMessage("Node", IMBEventType.DELETE,
-                        new Object[] { getSimulator().getSimulatorTime().si, this.network.getId(), node.getId() });
+                        new Object[] {getSimulator().getSimulatorTime().si, this.network.getId(), node.getId()});
             }
             catch (IMBException exception)
             {

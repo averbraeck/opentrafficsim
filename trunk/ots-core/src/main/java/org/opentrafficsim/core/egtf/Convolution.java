@@ -28,7 +28,7 @@ public final class Convolution
 
     public static void main(final String... args)
     {
-        int[] size = new int[] { 10, 12, 15, 18, 20, 25, 30, 35, 50, 100, 200, 500, 1000 };
+        int[] size = new int[] {10, 12, 15, 18, 20, 25, 30, 35, 50, 100, 200, 500, 1000};
         for (int i = 0; i < size.length; i++)
         {
             for (int j = 0; j < size.length; j++)

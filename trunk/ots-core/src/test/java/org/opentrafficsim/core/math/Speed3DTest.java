@@ -38,13 +38,13 @@ public class Speed3DTest
         double z = 5.5;
         Speed3D s3d = new Speed3D(x, y, z, SpeedUnit.SI);
         checkSpeed(s3d, x, y, z);
-        SpeedVector sv = new SpeedVector(new double[] { x, y, z }, SpeedUnit.SI, StorageType.DENSE);
+        SpeedVector sv = new SpeedVector(new double[] {x, y, z}, SpeedUnit.SI, StorageType.DENSE);
         s3d = new Speed3D(sv);
         checkSpeed(s3d, x, y, z);
-        sv = new SpeedVector(new double[] { x, y, z }, SpeedUnit.SI, StorageType.SPARSE);
+        sv = new SpeedVector(new double[] {x, y, z}, SpeedUnit.SI, StorageType.SPARSE);
         s3d = new Speed3D(sv);
         checkSpeed(s3d, x, y, z);
-        sv = new SpeedVector(new double[] { x, y }, SpeedUnit.SI, StorageType.DENSE);
+        sv = new SpeedVector(new double[] {x, y}, SpeedUnit.SI, StorageType.DENSE);
         try
         {
             new Speed3D(sv);
@@ -54,7 +54,7 @@ public class Speed3DTest
         {
             // Ignore expected exception
         }
-        sv = new SpeedVector(new double[] { x, y, z, x }, SpeedUnit.SI, StorageType.DENSE);
+        sv = new SpeedVector(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.DENSE);
         try
         {
             new Speed3D(sv);
@@ -64,7 +64,7 @@ public class Speed3DTest
         {
             // Ignore expected exception
         }
-        sv = new SpeedVector(new double[] { x, y }, SpeedUnit.SI, StorageType.SPARSE);
+        sv = new SpeedVector(new double[] {x, y}, SpeedUnit.SI, StorageType.SPARSE);
         try
         {
             new Speed3D(sv);
@@ -74,7 +74,7 @@ public class Speed3DTest
         {
             // Ignore expected exception
         }
-        sv = new SpeedVector(new double[] { x, y, z, x }, SpeedUnit.SI, StorageType.SPARSE);
+        sv = new SpeedVector(new double[] {x, y, z, x}, SpeedUnit.SI, StorageType.SPARSE);
         try
         {
             new Speed3D(sv);

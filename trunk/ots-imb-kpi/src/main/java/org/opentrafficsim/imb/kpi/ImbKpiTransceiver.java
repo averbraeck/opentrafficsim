@@ -376,7 +376,7 @@ public class ImbKpiTransceiver<G extends GtuDataInterface> implements Serializab
         System.out.println("Total delay " + tdel);
         System.out.println("Number of stops " + nos);
         this.connector.postIMBMessage("StatisticsGTULane", IMBEventType.CHANGE,
-                new Object[] { time, this.query.getId(), tdist.si, ttt.si, ms.si, mttpdist.si, tdel.si, mtl.si, nos.si });
+                new Object[] {time, this.query.getId(), tdist.si, ttt.si, ms.si, mttpdist.si, tdel.si, mtl.si, nos.si});
         this.updateTime = this.updateTime.plus(this.transmissionInterval);
     }
 

@@ -156,7 +156,7 @@ public class RelativePosition implements Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -255,7 +255,7 @@ public class RelativePosition implements Serializable
 
         /** {@inheritDoc} */
         @Override
-        @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+        @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
         public boolean equals(final Object obj)
         {
             if (this == obj)

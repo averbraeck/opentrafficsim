@@ -36,10 +36,10 @@ public class AccelerationGTUColorer implements GTUColorer, Serializable
     private final Acceleration maximumAcceleration;
 
     /** Negative scale part of the range of colors (excluding the zero value). */
-    private static Color[] decelerationColors = { Color.MAGENTA, Color.RED, Color.ORANGE, Color.YELLOW };
+    private static Color[] decelerationColors = {Color.MAGENTA, Color.RED, Color.ORANGE, Color.YELLOW};
 
     /** Positive scale part of the range of colors (including the zero value). */
-    private static Color[] accelerationColors = { Color.YELLOW, Color.GREEN, Color.BLUE };
+    private static Color[] accelerationColors = {Color.YELLOW, Color.GREEN, Color.BLUE};
 
     /**
      * Construct a new AccelerationGTUColorer.

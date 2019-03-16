@@ -169,7 +169,7 @@ public class DemoTrafcodAndTurbo extends OTSSimulationApplication<TrafCODModel>
                 // setupBlock(lane, (DEVSSimulatorInterface.TimeDoubleUnit) this.simulator,
                 // gtuColorer );
 
-                String[] directions = { "E", "S", "W", "N" };
+                String[] directions = {"E", "S", "W", "N"};
                 // Add the traffic lights and the detectors
                 Set<TrafficLight> trafficLights = new HashSet<>();
                 Set<TrafficLightSensor> sensors = new HashSet<>();

@@ -281,7 +281,7 @@ public class LaneChange implements Serializable
             {
                 // TODO get rid of cast to AbstractLaneBasedGTU
                 gtu.getSimulator().scheduleEventNow(gtu, BUILDER, "scheduleLaneChangeFinalization", new Object[] {
-                        (AbstractLaneBasedGTU) gtu, Length.min(planDistance, path.getLength()), laneChangeDirection });
+                        (AbstractLaneBasedGTU) gtu, Length.min(planDistance, path.getLength()), laneChangeDirection});
             }
             catch (SimRuntimeException exception)
             {

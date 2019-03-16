@@ -5,7 +5,7 @@
 // Generated on: 2016.11.03 at 01:02:34 PM CET
 //
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://myOutput",
-        xmlns = { @XmlNs(prefix = "", namespaceURI = "http://myOutput") }, elementFormDefault = XmlNsForm.QUALIFIED)
+        xmlns = {@XmlNs(prefix = "", namespaceURI = "http://myOutput")}, elementFormDefault = XmlNsForm.QUALIFIED)
 
 // @javax.xml.bind.annotation.XmlSchema(namespace = "http://www.opentrafficsim.org/ots",
 // elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)

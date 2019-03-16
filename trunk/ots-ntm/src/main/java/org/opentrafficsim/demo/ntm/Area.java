@@ -164,7 +164,7 @@ public class Area extends GeoObject implements Locatable
     public DirectedPoint getLocation() throws RemoteException
     {
         Point c = this.getGeometry().getCentroid();
-        return new DirectedPoint(new double[] { c.getX(), c.getY(), 0.0d });
+        return new DirectedPoint(new double[] {c.getX(), c.getY(), 0.0d});
     }
 
     /** {@inheritDoc} */

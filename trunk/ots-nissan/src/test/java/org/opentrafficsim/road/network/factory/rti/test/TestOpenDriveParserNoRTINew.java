@@ -371,12 +371,12 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 Node n65_8 = this.network.getNode("3766065.8");
                 Route route7070r = new CompleteRoute("Right around NRC-SV", this.carType,
                         this.network
-                                .getShortestRouteBetween(this.carType, n70_0, n70_0, Arrays.asList(new Node[] { n45_0, n65_0 }))
+                                .getShortestRouteBetween(this.carType, n70_0, n70_0, Arrays.asList(new Node[] {n45_0, n65_0}))
                                 .getNodes());
                 putCar(lane70_1m1, route7070r, this.network, GTUDirectionality.DIR_PLUS, strategicalPlannerFactory);
-                Route route7070l =
-                        new CompleteRoute("Left around NRC-SV", this.carType, this.network.getShortestRouteBetween(this.carType,
-                                n70_0, n70_0, Arrays.asList(new Node[] { n65_8, n45_22, n70_23 })).getNodes());
+                Route route7070l = new CompleteRoute("Left around NRC-SV", this.carType, this.network
+                        .getShortestRouteBetween(this.carType, n70_0, n70_0, Arrays.asList(new Node[] {n65_8, n45_22, n70_23}))
+                        .getNodes());
                 putCar(lane70_1p1, route7070l, this.network, GTUDirectionality.DIR_MINUS, strategicalPlannerFactory);
             }
             catch (NetworkException | GTUException | NamingException | OTSGeometryException exception)
@@ -403,7 +403,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 Node n64_17 = this.network.getNode("3766064.17");
                 Route route6868r =
                         new CompleteRoute("Right top", this.carType, this.network.getShortestRouteBetween(this.carType, n68_0,
-                                n68_0, Arrays.asList(new Node[] { n38_88, n43_0, n45_0, n65_0, n64_17 })).getNodes());
+                                n68_0, Arrays.asList(new Node[] {n38_88, n43_0, n45_0, n65_0, n64_17})).getNodes());
                 System.out.println(route6868r);
                 for (int i = 0; i < 5; i++)
                 {
@@ -420,7 +420,7 @@ public class TestOpenDriveParserNoRTINew extends OTSSimulationApplication<OTSMod
                 Node n68_158 = this.network.getNode("3766068.158");
                 Route route6868l =
                         new CompleteRoute("Right top", this.carType, this.network.getShortestRouteBetween(this.carType, n68_158,
-                                n68_158, Arrays.asList(new Node[] { n64_0, n65_8, n45_22, n43_53, n38_0 })).getNodes());
+                                n68_158, Arrays.asList(new Node[] {n64_0, n65_8, n45_22, n43_53, n38_0})).getNodes());
                 System.out.println(route6868l);
                 for (int i = 0; i < 5; i++)
                 {

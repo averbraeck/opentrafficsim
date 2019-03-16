@@ -158,8 +158,7 @@ public class TrafficLightSensorTest implements EventListenerInterface
     public final void trafficLightSensorTest()
             throws NetworkException, NamingException, OTSGeometryException, SimRuntimeException, GTUException
     {
-        double[][] lengthLists =
-                { { 101.1, -1, 1, -1, 1, -900 }, { 1000 }, { -1000 }, { 101.1, 900 }, { 101.1, 1, 1, 1, 1, 900 }, };
+        double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900},};
         for (double[] lengthList : lengthLists)
         {
             for (int pos = 50; pos < 130; pos++)

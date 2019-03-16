@@ -261,7 +261,7 @@ public final class OperationalPlanBuilder
      */
     public static void main(final String[] args) throws OperationalPlanException, OTSGeometryException
     {
-        OTSLine3D path1 = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100.0, 0.0) });
+        OTSLine3D path1 = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100.0, 0.0)});
 
         // go from 0 to 10 m/s over entire distance. This should take 20 sec with a=0.5 m/s2.
         OperationalPlan plan1 =

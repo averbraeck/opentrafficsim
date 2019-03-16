@@ -243,7 +243,7 @@ public class CircularRoadIMB extends OTSSimulationApplication<CircularRoadModelI
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
                 trajectoryChart);
 
-        for (int lane : new int[] { 0, 1 })
+        for (int lane : new int[] {0, 1})
         {
             TablePanel charts = new TablePanel(3, 2);
             path = lane == 0 ? path0 : path1;

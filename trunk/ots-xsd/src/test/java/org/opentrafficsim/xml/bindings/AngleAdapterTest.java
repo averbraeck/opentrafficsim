@@ -39,12 +39,12 @@ public class AngleAdapterTest
         assertEquals(new Angle(2.3, AngleUnit.RADIAN), angleAdapter.unmarshal("+2.3rad"));
         assertEquals(new Angle(-2.3, AngleUnit.RADIAN), angleAdapter.unmarshal("-2.3 rad"));
         assertEquals(new Angle(-2.3, AngleUnit.RADIAN), angleAdapter.unmarshal("-2.3rad"));
-        
+
         assertEquals("2.3 deg", angleAdapter.marshal(new Angle(2.3, AngleUnit.DEGREE)));
         assertEquals("-2.3 deg", angleAdapter.marshal(new Angle(-2.3, AngleUnit.DEGREE)));
         assertEquals("2.3 rad", angleAdapter.marshal(new Angle(2.3, AngleUnit.RADIAN)));
         assertEquals("-2.3 rad", angleAdapter.marshal(new Angle(-2.3, AngleUnit.RADIAN)));
-        
+
         assertEquals(new Angle(0.0, AngleUnit.DEGREE), angleAdapter.unmarshal("0.0 deg"));
         assertEquals(new Angle(0.0, AngleUnit.DEGREE), angleAdapter.unmarshal("+0.0 deg"));
         assertEquals(new Angle(0.0, AngleUnit.DEGREE), angleAdapter.unmarshal("0.0deg"));
@@ -58,7 +58,7 @@ public class AngleAdapterTest
         assertEquals(new Angle(0.0, AngleUnit.RADIAN), angleAdapter.unmarshal("+0.0rad"));
         assertEquals(new Angle(-0.0, AngleUnit.RADIAN), angleAdapter.unmarshal("-0.0 rad"));
         assertEquals(new Angle(-0.0, AngleUnit.RADIAN), angleAdapter.unmarshal("-0.0rad"));
-        
+
         assertEquals("0.0 deg", angleAdapter.marshal(new Angle(0.0, AngleUnit.DEGREE)));
         assertEquals("-0.0 deg", angleAdapter.marshal(new Angle(-0.0, AngleUnit.DEGREE)));
         assertEquals("0.0 rad", angleAdapter.marshal(new Angle(0.0, AngleUnit.RADIAN)));
@@ -66,4 +66,3 @@ public class AngleAdapterTest
 
     }
 }
-

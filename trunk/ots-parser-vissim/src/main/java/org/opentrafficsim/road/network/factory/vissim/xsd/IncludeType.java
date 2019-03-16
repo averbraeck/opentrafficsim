@@ -54,7 +54,7 @@ import org.w3c.dom.Element;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "includeType", namespace = "http://www.w3.org/2001/XInclude", propOrder = { "content" })
+@XmlType(name = "includeType", namespace = "http://www.w3.org/2001/XInclude", propOrder = {"content"})
 public class IncludeType
 {
 

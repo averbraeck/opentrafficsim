@@ -21,7 +21,7 @@ public class DualBoundConstraintsTest
 
     /** Test values for the test. */
     private static double[] testValues =
-            { Double.NEGATIVE_INFINITY, Double.MIN_VALUE, -100, -10, 0, 20, 200, Double.MAX_VALUE, Double.POSITIVE_INFINITY };
+            {Double.NEGATIVE_INFINITY, Double.MIN_VALUE, -100, -10, 0, 20, 200, Double.MAX_VALUE, Double.POSITIVE_INFINITY};
 
     /**
      * Test the DoubleBound Constraints.

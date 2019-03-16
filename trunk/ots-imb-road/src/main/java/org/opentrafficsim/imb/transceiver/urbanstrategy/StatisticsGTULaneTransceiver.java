@@ -382,7 +382,7 @@ public class StatisticsGTULaneTransceiver<G extends GtuDataInterface> extends Ab
         System.out.println("Total delay " + tdel);
         System.out.println("Number of stops " + nos);
         getConnector().postIMBMessage("StatisticsGTULane", IMBEventType.CHANGE,
-                new Object[] { time, q.getId(), tdist.si, ttt.si, ms.si, mttpdist.si, tdel.si, mtl.si, nos.si });
+                new Object[] {time, q.getId(), tdist.si, ttt.si, ms.si, mttpdist.si, tdel.si, mtl.si, nos.si});
 
         // Thread thread = new Thread(new StatisticsRunnable(time, groups), "Statistics calculation thread");
         // thread.start();
@@ -461,7 +461,7 @@ public class StatisticsGTULaneTransceiver<G extends GtuDataInterface> extends Ab
             try
             {
                 getConnector().postIMBMessage("StatisticsGTULane", IMBEventType.CHANGE,
-                        new Object[] { this.time, q.getId(), tdist.si, ttt.si, ms.si, mttpdist.si, tdel.si, mtl.si, nos.si });
+                        new Object[] {this.time, q.getId(), tdist.si, ttt.si, ms.si, mttpdist.si, tdel.si, mtl.si, nos.si});
             }
             catch (IMBException exception)
             {

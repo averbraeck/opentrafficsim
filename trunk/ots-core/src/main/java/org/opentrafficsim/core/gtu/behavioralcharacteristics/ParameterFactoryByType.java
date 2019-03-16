@@ -48,7 +48,7 @@ public class ParameterFactoryByType implements ParameterFactory
     {
         // set of parameters that this class is going to set
         Map<ParameterType<?>, ParameterEntry<?>> setType = new LinkedHashMap<>();
-        for (GTUType type : new GTUType[] { null, gtuType })
+        for (GTUType type : new GTUType[] {null, gtuType})
         {
             if (this.map.containsKey(type))
             {
@@ -71,7 +71,7 @@ public class ParameterFactoryByType implements ParameterFactory
          */
         Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>> remainingCorrelations = new LinkedHashMap<>();
         Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>> allCorrelations = new LinkedHashMap<>();
-        for (GTUType type : new GTUType[] { null, gtuType }) // null first, so specific type overwrites
+        for (GTUType type : new GTUType[] {null, gtuType}) // null first, so specific type overwrites
         {
             if (this.correlations.containsKey(type))
             {

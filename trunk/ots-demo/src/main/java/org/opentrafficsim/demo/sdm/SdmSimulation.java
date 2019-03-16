@@ -236,7 +236,7 @@ public class SdmSimulation extends AbstractSimulationScript
         double wut = sim.getReplication().getTreatment().getWarmupPeriod().si;
         double rl = sim.getReplication().getTreatment().getRunLength().si;
         TimeVector timeVector =
-                new TimeVector(new double[] { 0.0, wut, wut + (rl - wut) * 0.5, rl }, TimeUnit.BASE, StorageType.DENSE);
+                new TimeVector(new double[] {0.0, wut, wut + (rl - wut) * 0.5, rl}, TimeUnit.BASE, StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR;
         Categorization categorization = new Categorization("GTU categorization", GTUType.class);
         ODMatrix odMatrix = new ODMatrix("OD", origins, destinations, categorization, timeVector, interpolation);
@@ -249,10 +249,10 @@ public class SdmSimulation extends AbstractSimulationScript
         double startDemandFactor = getDoubleProperty("startDemandFactor");
         double left1 = left2 * startDemandFactor;
         double right1 = right2 * startDemandFactor;
-        odMatrix.putDemandVector(nodeA, nodeF, carCategory, freq(new double[] { f2 * left1, f2 * left1, f2 * left2, 0.0 }));
-        odMatrix.putDemandVector(nodeA, nodeF, truCategory, freq(new double[] { f1 * left1, f1 * left1, f1 * left2, 0.0 }));
-        odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] { f2 * right1, f2 * right1, f2 * right2, 0.0 }));
-        odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] { f1 * right1, f1 * right1, f1 * right2, 0.0 }));
+        odMatrix.putDemandVector(nodeA, nodeF, carCategory, freq(new double[] {f2 * left1, f2 * left1, f2 * left2, 0.0}));
+        odMatrix.putDemandVector(nodeA, nodeF, truCategory, freq(new double[] {f1 * left1, f1 * left1, f1 * left2, 0.0}));
+        odMatrix.putDemandVector(nodeB, nodeF, carCategory, freq(new double[] {f2 * right1, f2 * right1, f2 * right2, 0.0}));
+        odMatrix.putDemandVector(nodeB, nodeF, truCategory, freq(new double[] {f1 * right1, f1 * right1, f1 * right2, 0.0}));
         ODOptions odOptions = new ODOptions().set(ODOptions.NO_LC_DIST, Length.createSI(200)).set(ODOptions.GTU_TYPE,
                 new DefaultGTUCharacteristicsGeneratorOD(
                         new SdmStrategicalPlannerFactory(sim.getReplication().getStream("generation"), this)));

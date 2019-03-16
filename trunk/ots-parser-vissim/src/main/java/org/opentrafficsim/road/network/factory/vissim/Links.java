@@ -194,7 +194,7 @@ final class Links
      * @throws OTSGeometryException when construction of the offset-line or contour fails
      * @throws SimRuntimeException when construction of the generator fails
      */
-    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:methodlength" })
+    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:methodlength"})
     static void applyRoadTypeToLink(final LinkTag linkTag, final VissimNetworkLaneParser parser,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws NetworkException, NamingException, SAXException, GTUException, OTSGeometryException, SimRuntimeException
@@ -309,7 +309,7 @@ final class Links
      * @throws OTSGeometryException when construction of the offset-line or contour fails
      * @throws SimRuntimeException when construction of the generator fails
      */
-    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:methodlength" })
+    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:methodlength"})
     static void applyRoadTypeToConnector(final LinkTag linkTag, final VissimNetworkLaneParser parser,
             final DEVSSimulatorInterface.TimeDoubleUnit simulator)
             throws NetworkException, NamingException, SAXException, GTUException, OTSGeometryException, SimRuntimeException

@@ -299,7 +299,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         }
         return new ImmutableHashMap<>(result, Immutable.WRAP);
     }
-    
+
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
@@ -493,8 +493,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
             this.routeMap.put(gtuType, new HashMap<String, Route>());
         }
         this.routeMap.get(gtuType).put(route.getId(), route);
-        fireEvent(Network.ROUTE_ADD_EVENT, new Object[] { gtuType.getId(), route.getId() });
-        fireEvent(Network.ANIMATION_ROUTE_ADD_EVENT, new Object[] { gtuType, route });
+        fireEvent(Network.ROUTE_ADD_EVENT, new Object[] {gtuType.getId(), route.getId()});
+        fireEvent(Network.ANIMATION_ROUTE_ADD_EVENT, new Object[] {gtuType, route});
     }
 
     /** {@inheritDoc} */
@@ -505,8 +505,8 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
         {
             throw new NetworkException("Route " + route + " for GTUType " + gtuType + " not registered in network " + this.id);
         }
-        fireEvent(Network.ROUTE_REMOVE_EVENT, new Object[] { gtuType.getId(), route.getId() });
-        fireEvent(Network.ANIMATION_ROUTE_REMOVE_EVENT, new Object[] { gtuType, route });
+        fireEvent(Network.ROUTE_REMOVE_EVENT, new Object[] {gtuType.getId(), route.getId()});
+        fireEvent(Network.ANIMATION_ROUTE_REMOVE_EVENT, new Object[] {gtuType, route});
         this.routeMap.get(gtuType).remove(route.getId());
     }
 
@@ -603,7 +603,7 @@ public class OTSNetwork extends EventProducer implements Network, PerceivableCon
     private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> buildGraph(final GTUType gtuType, final LinkWeight linkWeight)
     {
         // TODO: take connections into account, and possibly do node expansion to build the graph
-        @SuppressWarnings({ "unchecked" })
+        @SuppressWarnings({"unchecked"})
         // TODO: the next line with .class has problems compiling... So used a dirty hack instead for now...
         Class<LinkEdge<Link>> linkEdgeClass = (Class<LinkEdge<Link>>) new LinkEdge<OTSLink>(null).getClass();
         SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleDirectedWeightedGraph<>(linkEdgeClass);

@@ -236,7 +236,7 @@ public class TrafficLightSensor extends EventProducer
         if (this.currentGTUs.add(gtu) && this.currentGTUs.size() == 1)
         {
             fireTimedEvent(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_ENTRY_EVENT,
-                    new Object[] { getId() }, getSimulator().getSimulatorTime());
+                    new Object[] {getId()}, getSimulator().getSimulatorTime());
         }
     }
 
@@ -249,7 +249,7 @@ public class TrafficLightSensor extends EventProducer
         if (this.currentGTUs.remove(gtu) && this.currentGTUs.size() == 0)
         {
             fireTimedEvent(NonDirectionalOccupancySensor.NON_DIRECTIONAL_OCCUPANCY_SENSOR_TRIGGER_EXIT_EVENT,
-                    new Object[] { getId() }, getSimulator().getSimulatorTime());
+                    new Object[] {getId()}, getSimulator().getSimulatorTime());
         }
     }
 

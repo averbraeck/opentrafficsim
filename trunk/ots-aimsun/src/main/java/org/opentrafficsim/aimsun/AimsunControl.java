@@ -82,8 +82,8 @@ public class AimsunControl
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException,
-            ValueException, ParameterException, SimRuntimeException
+    public static void main(final String[] args) throws NetworkException, OTSGeometryException, NamingException, ValueException,
+            ParameterException, SimRuntimeException
     {
         SimLogger.setAllLogLevel(Level.WARNING);
         SimLogger.setLogCategories(LogCategory.ALL);
@@ -153,7 +153,7 @@ public class AimsunControl
     /**
      * Construct a GTU positions message, clear the simulateUntil value, transmit all GTU positions to Aimsun and wait for the
      * simulateUntil value to be set again.
-     * @param outputStream
+     * @param outputStream OutputStream;
      */
     protected void sendGTUPositionsToAimsun(final OutputStream outputStream)
     {
@@ -213,8 +213,7 @@ public class AimsunControl
         }
         try
         {
-            simulator.scheduleEventAbs(this.simulateUntil, this, this, "sendGTUPositionsToAimsun",
-                    new Object[] { outputStream });
+            simulator.scheduleEventAbs(this.simulateUntil, this, this, "sendGTUPositionsToAimsun", new Object[] {outputStream});
         }
         catch (SimRuntimeException exception)
         {
@@ -234,8 +233,8 @@ public class AimsunControl
      * @throws SimRuntimeException on error
      * @throws ParameterException on error
      */
-    private void commandLoop(final Socket socket) throws IOException, NetworkException, OTSGeometryException,
-            NamingException, ValueException, ParameterException, SimRuntimeException
+    private void commandLoop(final Socket socket) throws IOException, NetworkException, OTSGeometryException, NamingException,
+            ValueException, ParameterException, SimRuntimeException
     {
         System.out.println("Entering command loop");
         InputStream inputStream = socket.getInputStream();
@@ -248,9 +247,8 @@ public class AimsunControl
             {
                 byte[] sizeBytes = new byte[4];
                 fillBuffer(inputStream, sizeBytes);
-                int size =
-                        ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
-                                + (sizeBytes[3] & 0xff);
+                int size = ((sizeBytes[0] & 0xff) << 24) + ((sizeBytes[1] & 0xff) << 16) + ((sizeBytes[2] & 0xff) << 8)
+                        + (sizeBytes[3] & 0xff);
                 System.out.println("expecting message of " + size + " bytes");
                 byte[] buffer = new byte[size];
                 fillBuffer(inputStream, buffer);
@@ -281,8 +279,7 @@ public class AimsunControl
                             animator.initialize(Time.ZERO, warmupDuration, runDuration, this.model);
                             OTSAnimationPanel animationPanel =
                                     new OTSAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(800, 600),
-                                            animator, this.model, OTSSwingApplication.DEFAULT_COLORER,
-                                            this.model.getNetwork());
+                                            animator, this.model, OTSSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
                             DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), animator,
                                     new DefaultSwitchableGTUColorer());
                             new AimsunSwingApplication(this.model, animationPanel);
@@ -308,7 +305,7 @@ public class AimsunControl
                         {
                             simulatorStarted = true;
                             simulator.scheduleEventAbs(stopTime, this, this, "sendGTUPositionsToAimsun",
-                                    new Object[] { outputStream });
+                                    new Object[] {outputStream});
                             System.out.println("Starting simulator");
                             this.simulateUntil = stopTime;
                             simulator.start();
@@ -423,8 +420,7 @@ public class AimsunControl
          * @param panel OTSAnimationPanel; the panel of the main screen
          * @throws OTSDrawingException on animation error
          */
-        public AimsunSwingApplication(final OTSModelInterface model, final OTSAnimationPanel panel)
-                throws OTSDrawingException
+        public AimsunSwingApplication(final OTSModelInterface model, final OTSAnimationPanel panel) throws OTSDrawingException
         {
             super(model, panel);
         }
@@ -474,8 +470,8 @@ public class AimsunControl
                 ConflictBuilder.buildConflicts(this.network, GTUType.VEHICLE, this.simulator,
                         new ConflictBuilder.FixedWidthGenerator(Length.createSI(2.0)));
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                    | GTUException | OTSGeometryException | ValueException | ParameterException | SimRuntimeException exception)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException | GTUException
+                    | OTSGeometryException | ValueException | ParameterException | SimRuntimeException exception)
             {
                 exception.printStackTrace();
                 throw new SimRuntimeException(exception);

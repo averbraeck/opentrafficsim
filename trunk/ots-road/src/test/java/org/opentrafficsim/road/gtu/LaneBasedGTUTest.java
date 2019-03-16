@@ -102,7 +102,7 @@ public class LaneBasedGTUTest implements UNITS
         LaneType laneType = LaneType.TWO_WAY_LANE;
         // Create a series of Nodes (some closely bunched together)
         ArrayList<OTSNode> nodes = new ArrayList<OTSNode>();
-        int[] linkBoundaries = { 0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200 };
+        int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
         for (int xPos : linkBoundaries)
         {
             nodes.add(new OTSNode(this.network, "Node at " + xPos, new OTSPoint3D(xPos, 20, 0)));

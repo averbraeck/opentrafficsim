@@ -32,9 +32,9 @@ public final class Bezier
     private static final int DEFAULT_NUM_POINTS = 64;
 
     /** Cached factorial values. */
-    private static long[] fact = new long[] { 1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L, 39916800L,
+    private static long[] fact = new long[] {1L, 1L, 2L, 6L, 24L, 120L, 720L, 5040L, 40320L, 362880L, 3628800L, 39916800L,
             479001600L, 6227020800L, 87178291200L, 1307674368000L, 20922789888000L, 355687428096000L, 6402373705728000L,
-            121645100408832000L, 2432902008176640000L };
+            121645100408832000L, 2432902008176640000L};
 
     /** Utility class. */
     private Bezier()

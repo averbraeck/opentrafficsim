@@ -59,5 +59,5 @@ public interface TaskManager
             }
         }
     }
-    
+
 }

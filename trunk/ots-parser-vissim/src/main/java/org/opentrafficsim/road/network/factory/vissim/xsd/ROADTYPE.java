@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "speedlimit" })
+@XmlType(name = "", propOrder = {"speedlimit"})
 @XmlRootElement(name = "ROADTYPE")
 public class ROADTYPE
 {

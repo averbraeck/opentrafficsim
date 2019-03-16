@@ -164,8 +164,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     preferred.isRight() ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
 
             AccelerationVector defaultLaneIncentives =
-                    new AccelerationVector(new double[] { defaultLeftLaneIncentive.getSI(), STAYINCURRENTLANEINCENTIVE.getSI(),
-                            defaultRightLaneIncentive.getSI() }, AccelerationUnit.SI, StorageType.DENSE);
+                    new AccelerationVector(new double[] {defaultLeftLaneIncentive.getSI(), STAYINCURRENTLANEINCENTIVE.getSI(),
+                            defaultRightLaneIncentive.getSI()}, AccelerationUnit.SI, StorageType.DENSE);
             AccelerationVector laneIncentives = laneIncentives(laneBasedGTU, defaultLaneIncentives);
             LaneMovementStep lcmr = this.laneChangeModel.computeLaneChangeAndAcceleration(laneBasedGTU, sameLaneTraffic,
                     rightLaneTraffic, leftLaneTraffic, speedLimit,
@@ -259,18 +259,18 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 && (rightSuitability == NOLANECHANGENEEDED || rightSuitability == GETOFFTHISLANENOW))
         {
             return checkLaneDrops(gtu,
-                    new AccelerationVector(new double[] { acceleration(gtu, leftSuitability),
-                            defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability) }, AccelerationUnit.SI,
+                    new AccelerationVector(new double[] {acceleration(gtu, leftSuitability),
+                            defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability)}, AccelerationUnit.SI,
                             StorageType.DENSE));
         }
         if (currentSuitability == NOLANECHANGENEEDED)
         {
-            return new AccelerationVector(new double[] { acceleration(gtu, leftSuitability),
-                    defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability) }, AccelerationUnit.SI,
+            return new AccelerationVector(new double[] {acceleration(gtu, leftSuitability),
+                    defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability)}, AccelerationUnit.SI,
                     StorageType.DENSE);
         }
-        return new AccelerationVector(new double[] { acceleration(gtu, leftSuitability), acceleration(gtu, currentSuitability),
-                acceleration(gtu, rightSuitability) }, AccelerationUnit.SI, StorageType.DENSE);
+        return new AccelerationVector(new double[] {acceleration(gtu, leftSuitability), acceleration(gtu, currentSuitability),
+                acceleration(gtu, rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
     }
 
     /**
@@ -304,22 +304,24 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         // @formatter:on
         if (currentSuitability == NOLANECHANGENEEDED)
         {
-            return new AccelerationVector(new double[] { acceleration(gtu, leftSuitability),
-                    defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability) }, AccelerationUnit.SI,
+            return new AccelerationVector(new double[] {acceleration(gtu, leftSuitability),
+                    defaultLaneIncentives.get(1).getSI(), acceleration(gtu, rightSuitability)}, AccelerationUnit.SI,
                     StorageType.DENSE);
         }
         if (currentSuitability.le(leftSuitability))
         {
-            return new AccelerationVector(new double[] { PREFERREDLANEINCENTIVE.getSI(), NONPREFERREDLANEINCENTIVE.getSI(),
-                    GETOFFTHISLANENOW.getSI() }, AccelerationUnit.SI, StorageType.DENSE);
+            return new AccelerationVector(
+                    new double[] {PREFERREDLANEINCENTIVE.getSI(), NONPREFERREDLANEINCENTIVE.getSI(), GETOFFTHISLANENOW.getSI()},
+                    AccelerationUnit.SI, StorageType.DENSE);
         }
         if (currentSuitability.le(rightSuitability))
         {
-            return new AccelerationVector(new double[] { GETOFFTHISLANENOW.getSI(), NONPREFERREDLANEINCENTIVE.getSI(),
-                    PREFERREDLANEINCENTIVE.getSI() }, AccelerationUnit.SI, StorageType.DENSE);
+            return new AccelerationVector(
+                    new double[] {GETOFFTHISLANENOW.getSI(), NONPREFERREDLANEINCENTIVE.getSI(), PREFERREDLANEINCENTIVE.getSI()},
+                    AccelerationUnit.SI, StorageType.DENSE);
         }
-        return new AccelerationVector(new double[] { acceleration(gtu, leftSuitability), acceleration(gtu, currentSuitability),
-                acceleration(gtu, rightSuitability) }, AccelerationUnit.SI, StorageType.DENSE);
+        return new AccelerationVector(new double[] {acceleration(gtu, leftSuitability), acceleration(gtu, currentSuitability),
+                acceleration(gtu, rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
     }
 
     /**

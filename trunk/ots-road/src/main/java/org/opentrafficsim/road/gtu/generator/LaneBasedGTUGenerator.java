@@ -262,12 +262,12 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
             placeGtu(characteristics, placement.getPosition(), placement.getSpeed());
             if (queue.size() > 0)
             {
-                this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { position });
+                this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {position});
             }
         }
         else if (queue.size() > 0)
         {
-            this.simulator.scheduleEventRel(this.reTryInterval, this, this, "tryToPlaceGTU", new Object[] { position });
+            this.simulator.scheduleEventRel(this.reTryInterval, this, this, "tryToPlaceGTU", new Object[] {position});
         }
     }
 
@@ -330,7 +330,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
         queue.add(new TimeStampedObject<>(characteristics, this.simulator.getSimulatorTime()));
         if (queue.size() == 1)
         {
-            this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] { lanePosition });
+            this.simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {lanePosition});
         }
     }
 
@@ -442,7 +442,7 @@ public class LaneBasedGTUGenerator extends EventProducer implements Serializable
     public void disable(final Time start, final Time end, final Set<LaneDirection> laneDirections) throws SimRuntimeException
     {
         Throw.when(end.lt(start), SimRuntimeException.class, "End time %s is before start time %s.", end, start);
-        this.simulator.scheduleEventAbs(start, this, this, "disable", new Object[] { laneDirections });
+        this.simulator.scheduleEventAbs(start, this, this, "disable", new Object[] {laneDirections});
         this.simulator.scheduleEventAbs(end, this, this, "enable", new Object[0]);
     }
 

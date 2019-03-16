@@ -163,13 +163,13 @@ public interface Network extends EventProducerInterface, Identifiable
 
     /**
      * Return object of given type with given id.
-     * @param objectType T; object type class
+     * @param objectType Class&lt;T&gt;; object type class
      * @param objectId String; id of object
      * @param <T> object type
      * @return T; object of given type with given id, {@code null} if no such object
      */
     <T extends ObjectInterface> T getObject(Class<T> objectType, String objectId);
-    
+
     /**
      * Add an ObjectInterface implementing object to the Network.
      * @param object ObjectInterface; the object that implements ObjectInterface

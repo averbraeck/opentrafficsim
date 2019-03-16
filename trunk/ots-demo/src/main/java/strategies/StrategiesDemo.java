@@ -530,7 +530,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 new DistNormal(this.stream, 123.7 / 120.0, 12.0 / 120.0));
         parameterFactory.addParameter(GTUType.TRUCK, ParameterTypes.A, Acceleration.createSI(0.4));
         parameterFactory.addParameter(GTUType.TRUCK, ParameterTypes.FSPEED, 1.0);
-        for (GTUType gtuType : new GTUType[] { GTUType.CAR, GTUType.TRUCK })
+        for (GTUType gtuType : new GTUType[] {GTUType.CAR, GTUType.TRUCK})
         {
             // incentives
             Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();

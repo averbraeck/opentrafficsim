@@ -68,8 +68,7 @@ public class OTSNode implements Node, Locatable, Serializable
      * @param point OTSPoint3D; the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public OTSNode(final Network network, final String id, final OTSPoint3D point)
-            throws NetworkException
+    public OTSNode(final Network network, final String id, final OTSPoint3D point) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -363,7 +362,7 @@ public class OTSNode implements Node, Locatable, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
         if (this == obj)

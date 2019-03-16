@@ -41,6 +41,4 @@ public final class LaneParser
         throw new NetworkException("Unknown lane keeping policy string: " + lkpStr);
     }
 
-
 }
-

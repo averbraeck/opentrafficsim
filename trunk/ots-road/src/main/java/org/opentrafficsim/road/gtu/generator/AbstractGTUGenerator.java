@@ -181,7 +181,7 @@ public abstract class AbstractGTUGenerator extends EventProducer implements Seri
             throw new RuntimeException("Bounds for generator cannot be determined.");
         }
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
-        
+
         // notify the potential animation of the existence of a GTUGenerator
         fireEvent(Network.GENERATOR_ADD_EVENT, name);
         fireEvent(Network.ANIMATION_GENERATOR_ADD_EVENT, this);

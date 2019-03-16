@@ -103,7 +103,7 @@ class CrossSectionElementTag implements Serializable
     private static final long serialVersionUID = 20150723L;
 
     /** Element types. */
-    @SuppressWarnings({ "javadoc", "checkstyle:javadocvariable" })
+    @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
     enum ElementType
     {
         LANE,
@@ -113,7 +113,7 @@ class CrossSectionElementTag implements Serializable
     };
 
     /** Stripe types. */
-    @SuppressWarnings({ "javadoc", "checkstyle:javadocvariable" })
+    @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
     enum StripeType
     {
         SOLID,

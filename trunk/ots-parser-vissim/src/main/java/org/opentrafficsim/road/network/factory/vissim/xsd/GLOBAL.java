@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "speedgtucolorer", "accelerationgtucolorer", "lanechangeurgegtucolorer" })
+@XmlType(name = "", propOrder = {"speedgtucolorer", "accelerationgtucolorer", "lanechangeurgegtucolorer"})
 @XmlRootElement(name = "GLOBAL")
 public class GLOBAL
 {

@@ -63,12 +63,12 @@ public class SubstringLine
         // check for a zero-length segment and handle appropriately
         if (endDistance <= 0.0)
         {
-            return line.getFactory().createLineString(new Coordinate[] { coordinates[0], coordinates[0] });
+            return line.getFactory().createLineString(new Coordinate[] {coordinates[0], coordinates[0]});
         }
         if (startDistance >= line.getLength())
         {
             return line.getFactory().createLineString(
-                    new Coordinate[] { coordinates[coordinates.length - 1], coordinates[coordinates.length - 1] });
+                    new Coordinate[] {coordinates[coordinates.length - 1], coordinates[coordinates.length - 1]});
         }
         if (startDistance < 0.0)
         {
@@ -130,7 +130,7 @@ public class SubstringLine
          */
         if (newCoordinateArray.length <= 1)
         {
-            newCoordinateArray = new Coordinate[] { newCoordinateArray[0], newCoordinateArray[0] };
+            newCoordinateArray = new Coordinate[] {newCoordinateArray[0], newCoordinateArray[0]};
         }
         return line.getFactory().createLineString(newCoordinateArray);
     }

@@ -275,7 +275,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
         destinations.add(network.getNode("EXIT"));
         Categorization categorization = new Categorization("Distraction", GTUType.class);
         TimeVector globalTime =
-                new TimeVector(new double[] { 0, 360, 1560, 2160, 3960 }, TimeUnit.BASE_SECOND, StorageType.DENSE);
+                new TimeVector(new double[] {0, 360, 1560, 2160, 3960}, TimeUnit.BASE_SECOND, StorageType.DENSE);
         ODMatrix od = new ODMatrix("Distraction", origins, destinations, categorization, globalTime, Interpolation.LINEAR);
         Category carCategory = new Category(categorization, GTUType.CAR);
         Category truckCategory = new Category(categorization, GTUType.TRUCK);
@@ -341,7 +341,7 @@ public final class AnticipationRelianceScript extends AbstractSimulationScript
      */
     private static FrequencyVector getDemand(final double demand) throws ValueException
     {
-        return new FrequencyVector(new double[] { demand * 0.5, demand * 0.5, demand, demand, 0.0 }, FrequencyUnit.PER_HOUR,
+        return new FrequencyVector(new double[] {demand * 0.5, demand * 0.5, demand, demand, 0.0}, FrequencyUnit.PER_HOUR,
                 StorageType.DENSE);
     }
 

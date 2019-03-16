@@ -149,7 +149,7 @@ public class TestXMLParserN201 extends OTSSimulationApplication<TestXMLModelN201
             {
                 exception.printStackTrace();
             }
-            
+
             for (TrafficLight tl : this.network.getObjectMap(TrafficLight.class).values())
             {
                 tl.setTrafficLightColor(TrafficLightColor.GREEN);

@@ -22,10 +22,10 @@ public class StripeTypeAdapter extends XmlAdapter<String, StripeType>
         {
             String clean = field.replaceAll("\\s", "");
             for (StripeType st : StripeType.values())
-            if (clean.equals(st.name()))
-            {
-                return st;
-            }
+                if (clean.equals(st.name()))
+                {
+                    return st;
+                }
         }
         catch (Exception exception)
         {

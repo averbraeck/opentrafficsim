@@ -77,7 +77,8 @@ class LaneTypeTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseLaneTypes(final NodeList nodeList, final XmlNetworkLaneParserOld parser) throws SAXException, NetworkException
+    static void parseLaneTypes(final NodeList nodeList, final XmlNetworkLaneParserOld parser)
+            throws SAXException, NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "LANETYPE"))
         {

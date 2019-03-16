@@ -31,7 +31,7 @@ public class LengthBeginEnd
     private final double fraction;
 
     /**
-     * @param begin begin or end?
+     * @param begin boolean; begin or end?
      * @param offset the offset; absolute = true
      */
     public LengthBeginEnd(final boolean begin, final Length offset)

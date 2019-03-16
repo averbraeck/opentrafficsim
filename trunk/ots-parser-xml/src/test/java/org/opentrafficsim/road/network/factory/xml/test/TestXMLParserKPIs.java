@@ -231,7 +231,7 @@ public class TestXMLParserKPIs extends OTSSimulationApplication<OTSModelInterfac
             try
             {
                 simulator.scheduleEventAbs(new Time(time, TimeUnit.BASE_SECOND), this, this, "publishKpis",
-                        new Object[] { time, simulator, query });
+                        new Object[] {time, simulator, query});
             }
             catch (SimRuntimeException exception)
             {

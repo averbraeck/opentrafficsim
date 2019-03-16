@@ -257,7 +257,6 @@ public abstract class AbstractDelayedNeighborsPerception extends AbstractDelayed
         setInfo(ODOMETER, new TimeStampedObject<>(getGtu().getOdometer(), getTimestamp()));
     }
 
-
     /**
      * Returns the cross-section on which the most recent observed neighbors were determined.
      * @return cross-section on which the most recent observed neighbors were determined

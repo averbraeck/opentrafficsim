@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "gtu" })
+@XmlType(name = "", propOrder = {"gtu"})
 @XmlRootElement(name = "GTUMIX")
 public class GTUMIX
 {

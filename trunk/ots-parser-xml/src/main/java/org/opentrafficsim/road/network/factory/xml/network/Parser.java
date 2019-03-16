@@ -43,7 +43,7 @@ public final class Parser
 
     /**
      * Select object of given type by predicate.
-     * @param objectList List&lt;Object&gt;; list of objects
+     * @param objectList List&lt;?&gt;; list of objects
      * @param clazz Class&lt;T&gt;; class of type of objects to return
      * @param predicate Predicate&lt;T&gt;; predicate
      * @param <T> type
@@ -68,7 +68,7 @@ public final class Parser
 
     /**
      * Select object of given type by predicate.
-     * @param objectList List&lt;Object&gt;; list of objects
+     * @param objectList List&lt;T&gt;; list of objects
      * @param predicate Predicate&lt;T&gt;; predicate
      * @param <T> type
      * @return (first) object of given type that matches the predicate

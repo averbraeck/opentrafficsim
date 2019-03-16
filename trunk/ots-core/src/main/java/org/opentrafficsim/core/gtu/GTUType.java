@@ -79,9 +79,9 @@ public final class GTUType extends HierarchicalType<GTUType> implements Serializ
 
     /** Super type for scheduled busses. */
     public static final GTUType SCHEDULED_BUS;
-    
+
     /** Map to store the global GTU information for a certain run. */
-    public static final Map<Object, Map<String, GTUType>> GLOBAL_GTU_TYPES = new HashMap<>(); 
+    public static final Map<Object, Map<String, GTUType>> GLOBAL_GTU_TYPES = new HashMap<>();
 
     static
     {

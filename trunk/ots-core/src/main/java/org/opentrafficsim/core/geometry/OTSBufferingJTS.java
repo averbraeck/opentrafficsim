@@ -552,7 +552,7 @@ public final class OTSBufferingJTS
         // new OTSPoint3D(-579.253, 60.177, 1.568)});
         // double offset = 4.83899987;
         // System.out.println(OTSBufferingOLD.offsetGeometryOLD(line, offset));
-        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(-579.253, 60.157, 4.710),
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(-579.253, 60.157, 4.710),
                 new OTSPoint3D(-579.253, 60.144, 4.712), new OTSPoint3D(-579.253, 60.144, 0.000),
                 new OTSPoint3D(-579.251, 60.044, 0.000), new OTSPoint3D(-579.246, 59.944, 0.000),
                 new OTSPoint3D(-579.236, 59.845, 0.000), new OTSPoint3D(-579.223, 59.746, 0.000),
@@ -575,7 +575,7 @@ public final class OTSBufferingJTS
                 new OTSPoint3D(-577.060, 57.538, 0.000), new OTSPoint3D(-576.962, 57.523, 0.000),
                 new OTSPoint3D(-576.862, 57.512, 0.000), new OTSPoint3D(-576.763, 57.504, 0.000),
                 new OTSPoint3D(-576.663, 57.500, 0.000), new OTSPoint3D(-576.623, 57.500, 6.278),
-                new OTSPoint3D(-576.610, 57.500, 6.280), new OTSPoint3D(-567.499, 57.473, 6.280) });
+                new OTSPoint3D(-576.610, 57.500, 6.280), new OTSPoint3D(-567.499, 57.473, 6.280)});
         System.out.println(line.toExcel());
         System.out.println(OTSBufferingJTS.offsetGeometryOLD(line, -1.831));
     }

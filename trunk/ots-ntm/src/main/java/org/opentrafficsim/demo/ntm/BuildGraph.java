@@ -67,7 +67,7 @@ public class BuildGraph
          * //generate the incoming and outgoing links from nodes for (Link link: allLinks) {
          * link.getStartNode().getIncomingLinks().add(link); link.getEndNode().getIncomingLinks().add(link); }
          */// make a directed graph of the entire network
-          // FIRST CREATE the LinkGraph
+           // FIRST CREATE the LinkGraph
         for (NTMLink shpLink : allLinks)
         {
             // area node: copies a node from a link and connects the area
@@ -832,7 +832,7 @@ public class BuildGraph
             exception.printStackTrace();
             linkCTM = null;
         }
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         LinkEdge leNew = new LinkEdge(linkCTM);
         addLinkEdge(flowNodeStart, flowNodeEnd, leNew, TrafficBehaviourType.FLOW, model.getAreaGraph());
         // loop through the other links to find the links that connect
@@ -980,9 +980,9 @@ public class BuildGraph
     /*
      * // Create new Areas where they are lacking
      *//**
-       * @param centroid
-       * @return the additional areas
-       */
+        * @param centroid
+        * @return the additional areas
+        */
     public SimpleDirectedWeightedGraph copySimpleDirectedWeightedGraph(final SimpleDirectedWeightedGraph graph)
     {
         SimpleDirectedWeightedGraph copyOfGraph = null;

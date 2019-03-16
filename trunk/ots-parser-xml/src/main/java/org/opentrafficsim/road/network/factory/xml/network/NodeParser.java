@@ -32,8 +32,8 @@ public final class NodeParser
 
     /**
      * Parse the Nodes.
-     * @param otsNetwork the network to insert the parsed objects in
-     * @param network the NETWORK tag
+     * @param otsNetwork OTSNetwork; the network to insert the parsed objects in
+     * @param network NETWORK; the NETWORK tag
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     public static void parseNodes(final OTSNetwork otsNetwork, final NETWORK network) throws NetworkException
@@ -45,8 +45,8 @@ public final class NodeParser
     /**
      * Calculate the default angles of the Nodes, in case they have not been set. This is based on the STRAIGHT LINK elements in
      * the XML file.
-     * @param otsNetwork the network to insert the parsed objects in
-     * @param network the NETWORK tag
+     * @param otsNetwork OTSNetwork; the network to insert the parsed objects in
+     * @param network NETWORK; the NETWORK tag
      * @return a map of nodes and their default direction
      */
     public static Map<String, Direction> calculateNodeAngles(final OTSNetwork otsNetwork, final NETWORK network)

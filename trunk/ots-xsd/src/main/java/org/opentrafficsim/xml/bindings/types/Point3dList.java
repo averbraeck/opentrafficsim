@@ -17,4 +17,3 @@ public class Point3dList extends ArrayList<Point3d>
     /** */
     private static final long serialVersionUID = 1L;
 }
-

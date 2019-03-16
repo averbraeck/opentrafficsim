@@ -54,7 +54,8 @@ public class TestXMLParserAimsun extends OTSSimulationApplication<TestXMLModelAi
      * @param animationPanel the animation panel
      * @throws OTSDrawingException on drawing error
      */
-    public TestXMLParserAimsun(final TestXMLModelAimsun model, final OTSAnimationPanel animationPanel) throws OTSDrawingException
+    public TestXMLParserAimsun(final TestXMLModelAimsun model, final OTSAnimationPanel animationPanel)
+            throws OTSDrawingException
     {
         super(model, animationPanel);
     }

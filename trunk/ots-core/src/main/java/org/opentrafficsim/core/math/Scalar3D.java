@@ -37,7 +37,7 @@ public final class Scalar3D
         double msp = Math.sin(phi);
         double mct = Math.sqrt(1.0 - mst * mst);
         double mcp = Math.sqrt(1.0 - msp * msp);
-        return new double[] { r * mst * mcp, r * mst * msp, r * mct };
+        return new double[] {r * mst * mcp, r * mst * msp, r * mct};
     }
 
     /**

@@ -76,7 +76,7 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
      * @param lsr LaneStructureRecord; record
      * @param graphics Graphics2D; graphics
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private void paintRecord(final LaneStructureRecord lsr, final Graphics2D graphics)
     {
         // line
@@ -131,7 +131,7 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
             path.moveTo(p1.x - loc.x, -(p1.y - loc.y));
             path.lineTo(p2.x - loc.x, -(p2.y - loc.y));
             graphics.setStroke(
-                    new BasicStroke(0.15f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10f, new float[] { .3f, 1.2f }, 0f));
+                    new BasicStroke(0.15f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10f, new float[] {.3f, 1.2f}, 0f));
             graphics.setColor(Color.DARK_GRAY);
             graphics.draw(path);
         }
@@ -178,7 +178,7 @@ public class LaneStructureAnimation extends Renderable2D<LaneStructureLocatable>
         path.moveTo(p1.x - loc.x, -(p1.y - loc.y));
         path.lineTo(p2.x - loc.x, -(p2.y - loc.y));
         graphics.setStroke(
-                new BasicStroke(0.05f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10f, new float[] { .15f, 0.6f }, 0f));
+                new BasicStroke(0.05f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10f, new float[] {.15f, 0.6f}, 0f));
         graphics.setColor(color);
         graphics.draw(path);
     }

@@ -84,7 +84,7 @@ public final class DataSource
      * @return DataStream&lt;T&gt;; stream for the quantity of this data source
      * @param <T> implicit data type
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public <T extends Number> DataStream<T> getStream(final Quantity<T, ?> quantity)
     {
         if (!this.streams.containsKey(quantity.getName()))

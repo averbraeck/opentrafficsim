@@ -10,7 +10,7 @@
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://myOutput",
-        xmlns = { @XmlNs(prefix = "", namespaceURI = "http://myOutput") }, elementFormDefault = XmlNsForm.QUALIFIED)
+        xmlns = {@XmlNs(prefix = "", namespaceURI = "http://myOutput")}, elementFormDefault = XmlNsForm.QUALIFIED)
 
 package org.opentrafficsim.road.network.factory.vissim;
 

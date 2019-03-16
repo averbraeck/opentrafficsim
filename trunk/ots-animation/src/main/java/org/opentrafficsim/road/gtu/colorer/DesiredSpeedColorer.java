@@ -46,7 +46,7 @@ public class DesiredSpeedColorer implements GTUColorer, Serializable
         this.minimumSpeed = minimumSpeed;
         this.maximumSpeed = maximumSpeed;
         this.legend = new ArrayList<>(4);
-        Color[] colorTable = { Color.RED, Color.YELLOW, Color.GREEN };
+        Color[] colorTable = {Color.RED, Color.YELLOW, Color.GREEN};
         for (int index = 0; index < colorTable.length; index++)
         {
             double ratio = index * 1.0 / (colorTable.length - 1);

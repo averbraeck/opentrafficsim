@@ -91,7 +91,7 @@ public final class TestCategoryLogger
                 "should all exceptions be logged?");
         delay();
 
-        LogCategory[] cats = new LogCategory[] { Cat.BASE, Cat.CORE, Cat.ROAD };
+        LogCategory[] cats = new LogCategory[] {Cat.BASE, Cat.CORE, Cat.ROAD};
         System.out.println("\nBASE + CORE + ROAD...");
         delay();
         CategoryLogger.filter(cats).trace("TRACE cats - this should NOT be logged");

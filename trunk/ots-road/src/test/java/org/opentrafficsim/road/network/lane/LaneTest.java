@@ -178,9 +178,9 @@ public class LaneTest implements UNITS
     @Test
     public final void contourTest() throws Exception
     {
-        final int[] startPositions = { 0, 1, -1, 20, -20 };
-        final double[] angles = { 0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI,
-                Math.PI * 1.01, Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2) };
+        final int[] startPositions = {0, 1, -1, 20, -20};
+        final double[] angles = {0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI,
+                Math.PI * 1.01, Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2)};
         LaneType laneType = LaneType.TWO_WAY_LANE;
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.VEHICLE, LongitudinalDirectionality.DIR_PLUS);
@@ -208,13 +208,13 @@ public class LaneTest implements UNITS
                     simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
                     CrossSectionLink link = new CrossSectionLink(network, "A to B", start, end, LinkType.ROAD, line, simulator,
                             LaneKeepingPolicy.KEEPRIGHT);
-                    final int[] lateralOffsets = { -10, -3, -1, 0, 1, 3, 10 };
+                    final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
                     {
                         for (int endLateralOffset : lateralOffsets)
                         {
                             int startWidth = 4; // This one is not varied
-                            for (int endWidth : new int[] { 2, 4, 6 })
+                            for (int endWidth : new int[] {2, 4, 6})
                             {
                                 // Now we can construct a Lane
                                 // FIXME what overtaking conditions do we want to test in this unit test?

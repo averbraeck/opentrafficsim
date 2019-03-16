@@ -72,8 +72,7 @@ public class IncentiveCourtesy implements VoluntaryIncentive
         SpeedLimitInfo sli = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
         boolean leftLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si > 0.0;
         boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
-        for (LateralDirectionality dir : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                LateralDirectionality.RIGHT })
+        for (LateralDirectionality dir : new LateralDirectionality[] {LateralDirectionality.LEFT, LateralDirectionality.RIGHT})
         {
             Iterable<HeadwayGTU> leaders = neighbors.getLeaders(new RelativeLane(dir, 1));
             if (leaders != null)

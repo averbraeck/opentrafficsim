@@ -393,7 +393,7 @@ public class OTSSwingApplication<T extends OTSModelInterface> extends JFrame
         public void mouseEntered(final MouseEvent e)
         {
             MenuSelectionManager.defaultManager().setSelectedPath(
-                    new MenuElement[] { (MenuElement) this.menu.getParent(), this.menu, this.menu.getPopupMenu() });
+                    new MenuElement[] {(MenuElement) this.menu.getParent(), this.menu, this.menu.getPopupMenu()});
         }
 
         /** {@inheritDoc} */
@@ -472,7 +472,7 @@ public class OTSSwingApplication<T extends OTSModelInterface> extends JFrame
             }
             JMenu menu = (JMenu) path[path.length - 3];
             MenuSelectionManager.defaultManager()
-                    .setSelectedPath(new MenuElement[] { (MenuElement) menu.getParent(), menu, menu.getPopupMenu() });
+                    .setSelectedPath(new MenuElement[] {(MenuElement) menu.getParent(), menu, menu.getPopupMenu()});
         }
 
         /** {@inheritDoc} */

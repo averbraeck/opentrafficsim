@@ -94,7 +94,7 @@ class TrafficLightTag implements Serializable
             try
             {
                 ClassUtil.resolveConstructor(clazz,
-                        new Class[] { String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
+                        new Class[] {String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class});
             }
             catch (NoSuchMethodException nsme)
             {

@@ -285,7 +285,7 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
         public float[] floatTransform(double x, double y)
         {
             double[] d = doubleTransform(x, y);
-            return new float[] { (float) d[0], (float) d[1] };
+            return new float[] {(float) d[0], (float) d[1]};
         }
 
         /** {@inheritDoc} */
@@ -295,12 +295,12 @@ public class N201IMB extends OTSSimulationApplication<N201Model>
             try
             {
                 Point2D c = TransformWGS84DutchRDNew.fromWGS84(x, y);
-                return new double[] { c.getX() - this.dx, c.getY() - this.dy };
+                return new double[] {c.getX() - this.dx, c.getY() - this.dy};
             }
             catch (Exception exception)
             {
                 System.err.println(exception.getMessage());
-                return new double[] { 0, 0 };
+                return new double[] {0, 0};
             }
         }
 

@@ -756,13 +756,13 @@ public class OTSControlPanel extends JPanel
             switch (ticksPerDecade)
             {
                 case 1:
-                    this.ratios = new int[] { 1 };
+                    this.ratios = new int[] {1};
                     break;
                 case 2:
-                    this.ratios = new int[] { 1, 3 };
+                    this.ratios = new int[] {1, 3};
                     break;
                 case 3:
-                    this.ratios = new int[] { 1, 2, 5 };
+                    this.ratios = new int[] {1, 2, 5};
                     break;
                 default:
                     throw new RuntimeException("Bad ticksPerDecade value (must be 1, 2 or 3)");

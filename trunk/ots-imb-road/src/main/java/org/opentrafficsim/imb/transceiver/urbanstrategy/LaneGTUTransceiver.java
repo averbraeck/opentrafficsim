@@ -273,8 +273,8 @@ public class LaneGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new Event(CrossSectionLink.LANE_ADD_EVENT, csl, new Object[] { link.getNetwork().getId(),
-                            link.getId(), lane.getId(), lane, csl.getLanes().indexOf(lane) }));
+                    this.notify(new Event(CrossSectionLink.LANE_ADD_EVENT, csl, new Object[] {link.getNetwork().getId(),
+                            link.getId(), lane.getId(), lane, csl.getLanes().indexOf(lane)}));
                 }
                 catch (RemoteException exception)
                 {
@@ -309,7 +309,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new TimedEvent<Time>(Lane.GTU_ADD_EVENT, lane, new Object[] { gtu.getId(), gtu, gtuCount },
+                    this.notify(new TimedEvent<Time>(Lane.GTU_ADD_EVENT, lane, new Object[] {gtu.getId(), gtu, gtuCount},
                             getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
@@ -339,7 +339,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
                 try
                 {
                     this.notify(new Event(CrossSectionLink.LANE_REMOVE_EVENT, csl,
-                            new Object[] { link.getNetwork().getId(), link.getId(), lane.getId() }));
+                            new Object[] {link.getNetwork().getId(), link.getId(), lane.getId()}));
                 }
                 catch (RemoteException exception)
                 {
@@ -447,13 +447,13 @@ public class LaneGTUTransceiver extends AbstractTransceiver
         double timestamp = getSimulator().getSimulatorTime().si;
         if (Lane.GTU_ADD_EVENT.equals(event.getType()))
         {
-            return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), true, gtuId,
-                    countAfterEvent };
+            return new Object[] {timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), true, gtuId,
+                    countAfterEvent};
         }
         else if (Lane.GTU_REMOVE_EVENT.equals(event.getType()))
         {
-            return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), false, gtuId,
-                    countAfterEvent };
+            return new Object[] {timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), false, gtuId,
+                    countAfterEvent};
         }
         System.err.println("LaneGTUTransceiver.transformChange: Don't know how to transform event " + event);
         return new Object[] {};
@@ -473,7 +473,7 @@ public class LaneGTUTransceiver extends AbstractTransceiver
             String linkId = (String) content[1];
             String laneId = (String) content[2];
             double timestamp = getSimulator().getSimulatorTime().si;
-            return new Object[] { timestamp, networkId, linkId, laneId };
+            return new Object[] {timestamp, networkId, linkId, laneId};
         }
         System.err.println("LaneGTUTransceiver.transformDelete: Don't know how to transform event " + event);
         return new Object[] {};

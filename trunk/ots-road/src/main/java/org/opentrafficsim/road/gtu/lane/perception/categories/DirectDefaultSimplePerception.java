@@ -786,15 +786,15 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
     {
         if (gtu.getTurnIndicatorStatus().isLeft())
         {
-            return new GTUStatus[] { GTUStatus.LEFT_TURNINDICATOR };
+            return new GTUStatus[] {GTUStatus.LEFT_TURNINDICATOR};
         }
         if (gtu.getTurnIndicatorStatus().isRight())
         {
-            return new GTUStatus[] { GTUStatus.RIGHT_TURNINDICATOR };
+            return new GTUStatus[] {GTUStatus.RIGHT_TURNINDICATOR};
         }
         if (gtu.getTurnIndicatorStatus().isHazard())
         {
-            return new GTUStatus[] { GTUStatus.EMERGENCY_LIGHTS };
+            return new GTUStatus[] {GTUStatus.EMERGENCY_LIGHTS};
         }
         return new GTUStatus[0];
     }

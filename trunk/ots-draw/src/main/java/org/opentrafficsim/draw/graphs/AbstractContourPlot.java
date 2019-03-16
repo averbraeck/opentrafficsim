@@ -131,8 +131,8 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         Throw.when(minValue.doubleValue() >= maxValue.doubleValue(), IllegalArgumentException.class,
                 "Minimum value %s is below or equal to maxumum value %s.", minValue, maxValue);
         double[] boundaries =
-                { minValue.doubleValue(), (minValue.doubleValue() + maxValue.doubleValue()) / 2.0, maxValue.doubleValue() };
-        Color[] colorValues = { Color.RED, Color.YELLOW, Color.GREEN };
+                {minValue.doubleValue(), (minValue.doubleValue() + maxValue.doubleValue()) / 2.0, maxValue.doubleValue()};
+        Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};
         return new BoundsPaintScale(boundaries, colorValues);
     }
 

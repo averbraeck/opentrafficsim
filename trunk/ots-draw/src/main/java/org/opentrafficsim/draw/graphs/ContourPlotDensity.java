@@ -43,7 +43,7 @@ public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
      */
     private static BoundsPaintScale createPaintScale()
     {
-        double[] boundaries = { 0.0, 20.0 / 1000, 150.0 / 1000 };
+        double[] boundaries = {0.0, 20.0 / 1000, 150.0 / 1000};
         Color[] colorValues = BoundsPaintScale.GREEN_RED;
         return new BoundsPaintScale(boundaries, colorValues);
     }

@@ -104,7 +104,7 @@ public class N201ODfactory
         try
         {
             matrix = new ODMatrix("N201demo", origins, destinations, Categorization.UNCATEGORIZED,
-                    new TimeVector(new double[] { 0, 3600 }, TimeUnit.BASE, StorageType.DENSE), Interpolation.STEPWISE);
+                    new TimeVector(new double[] {0, 3600}, TimeUnit.BASE, StorageType.DENSE), Interpolation.STEPWISE);
         }
         catch (ValueException exception)
         {
@@ -113,16 +113,16 @@ public class N201ODfactory
 
         // loop matrix
         // 2*0 because the through movement on the IJweg is not incorporated
-        int[][] od = new int[][] { { 0, 502, 309, 35, 285, 33, 218 }, { 331, 0, 229, 26, 212, 25, 162 },
-                { 150, 89, 0, 12, 98, 11, 75 }, { 29, 17, 14, 0, 30, 4, 23 }, { 30, 18, 14, 2 * 0, 32, 4, 25 },
-                { 296, 175, 143, 18, 0, 21, 136 }, { 67, 40, 32, 4, 63, 0, 787 }, { 373, 221, 180, 22, 350, 815, 0 } };
+        int[][] od = new int[][] {{0, 502, 309, 35, 285, 33, 218}, {331, 0, 229, 26, 212, 25, 162},
+                {150, 89, 0, 12, 98, 11, 75}, {29, 17, 14, 0, 30, 4, 23}, {30, 18, 14, 2 * 0, 32, 4, 25},
+                {296, 175, 143, 18, 0, 21, 136}, {67, 40, 32, 4, 63, 0, 787}, {373, 221, 180, 22, 350, 815, 0}};
         for (int o = 0; o < origins.size(); o++)
         {
             for (int d = 0; d < destinations.size(); d++)
             {
                 if (od[o][d] > 0)
                 {
-                    matrix.putTripsVector(origins.get(o), destinations.get(d), Category.UNCATEGORIZED, new int[] { od[o][d] });
+                    matrix.putTripsVector(origins.get(o), destinations.get(d), Category.UNCATEGORIZED, new int[] {od[o][d]});
                 }
             }
         }
@@ -231,11 +231,11 @@ public class N201ODfactory
         // "L15a16a", "L17a", "L18a19a", "L20a21a", "L22a", "L23a24a", "L25a", "L26a", "L27a", "L28a29a", "L30a", "L31a",
         // "L32a", "L33a", "L34a", "L35a", "L36a", "L37a", "L38a", "L39a", "L40a", "L41a", "L42a", "L43a", "L44a", "L45a",
         // "L46a", "L47a48a", "L49a" };
-        String[] southBound = new String[] { "L2a" };
-        String[] northBound = new String[] { "L49b", "L48b47b", "L46b", "L45b", "L44b", "L43b", "L42b", "L41b", "L40b", "L39b",
+        String[] southBound = new String[] {"L2a"};
+        String[] northBound = new String[] {"L49b", "L48b47b", "L46b", "L45b", "L44b", "L43b", "L42b", "L41b", "L40b", "L39b",
                 "L38b", "L37b", "L36b", "L35b", "L34b", "L33b", "L32b", "L31b", "L30b", "L29b28b", "L27b", "L26b", "L25b",
                 "L24b23b", "L22b21b", "L20b", "L19b18b", "L17b16b", "L15b", "L14b13b", "L12b", "L11b", "L10b", "L9b8b", "L7b",
-                "L6b", "L5b", "L4b3b", "L2b", "L1b" };
+                "L6b", "L5b", "L4b3b", "L2b", "L1b"};
         MetaDataSet metaDataSet = new MetaDataSet();
         Set<GtuTypeDataInterface> gtuTypes = new HashSet<>();
         gtuTypes.add(new GtuTypeData(CAR));

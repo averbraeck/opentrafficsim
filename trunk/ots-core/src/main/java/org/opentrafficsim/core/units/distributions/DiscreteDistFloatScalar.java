@@ -114,7 +114,7 @@ public interface DiscreteDistFloatScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         public final T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -177,7 +177,7 @@ public interface DiscreteDistFloatScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         public final T draw()
         {
             switch (getUnit().getClass().getSimpleName())

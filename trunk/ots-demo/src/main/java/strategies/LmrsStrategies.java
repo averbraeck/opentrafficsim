@@ -390,12 +390,12 @@ public class LmrsStrategies implements EventListenerInterface
         if (baseLMRS)
         {
             lmrsStrategies.incentives =
-                    new Class[] { IncentiveRoute.class, IncentiveSpeedWithCourtesy.class, IncentiveKeep.class };
+                    new Class[] {IncentiveRoute.class, IncentiveSpeedWithCourtesy.class, IncentiveKeep.class};
         }
         else
         {
-            lmrsStrategies.incentives = new Class[] { IncentiveRoute.class, IncentiveSpeedWithCourtesy.class,
-                    IncentiveKeep.class, IncentiveSocioSpeed.class };
+            lmrsStrategies.incentives = new Class[] {IncentiveRoute.class, IncentiveSpeedWithCourtesy.class,
+                    IncentiveKeep.class, IncentiveSocioSpeed.class};
         }
 
         // run
@@ -540,7 +540,7 @@ public class LmrsStrategies implements EventListenerInterface
 
         /** {@inheritDoc} */
         @Override
-        @SuppressWarnings({ "synthetic-access", "checkstyle:methodlength" })
+        @SuppressWarnings({"synthetic-access", "checkstyle:methodlength"})
         public void constructModel()
         {
             LmrsStrategies.this.simulator = getSimulator();
@@ -671,7 +671,7 @@ public class LmrsStrategies implements EventListenerInterface
             try
             {
                 // Strategical factories
-                for (GTUType gtuType : new GTUType[] { GTUType.CAR, GTUType.TRUCK })
+                for (GTUType gtuType : new GTUType[] {GTUType.CAR, GTUType.TRUCK})
                 {
                     // incentives
                     Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
@@ -762,12 +762,12 @@ public class LmrsStrategies implements EventListenerInterface
                 new SinkSensor(laneBC2, laneBC2.getLength().minus(Length.createSI(100.0)), getSimulator());
 
                 // detectors
-                Lane[][] grid = new Lane[][] { new Lane[] { laneAB3 }, new Lane[] { laneAB2, laneBC2 },
-                        new Lane[] { laneAB1, laneBC1 } };
+                Lane[][] grid =
+                        new Lane[][] {new Lane[] {laneAB3}, new Lane[] {laneAB2, laneBC2}, new Lane[] {laneAB1, laneBC1}};
                 Duration aggregationPeriod = Duration.createSI(60.0);
-                DetectorMeasurement<?, ?>[] measurements = new DetectorMeasurement[] { Detector.MEAN_SPEED, Detector.PASSAGES,
-                        new VGainMeasurement(), new SigmaMeasurement(), new VDesMeasurement(), new VDes0Measurement() };
-                String[] prefix = { "A", "B", "C" };
+                DetectorMeasurement<?, ?>[] measurements = new DetectorMeasurement[] {Detector.MEAN_SPEED, Detector.PASSAGES,
+                        new VGainMeasurement(), new SigmaMeasurement(), new VDesMeasurement(), new VDes0Measurement()};
+                String[] prefix = {"A", "B", "C"};
                 for (int i = 0; i < grid.length; i++)
                 {
                     int num = 1;
@@ -792,12 +792,12 @@ public class LmrsStrategies implements EventListenerInterface
                 List<Node> destinations = new ArrayList<>();
                 destinations.add(nodeC);
                 TimeVector timeVector =
-                        new TimeVector(new double[] { 0.0, 300.0, 2700.0, SIMTIME.si }, TimeUnit.BASE, StorageType.DENSE);
+                        new TimeVector(new double[] {0.0, 300.0, 2700.0, SIMTIME.si}, TimeUnit.BASE, StorageType.DENSE);
                 ODMatrix od = new ODMatrix("LMRS strategies", origins, destinations, categorization, timeVector,
                         Interpolation.LINEAR);
                 double q = LmrsStrategies.this.qMax;
                 FrequencyVector demand =
-                        new FrequencyVector(new double[] { q * .6, q * .6, q, 0.0 }, FrequencyUnit.PER_HOUR, StorageType.DENSE);
+                        new FrequencyVector(new double[] {q * .6, q * .6, q, 0.0}, FrequencyUnit.PER_HOUR, StorageType.DENSE);
                 Category category = new Category(categorization, GTUType.CAR);
                 od.putDemandVector(nodeA, nodeC, category, demand, timeVector, Interpolation.LINEAR,
                         1.0 - LmrsStrategies.this.fTruck);

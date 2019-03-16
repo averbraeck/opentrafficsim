@@ -104,7 +104,7 @@ class ExtensionFileFilter extends FileFilter
 
     public ExtensionFileFilter(String description, String extension)
     {
-        this(description, new String[] { extension });
+        this(description, new String[] {extension});
     }
 
     public ExtensionFileFilter(String description, String extensions[])

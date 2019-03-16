@@ -213,7 +213,7 @@ public class OpenDriveNetworkLaneParser implements Serializable
      * @return the OTSNetwork with the static information about the network
      * @throws NetworkException if items cannot be added to the Network
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private OTSNetwork makeNetwork(final String name) throws NetworkException
     {
         this.network = new OTSNetwork(name);

@@ -50,7 +50,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     {
         this.gtu = perceivingGtu;
     }
-    
+
     /**
      * Returns the GTU.
      * @return LaneBasedGTU; GTU
@@ -290,7 +290,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
         {
             return this.distance.compareTo(o.distance);
         }
-        
+
         /**
          * Returns the object.
          * @return U; object

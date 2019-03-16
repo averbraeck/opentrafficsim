@@ -150,9 +150,9 @@ public class GTUTest
                 new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));
         GTUType gtuType1 = new GTUType("gtu type 1", VEHICLE);
         GTUType gtuType2 = new GTUType("gtu type 2", VEHICLE);
-        for (String id : new String[] { "id1", "id2" })
+        for (String id : new String[] {"id1", "id2"})
         {
-            for (GTUType gtuType : new GTUType[] { gtuType1, gtuType2 })
+            for (GTUType gtuType : new GTUType[] {gtuType1, gtuType2})
             {
                 String gtuId = id + " " + gtuType.getId();
                 TestGTU gtu = new TestGTU(gtuId, gtuType, simulator, perceivableContext);

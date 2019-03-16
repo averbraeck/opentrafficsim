@@ -135,7 +135,7 @@ public class XTally implements Serializable
             }
             double z = this.confidenceDistribution.getInverseCumulativeProbability(level);
             double confidence = z * Math.sqrt(this.getSampleVariance() / this.n);
-            double[] result = { this.getSampleMean() - confidence, this.getSampleMean() + confidence };
+            double[] result = {this.getSampleMean() - confidence, this.getSampleMean() + confidence};
             if (side == Tally.LEFT_SIDE_CONFIDENCE)
             {
                 result[1] = this.getSampleMean();

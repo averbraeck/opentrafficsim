@@ -65,7 +65,7 @@ public class TrafCODDisplay extends JPanel implements MouseMotionListener, Mouse
         super.setPreferredSize(new Dimension(this.image.getWidth(), this.image.getHeight()));
         addMouseMotionListener(this);
     }
-    
+
     /**
      * Look up a DetectorImage.
      * @param id String; id of the DetectorImage
@@ -203,7 +203,7 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
 
     /** Tool tip text for this detector image. */
     private final String description;
-    
+
     /** String used to match this detector with the TrafCOD detector input. */
     private final String id;
 
@@ -272,7 +272,7 @@ class DetectorImage implements TrafCODObject, EventListenerInterface
         }
         return this.description;
     }
-    
+
     /**
      * Retrieve the id of this DetectorImage.
      * @return String; the id of this DetectorImage

@@ -76,10 +76,10 @@ public final class LinkParser
 
     /**
      * Build the links with the correct design line.
-     * @param otsNetwork the network to insert the parsed objects in
-     * @param network the NETWORK tag
-     * @param nodeDirections a map of the node ids and their default directions
-     * @param simulator the simulator
+     * @param otsNetwork OTSNetwork; the network to insert the parsed objects in
+     * @param network NETWORK; the NETWORK tag
+     * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
+     * @param simulator OTSSimulatorInterface; the simulator
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OTSGeometryException when the design line is invalid
      */
@@ -247,9 +247,9 @@ public final class LinkParser
 
     /**
      * Build the links with the correct design line.
-     * @param otsNetwork the network to insert the parsed objects in
-     * @param network the NETWORK tag
-     * @param simulator the simulator
+     * @param otsNetwork OTSNetwork; the network to insert the parsed objects in
+     * @param network NETWORK; the NETWORK tag
+     * @param simulator OTSSimulatorInterface; the simulator
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OTSGeometryException when the design line is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
@@ -407,11 +407,11 @@ public final class LinkParser
 
     /**
      * Parse a stripe on a road.
-     * @param csl the CrossSectionLine
-     * @param startOffset the offset of the start node
-     * @param endOffset the offset of the end node
-     * @param cse the CROSSECTIONELEMENT tag in the XML file
-     * @param cseList the list of CrossSectionElements to which the stripes should be added
+     * @param csl CrossSectionLink; the CrossSectionLine
+     * @param startOffset Length; the offset of the start node
+     * @param endOffset Length; the offset of the end node
+     * @param cse CROSSSECTIONELEMENT; the CROSSECTIONELEMENT tag in the XML file
+     * @param cseList List&lt;CrossSectionElement&gt;; the list of CrossSectionElements to which the stripes should be added
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id of the stripe not unique
      * @throws XmlParserException when the stripe type cannot be recognized

@@ -32,7 +32,7 @@ public class BezierTest
         OTSPoint3D control1 = new OTSPoint3D(20, 0, 10);
         OTSPoint3D control2 = new OTSPoint3D(00, 20, 20);
         OTSPoint3D to = new OTSPoint3D(0, 10, 30);
-        for (int n : new int[] { 2, 3, 4, 100 })
+        for (int n : new int[] {2, 3, 4, 100})
         {
             OTSLine3D line = Bezier.cubic(n, from, control1, control2, to);
             assertTrue("result has n points", line.size() == n);
@@ -57,7 +57,7 @@ public class BezierTest
                 // Ignore expected exception
             }
         }
-        for (int n : new int[] { 2, 3, 4, 100 })
+        for (int n : new int[] {2, 3, 4, 100})
         {
             OTSLine3D line = Bezier.cubic(n, new DirectedPoint(from.x, from.y, from.z, Math.PI / 2, -Math.PI / 2, 0),
                     new DirectedPoint(to.x, to.y, to.z, Math.PI, 0, -Math.PI / 2));
@@ -76,7 +76,7 @@ public class BezierTest
         assertEquals("Number of points is 64", 64, Bezier.bezier(from, control1, control2, to).size());
         control1 = new OTSPoint3D(5, 0, 10);
         control2 = new OTSPoint3D(0, 5, 20);
-        for (int n : new int[] { 2, 3, 4, 100 })
+        for (int n : new int[] {2, 3, 4, 100})
         {
             OTSLine3D line = Bezier.cubic(n, from, control1, control2, to);
             for (int i = 1; i < line.size() - 1; i++)
@@ -88,7 +88,7 @@ public class BezierTest
                 assertTrue("y of intermediate point has reasonable value", p.y > 0 && p.y < 10);
             }
         }
-        for (int n : new int[] { 2, 3, 4, 100 })
+        for (int n : new int[] {2, 3, 4, 100})
         {
             OTSLine3D line = Bezier.cubic(n, new DirectedPoint(from.x, from.y, from.z, Math.PI / 2, Math.PI / 2, Math.PI),
                     new DirectedPoint(to.x, to.y, to.z, 0, 0, Math.PI / 2));

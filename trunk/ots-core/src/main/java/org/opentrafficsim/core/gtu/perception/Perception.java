@@ -25,8 +25,8 @@ public interface Perception<G extends GTU> extends Serializable
 {
     /**
      * Invoked by the GTU prior to determining the operational plan. If the implementation works in-sync with the tactical
-     * planner, this method is used to update perceived information. It is however possible for the implementation to ignore 
-     * this and have fully autonomous perception.  
+     * planner, this method is used to update perceived information. It is however possible for the implementation to ignore
+     * this and have fully autonomous perception.
      * @throws GTUException when GTU has not been properly initialized.
      * @throws NetworkException in case of inconsistencies in the network during perception calculations.
      * @throws ParameterException in case of a parameter error.

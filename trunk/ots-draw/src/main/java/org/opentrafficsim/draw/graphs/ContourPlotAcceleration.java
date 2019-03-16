@@ -130,7 +130,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
      */
     private static BoundsPaintScale createPaintScale()
     {
-        double[] boundaries = { -3.0, -1.5, 0.0, 1.0, 2.0 };
+        double[] boundaries = {-3.0, -1.5, 0.0, 1.0, 2.0};
         Color[] colorValues = BoundsPaintScale.reverse(BoundsPaintScale.GREEN_RED_DARK);
         return new BoundsPaintScale(boundaries, colorValues);
     }

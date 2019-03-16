@@ -90,12 +90,11 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     static
     {
         Color[] c = BoundsPaintScale.hue(6);
-        COLORMAP = new Color[] { c[0], c[4], c[2], c[1], c[3], c[5] };
+        COLORMAP = new Color[] {c[0], c[4], c[2], c[1], c[3], c[5]};
         float lw = 0.4f;
-        STROKES = new BasicStroke[] { new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f),
-                new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f, new float[] { 13f, 4f }, 0.0f),
-                new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f, new float[] { 11f, 3f, 2f, 3f },
-                        0.0f) };
+        STROKES = new BasicStroke[] {new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f),
+                new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f, new float[] {13f, 4f}, 0.0f),
+                new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f, new float[] {11f, 3f, 2f, 3f}, 0.0f)};
     }
 
     /**
@@ -324,7 +323,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             int m = this.curvesPerLane.get(i);
             if (n < m)
             {
-                return new int[] { i, n };
+                return new int[] {i, n};
             }
             n -= m;
         }

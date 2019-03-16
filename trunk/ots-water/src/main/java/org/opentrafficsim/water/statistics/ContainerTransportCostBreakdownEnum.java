@@ -31,8 +31,9 @@ public enum ContainerTransportCostBreakdownEnum
 
     HUB_PORT_DUES("havengelden hubterminal", "aandeel van de kosten voor de havengelden bij hubterminal(s)"),
 
-    HUB_TERMINAL("kosten hubterminal", "kosten voor opslag container op de hubterminal, terminaltransport op de hubterminal, "
-            + "tussen stack en kade, en kade en schip (2 waterzijdige moves, als van toepassing)"),
+    HUB_TERMINAL("kosten hubterminal",
+            "kosten voor opslag container op de hubterminal, terminaltransport op de hubterminal, "
+                    + "tussen stack en kade, en kade en schip (2 waterzijdige moves, als van toepassing)"),
 
     SAILING_HUB_RTM("vaarkosten Hub-Rtm",
             "aandeel van de kosten voor het varen van de container op het schip tussen Rtm en eerste hub-terminal "

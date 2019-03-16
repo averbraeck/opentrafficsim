@@ -145,7 +145,7 @@ public class TrafCODDemo2 extends OTSSimulationApplication<TrafCODModel>
                 URL url = URLResource.getResource("/TrafCODDemo2/Network.xml");
                 XmlNetworkLaneParserOld nlp = new XmlNetworkLaneParserOld(getSimulator());
                 this.network = nlp.build(url, true);
-                String[] directions = { "E", "S", "W", "N" };
+                String[] directions = {"E", "S", "W", "N"};
                 // Add the traffic lights and the detectors
                 Length stopLineMargin = new Length(0.1, LengthUnit.METER);
                 Length headDetectorLength = new Length(1, LengthUnit.METER);

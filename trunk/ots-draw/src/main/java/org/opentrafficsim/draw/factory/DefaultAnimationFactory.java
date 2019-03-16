@@ -96,7 +96,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
         network.addListener(this, Network.ANIMATION_OBJECT_REMOVE_EVENT);
         network.addListener(this, Network.ANIMATION_GENERATOR_ADD_EVENT);
         network.addListener(this, Network.ANIMATION_GENERATOR_REMOVE_EVENT);
-        
+
         // model the current infrastructure
         try
         {
@@ -140,7 +140,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
                         }
                     }
                 }
-                
+
                 for (TrafficLight tl : network.getObjectMap(TrafficLight.class).values())
                 {
                     new TrafficLightAnimation(tl, simulator);
@@ -204,7 +204,7 @@ public class DefaultAnimationFactory implements EventListenerInterface
             {
                 // schedule the addition of the GTU to prevent it from not having an operational plan
                 LaneBasedGTU gtu = (LaneBasedGTU) event.getContent();
-                this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] { gtu });
+                this.simulator.scheduleEventNow(this, this, "animateGTU", new Object[] {gtu});
             }
             else if (event.getType().equals(Network.ANIMATION_GTU_REMOVE_EVENT))
             {

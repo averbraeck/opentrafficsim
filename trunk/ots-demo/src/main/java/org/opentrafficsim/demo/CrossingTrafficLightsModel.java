@@ -160,7 +160,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
                         for (Lane lane : lanes)
                         {
                             this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar",
-                                    new Object[] { lane });
+                                    new Object[] {lane});
                             SimpleTrafficLight tl = new SimpleTrafficLight(lane.getId() + "_TL", lane,
                                     new Length(lane.getLength().minus(new Length(10.0, LengthUnit.METER))), this.simulator);
                             trafficLights.put(lane, tl);
@@ -176,11 +176,11 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
 
                             if (i == 0 || i == 2)
                             {
-                                this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL", new Object[] { tl });
+                                this.simulator.scheduleEventRel(Duration.ZERO, this, this, "changeTL", new Object[] {tl});
                             }
                             else
                             {
-                                this.simulator.scheduleEventRel(TRED, this, this, "changeTL", new Object[] { tl });
+                                this.simulator.scheduleEventRel(TRED, this, this, "changeTL", new Object[] {tl});
                             }
                         }
                     }
@@ -215,17 +215,17 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
         if (tl.getTrafficLightColor().isRed())
         {
             tl.setTrafficLightColor(TrafficLightColor.GREEN);
-            this.simulator.scheduleEventRel(TGREEN, this, this, "changeTL", new Object[] { tl });
+            this.simulator.scheduleEventRel(TGREEN, this, this, "changeTL", new Object[] {tl});
         }
         else if (tl.getTrafficLightColor().isGreen())
         {
             tl.setTrafficLightColor(TrafficLightColor.YELLOW);
-            this.simulator.scheduleEventRel(TYELLOW, this, this, "changeTL", new Object[] { tl });
+            this.simulator.scheduleEventRel(TYELLOW, this, this, "changeTL", new Object[] {tl});
         }
         else if (tl.getTrafficLightColor().isYellow())
         {
             tl.setTrafficLightColor(TrafficLightColor.RED);
-            this.simulator.scheduleEventRel(TRED, this, this, "changeTL", new Object[] { tl });
+            this.simulator.scheduleEventRel(TRED, this, this, "changeTL", new Object[] {tl});
         }
     }
 
@@ -252,7 +252,7 @@ public class CrossingTrafficLightsModel extends AbstractOTSModel implements UNIT
             Route route = null;
             LaneBasedStrategicalPlanner strategicalPlanner = this.strategicalPlannerFactory.create(gtu, route, null, null);
             gtu.init(strategicalPlanner, initialPositions, initialSpeed);
-            this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar", new Object[] { lane });
+            this.simulator.scheduleEventRel(this.headwayDistribution.draw(), this, this, "generateCar", new Object[] {lane});
         }
         catch (SimRuntimeException | NetworkException | GTUException | OTSGeometryException exception)
         {

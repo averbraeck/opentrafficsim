@@ -124,7 +124,7 @@ public class DelayedNeighborsPerception extends AbstractDelayedNeighborsPercepti
             throw new RuntimeException("GTU not initialized.", exception);
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void notify(final EventInterface event) throws RemoteException

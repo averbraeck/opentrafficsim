@@ -64,7 +64,7 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
     public final float[] floatTransform(final double lon, final double lat)
     {
         double[] dt = doubleTransform(lon, lat);
-        return new float[] { (float) dt[0], (float) dt[1] };
+        return new float[] {(float) dt[0], (float) dt[1]};
     }
 
     /**
@@ -90,7 +90,7 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
         double x = coslon * term2 - this.centerX;
         double y = sinlon * term2 - this.centerY;
 
-        return new double[] { x, y };
+        return new double[] {x, y};
     }
 
     /** {@inheritDoc} */
@@ -100,7 +100,7 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform, Seria
         double x = (lon - this.lonCenter) * this.lonToM;
         double y = (lat - this.latCenter) * this.latToM;
 
-        return new double[] { x, y };
+        return new double[] {x, y};
     }
 
     /** {@inheritDoc} */

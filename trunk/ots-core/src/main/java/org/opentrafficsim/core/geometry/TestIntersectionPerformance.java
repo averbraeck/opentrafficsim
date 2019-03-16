@@ -140,7 +140,7 @@ public final class TestIntersectionPerformance
         for (int variant = 0; variant <= 1; variant++)
         {
             System.out.println(Results.getHeader());
-            for (int numVertices : new int[] { 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000 })
+            for (int numVertices : new int[] {10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000})
             {
                 if (numEdges / numVertices > 2)
                 {

@@ -63,7 +63,7 @@ public class Acceleration3D implements Serializable
     public Acceleration3D(final Acceleration x, final Acceleration y, final Acceleration z) throws ValueException
     {
         super();
-        this.acceleration = new AccelerationVector(new Acceleration[] { x, y, z }, StorageType.DENSE);
+        this.acceleration = new AccelerationVector(new Acceleration[] {x, y, z}, StorageType.DENSE);
     }
 
     /**
@@ -77,7 +77,7 @@ public class Acceleration3D implements Serializable
     public Acceleration3D(final double x, final double y, final double z, final AccelerationUnit unit) throws ValueException
     {
         super();
-        this.acceleration = new AccelerationVector(new double[] { x, y, z }, unit, StorageType.DENSE);
+        this.acceleration = new AccelerationVector(new double[] {x, y, z}, unit, StorageType.DENSE);
     }
 
     /**

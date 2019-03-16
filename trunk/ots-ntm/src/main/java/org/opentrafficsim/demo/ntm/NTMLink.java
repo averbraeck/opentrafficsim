@@ -263,7 +263,7 @@ public class NTMLink extends CapacityOTSLink
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate coordStart = new Coordinate(startNode.getPoint().x, startNode.getPoint().y);
         Coordinate coordEnd = new Coordinate(endNode.getPoint().x, endNode.getPoint().y);
-        Coordinate[] coords = new Coordinate[] { coordStart, coordEnd };
+        Coordinate[] coords = new Coordinate[] {coordStart, coordEnd};
         LineString line = geometryFactory.createLineString(coords);
         OTSLine3D geometry = null;
         try

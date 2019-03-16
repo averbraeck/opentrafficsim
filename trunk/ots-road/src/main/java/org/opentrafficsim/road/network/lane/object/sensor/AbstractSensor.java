@@ -141,7 +141,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     @Override
     public final void trigger(final LaneBasedGTU gtu)
     {
-        fireTimedEvent(SingleSensor.SENSOR_TRIGGER_EVENT, new Object[] { getId(), this, gtu, this.positionType },
+        fireTimedEvent(SingleSensor.SENSOR_TRIGGER_EVENT, new Object[] {getId(), this, gtu, this.positionType},
                 getSimulator().getSimulatorTime());
         triggerResponse(gtu);
     }
@@ -182,7 +182,7 @@ public abstract class AbstractSensor extends AbstractLaneBasedObject implements 
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
+    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
     @Override
     public boolean equals(final Object obj)
     {

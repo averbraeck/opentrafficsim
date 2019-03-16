@@ -81,7 +81,9 @@ public class ParamComments
                 {
                     processDirOrFile(subFile);
                 }
-                else if (subFile.getName().endsWith(".java") && !subFile.getName().startsWith("package-info"))
+                else if (subFile.getName().endsWith(".java") && !subFile.getName().startsWith("package-info")
+                        && !srcFolder.getName().contains("generated") && !subFile.getName().contains("ProtoBuf")
+                        && !srcFolder.getName().contains(".proto"))
                 {
                     processJavaFile(subFile);
                 }

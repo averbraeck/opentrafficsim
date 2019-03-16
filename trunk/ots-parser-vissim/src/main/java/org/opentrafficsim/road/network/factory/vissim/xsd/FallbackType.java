@@ -44,7 +44,7 @@ import javax.xml.namespace.QName;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fallbackType", namespace = "http://www.w3.org/2001/XInclude", propOrder = { "content" })
+@XmlType(name = "fallbackType", namespace = "http://www.w3.org/2001/XInclude", propOrder = {"content"})
 public class FallbackType
 {
 

@@ -83,11 +83,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     {
         try
         {
-            return NeighborsUtil.perceive(
-                    NeighborsUtil.getFirstDownstreamGTUs(
-                            getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getFront(),
-                            getGtu().getFront(), RelativePosition.REAR, getTimestamp()),
-                    this.headwayGtuType, getGtu(), true);
+            return NeighborsUtil.perceive(NeighborsUtil.getFirstDownstreamGTUs(
+                    getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getFront(),
+                    getGtu().getFront(), RelativePosition.REAR, getTimestamp()), this.headwayGtuType, getGtu(), true);
         }
         catch (ParameterException | GTUException | IllegalArgumentException exception)
         {
@@ -113,11 +111,9 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     {
         try
         {
-            return NeighborsUtil.perceive(
-                    NeighborsUtil.getFirstUpstreamGTUs(
-                            getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getRear(),
-                            getGtu().getRear(), RelativePosition.FRONT, getTimestamp()),
-                    this.headwayGtuType, getGtu(), false);
+            return NeighborsUtil.perceive(NeighborsUtil.getFirstUpstreamGTUs(
+                    getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getRear(),
+                    getGtu().getRear(), RelativePosition.FRONT, getTimestamp()), this.headwayGtuType, getGtu(), false);
         }
         catch (ParameterException | GTUException | IllegalArgumentException exception)
         {
