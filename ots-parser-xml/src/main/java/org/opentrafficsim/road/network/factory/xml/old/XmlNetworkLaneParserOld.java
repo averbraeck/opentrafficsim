@@ -524,7 +524,7 @@ public class XmlNetworkLaneParserOld implements Serializable
         double start = Double.parseDouble(startTimeString);
         start = 0;
         double duration = Double.parseDouble(durations.get(startTimeString));
-        TimeVector tv = new TimeVector(new double[] { start, start + duration }, TimeUnit.BASE, StorageType.DENSE);
+        TimeVector tv = new TimeVector(new double[] {start, start + duration}, TimeUnit.BASE, StorageType.DENSE);
         // Categorization categorization = new Categorization("AimsunOTSExport", firstGTUType, otherGTUTypes);
         Categorization categorization = new Categorization("AimsunOTSExport", GTUType.class);
         ODMatrix od = new ODMatrix("ODExample", new ArrayList<>(origins), new ArrayList<>(destinations), categorization, tv,
@@ -552,7 +552,7 @@ public class XmlNetworkLaneParserOld implements Serializable
             Category category = new Category(categorization, gtuType);
             org.opentrafficsim.core.network.Node from = otsNetwork.getNode(map.get("origin"));
             org.opentrafficsim.core.network.Node to = otsNetwork.getNode(map.get("destination"));
-            FrequencyVector demand = new FrequencyVector(new double[] { Double.parseDouble(map.get("flow")), 0 },
+            FrequencyVector demand = new FrequencyVector(new double[] {Double.parseDouble(map.get("flow")), 0},
                     FrequencyUnit.PER_HOUR, StorageType.DENSE);
             od.putDemandVector(from, to, category, demand);
             System.out.println(

@@ -164,21 +164,21 @@ public class TJunctionDemo extends OTSSimulationApplication<TJunctionModel>
                 {
                     trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
                     this.simulator.scheduleEventRel(new Duration(30.0, DurationUnit.SECOND), this, this, "changePhase",
-                            new Object[] { trafficLight });
+                            new Object[] {trafficLight});
                     break;
                 }
                 case YELLOW:
                 {
                     trafficLight.setTrafficLightColor(TrafficLightColor.RED);
                     this.simulator.scheduleEventRel(new Duration(56.0, DurationUnit.SECOND), this, this, "changePhase",
-                            new Object[] { trafficLight });
+                            new Object[] {trafficLight});
                     break;
                 }
                 case GREEN:
                 {
                     trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
                     this.simulator.scheduleEventRel(new Duration(4.0, DurationUnit.SECOND), this, this, "changePhase",
-                            new Object[] { trafficLight });
+                            new Object[] {trafficLight});
                     break;
                 }
                 default:

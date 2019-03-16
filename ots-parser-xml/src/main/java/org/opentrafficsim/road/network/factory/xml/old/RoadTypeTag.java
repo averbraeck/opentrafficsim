@@ -84,7 +84,8 @@ class RoadTypeTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseRoadTypes(final NodeList nodeList, final XmlNetworkLaneParserOld parser) throws SAXException, NetworkException
+    static void parseRoadTypes(final NodeList nodeList, final XmlNetworkLaneParserOld parser)
+            throws SAXException, NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "ROADTYPE"))
         {
@@ -102,7 +103,8 @@ class RoadTypeTag implements Serializable
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static RoadTypeTag parseRoadType(final Node node, final XmlNetworkLaneParserOld parser) throws SAXException, NetworkException
+    static RoadTypeTag parseRoadType(final Node node, final XmlNetworkLaneParserOld parser)
+            throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         RoadTypeTag roadTypeTag = new RoadTypeTag();

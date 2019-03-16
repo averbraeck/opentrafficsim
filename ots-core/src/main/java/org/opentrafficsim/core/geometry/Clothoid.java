@@ -255,7 +255,7 @@ public final class Clothoid
             cc = -cc;
             ss = -ss;
         }
-        return new double[] { cc, ss };
+        return new double[] {cc, ss};
     }
 
     /**
@@ -270,7 +270,7 @@ public final class Clothoid
         double a = Math.sqrt(Math.PI / Math.abs(cDot));
 
         double[] xy = fresnel(initialCurvature + s / a);
-        return new double[] { xy[0] * a, xy[1] * a * Math.signum(cDot), s * s * cDot * 0.5 };
+        return new double[] {xy[0] * a, xy[1] * a * Math.signum(cDot), s * s * cDot * 0.5};
     }
 
     /**

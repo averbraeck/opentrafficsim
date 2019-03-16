@@ -91,7 +91,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     private static final long serialVersionUID = 20141118L;
 
     /** Standard speed values in km/h. */
-    static final double[] STANDARDSPEEDS = { 30, 50, 80, 100, 120 };
+    static final double[] STANDARDSPEEDS = {30, 50, 80, 100, 120};
 
     /** The car following model. */
     private GTUFollowingModelOld carFollowingModel;

@@ -272,21 +272,21 @@ public final class AHFEUtil
         }
 
         TimeVector timeVector =
-                new TimeVector(new double[] { 0, 360, 1560, 2160, 3960 }, TimeUnit.BASE_SECOND, StorageType.DENSE);
+                new TimeVector(new double[] {0, 360, 1560, 2160, 3960}, TimeUnit.BASE_SECOND, StorageType.DENSE);
         double leftLeft = leftDemand.si * leftFraction;
         FrequencyVector leftLeftDemandPattern = new FrequencyVector(
-                new double[] { leftLeft * 0.5, leftLeft * 0.5, leftLeft, leftLeft, 0.0 }, FrequencyUnit.SI, StorageType.DENSE);
+                new double[] {leftLeft * 0.5, leftLeft * 0.5, leftLeft, leftLeft, 0.0}, FrequencyUnit.SI, StorageType.DENSE);
         double leftRight = leftDemand.si * (1 - leftFraction);
         FrequencyVector leftRightDemandPattern =
-                new FrequencyVector(new double[] { leftRight * 0.5, leftRight * 0.5, leftRight, leftRight, 0.0 },
+                new FrequencyVector(new double[] {leftRight * 0.5, leftRight * 0.5, leftRight, leftRight, 0.0},
                         FrequencyUnit.SI, StorageType.DENSE);
         double rightLeft = rightDemand.si * leftFraction;
         FrequencyVector rightLeftDemandPattern =
-                new FrequencyVector(new double[] { rightLeft * 0.5, rightLeft * 0.5, rightLeft, rightLeft, 0.0 },
+                new FrequencyVector(new double[] {rightLeft * 0.5, rightLeft * 0.5, rightLeft, rightLeft, 0.0},
                         FrequencyUnit.SI, StorageType.DENSE);
         double rightRight = rightDemand.si * (1 - leftFraction);
         FrequencyVector rightRightDemandPattern =
-                new FrequencyVector(new double[] { rightRight * 0.5, rightRight * 0.5, rightRight, rightRight, 0.0 },
+                new FrequencyVector(new double[] {rightRight * 0.5, rightRight * 0.5, rightRight, rightRight, 0.0},
                         FrequencyUnit.SI, StorageType.DENSE);
         // This defaults to stepwise interpolation, should have been linear.
         HeadwayGeneratorDemand leftLeftHeadways = new HeadwayGeneratorDemand(timeVector, leftLeftDemandPattern, simulator);

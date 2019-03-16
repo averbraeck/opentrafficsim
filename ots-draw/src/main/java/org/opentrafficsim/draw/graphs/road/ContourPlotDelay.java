@@ -153,7 +153,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
      */
     private static BoundsPaintScale createPaintScale()
     {
-        double[] boundaries = { 0.0, 0.05, 0.2 };
+        double[] boundaries = {0.0, 0.05, 0.2};
         Color[] colorValues = BoundsPaintScale.GREEN_RED;
         return new BoundsPaintScale(boundaries, colorValues);
     }

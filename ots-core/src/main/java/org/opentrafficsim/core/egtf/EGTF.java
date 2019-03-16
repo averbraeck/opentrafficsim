@@ -538,7 +538,7 @@ public class EGTF
      * @param quantities Quantity&lt;?, ?&gt;...; quantities to calculate filtered data of
      * @return Filter; filtered data, {@code null} when interrupted
      */
-    @SuppressWarnings({ "synthetic-access", "methodlength" })
+    @SuppressWarnings({"synthetic-access", "methodlength"})
     public Filter filterSI(final double[] location, final double[] time, final Quantity<?, ?>... quantities)
     {
         Objects.requireNonNull(location, "Location may not be null.");

@@ -123,7 +123,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuDataInterface> impl
      * @param <RU> the corresponding relative unit
      * @return interpolated value
      */
-    @SuppressWarnings({ "unchecked", "checkstyle:designforextension" })
+    @SuppressWarnings({"unchecked", "checkstyle:designforextension"})
     public <AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>> T interpolate(final T value0, final T value1,
             final double f)
     {

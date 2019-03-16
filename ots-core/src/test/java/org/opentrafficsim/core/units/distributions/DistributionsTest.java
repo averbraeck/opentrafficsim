@@ -91,12 +91,12 @@ public class DistributionsTest
     public final void testConstructors() throws ClassNotFoundException
     {
         AbsoluteLinearUnit<?, ?>[] absoluteUnits =
-                { DirectionUnit.BASE, PositionUnit.BASE, AbsoluteTemperatureUnit.KELVIN, TimeUnit.BASE, AbsJunkUnit.BASE };
-        Unit<?>[] relativeUnits = { AccelerationUnit.SI, AngleUnit.SI, AngleSolidUnit.SI, AreaUnit.SI, DensityUnit.SI,
+                {DirectionUnit.BASE, PositionUnit.BASE, AbsoluteTemperatureUnit.KELVIN, TimeUnit.BASE, AbsJunkUnit.BASE};
+        Unit<?>[] relativeUnits = {AccelerationUnit.SI, AngleUnit.SI, AngleSolidUnit.SI, AreaUnit.SI, DensityUnit.SI,
                 DimensionlessUnit.SI, ElectricalChargeUnit.SI, ElectricalCurrentUnit.SI, ElectricalPotentialUnit.SI,
                 ElectricalResistanceUnit.SI, EnergyUnit.SI, FlowMassUnit.SI, FlowVolumeUnit.SI, ForceUnit.SI, FrequencyUnit.SI,
                 LengthUnit.SI, LinearDensityUnit.SI, MassUnit.SI, PowerUnit.SI, PressureUnit.SI, SpeedUnit.SI,
-                TemperatureUnit.SI, DurationUnit.SI, TorqueUnit.SI, VolumeUnit.SI, JunkUnit.SI };
+                TemperatureUnit.SI, DurationUnit.SI, TorqueUnit.SI, VolumeUnit.SI, JunkUnit.SI};
 
         DistContinuous distCont = new DistContinuous(null)
         {
@@ -163,7 +163,7 @@ public class DistributionsTest
      * @param distribution DistContinuous; the random source
      * @param unit Unit
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void checkDoubleAbsContUnit(final DistContinuous distribution, final AbsoluteLinearUnit unit)
     {
         ContinuousDistDoubleScalar.Abs dist = new ContinuousDistDoubleScalar.Abs(distribution, unit);
@@ -189,7 +189,7 @@ public class DistributionsTest
      * @param distribution DistContinuous; the random source
      * @param unit Unit
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void checkDoubleRelContUnit(final DistContinuous distribution, final Unit unit)
     {
         ContinuousDistDoubleScalar.Rel dist = new ContinuousDistDoubleScalar.Rel(distribution, unit);
@@ -215,7 +215,7 @@ public class DistributionsTest
      * @param distribution DistDiscrete; the random source
      * @param unit Unit
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void checkDoubleAbsDiscUnit(final DistDiscrete distribution, final AbsoluteLinearUnit unit)
     {
         DiscreteDistDoubleScalar.Abs dist = new DiscreteDistDoubleScalar.Abs(distribution, unit);
@@ -241,7 +241,7 @@ public class DistributionsTest
      * @param distribution DistContinuous; the random source
      * @param unit Unit
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void checkDoubleRelDiscUnit(final DistDiscrete distribution, final Unit unit)
     {
         DiscreteDistDoubleScalar.Rel dist = new DiscreteDistDoubleScalar.Rel(distribution, unit);
@@ -267,7 +267,7 @@ public class DistributionsTest
      * @param distribution DistContinuous; the random source
      * @param unit Unit
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void checkFloatAbsContUnit(final DistContinuous distribution, final AbsoluteLinearUnit unit)
     {
         ContinuousDistFloatScalar.Abs dist = new ContinuousDistFloatScalar.Abs(distribution, unit);
@@ -293,7 +293,7 @@ public class DistributionsTest
      * @param distribution DistContinuous; the random source
      * @param unit Unit
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void checkFloatRelContUnit(final DistContinuous distribution, final Unit unit)
     {
         ContinuousDistFloatScalar.Rel dist = new ContinuousDistFloatScalar.Rel(distribution, unit);
@@ -319,7 +319,7 @@ public class DistributionsTest
      * @param distribution DistDiscrete; the random source
      * @param unit Unit
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void checkFloatAbsDiscUnit(final DistDiscrete distribution, final AbsoluteLinearUnit unit)
     {
         DiscreteDistFloatScalar.Abs dist = new DiscreteDistFloatScalar.Abs(distribution, unit);
@@ -345,7 +345,7 @@ public class DistributionsTest
      * @param distribution DistContinuous; the random source
      * @param unit Unit
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void checkFloatRelDiscUnit(final DistDiscrete distribution, final Unit unit)
     {
         DiscreteDistFloatScalar.Rel dist = new DiscreteDistFloatScalar.Rel(distribution, unit);

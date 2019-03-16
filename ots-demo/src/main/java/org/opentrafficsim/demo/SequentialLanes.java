@@ -287,7 +287,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                 OTSNode n3 = new OTSNode(this.network, "Node(2000,197)", new OTSPoint3D(2000, 197));
                 OTSNode n4 = new OTSNode(this.network, "Node(2020,200)", new OTSPoint3D(2020, 200));
                 OTSNode n5 = new OTSNode(this.network, "Node(2200,200)", new OTSPoint3D(2200, 200));
-                this.nodes.addAll(Arrays.asList(new OTSNode[] { n0, n1, n2, n3, n4, n5 }));
+                this.nodes.addAll(Arrays.asList(new OTSNode[] {n0, n1, n2, n3, n4, n5}));
 
                 LaneType laneType = LaneType.TWO_WAY_LANE;
 
@@ -299,7 +299,7 @@ public class SequentialLanes extends OTSSimulationApplication<SequentialModel> i
                         minus ? new OTSLine3D(n3.getPoint(), n2.getPoint()) : new OTSLine3D(n2.getPoint(), n3.getPoint());
                 OTSLine3D l34 = LaneFactory.makeBezier(n2, n3, n4, n5);
                 OTSLine3D l45 = new OTSLine3D(n4.getPoint(), n5.getPoint());
-                OTSLine3D[] lines = new OTSLine3D[] { l01, l12, l23, l34, l45 };
+                OTSLine3D[] lines = new OTSLine3D[] {l01, l12, l23, l34, l45};
 
                 for (int i = 1; i < this.nodes.size(); i++)
                 {

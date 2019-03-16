@@ -273,7 +273,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new TimedEvent<Time>(Link.GTU_ADD_EVENT, link, new Object[] { gtu.getId(), gtu, gtuCount },
+                    this.notify(new TimedEvent<Time>(Link.GTU_ADD_EVENT, link, new Object[] {gtu.getId(), gtu, gtuCount},
                             getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
@@ -383,11 +383,11 @@ public class LinkGTUTransceiver extends AbstractTransceiver
         double timestamp = getSimulator().getSimulatorTime().si;
         if (Link.GTU_ADD_EVENT.equals(event.getType()))
         {
-            return new Object[] { timestamp, link.getNetwork().getId(), link.getId(), true, gtuId, countAfterEvent };
+            return new Object[] {timestamp, link.getNetwork().getId(), link.getId(), true, gtuId, countAfterEvent};
         }
         else if (Link.GTU_REMOVE_EVENT.equals(event.getType()))
         {
-            return new Object[] { timestamp, link.getNetwork().getId(), link.getId(), false, gtuId, countAfterEvent };
+            return new Object[] {timestamp, link.getNetwork().getId(), link.getId(), false, gtuId, countAfterEvent};
         }
         System.err.println("LinkGTUTransceiver.transformChange: Don't know how to transform event " + event);
         return new Object[] {};
@@ -404,7 +404,7 @@ public class LinkGTUTransceiver extends AbstractTransceiver
         {
             String linkId = (String) event.getContent();
             double timestamp = getSimulator().getSimulatorTime().si;
-            return new Object[] { timestamp, this.network.getId(), linkId };
+            return new Object[] {timestamp, this.network.getId(), linkId};
         }
         System.err.println("LinkGTUTransceiver.transformDelete: Don't know how to transform event " + event);
         return new Object[] {};

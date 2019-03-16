@@ -34,14 +34,14 @@ public class MarkovCorrelationTest
         // nulls
         testAddState(markov, null, 0.0, "Null state should fail.");
         // correlations
-        double[] corr = new double[] { -2.0, -1.0, 1.0, 2.0 };
+        double[] corr = new double[] {-2.0, -1.0, 1.0, 2.0};
         int n = 1;
         for (int i = 0; i < corr.length; i++)
         {
             testAddState(markov, "n" + n, corr[i], String.format("Correlation of %.2f should fail.", corr[i]));
             n++;
         }
-        corr = new double[] { -0.99, -0.5, 0.0, 0.5, 0.99 };
+        corr = new double[] {-0.99, -0.5, 0.0, 0.5, 0.99};
         String superState = "";
         for (int i = 0; i < corr.length; i++)
         {
@@ -67,13 +67,13 @@ public class MarkovCorrelationTest
         testAddState(markov, superState, null, 0.0, "Null state should fail."); // super exists
         n++;
         // correlations
-        corr = new double[] { -2.0, -1.0, 1.0, 2.0 };
+        corr = new double[] {-2.0, -1.0, 1.0, 2.0};
         for (int i = 0; i < corr.length; i++)
         {
             testAddState(markov, superState, "n" + n, corr[i], String.format("Correlation of %.2f should fail.", corr[i]));
             n++;
         }
-        corr = new double[] { 0.11, 0.5, 0.99 };
+        corr = new double[] {0.11, 0.5, 0.99};
         for (int i = 0; i < corr.length; i++)
         {
             try
@@ -144,14 +144,14 @@ public class MarkovCorrelationTest
 
         // without correlation
         MarkovCorrelation<String, Double> markov = new MarkovCorrelation<>();
-        String[] states = new String[] { "Car", "Bus", "Truck" };
+        String[] states = new String[] {"Car", "Bus", "Truck"};
         for (int i = 0; i < states.length; i++)
         {
             markov.addState(states[i], 0.0);
         }
         StreamInterface stream = new MersenneTwister(1L);
         int nTot = 1000000;
-        Double[] ss = new Double[] { .7 * nTot, .2 * nTot, .1 * nTot }; // steady state
+        Double[] ss = new Double[] {.7 * nTot, .2 * nTot, .1 * nTot}; // steady state
         for (int i = 0; i < states.length; i++)
         {
             int[] n = new int[states.length];
@@ -180,7 +180,7 @@ public class MarkovCorrelationTest
 
         // with correlation
         markov = new MarkovCorrelation<>();
-        double[] correlation = new double[] { 0.2, 0.3, 0.8 };
+        double[] correlation = new double[] {0.2, 0.3, 0.8};
         for (int i = 0; i < states.length; i++)
         {
             markov.addState(states[i], correlation[i]);
@@ -226,9 +226,9 @@ public class MarkovCorrelationTest
 
         // with subgroup
         markov = new MarkovCorrelation<>();
-        states = new String[] { "Car", "SlowVehicle", "Bus", "Truck" };
-        ss = new Double[] { .6 * nTot, .2 * nTot, .15 * nTot, .05 * nTot };
-        correlation = new double[] { 0.2, 0.4, 0.7, 0.7 };
+        states = new String[] {"Car", "SlowVehicle", "Bus", "Truck"};
+        ss = new Double[] {.6 * nTot, .2 * nTot, .15 * nTot, .05 * nTot};
+        correlation = new double[] {0.2, 0.4, 0.7, 0.7};
         double[] correlation2 = new double[4];
         for (int i = 1; i < states.length; i++)
         {

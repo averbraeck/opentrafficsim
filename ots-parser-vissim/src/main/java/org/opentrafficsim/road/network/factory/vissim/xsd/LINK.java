@@ -208,8 +208,8 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "bezier", "clothoid", "straight", "arc", "polyline", "roadlayout",
-        "laneoverrideOrGENERATOROrLISTGENERATOR" })
+@XmlType(name = "", propOrder = {"bezier", "clothoid", "straight", "arc", "polyline", "roadlayout",
+        "laneoverrideOrGENERATOROrLISTGENERATOR"})
 @XmlRootElement(name = "LINK")
 public class LINK
 {
@@ -232,13 +232,13 @@ public class LINK
     @XmlElement(name = "ROADLAYOUT")
     protected ROADLAYOUT roadlayout;
 
-    @XmlElements({ @XmlElement(name = "LANEOVERRIDE", type = LINK.LANEOVERRIDE.class),
+    @XmlElements({@XmlElement(name = "LANEOVERRIDE", type = LINK.LANEOVERRIDE.class),
             @XmlElement(name = "GENERATOR", type = LINK.GENERATOR.class),
             @XmlElement(name = "LISTGENERATOR", type = LINK.LISTGENERATOR.class),
             @XmlElement(name = "FILL", type = LINK.FILL.class), @XmlElement(name = "BLOCK", type = LINK.BLOCK.class),
             @XmlElement(name = "SENSOR", type = LINK.SENSOR.class),
             @XmlElement(name = "TRAFFICLIGHT", type = LINK.TRAFFICLIGHT.class),
-            @XmlElement(name = "SINK", type = LINK.SINK.class) })
+            @XmlElement(name = "SINK", type = LINK.SINK.class)})
     protected List<Object> laneoverrideOrGENERATOROrLISTGENERATOR;
 
     @XmlAttribute(name = "NAME", required = true)

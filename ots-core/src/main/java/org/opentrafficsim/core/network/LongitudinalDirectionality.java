@@ -23,11 +23,11 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 public enum LongitudinalDirectionality
 {
     /** Direction the same as the direction of the graph, increasing fractional position when driving in this direction. */
-    DIR_PLUS(new GTUDirectionality[] { GTUDirectionality.DIR_PLUS }),
+    DIR_PLUS(new GTUDirectionality[] {GTUDirectionality.DIR_PLUS}),
     /** Direction opposite to the direction of the graph, decreasing fractional position when driving in this direction. */
-    DIR_MINUS(new GTUDirectionality[] { GTUDirectionality.DIR_MINUS }),
+    DIR_MINUS(new GTUDirectionality[] {GTUDirectionality.DIR_MINUS}),
     /** Bidirectional. */
-    DIR_BOTH(new GTUDirectionality[] { GTUDirectionality.DIR_PLUS, GTUDirectionality.DIR_MINUS }),
+    DIR_BOTH(new GTUDirectionality[] {GTUDirectionality.DIR_PLUS, GTUDirectionality.DIR_MINUS}),
     /** No traffic possible. */
     DIR_NONE(new GTUDirectionality[] {});
 

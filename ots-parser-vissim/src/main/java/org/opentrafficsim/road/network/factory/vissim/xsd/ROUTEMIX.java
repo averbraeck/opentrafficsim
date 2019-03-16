@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "route" })
+@XmlType(name = "", propOrder = {"route"})
 @XmlRootElement(name = "ROUTEMIX")
 public class ROUTEMIX
 {

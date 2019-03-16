@@ -221,8 +221,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             RollingLaneStructureRecord newRoot = constructRecord(lane, direction, null, RecordLink.CROSS, RelativeLane.CURRENT);
             this.root.set(newRoot);
             this.crossSectionRecords.put(RelativeLane.CURRENT, newRoot);
-            for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                    LateralDirectionality.RIGHT })
+            for (LateralDirectionality latDirection : new LateralDirectionality[] {LateralDirectionality.LEFT,
+                    LateralDirectionality.RIGHT})
             {
                 RollingLaneStructureRecord current = newRoot;
                 RelativeLane relativeLane = RelativeLane.CURRENT;
@@ -331,8 +331,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable
 
                 this.crossSectionRecords.clear();
                 this.crossSectionRecords.put(RelativeLane.CURRENT, newRoot);
-                for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                        LateralDirectionality.RIGHT })
+                for (LateralDirectionality latDirection : new LateralDirectionality[] {LateralDirectionality.LEFT,
+                        LateralDirectionality.RIGHT})
                 {
                     RollingLaneStructureRecord record = newRoot;
                     RollingLaneStructureRecord next = newRoot;
@@ -420,8 +420,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             Set<RollingLaneStructureRecord> newSet = new HashSet<>();
             for (RollingLaneStructureRecord record : set)
             {
-                for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                        LateralDirectionality.RIGHT })
+                for (LateralDirectionality latDirection : new LateralDirectionality[] {LateralDirectionality.LEFT,
+                        LateralDirectionality.RIGHT})
                 {
                     prev = record;
                     next = latDirection.isLeft() ? record.getLeft() : record.getRight();
@@ -602,8 +602,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable
         while (iterator.hasNext())
         {
             RollingLaneStructureRecord record = iterator.next();
-            for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                    LateralDirectionality.RIGHT })
+            for (LateralDirectionality latDirection : new LateralDirectionality[] {LateralDirectionality.LEFT,
+                    LateralDirectionality.RIGHT})
             {
                 RelativeLane relativeLane = this.relativeLanes.get(record);
                 RollingLaneStructureRecord prev = record;
@@ -746,8 +746,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable
             for (RollingLaneStructureRecord record : nexts)
             {
                 RollingLaneStructureRecord prev = record;
-                for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                        LateralDirectionality.RIGHT })
+                for (LateralDirectionality latDirection : new LateralDirectionality[] {LateralDirectionality.LEFT,
+                        LateralDirectionality.RIGHT})
                 {
                     while (prev != null)
                     {
@@ -1040,8 +1040,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable
     {
         for (RollingLaneStructureRecord other : nextSet)
         {
-            for (LateralDirectionality latDirection : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                    LateralDirectionality.RIGHT })
+            for (LateralDirectionality latDirection : new LateralDirectionality[] {LateralDirectionality.LEFT,
+                    LateralDirectionality.RIGHT})
             {
                 if ((latDirection.isLeft() ? other.getLeft() : other.getRight()) == null)
                 {

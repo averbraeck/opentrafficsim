@@ -56,13 +56,13 @@ public final class SpeedLimitUtil
         if (speedLimitInfo.containsType(SpeedLimitTypes.FIXED_SIGN)
                 || speedLimitInfo.containsType(SpeedLimitTypes.DYNAMIC_SIGN))
         {
-            speedLimitTypes = new SpeedLimitTypeSpeedLegal[] { SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED,
-                    SpeedLimitTypes.FIXED_SIGN, SpeedLimitTypes.DYNAMIC_SIGN };
+            speedLimitTypes = new SpeedLimitTypeSpeedLegal[] {SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED,
+                    SpeedLimitTypes.FIXED_SIGN, SpeedLimitTypes.DYNAMIC_SIGN};
         }
         else
         {
             speedLimitTypes =
-                    new SpeedLimitTypeSpeedLegal[] { SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED, SpeedLimitTypes.ROAD_CLASS };
+                    new SpeedLimitTypeSpeedLegal[] {SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED, SpeedLimitTypes.ROAD_CLASS};
         }
         Speed result = Speed.POSITIVE_INFINITY;
         for (SpeedLimitTypeSpeedLegal lsl : speedLimitTypes)
@@ -107,7 +107,7 @@ public final class SpeedLimitUtil
         SpeedLimitInfo currentSpeedLimitInfo = speedLimitProspect.getSpeedLimitInfo(Length.ZERO);
 
         // decelerate for curves and speed bumps
-        for (SpeedLimitType<?> speedLimitType : new SpeedLimitType[] { SpeedLimitTypes.CURVATURE, SpeedLimitTypes.SPEED_BUMP })
+        for (SpeedLimitType<?> speedLimitType : new SpeedLimitType[] {SpeedLimitTypes.CURVATURE, SpeedLimitTypes.SPEED_BUMP})
         {
             for (Length distance : speedLimitProspect.getDownstreamDistances(speedLimitType))
             {

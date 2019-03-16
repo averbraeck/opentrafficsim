@@ -278,7 +278,7 @@ public class GraphTransceiver extends AbstractTransceiver
 
         try
         {
-            simulator.scheduleEventRel(this.transmissionInterval, this, this, "makePNG", new Object[] { plot });
+            simulator.scheduleEventRel(this.transmissionInterval, this, this, "makePNG", new Object[] {plot});
         }
         catch (SimRuntimeException exception)
         {
@@ -296,7 +296,7 @@ public class GraphTransceiver extends AbstractTransceiver
     {
         byte[] png = plot.encodeAsPng(this.width, this.height, 32.0);
         getConnector().postIMBMessage("Graph", IMBEventType.CHANGE,
-                new Object[] { getSimulator().getSimulatorTime().si, plot.getId(), this.width, this.height, png });
-        getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "makePNG", new Object[] { plot });
+                new Object[] {getSimulator().getSimulatorTime().si, plot.getId(), this.width, this.height, png});
+        getSimulator().scheduleEventRel(this.transmissionInterval, this, this, "makePNG", new Object[] {plot});
     }
 }

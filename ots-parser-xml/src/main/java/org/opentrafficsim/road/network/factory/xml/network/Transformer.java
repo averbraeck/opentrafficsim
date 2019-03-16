@@ -43,7 +43,7 @@ public final class Transformer
     }
 
     /**
-     * @param positionType the JAXB position to parse
+     * @param positionType GTUPositionType; the JAXB position to parse
      * @return the corresponding OTS RelativePosition
      */
     public static RelativePosition.TYPE parseTriggerPosition(final GTUPositionType positionType)
@@ -63,7 +63,5 @@ public final class Transformer
                 return RelativePosition.REFERENCE;
         }
     }
-    
 
 }
-

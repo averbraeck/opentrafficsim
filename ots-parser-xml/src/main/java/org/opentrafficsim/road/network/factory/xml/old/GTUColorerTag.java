@@ -97,7 +97,7 @@ final class GTUColorerTag
         if (defaultColorer != null)
             return defaultColorer;
         GTUColorer[] gtuColorers =
-                new GTUColorer[] { new IDGTUColorer(), makeSpeedGTUColorer(globalTag), makeAccelerationGTUColorer(globalTag) };
+                new GTUColorer[] {new IDGTUColorer(), makeSpeedGTUColorer(globalTag), makeAccelerationGTUColorer(globalTag)};
         // TODO default colorer
         return new SwitchableGTUColorer(0, gtuColorers);
     }

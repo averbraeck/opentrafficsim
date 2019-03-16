@@ -545,7 +545,7 @@ public final class LaneOperationalPlanBuilder // class package private for sched
             time = gtu.getOperationalPlan().getEndTime();
         }
         SimEventInterface<SimTimeDoubleUnit> event = gtu.getSimulator().scheduleEventAbs(time, (short) 6, gtu, gtu,
-                "finalizeLaneChange", new Object[] { laneChangeDirection });
+                "finalizeLaneChange", new Object[] {laneChangeDirection});
         gtu.setFinalizeLaneChangeEvent(event);
     }
 

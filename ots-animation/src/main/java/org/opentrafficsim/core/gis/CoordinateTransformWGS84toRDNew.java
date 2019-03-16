@@ -47,7 +47,7 @@ public class CoordinateTransformWGS84toRDNew implements CoordinateTransform, Ser
     public final float[] floatTransform(final double x, final double y)
     {
         double[] d = doubleTransform(x, y);
-        return new float[] { (float) d[0], (float) d[1] };
+        return new float[] {(float) d[0], (float) d[1]};
     }
 
     /** {@inheritDoc} */
@@ -57,12 +57,12 @@ public class CoordinateTransformWGS84toRDNew implements CoordinateTransform, Ser
         try
         {
             Point2D c = TransformWGS84DutchRDNew.fromWGS84(x, y);
-            return new double[] { c.getX() - this.dx, c.getY() - this.dy };
+            return new double[] {c.getX() - this.dx, c.getY() - this.dy};
         }
         catch (Exception exception)
         {
             SimLogger.always().error(exception);
-            return new double[] { 0, 0 };
+            return new double[] {0, 0};
         }
     }
 

@@ -59,7 +59,7 @@ public class IncentiveGetInLane implements MandatoryIncentive
         double right = 0;
         double vCur = Double.POSITIVE_INFINITY;
 
-        for (RelativeLane lane : new RelativeLane[] { RelativeLane.LEFT, RelativeLane.RIGHT })
+        for (RelativeLane lane : new RelativeLane[] {RelativeLane.LEFT, RelativeLane.RIGHT})
         {
             if (infra.getCrossSection().contains(lane))
             {

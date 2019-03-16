@@ -149,7 +149,7 @@ public class SteeringSimulation extends AbstractSimulationScript
         List<Lane> originLanes = new ArrayList<>();
         for (int i = 0; i < n; i++)
         {
-            for (CrossSectionLink link : new CrossSectionLink[] { linkAB, linkBC, linkCD })
+            for (CrossSectionLink link : new CrossSectionLink[] {linkAB, linkBC, linkCD})
             {
                 Lane lane = new Lane(link, "Lane " + (i + 1), laneWidth.multiplyBy((0.5 + i)), laneWidth, LaneType.FREEWAY,
                         new Speed(120, SpeedUnit.KM_PER_HOUR), null);
@@ -190,16 +190,16 @@ public class SteeringSimulation extends AbstractSimulationScript
         origins.add(nodeE);
         List<OTSNode> destinations = new ArrayList<>();
         destinations.add(nodeD);
-        TimeVector timeVector = new TimeVector(new double[] { 0.0, 0.5, 1.0 }, TimeUnit.BASE_HOUR, StorageType.DENSE);
+        TimeVector timeVector = new TimeVector(new double[] {0.0, 0.5, 1.0}, TimeUnit.BASE_HOUR, StorageType.DENSE);
         Interpolation interpolation = Interpolation.LINEAR; // or STEPWISE
         Categorization categorization = new Categorization("GTU type", GTUType.class);
         Category carCategory = new Category(categorization, GTUType.CAR);
         Category truCategory = new Category(categorization, GTUType.TRUCK);
         ODMatrix odMatrix = new ODMatrix("Steering OD", origins, destinations, categorization, timeVector, interpolation);
 
-        odMatrix.putDemandVector(nodeA, nodeD, carCategory, freq(new double[] { 1000.0, 2000.0, 0.0 }));
-        odMatrix.putDemandVector(nodeA, nodeD, truCategory, freq(new double[] { 100.0, 200.0, 0.0 }));
-        odMatrix.putDemandVector(nodeE, nodeD, carCategory, freq(new double[] { 500.0, 1000.0, 0.0 }));
+        odMatrix.putDemandVector(nodeA, nodeD, carCategory, freq(new double[] {1000.0, 2000.0, 0.0}));
+        odMatrix.putDemandVector(nodeA, nodeD, truCategory, freq(new double[] {100.0, 200.0, 0.0}));
+        odMatrix.putDemandVector(nodeE, nodeD, carCategory, freq(new double[] {500.0, 1000.0, 0.0}));
 
         // anonymous tactical-planner-factory supplier
         AbstractLaneBasedTacticalPlannerFactory<SteeringLmrs> car = new AbstractLaneBasedTacticalPlannerFactory<SteeringLmrs>(

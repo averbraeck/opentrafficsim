@@ -166,7 +166,7 @@ public class CarTest implements UNITS
     {
         OTSNode n1 = new OTSNode(network, "n1", new OTSPoint3D(0, 0));
         OTSNode n2 = new OTSNode(network, "n2", new OTSPoint3D(100000.0, 0.0));
-        OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0) };
+        OTSPoint3D[] coordinates = new OTSPoint3D[] {new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0)};
         CrossSectionLink link12 = new CrossSectionLink(network, "link12", n1, n2, LinkType.ROAD, new OTSLine3D(coordinates),
                 simulator, LaneKeepingPolicy.KEEPRIGHT);
         Length latPos = new Length(0.0, METER);

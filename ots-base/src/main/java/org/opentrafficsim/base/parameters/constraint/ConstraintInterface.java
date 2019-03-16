@@ -67,7 +67,7 @@ package org.opentrafficsim.base.parameters.constraint;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-@SuppressWarnings({ "checkstyle:interfaceistype", "checkstyle:javadoctype", "checkstyle:javadocvariable", "javadoc" })
+@SuppressWarnings({"checkstyle:interfaceistype", "checkstyle:javadoctype", "checkstyle:javadocvariable", "javadoc"})
 public interface ConstraintInterface
 {
 

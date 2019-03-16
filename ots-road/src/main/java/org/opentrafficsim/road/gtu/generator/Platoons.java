@@ -284,7 +284,7 @@ public abstract class Platoons<T>
         if (!this.queue.isEmpty())
         {
             this.simulator.scheduleEventAbs(this.queue.peek().getTime(), this, this, "placeGtu",
-                    new Object[] { this.queue.poll() });
+                    new Object[] {this.queue.poll()});
         }
     }
 

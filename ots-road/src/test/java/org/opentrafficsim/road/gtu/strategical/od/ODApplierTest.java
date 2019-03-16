@@ -77,7 +77,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ OTSReplication.class, OTSSimulatorInterface.class })
+@PrepareForTest({OTSReplication.class, OTSSimulatorInterface.class})
 public class ODApplierTest
 {
 
@@ -228,7 +228,7 @@ public class ODApplierTest
         ODOptions odOptions = new ODOptions().set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
 
         // Stepwise interpolation with constant headways tests
-        ODMatrix od = getOD(new double[] { 100, 200, 300, 400, 500, 600 }, new double[] { 1000, 2000, 0, 0, 2000, 0 },
+        ODMatrix od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0},
                 Interpolation.STEPWISE, nodeA, nodeB, lane1, lane2);
         Map<String, GeneratorObjects> generatorObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
         assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
@@ -261,8 +261,8 @@ public class ODApplierTest
 
         // Linear interpolation with constant headways tests
         this.time = Time.ZERO;
-        od = getOD(new double[] { 100, 200, 300, 400, 500, 600 }, new double[] { 1000, 2000, 0, 0, 2000, 0 },
-                Interpolation.LINEAR, nodeA, nodeB, lane1, lane2);
+        od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0}, Interpolation.LINEAR,
+                nodeA, nodeB, lane1, lane2);
         generatorObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
         assertEquals("Incorrect number of generator created or returned.", generatorObjects.size(), 2);
         for (String id : generatorObjects.keySet())
@@ -304,7 +304,7 @@ public class ODApplierTest
                 {
                     this.time = Time.ZERO;
                     odOptions = new ODOptions().set(ODOptions.HEADWAY_DIST, headwayRandomization);
-                    od = getOD(new double[] { 1200, 2400, 3600, 4800, 6000, 7200 }, new double[] { 1000, 2000, 0, 0, 2000, 0 },
+                    od = getOD(new double[] {1200, 2400, 3600, 4800, 6000, 7200}, new double[] {1000, 2000, 0, 0, 2000, 0},
                             interpolation, nodeA, nodeB, lane1, lane2);
                     generatorObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
                     assertEquals("Incorrect number of generators created or returned.", generatorObjects.size(), 2);
@@ -479,8 +479,8 @@ public class ODApplierTest
         Lane lane1 = this.lanes.get("lane1");
         Lane lane2 = this.lanes.get("lane2");
         ODOptions odOptions = new ODOptions().set(ODOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
-        ODMatrix od = getOD(new double[] { 0, 100, 200 }, new double[] { 1000, 1500, 0 }, Interpolation.LINEAR, nodeA, nodeB,
-                lane1, lane2);
+        ODMatrix od = getOD(new double[] {0, 100, 200}, new double[] {1000, 1500, 0}, Interpolation.LINEAR, nodeA, nodeB, lane1,
+                lane2);
         Map<String, GeneratorObjects> generatorObjects = ODApplier.applyOD(this.network, od, this.simulator, odOptions);
         int nTot = 1000;
         int nCar = nTot / 2;

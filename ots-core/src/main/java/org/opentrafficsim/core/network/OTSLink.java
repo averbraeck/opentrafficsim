@@ -122,7 +122,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         if (!this.gtus.contains(gtu))
         {
             this.gtus.add(gtu);
-            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
+            fireTimedEvent(Link.GTU_ADD_EVENT, new Object[] {gtu.getId(), gtu, this.gtus.size()},
                     gtu.getSimulator().getSimulatorTime());
         }
     }
@@ -134,7 +134,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
         if (this.gtus.contains(gtu))
         {
             this.gtus.remove(gtu);
-            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] { gtu.getId(), gtu, this.gtus.size() },
+            fireTimedEvent(Link.GTU_REMOVE_EVENT, new Object[] {gtu.getId(), gtu, this.gtus.size()},
                     gtu.getSimulator().getSimulatorTime());
         }
     }
@@ -257,7 +257,7 @@ public class OTSLink extends EventProducer implements Link, Serializable, Locata
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
         if (this == obj)

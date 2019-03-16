@@ -168,7 +168,7 @@ public class NetworksSwing extends OTSSimulationApplication<NetworksModel> imple
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({"rawtypes", "unchecked"})
         @Override
         public void addParameterField(final JPanel panel, final InputParameter<?, ?> parameter)
         {

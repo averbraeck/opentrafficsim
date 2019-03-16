@@ -51,7 +51,7 @@ public class Angle3D implements Serializable
      */
     public Angle3D(final Angle roll, final Angle pitch, final Angle yaw) throws ValueException
     {
-        this.rotation = new AngleVector(new Angle[] { roll, pitch, yaw }, StorageType.DENSE);
+        this.rotation = new AngleVector(new Angle[] {roll, pitch, yaw}, StorageType.DENSE);
     }
 
     /**
@@ -63,7 +63,7 @@ public class Angle3D implements Serializable
      */
     public Angle3D(final double roll, final double pitch, final double yaw, final AngleUnit unit) throws ValueException
     {
-        this.rotation = new AngleVector(new double[] { roll, pitch, yaw }, unit, StorageType.DENSE);
+        this.rotation = new AngleVector(new double[] {roll, pitch, yaw}, unit, StorageType.DENSE);
     }
 
     /**

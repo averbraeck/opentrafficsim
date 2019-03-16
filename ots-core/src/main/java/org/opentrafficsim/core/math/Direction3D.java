@@ -51,7 +51,7 @@ public class Direction3D implements Serializable
      */
     public Direction3D(final Direction roll, final Direction pitch, final Direction yaw) throws ValueException
     {
-        this.rotation = new DirectionVector(new Direction[] { roll, pitch, yaw }, StorageType.DENSE);
+        this.rotation = new DirectionVector(new Direction[] {roll, pitch, yaw}, StorageType.DENSE);
     }
 
     /**
@@ -63,7 +63,7 @@ public class Direction3D implements Serializable
      */
     public Direction3D(final double roll, final double pitch, final double yaw, final DirectionUnit unit) throws ValueException
     {
-        this.rotation = new DirectionVector(new double[] { roll, pitch, yaw }, unit, StorageType.DENSE);
+        this.rotation = new DirectionVector(new double[] {roll, pitch, yaw}, unit, StorageType.DENSE);
     }
 
     /**

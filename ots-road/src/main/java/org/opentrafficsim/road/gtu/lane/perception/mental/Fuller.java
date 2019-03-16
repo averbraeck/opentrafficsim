@@ -93,7 +93,7 @@ public class Fuller implements Mental
 
     /** Behavioral adaptations depending on task saturation. */
     private final Set<BehavioralAdaptation> behavioralAdapatations;
-    
+
     /** Task manager. */
     private final TaskManager taskManager;
 

@@ -179,7 +179,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
      * @throws GTUException when the preconditions of the parameters are not met or when the construction of the original
      *             waiting path fails
      */
-    @SuppressWarnings({ "checkstyle:hiddenfield", "hiding", "checkstyle:designforextension" })
+    @SuppressWarnings({"checkstyle:hiddenfield", "hiding", "checkstyle:designforextension"})
     public void init(final StrategicalPlanner strategicalPlanner, final DirectedPoint initialLocation, final Speed initialSpeed)
             throws SimRuntimeException, GTUException
     {
@@ -195,7 +195,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
         this.tacticalPlanner.set(strategicalPlanner.getTacticalPlanner());
         Time now = this.simulator.getSimulatorTime();
 
-        fireTimedEvent(GTU.INIT_EVENT, new Object[] { getId(), initialLocation, getLength(), getWidth() }, now);
+        fireTimedEvent(GTU.INIT_EVENT, new Object[] {getId(), initialLocation, getLength(), getWidth()}, now);
 
         try
         {
@@ -226,7 +226,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
     {
-        fireTimedEvent(GTU.DESTROY_EVENT, new Object[] { getId(), getLocation(), getOdometer() },
+        fireTimedEvent(GTU.DESTROY_EVENT, new Object[] {getId(), getLocation(), getOdometer()},
                 this.simulator.getSimulatorTime());
 
         // cancel the next move
@@ -302,8 +302,8 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
             DirectedPoint p = (tNext - now.si < 0.5) ? newOperationalPlan.getEndLocation()
                     : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
-            this.nextMoveEvent = new SimEvent<>(new SimTimeDoubleUnit(new Time(tNext, TimeUnit.BASE)), this, this, "move",
-                    new Object[] { p });
+            this.nextMoveEvent =
+                    new SimEvent<>(new SimTimeDoubleUnit(new Time(tNext, TimeUnit.BASE)), this, this, "move", new Object[] {p});
             ALIGN_COUNT++;
         }
         else
@@ -311,11 +311,11 @@ public abstract class AbstractGTU extends EventProducer implements GTU
             // schedule the next move at the end of the current operational plan
             // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
             this.nextMoveEvent = new SimEvent<>(new SimTimeDoubleUnit(now.plus(newOperationalPlan.getTotalDuration())), this,
-                    this, "move", new Object[] { newOperationalPlan.getEndLocation() });
+                    this, "move", new Object[] {newOperationalPlan.getEndLocation()});
         }
         this.simulator.scheduleEvent(this.nextMoveEvent);
 
-        fireTimedEvent(GTU.MOVE_EVENT, new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(), getOdometer() },
+        fireTimedEvent(GTU.MOVE_EVENT, new Object[] {getId(), fromLocation, getSpeed(), getAcceleration(), getOdometer()},
                 this.simulator.getSimulatorTime());
     }
 
@@ -681,7 +681,7 @@ public abstract class AbstractGTU extends EventProducer implements GTU
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({ "designforextension", "needbraces" })
+    @SuppressWarnings({"designforextension", "needbraces"})
     public boolean equals(final Object obj)
     {
         if (this == obj)

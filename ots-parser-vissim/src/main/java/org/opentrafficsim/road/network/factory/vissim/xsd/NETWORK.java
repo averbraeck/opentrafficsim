@@ -48,17 +48,17 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "definitionsOrIncludeOrNODE" })
+@XmlType(name = "", propOrder = {"definitionsOrIncludeOrNODE"})
 @XmlRootElement(name = "NETWORK")
 public class NETWORK
 {
 
-    @XmlElements({ @XmlElement(name = "DEFINITIONS", type = DEFINITIONS.class),
+    @XmlElements({@XmlElement(name = "DEFINITIONS", type = DEFINITIONS.class),
             @XmlElement(name = "include", namespace = "http://www.w3.org/2001/XInclude", type = IncludeType.class),
             @XmlElement(name = "NODE", type = NODE.class), @XmlElement(name = "LINK", type = LINK.class),
             @XmlElement(name = "ROUTE", type = ROUTE.class), @XmlElement(name = "ROUTEMIX", type = ROUTEMIX.class),
             @XmlElement(name = "SHORTESTROUTE", type = SHORTESTROUTE.class),
-            @XmlElement(name = "SHORTESTROUTEMIX", type = SHORTESTROUTEMIX.class) })
+            @XmlElement(name = "SHORTESTROUTEMIX", type = SHORTESTROUTEMIX.class)})
     protected List<Object> definitionsOrIncludeOrNODE;
 
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")

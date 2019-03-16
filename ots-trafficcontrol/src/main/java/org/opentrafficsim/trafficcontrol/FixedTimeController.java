@@ -63,7 +63,7 @@ public class FixedTimeController extends AbstractTrafficController
      * @param signalGroups Set&lt;SignalGroup&gt;; signal groups
      * @throws SimRuntimeException simulator is past zero time
      */
-    @SuppressWarnings({ "synthetic-access" })
+    @SuppressWarnings({"synthetic-access"})
     public FixedTimeController(final String id, final OTSSimulatorInterface simulator, final Network network,
             final Duration cycleTime, final Duration offset, final Set<SignalGroup> signalGroups) throws SimRuntimeException
     {
@@ -82,22 +82,21 @@ public class FixedTimeController extends AbstractTrafficController
                 if (!signalGroup1.equals(signalGroup2))
                 {
                     Throw.when(!ImmutableCollections.disjoint(signalGroup1.trafficLightIds, signalGroup2.trafficLightIds),
-                            IllegalArgumentException.class,
-                            "A traffic light is in both signal group %s and signal group %s.", signalGroup1.getId(),
-                            signalGroup2.getId());
+                            IllegalArgumentException.class, "A traffic light is in both signal group %s and signal group %s.",
+                            signalGroup1.getId(), signalGroup2.getId());
                 }
             }
         }
         this.cycleTime = cycleTime;
         this.offset = offset;
         this.signalGroups = signalGroups;
-        simulator.scheduleEventAbs(Time.ZERO, this, this, "setup", new Object[] { simulator, network });
+        simulator.scheduleEventAbs(Time.ZERO, this, this, "setup", new Object[] {simulator, network});
     }
 
     /**
      * Initiates all traffic control events.
      * @param simulator OTSSimulatorInterface; simulator
-     * @param network network
+     * @param network Network; network
      * @throws SimRuntimeException when traffic light does not exist in the network
      */
     @SuppressWarnings("unused")
@@ -128,8 +127,7 @@ public class FixedTimeController extends AbstractTrafficController
         }
         try
         {
-            return new FixedTimeController(getId(), newSimulator, newNetwork, this.cycleTime, this.offset,
-                    signalGroupsCloned);
+            return new FixedTimeController(getId(), newSimulator, newNetwork, this.cycleTime, this.offset, signalGroupsCloned);
         }
         catch (SimRuntimeException exception)
         {
@@ -154,7 +152,8 @@ public class FixedTimeController extends AbstractTrafficController
 
     /**
      * <p>
-     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version 21 feb. 2019 <br>
@@ -197,7 +196,7 @@ public class FixedTimeController extends AbstractTrafficController
         /**
          * Constructor without pre-green duration.
          * @param id String; id
-         * @param trafficLightIds List&lt;String&gt;; traffic light ids
+         * @param trafficLightIds Set&lt;String&gt;; traffic light ids
          * @param offset Duration; offset from start of cycle
          * @param green Duration; green duration
          * @param yellow Duration; yellow duration
@@ -211,14 +210,14 @@ public class FixedTimeController extends AbstractTrafficController
         /**
          * Constructor with pre-green duration.
          * @param id String; id
-         * @param trafficLightIds List&lt;String&gt;; traffic light ids
+         * @param trafficLightIds Set&lt;String&gt;; traffic light ids
          * @param offset Duration; offset from start of cycle
          * @param preGreen Duration; pre-green duration
          * @param green Duration; green duration
          * @param yellow Duration; yellow duration
          */
-        public SignalGroup(final String id, final Set<String> trafficLightIds, final Duration offset,
-                final Duration preGreen, final Duration green, final Duration yellow)
+        public SignalGroup(final String id, final Set<String> trafficLightIds, final Duration offset, final Duration preGreen,
+                final Duration green, final Duration yellow)
         {
             Throw.whenNull(id, "Id may not be null.");
             Throw.whenNull(trafficLightIds, "Traffic light ids may not be null.");
@@ -248,10 +247,10 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
-         * @param controllerOffset
-         * @param cycleTime
-         * @param sim
-         * @param network
+         * @param controllerOffset Duration;
+         * @param cycleTime Duration;
+         * @param sim OTSSimulatorInterface;
+         * @param network Network;
          * @throws SimRuntimeException when traffic light does not exist in the network
          */
         public void startup(final Duration controllerOffset, final Duration cycleTime, final OTSSimulatorInterface sim,
@@ -356,7 +355,7 @@ public class FixedTimeController extends AbstractTrafficController
 
         /**
          * Change the color of our traffic lights.
-         * @param trafficLightColor the new traffic light color
+         * @param trafficLightColor TrafficLightColor; the new traffic light color
          */
         private void setTrafficLights(final TrafficLightColor trafficLightColor)
         {
@@ -372,8 +371,7 @@ public class FixedTimeController extends AbstractTrafficController
         @Override
         public SignalGroup clone()
         {
-            return new SignalGroup(getId(), this.trafficLightIds.toSet(), this.offset, this.preGreen, this.green,
-                    this.yellow);
+            return new SignalGroup(getId(), this.trafficLightIds.toSet(), this.offset, this.preGreen, this.green, this.yellow);
         }
 
         /** {@inheritDoc} */

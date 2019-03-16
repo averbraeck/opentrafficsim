@@ -179,14 +179,14 @@ public class TConnection
     // constants
     /** magic bytes to identify the start of a valid IMB packet */
     public static final byte[] MAGIC_BYTES =
-            new byte[] { 0x2F, 0x47, 0x61, 0x71, (byte) 0x95, (byte) 0xAD, (byte) 0xC5, (byte) 0xFB };
+            new byte[] {0x2F, 0x47, 0x61, 0x71, (byte) 0x95, (byte) 0xAD, (byte) 0xC5, (byte) 0xFB};
 
     // private static final long MagicBytesInt64 = 0xFBC5AD957161472FL;
     /** magic bytes to identify the end of the payload on a valid IMB packet (as 32 bit integer) */
     private static final int MAGIC_STRING_CHECK_INT32 = 0x10F13467;
 
     /** magic bytes to identify the end of the payload on a valid IMB packet (as array of bytes) */
-    public static final byte[] MAGIC_STRING_CHECK = new byte[] { 0x67, 0x34, (byte) 0xF1, 0x10 };
+    public static final byte[] MAGIC_STRING_CHECK = new byte[] {0x67, 0x34, (byte) 0xF1, 0x10};
 
     // fields
     /** TCP Socket the connection is based on */

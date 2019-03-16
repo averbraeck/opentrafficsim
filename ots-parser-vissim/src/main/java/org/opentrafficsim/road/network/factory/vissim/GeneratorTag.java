@@ -370,8 +370,7 @@ class GeneratorTag implements Serializable
         new GTUGeneratorIndividual(linkTag.name + "." + generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
                 generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
                 generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane,
-                position, generatorTag.gtuDirection, strategicalPlannerFactory, routeGenerator,
-                parser.network);
+                position, generatorTag.gtuDirection, strategicalPlannerFactory, routeGenerator, parser.network);
 
         // TODO GTUMix
         // TODO RouteMix

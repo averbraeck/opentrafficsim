@@ -562,7 +562,8 @@ class RoadTag implements Serializable
                     }
                     catch (RemoteException exception)
                     {
-                        Renderable2D animation = new org.opentrafficsim.draw.network.LinkAnimation(currentLink, simulator, 0.01f);
+                        Renderable2D animation =
+                                new org.opentrafficsim.draw.network.LinkAnimation(currentLink, simulator, 0.01f);
                         openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
                         exception.printStackTrace();
                     }
@@ -935,11 +936,11 @@ class RoadTag implements Serializable
                         sOffset = signalTag.s.minus(laneSec.s).plus(new Length(0.5, LengthUnit.METER));
 
                     Class<?> clazz = Class.forName(SimpleTrafficLight.class.getName());
-                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz, new Class[] { String.class,
-                            Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
+                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz,
+                            new Class[] {String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class});
 
                     SimpleTrafficLight trafficLight = (SimpleTrafficLight) trafficLightConstructor
-                            .newInstance(new Object[] { signalTag.id, lane, sOffset, simulator });
+                            .newInstance(new Object[] {signalTag.id, lane, sOffset, simulator});
 
                     if (!openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(signalTag.id))
                     {
@@ -1003,11 +1004,11 @@ class RoadTag implements Serializable
                         sOffset = signalReferenceTag.s.minus(laneSec.s).plus(new Length(0.5, LengthUnit.METER));
 
                     Class<?> clazz = Class.forName(SimpleTrafficLight.class.getName());
-                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz, new Class[] { String.class,
-                            Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class });
+                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(clazz,
+                            new Class[] {String.class, Lane.class, Length.class, DEVSSimulatorInterface.TimeDoubleUnit.class});
 
                     SimpleTrafficLight trafficLight = (SimpleTrafficLight) trafficLightConstructor
-                            .newInstance(new Object[] { signalTag.id + ".ref", lane, sOffset, simulator });
+                            .newInstance(new Object[] {signalTag.id + ".ref", lane, sOffset, simulator});
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {

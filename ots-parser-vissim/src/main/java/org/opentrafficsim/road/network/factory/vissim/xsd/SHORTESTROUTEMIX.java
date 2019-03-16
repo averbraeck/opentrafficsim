@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "shortestroute" })
+@XmlType(name = "", propOrder = {"shortestroute"})
 @XmlRootElement(name = "SHORTESTROUTEMIX")
 public class SHORTESTROUTEMIX
 {

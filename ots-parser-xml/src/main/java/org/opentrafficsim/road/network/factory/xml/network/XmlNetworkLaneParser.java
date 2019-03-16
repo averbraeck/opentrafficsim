@@ -48,9 +48,9 @@ public class XmlNetworkLaneParser implements Serializable
 
     /**
      * Parse the XML file and build the network.
-     * @param filename the name of the file to parse
-     * @param otsNetwork the network to insert the parsed objects in
-     * @param simulator the simulator
+     * @param filename String; the name of the file to parse
+     * @param otsNetwork OTSNetwork; the network to insert the parsed objects in
+     * @param simulator OTSSimulatorInterface; the simulator
      * @return the network that contains the parsed objects
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
@@ -73,12 +73,12 @@ public class XmlNetworkLaneParser implements Serializable
 
         return otsNetwork;
     }
-    
+
     /**
      * Parse the XML file and build the network.
      * @param xmlStream InputStream; the xml input stream
-     * @param otsNetwork the network to insert the parsed objects in
-     * @param simulator the simulator
+     * @param otsNetwork OTSNetwork; the network to insert the parsed objects in
+     * @param simulator OTSSimulatorInterface; the simulator
      * @return the network that contains the parsed objects
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
@@ -86,14 +86,15 @@ public class XmlNetworkLaneParser implements Serializable
      * @throws OTSGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      */
-    public static OTSNetwork build(final InputStream xmlStream, final OTSNetwork otsNetwork, final OTSSimulatorInterface simulator)
+    public static OTSNetwork build(final InputStream xmlStream, final OTSNetwork otsNetwork,
+            final OTSSimulatorInterface simulator)
             throws JAXBException, URISyntaxException, NetworkException, OTSGeometryException, XmlParserException
     {
         JAXBContext jc = JAXBContext.newInstance(OTS.class);
 
         Unmarshaller unmarshaller = jc.createUnmarshaller();
         OTS ots = (OTS) unmarshaller.unmarshal(xmlStream);
-        
+
         DEFINITIONS definitions = ots.getDEFINITIONS();
         NETWORK network = ots.getNETWORK();
         List<NETWORKDEMAND> demands = ots.getNETWORKDEMAND();
@@ -114,7 +115,7 @@ public class XmlNetworkLaneParser implements Serializable
     }
 
     /**
-     * @param args not used
+     * @param args String[]; not used
      * @throws Exception on parsing error
      */
     public static void main(final String[] args) throws Exception

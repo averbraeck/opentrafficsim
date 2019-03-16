@@ -51,7 +51,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /** Vehicle that is being synchronized to. */
     private String syncVehicle;
-    
+
     /** Whether the longitudinal control is human. */
     private boolean humanLongitudinalControl = true;
 
@@ -174,7 +174,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     {
         return this.desireMap.get(incentiveClass);
     }
-    
+
     /**
      * Returns the desire map.
      * @return Map&lt;Class&lt;? extends Incentive&gt;, Desire&gt;; desire map
@@ -192,14 +192,14 @@ public final class LmrsData implements DesireBased, Synchronizable
     {
         this.synchronizationState = synchronizationState;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Synchronizable.State getSynchronizationState()
     {
         return this.synchronizationState;
     }
-    
+
     /**
      * @return humanLongitudinalControl.
      */
@@ -209,7 +209,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     }
 
     /**
- * @param humanLongitudinalControl boolean; set humanLongitudinalControl.
+     * @param humanLongitudinalControl boolean; set humanLongitudinalControl.
      */
     public void setHumanLongitudinalControl(final boolean humanLongitudinalControl)
     {

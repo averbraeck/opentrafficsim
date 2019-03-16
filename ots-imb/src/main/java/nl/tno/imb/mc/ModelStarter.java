@@ -382,8 +382,8 @@ public abstract class ModelStarter
                     ModelParameters modelParameters = new ModelParameters(payload);
                     parameterRequest(modelParameters); // let it be modified
                     this.connection.signalEvent(returnEventName, TEventEntry.EK_NORMAL_EVENT,
-                            ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] { ModelCommand.DEFAULT_PARAMETERS.getValue(),
-                                    this.connection.getUniqueClientID(), modelParameters }),
+                            ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] {ModelCommand.DEFAULT_PARAMETERS.getValue(),
+                                    this.connection.getUniqueClientID(), modelParameters}),
                             false);
                 }
                 break;
@@ -429,7 +429,7 @@ public abstract class ModelStarter
     private void signalModelExit() throws IMBException
     {
         this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, ObjectArrayToIMB.objectArrayToIMBPayload(
-                new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_DELETE, this.connection.getUniqueClientID() })
+                new Object[] {ModelCommand.MODEL.getValue(), TEventEntry.ACTION_DELETE, this.connection.getUniqueClientID()})
                 .getBuffer());
     }
 
@@ -442,7 +442,7 @@ public abstract class ModelStarter
     private void signalModelInit(final long linkId, final String modelName) throws IMBException
     {
         this.privateControllerEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT,
-                ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] { ModelCommand.INIT.getValue() }).getBuffer());
+                ObjectArrayToIMB.objectArrayToIMBPayload(new Object[] {ModelCommand.INIT.getValue()}).getBuffer());
     }
 
     /**
@@ -457,7 +457,7 @@ public abstract class ModelStarter
                 this.privateControllerEvent.getEventName());
         TByteBuffer payload = null;
         payload = ObjectArrayToIMB
-                .objectArrayToIMBPayload(new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_NEW, newEvent });
+                .objectArrayToIMBPayload(new Object[] {ModelCommand.MODEL.getValue(), TEventEntry.ACTION_NEW, newEvent});
         if (eventName.length() == 0)
         {
             this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, payload.getBuffer());
@@ -469,7 +469,7 @@ public abstract class ModelStarter
         if (0 != this.progress)
         {
             payload = ObjectArrayToIMB.objectArrayToIMBPayload(
-                    new Object[] { ModelCommand.PROGRESS.getValue(), this.connection.getUniqueClientID(), this.progress });
+                    new Object[] {ModelCommand.PROGRESS.getValue(), this.connection.getUniqueClientID(), this.progress});
             if (eventName.length() == 0)
             {
                 this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT, payload.getBuffer());
@@ -490,7 +490,7 @@ public abstract class ModelStarter
     {
         this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT,
                 ObjectArrayToIMB.objectArrayToIMBPayload(
-                        new Object[] { ModelCommand.PROGRESS.getValue(), this.connection.getUniqueClientID(), currentProgress })
+                        new Object[] {ModelCommand.PROGRESS.getValue(), this.connection.getUniqueClientID(), currentProgress})
                         .getBuffer());
         this.progress = currentProgress;
     }
@@ -507,7 +507,7 @@ public abstract class ModelStarter
         this.controllersEvent.signalEvent(TEventEntry.EK_NORMAL_EVENT,
                 ObjectArrayToIMB
                         .objectArrayToIMBPayload(
-                                new Object[] { ModelCommand.MODEL.getValue(), TEventEntry.ACTION_CHANGE, modelChangeEvent })
+                                new Object[] {ModelCommand.MODEL.getValue(), TEventEntry.ACTION_CHANGE, modelChangeEvent})
                         .getBuffer());
         this.state = newState;
         System.out.println("New model state " + newState + " on " + federation);

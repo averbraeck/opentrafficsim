@@ -417,8 +417,8 @@ public class HeadwayConflict extends AbstractHeadwayCopy
             Throw.whenNull(endWidth, "End width may not be null.");
             try
             {
-                return new Width(new double[] { 0.0, 1.0 },
-                        new LengthVector(new Length[] { startWidth, endWidth }, StorageType.DENSE));
+                return new Width(new double[] {0.0, 1.0},
+                        new LengthVector(new Length[] {startWidth, endWidth}, StorageType.DENSE));
             }
             catch (ValueException exception)
             {

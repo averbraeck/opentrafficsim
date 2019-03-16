@@ -52,7 +52,7 @@ import org.opentrafficsim.road.network.factory.vissim.GTUTYPE;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "content" })
+@XmlType(name = "", propOrder = {"content"})
 @XmlRootElement(name = "DEFINITIONS")
 public class DEFINITIONS
 {
@@ -72,7 +72,7 @@ public class DEFINITIONS
             @XmlElementRef(name = "GLOBAL", namespace = "http://www.opentrafficsim.org/ots", type = GLOBAL.class,
                     required = false),
             @XmlElementRef(name = "GTUMIX", namespace = "http://www.opentrafficsim.org/ots", type = GTUMIX.class,
-                    required = false) })
+                    required = false)})
     @XmlMixed
     protected List<Object> content;
 

@@ -43,7 +43,7 @@ public class ContourPlotFlow extends AbstractContourPlot<Frequency>
      */
     private static BoundsPaintScale createPaintScale()
     {
-        double[] boundaries = { 0.0, 500.0 / 3600, 1000.0 / 3600, 1500.0 / 3600, 2000.0 / 3600, 2500.0 / 3600, 3000.0 / 3600 };
+        double[] boundaries = {0.0, 500.0 / 3600, 1000.0 / 3600, 1500.0 / 3600, 2000.0 / 3600, 2500.0 / 3600, 3000.0 / 3600};
         Color[] colorValues = BoundsPaintScale.hue(7);
         return new BoundsPaintScale(boundaries, colorValues);
     }

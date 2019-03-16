@@ -49,7 +49,7 @@ public interface HistoricalList<E> extends HistoricalCollection<E>, List<E>
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     default void sort(final Comparator<? super E> c)
     {

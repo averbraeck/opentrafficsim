@@ -69,10 +69,10 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     private static final long serialVersionUID = 20101016L;
 
     /** Aggregation periods. */
-    public static final double[] DEFAULT_PERIODS = new double[] { 5.0, 10.0, 30.0, 60.0, 120.0, 300.0, 900.0 };
+    public static final double[] DEFAULT_PERIODS = new double[] {5.0, 10.0, 30.0, 60.0, 120.0, 300.0, 900.0};
 
     /** Update frequencies (n * 1/period). */
-    public static final int[] DEFAULT_UPDATE_FREQUENCIES = new int[] { 1, 2, 3, 5, 10 };
+    public static final int[] DEFAULT_UPDATE_FREQUENCIES = new int[] {1, 2, 3, 5, 10};
 
     /** Source providing the data. */
     private final FdSource source;
@@ -240,7 +240,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         return new ChartMouseListener()
         {
             /** {@inheritDoc} */
-            @SuppressWarnings({ "unchecked", "synthetic-access" })
+            @SuppressWarnings({"unchecked", "synthetic-access"})
             @Override
             public void chartMouseClicked(final ChartMouseEvent event)
             {
@@ -290,7 +290,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             }
 
             /** {@inheritDoc} */
-            @SuppressWarnings({ "synthetic-access", "unchecked" })
+            @SuppressWarnings({"synthetic-access", "unchecked"})
             @Override
             public void chartMouseMoved(final ChartMouseEvent event)
             {

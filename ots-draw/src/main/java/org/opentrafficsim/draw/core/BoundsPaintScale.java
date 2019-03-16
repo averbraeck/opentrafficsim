@@ -24,11 +24,11 @@ public class BoundsPaintScale implements ColorPaintScale, Serializable
 {
 
     /** 3-color scale from green to red. */
-    public static final Color[] GREEN_RED = new Color[] { Color.GREEN, Color.YELLOW, Color.RED };
+    public static final Color[] GREEN_RED = new Color[] {Color.GREEN, Color.YELLOW, Color.RED};
 
     /** 5-color scale from green to red with dark edges. */
     public static final Color[] GREEN_RED_DARK =
-            new Color[] { Color.GREEN.darker(), Color.GREEN, Color.YELLOW, Color.RED, Color.RED.darker() };
+            new Color[] {Color.GREEN.darker(), Color.GREEN, Color.YELLOW, Color.RED, Color.RED.darker()};
 
     /** */
     private static final long serialVersionUID = 20181008L;

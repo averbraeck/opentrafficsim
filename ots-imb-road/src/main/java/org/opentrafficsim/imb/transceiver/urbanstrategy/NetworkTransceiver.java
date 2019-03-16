@@ -70,8 +70,7 @@ public class NetworkTransceiver extends AbstractTransceiver
     {
         super("Network", connector, simulator);
         Throw.whenNull(network, "Network cannot be null");
-        connector.postIMBMessage("Network", IMBEventType.NEW,
-                new Object[] { simulator.getSimulatorTime().si, network.getId() });
+        connector.postIMBMessage("Network", IMBEventType.NEW, new Object[] {simulator.getSimulatorTime().si, network.getId()});
     }
 
 }

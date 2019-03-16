@@ -77,7 +77,7 @@ public class CurveTest
         OTSLine3D curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
         Lane[] curve = LaneFactory.makeMultiLane(network, "bezier", curveStart, curveEnd, curveLine.getPoints(), laneCount,
                 laneType, speedLimit, simulator);
-        Lane[][] laneSets = new Lane[][] { straight1, curve, straight2 };
+        Lane[][] laneSets = new Lane[][] {straight1, curve, straight2};
         Length initialPosition = new Length(5, LengthUnit.METER);
         Speed speed = new Speed(10, SpeedUnit.SI);
         for (int lane = 0; lane < laneCount; lane++)

@@ -169,7 +169,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
             throws OperationalPlanException, GTUException, NetworkException, ParameterException
     {
         Break.on(getGtu(), "WWP.LANE:4", 41, true);
-        
+
         // obtain objects to get info
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
                 .getSpeedLimitProspect(RelativeLane.CURRENT);
@@ -188,19 +188,19 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner implements DesireBase
         double dSync = params.getParameterOrNull(LmrsParameters.DSYNC);
         if (this.laneChange.isChangingLane())
         {
-            lanes = new RelativeLane[] { RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu()) };
+            lanes = new RelativeLane[] {RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu())};
         }
         else if (dLeft >= dSync && dLeft >= dRight)
         {
-            lanes = new RelativeLane[] { RelativeLane.CURRENT, RelativeLane.LEFT };
+            lanes = new RelativeLane[] {RelativeLane.CURRENT, RelativeLane.LEFT};
         }
         else if (dRight >= dSync)
         {
-            lanes = new RelativeLane[] { RelativeLane.CURRENT, RelativeLane.RIGHT };
+            lanes = new RelativeLane[] {RelativeLane.CURRENT, RelativeLane.RIGHT};
         }
         else
         {
-            lanes = new RelativeLane[] { RelativeLane.CURRENT };
+            lanes = new RelativeLane[] {RelativeLane.CURRENT};
         }
         for (AccelerationIncentive incentive : this.accelerationIncentives)
         {

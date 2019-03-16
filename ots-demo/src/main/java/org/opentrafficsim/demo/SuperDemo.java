@@ -210,7 +210,7 @@ public class SuperDemo extends JFrame
         {
             try
             {
-                final Method demoMethod = ClassUtil.resolveMethod(this.clazz, "demo", new Class[] { boolean.class });
+                final Method demoMethod = ClassUtil.resolveMethod(this.clazz, "demo", new Class[] {boolean.class});
                 Thread demo = new Thread(new Runnable()
                 {
                     @Override
@@ -219,7 +219,7 @@ public class SuperDemo extends JFrame
                         try
                         {
                             Class.forName(Demo.this.clazz.getName());
-                            demoMethod.invoke(null, new Object[] { false });
+                            demoMethod.invoke(null, new Object[] {false});
                         }
                         catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
                                 | ClassNotFoundException exception)

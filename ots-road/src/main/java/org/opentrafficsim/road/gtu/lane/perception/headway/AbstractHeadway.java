@@ -184,7 +184,7 @@ public abstract class AbstractHeadway implements Headway
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
     public boolean equals(final Object obj)
     {

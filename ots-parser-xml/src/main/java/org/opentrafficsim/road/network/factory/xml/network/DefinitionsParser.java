@@ -16,17 +16,15 @@ public final class DefinitionsParser
         // utility class
     }
 
-    
-//    for (Node definitionNode : definitionNodes)
-//        GTUTypeTag.parseGTUTypes(definitionNode.getChildNodes(), this);
-//    for (Node definitionNode : definitionNodes)
-//        GTUTag.parseGTUs(definitionNode.getChildNodes(), this);
-//    for (Node definitionNode : definitionNodes)
-//        RoadTypeTag.parseRoadTypes(definitionNode.getChildNodes(), this);
-//    for (Node definitionNode : definitionNodes)
-//        LaneTypeTag.parseLaneTypes(definitionNode.getChildNodes(), this);
-//    for (Node definitionNode : definitionNodes)
-//        RoadLayoutTag.parseRoadTypes(definitionNode.getChildNodes(), this);
+    // for (Node definitionNode : definitionNodes)
+    // GTUTypeTag.parseGTUTypes(definitionNode.getChildNodes(), this);
+    // for (Node definitionNode : definitionNodes)
+    // GTUTag.parseGTUs(definitionNode.getChildNodes(), this);
+    // for (Node definitionNode : definitionNodes)
+    // RoadTypeTag.parseRoadTypes(definitionNode.getChildNodes(), this);
+    // for (Node definitionNode : definitionNodes)
+    // LaneTypeTag.parseLaneTypes(definitionNode.getChildNodes(), this);
+    // for (Node definitionNode : definitionNodes)
+    // RoadLayoutTag.parseRoadTypes(definitionNode.getChildNodes(), this);
 
 }
-

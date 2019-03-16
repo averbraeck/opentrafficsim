@@ -273,8 +273,8 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new Event(CrossSectionLink.LANE_ADD_EVENT, csl, new Object[] { link.getNetwork().getId(),
-                            link.getId(), lane.getId(), lane, csl.getLanes().indexOf(lane) }));
+                    this.notify(new Event(CrossSectionLink.LANE_ADD_EVENT, csl, new Object[] {link.getNetwork().getId(),
+                            link.getId(), lane.getId(), lane, csl.getLanes().indexOf(lane)}));
                 }
                 catch (RemoteException exception)
                 {
@@ -297,7 +297,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new TimedEvent<Time>(Lane.SENSOR_ADD_EVENT, lane, new Object[] { sensor.getId(), sensor },
+                    this.notify(new TimedEvent<Time>(Lane.SENSOR_ADD_EVENT, lane, new Object[] {sensor.getId(), sensor},
                             getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
@@ -358,7 +358,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
                 try
                 {
                     this.notify(new Event(CrossSectionLink.LANE_REMOVE_EVENT, csl,
-                            new Object[] { link.getNetwork().getId(), link.getId(), lane.getId() }));
+                            new Object[] {link.getNetwork().getId(), link.getId(), lane.getId()}));
                 }
                 catch (RemoteException exception)
                 {
@@ -383,7 +383,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             {
                 try
                 {
-                    this.notify(new TimedEvent<Time>(Lane.SENSOR_REMOVE_EVENT, lane, new Object[] { sensor.getId(), sensor },
+                    this.notify(new TimedEvent<Time>(Lane.SENSOR_REMOVE_EVENT, lane, new Object[] {sensor.getId(), sensor},
                             getSimulator().getSimulatorTime()));
                 }
                 catch (RemoteException exception)
@@ -447,8 +447,8 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             DirectedPoint pos = sensor.getLocation();
             String triggerPosition = sensor.getPositionType().toString();
             double timestamp = getSimulator().getSimulatorTime().si;
-            return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), sensorId,
-                    longitudinalPosition, length, pos.x, pos.y, pos.z, triggerPosition };
+            return new Object[] {timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), sensorId,
+                    longitudinalPosition, length, pos.x, pos.y, pos.z, triggerPosition};
         }
         System.err.println("SensorGTUTransceiver.transformNew: Don't know how to transform event " + event);
         return new Object[] {};
@@ -473,8 +473,8 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             double gtuSpeed = gtu.getSpeed().si;
             String triggerPosition = ((RelativePosition.TYPE) content[3]).toString();
             double timestamp = getSimulator().getSimulatorTime().si;
-            return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), sensorId, gtuId,
-                    gtuSpeed, triggerPosition };
+            return new Object[] {timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), sensorId, gtuId,
+                    gtuSpeed, triggerPosition};
         }
         System.err.println("SensorGTUTransceiver.transformChange: Don't know how to transform event " + event);
         return new Object[] {};
@@ -495,7 +495,7 @@ public class SensorGTUTransceiver extends AbstractTransceiver
             SingleSensor sensor = (SingleSensor) content[1];
             Lane lane = sensor.getLane();
             double timestamp = getSimulator().getSimulatorTime().si;
-            return new Object[] { timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), sensorId };
+            return new Object[] {timestamp, this.network.getId(), lane.getParentLink().getId(), lane.getId(), sensorId};
         }
         System.err.println("SensorGTUTransceiver.transformDelete: Don't know how to transform event " + event);
         return new Object[] {};

@@ -119,7 +119,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "speedlimit", "laneOrNOTRAFFICLANEOrSHOULDER" })
+@XmlType(name = "", propOrder = {"speedlimit", "laneOrNOTRAFFICLANEOrSHOULDER"})
 @XmlRootElement(name = "ROADLAYOUT")
 public class ROADLAYOUT
 {
@@ -127,10 +127,10 @@ public class ROADLAYOUT
     @XmlElement(name = "SPEEDLIMIT")
     protected List<ROADLAYOUT.SPEEDLIMIT> speedlimit;
 
-    @XmlElements({ @XmlElement(name = "LANE", type = ROADLAYOUT.LANE.class),
+    @XmlElements({@XmlElement(name = "LANE", type = ROADLAYOUT.LANE.class),
             @XmlElement(name = "NOTRAFFICLANE", type = ROADLAYOUT.NOTRAFFICLANE.class),
             @XmlElement(name = "SHOULDER", type = ROADLAYOUT.SHOULDER.class),
-            @XmlElement(name = "STRIPE", type = ROADLAYOUT.STRIPE.class) })
+            @XmlElement(name = "STRIPE", type = ROADLAYOUT.STRIPE.class)})
     protected List<Object> laneOrNOTRAFFICLANEOrSHOULDER;
 
     @XmlAttribute(name = "NAME", required = true)
@@ -344,7 +344,7 @@ public class ROADLAYOUT
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = { "speedlimit" })
+    @XmlType(name = "", propOrder = {"speedlimit"})
     public static class LANE
     {
 

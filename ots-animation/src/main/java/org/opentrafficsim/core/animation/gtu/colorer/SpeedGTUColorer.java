@@ -41,7 +41,7 @@ public class SpeedGTUColorer implements GTUColorer, Serializable
     {
         this.maximumSpeed = maximumSpeed;
         this.legend = new ArrayList<>(4);
-        Color[] colorTable = { Color.RED, Color.YELLOW, Color.GREEN };
+        Color[] colorTable = {Color.RED, Color.YELLOW, Color.GREEN};
         Speed zeroSpeed = new Speed(0.0, SpeedUnit.KM_PER_HOUR);
         for (int index = 0; index < colorTable.length; index++)
         {

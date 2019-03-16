@@ -62,7 +62,7 @@ public class IDMPlusTest implements UNITS
      * Test IDMPlus.
      * @throws Exception when something goes wrong (should not happen)
      */
-    @SuppressWarnings({ "static-method", "checkstyle:methodlength" })
+    @SuppressWarnings({"static-method", "checkstyle:methodlength"})
     @Test
     public final void computeAcceleration() throws Exception
     {

@@ -102,8 +102,8 @@ public class LaneChangeModelTest extends AbstractOTSModel implements UNITS
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
-        OTSPoint3D[] coordinates = new OTSPoint3D[] { new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
-                new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0) };
+        OTSPoint3D[] coordinates = new OTSPoint3D[] {new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
+                new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0)};
         OTSLine3D line = new OTSLine3D(coordinates);
         CrossSectionLink link =
                 new CrossSectionLink(network, name, from, to, LinkType.ROAD, line, simulator, LaneKeepingPolicy.KEEPRIGHT);

@@ -15,17 +15,17 @@ import nl.tudelft.simulation.event.EventProducer;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
-public abstract class AbstractTrafficController extends EventProducer implements TrafficController 
+public abstract class AbstractTrafficController extends EventProducer implements TrafficController
 {
 
     /** */
     private static final long serialVersionUID = 20190221L;
-    
+
     /** Id of this controller. */
     final String id;
-    
+
     /**
-     * Constructor for traffic controller. 
+     * Constructor for traffic controller.
      * @param id String; id
      * @param simulator OTSSimulatorInterface; simulator
      */
@@ -34,7 +34,7 @@ public abstract class AbstractTrafficController extends EventProducer implements
         Throw.whenNull(id, "Id may not be null.");
         this.id = id;
         fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_CREATED,
-                new Object[] { this.id, TrafficController.STARTING_UP }, simulator.getSimulatorTime());        
+                new Object[] {this.id, TrafficController.STARTING_UP}, simulator.getSimulatorTime());
     }
 
     /**
@@ -45,5 +45,5 @@ public abstract class AbstractTrafficController extends EventProducer implements
     {
         return this.id;
     }
-    
+
 }

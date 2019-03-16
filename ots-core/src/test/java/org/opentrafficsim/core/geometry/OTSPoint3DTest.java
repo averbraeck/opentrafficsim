@@ -39,8 +39,8 @@ public class OTSPoint3DTest
     {
         OTSPoint3D previousPoint = null;
         int previousHashCode = 0;
-        double[] values = { Double.NEGATIVE_INFINITY, -99999999, -Math.PI, -1, -0.0000001, 0, 0.0000001, 1, Math.PI, 99999999,
-                Double.MAX_VALUE, Double.POSITIVE_INFINITY, Double.NaN };
+        double[] values = {Double.NEGATIVE_INFINITY, -99999999, -Math.PI, -1, -0.0000001, 0, 0.0000001, 1, Math.PI, 99999999,
+                Double.MAX_VALUE, Double.POSITIVE_INFINITY, Double.NaN};
         for (double x : values)
         {
             for (double y : values)
@@ -49,9 +49,9 @@ public class OTSPoint3DTest
                 {
                     OTSPoint3D p = new OTSPoint3D(x, y, z);
                     checkXYZ(p, x, y, z);
-                    checkXYZ(new OTSPoint3D(new double[] { x, y, z }), x, y, z);
+                    checkXYZ(new OTSPoint3D(new double[] {x, y, z}), x, y, z);
                     checkXYZ(new OTSPoint3D(p), x, y, z);
-                    checkXYZ(new OTSPoint3D(new double[] { x, y }), x, y, 0d);
+                    checkXYZ(new OTSPoint3D(new double[] {x, y}), x, y, 0d);
                     checkXYZ(new OTSPoint3D(new Point3d(x, y, z)), x, y, z);
                     checkXYZ(new OTSPoint3D(new CartesianPoint(x, y, z)), x, y, z);
                     checkXYZ(new OTSPoint3D(new DirectedPoint(x, y, z)), x, y, z);
@@ -140,7 +140,7 @@ public class OTSPoint3DTest
     {
         OTSPoint3D p0 = new OTSPoint3D(123, 234, 345);
         OTSPoint3D p1 = new OTSPoint3D(567, 678, 789);
-        for (double ratio : new double[] { 0, 1, 0.5, 0.1, -10, 10 })
+        for (double ratio : new double[] {0, 1, 0.5, 0.1, -10, 10})
         {
             OTSPoint3D pi = OTSPoint3D.interpolate(ratio, p0, p1);
             assertTrue("result of interpolate is not null", null != pi);

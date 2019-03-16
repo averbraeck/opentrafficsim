@@ -242,8 +242,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         // init event
         DirectedLanePosition referencePosition = getReferencePosition();
         fireTimedEvent(LaneBasedGTU.LANEBASED_INIT_EVENT,
-                new Object[] { getId(), initialLocation, getLength(), getWidth(), referencePosition.getLane(),
-                        referencePosition.getPosition(), referencePosition.getGtuDirection(), getGTUType() },
+                new Object[] {getId(), initialLocation, getLength(), getWidth(), referencePosition.getLane(),
+                        referencePosition.getPosition(), referencePosition.getGtuDirection(), getGTUType()},
                 getSimulator().getSimulatorTime());
 
         // register the GTU on the lanes
@@ -475,7 +475,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         this.cachedPositions.clear();
 
         // fire event
-        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection, from },
+        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
                 getSimulator().getSimulatorTime());
 
     }
@@ -686,7 +686,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             throw new RuntimeException(exception);
         }
-        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] { getId(), laneChangeDirection, from },
+        this.fireTimedEvent(LaneBasedGTU.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection, from},
                 getSimulator().getSimulatorTime());
     }
 
@@ -776,8 +776,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         DirectedLanePosition dlp = getReferencePosition();
         fireTimedEvent(
-                LaneBasedGTU.LANEBASED_MOVE_EVENT, new Object[] { getId(), fromLocation, getSpeed(), getAcceleration(),
-                        getTurnIndicatorStatus(), getOdometer(), dlp.getLane(), dlp.getPosition(), dlp.getGtuDirection() },
+                LaneBasedGTU.LANEBASED_MOVE_EVENT, new Object[] {getId(), fromLocation, getSpeed(), getAcceleration(),
+                        getTurnIndicatorStatus(), getOdometer(), dlp.getLane(), dlp.getPosition(), dlp.getGtuDirection()},
                 getSimulator().getSimulatorTime());
 
         if (getOperationalPlan().getAcceleration(Duration.ZERO).si < -10
@@ -1327,7 +1327,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                         coveredDistance = plan.getDistanceAlongLane(this, end);
                     }
                     SimEventInterface<SimTimeDoubleUnit> event = getSimulator().scheduleEventAbs(enterTime, this, this,
-                            "addGtuToLane", new Object[] { nextLane, refPosAtLastTimestep.plus(coveredDistance) });
+                            "addGtuToLane", new Object[] {nextLane, refPosAtLastTimestep.plus(coveredDistance)});
                     addEnterTrigger(nextLane, event);
                 }
             }
@@ -1380,7 +1380,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (exitTime != null && !Double.isNaN(exitTime.si))
             {
                 SimEvent<SimTimeDoubleUnit> event = new SimEvent<>(new SimTimeDoubleUnit(exitTime), this, this, "leaveLane",
-                        new Object[] { lane, new Boolean(false) });
+                        new Object[] {lane, new Boolean(false)});
                 getSimulator().scheduleEvent(event);
                 addTrigger(lane, event);
             }
@@ -1504,13 +1504,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             Lane referenceLane = dlp.getLane();
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] { getId(), location, getOdometer(), referenceLane, dlp.getPosition(), dlp.getGtuDirection() },
+                    new Object[] {getId(), location, getOdometer(), referenceLane, dlp.getPosition(), dlp.getGtuDirection()},
                     getSimulator().getSimulatorTime());
         }
         else
         {
             fireTimedEvent(LaneBasedGTU.LANEBASED_DESTROY_EVENT,
-                    new Object[] { getId(), location, getOdometer(), null, Length.ZERO, null },
+                    new Object[] {getId(), location, getOdometer(), null, Length.ZERO, null},
                     getSimulator().getSimulatorTime());
         }
         if (this.finalizeLaneChangeEvent != null)

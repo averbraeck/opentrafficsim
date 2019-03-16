@@ -19,5 +19,5 @@ public interface ActuatedTrafficController extends TrafficController
      * @param detectingGTU boolean;
      */
     public void updateDetector(String detectorId, boolean detectingGTU);
-    
+
 }

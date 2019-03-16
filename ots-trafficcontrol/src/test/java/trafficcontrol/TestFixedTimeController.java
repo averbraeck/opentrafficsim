@@ -328,22 +328,22 @@ public class TestFixedTimeController
         String trafficLightId = "08.1";
         trafficLightIds.add(trafficLightId);
         Set<SignalGroup> signalGroups = new HashSet<>();
-        for (int cycleTime : new int[] { 60, 90 })
+        for (int cycleTime : new int[] {60, 90})
         {
             Duration cycle = Duration.createSI(cycleTime);
-            for (int ftcOffsetTime : new int[] { -100, -10, 0, 10, 100 })
+            for (int ftcOffsetTime : new int[] {-100, -10, 0, 10, 100})
             {
                 Duration ftcOffset = Duration.createSI(ftcOffsetTime);
-                for (int sgOffsetTime : new int[] { -99, -9, 0, 9, 99 })
+                for (int sgOffsetTime : new int[] {-99, -9, 0, 9, 99})
                 {
                     Duration sgOffset = Duration.createSI(sgOffsetTime);
-                    for (int preGreenTime : new int[] { 0, 3 })
+                    for (int preGreenTime : new int[] {0, 3})
                     {
                         Duration preGreen = Duration.createSI(preGreenTime);
-                        for (int greenTime : new int[] { 5, 15, 100 })
+                        for (int greenTime : new int[] {5, 15, 100})
                         {
                             Duration green = Duration.createSI(greenTime);
-                            for (double yellowTime : new double[] { 0, 3.5, 4.5 })
+                            for (double yellowTime : new double[] {0, 3.5, 4.5})
                             {
                                 Duration yellow = Duration.createSI(yellowTime);
                                 double minimumCycleTime = preGreenTime + greenTime + yellowTime;
@@ -386,8 +386,8 @@ public class TestFixedTimeController
                                     catch (SimRuntimeException exception)
                                     {
                                         exceptionThrown = true;
-                                        assertTrue("exception explains cycle time problem", exception.getCause().getCause()
-                                                .getMessage().contains("Cycle time shorter "));
+                                        assertTrue("exception explains cycle time problem",
+                                                exception.getCause().getCause().getMessage().contains("Cycle time shorter "));
                                     }
                                     assertTrue("Too short cycle time should have thrown a SimRuntimeException",
                                             exceptionThrown);
@@ -398,7 +398,7 @@ public class TestFixedTimeController
                                     // second
                                     for (int second = 0; second <= 300; second++)
                                     {
-                                        Object[] args = new Object[] { simulator, ftc, Boolean.TRUE };
+                                        Object[] args = new Object[] {simulator, ftc, Boolean.TRUE};
                                         simulator.scheduleEventAbs(Time.createSI(second + 0.25), this, this, "checkState",
                                                 args);
                                         simulator.scheduleEventAbs(Time.createSI(second + 0.75), this, this, "checkState",
@@ -488,9 +488,11 @@ public class TestFixedTimeController
                     }
                     else
                     {
-                        assertEquals("Traffic light color mismatch at simulator time " + simulator.getSimulatorTime()
-                                + " of signal group " + sg, expectedColor + " which is in phase " + phase
-                                + " of cycle time " + cycleTime, tl.getTrafficLightColor());
+                        assertEquals(
+                                "Traffic light color mismatch at simulator time " + simulator.getSimulatorTime()
+                                        + " of signal group " + sg,
+                                expectedColor + " which is in phase " + phase + " of cycle time " + cycleTime,
+                                tl.getTrafficLightColor());
                     }
                 }
             }
@@ -529,13 +531,14 @@ public class TestFixedTimeController
                 return TestFixedTimeController.this.currentTrafficLightColors.get(result.getFullId());
             }
         });
-        Mockito.doAnswer((Answer<Void>) invocation -> {
+        Mockito.doAnswer((Answer<Void>) invocation ->
+        {
             TrafficLightColor tlc = invocation.getArgument(0);
             // System.out.println(simulator.getSimulatorTime() + " changing color of " + result.getFullId() + " from "
             // + this.currentTrafficLightColors.get(result.getFullId()) + " to " + tlc);
-                this.currentTrafficLightColors.put(result.getFullId(), tlc);
-                return null;
-            }).when(result).setTrafficLightColor(ArgumentMatchers.any(TrafficLightColor.class));
+            this.currentTrafficLightColors.put(result.getFullId(), tlc);
+            return null;
+        }).when(result).setTrafficLightColor(ArgumentMatchers.any(TrafficLightColor.class));
         this.currentTrafficLightColors.put(result.getFullId(), TrafficLightColor.BLACK);
         return result;
     }

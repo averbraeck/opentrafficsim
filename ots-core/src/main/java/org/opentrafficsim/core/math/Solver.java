@@ -45,10 +45,10 @@ public final class Solver
         }
         if (0 == discriminant)
         {
-            return new double[] { -b / 2 / a };
+            return new double[] {-b / 2 / a};
         }
         discriminant = Math.sqrt(discriminant);
-        return new double[] { (-b + discriminant) / 2 / a, (-b - discriminant) / 2 / a };
+        return new double[] {(-b + discriminant) / 2 / a, (-b - discriminant) / 2 / a};
     }
 
     /**
@@ -106,7 +106,7 @@ public final class Solver
             // Degenerate; no solution (or infinitely many solutions)
             return new double[0];
         }
-        return new double[] { -b / a };
+        return new double[] {-b / a};
     }
 
 }

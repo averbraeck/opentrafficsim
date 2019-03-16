@@ -43,7 +43,7 @@ public class LinkLocationTest implements UNITS
         Network network = new OTSNetwork("link location test network");
         OTSNode nodeFrom = new OTSNode(network, "From", new OTSPoint3D(0, 0, 0));
         OTSNode nodeTo = new OTSNode(network, "To", new OTSPoint3D(1000, 0, 0));
-        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0) });
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] {new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
         OTSSimulatorInterface simulator = MockSimulator.createMock();
         CrossSectionLink link = new CrossSectionLink(network, "Link", nodeFrom, nodeTo, LinkType.ROAD, line, simulator,
                 LaneKeepingPolicy.KEEPRIGHT);

@@ -40,8 +40,8 @@ public final class Test
     public static String checkAll(final OTSLine3D reference, final double offset)
     {
         String result = "";
-        for (OTSLine3D.OffsetMethod offsetMethod : new OTSLine3D.OffsetMethod[] { OTSLine3D.OffsetMethod.JTS,
-                OTSLine3D.OffsetMethod.PK })
+        for (OTSLine3D.OffsetMethod offsetMethod : new OTSLine3D.OffsetMethod[] {OTSLine3D.OffsetMethod.JTS,
+                OTSLine3D.OffsetMethod.PK})
         {
             result += timeLimitedCheckOffsetLine(reference, offset, offsetMethod, 5000);
             result += timeLimitedCheckOffsetLine(reference, -offset, offsetMethod, 5000);

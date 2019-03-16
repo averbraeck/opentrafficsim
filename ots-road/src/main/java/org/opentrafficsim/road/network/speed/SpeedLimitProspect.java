@@ -124,7 +124,7 @@ public class SpeedLimitProspect implements Serializable
      * @throws IllegalArgumentException if the distance is negative
      * @throws NullPointerException if any input is null
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public final void removeSpeedInfo(final Length distance, final SpeedLimitType<?> speedLimitType, final Object source)
     {
         Throw.whenNull(distance, "Distance may not be null.");

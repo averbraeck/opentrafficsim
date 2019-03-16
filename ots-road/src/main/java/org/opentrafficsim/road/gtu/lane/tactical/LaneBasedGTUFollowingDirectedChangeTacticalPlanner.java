@@ -256,8 +256,8 @@ public class LaneBasedGTUFollowingDirectedChangeTacticalPlanner extends Abstract
 
             // Cooperation
             this.coopHeadway = null;
-            for (LateralDirectionality direction : new LateralDirectionality[] { LateralDirectionality.LEFT,
-                    LateralDirectionality.RIGHT })
+            for (LateralDirectionality direction : new LateralDirectionality[] {LateralDirectionality.LEFT,
+                    LateralDirectionality.RIGHT})
             {
                 simplePerception.updateNeighboringHeadways(direction);
                 for (Headway headway : simplePerception.getNeighboringHeadways(direction))

@@ -417,7 +417,7 @@ public class Detector extends AbstractSensor
         }
         if (this.listeners.containsKey(DETECTOR_TRIGGERED))
         {
-            this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] { gtu }, getSimulator().getSimulatorTime());
+            this.fireTimedEvent(DETECTOR_TRIGGERED, new Object[] {gtu}, getSimulator().getSimulatorTime());
         }
     }
 

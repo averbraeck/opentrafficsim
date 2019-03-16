@@ -71,7 +71,7 @@ public class PubSubIMBMessageHandler implements IMBMessageHandler
         EventInterface event = new Event(this.eventType, this, imbTransformResult.getEventContent());
         try
         {
-            this.simulator.scheduleEventNow(this, imbTransformResult.getEventListener(), "notify", new Object[] { event });
+            this.simulator.scheduleEventNow(this, imbTransformResult.getEventListener(), "notify", new Object[] {event});
         }
         catch (SimRuntimeException exception)
         {

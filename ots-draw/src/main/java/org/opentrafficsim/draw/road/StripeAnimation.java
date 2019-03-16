@@ -120,12 +120,11 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
         switch (this.type)
         {
             case DASHED:// ¦ - Draw a 3-9 dash pattern on the center line
-                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.2, 3.0,
-                        new double[] { 3, 9 });
+                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.2, 3.0, new double[] {3, 9});
 
             case BLOCK:// : - Draw a 1-3 dash pattern on the center line
                 return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.45, 1.0,
-                        new double[] { 1, 3 });
+                        new double[] {1, 3});
 
             case DOUBLE:// ||- Draw two solid lines
             {
@@ -151,7 +150,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
                 OTSLine3D centerLine = stripe.getCenterLine();
                 Geometry rightDesignLine = centerLine.offsetLine(-0.2).getLineString();
                 ArrayList<OTSPoint3D> result =
-                        makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 0.0, new double[] { 3, 9 });
+                        makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 0.0, new double[] {3, 9});
                 Coordinate[] leftCoordinates = centerLine.offsetLine(0.2).getLineString()
                         .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 for (int i = 0; i < leftCoordinates.length; i++)
@@ -166,8 +165,7 @@ public class StripeAnimation extends Renderable2D<Stripe> implements ClonableRen
             {
                 OTSLine3D centerLine = stripe.getCenterLine();
                 Geometry leftDesignLine = centerLine.offsetLine(0.2).getLineString();
-                ArrayList<OTSPoint3D> result =
-                        makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 0.0, new double[] { 3, 9 });
+                ArrayList<OTSPoint3D> result = makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 0.0, new double[] {3, 9});
                 Coordinate[] rightCoordinates = centerLine.offsetLine(-0.2).getLineString()
                         .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 for (int i = 0; i < rightCoordinates.length; i++)

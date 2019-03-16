@@ -27,7 +27,7 @@ public class TaskCarFollowing extends TaskHeadwayBased
     {
         super("car-following");
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected Duration getHeadway(final LanePerception perception, final LaneBasedGTU gtu, final Parameters parameters)

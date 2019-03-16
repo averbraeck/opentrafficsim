@@ -103,7 +103,7 @@ public class StochasticDistractionModel implements EventListenerInterface
             ((Fuller) gtu.getTacticalPlanner().getPerception().getMental()).addTask(task);
             // stop the distraction
             this.simulator.scheduleEventRel(distraction.nextDuration(), this, this, "stopDistraction",
-                    new Object[] { gtu, task });
+                    new Object[] {gtu, task});
         }
         else
         {
@@ -118,7 +118,7 @@ public class StochasticDistractionModel implements EventListenerInterface
         {
             // schedule next distraction
             this.simulator.scheduleEventRel(distraction.nextInterArrival(), this, this, "startDistraction",
-                    new Object[] { gtu, distraction, true });
+                    new Object[] {gtu, distraction, true});
         }
     }
 
@@ -177,7 +177,7 @@ public class StochasticDistractionModel implements EventListenerInterface
                     {
                         Try.execute(
                                 () -> this.simulator.scheduleEventRel(distraction.nextInterArrival(), this, this,
-                                        "startDistraction", new Object[] { gtu, distraction, true }),
+                                        "startDistraction", new Object[] {gtu, distraction, true}),
                                 "Exception while scheduling distraction start.");
                     }
                 }

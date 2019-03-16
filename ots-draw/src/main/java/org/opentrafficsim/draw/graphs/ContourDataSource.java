@@ -56,13 +56,13 @@ public class ContourDataSource<G extends GtuDataInterface>
     // *************************
 
     /** Space granularity values. */
-    protected static final double[] DEFAULT_SPACE_GRANULARITIES = { 10, 20, 50, 100, 200, 500, 1000 };
+    protected static final double[] DEFAULT_SPACE_GRANULARITIES = {10, 20, 50, 100, 200, 500, 1000};
 
     /** Index of the initial space granularity. */
     protected static final int DEFAULT_SPACE_GRANULARITY_INDEX = 3;
 
     /** Time granularity values. */
-    protected static final double[] DEFAULT_TIME_GRANULARITIES = { 1, 2, 5, 10, 20, 30, 60, 120, 300, 600 };
+    protected static final double[] DEFAULT_TIME_GRANULARITIES = {1, 2, 5, 10, 20, 30, 60, 120, 300, 600};
 
     /** Index of the initial time granularity. */
     protected static final int DEFAULT_TIME_GRANULARITY_INDEX = 3;
@@ -504,7 +504,7 @@ public class ContourDataSource<G extends GtuDataInterface>
      * last part that falls within the kernel.
      * @param t Time; time up to which to show data
      */
-    @SuppressWarnings({ "synthetic-access", "methodlength" })
+    @SuppressWarnings({"synthetic-access", "methodlength"})
     private void update(final Time t)
     {
         Throw.when(this.plots.isEmpty(), IllegalStateException.class, "ContourDataSource is used, but not by a contour plot!");

@@ -115,7 +115,7 @@ public interface ContinuousDistDoubleScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         public T draw()
         {
             switch (getUnit().getClass().getSimpleName())
@@ -178,7 +178,7 @@ public interface ContinuousDistDoubleScalar
         /**
          * @return a drawn number from the distribution in the given unit.
          */
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         public T draw()
         {
             switch (getUnit().getClass().getSimpleName())

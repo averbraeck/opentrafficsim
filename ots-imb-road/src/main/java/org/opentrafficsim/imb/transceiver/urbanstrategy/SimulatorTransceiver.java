@@ -60,7 +60,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
         final DEVSRealTimeClock.TimeDoubleUnit animator = (DEVSRealTimeClock.TimeDoubleUnit) simulator;
         addOTSToIMBChannel(animator, SimulatorInterface.START_EVENT, "Sim_Start", new Object[] {}, this.emptyTransformer);
         addOTSToIMBChannel(animator, SimulatorInterface.STOP_EVENT, "Sim_Stop", new Object[] {}, this.emptyTransformer);
-        addOTSToIMBChannel(animator, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT, "Sim_Speed", new Object[] { new Double(1.0) },
+        addOTSToIMBChannel(animator, DEVSRealTimeClock.CHANGE_SPEED_FACTOR_EVENT, "Sim_Speed", new Object[] {new Double(1.0)},
                 this.speedTransformer);
 
         // register the IMB to OTS updates for the simulator
@@ -214,7 +214,7 @@ public class SimulatorTransceiver extends AbstractTransceiver
         {
             Double speed = ((Double) event.getContent());
             System.out.println("Transmitting speed " + speed + " to IMB");
-            return new Object[] { speed };
+            return new Object[] {speed};
         }
     }
 }

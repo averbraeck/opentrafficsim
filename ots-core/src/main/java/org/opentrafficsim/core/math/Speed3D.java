@@ -62,7 +62,7 @@ public class Speed3D implements Serializable
     public Speed3D(final Speed x, final Speed y, final Speed z) throws ValueException
     {
         super();
-        this.speed = new SpeedVector(new Speed[] { x, y, z }, StorageType.DENSE);
+        this.speed = new SpeedVector(new Speed[] {x, y, z}, StorageType.DENSE);
     }
 
     /**
@@ -76,7 +76,7 @@ public class Speed3D implements Serializable
     public Speed3D(final double x, final double y, final double z, final SpeedUnit unit) throws ValueException
     {
         super();
-        this.speed = new SpeedVector(new double[] { x, y, z }, unit, StorageType.DENSE);
+        this.speed = new SpeedVector(new double[] {x, y, z}, unit, StorageType.DENSE);
     }
 
     /**

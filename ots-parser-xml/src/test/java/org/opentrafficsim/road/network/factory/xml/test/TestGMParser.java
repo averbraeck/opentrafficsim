@@ -259,7 +259,7 @@ public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
         public float[] floatTransform(double x, double y)
         {
             double[] d = doubleTransform(x, y);
-            return new float[] { (float) d[0], (float) d[1] };
+            return new float[] {(float) d[0], (float) d[1]};
         }
 
         /** {@inheritDoc} */
@@ -269,12 +269,12 @@ public class TestGMParser extends OTSSimulationApplication<OTSModelInterface>
             try
             {
                 Coords c = WGS84ToRDNewTransform.ellipswgs842rd(x, y);
-                return new double[] { c.x - this.dx, c.y - this.dy };
+                return new double[] {c.x - this.dx, c.y - this.dy};
             }
             catch (Exception exception)
             {
                 exception.printStackTrace();
-                return new double[] { 0, 0 };
+                return new double[] {0, 0};
             }
         }
 

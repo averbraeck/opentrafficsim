@@ -1242,10 +1242,10 @@ public class NTMModel extends AbstractOTSModel
     /*
      * // Create new Areas around highways, that show different behaviour
      *//**
-       * @param shpLinks the links of this model
-       * @param areas the intial areas
-       * @return the additional areas
-       */
+        * @param shpLinks the links of this model
+        * @param areas the intial areas
+        * @return the additional areas
+        */
     /*
      * public static Map<String, AreaNTM> createCordonFeederAreas(final Map<String, ShpLink> shpLinks, final Map<String,
      * AreaNTM> areas) { for (ShpLink shpLink : shpLinks.values()) { if (shpLink.getSpeed() > 70 && shpLink.getCapacity() >

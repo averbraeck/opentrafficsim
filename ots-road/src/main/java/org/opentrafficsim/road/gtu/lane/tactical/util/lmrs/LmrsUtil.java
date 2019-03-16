@@ -96,7 +96,7 @@ public final class LmrsUtil implements LmrsParameters
      * @throws ParameterException parameter exception
      * @throws OperationalPlanException operational plan exception
      */
-    @SuppressWarnings({ "checkstyle:parameternumber", "checkstyle:methodlength" })
+    @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
     public static SimpleOperationalPlan determinePlan(final LaneBasedGTU gtu, final Time startTime,
             final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LmrsData lmrsData,
             final LanePerception perception, final LinkedHashSet<MandatoryIncentive> mandatoryIncentives,

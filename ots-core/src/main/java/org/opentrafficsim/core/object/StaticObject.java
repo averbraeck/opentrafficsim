@@ -58,7 +58,7 @@ public class StaticObject extends EventProducer implements ObjectInterface, Seri
         this.id = id;
         this.geometry = geometry;
         this.height = height;
-        
+
         // notify the potential animation of the existence of a StaticObject
         fireEvent(Network.OBJECT_ADD_EVENT, id);
         fireEvent(Network.ANIMATION_OBJECT_ADD_EVENT, this);
