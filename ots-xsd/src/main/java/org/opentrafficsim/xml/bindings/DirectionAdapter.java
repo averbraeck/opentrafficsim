@@ -28,7 +28,7 @@ public class DirectionAdapter extends XmlAdapter<String, Direction>
     @Override
     public String marshal(final Direction direction) throws IllegalArgumentException
     {
-        return Scalar.stringOf(direction);
+        return Scalar.textualStringOfDefaultLocale(direction);
     }
 
 }

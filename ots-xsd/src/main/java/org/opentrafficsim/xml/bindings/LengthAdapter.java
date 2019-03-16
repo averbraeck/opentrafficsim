@@ -34,7 +34,7 @@ public class LengthAdapter extends XmlAdapter<String, Length>
         {
             throw new IllegalArgumentException("Length cannot be negative: " + length);
         }
-        return Scalar.stringOf(length);
+        return Scalar.textualStringOfDefaultLocale(length);
     }
 
 }

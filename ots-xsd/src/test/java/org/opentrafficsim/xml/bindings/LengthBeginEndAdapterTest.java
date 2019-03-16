@@ -26,7 +26,7 @@ public class LengthBeginEndAdapterTest
             LengthUnit.FOOT};
 
     /** the corresponding strings. */
-    String[] unitStrings = new String[] {"mm", "cm", "dm", "m", "dam", "hm", "km", "mi", "y", "ft"};
+    String[] unitStrings = new String[] {"mm", "cm", "dm", "m", "dam", "hm", "km", "mi", "yd", "ft"};
 
     /**
      * Test the LengthBeginEndAdapter

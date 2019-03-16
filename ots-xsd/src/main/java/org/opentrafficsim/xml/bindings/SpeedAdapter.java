@@ -26,7 +26,7 @@ public class SpeedAdapter extends XmlAdapter<String, Speed>
     @Override
     public String marshal(final Speed speed) throws IllegalArgumentException
     {
-        return Scalar.stringOf(speed);
+        return Scalar.textualStringOfDefaultLocale(speed);
     }
 
 }

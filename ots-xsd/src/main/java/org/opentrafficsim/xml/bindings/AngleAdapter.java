@@ -26,7 +26,7 @@ public class AngleAdapter extends XmlAdapter<String, Angle>
     @Override
     public String marshal(final Angle angle) throws IllegalArgumentException
     {
-        return Scalar.stringOf(angle);
+        return Scalar.textualStringOfDefaultLocale(angle);
     }
 
 }

@@ -26,7 +26,7 @@ public class AccelerationAdapter extends XmlAdapter<String, Acceleration>
     @Override
     public String marshal(final Acceleration acceleration) throws IllegalArgumentException
     {
-        return Scalar.stringOf(acceleration);
+        return Scalar.textualStringOfDefaultLocale(acceleration);
     }
 
 }
