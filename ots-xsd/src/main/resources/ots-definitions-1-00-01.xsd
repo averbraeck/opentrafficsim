@@ -31,7 +31,7 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="GTU">
+  <xsd:element name="GTUTEMPLATE">
     <xsd:complexType>
       <xsd:attribute name="NAME" type="xsd:string" use="required" />
       <xsd:attribute name="GTUTYPE" type="xsd:string" use="required" />
@@ -43,10 +43,10 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="GTUS">
+  <xsd:element name="GTUTEMPLATES">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="GTU" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="GTUTEMPLATE" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
@@ -185,7 +185,7 @@
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
           <xsd:element ref="xi:include" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="GTUTYPES" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="GTUS" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="GTUTEMPLATES" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="LANETYPES" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="LINKTYPES" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="ROADLAYOUT" minOccurs="0" maxOccurs="unbounded" />
