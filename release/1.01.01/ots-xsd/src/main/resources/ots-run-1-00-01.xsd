@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  elementFormDefault="qualified">
+
+  <!-- http://www.w3.org/2009/01/xml.xsd -->
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
+  <!-- http://www.w3.org/2001/xinclude.xsd -->
+  <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="ref/xinclude.xsd" />
+
+  <xsd:include schemaLocation="ots-types-1-00-01.xsd" />
+
+  <xsd:element name="RUN">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="SEED" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="STREAMNAME" type="xsd:string" use="required" />
+            <xsd:attribute name="SEEEDVALUE" type="xsd:integer" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional" default="0s" />
+      <xsd:attribute name="WARMUPPERIOD" type="DURATIONTYPE" use="optional" default="0s" />
+      <xsd:attribute name="RUNLENGTH" type="DURATIONTYPE" use="required" />
+      <xsd:attribute name="NUMBERREPLICATIONS" type="xsd:unsignedInt" use="optional" default="1" />
+      <xsd:attribute ref="xml:base" />
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>
