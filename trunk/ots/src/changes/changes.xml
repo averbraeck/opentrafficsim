@@ -28,7 +28,7 @@
       <action dev="averbraeck" type="update">
         The LaneType does not have static definitions anymore, to allow alternative LaneTypes for different situations.
         An enum called LaneType.DEFAULTS has been added that indicates the names of the LaneTypes that are defined by default.
-        LaneTypes are registerd in the RoadNetwork, and can be retrieved from the road network.
+        LaneTypes are registered in the RoadNetwork, and can be retrieved from the road network.
         A method called addDefaultLaneTypes() has been added to the RoadNetwork to instantiate all default types in a default way.
       </action>
       <action dev="averbraeck" type="add">
@@ -167,12 +167,12 @@ LEGEND.get(gtu.getId().hashCode() % LEGEND.size()).getColor()
         Copyright years updated to 2019.
       </action>
       <action dev="averbraeck" type="update">
-        The DSOL version has been updated to 3.03. This has quite a number ofconsequences.
+        The DSOL version has been updated to 3.03. This has quite a number of consequences.
         Examples are anew use of the DSOLModel, more time-based inner classes of the Simulators,
         DistContinuousTime has been renamed intoDistContinuousSimulationTime, models have
-        specified input parameters andoutput parameters, which makes the use of the
-        ModelPropertiessuperfluous, charts have been moved into one classeach, etc.
-        Seehttps://simulation.tudelft.nl/dsol/3.0/changes-report.html#a3.03.00
+        specified input parameters and output parameters, which makes the use of the
+        ModelPropertiessuperfluous, charts have been moved into one class each, etc.
+        See https://simulation.tudelft.nl/dsol/3.0/changes-report.html#a3.03.00
         for more information.
       </action>
       <action dev="averbraeck" type="add">
@@ -308,7 +308,7 @@ if (simulator instanceof AnimatorInterface)
         the latest version.
       </action>
       <action dev="averbraeck" type="update">
-        The mocking package jmockit meeds to set agent-injections for junit tests in
+        The mocking package jmockit needs to set agent-injections for junit tests in
         the latest version.
         Therefore jmockit has been replaced by Mockito + Powermock (also known as PowerMockito).
         The mocking structure for the tests had to be adapted to this new structure.
