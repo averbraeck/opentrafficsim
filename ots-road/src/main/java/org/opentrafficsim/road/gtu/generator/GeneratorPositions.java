@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -721,6 +722,65 @@ public final class GeneratorPositions implements Locatable
             return "LaneBiases [" + this.biases + "]";
         }
 
+    }
+
+    /**
+     * Set of lane biases per GTU type enum, based on the GTU Types that are defined by default.
+     * <p>
+     * Copyright (c) 2013-2019 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version 24 dec. 2017 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     */
+    public static final class LaneBiasDefaults
+    {
+        /** Biases per GTU type. */
+        private final EnumMap<GTUType.DEFAULTS, LaneBias> biases = new EnumMap<>(GTUType.DEFAULTS.class);
+
+        /**
+         * Adds a GTU bias for randomly drawing a lane.
+         * @param gtuEnum GTUType.DEFAULTS; gtu type
+         * @param bias LaneBias; bias
+         * @return LaneBiases; lane biases for method chaining
+         */
+        public LaneBiasDefaults addBias(final GTUType.DEFAULTS gtuEnum, final LaneBias bias)
+        {
+            Throw.whenNull(gtuEnum, "GTU type enum may not be null.");
+            Throw.whenNull(bias, "Bias may not be null.");
+            this.biases.put(gtuEnum, bias);
+            return this;
+        }
+
+        /**
+         * Whether a bias is defined for the given type.
+         * @param gtuEnum GTUType; GTU type enum
+         * @return whether a bias is defined for the given type
+         */
+        public boolean contains(final GTUType.DEFAULTS gtuEnum)
+        {
+            return this.biases.containsKey(gtuEnum);
+        }
+
+        /**
+         * Returns the bias of given GTU type, or {@code Bias.None} if none defined for the GTU type.
+         * @param gtuEnum GTUType.DEFAULTS; GTU type enum
+         * @return Bias; bias of the GTU type
+         */
+        public LaneBias getBias(final GTUType.DEFAULTS gtuEnum)
+        {
+            return this.biases.getOrDefault(gtuEnum, LaneBias.NONE);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "LaneBiases [" + this.biases + "]";
+        }
     }
 
     /**
