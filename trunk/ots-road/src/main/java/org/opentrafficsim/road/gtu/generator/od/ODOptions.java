@@ -72,7 +72,7 @@ public class ODOptions
      * @param network the network for which to return the lane bias
      * @return the lane bias
      */
-    public static final Option<LaneBiases> getDefaultLaneBias(final RoadNetwork network)
+    public static final Option<LaneBiases> getLaneBiasOption(final RoadNetwork network)
     {
         Option<LaneBiases> laneBiases = LANE_BIAS_CACHE.get(network);
         if (laneBiases == null)
